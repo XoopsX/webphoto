@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_info.html,v 1.1 2008/06/21 12:29:26 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_info.html,v 1.2 2008/06/21 17:15:23 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -168,7 +168,7 @@
 <{* 7TH LINE OF INFORMATION *}>
 
 <{* EXIF *}>
-<{if $show_photo_exif && $photo.cont_exif_disp != '' }>
+<{if $show_photo_exif && $photo.is_owner && ($photo.cont_exif_disp != '') }>
   <div class="webphoto_description">
   <{$photo.cont_exif_disp}> <br />
   </div>
