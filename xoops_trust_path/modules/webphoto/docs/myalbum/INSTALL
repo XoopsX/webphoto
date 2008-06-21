@@ -1,0 +1,201 @@
+[mlimg]
+[xlang:en]
+
+HOW TO INSTALL:
+
+- Unzip in "modules" directory.
+- Configure this module in admin section.
+- Check module environment in the photo album admin section.
+- Create a Categories in the photo album admin section.
+- If you didnot set, chmod 777 your xoops uploads directory.
+- If your server runs "safe_mode on", create photos & thumbs directory manually.
+- Start uploading photos! :)
+
+
+
+
+HOW TO UPGRADE (from older myAlbum-P or myAlbum 1.1.3):
+- Unzip in "modules" directory.
+- Update this module in module administration.
+- Set photos/thumbs directories properly in myAlbum-P's admin.
+  (If you used daniel's myalbum, photos directory may be /modules/myalbum/photos and thumbnails directory may be /modules/myalbum/photos/thumbs)
+- chmod 777 (or 707) photos and photos/thumbs directories (if needed)
+- If you used custom template set, remake myalbum_photo.html and myalbum_photo_in_list.html
+
+Don't forget updating this module !
+
+Since some permissioning system has been changed, you should recheck each group's permissions from "Global Permissions" in myAlbum-P's admin, after updating this module.
+
+
+
+
+
+
+HOW TO use myAlbum-P multiply
+
+copy the directory of modules/myalbum/ into modules/myalbum* entirely.
+(Symbolic linking will not be useful. Because __FILE__ returns true file path.)
+
+The directory names are usable like this:
+
+myalbum0
+myalbum1
+myalbum2
+
+Thus, you can use 4 of myAlbum-P at same time.
+If you want to use more myAlbum-P's as separated modules, use mk_templates.sh and mk_slogo.sh, and edit sql/myalbum*.sql manually.
+
+The important notice: the 1st one should not be older than 2.7.
+If you've already use myAlbum-P 2.6x or older, update it at first.
+
+
+
+HOW TO use imagemanager integration:
+
+There are two ways to integrate XOOPS imagemanager.
+
+1) overwrite imagemanager.php by modules/myalbum/imagemanager.php
+This is the easiest way, but is not smart.
+
+2) add a line into original imagemanager.php like this:
+line 28:
+---------------------------------------------------
+include './mainfile.php';
+include 'modules/myalbum/imagemanager.php';  // add this line
+if (!isset($HTTP_GET_VARS['target']) && !isset($HTTP_POST_VARS['target'])) {
+	exit();
+}
+---------------------------------------------------
+Though this way is a little bit more difficult than overwriting method,
+you can turn on/off myalbum's hook easily.
+
+When you use myAlbum-P with multiple, you can specify the module like this:
+
+include 'modules/myalbum0/imagemanager.php';  // add this line
+
+If you want to use ImageManager Integration as Simplified Attachment Manager, change the preferences of myAlbum-P.
+
+eg) If you want to upload and attach PDFs via ImageManager:
+- Enable ImageManager Integration like described above.
+- set 'jpg|jpeg|gif|png|pdf' in "File extensions can be uploaded"
+- set blank as "MIME Types can be uploaded"
+
+
+
+
+
+enjoy!
+
+
+GIJ=CHECKMATE
+
+
+
+[/xlang:en]
+[xlang:ja]
+
+●インストール方法：
+
+- アーカイブを、お使いのXOOPSのmodulesディレクトリに展開して下さい。
+
+- モジュール管理画面から、インストールします。
+
+- 「マイアルバム」のカテゴリー管理にて、最低１つ、カテゴリーを作成して下さい。
+
+- 必要に応じて、「マイアルバム」内の一般設定を変更して下さい。ほとんどの場合、、「サムネイルを作成する」をONにするのが良いでしょう。
+
+- 「各グループの権限」および「ブロック・アクセス権限」で、各グループに適切な権限を与えて下さい。（初期状態では、管理者以外、ほとんど何もできません）
+
+- 基本的にはこれで終了です。あとは、写真をアップロードするだけです。写真は、uploads/photos/ に、サムネイルは uploads/thumbs/ に保存されます。これらのディレクトリは自動生成されます。
+
+- もし、お使いのサーバがセーフモードなら、自動生成に頼らず、自分で uploads/photos/ および uploads/thumbs を作成する必要があります。この場合、そのディレクトリのパーミッションを707または777に変更することをお忘れ無く
+
+- 「マイアルバム」の「モジュールの状態チェック」を実行することで、より詳しいレポートが得られます。変だな、と思ったら、まずはこちらをお試し下さい。
+
+
+
+●アップグレード方法 (旧myalbumユーザ)
+
+- modules/myalbum ディレクトリに、myAlbum-Pの全ファイルを上書きして下さい。この際、modules/myalbum/photos 以下には触れないようにして下さい。
+
+- モジュール管理画面から、モジュールアップデートを実行して下さい。
+
+- 「マイアルバム」内の一般設定に入り、画像およびサムネイルの保存先ディレクトリをそれぞれ、 /modules/myalbum/photos , /modules/myalbum/photos/thumbs に設定して下さい。
+
+- 「各グループの権限」および「ブロック・アクセス権限」で、各グループに適切な権限を与えて下さい。（初期状態では、管理者以外、ほとんど何もできません）
+
+- もし、カスタムテンプレートセットをご利用であれば、myalbum_photo.html および myalbum_photo_in_list.html を、myAlbum-P 付属のテンプレートを参考に書き直して下さい。
+
+
+
+●アップグレード方法 (2.6以前のmyAlbum-Pユーザ)
+
+- modules/myalbum ディレクトリに、myAlbum-Pの全ファイルを上書きして下さい。
+
+- モジュール管理画面から、モジュールアップデートを実行して下さい。
+
+- 2.5以前のmyAlbum-Pをご利用で、カスタムテンプレートセットをご使用中の方は、myalbum_photo.html および myalbum_photo_in_list.html を、myAlbum-P 付属のテンプレートを参考に書き直して下さい。
+
+- 2.6以降、権限システムが大幅に変わりました。あらためて、「各グループの権限」および「ブロック・アクセス権限」で、各グループに適切な権限を与えて下さい。（初期状態では、管理者以外、ほとんど何もできません）
+
+
+
+
+◎myAlbum-P ならではの機能についての解説
+
+●myAlbum-P の複製利用
+
+myAlbum-P は、コピーしただけで、別モジュールとしてインストール可能なようにつくってあります。（そのようなモジュールは、他にTinyContent-Duplicatableがあります）
+
+通常は、modules/myalbum/ に展開するモジュールを、そっくりそのまま、modules/myalbum0 にコピーしてみて下さい。
+
+すると、モジュール管理画面に、もう一つアイコンが増えているはずです。（myAlbum-Pと同じアイコンですが、右側に数字の0が描いてあります）
+
+通常通り、そのモジュールをインストールすれば、２つめのmyAlbum-Pのインストール完了です。
+
+この調子で、全部で４つまで、myAlbum-Pをインストールできます。
+
+ただし、ディレクトリの名前に制限があり、
+
+modules/myalbum
+modules/myalbum0
+modules/myalbum1
+modules/myalbum2
+
+だけが有効です。５つ以上インストールすることはおそらく無いと思いますが、４つ以下でもうまくインストールできないとすれば、ディレクトリ名を間違っている可能性が大です。
+
+なお、上級者のために一応書いておきますが、コピーの代わりにシンボリックリンクでは、この機能は有効になりません。これはPHPの__FILE__の制限によるものです
+
+また、この機能は、インストールされたmyAlbum-Pがすべてが2.7以上である必要があります。一部だけ、2.6を使ったりするとおかしくなりますので、ご注意ください。
+
+
+
+●イメージマネージャ統合機能の使い方
+
+myAlbum-P 2.6から、イメージマネージャ統合機能がつきました。
+この機能をONにすることで、サムネイルの自動生成・バッチアップロードといった機能が、イメージマネージャでも利用可能となります。
+
+また、2.7からは、XOOPS付属イメージマネージャへの画像インポート・エクスポートもできるようになったため、過去のイメージマネージャの資産を活用することも、XOOPS付属イメージマネージャに戻ることも簡単にできます。
+
+この機能を有効にするために、以下の２つの方法があります。お好きな方をお選び下さい。
+
+1) myAlbum-P 付属の imagemanager.php を、XOOPSルートパスにある、imagemanager.php に上書きします。
+
+一番簡単な方法ですが、複製したモジュールをイメージマネージャにすることは出来ません。
+
+
+2) XOOPSルートパスにある、imagemanager.php を以下のように書き換えます
+line 28:
+---------------------------------------------------
+include './mainfile.php';
+include 'modules/myalbum/imagemanager.php';  // この一行だけ追加
+if (!isset($HTTP_GET_VARS['target']) && !isset($HTTP_POST_VARS['target'])) {
+	exit();
+}
+---------------------------------------------------
+
+こちらは 1) に比べてちょっとだけ難しくなりますが、より優れています。
+modules/myalbum/ という部分を、 /modules/myalbum0 等と書き換えるだけで、４つのmyAlbum-Pのいずれもイメージマネージャとして利用可能となります。
+
+
+[/xlang:ja]

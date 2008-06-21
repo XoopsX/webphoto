@@ -1,0 +1,153 @@
+<{* $Id: main_list.html,v 1.1 2008/06/21 12:22:17 ohwada Exp $ *}>
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
+<{$xoops_modulename}></a> &gt;&gt; 
+<b><{$title_bread_crumb}></b>
+<br /><br />
+
+<{* === menue === *}>
+<{include file="db:`$mydirname`_inc_menu.html" }>
+
+<{* === search form === *}>
+<{include file="db:`$mydirname`_inc_search.html" }>
+
+<div class="webphoto_page_title">
+  <{$sub_title_s}>
+</div>
+
+<{if $error != '' }>
+  <div class="webphoto_error"><{$error}></div>
+<{/if}>
+
+<{* === tag cloud === *}>
+<{if $show_tagcloud }>
+  <div id="webphoto_box_tagcloud_b">
+  <a href="javascript:webphoto_box_visible_flip('webphoto_box_tagcloud', 0)">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
+  <{$lang_tagcloud_off}></a> <br />
+  <div class="webphoto_tagcloud" >
+  <{foreach from=$tagcloud item=tagc }>
+    <a href="<{$tagc.link}>" style="text-decoration:none;padding:2px;font-size:<{$tagc.size}>px;">
+    <{$tagc.name|escape}></a>
+  <{/foreach}>
+  </div>
+  </div>
+
+  <div id="webphoto_box_tagcloud_a" style="display:none">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_plus.png" width="16" height="16" border="0" alt="minus" />
+  <a href="javascript:webphoto_box_visible_flip('webphoto_box_tagcloud', 1)">
+  <{$lang_tagcloud_on}></a>
+  </div>
+<{/if}>
+
+<{* === cat list === *}>
+<{if $show_catlist }>
+  <div id="webphoto_box_catlist_b">
+  <a href="javascript:webphoto_box_visible_flip('webphoto_box_catlist', 0)">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
+  <{$lang_catlist_off}></a> <br />
+  <div class="webphoto_categories" >
+  <{include file="db:`$mydirname`_inc_catlist.html"}>
+  </div>
+  </div>
+
+  <div id="webphoto_box_catlist_a" style="display:none">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_plus.png" width="16" height="16" border="0" alt="minus" />
+  <a href="javascript:webphoto_box_visible_flip('webphoto_box_catlist', 1)">
+  <{$lang_catlist_on}></a>
+  </div>
+<{/if}>
+
+<{* === gmap === *}>
+<{if $show_gmap }>
+  <div id="webphoto_box_gmap_b">
+  <a href="javascript:webphoto_box_gmap_off()">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
+  <{$lang_gmap_off}></a> <br />
+  <{$lang_gmap_desc}><br />
+  <div id="webphoto_gmap_not_compatible" class="webphoto_error"></div>
+  <div id="webphoto_gmap_map" class="webphoto_gmap_map">Loading ...</div>
+  </div>
+
+  <div id="webphoto_box_gmap_a" style="display:none">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_plus.png" width="16" height="16" border="0" alt="minus" />
+  <a href="javascript:webphoto_box_gmap_on()">
+  <{$lang_gmap_on}></a> </a>
+  </div>
+
+  <br />
+<{/if}>
+
+<{* === photo === *}>
+<{foreach item=list from=$photo_list}>
+  <div class="webphoto_list_frame">
+
+<{* --- catpath for category --- *}>
+  <{if $list.show_catpath }>
+    <{assign var="catpath_last" value=$list.catpath.last }>
+    <div class="webphoto_catpath">
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
+
+    <{if $catpath_last.imgurl_s != ""}>
+      <{if $catpath_last.cat_sub_width && $catpath_last.cat_sub_height }>
+        <img src="<{$catpath_last.imgurl_s}>" width="<{$catpath_last.cat_sub_width}>" height="<{$catpath_last.cat_sub_height}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
+      <{else}>
+        <img src="<{$catpath_last.imgurl_s}>" width="<{$cat_sub_width}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
+      <{/if}>
+    <{/if}>
+
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" border="0" alt="<{$catpath_last.cat_title_s}>" />
+    </a> 
+
+    <{foreach item=catpath_list from=$list.catpath.list}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
+      <span class="webphoto_catpath_title"><{$catpath_list.cat_title_s}></span>
+      </a> : 
+    <{/foreach}>  
+
+    (<{$list.total}>)
+    </div>
+
+    <{if $list.sum > 0 }>
+      <{assign var="photo" value=$list.photo }>
+      <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
+    <{/if}>
+
+  <{/if}>
+<{* --- catpath end --- *}>
+
+<{* --- title for normal --- *}>
+  <{if $list.title_s != ''}>
+    <{if $list.link_s}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/<{$list.link_s}>">
+    <{/if}>
+    <span class="webphoto_list_title"><{$list.title_s}></span>
+    <{if $list.link_s}>
+      </a>
+    <{/if}>
+
+    (<{$list.total}>) 
+
+    <{if $list.total > 0 }>
+      <{assign var="photo" value=$list.photo }>
+      <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
+    <{/if}>
+
+  <{/if}>
+<{* --- title end --- *}>
+
+  </div>
+<{/foreach}>
+
+
+
+<hr />
+<div class="webphoto_execution_time">execution time : <{$execution_time}> sec </div>
+<{if $is_module_admin && ($memory_usage > 0)}>
+	<div class="webphoto_memory_usage">memory usage : <{$memory_usage}> MB </div>
+<{/if}>
+
+<{if $is_module_admin }>
+  <br />
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php"><{$lang_goto_admin}></a>
+<{/if}>

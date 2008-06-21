@@ -1,0 +1,63 @@
+<{* $Id: inc_menu.html,v 1.1 2008/06/21 12:22:17 ohwada Exp $ *}>
+
+<div class="webphoto_page_menu">
+
+<{* --- 1st line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/latest/">
+<{$lang_title_latest}></a> | 
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/popular/">
+<{$lang_title_popular}></a> | 
+
+<{if $has_rateview }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/highrate/">
+  <{$lang_title_highrate}></a> | 
+<{/if}>
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
+<{$lang_title_random}></a> | 
+
+<{if $xoops_isuser }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
+  <{$lang_title_myphoto}></a> | 
+<{/if}>
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
+<{$lang_title_help}></a> | 
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/" target="_blank" >
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rss.png" border="0" alt="<{$lang_title_rss}>" title="<{$lang_title_rss}>" />
+</a> | 
+
+<{if $has_insertable }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/submit/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/pictadd.png" border="0" alt="<{$lang_title_addphoto}>" title="<{$lang_title_addphoto}>" />
+  <{$lang_title_addphoto}>
+  </a> |
+<{/if}>
+
+</div>
+
+<{* --- 2nd line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/">
+<{$lang_title_category_list}></a> | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/">
+<{$lang_title_tag_list}></a> | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/">
+<{$lang_title_user_list}></a> | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/">
+<{$lang_title_date_list}></a> | 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/">
+<{$lang_title_place_list}></a> | 
+</div>
+
+<{* --- 3rd line --- *}>
+<div class="webphoto_page_menu_line">
+<{$lang_thereare}> 
+</div>
+
+</div>

@@ -1,0 +1,186 @@
+<?php
+// $Id: photo_sort.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+
+//=========================================================
+// webphoto module
+// 2008-04-02 K.OHWADA
+//=========================================================
+
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//=========================================================
+// class webphoto_photo_sort
+//=========================================================
+class webphoto_photo_sort
+{
+	var $_DIRNAME       = null;
+	var $_TRUST_DIRNAME = null;
+	var $_MODULE_URL;
+	var $_MODULE_DIR;
+	var $_TRUST_DIR;
+
+	var $_PHOTO_SORT_ARRAY   = null;
+	var $_MODE_TO_SORT_ARRAY = null;
+
+	var $_PHOTO_SORT_DEFAULT = 'dated';
+	var $_ORDERBY_RANDOM = 'rand()';
+
+//---------------------------------------------------------
+// constructor
+//---------------------------------------------------------
+function webphoto_photo_sort( $dirname, $trust_dirname )
+{
+	$this->set_trust_dirname( $trust_dirname );
+	$this->_init_d3_language( $dirname, $trust_dirname );
+
+	$this->set_photo_sort_array(   $this->photo_sort_array_default() );
+	$this->set_mode_to_sort_array( $this->mode_to_sort_array_default() );
+}
+
+function &getInstance( $dirname, $trust_dirname )
+{
+	static $instance;
+	if (!isset($instance)) {
+		$instance = new webphoto_photo_sort( $dirname, $trust_dirname );
+	}
+	return $instance;
+}
+
+//---------------------------------------------------------
+// function
+//---------------------------------------------------------
+function mode_to_orderby( $mode )
+{
+	return $this->sort_to_orderby( $this->mode_to_sort( $mode ) );
+}
+
+//---------------------------------------------------------
+// mode
+//---------------------------------------------------------
+function mode_to_sort_array_default()
+{
+	$arr = array(
+		'latest'   => 'dated' ,
+		'popular'  => 'hitsd' ,
+		'highrate' => 'ratingd' ,
+		'random'   => 'random' ,
+	);
+	return $arr;
+}
+
+function set_mode_to_sort_array( $arr )
+{
+	if ( is_array($arr) && count($arr) ) {
+		$this->_MODE_TO_SORT_ARRAY = $arr;
+	}
+}
+
+function mode_to_sort( $mode )
+{
+	if ( isset( $this->_MODE_TO_SORT_ARRAY[ $mode ] ) ){
+		return  $this->_MODE_TO_SORT_ARRAY[ $mode ];
+	}
+	return null;
+}
+
+//---------------------------------------------------------
+// photo sort
+//---------------------------------------------------------
+function photo_sort_array_default()
+{
+	$arr = array(
+		'ida'     => array( 'photo_id ASC' ,           $this->get_constant('SORT_IDA') ) ,
+		'idd'     => array( 'photo_id DESC' ,          $this->get_constant('SORT_IDD') ) ,
+		'titlea'  => array( 'photo_title ASC' ,        $this->get_constant('SORT_TITLEA') ) ,
+		'titled'  => array( 'photo_title DESC' ,       $this->get_constant('SORT_TITLED') ) ,
+		'datea'   => array( 'photo_time_update ASC' ,  $this->get_constant('SORT_DATEA') ) ,
+		'dated'   => array( 'photo_time_update DESC' , $this->get_constant('SORT_DATED') ) ,
+		'hitsa'   => array( 'photo_hits ASC' ,         $this->get_constant('SORT_HITSA') ) ,
+		'hitsd'   => array( 'photo_hits DESC' ,        $this->get_constant('SORT_HITSD') ) ,
+		'ratinga' => array( 'photo_rating ASC' ,       $this->get_constant('SORT_RATINGA') ) ,
+		'ratingd' => array( 'photo_rating DESC' ,      $this->get_constant('SORT_RATINGD') ) ,
+		'random'  => array( $this->_ORDERBY_RANDOM ,   $this->get_constant('SORT_RANDOM') ) ,
+	) ;
+	return $arr;
+}
+
+function set_photo_sort_array( $arr )
+{
+	if ( is_array($arr) && count($arr) ) {
+		$this->_PHOTO_SORT_ARRAY = $arr;
+	}
+}
+
+function sort_to_orderby( $sort )
+{
+	$orderby = $this->get_photo_sort( $sort, 0 );
+
+	if (($orderby != 'photo_id DESC')&&( $orderby != 'rand()')) {
+		$orderby = $orderby.', photo_id DESC';
+	}
+	return $orderby;
+}
+
+function get_lang_sortby( $name )
+{
+	return sprintf( $this->get_constant('SORT_S_CURSORTEDBY') , $this->get_photo_sort( $name, 1 ) );
+}
+
+function get_photo_sort_name( $name )
+{
+	if( $name && isset( $this->_PHOTO_SORT_ARRAY[ $name ] ) ) {
+		return $name ;
+	} elseif( isset( $this->_PHOTO_SORT_ARRAY[ $this->_PHOTO_SORT_DEFAULT ] ) ) {
+		return $this->_PHOTO_SORT_DEFAULT ;
+	}
+
+	return false;
+}
+
+function get_photo_sort( $name, $num )
+{
+	if ( isset( $this->_PHOTO_SORT_ARRAY[ $name ][ $num ] ) ) {
+		return  $this->_PHOTO_SORT_ARRAY[ $name ][ $num ];
+	}
+	return $this->_PHOTO_SORT_ARRAY[ $this->_PHOTO_SORT_DEFAULT ][ $num ];
+}
+
+function set_photo_sort_default( $val )
+{
+	$this->_PHOTO_SORT_DEFAULT = $val;
+}
+
+function get_random_orderby()
+{
+	return $this->_ORDERBY_RANDOM;
+}
+
+//---------------------------------------------------------
+// d3 language
+//---------------------------------------------------------
+function _init_d3_language( $dirname, $trust_dirname )
+{
+	$this->_language_class =& webphoto_d3_language::getInstance();
+	$this->_language_class->init( $dirname , $trust_dirname );
+}
+
+function get_lang_array()
+{
+	return $this->_language_class->get_lang_array();
+}
+
+function get_constant( $name )
+{
+	return $this->_language_class->get_constant( $name );
+}
+
+function set_trust_dirname( $trust_dirname )
+{
+	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
+}
+
+// --- class end ---
+}
+
+?>

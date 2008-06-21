@@ -1,0 +1,307 @@
+<?php
+// $Id: batch.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+
+//=========================================================
+// webphoto module
+// 2008-04-02 K.OHWADA
+//=========================================================
+
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//=========================================================
+// class webphoto_admin_batch
+//=========================================================
+class webphoto_admin_batch extends webphoto_base_this
+{
+	var $_mime_class;
+	var $_image_class;
+	var $_build_class;
+
+	var $_post_catid;
+	var $_post_desc;
+	var $_post_uid;
+	var $_time_update;
+
+	var $_ADMIN_BATCH_PHP;
+
+	var $_TIME_SUCCESS  = 1;
+	var $_TIME_FAIL     = 5;
+
+//---------------------------------------------------------
+// constructor
+//---------------------------------------------------------
+function webphoto_admin_batch( $dirname , $trust_dirname )
+{
+	$this->webphoto_base_this( $dirname , $trust_dirname );
+
+	$this->_build_class =& webphoto_photo_build::getInstance( $dirname );
+	$this->_image_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
+	$this->_mime_class  =& webphoto_mime::getInstance( $dirname );
+
+	$this->_ADMIN_BATCH_PHP = $this->_MODULE_URL .'/admin/index.php?fct=batch';
+}
+
+function &getInstance( $dirname , $trust_dirname )
+{
+	static $instance;
+	if (!isset($instance)) {
+		$instance = new webphoto_admin_batch( $dirname , $trust_dirname );
+	}
+	return $instance;
+}
+
+//---------------------------------------------------------
+// main
+//---------------------------------------------------------
+function main()
+{
+	$this->_check_cat();
+
+	if ( !$this->_check_cat() ) {
+		xoops_cp_header();
+		echo $this->build_admin_menu();
+		echo $this->build_admin_title( 'BATCH' );
+		xoops_error( _WEBPHOTO_ERR_MUSTADDCATFIRST );
+		xoops_cp_footer() ;
+		exit();
+	}
+
+	$post_submit = $this->_post_class->get_post_text('submit');
+
+	if ( $post_submit != '' ) {
+		$this->_submit();
+		exit();
+	}
+
+	xoops_cp_header();
+
+	echo $this->build_admin_menu();
+	echo $this->build_admin_title( 'BATCH' );
+
+	$this->_print_form();
+
+	xoops_cp_footer() ;
+
+}
+
+function _check_cat()
+{
+// check Categories exist
+	$count = $this->_cat_handler->get_count_all();
+	if( $count > 0 ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
+// submit
+//---------------------------------------------------------
+function _submit()
+{
+	$title = $this->get_admin_title( 'BATCH' );
+
+	xoops_cp_header();
+	echo $this->build_admin_bread_crumb( $title, $this->_ADMIN_BATCH_PHP );
+	echo "<h3>". $title ."</h3>\n";
+
+	$this->_exec_submit();
+
+	if( $this->has_error() ) {
+		echo $this->get_format_error( false, true ) ;
+		echo "<br />\n" ;
+	}
+
+	echo "<br /><hr />\n";
+	echo "<h4>". _AM_WEBPHOTO_FINISHED."</h4>\n";
+	echo '<a href="index.php">GOTO Admin Menu</a>'."<br />\n";
+
+	xoops_cp_footer() ;
+}
+
+function _exec_submit()
+{
+	// Check Directory
+	$post_dir          = $this->_post_class->get_post_text( 'dir' ) ;
+	$post_title        = $this->_post_class->get_post_text( 'title' ) ;
+	$post_update       = $this->_post_class->get_post_time( 'update' ) ;
+	$this->_post_catid = $this->_post_class->get_post_get_int('cat_id') ;
+	$this->_post_desc  = $this->_post_class->get_post_text( 'desc' ) ;
+	$this->_post_uid   = $this->_post_class->get_post_int( 'uid', $this->_xoops_uid ) ;
+
+	if ( $post_update > 0 ) {
+		$this->_time_update = $post_update;
+	} else {
+		$this->_time_update = time();
+	}
+
+	if ( !$this->check_token() ) {
+		$this->set_error( 'Token Error' );
+		$this->set_error( $this->get_token_errors() );
+		return false ;
+	}
+
+	$dir = $post_dir;
+
+	if ( empty( $dir ) || ! is_dir( $dir ) ) {
+		$dir = $this->add_slash_to_head( $dir );
+		$prefix = XOOPS_ROOT_PATH ;
+		while( strlen( $prefix ) > 0 ) {
+			if( is_dir( $prefix.$dir ) ) {
+				$dir = $prefix.$dir ;
+				break ;
+			}
+			$prefix = substr( $prefix , 0 , strrpos( $prefix , '/' ) ) ;
+		}
+		if( ! is_dir( $dir ) ) {
+			$this->set_error( _AM_WEBPHOTO_MES_INVALIDDIRECTORY );
+			$this->set_error( $post_dir );
+			return false ;
+		}
+	}
+
+	$dir = $this->strip_slash_from_tail( $dir );
+
+	$dh = opendir( $dir ) ;
+	if( $dh === false ) {
+		$this->set_error( _AM_WEBPHOTO_MES_INVALIDDIRECTORY );
+		$this->set_error( $post_dir );
+		return false;
+	}
+
+	// get all file_names from the directory.
+	$file_names = array() ;
+	while( $file_name = readdir( $dh ) ) {
+		$file_names[] = $file_name ;
+	}
+	sort( $file_names ) ;
+
+	list ( $allowed_mime_types, $allowed_exts )
+		= $this->_mime_class->get_my_allowed_mimes();
+
+	$filecount = 1 ;
+	foreach( $file_names as $file_name ) 
+	{
+		// Skip '.' , '..' and hidden file
+		if ( substr( $file_name , 0 , 1 ) == '.' ) { continue ; }
+
+		$ext  = $this->parse_ext( $file_name ) ;
+		$node = substr( $file_name , 0 , - strlen( $ext ) - 1 ) ;
+		$src_file = $dir.'/'.$node.'.'.$ext ;
+
+		if ( ! is_readable( $src_file ) || ! in_array( strtolower( $ext ) , $allowed_exts ) ) {
+			echo ' Skip : '. $this->sanitize($file_name) ."<br />\n" ;
+			continue;
+		}
+
+		$title = empty( $post_title ) ? addslashes( $node ) : $post_title.' '.$filecount ;
+
+		$this->_exec_each_file( $src_file, $ext, $title );
+
+		$filecount ++ ;
+	}
+
+	closedir( $dh ) ;
+
+	if ( $filecount <= 1 ) {
+		$msg = $this->sanitize($post_dir) . ' : '. _AM_WEBPHOTO_MES_BATCHNONE ;
+	} else {
+		$msg = sprintf( _AM_WEBPHOTO_MES_BATCHDONE , $filecount - 1 ) ;
+	}
+
+	echo "<br />\n";
+	echo "<b>". $msg ."</b><br />\n";
+
+	return $this->return_code();
+}
+
+function _exec_each_file( $src_file, $photo_ext, $title )
+{
+	$thumb_info = null;
+
+// insert
+	$row = $this->_photo_handler->create( true );
+	$row['photo_title']       = $title;
+	$row['photo_cat_id']      = $this->_post_catid;
+	$row['photo_uid']         = $this->_post_uid;
+	$row['photo_time_update'] = $this->_time_update;
+	$row['photo_description'] = $this->_post_desc;
+	$row['photo_status']      = 1;
+
+	$row['photo_search']      = $this->_build_class->build_search( $row );
+
+	$newid = $this->_photo_handler->insert( $row );
+	if ( !$newid ) {
+		$this->set_error( $this->_photo_handler->get_errors() );
+		return false;
+	}
+
+	$url = $this->_MODULE_URL .'/index.php/photo/'. $newid .'/';
+	echo '- <a href="'. $url .'" target="_blank">'. $src_file .'</a> : ';
+
+	$photo_name = $this->_image_class->build_photo_name( $newid, $photo_ext );
+	$photo_path = $this->_PHOTOS_PATH .'/'. $photo_name ;
+	$photo_file = XOOPS_ROOT_PATH . $photo_path ;
+	$photo_url  = XOOPS_URL       . $photo_path ;
+
+	$this->copy_file( $src_file , $photo_file ) ;
+
+	$photo_info = $this->_image_class->build_photo_info( $photo_path, $photo_ext ) ;
+	$photo_info['url']  = $photo_url ;
+	$photo_info['name'] = $photo_name ;
+
+	$photo_info = $this->_mime_class->add_mime_if_empty( $photo_info );
+
+	$ret1 = $this->_image_class->create_thumb( $photo_path , $newid , $photo_ext ) ;
+	if ( $ret1 == _C_WEBPHOTO_IMAGE_READ_FAULT ) {
+		echo ' thumb file read error ' ;
+	} elseif ( $ret1 == _C_WEBPHOTO_IMAGE_SKIPPED ) {
+		echo ' skipped thumb ' ;
+
+	} else {
+		echo ' create thumb ' ;
+		$thumb_image_info = $this->_image_class->get_thumb_info();
+		if ( is_array($thumb_image_info) ) {
+			$thumb_path = $thumb_image_info['path'] ;
+			$thumb_name = $thumb_image_info['name'] ;
+			$thumb_ext  = $thumb_image_info['ext'] ;
+
+			$thumb_info = $this->_image_class->build_thumb_info( $thumb_path, $thumb_ext);
+			$thumb_info['url']  = XOOPS_URL . $thumb_path;
+			$thumb_info['name'] = $thumb_name;
+		}
+	}
+
+// update
+	$row['photo_id'] = $newid ;
+
+	$row = $this->_photo_handler->build_row_by_photo_info( $row, $photo_info );
+	$row = $this->_photo_handler->build_row_by_thumb_info( $row, $thumb_info );
+
+	$ret2 = $this->_photo_handler->update( $row );
+	if ( !$ret2 ) {
+		$this->set_error( $this->_photo_handler->get_errors() );
+		return false;
+	}
+
+	echo _AM_WEBPHOTO_FINISHED."<br />\n" ;
+
+	return true;
+}
+
+//---------------------------------------------------------
+// print form
+//---------------------------------------------------------
+function _print_form()
+{
+	$form =& webphoto_admin_batch_form::getInstance(
+		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
+
+	$form->print_form_batch( 
+		$this->_cat_handler->build_selbox_catid( 0 ) );
+}
+
+// --- class end ---
+}
+
+?>

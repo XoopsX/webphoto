@@ -1,0 +1,11 @@
+<{* $Id: block_tophits.html,v 1.1 2008/06/21 12:22:17 ohwada Exp $ *}>
+
+<ul>
+<{foreach item=photo from=$block.photo}>
+  <li>
+  <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{$photo.title_s}></a> 
+  (<{$photo.photo_hits}> <{$photo.hits_suffix}>)
+  </li>
+<{/foreach}>
+</ul>

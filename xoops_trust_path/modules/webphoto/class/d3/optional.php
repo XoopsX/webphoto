@@ -1,0 +1,211 @@
+<?php
+// $Id: optional.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+
+//=========================================================
+// webphoto module
+// 2008-04-02 K.OHWADA
+//=========================================================
+
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//=========================================================
+// class webphoto_d3_optional
+// NOT replace this file
+//=========================================================
+class webphoto_d3_optional
+{
+	var $_DIRNAME;
+	var $_TRUST_DIRNAME;
+	var $_MODULE_DIR;
+	var $_TRUST_DIR;
+
+	var $_xoops_language = null;
+
+	var $_DEBUG_INCLUDE = false;
+	var $_DEBUG_ERROR   = false;
+
+//---------------------------------------------------------
+// constructor
+//---------------------------------------------------------
+function webphoto_d3_optional()
+{
+	$this->_init_xoops_param();
+}
+
+function &getInstance()
+{
+	static $instance;
+	if (!isset($instance)) {
+		$instance = new webphoto_d3_optional();
+	}
+	return $instance;
+}
+
+function init( $dirname , $trust_dirname )
+{
+	$this->_DIRNAME       = $dirname;
+	$this->_TRUST_DIRNAME = $trust_dirname;
+
+	$this->_MODULE_DIR = XOOPS_ROOT_PATH  .'/modules/'. $dirname;
+	$this->_TRUST_DIR  = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
+
+	$constpref = strtoupper( '_C_' . $dirname. '_' ) ;
+	$this->set_debug_include_by_const_name( $constpref.'DEBUG_INCLUDE' );
+	$this->set_debug_error_by_const_name(   $constpref.'DEBUG_ERROR' );
+}
+
+//---------------------------------------------------------
+// public
+//---------------------------------------------------------
+function include_once_file( $file )
+{
+	$file_trust = $this->_TRUST_DIR  . '/' . $file ;
+	$file_root  = $this->_MODULE_DIR . '/' . $file ;
+
+	if ( file_exists( $file_root ) ) {
+		$this->debug_msg_include_file( $file_root );
+		include_once $file_root;
+		return true;
+
+	} elseif( file_exists( $file_trust ) ) {
+		$this->debug_msg_include_file( $file_trust );
+		include_once $file_trust;
+		return true;
+	}
+
+	$this->debug_msg_error( 'CANNOT include '. $file .' in '. $this->_DIRNAME ) ;
+	return false;
+}
+
+function include_once_language( $file, $debug )
+{
+	$file_trust_lang = $this->_TRUST_DIR  .'/language/'. $this->_xoops_language .'/'.$file;
+	$file_trust_eng  = $this->_TRUST_DIR  .'/language/english/'.                     $file;
+	$file_root_lang  = $this->_MODULE_DIR .'/language/'. $this->_xoops_language .'/'.$file;
+	$file_root_eng   = $this->_MODULE_DIR .'/language/english/'.                     $file;
+
+	if ( file_exists( $file_root_lang ) ) {
+		$this->debug_msg_include_file( $file_root_lang, $debug );
+		include_once $file_root_lang;
+		return true;
+
+	} elseif( file_exists( $file_trust_lang ) ) {
+		$this->debug_msg_include_file( $file_trust_lang, $debug );
+		include_once $file_trust_lang;
+		return true;
+
+	} elseif ( file_exists( $file_root_eng ) ) {
+		$this->debug_msg_include_file( $file_root_eng, $debug );
+		include_once $file_root_eng;
+		return true;
+
+	} elseif ( file_exists( $file_trust_eng ) ) {
+		$this->debug_msg_include_file( $file_trust_eng, $debug );
+		include_once $file_trust_eng;
+		return true;
+	}
+
+	$this->debug_msg_error( 'CANNOT include '. $file .' in '. $this->_DIRNAME ) ;
+	return false;
+}
+
+function include_language( $file )
+{
+	$GLOBALS['MY_DIRNAME'] = $this->_DIRNAME;
+
+	$file_trust_lang = $this->_TRUST_DIR  .'/language/'. $this->_xoops_language .'/'.$file;
+	$file_trust_eng  = $this->_TRUST_DIR  .'/language/english/'.                     $file;
+	$file_root_lang  = $this->_MODULE_DIR .'/language/'. $this->_xoops_language .'/'.$file;
+	$file_root_eng   = $this->_MODULE_DIR .'/language/english/'.                     $file;
+
+	if ( file_exists( $file_root_lang ) ) {
+		$this->debug_msg_include_file( $file_root_lang );
+		include $file_root_lang;
+		return true;
+
+	} elseif( file_exists( $file_trust_lang ) ) {
+		$this->debug_msg_include_file( $file_trust_lang );
+		include $file_trust_lang;
+		return true;
+
+	} elseif ( file_exists( $file_root_eng ) ) {
+		$this->debug_msg_include_file( $file_root_eng );
+		include $file_root_eng;
+		return true;
+
+	} elseif ( file_exists( $file_trust_eng ) ) {
+		$this->debug_msg_include_file( $file_trust_eng );
+		include $file_trust_eng;
+		return true;
+	}
+
+	$this->debug_msg_error( 'CANNOT include '. $file .' in '. $this->_DIRNAME ) ;
+	return false;
+}
+
+function debug_msg_include_file( $file, $debug=true )
+{
+	$file_win = str_replace( '/', '\\', $file );
+
+	if ( $this->_DEBUG_INCLUDE && $debug &&
+	     ! in_array( $file,     get_included_files() ) &&
+	     ! in_array( $file_win, get_included_files() ) ) {
+		echo 'include '. $file ."<br />\n";
+	}
+}
+
+function debug_msg_error( $str )
+{
+	if ( $this->_DEBUG_ERROR ) {
+		echo  $this->_highlight( $str )."<br />\n";
+	}
+}
+
+function set_debug_error( $val )
+{
+	$this->_DEBUG_ERROR = (bool)$val;
+}
+
+function set_debug_include( $val )
+{
+	$this->_DEBUG_INCLUDE = (bool)$val;
+}
+
+function set_debug_error_by_const_name( $name )
+{
+	$name = strtoupper( $name );
+	if ( defined($name) ) {
+		$this->set_debug_error( constant($name) );
+	}
+}
+
+function set_debug_include_by_const_name( $name )
+{
+	$name = strtoupper( $name );
+	if ( defined($name) ) {
+		$this->set_debug_include( constant($name) );
+	}
+}
+
+//---------------------------------------------------------
+// private
+//---------------------------------------------------------
+function _highlight( $str )
+{
+	$val = '<span style="color:#ff0000;">'. $str .'</span>';
+	return $val;
+}
+
+//---------------------------------------------------------
+// xoops param
+//---------------------------------------------------------
+function _init_xoops_param()
+{
+	global $xoopsConfig;
+	$this->_xoops_language = $xoopsConfig['language'];
+}
+
+//----- class end -----
+}
+
+?>
