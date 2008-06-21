@@ -1,0 +1,30 @@
+/* $Id: gmap.css,v 1.1 2008/06/21 12:29:25 ohwada Exp $ */
+
+.webphoto_gmap_map
+{
+	border:  1px solid #808080;	/* gray */
+	width:   98%;
+	height:  300px;
+	margin:  5px;
+	padding: 5px;
+}
+
+.webphoto_gmap_error
+{
+  color: #ff0000;
+}
+
+#webphoto_gmap_current_location
+{
+	font-size: 80%; 
+}
+
+#webphoto_gmap_current_address
+{
+	font-size: 80%; 
+}
+
+#webphoto_gmap_list
+{
+	font-size: 80%; 
+}

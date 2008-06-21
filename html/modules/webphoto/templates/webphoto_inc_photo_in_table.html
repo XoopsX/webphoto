@@ -1,0 +1,82 @@
+<{* $Id: webphoto_inc_photo_in_table.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+
+<{* IMAGE PART *}>
+
+<{* NORMAL IMAGES with popbox  *}>
+<{if $photo.is_normal_image && $use_popbox_js }>
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
+  <{/if}>
+
+<{* NORMAL IMAGES *}>
+<{elseif $photo.is_normal_image }> 
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
+  <{/if}>
+  </a>
+
+<{* FILES OTHER THAN IMAGES *}>
+<{else}>
+  <{if $photo.ahref_file }>
+    <a href="<{$photo.ahref_file}>" target="_blank">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{/if}>
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+  <{/if}>
+  </a>
+
+<{/if}>
+<br />
+
+<div >
+<{* EDIT ICON *}>
+<{if $photo.can_edit}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /></a>
+<{/if}>
+
+<{* PHOTO"S SUBJECT *}>
+<a name="<{$photo.photo_id}>"></a>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+<span class="webphoto_table_title"><{$photo.title_s}></span>
+</a><br />
+
+<div class="webphoto_table_info">
+
+<{* SUBMITTER *}>
+<{* user *}>
+<{if $photo.uid > 0}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/<{$photo.uid}>/">
+  <{$photo.uname_s}></a>
+
+<{* guest *}>
+<{else}>
+  <{$photo.uname_s}>
+
+<{/if}>
+<br />
+
+<{* DATE *}>
+<{if $photo.datetime_disp != '' }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/<{$photo.datetime_disp}>/">
+  <{$photo.datetime_disp}>
+  </a> <br />
+<{/if}>
+
+<{* PLACE *}>
+<{if $photo.place_s != '' }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/<{$photo.place_urlencode}>/">
+  <{$photo.place_s}>
+  </a> <br />
+<{/if}>
+
+</div>

@@ -1,0 +1,9 @@
+<{* $Id: webphoto_inc_search.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+
+<div class="webphoto_search_form">
+<form action="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php" method="get">
+<input type="hidden" name="fct" value="search" />
+<input type="text" id="query" name="query" size="50" maxlength="255" value="<{$search_query}>" />
+<input type="submit" value="<{$lang_sr_search}>" />
+</form>
+</div>

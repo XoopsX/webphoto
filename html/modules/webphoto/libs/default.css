@@ -1,0 +1,278 @@
+/* $Id: default.css,v 1.1 2008/06/21 12:29:25 ohwada Exp $ */
+
+/* === index === */
+div.webphoto_photo_type
+{
+	border: 1px solid #c0c0c0;	/* silver */
+	background-color: #e9e9e9;	/* near silver */
+	color: #000000;	/* black */
+	padding: 10px 5px 5px 5px;
+}
+
+div.webphoto_index_photo_header
+{
+	border: 1px solid #c0c0c0;	/* silver */
+	background-color: #e9e9e9;	/* near silver */
+	color: #000000;	/* black */
+	padding: 10px 5px 5px 5px;
+}
+
+div.webphoto_index_photo_body
+{
+	border: 1px solid #c0c0c0;	/* silver */
+	background-color: #e9e9e9;	/* near silver */
+	color: #000000;	/* black */
+	padding: 5px;
+}
+
+div.webphoto_index_photo_footer
+{
+	border: 1px solid #c0c0c0;	/* silver */
+	background-color: #e9e9e9;	/* near silver */
+	color: #000000;	/* black */
+	padding: 5px;
+}
+
+div.webphoto_page_menu
+{
+	background-color: #e9e9e9;	/* near silver */
+	color: #000000;	/* black */
+	padding: 1px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_page_menu_line
+{
+	padding: 3px;
+	margin:  3px;
+}
+
+div.webphoto_index_desc
+{
+	text-align: center;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_search_form
+{
+	text-align: center;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_tagcloud
+{
+	border: blue 1px dotted;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_categories
+{
+	border: blue 1px dotted;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_cat_desc
+{
+	border: blue 1px dotted;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_page_title
+{
+	font-size: 120%; 
+	font-weight:bold;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+div.webphoto_cat_path
+{
+	vertical-align: bottom;
+	padding: 3px;
+	margin:  3px;
+}
+
+span.webphoto_cat_path_title
+{
+	font-size: 110%; 
+	font-weight:bold;
+}
+
+div.webphoto_sub_title_total
+{
+	padding: 3px;
+	margin:  3px;
+}
+
+span.webphoto_sub_title
+{
+	font-size: 110%; 
+	font-weight:bold;
+}
+
+div.webphoto_sub_desc
+{
+	/* dummy */
+}
+
+div.webphoto_footer
+{
+	text-align: right;
+	font-size: 80%; 
+}
+
+div.webphoto_execution_time
+{
+	font-size: 80%; 
+}
+
+div.webphoto_memory_usage
+{
+	font-size: 80%; 
+}
+
+.webphoto_sr_keyword
+{
+	font-weight:bold;
+}
+
+.webphoto_error
+{
+	color: #ff0000;
+	font-weight:bold;
+	padding: 3px;
+	margin:  3px;
+}
+
+/* highlight */
+.webphoto_highlight
+{
+	font-weight: bolder;
+	background-color: #ffff80;	/* light yellow */
+	color: #000000;	/* black */
+}
+
+/* photo list */
+div.webphoto_list_image
+{
+	padding: 10px;
+	margin:  10px;
+	text-align: center;
+}
+
+/* photo table */
+div.webphoto_table_title
+{
+	font-weight: bold;
+}
+
+div.webphoto_table_info
+{
+	font-size: 80%; 
+}
+
+/* photo */
+div.webphoto_description
+{
+	border: blue 1px dotted;
+	padding: 3px;
+	margin:  3px;
+}
+
+/* === list === */
+div.webphoto_list_frame
+{
+	padding: 3px;
+	margin: 3px;
+}
+
+.webphoto_list_title
+{
+	font-size: 110%; 
+	font-weight:bold;
+}
+
+/* === photo === */
+div.webphoto_tagedit_form
+{
+	background-color: #dde1de;
+	border: 1px solid #808080;
+	text-align: center;
+	width:   400px;
+	padding: 3px;
+	margin: 3px 3px 10px 3px;
+}
+
+input.webphoto_tagedit 
+{
+	background-color : #ffffff; /* white */
+	color : #000000; /* bloack */
+	padding: 0px;
+	margin:  3px;
+}
+
+div.webphoto_commentsnav
+{
+	text-align: center;
+	padding: 3px;
+	margin: 3px;
+}
+
+div.webphoto_comments
+{
+	padding: 3px;
+	margin: 3px;
+}
+
+.webphoto_photo_title
+{
+	font-size: 110%; 
+	font-weight:bold;
+	padding: 3px;
+	margin:  3px;
+}
+
+/* === submit === */
+div.webphoto_imagemanager
+{
+	width: 98%;
+	padding: 3px;
+	margin: 3px;
+}
+
+div.webphoto_close
+{
+	text-align: center;
+	padding: 3px;
+	margin: 3px;
+}
+
+/* gmap */
+div.webphoto_gmap_map
+{
+	border:  1px solid #808080;	/* gray */
+	width:   98%;
+	height:  300px;
+	margin:  5px;
+	padding: 5px;
+}
+
+#webphoto_gmap_current_location
+{
+	font-size: 80%; 
+}
+
+#webphoto_gmap_current_address
+{
+	font-size: 80%; 
+}
+
+#webphoto_gmap_list
+{
+	font-size: 80%; 
+}

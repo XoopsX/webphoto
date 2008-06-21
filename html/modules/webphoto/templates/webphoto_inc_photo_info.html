@@ -1,0 +1,177 @@
+<{* $Id: webphoto_inc_photo_info.html,v 1.1 2008/06/21 12:29:26 ohwada Exp $ *}>
+
+<{* 1ST LINE OF INFORMATION *}>
+
+<{* EDIT ICON *}>
+<{if $photo.can_edit}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /></a>
+<{/if}>
+
+<{* PHOTO"S SUBJECT *}>
+<a name="<{$photo.photo_id}>"></a>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+<b><{$photo.title_s}></b></a>
+
+<{* NEW ICON *}>
+<{if $photo.is_newphoto}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/new.png" border="0" alt="<{$lang_icon_new}>" title="<{$lang_icon_new}>" />
+<{/if}>
+
+<{* UPDATE ICON *}>
+<{if $photo.is_updatedphoto}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/update.png" border="0" alt="<{$lang_icon_update}>" title="<{$lang_icon_update}>" />
+<{/if}>
+
+<{* POPULAR ICON *}>
+<{if $photo.is_popularphoto}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/popular.png" border="0" alt="<{$lang_icon_popular}>" title="<{$lang_icon_popular}>" />
+<{/if}>
+
+<br />
+
+<{* 2ND LINE OF INFORMATION *}>
+
+<{* SUBMITTER *}>
+<{* user *}>
+<{if $photo.uid > 0}>
+  <a href="<{$xoops_url}>/userinfo.php?uid=<{$photo.uid}>">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/submitter.png" width="16" height="16" alt="<{$lang_submitter}>" title="<{$lang_submitter}>" border="0" />
+  </a>
+
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/<{$photo.uid}>/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/myphotos.png" width="16" height="16" alt="<{$photo.info_morephotos}>" title="<{$photo.info_morephotos}>" border="0" /> 
+  <{$photo.uname_s}></a>
+
+<{* guest *}>
+<{else}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/submitter.png" width="16" height="16" alt="<{$lang_submitter}>" title="<{$lang_submitter}>" /> 
+  <{$photo.uname_s}>
+<{/if}>
+&nbsp; &nbsp; 
+
+<{* 3RD LINE OF INFORMATION *}>
+
+<{* DATE *}>
+<{if $photo.datetime_disp != '' }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/<{$photo.datetime_urlencode}>/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/datetime.png" width="16" height="16" alt="<{$lang_photo_datetime}>" title="<{$lang_photo_datetime}>" />
+  <{$photo.datetime_disp}>
+  </a> 
+<{/if}>
+
+<{* PLACE *}>
+<{if $photo.place_s != '' }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/<{$photo.place_urlencode}>/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/place.png" width="16" height="16" alt="<{$lang_photo_place}>" title="<{$lang_photo_place}>" />
+  <{$photo.place_s}>
+  </a>
+<{/if}>
+
+<{* EQUIPMENT *}>
+<{if $photo.equipment_s != '' }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/search/<{$photo.equipment_urlencode}>/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/equipment.png" width="16" height="16" alt="<{$lang_photo_equipment}>" title="<{$lang_photo_equipment}>" />
+  <{$photo.equipment_s}>
+  </a> 
+<{/if}>
+
+<{if ($photo.datetime_disp != '') || ($photo.place_s != '') || ($photo.equipment_s != '') }>
+  <br />
+<{/if}>
+
+<{* 4TH LINE OF INFORMATION *}>
+
+<{* TAG *}>
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/tags.png" width="16" height="16" alt="<{$lang_tags}>" title="<{$lang_tags}>" border="0" /> 
+<{foreach name=webphoto_tags item=tag from=$photo.tags}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/<{$tag.urlencoded}>/">
+  <{$tag.tag_name_s}></a>
+  <{if ! $smarty.foreach.webphoto_tags.last }>
+      , 
+  <{/if}>
+<{/foreach}>
+
+<{* CATEGORY *}>
+<{if $photo.cat_title_s}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$photo.cat_id}>/">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" alt="<{$lang_category}>" title="<{$lang_category}>" border="0" />
+  <{$photo.cat_title_s}></a> &nbsp; &nbsp;
+<{/if}>
+
+<{* LAST UPDATED *}>
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/lastupdate.png" width="16" height="16" alt="<{$lang_icon_lastupdate}>" title="<{$lang_icon_lastupdate}>" />:
+<{$photo.time_update_m}> &nbsp; &nbsp;
+
+<{* TELL A FRIEND *}>
+<{if $has_tellafriend}>
+  <{if $is_taf_module }>
+    <a href="<{$xoops_url}>/modules/tellafriend/index.php?target_uri=<{$photo.taf_target_uri}>" >
+  <{else}>
+    <a target="_top" href="mailto:?<{$photo.taf_mailto}>">
+  <{/if}>
+  
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/tellafriend.png" width="24" height="16" alt="<{$lang_tellafriend}>" title="<{$lang_tellafriend}>" />
+  <{$lang_tellafriend}></a>
+<{/if}>
+
+<br />
+
+<{* 5TH LINE OF INFORMATION *}>
+
+<{* HIT COUNTS *}>
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/hits.png" width="16" height="16" alt="<{$lang_icon_hits}>" title="<{$lang_icon_hits}>" />
+<{$photo.hits}> &nbsp; 
+
+<{* COMMENT COUNTS *}>
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/comments.png" width="16" height="16" alt="<{$lang_icon_comments}>" title="<{$lang_icon_comments}>" />
+<{$photo.comments}> &nbsp; &nbsp;
+
+<{* RANK & RATING *}>
+<{if $has_rateview}>
+  <{if $photo.rating > 0}>
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rank<{$photo.rank}>.png" alt="<{$photo.rating}>" title="<{$photo.rating}>" border="0" />
+    <{$photo.info_votes}>
+  <{else}>
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rank_none.png" alt="<{$photo.info_votes}>" title="<{$photo.info_votes}>" border="0" />
+    <{$photo.info_votes}>
+  <{/if}>
+<{/if}>
+
+<{* VOTE BUTTON *}>
+<{if $has_ratevote}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rate&amp;photo_id=<{$photo.photo_id}>">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/vote.png" alt="<{$lang_votethis}>" title="<{$lang_votethis}>" border="0" />
+  <{$lang_votethis}></a>
+<{/if}>
+
+<br />
+
+<{* 6TH LINE OF INFORMATION *}>
+
+<{if $show_photo_desc && $photo.show_desc }>
+  <div class="webphoto_description">
+
+<{* DESCRIPTION *}>
+  <{$photo.description_disp}> <br />
+
+<{* TEXT 1 - 10 *}>
+  <{foreach item=photo_text from=$photo.texts}>
+    <{if $photo_text.text_s != '' }>
+      <{$photo_text.lang}>: <{$photo_text.text_s}> <br /> 
+    <{/if}>
+  <{/foreach}>
+
+  </div>
+<{/if}>
+
+<{* 7TH LINE OF INFORMATION *}>
+
+<{* EXIF *}>
+<{if $show_photo_exif && $photo.cont_exif_disp != '' }>
+  <div class="webphoto_description">
+  <{$photo.cont_exif_disp}> <br />
+  </div>
+<{/if}>
+
+<br />

@@ -1,0 +1,17 @@
+<{* $Id: webphoto_inc_gmap_makers.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+
+<{* -- gmap photo_loop -- *}>
+<{counter name="gmap_photo_i" assign="gmap_photo_i" start=0 print=false }><br />
+<{foreach item=gmap_photo from=$gmap_photos}>
+
+<script type="text/javascript">
+//<![CDATA[
+
+  webphoto_gmap_info[<{$gmap_photo_i}>] = new Array( parseFloat( <{$gmap_photo.gmap_latitude}> ), parseFloat( <{$gmap_photo.gmap_longitude}> ), parseInt( <{$gmap_photo.gmap_icon_id}> ), '<{$gmap_photo.gmap_info}>' );
+
+//]]>
+</script>
+
+<{counter name="gmap_photo_i" assign="gmap_photo_i" print=false }>
+<{/foreach}>
+<{* -- gmap photo loop end -- *}>

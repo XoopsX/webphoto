@@ -1,0 +1,68 @@
+<{* $Id: webphoto_inc_catlist.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+
+<table width="100%" border="0" cellspacing="5" cellpadding="0" align="center">
+<tr>
+
+<{* --- main category --- *}>
+<{foreach from=$catlist_cats item=cat key=count}>
+  <td valign="top" align="right" >
+
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+
+  <{if $cat.imgurl_s != ""}>
+    <{if $cat.cat_main_width && $cat.cat_main_height }>
+      <img src="<{$cat.imgurl_s}>" width="<{$cat.cat_main_width}>" height="<{$cat.cat_main_height}>" border="0" alt="<{$cat.cat_title_s}>" />
+    <{else}>
+      <img src="<{$cat.imgurl_s}>" width="<{$cat_main_width}>" border="0" alt="<{$cat.cat_title_s}>" />
+    <{/if}>
+  <{else}>
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/parent_category.png" width="32" height="32" border="0" alt="<{$cat.cat_title_s}>" />
+  <{/if}>
+
+  </a>
+
+  </td>
+  <td valign="top" align="left" width="<{$catlist_width}>%">
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+    <span style="font:bold 150%;"><{$cat.cat_title_s}></span></a>&nbsp;
+    <{$lang_caption_total}>
+    <{$cat.photo_total_sum}>&nbsp;(<{$cat.photo_small_sum}>)
+    <br />
+
+<{* --- sub category --- *}>    
+    <{foreach from=$cat.subcategories item=subcat}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$subcat.cat_id}>/">
+
+      <{if $show_subcat_img && $subcat.imgurl_s != ''}>
+        <{if $subcat.cat_sub_width && $subcat.cat_sub_height }>
+          <img src="<{$subcat.imgurl_s}>" width="<{$subcat.cat_sub_width}>" height="<{$subcat.cat_sub_height}>" border="0" alt="<{$subcat.cat_title_s}>" />
+        <{else}>
+          <img src="<{$subcat.imgurl_s}>" width="<{$cat_sub_width}>" border="0" alt="<{$subcat.cat_title_s}>" />
+        <{/if}>
+      <{else}>
+        <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" border="0" alt="<{$subcat.cat_title_s}>" />
+      <{/if}>
+
+      <{if $subcat.number_of_subcat}>
+        <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/subcat.png" width="15" height="15" border="0" alt="subcat" />
+      <{/if}>
+
+      <{$subcat.cat_title_s}></a> 
+      (<{$subcat.photo_total_sum}>) 
+
+      <{if $catlist_delmita }>
+         <{$catlist_delmita}>
+      <{/if}>
+
+    <{/foreach}>
+<{* --- sub category end --- *}>
+
+  </td>
+  <{if ($count+1) is div by $catlist_cols }>
+    </tr><tr>
+  <{/if}>
+<{/foreach}>
+<{* --- main category end --- *}>
+
+</tr>
+</table>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+  xmlns:georss="http://www.georss.org/georss"
+  xmlns:media="http://search.yahoo.com/mrss/" >
+<{* $Id: webphoto_main_rss.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+<channel>
+  <title><{$channel_title}></title>
+  <link><{$channel_link}></link>
+  <{if $channel_description != ""}>
+    <description><{$channel_description}></description>
+  <{/if}>
+  <{if $channel_pubdate != ""}>
+    <pubDate><{$channel_pubdate}></pubDate>
+  <{/if}>
+  <{if $channel_lastbuild != ""}>
+    <lastBuildDate><{$channel_lastbuild}></lastBuildDate>
+  <{/if}>
+  <{if $channel_docs != ""}>
+    <docs><{$channel_docs}></docs>
+  <{/if}>
+  <{if $channel_generator != ""}>
+    <generator><{$channel_generator}></generator>
+  <{/if}>
+  <{if $channel_category != ""}>
+    <category><{$channel_category}></category>
+  <{/if}>
+  <{if $channel_managingeditor != ""}>
+    <managingEditor><{$channel_managingeditor}></managingEditor>
+  <{/if}>
+  <{if $channel_webmaster != ""}>
+    <webMaster><{$channel_webmaster}></webMaster>
+  <{/if}>
+  <{if $channel_copyright != ""}>
+    <copyright><{$channel_copyright}></copyright>
+  <{/if}>
+  <{if $channel_language != ""}>
+    <language><{$channel_language}></language>
+  <{/if}>
+  <{if $channel_atom_link != ""}>
+    <atom:link href="<{$channel_atom_link}>" rel="self" type="application/rss+xml" />
+  <{/if}>
+  <{if $image_url != ""}>
+    <image>
+      <title><{$image_title}></title>
+      <link><{$image_link}></link>
+      <url><{$image_url}></url>
+      <width><{$image_width}></width>
+      <height><{$image_height}></height>
+    </image>
+  <{/if}>
+<{foreach item=item from=$items}>
+<{* === item begin === *}>
+  <item>
+  <title><{$item.title}></title>
+  <link><{$item.link}></link>
+  <{if $item.description_cdata != ""}>
+    <description> <![CDATA[
+    <{$item.description_cdata}>
+    ]]> </description>
+  <{elseif $item.description != ""}>
+    <description><{$item.description}></description>
+  <{/if}>
+  <{if $item.pubdate != ""}>
+    <pubDate><{$item.pubdate}></pubDate>
+  <{/if}>
+  <{if $item.guid != ""}>
+    <guid><{$item.guid}></guid>
+  <{/if}>
+  <{if $item.category != ""}>
+    <category><{$item.category}></category>
+  <{/if}>
+  <{if $item.enclosure_url != ""}>
+    <{if ($item.enclosure_type != "") &&($item.enclosure_length != "") }>
+    <enclosure url="<{$item.enclosure_url}>" type="<{$item.enclosure_type}>" length="<{$item.enclosure_length}>" />
+    <{else}>
+    <enclosure url="<{$item.enclosure_url}>" />
+    <{/if}>
+  <{/if}>
+<{* === content === *}>  
+  <{if $item.content_encoded != ""}>
+    <content:encoded> <![CDATA[
+    <{$item.content_encoded}>
+    ]]> </content:encoded>
+  <{/if}>
+<{* === dc === *}>
+  <{if $item.dc_creator != ""}>
+    <dc:creator><{$item.dc_creator}></dc:creator>
+  <{/if}>
+<{* === geo === *}>
+  <{if ($item.geo_lat != "")&&($item.geo_long != "") }>
+    <geo:Point>
+      <geo:lat><{$item.geo_lat}></geo:lat>
+      <geo:long><{$item.geo_long}></geo:long>
+    </geo:Point>
+  <{/if}>
+<{* === georss === *}>
+  <{if $item.georss_point != ""}>
+    <georss:point><{$item.georss_point}></georss:point>
+  <{/if}>
+<{* === media rss begin === *}>
+  <{if $item.media_group != ""}>
+    <media:group>
+  <{/if}>
+  <{if $item.media_title != ""}>
+    <media:title type="plain"><{$item.media_title}></media:title>
+  <{/if}>
+  <{if $item.media_description != ""}>
+    <media:description type="plain"><{$item.media_description}></media:description>
+  <{/if}>
+  <{if $item.media_text != ""}>
+    <media:text type="html"><{$item.media_text}></media:text>
+  <{/if}>
+  <{if $item.media_keywords != ""}>
+    <media:keywords><{$item.media_keywords}></media:keywords>
+  <{/if}>
+  <{if $item.media_credit != ""}>
+    <media:credit><{$item.media_credit}></media:credit>
+  <{/if}>
+  <{if $item.media_content_url != "" }>
+<{* image *}>
+    <{if $item.media_content_medium == 'image' }>
+      <{if $item.media_content_filesize && $item.media_content_width && $item.media_content_height && $item.media_content_type }>
+        <media:content url="<{$item.media_content_url}>" fileSize="<{$item.media_content_filesize}>" width="<{$item.media_content_width}>" height="<{$item.media_content_height}>" type="<{$item.media_content_type}>" medium="image" />
+      <{elseif $item.media_content_filesize && $item.media_content_type }>
+        <media:content url="<{$item.media_content_url}>" fileSize="<{$item.media_content_filesize}>" type="<{$item.media_content_type}>" medium="image" />
+      <{else}>
+        <media:content url="<{$item.media_content_url}>" medium="image" />
+      <{/if}>
+<{* video *}>
+    <{elseif $item.media_content_medium == 'video' }>
+      <{if $item.media_content_filesize && $item.media_content_type && $item.media_content_duration }>
+        <media:content url="<{$item.media_content_url}>" fileSize="<{$item.media_content_filesize}>" duration="<{$item.media_content_duration}>" type="<{$item.media_content_type}>" medium="video" />
+      <{elseif $item.media_content_filesize && $item.media_content_type }>
+        <media:content url="<{$item.media_content_url}>" fileSize="<{$item.media_content_filesize}>" type="<{$item.media_content_type}>" medium="video" />
+      <{else}>
+        <media:content url="<{$item.media_content_url}>" medium="video" />
+      <{/if}>
+<{* other *}>
+    <{elseif $item.media_content_filesize && $item.media_content_type }>
+      <media:content url="<{$item.media_content_url}>" fileSize="<{$item.media_content_filesize}>" type="<{$item.media_content_type}>" />
+    <{else}>
+      <media:content url="<{$item.media_content_url}>" />
+    <{/if}>
+  <{/if}>
+<{* thumbnail *}>
+  <{if $item.media_thumbnail_url != ""}>
+    <media:thumbnail url="<{$item.media_thumbnail_url}>" height="<{$item.media_thumbnail_height}>" width="<{$item.media_thumbnail_width}>" />
+  <{/if}>
+  <{if $item.media_thumbnail_medium_url != ""}>
+    <media:thumbnail url="<{$item.media_thumbnail_medium_url}>" height="<{$item.media_thumbnail_medium_height}>" width="<{$item.media_thumbnail_medium_width}>" />
+  <{/if}>
+  <{if $item.media_thumbnail_large_url != ""}>
+    <media:thumbnail url="<{$item.media_thumbnail_large_url}>" height="<{$item.media_thumbnail_large_height}>" width="<{$item.media_thumbnail_large_width}>" />
+  <{/if}>
+  <{if $item.media_group != ""}>
+    </media:group>
+  <{/if}>
+<{* --- media rss end --- *}>
+  </item>
+<{* --- item end --- *}>
+<{/foreach}>
+</channel>
+</rss>
