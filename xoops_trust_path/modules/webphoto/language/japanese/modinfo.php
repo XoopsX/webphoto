@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.1 2008/06/21 12:22:16 ohwada Exp $
+// $Id: modinfo.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -79,7 +79,9 @@ define( $constpref."CFG_CATONSUBMENU" , "サブメニューへのトップカテゴリーの登録"
 define( $constpref."CFG_NAMEORUNAME" , "投稿者名の表示" ) ;
 define( $constpref."CFG_DESCNAMEORUNAME" , "ログイン名かハンドル名か選択して下さい" ) ;
 define( $constpref."CFG_VIEWCATTYPE" , "一覧表示の表示タイプ" ) ;
-define( $constpref."CFG_COLSOFTABLEVIEW" , "テーブル表示時のカラム数" ) ;
+
+//define( $constpref."CFG_COLSOFTABLEVIEW" , "テーブル表示時のカラム数" ) ;
+define( $constpref."CFG_COLSOFTABLE" , "テーブル表示時のカラム数" ) ;
 
 //define( $constpref."CFG_ALLOWEDEXTS" , "アップロード許可するファイル拡張子" ) ;
 //define( $constpref."CFG_DESCALLOWEDEXTS" , "ファイルの拡張子を、jpg|jpeg|gif|png のように、'|' で区切って入力して下さい。<br />すべて小文字で指定し、ピリオドや空白は入れないで下さい。<br />意味の判っている方以外は、phpやphtmlなどを追加しないで下さい" ) ;

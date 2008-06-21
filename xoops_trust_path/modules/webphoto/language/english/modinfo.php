@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.1 2008/06/21 12:22:16 ohwada Exp $
+// $Id: modinfo.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -79,7 +79,9 @@ define($constpref."CFG_CATONSUBMENU" , "Register top categories into submenu" ) 
 define($constpref."CFG_NAMEORUNAME" , "Poster name displayed" ) ;
 define($constpref."CFG_DESCNAMEORUNAME" , "Select which 'name' is displayed" ) ;
 define($constpref."CFG_VIEWCATTYPE" , "Type of view in category" ) ;
-define($constpref."CFG_COLSOFTABLEVIEW" , "Number of columns in table view" ) ;
+
+//define($constpref."CFG_COLSOFTABLEVIEW" , "Number of columns in table view" ) ;
+define($constpref."CFG_COLSOFTABLE" , "Number of columns in table view" ) ;
 
 //define($constpref."CFG_ALLOWEDEXTS" , "File extensions that can be uploaded" ) ;
 //define($constpref."CFG_DESCALLOWEDEXTS" , "Input extensions with separator '|'. (eg 'jpg|jpeg|gif|png') .<br />All characters must be lowercase. Don't insert periods or spaces<br />Never add php or phtml etc." ) ;

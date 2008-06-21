@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: base_this.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -186,7 +186,15 @@ function has_editable_by_uid( $uid )
 {
 	$has_editable = $this->_perm_class->has_editable();
 
-	if ( $has_editable && ( $this->_xoops_uid == $uid || $this->_is_module_admin ) ) {
+	if ( $has_editable && $this->is_photo_owner( $uid ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_photo_owner( $uid )
+{
+	if ( ( $this->_xoops_uid == $uid ) || $this->_is_module_admin ) {
 		return true;
 	}
 	return false;

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: show_photo.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -163,6 +163,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'cont_exif_disp'      => $this->_photo_handler->build_show_cont_exif_disp( $row ) ,
 
 		'tags'           => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
+		'is_owner'       => $this->is_photo_owner( $photo_uid ),
+
 	);
 
 	$show_desc = false;
@@ -335,6 +337,14 @@ function build_show_taf_mailto( $photo_id )
 
 	$str = 'subject='. $subject .'&amp;body='. $body;
 	return $str;
+}
+
+function build_show_is_owner( $uid )
+{
+	if ( $this->_xoops_uid == $uid || $this->_is_module_admin ) {
+		return true;
+	}
+	return false;
 }
 
 function url_encode( $str )

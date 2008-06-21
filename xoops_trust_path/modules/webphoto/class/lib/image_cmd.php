@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.1 2008/06/21 12:22:28 ohwada Exp $
+// $Id: image_cmd.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -688,7 +688,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 
 
 // Creating Thumbnail by ImageMagick
-function myalbum_create_thumb_by_imagick( $src_file , $dst_file )
+function create_thumb_by_imagick( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
 		return 0 ;	// read fault
@@ -721,7 +721,7 @@ function myalbum_create_thumb_by_imagick( $src_file , $dst_file )
 
 
 // Creating Thumbnail by NetPBM
-function myalbum_create_thumb_by_netpbm( $src_file , $dst_file )
+function create_thumb_by_netpbm( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
 		return 0 ;	// read fault

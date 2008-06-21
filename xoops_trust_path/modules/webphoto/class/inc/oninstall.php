@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: oninstall.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -13,11 +13,13 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_oninstall extends webphoto_inc_handler
 {
+	var $_is_xoops_2018 = false;
+
+	var $_msg_array = array();
+
 	var $_TRUST_DIRNAME ;
 	var $_TRUST_DIR;
 	var $_MODULE_ID = 0;
-
-	var $_msg_array = array();
 
 //---------------------------------------------------------
 // constructor
@@ -114,6 +116,17 @@ function _init( $trust_dirname , &$module )
 	$this->_TRUST_DIR     = XOOPS_TRUST_PATH.'/modules/'. $trust_dirname ;
 
 	$this->init_handler( $dirname );
+
+// preload
+	$preload_file = $this->_TRUST_DIR  .'/preload/constants.php';
+
+	if ( is_file( $preload_file ) ) {
+		include_once $preload_file;
+	}
+
+	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
+		$this->_is_xoops_2018 = true ;
+	}
 }
 
 function _exec_install()
@@ -291,10 +304,21 @@ function _template_common()
 	$TPL_TRUST_PATH = $this->_TRUST_DIR  .'/templates';
 	$TPL_ROOT_PATH  = $this->_MODULE_DIR .'/templates';
 
+// read webphoto_xxx.html in root_path
+	if ( $this->_is_xoops_2018 ) {
+		$tpl_path = $TPL_ROOT_PATH . '/';
+		$prefix   = ''; 
+
+// read xxx.html in trust_path
+	} else {
+		$tpl_path = $TPL_TRUST_PATH . '/';
+		$prefix   = $this->_DIRNAME .'_'; 
+	}
+
 	// TEMPLATES
 	$tplfile_handler =& xoops_gethandler( 'tplfile' ) ;
 
-	$handler = @opendir( $TPL_TRUST_PATH . '/' ) ;
+	$handler = @opendir( $tpl_path ) ;
 	if ( ! $handler ) {
 		xoops_template_clear_module_cache( $this->_MODULE_ID ) ;
 		return true;
@@ -302,8 +326,8 @@ function _template_common()
 
 	while( ( $file = readdir( $handler ) ) !== false ) 
 	{
-	// ignore . and ..
-		if( substr( $file , 0 , 1 ) == '.' ) { 
+	// check file
+		if ( !$this->_check_tpl_file( $file ) ) {
 			continue ;
 		}
 
@@ -318,7 +342,7 @@ function _template_common()
 			continue;
 		}
 
-		$dirname_file   = $this->_DIRNAME .'_'. $file ;
+		$dirname_file   = $prefix . $file ;
 		$dirname_file_s = $this->sanitize( $dirname_file );
 		$mtime = intval( @filemtime( $file_path ) ) ;
 
@@ -362,6 +386,33 @@ function _template_common()
 function _template_uninstall()
 {
 	// TEMPLATES (Not necessary because modulesadmin removes all templates)
+}
+
+function _check_tpl_file( $file )
+{
+// ignore . and ..
+	if ( $this->_parse_first_char( $file ) == '.' ) {
+		return false;
+	}
+// ignore 'index.htm'
+	if (( $file == 'index.htm' )||( $file == 'index.html' )) {
+		return false;
+	}
+// ignore not html
+	if ( $this->_parse_ext( $file ) != 'html' ){
+		return false;
+	}
+	return true; 
+}
+
+function _parse_first_char( $file )
+{
+	return substr( $file , 0 , 1 );
+}
+
+function _parse_ext( $file )
+{
+	return substr( strrchr( $file , '.' ) , 1 );
 }
 
 //---------------------------------------------------------

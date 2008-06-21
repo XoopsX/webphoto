@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: xoops_version.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -620,7 +620,7 @@ function _build_config()
 
 	$arr[] = array(
 		'name'			=> 'colsoftableview' ,
-		'title'			=> $this->_constant_name( 'CFG_COLSOFTABLEVIEW' ) ,
+		'title'			=> $this->_constant_name( 'CFG_COLSOFTABLE' ) ,	// short name
 		'description'	=> '' ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
