@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: search.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -38,7 +38,7 @@ function _init( $dirname )
 	$this->init_handler( $dirname );
 
 // preload
-	$name = strtoupper( '_C_'. $dirname .'_SEARCH_SUBSTITUTE' );
+	$name = strtoupper( '_P_'. $dirname .'_SEARCH_SUBSTITUTE' );
 	if ( defined( $name ) ) {
 		$this->_FLAG_SUBSTITUTE = constant( $name );
 	}

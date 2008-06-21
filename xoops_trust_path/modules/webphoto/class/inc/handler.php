@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: handler.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -47,6 +47,10 @@ function init_handler( $dirname )
 	$this->_DIRNAME = $dirname;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
+
+	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
+	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_INC_SQL' );
+	$this->set_debug_error_by_const_name( $constpref.'DEBUG_INC_ERROR' );
 }
 
 //---------------------------------------------------------
@@ -166,6 +170,35 @@ function set_normal_exts( $val )
 	} else {
 		$this->_NORMAL_EXTS = explode( '|', $val );
 	}
+}
+
+//---------------------------------------------------------
+// debug
+//---------------------------------------------------------
+function set_debug_sql_by_const_name( $name )
+{
+	$name = strtoupper( $name );
+	if ( defined($name) ) {
+		$this->set_debug_sql( constant($name) );
+	}
+}
+
+function set_debug_error_by_const_name( $name )
+{
+	$name = strtoupper( $name );
+	if ( defined($name) ) {
+		$this->set_debug_error( constant($name) );
+	}
+}
+
+function set_debug_sql( $val )
+{
+	$this->_DEBUG_SQL = (bool)$val;
+}
+
+function set_debug_error( $val )
+{
+	$this->_DEBUG_ERROR = (bool)$val;
 }
 
 // --- class end ---

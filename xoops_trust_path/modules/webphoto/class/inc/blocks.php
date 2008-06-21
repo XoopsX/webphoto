@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: blocks.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -189,18 +189,18 @@ function _top_edit_common( $options )
 	$ret .= $this->_DIRNAME."\n";
 	$ret .= '<input type="hidden" name="options[0]" value="'. $this->_DIRNAME .'" />'."\n";
 	$ret .= "<br />\n";
-	$ret .= $this->_constatnt( 'TEXT_DISP' )." &nbsp";
+	$ret .= $this->_constant( 'TEXT_DISP' )." &nbsp";
 	$ret .= '<input type="text" size="4" name="options[1]" value="'. $photos_num .'" style="text-align:right;" />'."\n";
 	$ret .= "<br />\n";
-	$ret .= $this->_constatnt( 'TEXT_CATLIMITATION' ) .' &nbsp; '. $catselbox ."\n";
-	$ret .= $this->_constatnt( 'TEXT_CATLIMITRECURSIVE' )."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIMITATION' ) .' &nbsp; '. $catselbox ."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIMITRECURSIVE' )."\n";
 	$ret .= '<input type="radio" name="options[3]" value="1" '. $recursive_checked_yes .' />'._YES."\n";
 	$ret .= '<input type="radio" name="options[3]" value="0" '. $recursive_checked_no .' />'._NO."\n";
 	$ret .= "<br />\n";
-	$ret .= $this->_constatnt( 'TEXT_STRLENGTH' )." &nbsp; \n";
+	$ret .= $this->_constant( 'TEXT_STRLENGTH' )." &nbsp; \n";
 	$ret .= '<input type="text" size="6" name="options[4]" value="'. $title_max_length .'" style="text-align:right;" />'."\n";
 	$ret .= "<br />\n";
-	$ret .= $this->_constatnt( 'TEXT_COLS' )." &nbsp; \n";
+	$ret .= $this->_constant( 'TEXT_COLS' )." &nbsp; \n";
 	$ret .= '<input type="text" size="2" name="options[5]" value="' .$cols .'" style="text-align:right;" />'."\n";
 	$ret .= "<br />\n";
 
