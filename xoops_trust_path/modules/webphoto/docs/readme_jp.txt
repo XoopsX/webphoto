@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.1 2008/06/21 12:22:17 ohwada Exp $
+$Id: readme_jp.txt,v 1.2 2008/06/22 10:17:56 ohwada Exp $
 
 =================================================
 Version: 0.10
-Date:   2008-06-08
+Date:   2008-06-21
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -92,12 +92,25 @@ MIMEタイプを格納するテーブル
 
 
 ● インストール
+1. 共通 ( xoops 2.0.16a JP および XOOPS Cube 2.1.x )
 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
 それぞれ、XOOPS の該当するディレクトリに格納ください。
 
+イントール時に下記のような Warning が出ますが、
+動作には支障ないので、無視してください。
+-----
+Warning [Xoops]: Smarty error: unable to read resource: "db:_inc_gmap_js.html" in file class/smarty/Smarty.class.php line 1095
+-----
+
+2. xoops 2.0.18
+上記に加えて、preload ファイルをリネームする
+
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
+ -> constants.php (アンダーバーなし)
+
 
 ● モジュール複製
-1. xoops 2.0.16a JP および XOOPS Cube 2.1.x
+1. 共通 ( xoops 2.0.16a JP および XOOPS Cube 2.1.x )
 ディレクトリをコピーするだけです。
 
 例えば、ディレクトリ hoge にコピーする。
@@ -109,6 +122,27 @@ XOOPS_ROOT_PATH/modules/webphoto/*
 
 XOOPS_ROOT_PATH/modules/hoge/templates/webphoto_*.html 
  -> XOOPS_ROOT_PATH/modules/hoge/templates/hoge_*.html 
+
+
+● picles
+piclens に対応しています
+http://www.cooliris.com/
+
+RSS を複数出力する XOOPS サイトの構成にしている場合は、
+webphoto モジュールの出力する RSS が一番最初になるように設定してください
+
+例えば、テーマテンプレートに whatsnew モジュールの RSS を設定している場合は、
+下記の順番にする
+
+themes/xxx/theme,html
+-----
+<{$xoops_module_header}>
+
+<!-- xoops_module_header の下に記述する -->
+<link rel="alternate" type="application/rdf+xml" title="RDF" href="<{$xoops_url}>/modules/whatsnew/rdf.php" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="<{$xoops_url}>/modules/whatsnew/rss.php" />
+<link rel="alternate" type="application/atom+xml" title="ATOM" href="<{$xoops_url}>/modules/whatsnew/atom.php" />
+-----
 
 
 ● 注意

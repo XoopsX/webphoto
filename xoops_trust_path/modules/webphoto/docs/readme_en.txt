@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.1 2008/06/21 12:22:17 ohwada Exp $
+$Id: readme_en.txt,v 1.2 2008/06/22 10:17:56 ohwada Exp $
 
 =================================================
 Version: 0.10
-Date:   2008-06-08
+Date:   2008-06-21
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -91,12 +91,25 @@ this table store synonym for ambiguous search
 
 
 * Install *
-when unzip, there are two directories html and xoops_trust_path.
-store in the directory which XOOPS correspond
+1. common ( xoops 2.0.16a JP and XOOPS Cube 2.1.x )
+When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please you copy in the directory which XOOPS correspond
+
+When you install, the xoops output warning like the following.
+Please ignore, because xoops and webphoto work well.
+-----
+Warning [Xoops]: Smarty error: unable to read resource: "db:_inc_gmap_js.html" in file class/smarty/Smarty.class.php line 1095
+-----
+
+2. xoops 2.0.18
+in addition to the above, rename preload file.
+
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (with undebar)
+ -> constants.php (without undebar)
 
 
 * Module Duplication *
-1. xoops 2.0.16a JP and XOOPS Cube 2.1.x
+1. common ( xoops 2.0.16a JP and XOOPS Cube 2.1.x )
 copy directory only
 
 for exsample, copy to 'hoge' directory
@@ -108,6 +121,26 @@ in addition to the above, rename template files.
 
 XOOPS_ROOT_PATH/modules/hoge/templates/webphoto_*.html 
  -> XOOPS_ROOT_PATH/modules/hoge/templates/hoge_*.html 
+
+
+* picles *
+this module support piclens
+http://www.cooliris.com/
+
+When your xoops site which outputs more than one RSS,
+you set outputs first the RSS of webphoto module.
+For example, when you set the RSS of whatsnew module in the theme template,
+you should describe the following.
+
+themes/xxx/theme,html
+-----
+<{$xoops_module_header}>
+
+<!-- described under xoops_module_header -->
+<link rel="alternate" type="application/rdf+xml" title="RDF" href="<{$xoops_url}>/modules/whatsnew/rdf.php" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="<{$xoops_url}>/modules/whatsnew/rss.php" />
+<link rel="alternate" type="application/atom+xml" title="ATOM" href="<{$xoops_url}>/modules/whatsnew/atom.php" />
+-----
 
 
 * Notice *
