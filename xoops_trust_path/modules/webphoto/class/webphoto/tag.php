@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: tag.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -305,12 +305,14 @@ function url_encode( $str )
 
 function encode_tag( $str )
 {
-	return $this->_utility_class->encode_slash( $str );
+	$str = $this->_utility_class->encode_slash( $str );
+	return $this->_utility_class->encode_colon( $str );
 }
 
 function decode_tag( $str )
 {
-	return $this->_utility_class->decode_slash( $str );
+	$str = $this->_utility_class->decode_slash( $str );
+	return $this->_utility_class->decode_colon( $str );
 }
 
 //---------------------------------------------------------

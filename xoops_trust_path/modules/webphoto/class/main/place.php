@@ -1,5 +1,5 @@
 <?php
-// $Id: place.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: place.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -100,7 +100,7 @@ function list_build_detail( $place_in )
 	$orderby = $this->get_orderby_by_post();
 	$where   = null;
 
-	$place_in  = $this->_utility_class->decode_slash( $place_in );
+	$place_in  = $this->decode_str( $place_in );
 	$place_arr = $this->_search_class->query_to_array( $place_in );
 	$place     = $this->array_to_str( $place_arr, ' ' );
 	$this->set_param_out( $place );

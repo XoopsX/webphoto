@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: show_photo.php,v 1.3 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -54,7 +54,6 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_highlight_class->set_class( 'webphoto_highlight' );
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-	$this->_multibyte_class->set_is_japanese( $this->_is_japanese );
 	$this->_multibyte_class->set_ja_kuten(   _WEBPHOTO_JA_KUTEN );
 	$this->_multibyte_class->set_ja_dokuten( _WEBPHOTO_JA_DOKUTEN );
 	$this->_multibyte_class->set_ja_period(  _WEBPHOTO_JA_PERIOD );
@@ -349,12 +348,20 @@ function build_show_is_owner( $uid )
 
 function url_encode( $str )
 {
-	return rawurlencode( $this->encode_slash( $str ) );
+	return rawurlencode( $this->encode_str( $str ) );
 }
 
-function encode_slash( $str )
+// some characters do not work
+function encode_str( $str )
 {
-	return $this->_utility_class->encode_slash( $str );
+	$str = $this->_utility_class->encode_slash( $str );
+	return $this->_utility_class->encode_colon( $str );
+}
+
+function decode_str( $str )
+{
+	$str = $this->_utility_class->decode_slash( $str );
+	return $this->_utility_class->decode_colon( $str );
 }
 
 //---------------------------------------------------------
@@ -449,7 +456,7 @@ function get_tag_name_array_by_photoid( $photo_id )
 function build_show_summary( $str )
 {
 	return $this->_multibyte_class->build_summary( 
-		$str, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL );
+		$str, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL, $this->_is_japanese );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: utility.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -17,6 +17,7 @@ class webphoto_lib_utility
 	var $_MYSQL_FMT_DATETIME = 'Y-m-d H:i:s';
 
 	var $_HTML_SLASH = '&#047;' ;
+	var $_HTML_COLON = '&#058;' ;
 
 //---------------------------------------------------------
 // constructor
@@ -241,9 +242,19 @@ function encode_slash( $str )
 	return str_replace( '/', $this->_HTML_SLASH, $str );
 }
 
+function encode_colon( $str )
+{
+	return str_replace( ':', $this->_HTML_COLON, $str );
+}
+
 function decode_slash( $str )
 {
 	return str_replace( $this->_HTML_SLASH, '/', $str );
+}
+
+function decode_colon( $str )
+{
+	return str_replace( $this->_HTML_COLON, ':', $str );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: notification_select.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: notification_select.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,17 +11,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //---------------------------------------------------------
 // xoops system files
 //---------------------------------------------------------
-global $xoopsConfig;
-$XOOPS_LANGUAGE = $xoopsConfig['language'];
-
 include_once XOOPS_ROOT_PATH.'/include/notification_constants.php';
 include_once XOOPS_ROOT_PATH.'/include/notification_functions.php';
-
-if ( file_exists(XOOPS_ROOT_PATH.'/language/'.$XOOPS_LANGUAGE.'/notification.php') ) {
-	include_once XOOPS_ROOT_PATH.'/language/'.$XOOPS_LANGUAGE.'/notification.php';
-} else {
-	include_once XOOPS_ROOT_PATH.'/language/english/notification.php';
-}
 
 //=========================================================
 // class webphoto_d3_notification_select
@@ -63,7 +54,7 @@ function init( $dirname )
 {
 	$this->_DIRNAME    = $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH  .'/modules/'. $dirname;
-	$this->_MODULE_URL = XOOPS_URL        .'/modules/'.$dirname;
+	$this->_MODULE_URL = XOOPS_URL        .'/modules/'. $dirname;
 
 }
 
@@ -132,6 +123,11 @@ function build()
 	$notification['redirect_script'] = $this->_MODULE_URL.'/index.php'. $this->_get_server_path_info() ;
 
 //	$xoopsTpl->assign(array('lang_activenotifications' => _NOT_ACTIVENOTIFICATIONS, 'lang_notificationoptions' => _NOT_NOTIFICATIONOPTIONS, 'lang_updateoptions' => _NOT_UPDATEOPTIONS, 'lang_updatenow' => _NOT_UPDATENOW, 'lang_category' => _NOT_CATEGORY, 'lang_event' => _NOT_EVENT, 'lang_events' => _NOT_EVENTS, 'lang_checkall' => _NOT_CHECKALL, 'lang_notificationmethodis' => _NOT_NOTIFICATIONMETHODIS, 'lang_change' => _NOT_CHANGE, 'editprofile_url' => XOOPS_URL . '/edituser.php?uid=' . $xoopsUser->getVar('uid')));
+
+// probably notificationEvents include language file
+	if ( !defined('_NOT_EMAIL') ) {
+		$this->_include_lang_file();
+	}
 
 	switch ( $this->_xoops_notify_method ) 
 	{
@@ -210,6 +206,17 @@ function _init_xoops_param()
 		}
 	}
 
+}
+
+function _include_lang_file()
+{
+	global $xoopsConfig;
+	$LANGUAGE = $xoopsConfig['language'];
+	if ( file_exists(XOOPS_ROOT_PATH.'/language/'.$LANGUAGE.'/notification.php') ) {
+		include_once XOOPS_ROOT_PATH.'/language/'.$LANGUAGE.'/notification.php';
+	} else {
+		include_once XOOPS_ROOT_PATH.'/language/english/notification.php';
+	}
 }
 
 // --- class end ---

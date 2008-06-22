@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_view.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: comment_view.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,9 +11,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //---------------------------------------------------------
 // xoops system files
 //---------------------------------------------------------
-global $xoopsConfig;
-$XOOPS_LANGUAGE = $xoopsConfig['language'];
-
 include_once XOOPS_ROOT_PATH.'/include/comment_constants.php';
 include_once XOOPS_ROOT_PATH.'/class/commentrenderer.php';
 
@@ -24,12 +21,6 @@ if( defined( 'XOOPS_CUBE_LEGACY' ) ) {
 // XOOPS 2.0
 } else {
 	include_once XOOPS_ROOT_PATH.'/modules/system/constants.php';
-}
-
-if ( file_exists(XOOPS_ROOT_PATH.'/language/'.$XOOPS_LANGUAGE.'/comment.php') ) {
-	include_once XOOPS_ROOT_PATH.'/language/'.$XOOPS_LANGUAGE.'/comment.php';
-} else {
-	include_once XOOPS_ROOT_PATH.'/language/english/comment.php';
 }
 
 //=========================================================
@@ -94,6 +85,8 @@ function assgin_tmplate()
 	if ( XOOPS_COMMENT_APPROVENONE == $this->_xoops_module_config_com_rule ) {
 		return false;
 	}
+
+	$this->_include_lang_file();
 
 	$xoopsTpl->assign( 'xoops_iscommentadmin', $this->_groupperm_class->has_system_comment() );
 
@@ -367,6 +360,17 @@ function _init_xoops_param()
 		$this->_xoops_module_config_com_anonpost = $xoopsModuleConfig['com_anonpost'];
 	}
 
+}
+
+function _include_lang_file()
+{
+	global $xoopsConfig;
+	$LANGUAGE = $xoopsConfig['language'];
+	if ( file_exists(XOOPS_ROOT_PATH.'/language/'.$LANGUAGE.'/comment.php') ) {
+		include_once XOOPS_ROOT_PATH.'/language/'.$LANGUAGE.'/comment.php';
+	} else {
+		include_once XOOPS_ROOT_PATH.'/language/english/comment.php';
+	}
 }
 
 // --- class end ---

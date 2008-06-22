@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: multibyte.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -13,8 +13,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_lib_multibyte
 {
-	var $_is_japanese = false;
-
 	var $_JA_KUTEN   = null;
 	var $_JA_DOKUTEN = null;
 	var $_JA_PERIOD  = null;
@@ -427,9 +425,9 @@ function shorten( $str, $max, $tail=' ...' )
 //---------------------------------------------------------
 // build summary
 //---------------------------------------------------------
-function build_summary( $str, $max, $tail=' ...' )
+function build_summary( $str, $max, $tail=' ...', $is_japanese=false )
 {
-	if ( $this->_is_japanese ) {
+	if ( $is_japanese ) {
 		$str = $this->m_mb_convert_kana( $str, "s" );
 		$str = $this->str_add_space_after_punctuation_ja( $str );
 	}
@@ -531,11 +529,6 @@ function add_space_after_str_ja( $str, $word )
 		return $this->m_mb_ereg_replace( $word, $word.' ', $str );
 	}
 	return $str;
-}
-
-function set_is_japanese( $val )
-{
-	$this->_is_japanese = (bool)$val;
 }
 
 function set_ja_kuten( $val )

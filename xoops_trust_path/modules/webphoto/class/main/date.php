@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.1 2008/06/21 12:22:18 ohwada Exp $
+// $Id: date.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -181,7 +181,8 @@ function list_build_detail( $datetime_in )
 	$start   = $this->pagenavi_calc_start( $limit );
 	$orderby = $this->get_orderby_by_post();
 
-	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime_in );
+	$datetime = $this->decode_str( $datetime_in );
+	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
 	$this->set_param_out( $datetime );
 
 	$init_param = $this->list_build_init_param( true );
