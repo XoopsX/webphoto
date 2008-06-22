@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: upload.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -110,10 +110,8 @@ function get_tmp_name()
 //---------------------------------------------------------
 // uploader class
 //---------------------------------------------------------
-function init_media_uploader()
+function init_media_uploader( $has_resize )
 {
-
-	$has_resize   = $this->_config_class->has_resize();
 	$cfg_fsize    = $this->get_config_by_name( 'fsize' );
 	$cfg_width    = $this->get_config_by_name( 'width' );
 	$cfg_height   = $this->get_config_by_name( 'height' );
@@ -220,6 +218,10 @@ function build_uploader_errors()
 
 function build_uploader_error_single( $code )
 {
+	$cfg_fsize    = $this->get_config_by_name( 'fsize' );
+	$cfg_width    = $this->get_config_by_name( 'width' );
+	$cfg_height   = $this->get_config_by_name( 'height' );
+
 	$err1 = $this->get_uploader_error_msg( $code );
 	$err2 = '';
 
@@ -240,14 +242,17 @@ function build_uploader_error_single( $code )
 
 		case 11:
 			$err1 .= ' : '.$this->_uploader_class->getMediaSize();
+			$err1 .= ' > '.$cfg_size;
 			break;
 
 		case 12:
-			$err1 .= ' : '.$this->_uploader_class->getMaxWidth();
+			$err1 .= ' : '.$this->_uploader_class->getMediaWidth();
+			$err1 .= ' > '.$cfg_width;
 			break;
 
 		case 13:
-			$err1 .= ' : '.$this->_uploader_class->getMaxHeighth();
+			$err1 .= ' : '.$this->_uploader_class->getMediaHeight();
+			$err1 .= ' > '.$cfg_height;
 			break;
 
 		case 14:
@@ -275,12 +280,16 @@ function build_uploader_error_single( $code )
 //---------------------------------------------------------
 function _init_errors()
 {
+	$cfg_fsize = $this->get_config_by_name( 'fsize' );
+
+	$err_2 = sprintf( $this->get_constant('PHP_UPLOAD_ERR_FORM_SIZE'), 
+		$this->_utility_class->format_filesize( $cfg_fsize ) );
 
 // http://www.php.net/manual/en/features.file-upload.errors.php
 	$this->_PHP_UPLOAD_ERRORS = array(
 //		0 => $this->get_constant('PHP_UPLOAD_ERR_OK') ,
 		1 => $this->get_constant('PHP_UPLOAD_ERR_INI_SIZE') ,
-		2 => $this->get_constant('PHP_UPLOAD_ERR_FORM_SIZE') ,
+		2 => $err_2 ,
 		3 => $this->get_constant('PHP_UPLOAD_ERR_PARTIAL') ,
 		4 => $this->get_constant('PHP_UPLOAD_ERR_NO_FILE') ,
 		6 => $this->get_constant('PHP_UPLOAD_ERR_NO_TMP_DIR') ,
@@ -301,7 +310,7 @@ function _init_errors()
 		10 => $this->get_constant('UPLOADER_ERR_NOT_ALLOWED_MIME') , // mediaType
 		11 => $this->get_constant('UPLOADER_ERR_LARGE_FILE_SIZE') , // mediaSize
 		12 => $this->get_constant('UPLOADER_ERR_LARGE_WIDTH') , // maxWidth
-		13 => $this->get_constant('UPLOADER_ERR_LARGE_HEIGHT') , // maxHeighth
+		13 => $this->get_constant('UPLOADER_ERR_LARGE_HEIGHT') , // maxHeight
 		14 => $this->get_constant('UPLOADER_ERR_UPLOAD') , // mediaName
 	);
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: uploader.php,v 1.1 2008/06/21 12:22:28 ohwada Exp $
+// $Id: uploader.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -97,7 +97,7 @@ class webphoto_lib_uploader
 		10 => 'MIME type not allowed: ', // mediaType
 		11 => 'File size too large: ', // mediaSize
 		12 => 'File width must be smaller than ', // maxWidth
-		13 => 'File height must be smaller than ', // maxHeighth
+		13 => 'File height must be smaller than ', // maxHeight
 		14 => 'Failed uploading file: ', // mediaName
 	);
 
@@ -312,8 +312,8 @@ class webphoto_lib_uploader
 	}
 
 // 2008-04-02
-	function getMaxHeighth() {
-		return $this->maxHeighth;
+	function getMaxHeight() {
+		return $this->maxHeight;
 	}
 
 // 2008-04-02
@@ -322,8 +322,8 @@ class webphoto_lib_uploader
 	}
 
 // 2008-04-02
-	function getMediaHeighth() {
-		return $this->mediaHeighth;
+	function getMediaHeight() {
+		return $this->mediaHeight;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: submit.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -47,6 +47,8 @@ function webphoto_main_submit( $dirname , $trust_dirname )
 
 // overwrite by submit_imagemanager
 	$this->_REDIRECT_URL  = $this->_MODULE_URL .'/index.php?fct=submit';
+
+	$this->init_preload();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -502,6 +504,8 @@ function print_form()
 		'preview_name'    => $this->get_preview_name(),
 		'tag_name_array'  => $this->get_tag_name_array(),
 		'checkbox_array'  => $this->get_checkbox_array(),
+		'has_resize'      => $this->_has_resize,
+		'has_rotate'      => $this->_has_rotate,
 	);
 
 	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );

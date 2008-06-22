@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.1 2008/06/21 12:22:29 ohwada Exp $
+// $Id: exif.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -51,18 +51,23 @@ function read_file( $filename )
 		return false;
 	}
 
-	$datetime = '';
+	$datetime     = '';
+	$datetime_gnu = '';
 	if ( isset( $exif['IFD0']['DateTime'] ) ) {
 		$datetime = $exif['IFD0']['DateTime'];
+
+// yyyy:mm:dd -> yyy-mm-dd
+// http://www.gnu.org/software/tar/manual/html_node/General-date-syntax.html
+		$datetime_gnu = preg_replace('/(\d{4}):(\d{2}):(\d{2})(.*)/', '$1-$2-$3$4', $datetime );
 	}
 
 	$maker = '';
-	if ( isset( $exif['IFD0']['Make'] ) ) {
+	if ( isset(  $exif['IFD0']['Make'] ) ) {
 		$maker = $exif['IFD0']['Make'];
 	}
 
 	$model = '';
-	if ( isset( $exif['IFD0']['Model'] ) ) {
+	if ( isset(  $exif['IFD0']['Model'] ) ) {
 		$model = $exif['IFD0']['Model'];
 	}
 
@@ -91,11 +96,12 @@ function read_file( $filename )
 	}
 
 	$arr = array(
-		'datetime'  => $datetime,
-		'maker'     => $maker,
-		'model'     => $model,
-		'equipment' => $equipment,
-		'all_data'  => $str,
+		'datetime'     => $datetime,
+		'maker'        => $maker,
+		'model'        => $model,
+		'datetime_gnu' => $datetime_gnu,
+		'equipment'    => $equipment,
+		'all_data'     => $str,
 	);
 	return $arr;
 }

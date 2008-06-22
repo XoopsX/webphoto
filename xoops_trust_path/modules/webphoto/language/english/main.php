@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.1 2008/06/21 12:22:17 ohwada Exp $
+// $Id: main.php,v 1.2 2008/06/22 05:25:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -601,6 +601,8 @@ define("_WEBPHOTO_CAP_THUMB_SELECT", "Select the thumb image");
 define("_WEBPHOTO_DSC_THUMB_SELECT", "create from the main image, when not select");
 define("_WEBPHOTO_DSC_SET_DATETIME",  "Set photo datetime");
 define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "Set update time");
+define("_WEBPHOTO_DSC_PIXCEL_RESIZE", "Resize automatically if bigger than this size");
+define("_WEBPHOTO_DSC_PIXCEL_REJECT", "Cannot upload if bigger than this size");
 define("_WEBPHOTO_BUTTON_CLEAR", "Clear");
 define("_WEBPHOTO_SUBMIT_RESIZED", "Resized, because photo is too big ");
 
@@ -608,7 +610,7 @@ define("_WEBPHOTO_SUBMIT_RESIZED", "Resized, because photo is too big ");
 // http://www.php.net/manual/en/features.file-upload.errors.php
 define("_WEBPHOTO_PHP_UPLOAD_ERR_OK", "There is no error, the file uploaded with success.");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_INI_SIZE", "The uploaded file exceeds the upload_max_filesize.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE", "The uploaded file exceeds the MAX_FILE_SIZE.");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE", "The uploaded file exceeds %s .");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_PARTIAL", "The uploaded file was only partially uploaded.");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_FILE", "No file was uploaded.");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_TMP_DIR", "Missing a temporary folder.");

@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: image_cmd.php,v 1.3 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -177,10 +177,8 @@ function modify_photo( $src_file , $dst_file )
 		return 2;	// copied
 	}
 
-	list( $width , $height , $type ) = getimagesize( $src_file ) ;
-
 	// only copy when small enough and no rotate
-	if (( $width  <= $this->_cfg_width ) && ( $height <= $this->_cfg_height ) &&
+	if (( !$this->has_resize() || !$this->require_resize( $src_file ) ) &&
 		( !$this->has_rotate() || !$this->require_rotate() ) ) {
 		$this->rename_file( $src_file , $dst_file ) ;
 		return 2;	// copied
@@ -198,11 +196,29 @@ function modify_photo( $src_file , $dst_file )
 	return 2;	// copied
 }
 
+function has_resize()
+{
+	if ( $this->_cfg_imagingpipe || $this->_cfg_forcegd2 ) {
+		return true;
+	}
+	return false;
+}
+
 function has_rotate()
 {
 	if ( ( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) ||
 	     ( $this->_cfg_imagingpipe == $this->_PIPEID_NETPBM )  ||
 	     ( $this->_cfg_forcegd2 && function_exists( 'imagerotate' ) ) ) {
+		return true;
+	}
+	return false;
+}
+
+function require_resize( $src_file )
+{
+	list( $width , $height , $type ) = getimagesize( $src_file ) ;
+
+	if ( $width > $this->_cfg_width || $height > $this->_cfg_height ) {
 		return true;
 	}
 	return false;
@@ -263,7 +279,7 @@ function modify_photo_by_gd( $src_file , $dst_file )
 			return 2 ;	// copied
 	}
 
-	if ( $width > $this->_cfg_width || $height > $this->_cfg_height ) {
+	if ( $this->require_resize( $src_file ) ) {
 		$ret_code = 5;	// resize
 
 		if( $width / $this->_cfg_width > $height / $this->_cfg_height ) {
@@ -358,8 +374,7 @@ function modify_photo_by_imagick( $src_file , $dst_file )
 	// Make options for imagick
 	$option = "" ;
 
-	list ( $width , $height , $type ) = getimagesize( $src_file ) ;
-	if ( $width > $this->_cfg_width || $height > $this->_cfg_height ) {
+	if ( $this->require_resize( $src_file ) ) {
 		$ret_code = 5;	// resize
 		$option .= ' -geometry '. $this->_cfg_width .'x'. $this->_cfg_height;
 	}
@@ -448,7 +463,7 @@ function modify_photo_by_netpbm( $src_file , $dst_file )
 			return 2 ;	// copied
 	}
 
-	if ( $width > $this->_cfg_width || $height > $this->_cfg_height ) {
+	if ( $this->require_resize( $src_file ) ) {
 		$ret_code = 5;	// resize
 
 		if( $width / $this->_cfg_width > $height / $this->_cfg_height ) {

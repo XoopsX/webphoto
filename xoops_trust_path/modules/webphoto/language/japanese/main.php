@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.1 2008/06/21 12:22:16 ohwada Exp $
+// $Id: main.php,v 1.2 2008/06/22 05:25:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -601,6 +601,8 @@ define("_WEBPHOTO_CAP_THUMB_SELECT", "サムネイル画像の選択");
 define("_WEBPHOTO_DSC_THUMB_SELECT", "指定しないときは、メイン画像より自動生成される");
 define("_WEBPHOTO_DSC_SET_DATETIME",   "撮影日時を設定する");
 define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "更新日時を変更する");
+define("_WEBPHOTO_DSC_PIXCEL_RESIZE", "これ以上大きい画像はリサイズします");
+define("_WEBPHOTO_DSC_PIXCEL_REJECT", "これ以上大きい画像はアップロードできません");
 define("_WEBPHOTO_BUTTON_CLEAR", "リセット");
 define("_WEBPHOTO_SUBMIT_RESIZED", "画像が大きいので、リサイズした");
 
@@ -608,7 +610,7 @@ define("_WEBPHOTO_SUBMIT_RESIZED", "画像が大きいので、リサイズした");
 // http://www.php.net/manual/en/features.file-upload.errors.php
 define("_WEBPHOTO_PHP_UPLOAD_ERR_OK", "エラーはなく、ファイルアップロードは成功しています");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_INI_SIZE", "アップロードされたファイルは、upload_max_filesize の値を超えています");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE", "アップロードされたファイルは、MAX_FILE_SIZE を超えています");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE", "アップロードされたファイルは、%s を超えています");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_PARTIAL", "アップロードされたファイルは一部のみしかアップロードされていません");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_FILE", "ファイルはアップロードされませんでした");
 define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_TMP_DIR", "テンポラリフォルダがありません");

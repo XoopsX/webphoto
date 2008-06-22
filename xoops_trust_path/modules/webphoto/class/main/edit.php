@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: edit.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -35,6 +35,8 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 	$this->_has_deletable = $this->_perm_class->has_deletable();
 
 	$this->_EDIT_PHP = $this->_MODULE_URL .'/index.php?fct=edit';
+
+	$this->init_preload();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -554,9 +556,13 @@ function _print_form_default()
 		'preview_name'    => $this->get_preview_name(),
 		'tag_name_array'  => $this->get_tag_name_array(),
 		'checkbox_array'  => $this->get_checkbox_array(),
+		'has_resize'      => $this->_has_resize,
+		'has_rotate'      => $this->_has_rotate,
 	);
 
-	$this->_print_edit_form( $row, $param );
+	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form->print_form_common( $row, $param );
+
 }
 
 function _print_form_confirm()
@@ -580,25 +586,14 @@ function _print_form_confirm()
 
 	echo "<br />\n";
 
-	$this->_print_edit_form_confirm( $this->_post_photo_id );
+	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form->print_form_delete_confirm( $photo_id );
 }
 
 function _build_bread_crumb_edit()
 {
 	$url_edit = $this->_EDIT_PHP.'&amp;photo_id='. $this->_post_photo_id;
 	return $this->build_bread_crumb( $this->get_constant('TITLE_EDIT'), $url_edit );
-}
-
-function _print_edit_form( $row, $param )
-{
-	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form->print_form_common( $row, $param );
-}
-
-function _print_edit_form_confirm( $photo_id )
-{
-	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form->print_form_delete_confirm( $photo_id );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: giconmanager.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -33,8 +33,8 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 	var $_SHADOW_FIELD_NAME = 'shadow_file';
 	var $_SHADOW_NAME_EXTRA = 's0';
 
-	var $_TIME_SUCCESS = 1;
-	var $_TIME_FAIL    = 5;
+	var $_TIME_SUCCESS = 100;
+	var $_TIME_FAIL    = 500;
 
 //---------------------------------------------------------
 // constructor
@@ -259,7 +259,8 @@ function _excute_insert()
 
 function _fetch_image( $allow_noimage=false )
 {
-	$this->_upload_class->init_media_uploader();
+// reject if too big
+	$this->_upload_class->init_media_uploader( false );
 	$this->_upload_class->set_image_extensions();
 
 	$ret = $this->_upload_class->fetch_for_gicon( $this->_IMAGE_FIELD_NAME, $allow_noimage );

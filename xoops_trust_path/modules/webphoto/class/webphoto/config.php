@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: config.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -89,29 +89,6 @@ function get_gicons_path()
 function get_tmp_path()
 {
 	return $this->_get_path_by_name( 'tmppath' );
-}
-
-function has_rotate()
-{
-	$imagingpipe = $this->get_by_name( 'imagingpipe' );
-	$forcegd2    = $this->get_by_name( 'forcegd2' );
-
-	if ( ( $imagingpipe == _C_WEBPHOTO_PIPEID_IMAGICK ) ||
-	     ( $imagingpipe == _C_WEBPHOTO_PIPEID_NETPBM )  ||
-	     ( $forcegd2 && function_exists( 'imagerotate' ) ) ) {
-		return true;
-	}
-
-	return false;
-}
-
-function has_resize()
-{
-	$imagingpipe = $this->get_by_name( 'imagingpipe' );
-	$forcegd2    = $this->get_by_name( 'forcegd2' );
-
-	if ( $imagingpipe || $forcegd2 ) { return true; }
-	return false;
 }
 
 function get_middle_wh()

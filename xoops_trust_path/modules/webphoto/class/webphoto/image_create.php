@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: image_create.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,6 +15,9 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_image_create extends webphoto_image_info
 {
 	var $_image_cmd_class;
+
+	var $_has_resize = false;
+	var $_has_rotate = false;
 
 	var $_image_info       = null;
 	var $_photo_thumb_info = null;
@@ -73,6 +76,18 @@ function _init_image_cmd()
 	$this->_image_cmd_class->set_icon_dir(     $ICON_EXT_DIR );
 	$this->_image_cmd_class->set_watermark(    $WATERMARK );
 
+	$this->_has_resize = $this->_image_cmd_class->has_resize();
+	$this->_has_rotate = $this->_image_cmd_class->has_rotate();
+}
+
+function has_resize()
+{
+	return $this->_has_resize ;
+}
+
+function has_rotate()
+{
+	return $this->_has_rotate ;
 }
 
 //---------------------------------------------------------

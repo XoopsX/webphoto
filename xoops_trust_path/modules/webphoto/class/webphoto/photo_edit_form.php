@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -98,8 +98,10 @@ function _preload_constant()
 //---------------------------------------------------------
 function print_form_common( $row, $param )
 {
-	$mode            = $param['mode'];
-	$preview_name    = $param['preview_name'];
+	$mode          = $param['mode'];
+	$preview_name  = $param['preview_name'];
+	$has_resize    = $param['has_resize'];
+	$has_rotate    = $param['has_rotate'];
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
@@ -147,12 +149,20 @@ function print_form_common( $row, $param )
 	echo $this->build_table_begin();
 	echo $this->build_line_title( $this->get_constant('TITLE_PHOTOUPLOAD') );
 
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'),     $this->_build_ele_maxpixel() );
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'),      $this->_build_ele_maxsize() );
-	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), $this->_build_ele_allowed_exts() );
-	echo $this->build_line_ele( $this->get_constant('CATEGORY') ,        $this->_build_ele_category() );
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'), 
+		$this->_build_ele_maxpixel( $has_resize ) );
 
-	echo $this->build_line_ele( $this->get_constant('PHOTO_TITLE'), $this->_build_ele_title() );
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'), 
+		$this->_build_ele_maxsize() );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
+		$this->_build_ele_allowed_exts() );
+
+	echo $this->build_line_ele( 
+		$this->get_constant('CATEGORY'), $this->_build_ele_category() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('PHOTO_TITLE'), $this->_build_ele_title() );
 
 	if ( $this->_is_in_array( 'photo_datetime' ) ) {
 		echo $this->build_line_ele( $this->get_constant( 'photo_datetime' ), 
@@ -173,7 +183,8 @@ function print_form_common( $row, $param )
 	echo $this->build_row_dhtml( $this->get_constant('PHOTO_DESCRIPTION'), 'photo_description' );
 	echo $this->build_row_textarea( $this->get_constant('PHOTO_CONT_EXIF'), 'photo_cont_exif' );
 
-	echo $this->build_line_ele(  $this->get_constant('TAGS'), $this->_build_ele_tags( $param ) );
+	echo $this->build_line_ele(  $this->get_constant('TAGS'), 
+		$this->_build_ele_tags( $param ) );
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->build_row_text_id( $this->get_constant('PHOTO_GMAP_LATITUDE'),
@@ -189,19 +200,23 @@ function print_form_common( $row, $param )
 			$this->get_constant('GMAP_ICON'), $this->_build_ele_gicon() );
 	}
 
-	echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), $this->_build_ele_photo_file() );
+	echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), 
+		$this->_build_ele_photo_file() );
 
-	if ( $this->_config_class->has_rotate() ) {
-		echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), $this->_build_ele_rotate() );
+	if ( $has_rotate ) {
+		echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), 
+			$this->_build_ele_rotate() );
 	}
 
-	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), $this->_build_ele_thumb_file() );
+	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
+		$this->_build_ele_thumb_file() );
 
 	if ( $is_edit && $this->_is_module_admin ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
 			$this->_build_ele_valid( $row['photo_status'] ) ) ;
 
-		echo $this->build_line_ele( $this->get_constant('PHOTO_TIME_UPDATE') , $this->_build_ele_time_update() ) ;
+		echo $this->build_line_ele( $this->get_constant('PHOTO_TIME_UPDATE'),
+			$this->_build_ele_time_update() ) ;
 	}
 
 	echo $this->build_line_ele( '', $this->_build_ele_button( $mode ) );
@@ -225,16 +240,17 @@ function _print_row_text_is_in_array( $name )
 	}
 }
 
-function _build_ele_maxpixel()
+function _build_ele_maxpixel( $has_resize )
 {
-	$has_resize = $this->_config_class->has_resize();
 	$cfg_width  = $this->_config_class->get_by_name( 'width' );
 	$cfg_height = $this->_config_class->get_by_name( 'height' );
 
-	$text = $cfg_width .' x '. $cfg_height ;
+	$text = $cfg_width .' x '. $cfg_height ."<br />\n" ;
 
-	if( $has_resize ) {
-		$text .= ' (auto resize) ' ;
+	if ( $has_resize ) {
+		$text .= $this->get_constant('DSC_PIXCEL_RESIZE');
+	} else {
+		$text .= $this->get_constant('DSC_PIXCEL_REJECT');
 	}
 
 	return $text;

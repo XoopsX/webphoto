@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: photo_edit.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -23,10 +23,14 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_delete_class;
 	var $_exif_class;
 	var $_mime_class;
+	var $_preload_class;
 
 	var $_post_photo_id   = 0;
 	var $_post_photo_catid      = 0;
 	var $_post_time_photo_checkbox = 1;
+
+	var $_has_resize = false;
+	var $_has_rotate = false;
 
 // overwrite param
 	var $_photo_title     = null;
@@ -63,7 +67,6 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
 	$this->_upload_class =& webphoto_upload::getInstance( $dirname , $trust_dirname );
-	$this->_image_class  =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 	$this->_show_class   =& webphoto_show_photo::getInstance( $dirname , $trust_dirname );
 	$this->_build_class  =& webphoto_photo_build::getInstance( $dirname );
 	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
@@ -72,6 +75,13 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 
 	$this->_tag_class  =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
+
+	$this->_image_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
+	$this->_has_resize  = $this->_image_class->has_resize();
+	$this->_has_rotate  = $this->_image_class->has_rotate();
+
+	$this->_preload_class =& webphoto_d3_preload::getInstance();
+	$this->_preload_class->init( $dirname , $trust_dirname );
 
 }
 
@@ -83,6 +93,41 @@ function &getInstance( $dirname , $trust_dirname )
 		$instance = new webphoto_photo_edit( $dirname , $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// preload
+//---------------------------------------------------------
+function init_preload()
+{
+	$this->_preload_constant();
+}
+
+function _preload_constant()
+{
+	$arr = $this->_preload_class->get_preload_const_array();
+
+	if ( !is_array($arr) || !count($arr) ) {
+		return true;	// no action
+	}
+
+	foreach( $arr as $k => $v )
+	{
+		$local_name = strtoupper( '_' . $k );
+
+// array type
+		if ( strpos($k, 'array_') === 0 ) {
+			$temp = $this->str_to_array( $v, '|' );
+			if ( is_array($temp) && count($temp) ) {
+				$this->$local_name = $temp;
+			}
+
+// string type
+		} else {
+			$this->$local_name = $v;
+		}
+	}
+
 }
 
 //---------------------------------------------------------
@@ -278,17 +323,11 @@ function get_photo_datetime_flag()
 	return $this->_photo_datetime_flag;
 }
 
-function overwrite_photo_datetime_by_exif( $datetime )
+function overwrite_photo_datetime( $datetime )
 {
 	if ( empty($datetime) ) { return false; }
 
-	$time = $this->_utility_class->str_to_time( $datetime );
-	if ( $time <= 0 ) { return false; }
-
-	$mysql = $this->_utility_class->time_to_mysql_datetime( $time );
-	if ( empty($mysql) ) { return false; }
-
-	$this->set_photo_datetime(      $mysql );
+	$this->set_photo_datetime(      $datetime );
 	$this->set_photo_datetime_flag( true );
 
 }
@@ -331,7 +370,7 @@ function upload_fetch_photo()
 // get exif date
 		$exif_info = $this->_exif_class->read_file( $this->_TMP_DIR.'/'.$this->_photo_tmp_name );
 		if ( is_array($exif_info) ) {
-			$this->overwrite_photo_datetime_by_exif( $exif_info['datetime'] );
+			$this->overwrite_photo_datetime( $this->exif_to_mysql_datetime( $exif_info ) );
 			$this->overwrite_photo_equipment( $exif_info['equipment'] );
 			$this->overwrite_photo_cont_exif( $exif_info['all_data'] );
 		}
@@ -352,6 +391,21 @@ function upload_fetch_thumb()
 		$this->_thumb_tmp_name   = $this->upload_tmp_name();
 		$this->_thumb_media_type = $this->upload_media_type();
 	}
+}
+
+function exif_to_mysql_datetime( $exif )
+{
+	$datetime     = $exif['datetime'];
+	$datetime_gnu = $exif['datetime_gnu'];
+
+	if ( $datetime_gnu ) {
+		return $datetime_gnu;
+	}
+
+	$time = $this->_utility_class->str_to_time( $datetime );
+	if ( $time <= 0 ) { return false; }
+
+	return $this->_utility_class->time_to_mysql_datetime( $time );
 }
 
 //---------------------------------------------------------
@@ -463,7 +517,7 @@ function tag_handler_tag_name_array( $photo_id )
 //---------------------------------------------------------
 function upload_init()
 {
-	$this->_upload_class->init_media_uploader();
+	$this->_upload_class->init_media_uploader( $this->_has_resize );
 }
 
 function upload_fetch( $field_name )
