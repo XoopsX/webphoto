@@ -1,10 +1,16 @@
 <?php
-// $Id: xoops_version.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: xoops_version.php,v 1.3 2008/06/30 13:33:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-06-30 K.OHWADA
+// typo
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -219,7 +225,7 @@ function _build_sub()
 			foreach ( $rows as $row )
 			{
 				$name  = ' - '. $this->sanitize( $row['cat_title'] ) ;
-				$url   = 'index.php/category/cat_id='. $row['cat_id'] .'/' ;
+				$url   = 'index.php/category/'. $row['cat_id'] .'/' ;
 				$arr[] = $this->_build_sub_array( $name, $url );
 			}
 		}
