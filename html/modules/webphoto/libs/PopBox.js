@@ -1,4 +1,9 @@
-/* $Id: PopBox.js,v 1.1 2008/06/21 12:29:25 ohwada Exp $ */
+/* $Id: PopBox.js,v 1.2 2008/06/30 13:11:33 ohwada Exp $ */
+
+/* 2008-06-29 hacked by K.OHWADA
+remove this
+popBoxWaitImage.src = "images/spinner40.gif";
+*/
 
 /********************************************************************************************************************
 * PopBox.js, v2.5 released December 18, 2007. Copyright (c) 2007, C6 Software, Inc. (http://www.c6software.com/)
@@ -1123,7 +1128,11 @@ function CalculateImageDimensions(newWidth, newHeight, fullWidth, fullHeight, wi
 var popBoxAutoClose = true;
 var popBoxMouseMoveRevert = true;
 var popBoxWaitImage = new Image();
+
+/* 2008-06-29 hacked by K.OHWADA
+removed this
 popBoxWaitImage.src = "images/spinner40.gif";
+*/
 
 var popBoxShowRevertBar = true;
 var popBoxShowRevertText = true;
