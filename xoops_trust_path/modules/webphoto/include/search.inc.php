@@ -1,10 +1,16 @@
 <?php
-// $Id: search.inc.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: search.inc.php,v 1.2 2008/07/05 16:57:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added config.php
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -16,7 +22,9 @@ include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'class/inc/handler.php',  $MY_DIRNAME );
+webphoto_include_once( 'class/inc/config.php' ,  $MY_DIRNAME );
 webphoto_include_once( 'class/inc/search.php' ,  $MY_DIRNAME );
+webphoto_include_once( 'preload/search.php' ,    $MY_DIRNAME  );
 
 //=========================================================
 // search functions

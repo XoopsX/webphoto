@@ -1,10 +1,16 @@
 <?php
-// $Id: search.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
+// $Id: search.php,v 1.3 2008/07/05 16:57:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used use_pathinfo
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +19,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_search extends webphoto_inc_handler
 {
+	var $_cfg_use_pathinfo = false;
+
 	var $_FLAG_SUBSTITUTE = false;
 
 //---------------------------------------------------------
@@ -36,6 +44,7 @@ function &getInstance()
 function _init( $dirname )
 {
 	$this->init_handler( $dirname );
+	$this->_init_xoops_config( $dirname );
 
 // preload
 	$name = strtoupper( '_P_'. $dirname .'_SEARCH_SUBSTITUTE' );
@@ -61,7 +70,13 @@ function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
 
 	foreach( $rows as $row )
 	{
-		$arr['link']    = 'index.php?fct=photo&amp;photo_id='. $row['photo_id'] .'&amp;keywords='. $keywords;
+		if ( $this->_cfg_use_pathinfo ) {
+			$link = 'index.php/photo/'. $row['photo_id'] .'/keywords='. $keywords .'/' ;
+		} else {
+			$link = 'index.php?fct=photo&amp;p='. $row['photo_id'] .'&amp;keywords='. $keywords ;
+		}
+
+		$arr['link']    = $link ;
 		$arr['title']   = $row['photo_title'];
 		$arr['time']    = $row['photo_time_update'];
 		$arr['uid']     = $row['photo_uid'];
@@ -192,6 +207,17 @@ function _build_where_search_single( $str )
 {
 	$text = "photo_search LIKE '%" . addslashes( $str ) . "%'" ;
 	return $text;
+}
+
+//---------------------------------------------------------
+// xoops_config
+//---------------------------------------------------------
+function _init_xoops_config( $dirname )
+{
+	$config_handler =& webphoto_inc_config::getInstance();
+	$config_handler->init( $dirname );
+
+	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 // --- class end ---

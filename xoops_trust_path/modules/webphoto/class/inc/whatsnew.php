@@ -1,10 +1,16 @@
 <?php
-// $Id: whatsnew.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
+// $Id: whatsnew.php,v 1.3 2008/07/05 16:57:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used use_pathinfo
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +19,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_whatsnew extends webphoto_inc_handler
 {
+	var $_cfg_use_pathinfo = false;
+
 	var $_cat_cached = array();
 
 	var $_FLAG_SUBSTITUTE = false;
@@ -39,6 +47,7 @@ function &getInstance()
 function _init( $dirname )
 {
 	$this->init_handler( $dirname );
+	$this->_init_xoops_config( $dirname );
 
 // preload
 	$name = strtoupper( '_P_'. $dirname .'_WHATSNEW_SUBSTITUTE' );
@@ -77,9 +86,17 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 			$cat_title = $cat_row['cat_title'];
 		}
 
+		if ( $this->_cfg_use_pathinfo ) {
+			$link     = $this->_MODULE_URL.'/index.php/photo/'.    $photo_id .'/' ;
+			$cat_link = $this->_MODULE_URL.'/index.php/category/'. $cat_id .'/' ;
+		} else {
+			$link     = $this->_MODULE_URL.'/index.php?fct=photo&amp;p='.    $photo_id ;
+			$cat_link = $this->_MODULE_URL.'/index.php?fct=category&amp;p='. $cat_id ;
+		}
+
 		$arr = array(
-			'link'     => $this->_MODULE_URL.'/index.php/photo/'. $photo_id .'/' ,
-			'cat_link' => $this->_MODULE_URL.'/index.php/category/'. $cat_id .'/' ,
+			'link'     => $link ,
+			'cat_link' => $cat_link ,
 			'title'    => $row['photo_title'] ,
 			'cat_name' => $cat_title ,
 			'uid'      => $row['photo_uid'] ,
@@ -181,6 +198,17 @@ function _get_cat_row( $table, $cat_id )
 	$sql  = 'SELECT * FROM '. $table;
 	$sql .= ' WHERE cat_id='.intval($cat_id);
 	return $this->get_row_by_sql( $sql );
+}
+
+//---------------------------------------------------------
+// xoops_config
+//---------------------------------------------------------
+function _init_xoops_config( $dirname )
+{
+	$config_handler =& webphoto_inc_config::getInstance();
+	$config_handler->init( $dirname );
+
+	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 // --- class end ---
