@@ -1,11 +1,16 @@
-<{* $Id: webphoto_block_topnews_p.html,v 1.1 2008/06/21 12:29:26 ohwada Exp $ *}>
+<{* $Id: webphoto_block_topnews_p.html,v 1.2 2008/07/05 12:52:06 ohwada Exp $ *}>
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
 <tr>
 <{foreach item=photo key=count from=$block.photo}>
   <td align="center" style="margin:0px;padding:5px 0px;">
     <{if $photo.title_short_s != '' }>
-      <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
+      <{if $use_pathinfo }>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+      <{else}>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;photo_id=<{$photo.photo_id}>">
+      <{/if}>
+
       <{$photo.title_short_s}></a> 
     <{/if}>
     (<{$photo.photo_time_update|formatTimestamp:"s"}>) <br />
@@ -21,7 +26,12 @@
 <{* NORMAL IMAGES *}>
 <{* FILES OTHER THAN IMAGES *}>
     <{else}>
-      <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
+      <{if $use_pathinfo }>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+      <{else}>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+      <{/if}>
+
       <{if $photo.thumb_width && $photo.thumb_height }>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
       <{else}>

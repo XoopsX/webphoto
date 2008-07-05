@@ -1,46 +1,52 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.2 2008/07/05 12:52:06 ohwada Exp $ *}>
 
 <table><tr>
 
 <{* IMAGE PART *}>
 <td width="150" align="center">
-  <div align="webphoto_list_image">
+<div align="webphoto_list_image">
 
 <{* NORMAL IMAGES with popbox  *}>
-
-  <{if $photo.is_normal_image && $use_popbox_js }>
-    <{if $photo.thumb_width && $photo.thumb_height }>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
-    <{else}>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
-    <{/if}>
-
-<{* NORMAL IMAGES *}>
-  <{elseif $photo.is_normal_image }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
-    <{if $photo.thumb_width && $photo.thumb_height }>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
-    <{else}>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
-    <{/if}>
-    </a>
-
-<{* FILES OTHER THAN IMAGES *}>
+<{if $photo.is_normal_image && $use_popbox_js }>
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
   <{else}>
-    <{if $photo.ahref_file }>
-      <a href="<{$photo.ahref_file}>" target="_blank">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
-    <{/if}>
-    <{if $photo.thumb_width && $photo.thumb_height }>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
-    <{else}>
-      <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
-    <{/if}>
-    </a>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
   <{/if}>
 
-  </div>
+<{* NORMAL IMAGES & FLASH VODEO *}>
+<{elseif $photo.is_normal_image || $photo.is_flash_video }>
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <{/if}>
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
+  <{/if}>
+  </a>
+
+<{* FILES OTHER THAN IMAGES *}>
+<{else}>
+  <{if $photo.ahref_file }>
+    <a href="<{$photo.ahref_file}>" target="_blank">
+  <{elseif $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <{/if}>
+
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+  <{/if}>
+  </a>
+<{/if}>
+
+</div>
 </td>
 
 <{* INFORMATION PART *}>

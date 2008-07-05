@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_list.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+<{* $Id: webphoto_main_list.html,v 1.2 2008/07/05 12:52:06 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -86,8 +86,12 @@
   <{if $list.show_catpath }>
     <{assign var="catpath_last" value=$list.catpath.last }>
     <div class="webphoto_catpath">
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
-
+    <{if $use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_last.cat_id}>">
+    <{/if}>
+  
     <{if $catpath_last.imgurl_s != ""}>
       <{if $catpath_last.cat_sub_width && $catpath_last.cat_sub_height }>
         <img src="<{$catpath_last.imgurl_s}>" width="<{$catpath_last.cat_sub_width}>" height="<{$catpath_last.cat_sub_height}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
@@ -100,7 +104,11 @@
     </a> 
 
     <{foreach item=catpath_list from=$list.catpath.list}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
+      <{if $use_pathinfo }>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
+      <{else}>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">
+      <{/if}>
       <span class="webphoto_catpath_title"><{$catpath_list.cat_title_s}></span>
       </a> : 
     <{/foreach}>  

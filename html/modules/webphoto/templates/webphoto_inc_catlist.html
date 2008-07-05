@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_catlist.html,v 1.1 2008/06/21 12:29:27 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_catlist.html,v 1.2 2008/07/05 12:52:06 ohwada Exp $ *}>
 
 <table width="100%" border="0" cellspacing="5" cellpadding="0" align="center">
 <tr>
@@ -7,7 +7,11 @@
 <{foreach from=$catlist_cats item=cat key=count}>
   <td valign="top" align="right" >
 
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;cat_id=<{$cat.cat_id}>">
+  <{/if}>
 
   <{if $cat.imgurl_s != ""}>
     <{if $cat.cat_main_width && $cat.cat_main_height }>
@@ -23,7 +27,13 @@
 
   </td>
   <td valign="top" align="left" width="<{$catlist_width}>%">
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+
+    <{if $use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$cat.cat_id}>">
+    <{/if}>
+
     <span style="font:bold 150%;"><{$cat.cat_title_s}></span></a>&nbsp;
     <{$lang_caption_total}>
     <{$cat.photo_total_sum}>&nbsp;(<{$cat.photo_small_sum}>)
@@ -31,7 +41,12 @@
 
 <{* --- sub category --- *}>    
     <{foreach from=$cat.subcategories item=subcat}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$subcat.cat_id}>/">
+
+      <{if $use_pathinfo }>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$subcat.cat_id}>/">
+      <{else}>
+        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$subcat.cat_id}>">
+      <{/if}>
 
       <{if $show_subcat_img && $subcat.imgurl_s != ''}>
         <{if $subcat.cat_sub_width && $subcat.cat_sub_height }>
