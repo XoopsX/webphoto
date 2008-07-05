@@ -1,10 +1,16 @@
 <?php
-// $Id: blocks.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
+// $Id: blocks.php,v 1.3 2008/07/05 16:10:30 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used use_pathinfo
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,8 +21,9 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 {
 	var $_multibyte_class;
 
-	var $_cfg_use_popbox  = false;
-	var $_normal_exts     = null;
+	var $_cfg_use_popbox   = false;
+	var $_cfg_use_pathinfo = false;
+	var $_normal_exts      = null;
 
 	var $_URL_DEFUALT_ICON;
 	var $_URL_PIXEL_GIF;
@@ -155,9 +162,10 @@ function _top_show_common( $mode , $options )
 		$block['photo'][$count++] = $arr ;
 	}
 
-	$block['dirname']     = $this->_DIRNAME ;
-	$block['cols']        = $cols ;
-	$block['show_popbox'] = $use_popbox ;
+	$block['dirname']      = $this->_DIRNAME ;
+	$block['cols']         = $cols ;
+	$block['show_popbox']  = $use_popbox ;
+	$block['use_pathinfo'] = $this->_cfg_use_pathinfo ;
 
 	if ( $disable_renderer ) {
 		return $block ;
@@ -454,7 +462,8 @@ function _init_xoops_config( $dirname )
 	$config_handler =& webphoto_inc_config::getInstance();
 	$config_handler->init( $dirname );
 
-	$this->_cfg_use_popbox = $config_handler->get_by_name('use_popbox');
+	$this->_cfg_use_popbox   = $config_handler->get_by_name('use_popbox');
+	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 // --- class end ---
