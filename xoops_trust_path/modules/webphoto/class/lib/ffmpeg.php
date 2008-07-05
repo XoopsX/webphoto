@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.1 2008/07/05 12:54:16 ohwada Exp $
+// $Id: ffmpeg.php,v 1.2 2008/07/05 15:45:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,10 @@ class webphoto_lib_ffmpeg
 	var $_EXT_FLV  = 'flv';
 
 	var $_DEBUG = false;
+
+	var $_CMD_INFO          = 'ffmpeg -i %s';
+	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
+	var $_CMD_CREATE_FLASH  = 'ffmpeg -i %s -vcodec flv %s -f flv %s';
 
 //---------------------------------------------------------
 // constructor
@@ -74,6 +78,11 @@ function set_offset( $val )
 	$this->_offset = $val;
 }
 
+function set_debug( $val )
+{
+	$this->_DEBUG = (bool)$val ;
+}
+
 //---------------------------------------------------------
 // get duration width height
 //
@@ -88,11 +97,13 @@ function set_offset( $val )
 //---------------------------------------------------------
 function get_duration_size( $file )
 {
-	$cmd = $this->_CMD_PATH.'ffmpeg -i '.$file;
+	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_INFO, $file );
+
 	exec( "$cmd 2>&1", $outputs );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
 		print_r( $outputs );
+		echo "<br />\n";
 	}
 
 	if ( !is_array($outputs) ) {
@@ -135,16 +146,20 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 		$sec      = $i * $step + $start ;
 		$name     = $this->build_thumb_name( $i + $this->_offset ) ;
 		$file_out = $this->_TMP_PATH .'/'. $name;
-		$cmd      = $this->_CMD_PATH.'ffmpeg -vframes 1 -ss '.$sec.' -i '.$file_in.' -f image2 '.$file_out;
+
+		$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_THUMBS, $sec, $file_in, $file_out );
+
 		exec( "$cmd 2>&1", $outputs );
 		if ( $this->_DEBUG ) {
 			echo $cmd."<br />\n";
 			print_r( $outputs );
+			echo "<br />\n";
 		}
 
 		if ( is_file($file_out) && filesize( $file_out ) ) {
 			$count ++;
 		} else {
+			$this->_set_error( $cmd );
 			$this->_set_error( $outputs );
 		}
 
@@ -170,10 +185,7 @@ function create_flash( $file_in, $file_out, $extra=null )
 		return false;
 	}
 
-	$cmd  = $this->_CMD_PATH.'ffmpeg -i '. $file_in;
-	$cmd .= ' -vcodec flv ';
-	$cmd .= $extra;
-	$cmd .= ' -f flv '. $file_out;
+	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_FLASH, $file_in, $extra, $file_out );
 
 	exec( "$cmd 2>&1", $outputs );
 	if ( $this->_DEBUG ) {
@@ -185,6 +197,7 @@ function create_flash( $file_in, $file_out, $extra=null )
 		return true ;
 	}
 
+	$this->_set_error( $cmd );
 	$this->_set_error( $outputs );
 	return false ;
 }
@@ -204,10 +217,12 @@ function _clear_error()
 
 function _set_error( $outputs )
 {
-	foreach( $outputs as $line ) {
-		if ( preg_match( "/error/i", $line ) ) {
-			$this->_errors[] = $line;
+	if ( is_array($outputs) ) {
+		foreach( $outputs as $line ) {
+			$this->_errors[] = $line ;
 		}
+	} else {
+		$this->_errors[] = $outputs ;
 	}
 }
 

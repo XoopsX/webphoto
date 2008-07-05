@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.1 2008/07/05 12:54:16 ohwada Exp $
+// $Id: video.php,v 1.2 2008/07/05 15:45:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,7 +11,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_video
 //=========================================================
-class webphoto_video
+class webphoto_video extends webphoto_lib_error
 {
 	var $_mime_handler ;
 	var $_config_class ;
@@ -52,6 +52,8 @@ class webphoto_video
 //---------------------------------------------------------
 function webphoto_video( $dirname )
 {
+	$this->webphoto_lib_error();
+
 	$this->_mime_handler  =& webphoto_mime_handler::getInstance( $dirname );
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
@@ -68,6 +70,9 @@ function webphoto_video( $dirname )
 	$this->_ffmpeg_class->set_tmp_path( $this->_TMP_DIR );
 	$this->_ffmpeg_class->set_cmd_path( $cfg_ffmpegpath );
 	$this->_ffmpeg_class->set_ext( $this->_THUMB_EXT );
+
+	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
+	$this->set_debug_by_const_name(   $constpref.'DEBUG_VIDEO' );
 }
 
 function &getInstance( $dirname )
@@ -151,8 +156,10 @@ function create_single_thumb( $id, $file )
 	if ( $count ) {
 		$path = $this->_TMP_PATH .'/'. $this->build_thumb_name( $id, $this->_SINGLE_FIRST, false );
 	} else {
+		$errors = $this->_ffmpeg_class->get_errors();
+		$this->set_error( $errors );
 		if ( $this->_DEBUG ) {
-			print_r( $this->_ffmpeg_class->get_errors() );
+			print_r( $errors );
 		}
 	}
 
@@ -227,8 +234,10 @@ function create_flash( $file_in, $name_out )
 	$ret = $this->_ffmpeg_class->create_flash( $file_in, $file_out, $extra );
 	if ( !$ret ) {
 		$this->_utility_class->unlink_file( $file_out );
+		$errors = $this->_ffmpeg_class->get_errors();
+		$this->set_error( $errors );
 		if ( $this->_DEBUG ) {
-			print_r( $this->_ffmpeg_class->get_errors() );
+			print_r( $errors );
 		}
 		return false;
 	}
@@ -273,6 +282,23 @@ function get_cached_extra_by_ext( $ext )
 	$extra = trim( $row['mime_ffmpeg'] ) ;
 	$this->_cached_extra_array[ $ext ] = $extra ;
 	return $extra ;
+}
+
+//---------------------------------------------------------
+// debug
+//---------------------------------------------------------
+function set_debug_by_const_name( $name )
+{
+	if ( defined($name) ) {
+		$val = constant($name);
+		$this->set_debug( $val );
+		$this->_ffmpeg_class->set_debug( $val );
+	}
+}
+
+function set_debug( $val )
+{
+	$this->_DEBUG = (bool)$val ;
 }
 
 // --- class end ---

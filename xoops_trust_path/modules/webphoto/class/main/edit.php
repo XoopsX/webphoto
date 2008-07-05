@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: edit.php,v 1.4 2008/07/05 15:45:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -398,7 +398,7 @@ function _exec_redo()
 	$this->_msg_class->clear_msgs();
 
 	$this->_is_video_thumb_form = false;
-	$flash_info = null;
+	$file_info = null;
 
 	$post_redo_thumb = $this->_post_class->get_post_text('redo_thumb' );
 	$post_redo_flash = $this->_post_class->get_post_text('redo_flash' );

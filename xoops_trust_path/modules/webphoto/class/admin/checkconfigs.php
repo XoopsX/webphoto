@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: checkconfigs.php,v 1.3 2008/07/05 15:45:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -147,6 +147,7 @@ function check()
 	      $cfg_imagickpath ) {
 		echo "<b>ImageMagick</b><br />\n";
 		echo " &nbsp; Path: $cfg_imagickpath<br />\n" ;
+		$ret_array = array() ;
 		exec( "{$cfg_imagickpath}convert --help" , $ret_array ) ;
 		if( count( $ret_array ) < 1 ) {
 			$msg = " &nbsp; Error: {$cfg_imagickpath}convert can't be executed" ;
@@ -181,6 +182,7 @@ function check()
 		$flag_ffmpeg = false;
 		echo "<b>FFmpeg</b><br />\n";
 		echo " &nbsp; Path: $cfg_ffmpegpath<br />\n" ;
+		$ret_array = array() ;
 		exec( "{$cfg_ffmpegpath}ffmpeg -version 2>&1" , $ret_array ) ;
 
 		if ( is_array($ret_array) && count($ret_array) ) {

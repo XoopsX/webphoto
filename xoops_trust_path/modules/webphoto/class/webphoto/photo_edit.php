@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: photo_edit.php,v 1.4 2008/07/05 15:45:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -553,7 +553,7 @@ function create_video_flash_thumb( $photo_id, $photo_info )
 	}
 
 // create flash
-	$ret = $this->create_video_flash( $photo_id, $photo_file, $photo_file_file  );
+	$ret = $this->create_video_flash( $photo_id, $photo_file );
 	if ( $ret ) {
 		$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
 	}
@@ -567,7 +567,7 @@ function create_video_flash_thumb( $photo_id, $photo_info )
 	return $photo_info;
 }
 
-function create_video_flash( $photo_id, $photo_file)
+function create_video_flash( $photo_id, $photo_file )
 {
 	$flash_name = $this->_image_class->build_photo_name( 
 		 $photo_id, $this->_video_class->get_flash_ext() );
@@ -576,6 +576,9 @@ function create_video_flash( $photo_id, $photo_file)
 		return true;
 	}
 	$this->_msg_class->set_msg( $this->get_constant('ERR_VIDEO_FLASH') ) ;
+	if ( $this->_is_module_admin ) {
+		$this->_msg_class->set_msg( $this->_video_class->get_errors() ) ;
+	}
 	return false;
 }
 
