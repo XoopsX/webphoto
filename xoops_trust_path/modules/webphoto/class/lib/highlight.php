@@ -1,10 +1,16 @@
 <?php
-// $Id: highlight.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: highlight.php,v 1.2 2008/07/05 17:12:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// changed webphoto_highlighter_by_style()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -227,7 +233,7 @@ function webphoto_highlighter($matches)
 
 function webphoto_highlighter_by_style($matches) 
 {
-	$highlight =& webphoto_highlight::getInstance();
+	$highlight =& webphoto_lib_highlight::getInstance();
 	$style = $highlight->get_style();
 	$ret   = false;
 	if ( is_array($matches) && isset($matches[0]) ) {
@@ -238,7 +244,7 @@ function webphoto_highlighter_by_style($matches)
 
 function webphoto_highlighter_by_class($matches) 
 {
-	$highlight =& webphoto_highlight::getInstance();
+	$highlight =& webphoto_lib_highlight::getInstance();
 	$class = $highlight->get_class();
 	$ret   = false;
 	if ( is_array($matches) && isset($matches[0]) ){
