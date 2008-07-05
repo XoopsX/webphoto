@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
+// $Id: xoops_version.php,v 1.5 2008/07/05 17:05:03 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -93,7 +93,7 @@ function _build_basic()
 	$arr['official'] = 0;
 	$arr['image']    = $module_icon ;
 	$arr['dirname']  = $this->_DIRNAME;
-	$arr['version']  = 0.10;
+	$arr['version']  = _C_WEBPHOTO_VERSION ;
 
 // Any tables can't be touched by modulesadmin.
 	$arr['sqlfile'] = false ;
