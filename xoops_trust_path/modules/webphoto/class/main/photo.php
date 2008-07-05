@@ -1,10 +1,16 @@
 <?php
-// $Id: photo.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: photo.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used build_uri_photo() build_photo_pagenavi()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -66,7 +72,7 @@ function check_edittag()
 
 function _check()
 {
-	$this->_get_photo_id = $this->_get_photo_id();
+	$this->_get_photo_id = $this->_uri_class->get_pathinfo_id( 'photo_id' ) ;
 	$this->_get_cat_id   = $this->_pathinfo_class->get_int( 'cat_id' );
 	$this->_get_order    = $this->_pathinfo_class->get( 'order' );
 
@@ -78,18 +84,6 @@ function _check()
 
 // save row
 	$this->_row = $row;
-}
-
-function _get_photo_id()
-{
-	$photo_id = $this->_post_class->get_post_get_int( 'photo_id' );
-	if ( empty($photo_id) ) {
-		$photo_id = $this->_pathinfo_class->get_int( 'photo_id' );
-	}
-	if ( empty($photo_id) ) {
-		$photo_id = $this->_pathinfo_class->get_path( 1 );
-	}
-	return $photo_id;
 }
 
 //---------------------------------------------------------
@@ -105,7 +99,7 @@ function _is_edittag()
 
 function _edittag()
 {
-	$url_photo = $this->_INDEX_PHP.'/photo/'. $this->_get_photo_id .'/';
+	$redirect_this_url = $this->build_uri_photo( $this->_get_photo_id );
 
 	$ret = $this->_excute_edittag();
 	switch ( $ret )
@@ -119,7 +113,7 @@ function _edittag()
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_token_errors();
 			}
-			redirect_header( $url_photo, $this->_TIME_FAIL , $msg );
+			redirect_header( $redirect_this_url, $this->_TIME_FAIL , $msg );
 			exit();
 
 		case _C_WEBPHOTO_ERR_DB:
@@ -127,7 +121,7 @@ function _edittag()
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_format_error();
 			}
-			redirect_header( $url_photo, $this->_TIME_FAIL, $msg ) ;
+			redirect_header( $redirect_this_url, $this->_TIME_FAIL, $msg ) ;
 			exit();
 
 		case 0:
@@ -135,7 +129,7 @@ function _edittag()
 			break;
 	}
 
-	redirect_header( $url_photo , $this->_TIME_SUCCESS , $this->get_constant('DBUPDATED') ) ;
+	redirect_header( $redirect_this_url , $this->_TIME_SUCCESS , $this->get_constant('DBUPDATED') ) ;
 	exit();
 }
 
@@ -246,12 +240,11 @@ function _build_gmap_param( $row )
 
 function _build_navi( $photo_id, $cat_id )
 {
+	$script   = $this->_uri_class->build_photo_pagenavi() ;
 	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
 	$id_array = $this->_photo_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
 
-	$script = $this->_MODULE_URL.'/index.php/photo/';
 	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
-
 }
 
 function _build_notification_select()

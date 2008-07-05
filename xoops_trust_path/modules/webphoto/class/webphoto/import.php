@@ -1,10 +1,16 @@
 <?php
-// $Id: import.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: import.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used webphoto_lib_exif webphoto_video
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -19,6 +25,8 @@ class webphoto_import extends webphoto_base_this
 	var $_image_class;
 	var $_build_class;
 	var $_mime_class;
+	var $_video_class;
+	var $_exif_class;
 
 // post
 	var $_post_op;
@@ -26,11 +34,14 @@ class webphoto_import extends webphoto_base_this
 	var $_next;
 
 	var $_cfg_makethumb;
+	var $_cfg_use_ffmpeg;
 
 	var $_myalbum_dirname;
 	var $_myalbum_mid;
 	var $_myalbum_photos_dir;
 	var $_myalbum_thumbs_dir;
+
+	var $_FLAG_RESIZE = false;
 
 	var $_LIMIT = 100;
 
@@ -40,6 +51,8 @@ class webphoto_import extends webphoto_base_this
 	var $_CAT_MAIN_HEIGHT = _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT;
 	var $_CAT_SUB_WIDTH   = _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT;
 	var $_CAT_SUB_HEIGHT  = _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT;
+
+	var $_EXT_GIF = 'gif';
 
 //---------------------------------------------------------
 // constructor
@@ -72,11 +85,14 @@ function webphoto_import( $dirname , $trust_dirname )
 	$this->_image_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 	$this->_build_class =& webphoto_photo_build::getInstance( $dirname );
 	$this->_mime_class  =& webphoto_mime::getInstance( $dirname );
+	$this->_video_class =& webphoto_video::getInstance( $dirname );
+	$this->_exif_class  =& webphoto_lib_exif::getInstance();
 
 	$this->_ICON_EXT_DIR = $this->_MODULE_DIR .'/images/exts';
 	$this->_ICON_EXT_URL = $this->_MODULE_URL .'/images/exts';
 
-	$this->_cfg_makethumb = $this->get_config_by_name( 'makethumb' );
+	$this->_cfg_makethumb  = $this->get_config_by_name( 'makethumb' );
+	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -223,16 +239,6 @@ function create_photo_row_from_myalbum( $photo_id, $cat_id, $myalbum_row )
 	return $row;
 }
 
-function build_photo_row_by_photo_info( $row, $info )
-{
-	return $this->_photo_handler->build_row_by_photo_info( $row, $info );
-}
-
-function build_photo_row_by_thumb_info( $row, $info )
-{
-	return $this->_photo_handler->build_row_by_thumb_info( $row, $info );
-}
-
 function build_photo_description( $id )
 {
 	$row = $this->_myalbum_handler->get_text_row_by_id( $id );
@@ -252,7 +258,7 @@ function build_photo_info( $info_in )
 	$info['url']  = XOOPS_URL.$photo_path;
 	$info['name'] = $photo_name;
 
-	$info = $this->_mime_class->add_mime_if_empty( $info );
+	$info = $this->_mime_class->add_mime_to_info_if_empty( $info );
 
 	return $info;
 }
@@ -380,133 +386,230 @@ function print_finish()
 //---------------------------------------------------------
 // copy
 //---------------------------------------------------------
-function copy_photo_from_myalbum( $src_id, $dst_id, $ext )
+function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 {
-	$thumb_name = '' ;
-	$thumb_path = '' ;
-	$thumb_ext  = '' ;
-	$thumb_substitute = false;
+	$base_info = null;
+	$flag_video_thumb = false;
 
-	$src_name_ext = $src_id .'.'. $ext;
-	$src_name_gif = $src_id .'.gif';
+	$src_name_ext       = $src_id .'.'. $src_ext;
+	$src_name_gif       = $src_id .'.'. $this->_EXT_GIF ;
+	$src_photo_file     = $this->_myalbum_photos_dir .'/'. $src_name_ext;
+	$src_thumb_file_ext = $this->_myalbum_thumbs_dir .'/'. $src_name_ext;
+	$src_thumb_file_gif = $this->_myalbum_thumbs_dir .'/'. $src_name_gif;
 
-	$dst_name_ext = $this->_image_class->build_photo_name( $dst_id, $ext );
-	$dst_name_gif = $this->_image_class->build_photo_name( $dst_id, 'gif');
+	$photo_ext  = $src_ext ;
+	$photo_name = $this->_image_class->build_photo_name( $photo_id, $photo_ext );
+	$photo_path = $this->_PHOTOS_PATH .'/'. $photo_name;
+	$photo_file = XOOPS_ROOT_PATH . $photo_path;
 
-	$src_full_photo     = $this->_myalbum_photos_dir .'/'. $src_name_ext;
-	$src_full_thumb_ext = $this->_myalbum_thumbs_dir .'/'. $src_name_ext;
-	$src_full_thumb_gif = $this->_myalbum_thumbs_dir .'/'. $src_name_gif;
+	$thumb_name_ext = $this->_image_class->build_photo_name( $photo_id, $src_ext );
+	$thumb_name_gif = $this->_image_class->build_photo_name( $photo_id, $this->_EXT_GIF);
+	$thumb_path_ext = $this->_THUMBS_PATH .'/'. $thumb_name_ext;
+	$thumb_path_gif = $this->_THUMBS_PATH .'/'. $thumb_name_gif;
 
-	$dst_rel_photo     = $this->_PHOTOS_PATH .'/'. $dst_name_ext;
-	$dst_rel_thumb_ext = $this->_THUMBS_PATH .'/'. $dst_name_ext;
-	$dst_rel_thumb_gif = $this->_THUMBS_PATH .'/'. $dst_name_gif;
-	$dst_full_photo    = XOOPS_ROOT_PATH . $dst_rel_photo;
-
-	$this->copy_file_rel( $src_full_photo , $dst_rel_photo ) ;
-	$photo_name = $dst_name_ext ;
-	$photo_path = $dst_rel_photo ;
-	$photo_ext  = $ext ;
-
-	if ( file_exists( $src_full_thumb_ext ) ) {
-		$this->copy_file_rel( $src_full_thumb_ext , $dst_rel_thumb_ext ) ;
-		$thumb_name = $dst_name_ext ;
-		$thumb_path = $dst_rel_thumb_ext ;
-		$thumb_ext  = $ext ;
-
-	} elseif ( file_exists( $src_full_thumb_gif ) ) {
-		$this->copy_file_rel( $src_full_thumb_gif , $dst_rel_thumb_gif ) ;
-		$thumb_name = $dst_name_gif ;
-		$thumb_path = $dst_rel_thumb_gif ;
-		$thumb_ext  = 'gif' ;
-
- // create thumb
-	} elseif ( $this->_cfg_makethumb ) {
-		$this->_image_class->create_thumb( $photo_path , $dst_id , $ext ) ;
-		$image_thumb_info = $this->_image_class->get_thumb_info();
-		$thumb_name = $image_thumb_info['name'] ;
-		$thumb_path = $image_thumb_info['path'] ;
-		$thumb_ext  = $image_thumb_info['ext'] ;
-
-	} elseif ( $this->is_normal_ext($ext) ) {
-		$thumb_name = $photo_name ;
-		$thumb_path = $photo_path ;
-		$thumb_ext  = $photo_ext ;
-		$thumb_substitute = true;
+	if ( !is_readable($src_photo_file) || !filesize($src_photo_file) ) {
+		echo $this->highlight( ' fail to read file : '.$src_photo_file ) ;
+		return false;
 	}
 
-	$arr = array(
-		'photo_name' => $photo_name ,
-		'photo_path' => $photo_path ,
-		'photo_ext'  => $photo_ext ,
-		'thumb_name' => $thumb_name ,
-		'thumb_path' => $thumb_path ,
-		'thumb_ext'  => $thumb_ext ,
-		'thumb_substitute' => $thumb_substitute ,
-	);
+// exif
+	if ( $this->is_normal_ext( $photo_ext ) ) {
+		$base_info = $this->get_exif_info( $src_photo_file );
+	}
 
-	return $arr;
+// modify photo
+	if ( $this->_FLAG_RESIZE && $this->is_normal_ext( $photo_ext ) ) {
+		$ret1 = $this->_image_class->cmd_modify_photo( $src_photo_file , $photo_file );
+		if ( $ret1 == _C_WEBPHOTO_IMAGE_RESIZE ) {
+			echo ' resize photo, ';
+		}
+
+// copy
+	} else {
+		$this->copy_file( $src_photo_file , $photo_file ) ;
+	}
+
+	$photo_info = $this->_image_class->build_photo_full_info( $photo_path, $photo_name, $photo_ext ); 
+	if ( !is_array($photo_info) ) {
+		echo $this->highlight( ' not create photo ' ) ;
+		return false;
+	}
+
+	$thumb_src_path  = $photo_path;
+	$thumb_src_ext   = $photo_ext;
+
+	$photo_info = $this->_mime_class->add_mime_to_info_if_empty( $photo_info );
+
+// if video
+	if ( $this->_mime_class->is_video_ext( $photo_ext ) && $this->_cfg_use_ffmpeg ) {
+		$photo_info = $this->_video_class->add_duration_size_to_info( $photo_info );
+
+		$flash_name = $this->_image_class->build_photo_name( 
+			$photo_id, $this->_video_class->get_flash_ext() );
+
+		$ret = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
+		if ( $ret ) {
+			echo ' create flash, ' ;
+			$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
+		} else {
+			echo $this->highlight( ' fail to create flash, ' ) ;
+		}
+
+// create video thumb
+		if ( $this->_cfg_makethumb ) {
+			$video_thumb_path = $this->_video_class->create_single_thumb( $photo_id, $photo_file ) ;
+			if ( $video_thumb_path ) {
+				$flag_video_thumb = true;
+				$thumb_src_path   = $video_thumb_path;
+				$thumb_src_ext    = $this->_video_class->get_thumb_ext();
+			}
+		}
+
+	}
+
+// if exists thumb file
+	if ( file_exists( $src_thumb_file_ext ) && !$flag_video_thumb ) {
+		$this->copy_file_rel( $src_thumb_file_ext , $thumb_path_ext ) ;
+		$thumb_info = $this->_image_class->build_thumb_info_full(
+			$thumb_path_ext, $thumb_name_ext, $src_ext );
+
+// if exists thumb icon 
+	} elseif ( file_exists( $src_thumb_file_gif ) && !$flag_video_thumb ) {
+		$this->copy_file_rel( $src_thumb_file_gif , $thumb_path_gif ) ;
+		$thumb_info = $this->_image_class->build_thumb_info_full(
+			$thumb_path_gif, $thumb_name_gif, $this->_EXT_GIF );
+
+// if image file
+	} elseif ( $this->is_normal_ext( $photo_ext ) || $flag_video_thumb ) {
+
+// create thumb
+		if ( $this->_cfg_makethumb ) {
+			$this->_image_class->create_thumb_from_photo( 
+				$photo_id, $thumb_src_path, $thumb_src_ext );
+			$thumb_info = $this->_image_class->get_thumb_info();
+			if ( is_array($thumb_info) ) {
+				echo ' create thumb, ' ;
+			} else {
+				echo $this->highlight( ' fail to create thumb, ' ) ;
+			}
+
+// substitute with photo image
+		} else {
+			$this->_image_class->create_thumb_substitute( $photo_path, $photo_ext );
+			$thumb_info = $this->_image_class->get_thumb_info();
+		}
+
+// thumb icon
+	} else {
+		$this->_image_class->create_thumb_icon( $photo_id, $photo_ext );
+		$thumb_info = $this->_image_class->get_thumb_info();
+	}
+
+	$photo_thumb_info
+		= $this->_image_class->merge_photo_thumb_info( $photo_info, $thumb_info, $base_info );
+
+	return $photo_thumb_info;
 }
 
-function copy_photo_from_webphoto( $dst_id, $webphoto_row )
+function get_exif_info( $file )
 {
-	$thumb_name = '' ;
-	$thumb_path = '' ;
-	$thumb_ext  = '' ;
-	$thumb_substitute = false;
-
-	$src_photo_cont_path  = $webphoto_row['photo_cont_path'];
-	$src_photo_cont_ext   = $webphoto_row['photo_cont_ext'];
-	$src_photo_thumb_path = $webphoto_row['photo_thumb_path'];
-	$src_photo_thumb_ext  = $webphoto_row['photo_thumb_ext'];
-
-	$dst_photo_name = $this->_image_class->build_photo_name( $dst_id, $src_photo_cont_ext );
-	$dst_thumb_name = $this->_image_class->build_photo_name( $dst_id, $src_photo_thumb_ext );
-
-	$src_full_photo = XOOPS_ROOT_PATH . $src_photo_cont_path ;
-	$src_full_thumb = XOOPS_ROOT_PATH . $src_photo_thumb_path ;
-
-	$dst_rel_photo = $this->_PHOTOS_PATH .'/'. $dst_photo_name;
-	$dst_rel_thumb = $this->_THUMBS_PATH .'/'. $dst_thumb_name;
-
-	$dst_full_photo = XOOPS_ROOT_PATH . $dst_rel_photo;
-
-	$this->copy_file_rel( $src_full_photo , $dst_rel_photo ) ;
-	$photo_name = $dst_photo_name ;
-	$photo_path = $dst_rel_photo ;
-	$photo_ext  = $src_photo_cont_ext ;
-
-	if ( file_exists( $src_full_thumb ) ) {
-		$this->copy_file_rel( $src_full_thumb , $dst_rel_thumb ) ;
-		$thumb_name = $dst_thumb_name ;
-		$thumb_path = $dst_rel_thumb ;
-		$thumb_ext  = $src_photo_thumb_ext ;
-
- // create thumb
-	} elseif ( $this->_cfg_makethumb ) {
-		$this->_image_class->create_thumb( $photo_path , $dst_id , $photo_ext ) ;
-		$image_thumb_info = $this->_image_class->get_thumb_info();
-		$thumb_name = $image_thumb_info['name'] ;
-		$thumb_path = $image_thumb_info['path'] ;
-		$thumb_ext  = $image_thumb_info['ext'] ;
-
-	} elseif ( $this->is_normal_ext( $photo_ext ) ) {
-		$thumb_name = $photo_name ;
-		$thumb_path = $photo_path ;
-		$thumb_ext  = $photo_ext ;
-		$thumb_substitute = true;
+	$exif_info = $this->_exif_class->read_file( $file );
+	if ( !is_array($exif_info) ) {
+		return null;
 	}
 
-	$arr = array(
-		'photo_name' => $photo_name ,
-		'photo_path' => $photo_path ,
-		'photo_ext'  => $photo_ext ,
-		'thumb_name' => $thumb_name ,
-		'thumb_path' => $thumb_path ,
-		'thumb_ext'  => $thumb_ext ,
-		'thumb_substitute' => $thumb_substitute ,
+	$base_info = array();
+	$datetime  = $this->exif_to_mysql_datetime( $exif_info );
+	$equipment = $exif_info['equipment'] ;
+	$exif      = $exif_info['all_data'] ;
+	if ( $datetime ) {
+		$base_info['photo_datetime'] = $datetime ;
+	}
+	if ( $equipment ) {
+		$base_info['photo_equipment'] = $equipment ;
+	}
+	if ( $exif ) {
+		echo ' get exif, ';
+		$base_info['photo_cont_exif'] = $exif ;
+	}
+
+	return $base_info;
+}
+
+function copy_photo_from_webphoto( $photo_id, $webphoto_row )
+{
+	$src_photo_cont_path  = $webphoto_row['photo_cont_path'];
+	$src_photo_cont_name  = $webphoto_row['photo_cont_name'];
+	$src_photo_cont_ext   = $webphoto_row['photo_cont_ext'];
+	$src_photo_thumb_path = $webphoto_row['photo_thumb_path'];
+	$src_photo_thumb_name = $webphoto_row['photo_thumb_name'];
+	$src_photo_thumb_ext  = $webphoto_row['photo_thumb_ext'];
+
+	$src_photo_file = XOOPS_ROOT_PATH . $src_photo_cont_path ;
+	$src_thumb_file = XOOPS_ROOT_PATH . $src_photo_thumb_path ;
+
+	$photo_name = $this->_image_class->build_photo_name( $photo_id, $src_photo_cont_ext );
+	$thumb_name = $this->_image_class->build_photo_name( $photo_id, $src_photo_thumb_ext );
+
+	$photo_path = $this->_PHOTOS_PATH .'/'. $photo_name;
+	$thumb_path = $this->_THUMBS_PATH .'/'. $thumb_name;
+
+	$photo_ext  = $src_photo_cont_ext ;
+	$photo_file = XOOPS_ROOT_PATH . $photo_path;
+
+	$this->copy_file_rel( $src_photo_file , $photo_path ) ;
+	$photo_info = array(
+		'photo_file_url'      => $webphoto_row['photo_file_url'] ,
+		'photo_file_path'     => $webphoto_row['photo_file_path'] ,
+		'photo_file_name'     => $webphoto_row['photo_file_name'] ,
+		'photo_file_ext'      => $webphoto_row['photo_file_ext'] ,
+		'photo_file_mime'     => $webphoto_row['photo_file_mime'] ,
+		'photo_file_medium'   => $webphoto_row['photo_file_medium'] ,
+		'photo_file_size'     => $webphoto_row['photo_file_size'] ,
+		'photo_cont_url'      => $webphoto_row['photo_cont_url'] ,
+		'photo_cont_path'     => $webphoto_row['photo_cont_path'] ,
+		'photo_cont_name'     => $webphoto_row['photo_cont_name'] ,
+		'photo_cont_ext'      => $webphoto_row['photo_cont_ext'] ,
+		'photo_cont_mime'     => $webphoto_row['photo_cont_mime'] ,
+		'photo_cont_medium'   => $webphoto_row['photo_cont_medium'] ,
+		'photo_cont_size'     => $webphoto_row['photo_cont_size'] ,
+		'photo_cont_width'    => $webphoto_row['photo_cont_width'] ,
+		'photo_cont_height'   => $webphoto_row['photo_cont_height'] ,
+		'photo_cont_duration' => $webphoto_row['photo_cont_duration'] ,
+		'photo_middle_width'  => $webphoto_row['photo_middle_width'] ,
+		'photo_middle_height' => $webphoto_row['photo_middle_height'] ,
 	);
 
-	return $arr;
+	if ( file_exists( $src_thumb_file ) ) {
+		$this->copy_file_rel( $src_thumb_file , $thumb_path ) ;
+		$thumb_info = array(
+			'photo_thumb_url'     => $webphoto_row['photo_thumb_url'] ,
+			'photo_thumb_path'    => $webphoto_row['photo_thumb_path'] ,
+			'photo_thumb_name'    => $webphoto_row['photo_thumb_name'] ,
+			'photo_thumb_ext'     => $webphoto_row['photo_thumb_ext'] ,
+			'photo_thumb_mime'    => $webphoto_row['photo_thumb_mime'] ,
+			'photo_thumb_medium'  => $webphoto_row['photo_thumb_medium'] ,
+			'photo_thumb_size'    => $webphoto_row['photo_thumb_size'] ,
+			'photo_thumb_width'   => $webphoto_row['photo_thumb_width'] ,
+			'photo_thumb_height'  => $webphoto_row['photo_thumb_height'] ,
+		);
+
+// create thumb
+	} elseif ( $this->_cfg_makethumb ) {
+		echo ' create thumb ' ;
+		$this->_image_class->create_thumb_from_photo( $photo_id, $photo_path, $photo_ext ) ;
+		$thumb_info = $this->_image_class->get_thumb_info();
+
+// substitute with photo image
+	} elseif ( $this->is_normal_ext( $photo_ext ) ) {
+		$this->_image_class->create_thumb_substitute( $photo_path, $photo_ext );
+		$thumb_info = $this->_image_class->get_thumb_info();
+	}
+
+	$photo_thumb_info
+		= $this->_image_class->merge_photo_thumb_info( $photo_info, $thumb_info );
+
+	return $photo_thumb_info;
 }
 
 function copy_file_rel( $src_full, $dst_rel )

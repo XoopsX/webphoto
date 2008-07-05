@@ -1,10 +1,16 @@
 <?php
-// $Id: show_photo.php,v 1.3 2008/06/22 10:04:43 ohwada Exp $
+// $Id: show_photo.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added build_show_is_video()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -33,9 +39,15 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_URL_PIXEL_IMAGE;
 	var $_URL_CATEGORY_IMAGE;
 
+	var $_DEFAULT_IMAGE_WIDTH  = 64;
+	var $_DEFAULT_IMAGE_HEIGHT = 64;
+
 	var $_WINDOW_MERGIN = 16;
 	var $_MAX_SUMMARY   = 100;
 	var $_SUMMARY_TAIL  = ' ...';
+
+	var $_MEDIUM_VIDEO = 'video';
+	var $_EXT_FLASH_VIDEO = 'flv';
 
 //---------------------------------------------------------
 // constructor
@@ -155,14 +167,18 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 
 		'time_update_m'       => formatTimestamp( $photo_time_update , 'm' ) ,
 		'datetime_disp'       => $datetime_disp ,
-		'datetime_urlencode'  => $this->url_encode( $datetime_disp ) ,
-		'place_urlencode'     => $this->url_encode( $photo_place ),
-		'equipment_urlencode' => $this->url_encode( $photo_equipment ),
+		'datetime_urlencode'  => $this->rawurlencode_uri_encode_str( $datetime_disp ) ,
+		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $photo_place ),
+		'equipment_urlencode' => $this->rawurlencode_uri_encode_str( $photo_equipment ),
 		'description_disp'    => $desc_disp ,
 		'cont_exif_disp'      => $this->_photo_handler->build_show_cont_exif_disp( $row ) ,
+		'cont_size_disp'      => $this->_utility_class->format_filesize( $photo_cont_size, 1 ) ,
+		'cont_duration_disp'  => $this->format_time( $photo_cont_duration ) ,
 
-		'tags'           => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
-		'is_owner'       => $this->is_photo_owner( $photo_uid ),
+		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
+		'is_owner'  => $this->is_photo_owner( $photo_uid ),
+		'is_video'  => $this->build_show_is_video( $photo_cont_medium ) ,
+		'is_flash_video' => $this->build_show_is_flash_video( $photo_file_ext ) ,
 
 	);
 
@@ -346,22 +362,26 @@ function build_show_is_owner( $uid )
 	return false;
 }
 
-function url_encode( $str )
+function build_show_is_video( $photo_cont_medium )
 {
-	return rawurlencode( $this->encode_str( $str ) );
+	if ( $photo_cont_medium == $this->_MEDIUM_VIDEO ) {
+		return true ;
+	}
+	return false;
 }
 
-// some characters do not work
-function encode_str( $str )
+function build_show_is_flash_video( $photo_file_ext )
 {
-	$str = $this->_utility_class->encode_slash( $str );
-	return $this->_utility_class->encode_colon( $str );
+	if ( $photo_file_ext == $this->_EXT_FLASH_VIDEO ) {
+		return true ;
+	}
+	return false ;
 }
 
-function decode_str( $str )
+function format_time( $time )
 {
-	$str = $this->_utility_class->decode_slash( $str );
-	return $this->_utility_class->decode_colon( $str );
+	return $this->_utility_class->format_time( $time, 
+		$this->get_constant('HOUR'), $this->get_constant('MINUTE'), $this->get_constant('SECOND') ) ;
 }
 
 //---------------------------------------------------------
@@ -392,22 +412,27 @@ function build_show_imgsrc( $row )
 		$imgsrc_photo = $photo_cont_url_s;
 		$imgsrc_thumb = $photo_thumb_url_s;
 
-// no thumbnail
-	} elseif ( $photo_cont_url_s ) {
+// image without thumbnail
+	} elseif ( $photo_cont_url_s && $this->is_normal_ext( $photo_cont_ext ) ) {
 		$ahref_file   = $photo_cont_url_s;
 		$imgsrc_photo = $photo_cont_url_s;
 		$imgsrc_thumb = $photo_cont_url_s;
-
-		if ( $this->is_normal_ext( $photo_cont_ext ) ) {
-			list( $thumb_width, $thumb_height )
-				= $this->_image_class->adjust_thumb_size( $photo_width, $photo_height );
-		}
+		list( $thumb_width, $thumb_height )
+			= $this->_image_class->adjust_thumb_size( $photo_width, $photo_height );
 
 // icon gif (not normal exts)
 	} elseif ( $photo_thumb_url_s ) {
 		$ahref_file   = $photo_file_url_s;
 		$imgsrc_photo = $photo_thumb_url_s;
 		$imgsrc_thumb = $photo_thumb_url_s;
+
+// no image without thumbnail
+	} elseif ( $photo_cont_url_s ) {
+		$ahref_file   = $photo_cont_url_s;
+		$imgsrc_photo = $this->_URL_DEFAULT_IMAGE;
+		$imgsrc_thumb = $this->_URL_DEFAULT_IMAGE;
+		$thumb_width  = $this->_DEFAULT_IMAGE_WIDTH;
+		$thumb_height = $this->_DEFAULT_IMAGE_HEIGHT;
 
 	} else {
 		$ahref_file   = $photo_file_url_s;

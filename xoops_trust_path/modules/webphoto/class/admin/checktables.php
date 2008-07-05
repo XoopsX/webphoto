@@ -1,10 +1,16 @@
 <?php
-// $Id: checktables.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: checktables.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added $admin_link
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -166,20 +172,25 @@ function _print_check()
 		$thumb_path = $row['photo_thumb_path'];
 		$thumb_ext  = $row['photo_thumb_ext'];
 
-		$file_full_path = XOOPS_ROOT_PATH  . $file_path ;
+		$file_full_path  = XOOPS_ROOT_PATH  . $file_path ;
 		$photo_full_path = XOOPS_ROOT_PATH . $photo_path ;
 		$thumb_full_path = XOOPS_ROOT_PATH . $thumb_path ;
+
+		$admin_url  = $this->_MODULE_URL .'/admin/index.php?fct=photo_table_manage&amp;op=form&amp;id='.$id;
+		$admin_link = '<a href="'. $admin_url .'" target="_blank">'. sprintf("%04d", $id) .'</a> : '."\n";
 
 		echo ". " ;
 
 		if ( $file_path && ! is_readable( $file_full_path ) ) {
 			echo "<br />\n";
+			echo $admin_link;
 			printf( _AM_WEBPHOTO_FMT_PHOTONOTREADABLE , $file_full_path ) ;
 			echo "<br />\n";
 			$dead_photos ++ ;
 
 		} elseif ( $photo_path && ! is_readable( $photo_full_path ) ) {
 			echo "<br />\n";
+			echo $admin_link;
 			printf( _AM_WEBPHOTO_FMT_PHOTONOTREADABLE , $photo_full_path ) ;
 			echo "<br />\n";
 			$dead_photos ++ ;
@@ -187,6 +198,7 @@ function _print_check()
 
 		if ( $thumb_path && ! is_readable( $thumb_full_path ) ) {
 			echo "<br />\n";
+			echo $admin_link;
 			printf( _AM_WEBPHOTO_FMT_THUMBNOTREADABLE , $thumb_full_path ) ;
 			echo "<br />\n";
 			$dead_thumbs ++ ;

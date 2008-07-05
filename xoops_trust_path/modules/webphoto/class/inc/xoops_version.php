@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.3 2008/06/30 13:33:38 ohwada Exp $
+// $Id: xoops_version.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-07-01 K.OHWADA
+// added use_ffmpeg use_pathinfo
 // 2008-06-30 K.OHWADA
 // typo
 //---------------------------------------------------------
@@ -20,7 +22,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_inc_xoops_version extends webphoto_inc_handler
 {
 	var $_MODULE_ID = 0;
+
 	var $_cfg_catonsubmenu = false;
+	var $_cfg_use_pathinfo = false;
 	var $_has_insertable   = false;
 	var $_has_rateview     = false;
 
@@ -142,7 +146,7 @@ function _build_comments()
 	$arr = array();
 
 // Comments
-	$arr['pageName'] = 'index.php/photo/';
+	$arr['pageName'] = 'index.php';
 	$arr['itemName'] = 'photo_id';
 
 // Comment callback functions
@@ -209,14 +213,18 @@ function _build_sub()
 	$arr = array();
 
 	if ( $this->_has_insertable ) {
-		$arr[] = $this->_build_sub_array_const( 'SMNAME_SUBMIT',  'index.php/submit/' );
-		$arr[] = $this->_build_sub_array_const( 'SMNAME_MYPHOTO', 'index.php/myphoto/' );
+		$arr[] = $this->_build_sub_array_const(
+			'SMNAME_SUBMIT', $this->_build_sub_url_fct( 'submit' ) );
+		$arr[] = $this->_build_sub_array_const(
+			'SMNAME_MYPHOTO', $this->_build_sub_url_fct( 'myphoto' ) );
 	}
 
-	$arr[] = $this->_build_sub_array_const( 'SMNAME_POPULAR',  'index.php/popular/' );
+	$arr[] = $this->_build_sub_array_const(
+		'SMNAME_POPULAR', $this->_build_sub_url_op( 'popular' ) );
 
 	if ( $this->_has_rateview ) {
-		$arr[] = $this->_build_sub_array_const( 'SMNAME_HIGHRATE',  'index.php/highrate/' );
+		$arr[] = $this->_build_sub_array_const(
+			'SMNAME_HIGHRATE', $this->_build_sub_url_op( 'highrate' ) );
 	}
 
 	if ( $this->_cfg_catonsubmenu ) {
@@ -225,7 +233,7 @@ function _build_sub()
 			foreach ( $rows as $row )
 			{
 				$name  = ' - '. $this->sanitize( $row['cat_title'] ) ;
-				$url   = 'index.php/category/'. $row['cat_id'] .'/' ;
+				$url   = $this->_build_sub_url_category( $row['cat_id'] ) ;
 				$arr[] = $this->_build_sub_array( $name, $url );
 			}
 		}
@@ -246,6 +254,36 @@ function _build_sub_array( $name, $url )
 		'url'  => $url ,
 	);
 	return $arr;
+}
+
+function _build_sub_url_fct( $fct )
+{
+	if ( $this->_cfg_use_pathinfo ) {
+		$str = 'index.php/'. $fct .'/' ;
+	} else {
+		$str = 'index.php?fct='. $fct ;
+	}
+	return $str ;
+}
+
+function _build_sub_url_op( $op )
+{
+	if ( $this->_cfg_use_pathinfo ) {
+		$str = 'index.php/'. $op .'/' ;
+	} else {
+		$str = 'index.php?op='. $op ;
+	}
+	return $str ;
+}
+
+function _build_sub_url_category( $id )
+{
+	if ( $this->_cfg_use_pathinfo ) {
+		$str = 'index.php/category/'. $id .'/' ;
+	} else {
+		$str = 'index.php?fct=category&amp;p='. $id ;
+	}
+	return $str ;
 }
 
 //---------------------------------------------------------
@@ -400,6 +438,28 @@ function _build_config()
 		'name'			=> 'netpbmpath' ,
 		'title'			=> $this->_constant_name( 'CFG_NETPBMPATH' ) ,
 		'description'	=> $this->_constant_name( 'CFG_DESCNETPBMPATH' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+// add for webphoto
+	$arr[] = array(
+		'name'			=> 'use_ffmpeg' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_FFMPEG' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+// add for webphoto
+	$arr[] = array(
+		'name'			=> 'ffmpegpath' ,
+		'title'			=> $this->_constant_name( 'CFG_FFMPEGPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_DESCFFMPEGPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> '' ,
@@ -699,6 +759,16 @@ function _build_config()
 	) ;
 
 	$arr[] = array(
+		'name'			=> 'use_pathinfo' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_PATHINFO' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '1' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
 		'name'			=> 'index_desc' ,
 		'title'			=> $this->_constant_name( 'CFG_INDEX_DESC' ) ,
 		'description'	=> '' ,
@@ -838,6 +908,7 @@ function _init_xoops_config( $dirname )
 	$config_handler->init( $dirname );
 
 	$this->_cfg_catonsubmenu = $config_handler->get_by_name('catonsubmenu');
+	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 //---------------------------------------------------------

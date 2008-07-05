@@ -1,10 +1,16 @@
 <?php
-// $Id: notification_select.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: notification_select.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _get_script()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -120,7 +126,7 @@ function build()
 	$notification['target_page'] = $this->_MODULE_URL."/index.php?fct=notification_update";
 
 //	$notification['redirect_script'] = xoops_getenv('PHP_SELF');
-	$notification['redirect_script'] = $this->_MODULE_URL.'/index.php'. $this->_get_server_path_info() ;
+	$notification['redirect_script'] = $this->_get_script();
 
 //	$xoopsTpl->assign(array('lang_activenotifications' => _NOT_ACTIVENOTIFICATIONS, 'lang_notificationoptions' => _NOT_NOTIFICATIONOPTIONS, 'lang_updateoptions' => _NOT_UPDATEOPTIONS, 'lang_updatenow' => _NOT_UPDATENOW, 'lang_category' => _NOT_CATEGORY, 'lang_event' => _NOT_EVENT, 'lang_events' => _NOT_EVENTS, 'lang_checkall' => _NOT_CHECKALL, 'lang_notificationmethodis' => _NOT_NOTIFICATIONMETHODIS, 'lang_change' => _NOT_CHANGE, 'editprofile_url' => XOOPS_URL . '/edituser.php?uid=' . $xoopsUser->getVar('uid')));
 
@@ -171,10 +177,24 @@ function _notificationEvents( $category_name, $enabled_only, $module_id=null )
 	return notificationEvents( $category_name, $enabled_only, $module_id );
 }
 
-function _get_server_path_info()
+function _get_script()
 {
-	$str = isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : null;
-	return $str;
+	$path  = isset($_SERVER["PATH_INFO"])    ? $_SERVER["PATH_INFO"]    : null;
+	$query = isset($_SERVER["QUERY_STRING"]) ? $_SERVER["QUERY_STRING"] : null;
+
+// if path_info
+	if ( $path ) {
+		$ret = $this->_MODULE_URL.'/index.php' ;
+
+// if query
+	} elseif ( $query ) {
+		$ret = $this->_MODULE_URL.'/index.php' ;
+
+// else
+	} else {
+		$ret = xoops_getenv('PHP_SELF');
+	}
+	return $ret ;
 }
 
 // for XOOPS 2.0.18

@@ -1,10 +1,16 @@
 <?php
-// $Id: oninstall.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: oninstall.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _mime_update()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +19,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_oninstall extends webphoto_inc_handler
 {
+	var $_table_mime ;
+
 	var $_is_xoops_2018 = false;
 
 	var $_msg_array = array();
@@ -76,7 +84,7 @@ function update( $trust_dirname , &$module )
 	$msg_arr = $this->_get_msg_array();
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
-			$msgs[] = $msg."<br />\n";
+			$msgs[] = $msg;
 		}
 	}
 
@@ -97,7 +105,7 @@ function uninstall( $trust_dirname , &$module )
 	$msg_arr = $this->_get_msg_array();
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
-			$ret[] = $msg."<br />\n";
+			$ret[] = $msg;
 		}
 	}
 
@@ -116,6 +124,8 @@ function _init( $trust_dirname , &$module )
 	$this->_TRUST_DIR     = XOOPS_TRUST_PATH.'/modules/'. $trust_dirname ;
 
 	$this->init_handler( $dirname );
+
+	$this->_table_mime = $this->prefix_dirname( 'mime' );
 
 // preload
 	$preload_file = $this->_TRUST_DIR  .'/preload/constants.php';
@@ -138,6 +148,8 @@ function _exec_install()
 		$root->mDelegateManager->add( $name, 'webphoto_message_append_oninstall' ) ;
 	}
 
+	$this->_set_msg( "\n Install module extention ..." );
+
 	$res = $this->_table_install();
 	if ( ! $res ) { return false; }
 
@@ -156,7 +168,10 @@ function _exec_update()
 		$root->mDelegateManager->add( $name, 'webphoto_message_append_onupdate' ) ;
 	}
 
+	$this->_set_msg( "\n Update module extention ..." );
+
 	$this->_config_update();
+	$this->_mime_update();
 	$this->_table_update();
 	$this->_template_update();
 
@@ -171,6 +186,8 @@ function _exec_uninstall()
 		$root =& XCube_Root::getSingleton();
 		$root->mDelegateManager->add( $name , 'webphoto_message_append_onuninstall' ) ;
 	}
+
+	$this->_set_msg( "\n Uninstall module extention ..." );
 
 	$this->_table_uninstall();
 	$this->_template_uninstall();
@@ -301,6 +318,8 @@ function _template_update()
 
 function _template_common()
 {
+	$this->_set_msg( "Updating tmplates ..." );
+
 	$TPL_TRUST_PATH = $this->_TRUST_DIR  .'/templates';
 	$TPL_ROOT_PATH  = $this->_MODULE_DIR .'/templates';
 
@@ -361,12 +380,12 @@ function _template_common()
 		$ret1 = $tplfile_handler->insert( $tplfile );
 		if ( $ret1 ) {
 			$tplid = $tplfile->getVar( 'tpl_id' ) ;
-			$this->_set_msg( 'Template <b>'. $dirname_file_s .'</b> added to the database. (ID: <b>'.$tplid.'</b>)' );
+			$this->_set_msg( ' &nbsp; Template <b>'. $dirname_file_s .'</b> added to the database. (ID: <b>'.$tplid.'</b>)' );
 
 			// generate compiled file
 			$ret2 = xoops_template_touch( $tplid );
 			if ( $ret2 ) {
-				$this->_set_msg( 'Template <b>'. $dirname_file_s .'</b> compiled.</span>' );
+				$this->_set_msg( ' &nbsp; Template <b>'. $dirname_file_s .'</b> compiled.</span>' );
 			} else {
 				$this->_set_msg( $this->highlight( 'ERROR: Failed compiling template <b>'. $dirname_file_s .'</b>.' ) );
 			}
@@ -412,7 +431,7 @@ function _parse_first_char( $file )
 
 function _parse_ext( $file )
 {
-	return substr( strrchr( $file , '.' ) , 1 );
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 //---------------------------------------------------------
@@ -437,7 +456,7 @@ function _config_update()
 		$this->_set_msg( 'Modify char length in <b>'. $table_config .'</b>' );
 		return true;
 	} else {
-		$this->_set_msg( $this->highlight( 'ERROR: Could not modify <b>'. $config_table .'</b>.' ) );
+		$this->_set_msg( $this->highlight( 'ERROR: Could not modify <b>'. $table_config .'</b>.' ) );
 		return false;
 	}
 
@@ -475,6 +494,151 @@ function _groupperm_install()
 	}
 
 	return true ;
+}
+
+//---------------------------------------------------------
+// mime table
+//---------------------------------------------------------
+function _mime_update()
+{
+	$this->_mime_add_column_ffmpeg();
+	$this->_mime_add_record_flv();
+	$this->_mime_update_record_avi();
+}
+
+function _mime_add_column_ffmpeg()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_mime, 'mime_ffmpeg' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_mime ;
+	$sql .= " ADD mime_ffmpeg varchar(255) NOT NULL default '' ";
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add mime_ffmpeg in <b>'. $this->_table_mime .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _mime_add_record_flv()
+{
+// return if already exists
+	$row = $this->_mime_get_row_by_ext( 'flv' );
+	if ( is_array($row) ) {
+		return true;
+	}
+
+	$row = array(
+		'mime_time_create' => 0 ,
+		'mime_time_update' => 0 ,
+		'mime_name'        => 'Flash Video' ,
+		'mime_ext'         => 'flv' ,
+		'mime_medium'      => 'video' ,
+		'mime_type'        => 'video/x-flv' ,
+		'mime_perms'       => '&1&' ,
+		'mime_ffmpeg'      => '' ,
+	);
+
+	$ret = $this->_mime_insert_record( $row );
+	if ( $ret ) {
+		$this->_set_msg( 'Add flv in <b>'. $this->_table_mime .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _mime_update_record_avi()
+{
+	$row = $this->_mime_get_row_by_ext( 'avi' );
+
+// return if already set
+	if ( $row['mime_ffmpeg'] ) {
+		return true;
+	}
+
+	$row['mime_ffmpeg'] = '-ar 44100' ;
+
+	$ret = $this->_mime_update_record( $row );
+	if ( $ret ) {
+		$this->_set_msg( 'Update avi in <b>'. $this->_table_mime .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _mime_insert_record( $row )
+{
+	extract( $row ) ;
+
+	$sql  = 'INSERT INTO '. $this->_table_mime .' (';
+
+	$sql .= 'mime_time_create, ';
+	$sql .= 'mime_time_update, ';
+	$sql .= 'mime_name, ';
+	$sql .= 'mime_ext, ';
+	$sql .= 'mime_medium, ';
+	$sql .= 'mime_type, ';
+	$sql .= 'mime_perms, ';
+	$sql .= 'mime_ffmpeg ';
+
+	$sql .= ') VALUES ( ';
+
+	$sql .= intval($mime_time_create).', ';
+	$sql .= intval($mime_time_update).', ';
+	$sql .= $this->quote($mime_name).', ';
+	$sql .= $this->quote($mime_ext).', ';
+	$sql .= $this->quote($mime_medium).', ';
+	$sql .= $this->quote($mime_type).', ';
+	$sql .= $this->quote($mime_perms).', ';
+	$sql .= $this->quote($mime_ffmpeg).' ';
+
+	$sql .= ')';
+
+	$ret = $this->query( $sql );
+	if ( !$ret ) { return false; }
+
+	return $this->_db->getInsertId();
+}
+
+function _mime_update_record( $row )
+{
+	extract( $row ) ;
+
+	$sql  = 'UPDATE '. $this->_table_mime .' SET ';
+
+	$sql .= 'mime_time_create='.intval($mime_time_create).', ';
+	$sql .= 'mime_time_update='.intval($mime_time_update).', ';
+	$sql .= 'mime_name='.$this->quote($mime_name).', ';
+	$sql .= 'mime_ext='.$this->quote($mime_ext).', ';
+	$sql .= 'mime_medium='.$this->quote($mime_medium).', ';
+	$sql .= 'mime_type='.$this->quote($mime_type).', ';
+	$sql .= 'mime_perms='.$this->quote($mime_perms).', ';
+	$sql .= 'mime_ffmpeg='.$this->quote($mime_ffmpeg).' ';
+
+	$sql .= 'WHERE mime_id='.intval($mime_id);
+
+	return $this->query( $sql );
+}
+
+function _mime_get_row_by_ext( $ext )
+{
+	$sql  = 'SELECT * FROM '. $this->_table_mime ;
+	$sql .= ' WHERE mime_ext='.$this->quote( $ext );
+	return $this->get_row_by_sql( $sql );
 }
 
 //---------------------------------------------------------

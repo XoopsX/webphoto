@@ -1,10 +1,16 @@
 <?php
-// $Id: mime.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: mime.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added is_video_ext()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -85,7 +91,7 @@ function get_cached_mime_type_by_ext( $ext )
 		return  $this->_cached_mime_array[ $ext ];
 	}
 
-	$row = $this->_mime_handler->get_row_by_ext( $ext );
+	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
 	if ( !is_array($row) ) {
 		return false;
 	}
@@ -103,27 +109,51 @@ function get_cached_mime_type_by_ext( $ext )
 //---------------------------------------------------------
 // add mime type
 //---------------------------------------------------------
-function add_mime_if_empty( $info )
+function add_mime_to_info_if_empty( $info, $mime_in=null )
 {
-// if set mime
-	if ( $info['mime'] ) {
+	$medium = null ;
+
+// no image  info
+	if ( !is_array($info) || !count($info) ) {
 		return $info;
 	}
 
-	$mime = $this->get_cached_mime_type_by_ext( $info['ext'] );
-	if ( empty($mime) ) {
+// if set mime
+	if ( $info['photo_cont_mime'] ) {
 		return $info;
 	}
 
 // if not set mime
-	$info['mime'] = $mime ;
+	if ( $mime_in ) {
+		$mime = $mime_in ;
+	} else {
+		$mime = $this->get_cached_mime_type_by_ext( $info['photo_cont_ext'] );
+	}
+
+// set mime
+	if ( $mime ) {
+		$info['photo_file_mime'] = $mime ;
+		$info['photo_cont_mime'] = $mime ;
 
 // if video type
-	if ( $this->is_video_mime( $mime ) ) {
-		$info['medium'] = $this->_VIDEO_MEDIUM ;
+		if ( $this->is_video_mime( $mime ) ) {
+			$medium = $this->_VIDEO_MEDIUM ;
+		}
+	}
+			
+// set medium
+	if ( $medium ) {
+		$info['photo_file_medium'] = $medium ;
+		$info['photo_cont_medium'] = $medium ;
 	}
 
 	return $info;
+}
+
+function is_video_ext( $ext )
+{
+	$mime = $this->get_cached_mime_type_by_ext( $ext );
+	return $this->is_video_mime( $mime );
 }
 
 function is_video_mime( $mime )

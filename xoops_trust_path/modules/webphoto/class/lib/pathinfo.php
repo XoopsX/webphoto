@@ -1,10 +1,16 @@
 <?php
-// $Id: pathinfo.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: pathinfo.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added isset_param()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -59,6 +65,12 @@ function _init()
 //---------------------------------------------------------
 // function
 //---------------------------------------------------------
+function isset_param( $key )
+{
+	$ret = isset( $this->_get_param[ $key ] ) ? true : false;
+	return $ret;
+}
+
 function get( $key, $default=null )
 {
 	$str = isset( $this->_get_param[ $key ] ) ? $this->_get_param[ $key ] : $default;

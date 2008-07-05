@@ -1,10 +1,16 @@
 <?php
-// $Id: mime_table_manage.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: mime_table_manage.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added mime_ffmpeg
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -59,6 +65,7 @@ function _build_row_by_post()
 		'mime_type'        => $this->_post_class->get_post_text( 'mime_type' ),
 		'mime_name'        => $this->_post_class->get_post_text( 'mime_name' ),
 		'mime_perms'       => $this->_post_class->get_post_text( 'mime_perms' ),
+		'mime_ffmpeg'      => $this->_post_class->get_post_text( 'mime_ffmpeg' ),
 
 	);
 	return $row;
@@ -82,6 +89,7 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'mime_type' );
 	echo $this->build_comp_text( 'mime_name' );
 	echo $this->build_comp_text( 'mime_perms' );
+	echo $this->build_comp_text( 'mime_ffmpeg' );
 
 	echo $this->build_manage_submit();
 

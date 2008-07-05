@@ -1,10 +1,16 @@
 <?php
-// $Id: gmap_info.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: gmap_info.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used build_uri_photo()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -93,7 +99,7 @@ function build_info_title( $row )
 function build_info_author( $row )
 {
 	$uid   = intval( $row['photo_uid'] );
-	$href  = $this->_MODULE_URL .'/index.php/user/'. $uid .'/';
+	$href  = $this->build_uri_user( $uid ) ;
 	$uname = $this->get_xoops_uname_by_uid( $uid );
 	if ( $uid > 0 ) {
 		$str  = '<a href="'. $href .'">';
@@ -154,8 +160,7 @@ function build_a_photo( $row )
 
 function build_href_photo( $row )
 {
-	$str = $this->_MODULE_URL .'/index.php/photo/'.intval( $row['photo_id'] ).'/';
-	return $str;
+	return $this->build_uri_photo( $row['photo_id'] ) ;
 }
 
 function build_target_photo( $row )

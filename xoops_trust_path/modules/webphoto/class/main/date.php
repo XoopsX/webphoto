@@ -1,10 +1,17 @@
 <?php
-// $Id: date.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: date.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used set_mode()
+// decode_str() -> decode_uri_str()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -20,6 +27,7 @@ class webphoto_main_date extends webphoto_show_list
 function webphoto_main_date( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'date' );
 	$this->init_preload();
 }
 
@@ -181,7 +189,7 @@ function list_build_detail( $datetime_in )
 	$start   = $this->pagenavi_calc_start( $limit );
 	$orderby = $this->get_orderby_by_post();
 
-	$datetime = $this->decode_str( $datetime_in );
+	$datetime = $this->decode_uri_str( $datetime_in );
 	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
 	$this->set_param_out( $datetime );
 

@@ -1,10 +1,17 @@
 <?php
-// $Id: manage.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: manage.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// change build_comp_url()
+// xoops_error() -> build_error_msg()
+//---------------------------------------------------------
 
 //=========================================================
 // class webphoto_lib_manage
@@ -307,7 +314,7 @@ function manage_form()
 function manage_form_with_error( $msg=null )
 {
 	if ( $msg ) {
-		xoops_error( $msg );
+		echo $this->build_error_msg( $msg );
 	}
 	$this->manage_print_form();
 }
@@ -682,9 +689,9 @@ function build_comp_text( $name, $size=50 )
 	return $this->build_row_text( $this->get_constant( $name ), $name, $size );
 }
 
-function build_comp_url( $name, $size=50 )
+function build_comp_url( $name, $size=50, $flag_link=false )
 {
-	return $this->build_row_url( $this->get_constant( $name ), $name, $size );
+	return $this->build_row_url( $this->get_constant( $name ), $name, $size, $flag_link );
 }
 
 function build_comp_textarea( $name, $rows=5, $cols=50 )

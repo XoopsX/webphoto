@@ -1,10 +1,17 @@
 <?php
-// $Id: batch.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: batch.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used create_flash() create_single_thumb()
+// xoops_error() -> build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,11 +23,15 @@ class webphoto_admin_batch extends webphoto_base_this
 	var $_mime_class;
 	var $_image_class;
 	var $_build_class;
+	var $_video_class;
+	var $_exif_class;
 
 	var $_post_catid;
 	var $_post_desc;
 	var $_post_uid;
 	var $_time_update;
+
+	var $_cfg_makethumb ;
 
 	var $_ADMIN_BATCH_PHP;
 
@@ -34,9 +45,13 @@ function webphoto_admin_batch( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_build_class =& webphoto_photo_build::getInstance( $dirname );
-	$this->_image_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
-	$this->_mime_class  =& webphoto_mime::getInstance( $dirname );
+	$this->_build_class  =& webphoto_photo_build::getInstance( $dirname );
+	$this->_image_class  =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
+	$this->_mime_class   =& webphoto_mime::getInstance( $dirname );
+	$this->_video_class  =& webphoto_video::getInstance( $dirname );
+	$this->_exif_class   =& webphoto_lib_exif::getInstance();
+
+	$this->_cfg_makethumb = $this->get_config_by_name( 'makethumb' );
 
 	$this->_ADMIN_BATCH_PHP = $this->_MODULE_URL .'/admin/index.php?fct=batch';
 }
@@ -58,10 +73,13 @@ function main()
 	$this->_check_cat();
 
 	if ( !$this->_check_cat() ) {
+		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';
+		$msg .= _WEBPHOTO_ERR_MUSTADDCATFIRST ;
+		$msg .= '</a>';
 		xoops_cp_header();
 		echo $this->build_admin_menu();
 		echo $this->build_admin_title( 'BATCH' );
-		xoops_error( _WEBPHOTO_ERR_MUSTADDCATFIRST );
+		echo $this->build_error_msg( $msg, '', false );
 		xoops_cp_footer() ;
 		exit();
 	}
@@ -218,6 +236,7 @@ function _exec_submit()
 function _exec_each_file( $src_file, $photo_ext, $title )
 {
 	$thumb_info = null;
+	$flag_video_thumb  = false;
 
 // insert
 	$row = $this->_photo_handler->create( true );
@@ -228,10 +247,23 @@ function _exec_each_file( $src_file, $photo_ext, $title )
 	$row['photo_description'] = $this->_post_desc;
 	$row['photo_status']      = 1;
 
-	$row['photo_search']      = $this->_build_class->build_search( $row );
+// get exif date
+	$exif_info = $this->_exif_class->read_file( $src_file );
+	if ( is_array($exif_info) ) {
+		$datetime = $this->exif_to_mysql_datetime( $exif_info );
+		if ( $datetime ) {
+			$row['photo_datetime'] = $datetime;
+		}
+		$row['photo_equipment'] = $exif_info['equipment'];
+		$row['photo_cont_exif'] = $exif_info['all_data'];
+	}
 
+	$row['photo_search'] = $this->_build_class->build_search( $row );
+
+// insert record
 	$newid = $this->_photo_handler->insert( $row );
 	if ( !$newid ) {
+		echo " db error <br />\n" ;
 		$this->set_error( $this->_photo_handler->get_errors() );
 		return false;
 	}
@@ -239,47 +271,88 @@ function _exec_each_file( $src_file, $photo_ext, $title )
 	$url = $this->_MODULE_URL .'/index.php/photo/'. $newid .'/';
 	echo '- <a href="'. $url .'" target="_blank">'. $src_file .'</a> : ';
 
-	$photo_name = $this->_image_class->build_photo_name( $newid, $photo_ext );
-	$photo_path = $this->_PHOTOS_PATH .'/'. $photo_name ;
-	$photo_file = XOOPS_ROOT_PATH . $photo_path ;
-	$photo_url  = XOOPS_URL       . $photo_path ;
-
-	$this->copy_file( $src_file , $photo_file ) ;
-
-	$photo_info = $this->_image_class->build_photo_info( $photo_path, $photo_ext ) ;
-	$photo_info['url']  = $photo_url ;
-	$photo_info['name'] = $photo_name ;
-
-	$photo_info = $this->_mime_class->add_mime_if_empty( $photo_info );
-
-	$ret1 = $this->_image_class->create_thumb( $photo_path , $newid , $photo_ext ) ;
-	if ( $ret1 == _C_WEBPHOTO_IMAGE_READ_FAULT ) {
-		echo ' thumb file read error ' ;
-	} elseif ( $ret1 == _C_WEBPHOTO_IMAGE_SKIPPED ) {
-		echo ' skipped thumb ' ;
-
-	} else {
-		echo ' create thumb ' ;
-		$thumb_image_info = $this->_image_class->get_thumb_info();
-		if ( is_array($thumb_image_info) ) {
-			$thumb_path = $thumb_image_info['path'] ;
-			$thumb_name = $thumb_image_info['name'] ;
-			$thumb_ext  = $thumb_image_info['ext'] ;
-
-			$thumb_info = $this->_image_class->build_thumb_info( $thumb_path, $thumb_ext);
-			$thumb_info['url']  = XOOPS_URL . $thumb_path;
-			$thumb_info['name'] = $thumb_name;
-		}
+// create photo
+	$ret1 = $this->_image_class->create_photo( $src_file , $newid );
+	if ( $ret1 == _C_WEBPHOTO_IMAGE_RESIZE ) {
+		echo ' resize photo, ';
 	}
 
-// update
+	$photo_info = $this->_image_class->get_photo_info(); 
+	if ( !is_array($photo_info) ) {
+		echo ' not create photo ' ;
+		return false;
+	}
+
+	$photo_path = $photo_info['photo_cont_path'] ;
+	$photo_name = $photo_info['photo_cont_name'] ;
+	$photo_ext  = $photo_info['photo_cont_ext'] ;
+	$photo_file = XOOPS_ROOT_PATH . $photo_path ;
+
+	$thumb_src_path  = $photo_path;
+	$thumb_src_ext   = $photo_ext;
+
+	$photo_info = $this->_mime_class->add_mime_to_info_if_empty( $photo_info );
+
+// if video
+	if ( $this->_mime_class->is_video_ext( $photo_ext ) ) {
+		$photo_info = $this->_video_class->add_duration_size_to_info( $photo_info );
+
+// create flash
+		$flash_name = $this->_image_class->build_photo_name( 
+			$newid, $this->_video_class->get_flash_ext() );
+
+		$ret1 = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
+		if ( $ret1 ) {
+			echo ' create flash, ' ;
+			$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
+		} else {
+			echo ' fail to create flash, ' ;
+		}
+
+// create video thumb
+		if ( $this->_cfg_makethumb ) {
+			$video_thumb_path = $this->_video_class->create_single_thumb( $newid, $photo_file ) ;
+			if ( $video_thumb_path ) {
+				$flag_video_thumb = true;
+				$thumb_src_path   = $video_thumb_path;
+				$thumb_src_ext    = $this->_video_class->get_thumb_ext();
+			}
+		}
+
+	}
+
+	if ( $this->is_normal_ext( $photo_ext ) || $flag_video_thumb ) {
+
+// create thumb
+		if ( $this->_cfg_makethumb ) {
+			echo ' create thumb ' ;
+			$this->_image_class->create_thumb_from_photo( 
+				$newid, $thumb_src_path, $thumb_src_ext );
+			$thumb_info = $this->_image_class->get_thumb_info();
+
+// substitute with photo image
+		} else {
+			$this->_image_class->create_thumb_substitute( $photo_path, $photo_ext );
+			$thumb_info = $this->_image_class->get_thumb_info();
+		}
+
+// thumb icon
+	} else {
+		$this->_image_class->create_thumb_icon( $newid, $photo_ext );
+		$thumb_info = $this->_image_class->get_thumb_info();
+	}
+
+	$photo_thumb_info 
+		= $this->_image_class->merge_photo_thumb_info( $photo_info, $thumb_info );
+
+// update date
 	$row['photo_id'] = $newid ;
+	$update_row = array_merge( $row, $photo_thumb_info );
 
-	$row = $this->_photo_handler->build_row_by_photo_info( $row, $photo_info );
-	$row = $this->_photo_handler->build_row_by_thumb_info( $row, $thumb_info );
-
-	$ret2 = $this->_photo_handler->update( $row );
+// update record
+	$ret2 = $this->_photo_handler->update( $update_row );
 	if ( !$ret2 ) {
+		echo " db error <br />\n" ;
 		$this->set_error( $this->_photo_handler->get_errors() );
 		return false;
 	}
@@ -287,6 +360,21 @@ function _exec_each_file( $src_file, $photo_ext, $title )
 	echo _AM_WEBPHOTO_FINISHED."<br />\n" ;
 
 	return true;
+}
+
+function exif_to_mysql_datetime( $exif )
+{
+	$datetime     = $exif['datetime'];
+	$datetime_gnu = $exif['datetime_gnu'];
+
+	if ( $datetime_gnu ) {
+		return $datetime_gnu;
+	}
+
+	$time = $this->_utility_class->str_to_time( $datetime );
+	if ( $time <= 0 ) { return false; }
+
+	return $this->_utility_class->time_to_mysql_datetime( $time );
 }
 
 //---------------------------------------------------------

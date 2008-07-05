@@ -1,10 +1,16 @@
 <?php
-// $Id: imagemanager.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: imagemanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added class/xoops/base.php etc
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -30,9 +36,12 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'preload/debug.php' );
 webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
+webphoto_include_once( 'class/webphoto/config.php' );
+webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/main/imagemanager.php' );
 webphoto_include_language( 'main.php' );
 

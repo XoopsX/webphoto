@@ -1,10 +1,16 @@
 <?php
-// $Id: catmanager.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: catmanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// xoops_error() -> build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -441,7 +447,7 @@ function _print_list( )
 		foreach ( $rows as $row ) {
 			$ret = $this->_cat_handler->update_pid( $row['cat_id'], 0 );
 		}
-		xoops_error( 'A Ghost Category found.' ) ;
+		echo $this->build_error_msg( 'A Ghost Category found.' ) ;
 		xoops_cp_footer();
 		exit();
 	}

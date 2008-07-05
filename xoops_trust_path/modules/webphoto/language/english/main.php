@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.2 2008/06/22 05:25:42 ohwada Exp $
+// $Id: main.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -82,8 +82,8 @@ define("_WEBPHOTO_RADIO_ROTATE270" , "turn left" ) ;
 define("_WEBPHOTO_SUBMIT_RECEIVED","We received your Photo. Thank you!");
 define("_WEBPHOTO_SUBMIT_ALLPENDING","All photos are posted pending verification.");
 
-define("_WEBPHOTO_ERR_MUSTREGFIRST","Sorry, you don't have permission to perform this action.<br>Please register or login first!");
-define("_WEBPHOTO_ERR_MUSTADDCATFIRST","Sorry, there are no categories to add to yet.<br>Please create a category first!");
+define("_WEBPHOTO_ERR_MUSTREGFIRST","Sorry, you don't have permission to perform this action.<br />Please register or login first!");
+define("_WEBPHOTO_ERR_MUSTADDCATFIRST","Sorry, there are no categories to add to yet.<br />Please create a category first!");
 define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","No photo was uploaded");
 define("_WEBPHOTO_ERR_FILE","Photos are too big or there is a problem with the configuration");
 define("_WEBPHOTO_ERR_FILEREAD","Photos are not readable.");
@@ -499,6 +499,9 @@ define("_WEBPHOTO_MIME_TYPE" ,  "MIME Type" ) ;
 define("_WEBPHOTO_MIME_NAME" ,  "MIME Name" ) ;
 define("_WEBPHOTO_MIME_PERMS" , "Permission" ) ;
 
+// added in v0.20
+define("_WEBPHOTO_MIME_FFMPEG" , "ffmpeg option" ) ;
+
 // tag table
 define("_WEBPHOTO_TAG_TABLE" , "Tag Table" ) ;
 define("_WEBPHOTO_TAG_ID" ,          "Tag ID" ) ;
@@ -656,9 +659,9 @@ http://THIS-SITE/modules/webphoto/ <br /><br />
 (4) Click the blue icon on the upper right of Firefox<br />
 You cannot use Piclens, when the icon is black<br />' );
 
-
-
-
+//
+// dummy lines , adjusts line number for Japanese lang file.
+//
 
 define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_TITLE", "Media RSS Slide Show");
 define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_DSC", '
@@ -696,6 +699,23 @@ define("_WEBPHOTO_JA_KUTEN",   "");
 define("_WEBPHOTO_JA_DOKUTEN", "");
 define("_WEBPHOTO_JA_PERIOD",  "");
 define("_WEBPHOTO_JA_COMMA",   "");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL", "Select thumbnail of video");
+define("_WEBPHOTO_TITLE_VIDEO_REDO","Re-create Flash and Thumbnail from uploaded video");
+define("_WEBPHOTO_CAP_REDO_THUMB","Create Thumbnail");
+define("_WEBPHOTO_CAP_REDO_FLASH","Cretae Flash Video");
+define("_WEBPHOTO_ERR_VIDEO_FLASH", "Cannot create Flash video");
+define("_WEBPHOTO_ERR_VIDEO_THUMB", "Substituted with the icon, because cannot create Thumbnail for video");
+define("_WEBPHOTO_BUTTON_SELECT", "Select");
+
+define("_WEBPHOTO_DSC_DOWNLOAD_PLAY","Play after download");
+define("_WEBPHOTO_ICON_VIDEO", "Video");
+define("_WEBPHOTO_HOUR", "hour");
+define("_WEBPHOTO_MINUTE", "min");
+define("_WEBPHOTO_SECOND", "sec");
 
 // === define end ===
 }

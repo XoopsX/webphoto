@@ -1,10 +1,16 @@
 <?php
-// $Id: tree_handler.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: tree_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// change get_nice_path_from_id()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -42,7 +48,7 @@ function set_order_default( $val )
 //---------------------------------------------------------
 // base on XoopsTree::getNicePathFromId 
 //---------------------------------------------------------
-function get_nice_path_from_id( $sel_id, $title_name, $func_url )
+function get_nice_path_from_id( $sel_id, $title_name, $func_url, $flag_short=false )
 {
 	$rows = $this->get_parent_path_array( $sel_id );
 	if ( !is_array($rows)  || !count($rows) ) {
@@ -58,8 +64,14 @@ function get_nice_path_from_id( $sel_id, $title_name, $func_url )
 		$id    = $row[ $this->_id_name ];
 		$pid   = $row[ $this->_pid_name ];
 		$title = $row[ $title_name ];
+		
+		if ( $flag_short ) {
+			$url = $func_url . $id ;
+		} else {
+			$url = $func_url .'&amp;'. $this->_id_name .'='. $id ;
+		}
 
-		$path .= '<a href="'. $func_url .'&amp;'. $this->_id_name .'='. $id .'">';
+		$path .= '<a href="'. $url .'">';
 		$path .= $this->sanitize($title);
 		$path .= '</a> : ';
 	}

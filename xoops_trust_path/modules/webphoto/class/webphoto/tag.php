@@ -1,10 +1,16 @@
 <?php
-// $Id: tag.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: tag.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used uri_class
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +24,7 @@ class webphoto_tag extends webphoto_lib_error
 	var $_p2t_handler;
 	var $_photo_tag_handler;
 	var $_utility_class;
+	var $_uri_class;
 
 	var $_is_japanese = false;
 
@@ -38,6 +45,7 @@ function webphoto_tag( $dirname )
 	$this->_p2t_handler       =& webphoto_p2t_handler::getInstance(   $dirname );
 	$this->_photo_tag_handler =& webphoto_photo_tag_handler::getInstance( $dirname );
 	$this->_utility_class     =& webphoto_lib_utility::getInstance();
+	$this->_uri_class         =& webphoto_uri::getInstance( $dirname );
 
 	$this->_DIRNAME    = $dirname ;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
@@ -196,7 +204,7 @@ function build_tagcloud_by_rows( $rows )
 	{
 		$name  = $rows[$i]['tag_name'];
 		$count = $rows[$i]['photo_count'];
-		$link  = $this->_MODULE_URL .'/index.php/tag/'. $this->url_encode( $name ) .'/';
+		$link  = $this->_uri_class->build_tag( $name );
 		$cloud_class->addElement( $name,  $link, $count );
 	}
 
@@ -292,27 +300,15 @@ function build_show_tags_from_tag_name_array( $tag_name_array )
 		$row = array();
 		$row['tag_name']   = $this->sanitize( $tag_name );
 		$row['tag_name_s'] = $this->sanitize( $tag_name );
-		$row['urlencoded'] = $this->url_encode( $tag_name );
+		$row['urlencoded'] = $this->_uri_class->rawurlencode_encode_str( $tag_name );
 		$arr[] = $row;
 	}
 	return $arr;
 }
 
-function url_encode( $str )
-{
-	return rawurlencode( $this->encode_tag( $str ) );
-}
-
-function encode_tag( $str )
-{
-	$str = $this->_utility_class->encode_slash( $str );
-	return $this->_utility_class->encode_colon( $str );
-}
-
 function decode_tag( $str )
 {
-	$str = $this->_utility_class->decode_slash( $str );
-	return $this->_utility_class->decode_colon( $str );
+	return $this->_uri_class->decode_str( $str );
 }
 
 //---------------------------------------------------------

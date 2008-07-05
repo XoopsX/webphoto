@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.1 2008/06/22 05:25:42 ohwada Exp $
+// $Id: modinfo.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -206,6 +206,14 @@ define($constpref."ADMENU_MIME_TABLE_MANAGE","MIMEテーブル管理");
 define($constpref."ADMENU_TAG_TABLE_MANAGE","タグテーブル管理");
 define($constpref."ADMENU_P2T_TABLE_MANAGE","写真タグ関連テーブル管理");
 define($constpref."ADMENU_SYNO_TABLE_MANAGE","類似語テーブル管理");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define( $constpref."CFG_USE_FFMPEG"  , "ffmpeg を使用する" ) ;
+define( $constpref."CFG_FFMPEGPATH"  , "ffmpeg の実行パス" ) ;
+define( $constpref."CFG_DESCFFMPEGPATH" , "ffmpeg の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「ffmpeg を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
+define($constpref."CFG_USE_PATHINFO","pathinfo を使用する");
 
 }
 // === define begin ===

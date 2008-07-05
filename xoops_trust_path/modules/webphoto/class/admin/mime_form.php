@@ -1,10 +1,16 @@
 <?php
-// $Id: mime_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: mime_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added mime_ffmpeg
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -70,9 +76,10 @@ function print_form_mimetype( $row )
 
 	}
 
-	echo $this->build_row_text( _WEBPHOTO_MIME_EXT,   'mime_ext' );
-	echo $this->build_row_text( _WEBPHOTO_MIME_NAME,  'mime_name' );
-	echo $this->build_row_text( _WEBPHOTO_MIME_TYPE,  'mime_type' );
+	echo $this->build_row_text( _WEBPHOTO_MIME_EXT,    'mime_ext' );
+	echo $this->build_row_text( _WEBPHOTO_MIME_NAME,   'mime_name' );
+	echo $this->build_row_text( _WEBPHOTO_MIME_TYPE,   'mime_type' );
+	echo $this->build_row_text( _WEBPHOTO_MIME_FFMPEG, 'mime_ffmpeg' );
 	echo $this->build_line_ele( _WEBPHOTO_MIME_PERMS,  $this->_build_ele_perms() );
 	echo $this->build_line_ele( '', $button );
 

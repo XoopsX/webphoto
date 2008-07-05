@@ -1,10 +1,16 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used upload_fetch_photo()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,8 +19,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_submit_imagemanager extends webphoto_main_submit
 {
-	var $_TIME_SUCCESS  = 3;
-	var $_TIME_FAIL     = 5;
 
 //---------------------------------------------------------
 // constructor
@@ -22,6 +26,9 @@ class webphoto_main_submit_imagemanager extends webphoto_main_submit
 function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_main_submit( $dirname , $trust_dirname );
+
+// 1 -> 3 sec
+	$this->_TIME_SUCCESS = 3;
 
 	$this->_REDIRECT_URL = $this->_MODULE_URL .'/index.php?fct=close';
 }
@@ -52,29 +59,21 @@ function main()
 //---------------------------------------------------------
 function _exec_submit()
 {
-	$photo_tmp_name = null;
-
 	$ret = $this->_check_submit();
 	if ( $ret < 0 ) {
 		return $ret;
 	}
 
-// init uploader if photo file uploaded
-	$this->upload_init();
-
-	$ret11 = $this->upload_fetch( $this->_PHOTO_FIELD_NAME );
+	$ret11 = $this->upload_fetch_photo( false );
 	if ( $ret11 < 0 ) { 
 		return $ret11;	// failed
-	} elseif ( $ret11 == 1 ) {
-		$photo_tmp_name = $this->upload_tmp_name();
-		$this->overwrite_photo_title_by_media_name_if_empty();
 	}
 
-	if ( empty($photo_tmp_name) ) {
+	if ( empty( $this->_photo_tmp_name ) ) {
 		return _C_WEBPHOTO_ERR_NO_IMAGE;
 	}
 
-	return $this->_add_to_handler( $photo_tmp_name, null );
+	return $this->_add_to_handler( $this->_photo_tmp_name, null );
 }
 
 //---------------------------------------------------------
@@ -122,10 +121,15 @@ function _print_footer()
 //---------------------------------------------------------
 function _print_form_imagemanager()
 {
-	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$row = $this->_get_photo_default();
 
-	$form_class->print_form_imagemanager( $row, null );
+	$param = array(
+		'has_resize'    => $this->_has_resize,
+		'allowed_exts'  => $this->get_normal_exts() ,
+	);
+
+	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form_class->print_form_imagemanager( $row, $param );
 }
 
 // --- class end ---

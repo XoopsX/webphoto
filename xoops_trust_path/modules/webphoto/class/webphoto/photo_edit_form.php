@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_edit_form.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added print_form_video()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -24,10 +30,13 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_ICON_ROTATE_URL;
 
 	var $_ARRAY_PHOTO_ITEM = array(
-		'photo_datetime', 'photo_place', 'photo_equipment' );
+		'photo_datetime', 'photo_place', 'photo_equipment', 'photo_cont_duration' );
 	var $_ARRAY_PHOTO_TEXT = null;
 
 	var $_FLAG_PERM = true;
+
+	var $_VIDEO_THUMB_WIDTH = 120;
+	var $_VIDEO_ICON_WIDTH  = 64;
 
 //---------------------------------------------------------
 // constructor
@@ -102,6 +111,7 @@ function print_form_common( $row, $param )
 	$preview_name  = $param['preview_name'];
 	$has_resize    = $param['has_resize'];
 	$has_rotate    = $param['has_rotate'];
+	$allowed_exts  = $param['allowed_exts'];
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
@@ -156,7 +166,7 @@ function print_form_common( $row, $param )
 		$this->_build_ele_maxsize() );
 
 	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
-		$this->_build_ele_allowed_exts() );
+		$this->_build_ele_allowed_exts( $allowed_exts ) );
 
 	echo $this->build_line_ele( 
 		$this->get_constant('CATEGORY'), $this->_build_ele_category() );
@@ -172,6 +182,11 @@ function print_form_common( $row, $param )
 	$this->_print_row_text_is_in_array( 'photo_place' );
 	$this->_print_row_text_is_in_array( 'photo_equipment' );
 
+	if ( $this->_is_in_array( 'photo_cont_duration' ) ) {
+		echo $this->build_line_ele( $this->_build_cap_duration() , 
+			$this->_build_ele_duration() );
+	}
+
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_PHOTO_TEXT; $i++ ) 
 	{
 		$name = 'photo_text'.$i;
@@ -181,7 +196,11 @@ function print_form_common( $row, $param )
 	}
 
 	echo $this->build_row_dhtml( $this->get_constant('PHOTO_DESCRIPTION'), 'photo_description' );
-	echo $this->build_row_textarea( $this->get_constant('PHOTO_CONT_EXIF'), 'photo_cont_exif' );
+
+	if ( $is_edit ) {
+		echo $this->build_row_textarea( $this->get_constant('PHOTO_CONT_EXIF'), 
+			'photo_cont_exif' );
+	}
 
 	echo $this->build_line_ele(  $this->get_constant('TAGS'), 
 		$this->_build_ele_tags( $param ) );
@@ -223,6 +242,7 @@ function print_form_common( $row, $param )
 
 	echo $this->build_table_end();
 	echo $this->build_form_end();
+	echo "<br />\n";
 }
 
 function _is_in_array( $name )
@@ -271,12 +291,9 @@ function _build_ele_maxsize()
 	return $text;
 }
 
-function _build_ele_allowed_exts()
+function _build_ele_allowed_exts( $allowed_exts )
 {
-	$mime_class =& webphoto_mime::getInstance( $this->_DIRNAME );
-
-	list ( $types, $exts ) = $mime_class->get_my_allowed_mimes();
-	$text = implode( ' ', $exts );
+	$text = implode( ' ', $allowed_exts );
 	return $text;
 }
 
@@ -322,6 +339,22 @@ function _build_ele_time_update( $size=50 )
 	$text .= $this->build_input_text( $name, $date, $size );
 
 	return $text;
+}
+
+function _build_cap_duration()
+{
+	$cap  = $this->get_constant( 'photo_cont_duration' ); 
+	$cap .= ' ( ';
+	$cap .= $this->get_constant( 'second' ); 
+	$cap .= ' ) ';
+	return $cap;
+}
+
+function _build_ele_duration( $size=50 )
+{
+	$value = $this->get_row_by_key( 'photo_cont_duration' );
+	$ele  = $this->build_input_text( 'photo_cont_duration', $value, $size );
+	return $ele;
 }
 
 function _build_ele_rotate()
@@ -474,6 +507,9 @@ function _build_ele_category()
 //---------------------------------------------------------
 function print_form_imagemanager( $row, $param )
 {
+	$has_resize    = $param['has_resize'];
+	$allowed_exts  = $param['allowed_exts'];
+
 	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
 
 	$this->set_row( $row );
@@ -494,12 +530,18 @@ function print_form_imagemanager( $row, $param )
 	echo $this->build_table_begin();
 	echo $this->build_line_title( $this->get_constant('TITLE_PHOTOUPLOAD') );
 
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'),     $this->_build_ele_maxpixel() );
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'),      $this->_build_ele_maxsize() );
-	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), $this->_build_ele_allowed_exts() );
-	echo $this->build_line_ele( $this->get_constant('CATEGORY') ,        $this->_build_ele_category() );
-	echo $this->build_line_ele( $this->get_constant('PHOTO_TITLE'), $this->_build_ele_title() );
-	echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), $this->_build_ele_photo_file() );
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'), 
+		$this->_build_ele_maxpixel( $has_resize ) );
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'), 
+		$this->_build_ele_maxsize() );
+	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
+		$this->_build_ele_allowed_exts( $allowed_exts ) );
+	echo $this->build_line_ele( $this->get_constant('CATEGORY') , 
+		$this->_build_ele_category() );
+	echo $this->build_line_ele( $this->get_constant('PHOTO_TITLE'), 
+		$this->_build_ele_title() );
+	echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), 
+		$this->_build_ele_photo_file() );
 
 	echo $this->build_line_ele( '', $this->build_input_submit( 'submit', _ADD ) );
 
@@ -534,6 +576,123 @@ function build_iframe_gmap( $photo_id=null )
 	$text  = '<iframe src="'. $src .'" width="'. $WIDTH .'" height="'. $HEIGHT .'" frameborder="0" scrolling="yes" >'."\n";
 	$text .= $this->get_constant('IFRAME_NOT_SUPPORT') ."\n";
 	$text .= '</iframe>'."\n";
+	return $text;
+}
+
+//---------------------------------------------------------
+// video
+//---------------------------------------------------------
+function print_form_video_thumb( $row, $param )
+{
+	$video_class =& webphoto_video::getInstance( $this->_DIRNAME );
+
+	$mode     = $param['mode'];
+	$photo_id = $row['photo_id'];
+
+	switch ($mode)
+	{
+		case 'edit':
+			$fct = 'edit';
+			break;
+
+		case 'submit':
+		default:
+			$fct = 'submit';
+			break;
+	}
+
+	$max = $video_class->get_thumb_plural_max();
+
+	echo $this->build_form_begin();
+	echo $this->build_html_token();
+	echo $this->build_input_hidden( 'op',       'video' );
+	echo $this->build_input_hidden( 'fct',      $fct );
+	echo $this->build_input_hidden( 'photo_id', $photo_id );
+
+	echo $this->build_table_begin();
+	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), $max );
+	echo "<tr>\n";
+
+	for ( $i=0; $i<=$max; $i++ ) 
+	{
+		$width = $this->_VIDEO_THUMB_WIDTH ;
+		if ( $i == 0 ) {
+			$width = $this->_VIDEO_ICON_WIDTH ;
+		}
+
+	 	$name = $video_class->build_thumb_name( $photo_id, $i, true );
+		$file = $this->_TMP_DIR .'/'. $name ;
+		$src  = $this->_TMP_URL .'/'. $name ;
+
+		if ( is_file($file) ) {
+			echo '<td align="center" class="odd">';
+			echo '<img src="'. $src .'" width="'. $width .'"><br />';
+			echo '<input type="radio" name="num" value="'.$i.'" />';
+			echo "</td>\n";
+		}
+	}
+
+	echo "</tr>\n";
+	echo '<tr><td align="center" class="head" colspan="'. ($max + 1) .'">';
+	echo '<input type="submit" name="submit" value="'.$this->get_constant('BUTTON_SELECT').'" />';
+	echo "</td></tr>\n";
+
+	echo $this->build_table_end();
+	echo $this->build_form_end();
+
+}
+
+//---------------------------------------------------------
+// redo
+//---------------------------------------------------------
+function print_form_redo( $row, $param )
+{
+	$cfg_makethumb = $this->_config_class->get_by_name( 'makethumb' );
+
+	$photo_id  = $row['photo_id'];
+
+	$is_image  = $param['is_image'] ;
+	$is_video  = $param['is_video'] ;
+
+	if ( !$is_video ) {
+		return ;
+	}
+
+	echo $this->build_form_begin();
+	echo $this->build_html_token();
+	echo $this->build_input_hidden( 'op',       'redo' );
+	echo $this->build_input_hidden( 'fct',      'edit' );
+	echo $this->build_input_hidden( 'photo_id', $photo_id );
+
+	echo $this->build_table_begin();
+	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_REDO') );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_REDO_FLASH'), 
+		$this->_build_ele_redo_flash() );
+
+	if ( $cfg_makethumb ) {
+		echo $this->build_line_ele( $this->get_constant('CAP_REDO_THUMB'), 
+			$this->_build_ele_redo_thumb() );
+	}
+
+	echo $this->build_line_ele( '', $this->build_input_submit( 'submit', _EDIT ) );
+
+	echo $this->build_table_end();
+	echo $this->build_form_end();
+
+}
+
+function _build_ele_redo_thumb()
+{
+	$text  = $this->build_input_checkbox_yes( 'redo_thumb', 1 );
+	$text .= ' '.$this->get_constant('CAP_REDO_THUMB') ;
+	return $text;
+}
+
+function _build_ele_redo_flash()
+{
+	$text  = $this->build_input_checkbox_yes( 'redo_flash', 1 );
+	$text .= ' '.$this->get_constant('CAP_REDO_FLASH') ;
 	return $text;
 }
 

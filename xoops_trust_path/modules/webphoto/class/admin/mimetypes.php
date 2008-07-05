@@ -1,10 +1,16 @@
 <?php
-// $Id: mimetypes.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: mimetypes.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added mime_ffmpeg
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -130,10 +136,11 @@ function _save()
 		$row = $this->_mime_handler->create( true );
 	}
 
-	$row['mime_ext']   = $this->_post_class->get_post_text('mime_ext');
-	$row['mime_name']  = $this->_post_class->get_post_text('mime_name');
-	$row['mime_type']  = $this->_post_class->get_post_text('mime_type');
-	$row['mime_perms'] = $this->_build_save_perms();
+	$row['mime_ext']    = $this->_post_class->get_post_text('mime_ext');
+	$row['mime_name']   = $this->_post_class->get_post_text('mime_name');
+	$row['mime_type']   = $this->_post_class->get_post_text('mime_type');
+	$row['mime_ffmpeg'] = $this->_post_class->get_post_text('mime_ffmpeg');
+	$row['mime_perms']  = $this->_build_save_perms();
 
 	if ( $post_mime_id > 0 ) {
 		$res = $this->_mime_handler->update($row);
@@ -243,6 +250,7 @@ function _print_edit_form()
 	$get_mime_id = $this->_post_class->get_get_int('mime_id');
 
 	xoops_cp_header();
+	echo $this->build_admin_bread_crumb( $this->get_admin_title( 'MIMETYPES' ), $this->_ADMIN_MIME_PHP );
 
 	$this->_print_form_mimetype( $get_mime_id );
 

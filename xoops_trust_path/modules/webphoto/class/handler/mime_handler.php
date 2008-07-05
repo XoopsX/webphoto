@@ -1,10 +1,16 @@
 <?php
-// $Id: mime_handler.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: mime_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added mime_ffmpeg
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_mime_handler extends webphoto_lib_handler
 {
+	var $_cached_ext_array = array();
 
 //---------------------------------------------------------
 // constructor
@@ -62,6 +69,7 @@ function create( $flag_new= false )
 		'mime_ext'      => '',
 		'mime_type'     => '',
 		'mime_perms'    => '',
+		'mime_ffmpeg'   => '',
 	);
 
 	return $arr;
@@ -82,7 +90,8 @@ function insert( $row )
 	$sql .= 'mime_ext, ';
 	$sql .= 'mime_medium, ';
 	$sql .= 'mime_type, ';
-	$sql .= 'mime_perms ';
+	$sql .= 'mime_perms, ';
+	$sql .= 'mime_ffmpeg ';
 
 	$sql .= ') VALUES ( ';
 
@@ -92,7 +101,8 @@ function insert( $row )
 	$sql .= $this->quote($mime_ext).', ';
 	$sql .= $this->quote($mime_medium).', ';
 	$sql .= $this->quote($mime_type).', ';
-	$sql .= $this->quote($mime_perms).' ';
+	$sql .= $this->quote($mime_perms).', ';
+	$sql .= $this->quote($mime_ffmpeg).' ';
 
 	$sql .= ')';
 
@@ -117,7 +127,8 @@ function update( $row )
 	$sql .= 'mime_ext='.$this->quote($mime_ext).', ';
 	$sql .= 'mime_medium='.$this->quote($mime_medium).', ';
 	$sql .= 'mime_type='.$this->quote($mime_type).', ';
-	$sql .= 'mime_perms='.$this->quote($mime_perms).' ';
+	$sql .= 'mime_perms='.$this->quote($mime_perms).', ';
+	$sql .= 'mime_ffmpeg='.$this->quote($mime_ffmpeg).' ';
 
 	$sql .= 'WHERE mime_id='.intval($mime_id);
 
@@ -150,6 +161,21 @@ function get_row_by_ext( $ext )
 	return $this->get_row_by_sql( $sql );
 }
 
+function get_cached_row_by_ext( $ext )
+{
+	if ( isset( $this->_cached_ext_array[ $ext ] ) ) {
+		return  $this->_cached_ext_array[ $ext ];
+	}
+
+	$row = $this->get_row_by_ext( $ext );
+	if ( !is_array($row) ) {
+		return false;
+	}
+
+	$this->_cached_ext_array[ $ext ] = $row ;
+	return $row ;
+}
+
 //---------------------------------------------------------
 // get rows
 //---------------------------------------------------------
@@ -163,8 +189,7 @@ function get_rows_all_orderby_ext( $limit=0, $offset=0 )
 function get_rows_by_mygroups( $groups, $limit=0, $offset=0 )
 {
 	$arr = array();
-	foreach ( $groups as $group )
-	{
+	foreach ( $groups as $group ) {
 		$arr[] = "mime_perms LIKE '%&". intval($group) . "&%'" ;
 	}
 	$where = implode( ' OR ', $arr );

@@ -1,10 +1,16 @@
 <?php
-// $Id: giconmanager.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: giconmanager.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used get_my_allowed_mimes()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,6 +22,7 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 	var $_gicon_handler;
 	var $_upload_class;
 	var $_image_class;
+	var $_mime_class;
 
 	var $_post_gicon_id;
 	var $_post_delgicon;
@@ -46,6 +53,7 @@ function webphoto_admin_giconmanager( $dirname , $trust_dirname )
 	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
 	$this->_upload_class  =& webphoto_upload::getInstance( $dirname , $trust_dirname );
 	$this->_image_class   =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
+	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
 
 	$this->_GICONS_PATH = $this->_config_class->get_gicons_path();
 
@@ -259,9 +267,10 @@ function _excute_insert()
 
 function _fetch_image( $allow_noimage=false )
 {
+	list ( $allowed_mimes, $exts ) = $this->_mime_class->get_my_allowed_mimes();
+
 // reject if too big
-	$this->_upload_class->init_media_uploader( false );
-	$this->_upload_class->set_image_extensions();
+	$this->_upload_class->init_media_uploader( false, $allowed_mimes, $this->get_normal_exts() );
 
 	$ret = $this->_upload_class->fetch_for_gicon( $this->_IMAGE_FIELD_NAME, $allow_noimage );
 	if ( $ret < 0 ) {

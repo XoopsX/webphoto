@@ -1,10 +1,16 @@
 <?php
-// $Id: index.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: index.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added to check PATH_INFO
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -54,6 +60,16 @@ function main()
 {
 	xoops_cp_header();
 
+	if ( isset($_SERVER["PATH_INFO"]) && $_SERVER["PATH_INFO"] ) {
+		restore_error_handler() ;
+		error_reporting( E_ALL ) ;
+		echo "<b>". _AM_WEBPHOTO_PATHINFO_SUCCESS. "</b><br />\n";
+		echo 'PATH_INFO : ' . $_SERVER["PATH_INFO"]. "<br />\n"; ;
+
+		xoops_cp_footer();
+		exit();
+	}
+
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'CHECKCONFIGS' );
 
@@ -78,9 +94,10 @@ function _print_check()
 	echo $this->_make_dir( $this->_TMP_DIR );
 
 	if ( $this->_cat_handler->get_count_all() == 0 ) {
-		echo '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager" style="color:red;">';
-		echo _WEBPHOTO_ERR_MUSTADDCATFIRST ;
-		echo "</a><br />\n";
+		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';
+		$msg .= _WEBPHOTO_ERR_MUSTADDCATFIRST ;
+		$msg .= '</a>';
+		echo $this->build_error_msg( $msg, '', false );
 	}
 
 // Waiting Admission

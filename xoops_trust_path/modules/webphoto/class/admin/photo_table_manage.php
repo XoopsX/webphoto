@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_table_manage.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: photo_table_manage.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -156,14 +156,14 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'photo_datetime' );
 	echo $this->build_comp_text( 'photo_place' );
 	echo $this->build_comp_text( 'photo_equipment' );
-	echo $this->build_comp_url(  'photo_file_url',  $this->_URL_SIZE );
+	echo $this->build_comp_url(  'photo_file_url',  $this->_URL_SIZE, true );
 	echo $this->build_comp_text( 'photo_file_path', $this->_URL_SIZE );
 	echo $this->build_comp_text( 'photo_file_name' );
 	echo $this->build_comp_text( 'photo_file_ext' );
 	echo $this->build_comp_text( 'photo_file_mime' );
 	echo $this->build_comp_text( 'photo_file_medium' );
 	echo $this->build_comp_text( 'photo_file_size' );
-	echo $this->build_comp_url(  'photo_cont_url',  $this->_URL_SIZE );
+	echo $this->build_comp_url(  'photo_cont_url',  $this->_URL_SIZE, true );
 	echo $this->build_comp_text( 'photo_cont_path', $this->_URL_SIZE );
 	echo $this->build_comp_text( 'photo_cont_name' );
 	echo $this->build_comp_text( 'photo_cont_ext' );
@@ -175,7 +175,7 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'photo_cont_duration' );
 	echo $this->build_comp_text( 'photo_middle_width' );
 	echo $this->build_comp_text( 'photo_middle_height' );
-	echo $this->build_comp_url(  'photo_thumb_url',  $this->_URL_SIZE );
+	echo $this->build_comp_url(  'photo_thumb_url',  $this->_URL_SIZE, true );
 	echo $this->build_comp_text( 'photo_thumb_path', $this->_URL_SIZE );
 	echo $this->build_comp_text( 'photo_thumb_name' );
 	echo $this->build_comp_text( 'photo_thumb_ext' );

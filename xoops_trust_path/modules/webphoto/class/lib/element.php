@@ -1,10 +1,16 @@
 <?php
-// $Id: element.php,v 1.1 2008/06/21 12:22:28 ohwada Exp $
+// $Id: element.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// change build_row_url()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -46,6 +52,9 @@ class webphoto_lib_element extends webphoto_lib_error
 	var $_C_NO  = 0;
 
 	var $_THIS_URL;
+
+// base on style sheet of default theme
+	var $_STYLE_CONFIRM_MSG = 'background-color: #DDFFDF; color: #136C99; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ';
 
 //---------------------------------------------------------
 // constructor
@@ -174,45 +183,7 @@ function build_form_style( $title, $desc, $value, $style_div='', $style_span='' 
 	return $text;
 }
 
-function build_form_confirm( $hiddens, $action, $msg, $submit='', $cancel='', $addToken=true )
-{
-	$submit = ($submit != '') ? trim($submit) : _SUBMIT;
-	$cancel = ($cancel != '') ? trim($cancel) : _CANCEL;
 
-	$text  = '<div class="confirmMsg">'."\n";
-	$text .= '<h4>'.$msg.'</h4>'."\n";
-
-	$text .= $this->build_form_tag( 'confirmMsg', $action );
-
-	foreach ( $hiddens as $name => $value ) 
-	{
-		if (is_array($value)) {
-			foreach ($value as $caption => $newvalue) 
-			{
-				$text .= $this->build_input_radio( $name, $this->sanitize($newvalue) );
-				$text .= $caption;
-			}
-			$text .= "<br />\n";
-
-		} else {
-			$text .= $this->build_input_hidden( $name, $this->sanitize($value) );
-		}
-	}
-
-	if ( $addToken ) {
-		$text .= $this->build_html_token()."\n";
-	}
-
-// button
-	$text .= $this->build_input_submit('confirm_submit', $submit);
-	$text .= ' ';
-	$text .= $this->build_input_button_cancel( 'confirm_cancel', $cancel );
-
-	$text .= $this->build_form_end();
-	$text .= "</div>\n";
-
-	return $text;
-}
 
 //---------------------------------------------------------
 // form
@@ -440,13 +411,23 @@ function build_row_text( $title, $name, $size=50 )
 	return $text;
 }
 
-function build_row_url( $title, $name, $size=50 )
+function build_row_url( $title, $name, $size=50, $flag_link=false )
 {
 	$value = $this->get_row_by_key( $name );
-	if ( empty($value) ) {
-		$value = 'http://';
+
+	if ( $value ) {
+		$value_show = $value ;
+	} else {
+		$value_show = 'http://';
 	}
-	$ele   = $this->build_input_text( $name, $value, $size );
+
+	$ele = $this->build_input_text( $name, $value_show, $size );
+
+	if ( $flag_link && $value ) {
+		$ele  .= "<br />\n";
+		$ele  .= $this->build_a_link( $value, $value, '_blank' );
+	}
+
 	$text  = $this->build_line_ele( $title, $ele );
 	return $text;
 }
@@ -652,6 +633,34 @@ function build_input_button_cancel( $name, $value=null )
 	return $this->build_input_button( $name, $value, $extra );
 }
 
+function build_a_link( $name, $href, $target=null, $flag_sanitize=false )
+{
+	if ( $flag_sanitize ) {
+		$href = $this->sanitize($href);
+		$name = $this->sanitize($name);
+	}
+	$text  = $this->build_a_tag( $href, $target );
+	$text .= $name;
+	$text .= $this->build_a_end();
+	return $text;
+}
+
+function build_a_tag( $href, $target=null )
+{
+	$target_s = 'target="'. $target .'"';
+	if ( $target ) {
+		$target_s = 'target="'. $target .'"';
+	}
+	$text = '<a href="'. $href .'" '. $target_s .' ">';
+	return $text;
+}
+
+function build_a_end()
+{
+	$text = "</a>\n";
+	return $text;
+}
+
 //---------------------------------------------------------
 // keyword
 //---------------------------------------------------------
@@ -759,6 +768,50 @@ function set_title_header( $val )
 function set_keyword_min( $val )
 {
 	$this->_KEYWORD_MIN = intval($val);
+}
+
+//---------------------------------------------------------
+// base on core's xoops_confirm
+// XLC do not support 'confirmMsg' style class in admin cp
+//---------------------------------------------------------
+function build_form_confirm( $hiddens, $action, $msg, $submit='', $cancel='', $addToken=true )
+{
+	$submit = ($submit != '') ? trim($submit) : _SUBMIT;
+	$cancel = ($cancel != '') ? trim($cancel) : _CANCEL;
+
+	$text  = '<div style="'. $this->_STYLE_CONFIRM_MSG .'">'."\n";
+	$text .= '<h4>'.$msg.'</h4>'."\n";
+
+	$text .= $this->build_form_tag( 'confirmMsg', $action );
+
+	foreach ( $hiddens as $name => $value ) 
+	{
+		if (is_array($value)) {
+			foreach ($value as $caption => $newvalue) 
+			{
+				$text .= $this->build_input_radio( $name, $this->sanitize($newvalue) );
+				$text .= $caption;
+			}
+			$text .= "<br />\n";
+
+		} else {
+			$text .= $this->build_input_hidden( $name, $this->sanitize($value) );
+		}
+	}
+
+	if ( $addToken ) {
+		$text .= $this->build_html_token()."\n";
+	}
+
+// button
+	$text .= $this->build_input_submit('confirm_submit', $submit);
+	$text .= ' ';
+	$text .= $this->build_input_button_cancel( 'confirm_cancel', $cancel );
+
+	$text .= $this->build_form_end();
+	$text .= "</div>\n";
+
+	return $text;
 }
 
 // --- class end ---

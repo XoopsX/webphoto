@@ -1,10 +1,17 @@
 <?php
-// $Id: submit.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: submit.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _exec_video()
+// used  build_uri_category()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -19,18 +26,11 @@ class webphoto_main_submit extends webphoto_photo_edit
 	var $_has_superinsert = false;
 
 	var $_created_row    = null;
-	var $_photo_tmp_name = null;
-	var $_thumb_tmp_name = null;
-	var $_msg_code = 0;
 
 	var $_REDIRECT_URL;
 
 	var $_ERR_NO_CATEGORY = -1;
 	var $_ERR_NO_CATID    = -2;
-
-	var $_TIME_SUCCESS  = 1;
-	var $_TIME_PENDING  = 3;
-	var $_TIME_FAIL     = 5;
 
 //---------------------------------------------------------
 // constructor
@@ -67,12 +67,38 @@ function check_submit()
 {
 	$this->_check();
 
-	if ( $this->_is_submit() ) {
-		$this->_submit();
-		exit();
+	$op = $this->_post_class->get_post('op');
+	switch ( $op ) 
+	{
+		case 'submit':
+			$this->_check_token_exit();
+			$this->_submit();
+			if ( $this->_is_video_thumb_form ) {
+				break;
+			}
+			exit();
+
+		case 'video':
+			$this->_check_token_exit();
+			$this->_video();
+			exit();
 	}
 }
 
+function print_form()
+{
+	echo $this->build_bread_crumb( $this->get_constant('TITLE_ADDPHOTO'), $this->_REDIRECT_URL );
+
+	if ( $this->_is_video_thumb_form ) {
+		$this->_print_form_video_thumb();
+	} else {
+		$this->_print_form_submit();
+	}
+}
+
+//---------------------------------------------------------
+// check 
+//---------------------------------------------------------
 function _check()
 {
 	$this->get_post_param();
@@ -97,50 +123,57 @@ function _check()
 	}
 }
 
-//---------------------------------------------------------
-// check permission
-//---------------------------------------------------------
 function _exec_check()
 {
-	if ( ! $this->_has_insertable )   { return _C_WEBPHOTO_ERR_NO_PERM ; }
-	if ( ! $this->exists_category() ) { return $this->_ERR_NO_CATEGORY ; }
+	if ( ! $this->_has_insertable )   {
+		return _C_WEBPHOTO_ERR_NO_PERM ; 
+	}
+
+	if ( ! $this->exists_category() ) { 
+		return $this->_ERR_NO_CATEGORY ; 
+	}
 
 	$ret1 = $this->check_dir( $this->_PHOTOS_DIR );
-	if ( $ret1 < 0 ) { return $ret1; }
+	if ( $ret1 < 0 ) {
+		return $ret1; 
+	}
 
 	$ret2 = $this->check_dir( $this->_THUMBS_DIR );
-	if ( $ret2 < 0 ) { return $ret2; }
+	if ( $ret2 < 0 ) {
+		return $ret2; 
+	}
 
 	return 0;
+}
+
+function _check_token_exit()
+{
+	if ( ! $this->check_token() )  {
+		$msg = 'Token Error';
+		if ( $this->_is_module_admin ) {
+			$msg .= '<br />'.$this->get_token_errors();
+		}
+		redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL , $msg );
+		exit();
+	}
 }
 
 //---------------------------------------------------------
 // submit
 //---------------------------------------------------------
-function _is_submit()
-{
-	if ( $this->_post_class->get_post('submit') ) {
-		return true;
-	}
-	return false;
-}
-
 function _submit()
 {
 	$ret = $this->_exec_submit();
+
+	if ( $this->_is_video_thumb_form ) {
+		return;
+	}
+
 	switch ( $ret )
 	{
 		case $this->_ERR_NO_CATID:
 			redirect_header( $this->_REDIRECT_URL , $this->_TIME_FAIL , 'Category is not specified.' ) ;
 			exit() ;
-
-		case _C_WEBPHOTO_ERR_TOKEN:
-			$msg = 'Token Error';
-			if ( $this->_is_module_admin ) {
-				$msg .= '<br />'.$this->get_token_errors();
-			}
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL , $msg );
-			exit();
 
 		case _C_WEBPHOTO_ERR_DB:
 			$msg = 'DB Error';
@@ -193,12 +226,14 @@ function _exec_submit()
 
 	$cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
 
+	$this->_msg_class->clear_msgs();
+
 	$ret = $this->_check_submit();
 	if ( $ret < 0 ) {
 		return $ret;
 	}
 
-	$ret11 = $this->upload_fetch_photo();
+	$ret11 = $this->upload_fetch_photo( true );
 	if ( $ret11 < 0 ) { 
 		return $ret11;	// failed
 	}
@@ -233,17 +268,14 @@ function _exec_submit()
 
 function _check_submit()
 {
-	if ( ! $this->check_token() ) {
-		return _C_WEBPHOTO_ERR_TOKEN;
-	}
 
 // Check if cid is valid
-	if( ! $this->exists_post_cat_id() ) {
+	if ( ! $this->exists_post_cat_id() ) {
 		return $this->_ERR_NO_CATID;
 	}
 
 // Check if upload file name specified
-	if ( !$this->check_xoops_upload_file_submit() ) {
+	if ( ! $this->check_xoops_upload_file_submit() ) {
 		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
 	}
 
@@ -252,34 +284,19 @@ function _check_submit()
 
 function _add_to_handler( $photo_tmp_name, $thumb_tmp_name )
 {
-	$image_info     = null;
-
-	$cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
-
 	$ret13 = $this->_photo_handler_add();
-	if ( !$ret13 ) { return _C_WEBPHOTO_ERR_DB; }
+	if ( !$ret13 ) {
+		return _C_WEBPHOTO_ERR_DB;
+	}
 
 	$newid = $this->_created_row['photo_id'];
 
-// create image if upload
-	if ( $photo_tmp_name || $thumb_tmp_name ) {
-		$ret14 = $this->_image_class->create_photo_thumb( $newid, $photo_tmp_name, $thumb_tmp_name );
-		if ( $ret14 < 0 ) { return $ret14; }
-		$image_info      = $this->_image_class->get_photo_thumb_info();
-		$this->_msg_code = $this->_image_class->get_msg_code();
+	$ret14 = $this->create_photo_thumb( $newid, $photo_tmp_name, $thumb_tmp_name );
+	if ( $ret14 < 0 ) { return $ret14; }
 
-// dummy image if no upload
-	} elseif ( empty($photo_tmp_name) && empty($thumb_tmp_name) && $cfg_allownoimage ) {
-		$image_info = $this->_image_class->create_no_image_thumb( $newid );
-	}
-
-// add mime if empty
-	if ( $photo_tmp_name ) {
-		$image_info = $this->add_mime_if_empty( $image_info );
-	}
-
-	if ( is_array($image_info) && count($image_info) ) {
-		$row_update = array_merge( $this->_created_row, $image_info );
+	$info = $this->get_photo_thumb_info();
+	if ( is_array($info) && count($info) ) {
+		$row_update = array_merge( $this->_created_row, $info );
 		$ret15 = $this->_photo_handler->update( $row_update );
 		if ( !$ret15 ) {
 			$this->set_error( $this->_photo_handler->get_errors() );
@@ -288,7 +305,9 @@ function _add_to_handler( $photo_tmp_name, $thumb_tmp_name )
 	}
 
 	$ret16 = $this->tag_handler_add_tags( $newid, $this->get_tag_name_array() );
-	if ( !$ret16 ) { return _C_WEBPHOTO_ERR_DB; }
+	if ( !$ret16 ) { 
+		return _C_WEBPHOTO_ERR_DB; 
+	}
 
 	$this->_xoops_user_increment_post();
 
@@ -333,27 +352,86 @@ function _xoops_user_increment_post()
 function submit_success()
 {
 	if ( $this->_get_new_status() ) {
-		$url  = $this->_INDEX_PHP .'/category/'. $this->_post_photo_catid .'/orderby=dated/';
+		$param = array(
+			'orderby' => 'dated'
+		);
+		$url  = $this->build_uri_category( $this->_post_photo_catid, $param );
 		$time = $this->_TIME_SUCCESS ;
 		$msg  = '';
-		if ( $this->_msg_code == _C_WEBPHOTO_IMAGE_RESIZE ) {
-			$msg .= _WEBPHOTO_SUBMIT_RESIZED."<br />\n";
+
+		if ( $this->_msg_class->has_msg() ) {
+			$msg .= $this->_msg_class->get_format_msg() ;
+			$msg .= "<br />\n";
 			$time = $this->_TIME_PENDING ;
 		}
+
 		$msg .= $this->get_constant('SUBMIT_RECEIVED') ;
 
 	} else {
-		$url  = $this->_INDEX_PHP .'/latest/';
+		$url  = $this->build_uri_operate( 'latest' );
 		$time = $this->_TIME_PENDING ;
 		$msg  = $this->get_constant('SUBMIT_ALLPENDING') ;
 	}
 
 	redirect_header( $url, $time , $msg ) ;
+	exit();
 }
 
 function check_xoops_upload_file_submit()
 {
 	return $this->check_xoops_upload_file( true );
+}
+
+
+//---------------------------------------------------------
+// video
+//---------------------------------------------------------
+function _video()
+{
+	$ret = $this->_exec_video();
+	switch ( $ret )
+	{
+		case _C_WEBPHOTO_ERR_DB:
+			$msg = 'DB Error';
+			if ( $this->_is_module_admin ) {
+				$msg .= '<br />'.$this->get_format_error();
+			}
+			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg ) ;
+			exit();
+
+	}
+
+	$this->submit_success();
+}
+
+function _exec_video()
+{
+	$this->_msg_class->clear_msgs();
+
+	$photo_id = $this->_post_class->get_post('photo_id');
+	$num      = $this->_post_class->get_post('num');
+
+	$row = $this->_photo_handler->get_row_by_id( $photo_id );
+	if ( !is_array($row) ) {
+		return _C_WEBPHOTO_ERR_NO_RECORD;
+	}
+
+// set for redirect
+	$this->_post_photo_catid = $row['photo_cat_id'];
+
+	$thumb_info = $this->create_video_thumb( $row, $num );
+
+// update
+	if ( is_array($thumb_info) && count($thumb_info) ) {
+		$row_update = array_merge( $row, $thumb_info );
+		$ret = $this->_photo_handler->update( $row_update );
+		if ( !$ret ) {
+			$this->set_error( $this->_photo_handler->get_errors() );
+			return _C_WEBPHOTO_ERR_DB;
+		}
+	}
+
+	return 0;
 }
 
 //---------------------------------------------------------
@@ -489,15 +567,15 @@ function _get_photo_default()
 //---------------------------------------------------------
 // print form
 //---------------------------------------------------------
-function print_form()
+function _print_form_submit()
 {
-	echo $this->build_bread_crumb( $this->get_constant('TITLE_ADDPHOTO'), $this->_REDIRECT_URL );
-
 	if ( $this->_is_preview() ) {
 		$row = $this->_preview();
 	} else {
 		$row = $this->_get_photo_default();
 	}
+
+	list ( $types, $allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
 
 	$param = array(
 		'mode'            => 'submit',
@@ -506,10 +584,16 @@ function print_form()
 		'checkbox_array'  => $this->get_checkbox_array(),
 		'has_resize'      => $this->_has_resize,
 		'has_rotate'      => $this->_has_rotate,
+		'allowed_exts'    => $allowed_exts ,
 	);
 
 	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_common( $row, $param );
+}
+
+function _print_form_video_thumb()
+{
+	$this->print_form_video_thumb_common( 'submit', $this->_created_row );
 }
 
 // --- class end ---

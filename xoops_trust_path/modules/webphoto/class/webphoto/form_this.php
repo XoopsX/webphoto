@@ -1,10 +1,16 @@
 <?php
-// $Id: form_this.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: form_this.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used _TMP_PATH
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -27,7 +33,14 @@ class webphoto_form_this extends webphoto_lib_form
 	var $_THUMB_FIELD_NAME = 'thumb_file';
 
 	var $_PHOTOS_PATH;
+	var $_PHOTOS_DIR ;
+	var $_PHOTOS_URL ;
 	var $_THUMBS_PATH;
+	var $_THUMBS_DIR;
+	var $_THUMBS_URL;
+	var $_TMP_PATH;
+	var $_TMP_DIR;
+	var $_TMP_URL;
 
 	var $_ICONS_URL;
 	var $_ICON_ROTATE_URL;
@@ -48,6 +61,14 @@ function webphoto_form_this( $dirname , $trust_dirname )
 
 	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
 	$this->_THUMBS_PATH = $this->_config_class->get_thumbs_path();
+	$this->_TMP_PATH    = $this->_config_class->get_tmp_path();
+
+	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_DIR  = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
+	$this->_TMP_DIR     = XOOPS_ROOT_PATH . $this->_TMP_PATH ;
+	$this->_PHOTOS_URL  = XOOPS_URL       . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_URL  = XOOPS_URL       . $this->_THUMBS_PATH ;
+	$this->_TMP_URL     = XOOPS_URL       . $this->_TMP_PATH ;
 
 	$this->_ICONS_URL       = $this->_MODULE_URL .'/images/icons';
 	$this->_ICON_ROTATE_URL = $this->_MODULE_URL .'/images/uploader';

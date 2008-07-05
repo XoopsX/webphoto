@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_handler.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: photo_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// removed build_row_by_photo_info() build_row_by_thumb_info()
+//--------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -837,62 +843,6 @@ function build_datetime( $str )
 {
 	$utility_class =& webphoto_lib_utility::getInstance();
 	return $utility_class->str_to_mysql_datetime( $str );
-}
-
-//---------------------------------------------------------
-// build row
-//---------------------------------------------------------
-function build_row_by_photo_info( $row, $info )
-{
-	if ( !is_array($row)  || !count($row) || 
-	     !is_array($info) || !count($info) ) {
-		return $row;
-	}
-
-	extract( $info ) ;
-
-	$row['photo_file_url']      = $url;
-	$row['photo_file_path']     = $path;
-	$row['photo_file_name']     = $name;
-	$row['photo_file_ext']      = $ext;
-	$row['photo_file_mime']     = $mime;
-	$row['photo_file_medium']   = $medium;
-	$row['photo_file_size']     = $size;
-	$row['photo_cont_url']      = $url;
-	$row['photo_cont_path']     = $path;
-	$row['photo_cont_name']     = $name;
-	$row['photo_cont_ext']      = $ext;
-	$row['photo_cont_mime']     = $mime;
-	$row['photo_cont_medium']   = $medium;
-	$row['photo_cont_size']     = $size;
-	$row['photo_cont_width']    = $width;
-	$row['photo_cont_height']   = $height;
-	$row['photo_middle_width']  = $middle_width;
-	$row['photo_middle_height'] = $middle_height;
-
-	return $row;
-}
-
-function build_row_by_thumb_info( $row, $info )
-{
-	if ( !is_array($row)  || !count($row) || 
-	     !is_array($info) || !count($info) ) {
-		return $row;
-	}
-
-	extract( $info ) ;
-
-	$row['photo_thumb_url']     = $url;
-	$row['photo_thumb_path']    = $path;
-	$row['photo_thumb_name']    = $name;
-	$row['photo_thumb_ext']     = $ext;
-	$row['photo_thumb_mime']    = $mime;
-	$row['photo_thumb_medium']  = $medium;
-	$row['photo_thumb_size']    = $size;
-	$row['photo_thumb_width']   = $thumb_width;
-	$row['photo_thumb_height']  = $thumb_height;
-
-	return $row;
 }
 
 //---------------------------------------------------------

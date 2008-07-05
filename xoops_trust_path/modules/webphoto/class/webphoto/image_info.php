@@ -1,13 +1,18 @@
 <?php
-// $Id: image_info.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: image_info.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added build_photo_full_info()
+//---------------------------------------------------------
 
+if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_image_info
@@ -90,6 +95,57 @@ function build_format_id( $id )
 //---------------------------------------------------------
 // photo info
 //---------------------------------------------------------
+function build_photo_full_info( $path, $name, $ext )
+{
+	$photo_info = $this->build_photo_info( $path, $ext );
+	$mime    = $photo_info['mime'];
+	$medium  = $photo_info['medium'];
+	$size    = $photo_info['size'];
+	$width   = $photo_info['width'];
+	$height  = $photo_info['height'];
+	$url     = XOOPS_URL . $path ;
+
+	$arr = array(
+		'photo_file_url'      => $url ,
+		'photo_file_path'     => $path ,
+		'photo_file_name'     => $name ,
+		'photo_file_ext'      => $ext ,
+		'photo_file_mime'     => $mime ,
+		'photo_file_medium'   => $medium ,
+		'photo_file_size'     => $size ,
+		'photo_cont_url'      => $url ,
+		'photo_cont_path'     => $path ,
+		'photo_cont_name'     => $name ,
+		'photo_cont_ext'      => $ext ,
+		'photo_cont_mime'     => $mime ,
+		'photo_cont_medium'   => $medium ,
+		'photo_cont_size'     => $size ,
+		'photo_cont_width'    => $width ,
+		'photo_cont_height'   => $height ,
+		'photo_middle_width'  => $photo_info['middle_width'] ,
+		'photo_middle_height' => $photo_info['middle_height'] ,
+	);
+	return $arr;
+}
+
+function build_thumb_info_full( $path, $name, $ext )
+{
+	$thumb_info = $this->build_thumb_info( $path, $ext );
+
+	$arr = array(
+		'photo_thumb_url'     => XOOPS_URL . $path ,
+		'photo_thumb_path'    => $path ,
+		'photo_thumb_name'    => $name ,
+		'photo_thumb_ext'     => $ext ,
+		'photo_thumb_mime'    => $thumb_info['mime'] ,
+		'photo_thumb_medium'  => $thumb_info['medium'] ,
+		'photo_thumb_size'    => $thumb_info['size'] ,
+		'photo_thumb_width'   => $thumb_info['thumb_width'] ,
+		'photo_thumb_height'  => $thumb_info['thumb_height'] ,
+	);
+	return $arr;
+}
+
 function build_photo_info( $path, $ext=null )
 {
 	$middle_width  = 0;
@@ -169,6 +225,29 @@ function build_image_info( $path, $ext=null )
 	return $arr;
 }
 
+function merge_photo_thumb_info( $photo_info, $thumb_info, $other_info=null )
+{
+	$info_tmp = null;
+	$info_ret = null;
+	if ( is_array($photo_info) && count($photo_info) && 
+	     is_array($thumb_info) && count($thumb_info) ) {
+		$info_tmp = array_merge( $photo_info, $thumb_info );
+	} elseif ( is_array($photo_info) && count($photo_info) ) {
+		$info_tmp = $photo_info ;
+	} elseif ( is_array($thumb_info) && count($thumb_info) ) {
+		$info_tmp = $thumb_info ;
+	}
+	if ( is_array($info_tmp)   && count($info_tmp) && 
+	     is_array($other_info) && count($other_info) ) {
+		$info_ret = array_merge( $info_tmp, $other_info );
+	} elseif ( is_array($info_tmp) && count($info_tmp) ) {
+		$info_ret = $info_tmp ;
+	} elseif ( is_array($other_info) && count($other_info) ) {
+		$info_ret = $other_info ;
+	}
+	return $info_ret;
+}
+
 //---------------------------------------------------------
 // utlity
 //---------------------------------------------------------
@@ -195,10 +274,10 @@ function adjust_middle_size( $width, $height )
 //---------------------------------------------------------
 function clear_tmp_files_in_tmp_dir()
 {
-	return $this->clear_tmp_files( $this->_TMP_DIR );
+	return $this->clear_tmp_files( $this->_TMP_DIR, _C_WEBPHOTO_UPLOADER_PREFIX );
 }
 
-function clear_tmp_files( $dir_path , $prefix='tmp_' )
+function clear_tmp_files( $dir_path , $prefix )
 {
 	// return if directory can't be opened
 	if( ! ( $dir = @opendir( $dir_path ) ) ) {

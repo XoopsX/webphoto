@@ -1,10 +1,16 @@
 <?php
-// $Id: redo_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: redo_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _build_ele_exif()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -62,10 +68,23 @@ function print_form_redothumbs( $param )
 	echo $this->build_row_radio_yesno( _AM_WEBPHOTO_RADIO_FORCEREDO, 'forceredo' );
 	echo $this->build_row_radio_yesno( _AM_WEBPHOTO_RADIO_REMOVEREC, 'removerec' );
 	echo $this->build_row_radio_yesno( $cap_resize,         'resize' );
+	echo $this->build_line_ele( _AM_WEBPHOTO_CAP_REDO_EXIF, $this->_build_ele_exif() );
+
 	echo $this->build_line_ele( '', $submit_button );
 
 	echo $this->build_table_end();
 	echo $this->build_form_end(); 
+}
+
+function _build_ele_exif()
+{
+	$value = $this->get_row_by_key( 'exif' );
+	$options = array(
+		_NO => 0 ,
+		_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY    => 1 ,
+		_AM_WEBPHOTO_RADIO_REDO_EXIF_ALWAYS => 2,
+	);
+	return $this->build_form_radio( 'exif', $value, $options );
 }
 
 // --- class end ---

@@ -1,10 +1,18 @@
 <?php
-// $Id: base_this.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: base_this.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added exif_to_mysql_datetime()
+// used config use_pathinfo
+// used class  webphoto_build_uri
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,13 +26,16 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_cat_handler;
 	var $_post_class;
 	var $_perm_class;
+	var $_uri_class;
 
 	var $_is_japanese = false;
 
 	var $_PHOTOS_PATH;
 	var $_PHOTOS_DIR ;
+	var $_PHOTOS_URL ;
 	var $_THUMBS_PATH;
 	var $_THUMBS_DIR;
+	var $_THUMBS_URL;
 	var $_TMP_PATH;
 	var $_TMP_DIR;
 	var $_TMP_URL;
@@ -44,6 +55,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_perm_class   =& webphoto_permission::getInstance( $dirname );
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
+	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
 
 	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
 	$this->_THUMBS_PATH = $this->_config_class->get_thumbs_path();
@@ -52,6 +64,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR  = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
 	$this->_TMP_DIR     = XOOPS_ROOT_PATH . $this->_TMP_PATH ;
+	$this->_PHOTOS_URL  = XOOPS_URL       . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_URL  = XOOPS_URL       . $this->_THUMBS_PATH ;
 	$this->_TMP_URL     = XOOPS_URL       . $this->_TMP_PATH ;
 
 	$this->_ICONS_URL = $this->_MODULE_URL .'/images/icons';
@@ -72,6 +86,7 @@ function get_photo_globals()
 		'mydirname'           => $this->_DIRNAME ,
 		'photos_url'          => XOOPS_URL . $this->_PHOTOS_PATH ,
 		'thumbs_url'          => XOOPS_URL . $this->_THUMBS_PATH ,
+		'use_pathinfo'        => $this->get_config_by_name('use_pathinfo') ,
 		'cfg_thumb_width'     => $this->get_config_by_name('thumb_width') ,
 		'cfg_thumb_height'    => $this->get_config_by_name('thumb_height') ,
 		'cfg_middle_width'    => $this->get_config_by_name('middle_width') ,
@@ -137,6 +152,24 @@ function is_normal_ext( $ext )
 }
 
 //---------------------------------------------------------
+// exif
+//---------------------------------------------------------
+function exif_to_mysql_datetime( $exif )
+{
+	$datetime     = $exif['datetime'];
+	$datetime_gnu = $exif['datetime_gnu'];
+
+	if ( $datetime_gnu ) {
+		return $datetime_gnu;
+	}
+
+	$time = $this->_utility_class->str_to_time( $datetime );
+	if ( $time <= 0 ) { return false; }
+
+	return $this->_utility_class->time_to_mysql_datetime( $time );
+}
+
+//---------------------------------------------------------
 // file
 //---------------------------------------------------------
 function unlink_path( $path )
@@ -159,6 +192,39 @@ function get_footer_param()
 		'happy_linux_url' => $this->_utility_class->get_happy_linux_url( $this->_is_japanese ) ,
 	);
 	return $arr;
+}
+
+//---------------------------------------------------------
+// uri class
+//---------------------------------------------------------
+function build_uri_operate( $op )
+{
+	return $this->_uri_class->build_operate( $op );
+}
+
+function build_uri_photo( $id )
+{
+	return $this->_uri_class->build_photo( $id );
+}
+
+function build_uri_category( $id, $param=null )
+{
+	return $this->_uri_class->build_category( $id, $param );
+}
+
+function build_uri_user( $id )
+{
+	return $this->_uri_class->build_user( $id );
+}
+
+function rawurlencode_uri_encode_str( $str )
+{
+	return $this->_uri_class->rawurlencode_encode_str( $str );
+}
+
+function decode_uri_str( $str )
+{
+	return $this->_uri_class->decode_str( $str );
 }
 
 //---------------------------------------------------------

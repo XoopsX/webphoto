@@ -1,10 +1,16 @@
 <?php
-// $Id: handler.php,v 1.2 2008/06/21 18:22:30 ohwada Exp $
+// $Id: handler.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added exists_column()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -54,7 +60,7 @@ function init_handler( $dirname )
 }
 
 //---------------------------------------------------------
-// database handler
+// get
 //---------------------------------------------------------
 function get_count_by_sql( $sql )
 {
@@ -101,6 +107,40 @@ function get_rows_by_sql( $sql, $limit=0, $offset=0, $key=null )
 	return $arr; 
 }
 
+//---------------------------------------------------------
+// update
+//---------------------------------------------------------
+function exists_column( $table, $column )
+{
+	$row =& $this->get_column_row( $table, $column );
+	if ( is_array($row) ) {
+		return true;
+	}
+	return false;
+}
+
+function get_column_row( $table, $column )
+{
+	$sql = "SHOW COLUMNS FROM ". $table. " LIKE ". $this->quote($column);
+
+	$res =& $this->query($sql); 
+	if ( !$res ) {
+		return false;
+	}
+
+	while ( $row = $this->_db->fetchArray( $res ) )
+	{
+		if ( $row['Field'] == $column ) {
+			return $row;
+		}
+	}
+
+	return false;
+}
+
+//---------------------------------------------------------
+// handler
+//---------------------------------------------------------
 function query( $sql, $limit=0, $offset=0 )
 {
 	if ( $this->_DEBUG_SQL ) {
@@ -129,29 +169,6 @@ function quote( $str )
 	return $str;
 }
 
-function sanitize( $str )
-{
-	return htmlspecialchars( $str, ENT_QUOTES );
-}
-
-function highlight( $str )
-{
-	$val = '<span style="color:#ff0000;">'. $str .'</span>';
-	return $val;
-}
-
-function get_db_error( $flag_sanitize=true, $flag_highlight=true )
-{
-	$str = $this->_db_error;
-	if ( $flag_sanitize ) {
-		$str = $this->sanitize( $str );
-	}
-	if ( $flag_highlight ) {
-		$str = $this->highlight( $str );
-	}
-	return $str;
-}
-
 //---------------------------------------------------------
 // utility
 //---------------------------------------------------------
@@ -170,6 +187,32 @@ function set_normal_exts( $val )
 	} else {
 		$this->_NORMAL_EXTS = explode( '|', $val );
 	}
+}
+
+//---------------------------------------------------------
+// error
+//---------------------------------------------------------
+function get_db_error( $flag_sanitize=true, $flag_highlight=true )
+{
+	$str = $this->_db_error;
+	if ( $flag_sanitize ) {
+		$str = $this->sanitize( $str );
+	}
+	if ( $flag_highlight ) {
+		$str = $this->highlight( $str );
+	}
+	return $str;
+}
+
+function sanitize( $str )
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
+}
+
+function highlight( $str )
+{
+	$val = '<span style="color:#ff0000;">'. $str .'</span>';
+	return $val;
 }
 
 //---------------------------------------------------------

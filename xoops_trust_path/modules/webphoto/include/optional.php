@@ -1,10 +1,16 @@
 <?php
-// $Id: optional.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: optional.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// change webphoto_fct()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -18,28 +24,13 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 function webphoto_fct()
 {
-	$fct = '';
-	if ( isset($_POST['fct']) ) {
-		$fct = $_POST['fct'];
+	$page_array = array(
+		'photo_id' => 'photo' ,
+		'cat_id'   => 'category',
+	);
 
-	} elseif ( isset($_GET['fct']) ) {
-		$fct = $_GET['fct'];
-
-	} elseif ( isset($_SERVER['PATH_INFO']) ) {
-		$paths = explode( '/', $_SERVER['PATH_INFO'] );
-		if ( is_array($paths) && count($paths) ) {
-			foreach ( $paths as $path )
-			{
-				if ( $path ) {
-					$fct = $path;
-					break;
-				}
-			}
-		}
-	}
-
-	$fct = preg_replace( '/[^a-zA-Z0-9_-]/' , '' , $fct ) ;
-	return $fct;
+	$d3_class =& webphoto_d3_optional::getInstance();
+	return $d3_class->get_fct( $page_array );
 }
 
 function webphoto_include_once( $file, $dirname=null, $debug=true )

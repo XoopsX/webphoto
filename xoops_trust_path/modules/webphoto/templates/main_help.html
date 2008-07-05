@@ -1,4 +1,4 @@
-<{* $Id: main_help.html,v 1.1 2008/06/21 12:22:18 ohwada Exp $ *}>
+<{* $Id: main_help.html,v 1.2 2008/07/05 12:54:16 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -23,7 +23,13 @@
 <{$lang_help_mediarssslideshow_title}></h4>
 
 <{$lang_help_mediarssslideshow_dsc}>
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/random/" target="_blank">
-<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/random/
-</a><br />
 
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/random/" target="_blank">
+  <{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/random/
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rss&amp;mode=random" target="_blank">
+  <{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rss&amp;mode=random
+<{/if}>
+
+</a><br />

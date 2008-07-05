@@ -1,38 +1,79 @@
-<{* $Id: inc_menu.html,v 1.1 2008/06/21 12:22:17 ohwada Exp $ *}>
+<{* $Id: inc_menu.html,v 1.2 2008/07/05 12:54:16 ohwada Exp $ *}>
 
 <div class="webphoto_page_menu">
 
 <{* --- 1st line --- *}>
 <div class="webphoto_page_menu_line">
  | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/latest/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/latest/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=latest">
+<{/if}>
+
 <{$lang_title_latest}></a> | 
 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/popular/">
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/popular/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=popular">
+<{/if}>
+
 <{$lang_title_popular}></a> | 
 
 <{if $has_rateview }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/highrate/">
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/highrate/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=highrate">
+  <{/if}>
+
   <{$lang_title_highrate}></a> | 
 <{/if}>
 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=random">
+<{/if}>
+
 <{$lang_title_random}></a> | 
 
 <{if $xoops_isuser }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=myphoto">
+  <{/if}>
+
   <{$lang_title_myphoto}></a> | 
 <{/if}>
 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=help">
+<{/if}>
+
 <{$lang_title_help}></a> | 
 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/" target="_blank" >
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/" target="_blank">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rss" target="_blank">
+<{/if}>
+
 <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rss.png" border="0" alt="<{$lang_title_rss}>" title="<{$lang_title_rss}>" />
 </a> | 
 
 <{if $has_insertable }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/submit/">
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/submit/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit">
+  <{/if}>
+
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/pictadd.png" border="0" alt="<{$lang_title_addphoto}>" title="<{$lang_title_addphoto}>" />
   <{$lang_title_addphoto}>
   </a> |
@@ -43,15 +84,45 @@
 <{* --- 2nd line --- *}>
 <div class="webphoto_page_menu_line">
  | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category">
+<{/if}>
+
 <{$lang_title_category_list}></a> | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=tag">
+<{/if}>
+
 <{$lang_title_tag_list}></a> | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user">
+<{/if}>
+
 <{$lang_title_user_list}></a> | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date">
+<{/if}>
+
 <{$lang_title_date_list}></a> | 
-<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/">
+
+<{if $use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place">
+<{/if}>
+
 <{$lang_title_place_list}></a> | 
 </div>
 

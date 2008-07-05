@@ -1,10 +1,16 @@
 <?php
-// $Id: redothumbs.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: redothumbs.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added exif.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +24,7 @@ include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php' ;
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
+webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );

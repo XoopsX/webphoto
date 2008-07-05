@@ -1,10 +1,16 @@
 <?php
-// $Id: search.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: search.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used set_mode()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,6 +27,7 @@ class webphoto_main_search extends webphoto_show_list
 function webphoto_main_search( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'search' );
 
 	$this->_search_class =& webphoto_lib_search::getInstance();
 	$this->_search_class->set_lang_zenkaku( $this->get_constant('SR_ZENKAKU') );

@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.1 2008/06/22 05:25:42 ohwada Exp $
+// $Id: main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -697,6 +697,23 @@ define("_WEBPHOTO_JA_KUTEN",   "。");
 define("_WEBPHOTO_JA_DOKUTEN", "、");
 define("_WEBPHOTO_JA_PERIOD",  "．");
 define("_WEBPHOTO_JA_COMMA",   "，");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL", "動画のサムネイルを選択する");
+define("_WEBPHOTO_TITLE_VIDEO_REDO","アップロード済みの動画より Flash動画とサムネイルを生成する");
+define("_WEBPHOTO_CAP_REDO_THUMB","サムネイルを生成する");
+define("_WEBPHOTO_CAP_REDO_FLASH","Flash 動画を生成する");
+define("_WEBPHOTO_ERR_VIDEO_FLASH", "Flash 動画を生成できなかった");
+define("_WEBPHOTO_ERR_VIDEO_THUMB", "動画のサムネイルが生成できなかったので、アイコンで代用した");
+define("_WEBPHOTO_BUTTON_SELECT", "選択");
+
+define("_WEBPHOTO_DSC_DOWNLOAD_PLAY","ダウンロードして再生する");
+define("_WEBPHOTO_ICON_VIDEO", "動画");
+define("_WEBPHOTO_HOUR", "時間");
+define("_WEBPHOTO_MINUTE", "分");
+define("_WEBPHOTO_SECOND", "秒");
 
 // === define end ===
 }

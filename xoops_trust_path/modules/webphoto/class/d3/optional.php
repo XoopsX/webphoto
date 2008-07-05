@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: optional.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -57,6 +57,56 @@ function init( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
+function get_fct( $page_array )
+{
+	$fct = preg_replace( '/[^a-zA-Z0-9_-]/' , '' , $this->_try_to_get_fct( $page_array ) ) ;
+	return $fct;
+}
+
+function _try_to_get_fct( $page_array )
+{
+// POST
+	$fct = isset($_POST['fct']) ? $_POST['fct'] : null ;
+	if ( $fct ) { return $fct; }
+
+// GET
+	$fct = isset($_GET['fct']) ? $_GET['fct'] : null ;
+	if ( $fct ) { return $fct; }
+
+// PATH_INFO
+	$fct = null;
+	$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : null ;
+	if ( $path_info ) {
+		$path_arr = explode( '/', $path_info );
+		if ( is_array($path_arr) && count($path_arr) ) {
+			foreach ( $path_arr as $path )
+			{
+// first valid string
+				if ( $path ) {
+					$fct = $path;
+					break;
+				}
+			}
+		}
+	}
+	if ( $fct ) { return $fct; }
+
+// for xoops comment & notification
+	$fct = null;
+	if ( is_array($page_array) && count($page_array) ) {
+		foreach ( $page_array as $item => $page ) 
+		{
+			$val = isset($_GET[ $item ]) ? intval($_GET[ $item ]) : 0 ;
+			if ( $val > 0 ) {
+				$fct = $page ;
+				break;
+			}
+		}
+	}
+
+	return $fct;
+}
+
 function include_once_file( $file )
 {
 	$file_trust = $this->_TRUST_DIR  . '/' . $file ;

@@ -1,10 +1,17 @@
 <?php
-// $Id: place.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: place.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used set_mode()
+// decode_str() -> decode_uri_str()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,6 +28,7 @@ class webphoto_main_place extends webphoto_show_list
 function webphoto_main_place( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'place' );
 
 	$this->_search_class =& webphoto_lib_search::getInstance();
 	$this->_search_class->set_is_japanese( $this->_is_japanese );
@@ -100,7 +108,7 @@ function list_build_detail( $place_in )
 	$orderby = $this->get_orderby_by_post();
 	$where   = null;
 
-	$place_in  = $this->decode_str( $place_in );
+	$place_in  = $this->decode_uri_str( $place_in );
 	$place_arr = $this->_search_class->query_to_array( $place_in );
 	$place     = $this->array_to_str( $place_arr, ' ' );
 	$this->set_param_out( $place );

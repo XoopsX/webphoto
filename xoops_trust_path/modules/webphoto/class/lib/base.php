@@ -1,10 +1,16 @@
 <?php
-// $Id: base.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: base.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -209,6 +215,11 @@ function adjust_image_size( $width, $height, $max_width, $max_height )
 	return $this->_utility_class->adjust_image_size( $width, $height, $max_width, $max_height );
 }
 
+function build_error_msg( $msg, $title='', $flag_sanitize=true )
+{
+	return $this->_utility_class->build_error_msg( $msg, $title, $flag_sanitize );
+}
+
 //---------------------------------------------------------
 // sanitize
 //---------------------------------------------------------
@@ -274,11 +285,11 @@ function get_token_errors()
 	return $this->_token_errors;
 }
 
-function check_token_with_xoops_error()
+function check_token_with_print_error()
 {
 	$ret = $this->check_token();
 	if ( !$ret ) {
-		xoops_error("Token Error");
+		echo $this->build_error_msg( "Token Error" );
 	}
 	return $ret;
 }

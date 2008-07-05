@@ -1,4 +1,4 @@
-<{* $Id: main_photo.html,v 1.1 2008/06/21 12:22:18 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.2 2008/07/05 12:54:16 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -92,7 +92,28 @@
     <{/if}>
 
     <br />
-    <span class="webphoto_photo_title"><{$photo.title_s}></span>
+    <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+    ( <{$photo.cont_size_disp}> )  <br />
+    </a>
+
+<{* FLASH VIDEO *}>
+  <{elseif $photo.is_flash_video }>
+	<div id="webphoto_flash_video"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this player.</div>
+	<script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/swfobject.js"></script>
+	<script type="text/javascript">
+		var s1 = new SWFObject("<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/mediaplayer.swf","mediaplayer","320","240","8");
+		s1.addParam("allowfullscreen","true");
+		s1.addVariable("width","320");
+		s1.addVariable("height","240");
+		s1.addVariable("file","<{$photo.file_url_s}>");
+		s1.addVariable("image","<{$photo.imgsrc_thumb}>");
+		s1.write("webphoto_flash_video");
+	</script>
+
+    <br />
+    <a href="<{$photo.ahref_file}>" target="_blank">
+    <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+    <{$lang_dsc_download_play}> ( <{$photo.cont_duration_disp}> , <{$photo.cont_size_disp}> ) <br />
     </a>
 
 <{* FILES OTHER THAN IMAGES *}>
@@ -106,7 +127,13 @@
     <{/if}>
 
     <br />
-    <span class="webphoto_photo_title"><{$photo.title_s}></span>
+    <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+
+    <{if $photo.is_video && $photo.cont_duration_disp }>
+      ( <{$photo.cont_duration_disp}> ) 
+    <{/if}>
+
+    ( <{$photo.cont_size_disp}> ) <br />
     </a>
 
   <{else}>

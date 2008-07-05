@@ -1,10 +1,16 @@
 <?php
-// $Id: comment_view.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: comment_view.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// change $action_link
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -217,9 +223,9 @@ function assgin_tmplate()
 // absolute URL
 //	$navbar = '
 //<form method="get" action="'.$comment_config['pageName'].'">
-	$action_link = $this->_MODULE_URL.'/'.$comment_config['pageName'].'/'.$com_itemid.'/';
-	$navbar = '<form method="get" action="'. $action_link .'">';
+	$action_link = $this->_MODULE_URL.'/'.$comment_config['pageName'];
 
+	$navbar  = '<form method="get" action="'. $action_link .'">';
 	$navbar .= '<table width="95%" class="outer" cellspacing="1">';
 	$navbar .= '<tr>';
 	$navbar .= '<td class="even" align="center"><select name="com_mode"><option value="flat"';

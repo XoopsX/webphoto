@@ -1,10 +1,17 @@
 <?php
-// $Id: upload.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: upload.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// init_media_uploader( $has_resize )
+//   -> init_media_uploader( $has_resize, $allowed_mimes, $allowed_exts )
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,7 +20,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_upload extends webphoto_base_this
 {
-	var $_mime_class;
 	var $_uploader_class;
 
 	var $_uploader_media_name = null;
@@ -32,8 +38,6 @@ class webphoto_upload extends webphoto_base_this
 function webphoto_upload( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
-
-	$this->_mime_class =& webphoto_mime::getInstance( $dirname );
 
 	$this->_init_errors();
 	$this->_NORMAL_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
@@ -110,19 +114,16 @@ function get_tmp_name()
 //---------------------------------------------------------
 // uploader class
 //---------------------------------------------------------
-function init_media_uploader( $has_resize )
+function init_media_uploader( $has_resize, $allowed_mimes, $allowed_exts )
 {
 	$cfg_fsize    = $this->get_config_by_name( 'fsize' );
 	$cfg_width    = $this->get_config_by_name( 'width' );
 	$cfg_height   = $this->get_config_by_name( 'height' );
 
-	list ( $allowed_mime_types, $allowed_extensions )
-		= $this->_mime_class->get_my_allowed_mimes();
-
 	if ( $has_resize ) {
-		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mime_types , $cfg_fsize , null , null , $allowed_extensions ) ;
+		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , null , null , $allowed_exts ) ;
 	} else {
-		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mime_types , $cfg_fsize , $cfg_width , $cfg_height , $allowed_extensions ) ;
+		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , $cfg_width , $cfg_height , $allowed_exts ) ;
 	}
 
 	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;

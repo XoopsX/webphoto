@@ -1,10 +1,16 @@
 <?php
-// $Id: constants.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: constants.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _C_WEBPHOTO_VIDEO_THUMB_PREFIX
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -52,7 +58,7 @@ define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
 define("_C_WEBPHOTO_PIPEID_NETPBM" ,  2 ) ;
 
-define("_C_WEBPHOTO_IMAGE_READ_FAULT" , 0 ) ;
+define("_C_WEBPHOTO_IMAGE_READFAULT" , -1 ) ;
 define("_C_WEBPHOTO_IMAGE_CREATED" ,    1 ) ;
 define("_C_WEBPHOTO_IMAGE_COPIED" ,     2 ) ;
 define("_C_WEBPHOTO_IMAGE_SKIPPED" ,    3 ) ;
@@ -76,6 +82,7 @@ define("_C_WEBPHOTO_UPLOADER_UPLOAD"            , 14 ) ;
 
 define("_C_WEBPHOTO_UPLOADER_PREFIX"      , "tmp_" ) ;
 define("_C_WEBPHOTO_UPLOADER_PREFIX_PREV" , "tmp_prev_" ) ;
+define("_C_WEBPHOTO_VIDEO_THUMB_PREFIX"   , "tmp_video_" ) ;
 
 define("_C_WEBPHOTO_STATUS_WAITING" ,  0 ) ;
 define("_C_WEBPHOTO_STATUS_APPROVED" , 1 ) ;

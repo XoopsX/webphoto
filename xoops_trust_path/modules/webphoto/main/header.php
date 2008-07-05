@@ -1,10 +1,16 @@
 <?php
-// $Id: header.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: header.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added uri.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -44,6 +50,7 @@ webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
+webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );

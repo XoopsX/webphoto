@@ -1,10 +1,16 @@
 <?php
-// $Id: import_myalbum.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: import_myalbum.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// xoops_error() -> build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -123,7 +129,7 @@ function _check_cat_table()
 {
 	if ( $this->_cat_handler->get_count_all() > 0 ) {
 		$msg = 'already there are records in category table';
-		xoops_error( $msg );
+		echo $this->build_error_msg( $msg );
 		echo "<br />\n";
 		echo '<b>try to truncate tables</b><br />';
 		echo "<br />\n";
@@ -218,22 +224,17 @@ function _import_photo()
 		$title = $myalbum_row['title'];
 		$cid   = $myalbum_row['cid'];
 
-		echo $lid.' : '.$this->sanitize($title)." <br />\n";
+		echo $lid.' : '.$this->sanitize($title);
 
 // copy photo
-		$image_info = $this->copy_photo_from_myalbum( $lid, $lid, $ext );
-
-// build image param
-		$photo_info = $this->build_photo_info( $image_info );
-		$thumb_info = $this->build_thumb_info( $image_info );
+		$photo_thumb_info = $this->copy_photo_from_myalbum( $lid, $lid, $ext );
+		echo " <br />\n";
 
 // new row
 		$row = $this->create_photo_row_from_myalbum( $lid, $cid, $myalbum_row );
-
-		$row = $this->build_photo_row_by_photo_info( $row, $photo_info );
-		$row = $this->build_photo_row_by_thumb_info( $row, $thumb_info );
-
-// at last
+		if ( is_array($photo_thumb_info) ) {
+			$row = array_merge( $row, $photo_thumb_info );
+		}
 		$row['photo_search'] = $this->build_photo_search( $row );
 
 		$this->_photo_handler->insert( $row );
@@ -342,7 +343,7 @@ function _exists_myalbum_module()
 	$ret = $this->init_myalbum( $dirname );
 	if ( !$ret ) {
 		$msg = $dirname.' module is not installed ';
-		xoops_error( $msg );
+		echo $this->build_error_msg( $msg );
 		return false;
 	}
 
@@ -363,7 +364,7 @@ function _form_sel_myalbum()
 	$module_array = $this->_myalbum_handler->get_myalbum_module_array();
 	if ( !is_array($module_array) || !count($module_array) ) {
 		$msg = "myalbum module is not installed \n";
-		xoops_error( $msg );
+		echo $this->build_error_msg( $msg );
 		return false;
 	}
 

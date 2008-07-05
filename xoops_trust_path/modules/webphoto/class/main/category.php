@@ -1,10 +1,16 @@
 <?php
-// $Id: category.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: category.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used set_mode()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -20,6 +26,7 @@ class webphoto_main_category extends webphoto_show_list
 function webphoto_main_category( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'category' );
 	$this->init_preload();
 }
 
@@ -119,7 +126,10 @@ function _get_photo_for_list( $cat_id )
 // overwrite
 function list_build_detail( $cat_id )
 {
-	$mode  = 'category';
+
+// for xoops notification
+	$_GET['cat_id'] = $cat_id;
+
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
 

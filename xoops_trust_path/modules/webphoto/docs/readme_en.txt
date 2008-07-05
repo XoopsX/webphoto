@@ -1,11 +1,65 @@
-$Id: readme_en.txt,v 1.2 2008/06/22 10:17:56 ohwada Exp $
+$Id: readme_en.txt,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+
+=================================================
+Version: 0.20
+Date:   2008-07-05
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Extention of video feature
+(1) require ffmpeg
+http://ffmpeg.mplayerhq.hu/
+
+(2) get duratio time automatically
+(3) create thumbnail from video automatically
+(4) create Flash video automatically
+
+2. Flash video player
+(1) using mediaplayer.swf
+http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
+
+3. Supported the server which can not be used Pathinfo
+
+4. Bug fix
+(1) fatal error in RSS
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
+
+(2) 404 error with spinner40.gif 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
+
+(3) typo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=821
+
+(4) display <br>
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=823&forum=13
+
+(5) fatal error in imagemaneger
+
+5. Database structure
+(1) added mime_ffmpeg column in mime table
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
+
+* Notice for usage *
+"ffmpeg" is operated depends on the version and the compilation option.
+Sometimes you have to set options, when create Flash video.
+You can set "ffmpeg" command option for creating Flash video in mime table.
+In default, set "-ar 44100" in avi.
+
 
 =================================================
 Version: 0.10
 Date:   2008-06-21
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 This is the album module which manages photos and videos.
@@ -93,7 +147,7 @@ this table store synonym for ambiguous search
 * Install *
 1. common ( xoops 2.0.16a JP and XOOPS Cube 2.1.x )
 When you unzip the zip file, there are two directories html and xoops_trust_path.
-Please you copy in the directory which XOOPS correspond
+Please copy in the directory which XOOPS correspond
 
 When you install, the xoops output warning like the following.
 Please ignore, because xoops and webphoto work well.
@@ -123,7 +177,7 @@ XOOPS_ROOT_PATH/modules/hoge/templates/webphoto_*.html
  -> XOOPS_ROOT_PATH/modules/hoge/templates/hoge_*.html 
 
 
-* picles *
+* Piclens *
 this module support piclens
 http://www.cooliris.com/
 

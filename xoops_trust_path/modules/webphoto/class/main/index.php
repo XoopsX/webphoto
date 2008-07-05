@@ -1,10 +1,16 @@
 <?php
-// $Id: index.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: index.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// build_navi() -> build_main_navi()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -201,7 +207,7 @@ function _build_notification_select_param( $mode )
 function _build_navi_param( $mode, $total, $limit )
 {
 	if ( $this->check_show_navi( $mode, $this->_get_sort ) ) {
-		return $this->build_navi( $mode, $total, $limit ) ;
+		return $this->build_main_navi( $mode, $total, $limit ) ;
 	}
 
 	$arr = array(

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.1 2008/06/21 12:22:16 ohwada Exp $
+// $Id: admin.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -344,6 +344,16 @@ define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "All Groups" ) ;
 define("_AM_WEBPHOTO_FMT_IMPORTFROM_WEBPHOTO" , 'Importing from "%s" as module type of webphoto' ) ;
 define("_AM_WEBPHOTO_IMPORT_COMMENT_NO" , "Do not copy comments" ) ;
 define("_AM_WEBPHOTO_IMPORT_COMMENT_YES" , "Copy comments") ;
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_PATHINFO_LINK" , ""Check that 'Pathinfo' is working correctly in your server" ) ;
+define("_AM_WEBPHOTO_PATHINFO_DSC" , "If the page linked to from here doesn't display correctly, you should not use 'Pathinfo' " ) ;
+define("_AM_WEBPHOTO_PATHINFO_SUCCESS" , "Success!<br />Perhaps, you can use 'Pathinfo' in your server" ) ;
+define("_AM_WEBPHOTO_CAP_REDO_EXIF" , "Get Exif" ) ;
+define("_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY" , "Get when not set" ) ;
+define("_AM_WEBPHOTO_RADIO_REDO_EXIF_ALWAYS" , "Get always" ) ;
 
 // === define end ===
 }

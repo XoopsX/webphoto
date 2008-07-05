@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.3 2008/06/22 05:26:00 ohwada Exp $
+// $Id: image_cmd.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,13 +15,17 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
-// support gif functions of GD
+// 2008-07-01 K.OHWADA
+// changed rename to copy in modify_photo
+// removed unlink in modify_photo
+// removed create thumb icon
+//
+// 2008-04-02 K.OHWADA
+// supported gif functions of GD
 //---------------------------------------------------------
 
 class webphoto_lib_image_cmd
 {
-	var $_ICON_DIR;
-	var $_PATH_DEFAULT_ICON;
 	var $_PATH_WATERMRAK;
 
 	var $_cfg_imagingpipe  = 0;		// PIPEID_GD;
@@ -49,6 +53,12 @@ class webphoto_lib_image_cmd
 	var $_PIPEID_IMAGICK = 1 ;
 	var $_PIPEID_NETPBM  = 2 ;
 
+	var $_CODE_READFAULT  = -1 ;
+	var $_CODE_CREATED    = 1 ;
+	var $_CODE_COPIED     = 2 ;
+	var $_CODE_SKIPPED    = 3 ;
+	var $_CODE_RESIZE     = 5 ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -69,12 +79,6 @@ function &getInstance()
 //---------------------------------------------------------
 // set param
 //---------------------------------------------------------
-function set_icon_dir( $val )
-{
-	$this->_ICON_DIR = $val;
-	$this->_PATH_DEFAULT_ICON = $this->_ICON_DIR .'/default.png';
-}
-
 function set_watermark( $val )
 {
 	$this->_PATH_WATERMRAK = $val;
@@ -108,11 +112,6 @@ function set_width( $val )
 function set_height( $val )
 {
 	$this->_cfg_height = intval($val);
-}
-
-function set_makethumb( $val )
-{
-	$this->_cfg_makethumb = (bool)$val;
 }
 
 function set_thumbs_path( $val )
@@ -167,21 +166,27 @@ function _add_separator_to_tail( $str )
 function modify_photo( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
 	$ext = $this->parse_ext( $dst_file );
 
-	if( !$this->is_normal_ext($ext) ) {
-		$this->rename_file( $src_file , $dst_file ) ;
-		return 2;	// copied
+	if ( ! $this->is_normal_ext( $ext ) ) {
+		return $this->_CODE_SKIPPED ;
 	}
+
+//	if( !$this->is_normal_ext($ext) ) {
+//		$this->rename_file( $src_file , $dst_file ) ;
+//		return $this->_CODE_COPIED;	// copied
+//	}
 
 	// only copy when small enough and no rotate
 	if (( !$this->has_resize() || !$this->require_resize( $src_file ) ) &&
 		( !$this->has_rotate() || !$this->require_rotate() ) ) {
-		$this->rename_file( $src_file , $dst_file ) ;
-		return 2;	// copied
+
+//		$this->rename_file( $src_file , $dst_file ) ;
+		$this->copy_file( $src_file , $dst_file ) ;
+		return $this->_CODE_COPIED;	// copied
 	}
 
 	if ( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) {
@@ -192,8 +197,8 @@ function modify_photo( $src_file , $dst_file )
 		return $this->modify_photo_by_gd( $src_file , $dst_file ) ;
 	}
 
-	$this->rename_file( $src_file , $dst_file ) ;
-	return 2;	// copied
+	$this->copy_file( $src_file , $dst_file ) ;
+	return $this->_CODE_COPIED;	// copied
 }
 
 function has_resize()
@@ -243,14 +248,14 @@ function require_rotate()
 // Modifying Original Photo by GD
 function modify_photo_by_gd( $src_file , $dst_file )
 {
-	$ret_code = 1;	// success
+	$ret_code = $this->_CODE_CREATED;	// success
 
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
 	list ( $width , $height , $type ) = getimagesize( $src_file ) ;
- 
+
 	switch( $type ) {
 	// GIF
 		case 1 :
@@ -259,7 +264,7 @@ function modify_photo_by_gd( $src_file , $dst_file )
 				$src_img = imagecreatefromgif( $src_file ) ; 
 			} else {
 				$this->copy_file( $src_file , $dst_file ) ;
-				return 2 ;	// copied
+				return $this->_CODE_COPIED ;	// copied
 			}
 			break;
 
@@ -275,12 +280,12 @@ function modify_photo_by_gd( $src_file , $dst_file )
 
 	// other
 		default :
-			$this->rename_file( $src_file, $dst_file ) ;
-			return 2 ;	// copied
+			$this->copy_file( $src_file, $dst_file ) ;
+			return $this->_CODE_COPIED ;	// copied
 	}
 
 	if ( $this->require_resize( $src_file ) ) {
-		$ret_code = 5;	// resize
+		$ret_code = $this->_CODE_RESIZE;	// resize
 
 		if( $width / $this->_cfg_width > $height / $this->_cfg_height ) {
 			$new_w = $this->_cfg_width ;
@@ -332,7 +337,7 @@ function modify_photo_by_gd( $src_file , $dst_file )
 					imagedestroy( $dst_img ) ;
 				} else {
 					$this->copy_file( $src_file , $dst_file ) ;
-					return 2 ;	// copied
+					return $this->_CODE_COPIED ;	// copied
 				}
 				break ;
 
@@ -351,31 +356,28 @@ function modify_photo_by_gd( $src_file , $dst_file )
 	}
 
 	imagedestroy( $src_img ) ;
-	if( ! is_readable( $dst_file ) ) {
+	if ( ! is_readable( $dst_file ) ) {
 		// didn't exec convert, rename it.
-		$this->rename_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
-
-	} else {
-		$this->unlink_file( $src_file ) ;
-		return $ret_code ;	// complete created
+		$this->copy_file( $src_file , $dst_file ) ;
+		return $this->_CODE_COPIED ;	// copied
 	}
+	return $ret_code ;	// complete created
 }
 
 // Modifying Original Photo by ImageMagick
 function modify_photo_by_imagick( $src_file , $dst_file )
 {
-	$ret_code = 1;	// success
+	$ret_code = $this->_CODE_CREATED;	// success
 
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
 	// Make options for imagick
 	$option = "" ;
 
 	if ( $this->require_resize( $src_file ) ) {
-		$ret_code = 5;	// resize
+		$ret_code = $this->_CODE_RESIZE;	// resize
 		$option .= ' -geometry '. $this->_cfg_width .'x'. $this->_cfg_height;
 	}
 
@@ -406,11 +408,10 @@ function modify_photo_by_imagick( $src_file , $dst_file )
 
 	if( ! is_readable( $dst_file ) ) {
 		// didn't exec convert, rename it.
-		$this->rename_file( $src_file , $dst_file ) ;
-		$ret = 2 ;	// copied
+		$this->copy_file( $src_file , $dst_file ) ;
+		$ret = $this->_CODE_COPIED ;	// copied
 
 	} else {
-		$this->unlink_file( $src_file ) ;
 		$ret = $ret_code ;	// complete created
 	}
 
@@ -426,10 +427,10 @@ function modify_photo_by_imagick( $src_file , $dst_file )
 // Modifying Original Photo by NetPBM
 function modify_photo_by_netpbm( $src_file , $dst_file )
 {
-	$ret_code = 1;	// success
+	$ret_code = $this->_CODE_CREATED;	// success
 
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
 	list( $width , $height , $type ) = getimagesize( $src_file ) ;
@@ -459,12 +460,12 @@ function modify_photo_by_netpbm( $src_file , $dst_file )
 			break ;
 
 		default :
-			$this->rename_file( $src_file, $dst_file ) ;
-			return 2 ;	// copied
+			$this->copy_file( $src_file, $dst_file ) ;
+			return $this->_CODE_COPIED ;	// copied
 	}
 
 	if ( $this->require_resize( $src_file ) ) {
-		$ret_code = 5;	// resize
+		$ret_code = $this->_CODE_RESIZE;	// resize
 
 		if( $width / $this->_cfg_width > $height / $this->_cfg_height ) {
 			$new_w = $this->_cfg_width ;
@@ -516,11 +517,10 @@ function modify_photo_by_netpbm( $src_file , $dst_file )
 
 	if ( ! is_readable( $dst_file ) ) {
 		// didn't exec convert, rename it.
-		$this->rename_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		$this->copy_file( $src_file , $dst_file ) ;
+		return $this->_CODE_COPIED ;	// copied
 
 	} else {
-		$this->unlink_file( $src_file ) ;
 		return $ret_code ;	// complete created
 	}
 }
@@ -536,44 +536,28 @@ function modify_photo_by_netpbm( $src_file , $dst_file )
 //---------------------------------------------------------
 function create_thumb( $src_file , $node , $ext )
 {
-	$name_ext = $node .'.'. $ext;
-	$name_png = $node .'.png';
-	$ext_png  = $ext  .'.png';
-
-	$thumb_path_ext = $this->_cfg_thumbs_path .'/'. $name_ext;
-	$thumb_path_png = $this->_cfg_thumbs_path .'/'. $name_png;
-
-	$thumb_file_ext = XOOPS_ROOT_PATH . $thumb_path_ext ;
-	$thumb_file_png = XOOPS_ROOT_PATH . $thumb_path_png ;
-
-	$icon_file_png  = $this->_ICON_DIR        .'/'. $ext_png;
+	$thumb_name = $node .'.'. $ext;
+	$thumb_path = $this->_cfg_thumbs_path .'/'. $thumb_name;
+	$thumb_file = XOOPS_ROOT_PATH . $thumb_path ;
 
 	if ( ! $this->is_normal_ext( $ext ) ) {
-		$this->_thumb_path = $thumb_path_png;
-		$this->_thumb_name = $name_png;
-		$this->_thumb_ext  = 'png';
-		$this->copy_thumb_from_icons( $icon_file_png , $thumb_file_png ) ;
-		return 4 ;	// icon (not normal exts)
-	}
-
-	if ( ! $this->_cfg_makethumb ) {
-		return 3 ;	// skipped
+		return $this->_CODE_SKIPPED ;
 	}
 
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
-	$this->_thumb_path = $thumb_path_ext;
-	$this->_thumb_name = $name_ext;
+	$this->_thumb_path = $thumb_path;
+	$this->_thumb_name = $thumb_name;
 	$this->_thumb_ext  = $ext;
 
 	if( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) {
-		return $this->create_thumb_by_imagick( $src_file , $thumb_file_ext ) ;
+		return $this->create_thumb_by_imagick( $src_file , $thumb_file ) ;
 	} else if( $this->_cfg_imagingpipe == $this->_PIPEID_NETPBM ) {
-		return $this->create_thumb_by_netpbm( $src_file , $thumb_file_ext ) ;
+		return $this->create_thumb_by_netpbm( $src_file , $thumb_file ) ;
 	}
-	return $this->create_thumb_by_gd( $src_file , $thumb_file_ext ) ;
+	return $this->create_thumb_by_gd( $src_file , $thumb_file ) ;
 }
 
 function get_thumb_path()
@@ -591,22 +575,11 @@ function get_thumb_ext()
 	return $this->_thumb_ext;
 }
 
-// Copy Thumbnail from directory of icons
-function copy_thumb_from_icons( $src_file , $dst_file )
-{
-	$this->unlink_file( $dst_file ) ;
-	$copy_success = $this->copy_file( $src_file, $dst_file ) ;
-	if ( empty( $copy_success ) ) {
-		$this->copy_file( $this->_PATH_DEFAULT_ICON, $dst_file ) ;
-	}
-	return 4 ;	// icon (not normal exts)
-}
-
 // Creating Thumbnail by GD
 function create_thumb_by_gd( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
 	$bundled_2 = false ;
@@ -614,8 +587,6 @@ function create_thumb_by_gd( $src_file , $dst_file )
 		$gd_info = gd_info() ;
 		if( substr( $gd_info['GD Version'] , 0 , 10 ) == 'bundled (2' ) $bundled_2 = true ;
 	}
-
-	$this->unlink_file( $dst_file ) ;
 
 	list( $width , $height , $type ) = getimagesize( $src_file ) ;
 	switch( $type ) 
@@ -627,7 +598,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 				$src_img = imagecreatefromgif( $src_file ) ; 
 			} else {
 				$this->copy_file( $src_file , $dst_file ) ;
-				return 2 ;	// copied
+				return $this->_CODE_COPIED ;	// copied
 			}
 			break;
 
@@ -646,7 +617,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 	// skip
 		default :
 			$this->copy_file( $src_file , $dst_file ) ;
-			return 2 ;	// copied
+			return $this->_CODE_COPIED ;	// copied
 	}
 
 	list( $new_w , $new_h ) = $this->get_thumbnail_wh( $width , $height ) ;
@@ -654,7 +625,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 	if( $width <= $new_w && $height <= $new_h ) {
 		// only copy when small enough
 		$this->copy_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		return $this->_CODE_COPIED ;	// copied
 	}
 
 	if( $bundled_2 ) {
@@ -680,7 +651,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 				imagedestroy( $dst_img ) ;
 			} else {
 				$this->copy_file( $src_file , $dst_file ) ;
-				return 2 ;	// copied
+				return $this->_CODE_COPIED ;	// copied
 			}
 			break ;
 
@@ -698,7 +669,7 @@ function create_thumb_by_gd( $src_file , $dst_file )
 	}
 
 	imagedestroy( $src_img ) ;
-	return 1 ;	// complete created
+	return $this->_CODE_CREATED ;	// complete created
 }
 
 
@@ -706,10 +677,8 @@ function create_thumb_by_gd( $src_file , $dst_file )
 function create_thumb_by_imagick( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
-
-	$this->unlink_file( $dst_file ) ;
 
 	list( $width , $height , $type ) = getimagesize( $src_file ) ;
 
@@ -718,7 +687,7 @@ function create_thumb_by_imagick( $src_file , $dst_file )
 	if( $width <= $new_w && $height <= $new_h ) {
 		// only copy when small enough
 		$this->copy_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		return $this->_CODE_COPIED ;	// copied
 	}
 
 	// Make Thumb and check success
@@ -728,10 +697,10 @@ function create_thumb_by_imagick( $src_file , $dst_file )
 	if( ! is_readable( $dst_file ) ) {
 		// can't exec convert, big thumbs!
 		$this->copy_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		return $this->_CODE_COPIED ;	// copied
 	}
 
-	return 1 ;	// complete created
+	return $this->_CODE_CREATED ;	// complete created
 }
 
 
@@ -739,10 +708,9 @@ function create_thumb_by_imagick( $src_file , $dst_file )
 function create_thumb_by_netpbm( $src_file , $dst_file )
 {
 	if( ! is_readable( $src_file ) ) {
-		return 0 ;	// read fault
+		return $this->_CODE_READFAULT ;	// read fault
 	}
 
-	$this->unlink_file( $dst_file ) ;
 	list( $width , $height , $type ) = getimagesize( $src_file ) ;
 
 	switch( $type ) 
@@ -768,7 +736,7 @@ function create_thumb_by_netpbm( $src_file , $dst_file )
 
 		default :
 			$this->copy_file( $src_file , $dst_file ) ;
-			return 2 ;	// copied
+			return $this->_CODE_COPIED ;	// copied
 	}
 
 	list( $new_w , $new_h ) = $this->get_thumbnail_wh( $width , $height ) ;
@@ -776,7 +744,7 @@ function create_thumb_by_netpbm( $src_file , $dst_file )
 	if( $width <= $new_w && $height <= $new_h ) {
 		// only copy when small enough
 		$this->copy_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		return $this->_CODE_COPIED ;	// copied
 	}
 
 	$pipe1 = $this->_cfg_netpbmpath .'pnmscale -xysize '. $new_w .' '. $new_h;
@@ -788,10 +756,10 @@ function create_thumb_by_netpbm( $src_file , $dst_file )
 	if( ! is_readable( $dst_file ) ) {
 		// can't exec convert, big thumbs!
 		$this->copy_file( $src_file , $dst_file ) ;
-		return 2 ;	// copied
+		return $this->_CODE_COPIED ;	// copied
 	}
 
-	return 1 ;	// complete created
+	return $this->_CODE_CREATED ;	// complete created
 }
 
 function get_thumbnail_wh( $width , $height )
@@ -836,7 +804,7 @@ function get_thumbnail_wh( $width , $height )
 //---------------------------------------------------------
 function parse_ext( $file )
 {
-	return substr( strrchr( $file , '.' ) , 1 );
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 function is_normal_ext( $ext )
@@ -847,26 +815,10 @@ function is_normal_ext( $ext )
 	return false;
 }
 
-function unlink_file( $file )
-{
-	if ( $this->check_file( $file ) ) {
-		return unlink( $file );
-	}
-	return false;
-}
-
 function copy_file( $src, $dst )
 {
 	if ( $this->check_file( $src ) ) {
 		return copy( $src, $dst );
-	}
-	return false;
-}
-
-function rename_file( $old, $new )
-{
-	if ( $this->check_file( $old ) ) {
-		return rename( $old, $new );
 	}
 	return false;
 }

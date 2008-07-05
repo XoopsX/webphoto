@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.2 2008/06/21 17:20:29 ohwada Exp $
+// $Id: modinfo.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -100,7 +100,6 @@ define($constpref."OPT_CALCWHINSIDEBOX" , "put in specified size squre" ) ;
 
 define($constpref."OPT_VIEWLIST" , "List View" ) ;
 define($constpref."OPT_VIEWTABLE" , "Table View" ) ;
-
 
 // Sub menu titles
 //define($constpref."TEXT_SMNAME1","Submit");
@@ -206,6 +205,14 @@ define($constpref."ADMENU_MIME_TABLE_MANAGE","MIME Table Management");
 define($constpref."ADMENU_TAG_TABLE_MANAGE","Tag Table Management");
 define($constpref."ADMENU_P2T_TABLE_MANAGE","Photo-Tag Table Management");
 define($constpref."ADMENU_SYNO_TABLE_MANAGE","Synonym Table Management");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define( $constpref."CFG_USE_FFMPEG"  , "Use ffmpeg" ) ;
+define( $constpref."CFG_FFMPEGPATH"  , "Path to ffmpeg" ) ;
+define( $constpref."CFG_DESCFFMPEGPATH" , "Alhough the full path to 'ffmpeg' should be written, leave it blank in most environments.<br />This configuration is significant only when 'Use ffmpeg' is yes" ) ;
+define($constpref."CFG_USE_PATHINFO","Use pathinfo");
 
 }
 // === define begin ===

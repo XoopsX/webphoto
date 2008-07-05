@@ -1,10 +1,17 @@
 <?php
-// $Id: utility.php,v 1.2 2008/06/22 10:04:43 ohwada Exp $
+// $Id: utility.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// changed parse_ext()
+// added build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +25,9 @@ class webphoto_lib_utility
 
 	var $_HTML_SLASH = '&#047;' ;
 	var $_HTML_COLON = '&#058;' ;
+
+// base on style sheet of default theme
+	var $_STYLE_ERROR_MSG = 'background-color: #FFCCCC; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ';
 
 //---------------------------------------------------------
 // constructor
@@ -63,7 +73,7 @@ function array_to_str( $arr, $glue )
 
 function parse_ext( $file )
 {
-	return substr( strrchr( $file , '.' ) , 1 );
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 function strip_ext( $file )
@@ -112,21 +122,6 @@ function strip_slash_from_tail( $str )
 	return $str;
 }
 
-function format_filesize( $size, $precision=2 ) 
-{
-	$bytes = array('B','KB','MB','GB','TB');
-	foreach ($bytes as $val) 
-	{
-		if ($size > 1024) {
-			$size = $size / 1024;
-		} else {
-    		break;
-   		}
-	}
-	$str =round( $size, $precision )." ".$val;
-	return $str;
-}
-
 // Checks if string is started from HTTP
 function check_http_start( $str )
 {
@@ -157,6 +152,54 @@ function check_http_fill( $str )
 {
 	$ret = ! $this->check_http_null( $str );
 	return $ret;
+}
+
+//---------------------------------------------------------
+// format
+//---------------------------------------------------------
+function format_filesize( $size, $precision=2 ) 
+{
+	$format = '%.'. intval($precision) .'f';
+	$bytes  = array('B','KB','MB','GB','TB');
+	foreach ($bytes as $val) 
+	{
+		if ($size > 1024) {
+			$size = $size / 1024;
+		} else {
+			break;
+		}
+	}
+	$str = sprintf( $format, $size ).' '.$val;
+	return $str;
+}
+
+function format_time( $time, $str_hour, $str_min, $str_sec, $flag_zero=false ) 
+{
+	return $this->build_time( $this->parse_time( $time ), 
+		$str_hour, $str_min, $str_sec, $flag_zero ) ;
+}
+
+function build_time( $time_array, $str_hour, $str_min, $str_sec, $flag_zero=false ) 
+{
+	list( $hour, $min, $sec ) = $time_array ;
+
+	$str = null;
+	if ( $hour > 0 ) {
+		$str = "$hour $str_hour $min $str_min $sec $str_sec";
+	} elseif ( $min > 0 ) {
+		$str = "$min $str_min $sec $str_sec";
+	} elseif (( $sec > 0 ) || $flag_zero ) {
+		$str = "$sec $str_sec";
+	}
+	return $str;
+}
+
+function parse_time( $time ) 
+{
+	$hour = intval( $time / 3600 ) ;
+	$min  = intval(( $time - 3600 * $hour ) / 60 ) ;
+	$sec  = $time - 3600 * $hour - 60 * $min ;
+	return array( $hour, $min, $sec );
 }
 
 //---------------------------------------------------------
@@ -534,6 +577,41 @@ function get_powered_by()
 	$str .= '<span style="font-size : 80%;">Powered by Happy Linux</span>';
 	$str .= "</a></div>\n";
 	return $str;
+}
+
+//---------------------------------------------------------
+// base on core's xoops_error
+// XLC do not support 'errorMsg' style class in admin cp
+//---------------------------------------------------------
+function build_error_msg( $msg, $title='', $flag_sanitize=true )
+{
+	$str = '<div style="'. $this->_STYLE_ERROR_MSG .'">';
+	if ($title != '') {
+		if ( $flag_sanitize ) {
+			$title = $this->sanitize($title);
+		}
+		$str .= "<h4>".$title."</h4>\n";
+	}
+	if (is_array($msg)) {
+		foreach ($msg as $m) {
+			if ( $flag_sanitize ) {
+				$m = $this->sanitize($msg);
+			}
+			$str .= $m."<br />\n";
+		}
+	} else {
+		if ( $flag_sanitize ) {
+			$msg = $this->sanitize($msg);
+		}
+		$str .= $msg;
+	}
+	$str .= "</div>\n";
+	return $str;
+}
+
+function sanitize( $str )
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
 }
 
 // --- class end ---

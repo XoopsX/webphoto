@@ -1,10 +1,17 @@
 <?php
-// $Id: tag.php,v 1.1 2008/06/21 12:22:18 ohwada Exp $
+// $Id: tag.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used set_mode()
+// decode_tag() -> decode_uri_str()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -25,6 +32,7 @@ class webphoto_main_tag extends webphoto_show_list
 function webphoto_main_tag( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'tag' );
 	$this->init_preload();
 }
 
@@ -125,7 +133,7 @@ function list_build_detail( $tag_in )
 	$start   = $this->pagenavi_calc_start( $limit );
 	$orderby = str_replace( 'photo_', 'p.photo_', $this->get_orderby_by_post() );
 
-	$tag_name = $this->_tag_class->decode_tag( $tag_in );
+	$tag_name = $this->decode_uri_str( $tag_in );
 
 	$init_param = $this->list_build_init_param( true );
 

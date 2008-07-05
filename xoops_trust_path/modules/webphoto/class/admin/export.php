@@ -1,10 +1,16 @@
 <?php
-// $Id: export.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: export.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// xoops_error() -> build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -62,13 +68,13 @@ function main()
 	switch ( $this->_get_op() )
 	{
 		case 'image':
-			if ( $this->check_token_with_xoops_error() ) {
+			if ( $this->check_token_with_print_error() ) {
 				$this->_export_image();
 			}
 			break;
 
 		case 'myalbum':
-			if ( $this->check_token_with_xoops_error() ) {
+			if ( $this->check_token_with_print_error() ) {
 				$this->_export_myalbum();
 			}
 			break;
@@ -215,7 +221,7 @@ function _print_form()
 	if ( $this->_groupperm_class->has_system_image() ) {
 		$this->_print_form_image();
 	} else {
-		xoops_error('you have no permission');
+		echo $this->build_error_msg( 'you have no permission' );
 	}
 }
 

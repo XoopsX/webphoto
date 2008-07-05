@@ -1,10 +1,16 @@
 <?php
-// $Id: show_list.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: show_list.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used get_list_pathinfo_param()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -68,12 +74,31 @@ function list_sel()
 	return false;
 }
 
+function set_mode( $val )
+{
+	$this->_mode = $val;
+}
+
 //---------------------------------------------------------
 // get pathinfo param
 //---------------------------------------------------------
 function list_get_pathinfo_param()
 {
-	$mode = webphoto_fct() ;
+	$this->_param    = $this->get_uri_list_pathinfo_param() ;
+	$this->_get_page = $this->get_pathinfo_page() ;
+	$this->_get_sort = $this->get_photo_sort_name_by_pathinfo();
+
+	$this->set_param_out( $this->_param );
+
+	switch ( $this->_mode )
+	{
+		case 'myphoto':
+			$this->_mode  = 'user';
+			break;
+	}
+
+	return;
+// ====
 
 	$this->_get_tag      = $this->_pathinfo_class->get('tag');
 	$this->_get_date     = $this->_pathinfo_class->get('date');
@@ -207,7 +232,7 @@ function list_get_photo_list()
 function list_build_photo_array( $title, $param, $total, $row, $link=null, $photo=null )
 {
 	if ( empty($link) && $param ) {
-		$link  = 'index.php/'. $this->_mode .'/'. rawurlencode($param) .'/';
+		$link = $this->build_uri_list_link( $param ) ;
 	}
 
 	if ( empty($photo) && is_array($row) ) {
@@ -271,12 +296,9 @@ function list_build_init_param( $show_photo_desc=false )
 
 	$arr = array(
 		'mode'              => $this->_mode,
-		'cat_id'            => $this->_get_catid,
-		'uid'               => $this->_get_uid,
-		'tag_name'          => $this->_get_tag,
 		'page'              => $this->_get_page,
 		'sort'              => $this->_get_sort,
-		'param_sort'        => $this->build_param_sort( $this->_mode ) ,
+		'param_sort'        => $this->build_uri_list_sort() ,
 		'lang_cursortedby'  => $this->get_lang_sortby( $this->_get_sort ),
 		'use_popbox_js'     => $this->_USE_POPBOX_JS ,
 		'use_box_js'        => $this->_USE_BOX_JS ,
@@ -287,15 +309,10 @@ function list_build_init_param( $show_photo_desc=false )
 	return $arr;
 }
 
-function list_build_navi( $total, $limit, $get_page=null, $get_sort=null )
-{
-	return $this->build_navi_with_check_sort( $this->_mode, $total, $limit, $get_page, $get_sort );
-}
-
 function list_build_random_more( $total, $url=null )
 {
 	if ( empty($url) ) {
-		$url = 'index.php/'. $this->_mode .'/'. urlencode( $this->_param_out ) .'/';
+		$url = $this->build_uri_list_link( $this->_param_out ) ;
 	}
 	return $this->build_random_more_url_with_check_sort( $url, $total );
 }
@@ -310,31 +327,47 @@ function list_assign_xoops_header( $rss_param=null, $flag_gmap=false )
 }
 
 //---------------------------------------------------------
-// show main
+// navi
 //---------------------------------------------------------
-// overwrite
-function build_param_common()
+function list_build_navi( $total, $limit, $get_page=null, $get_sort=null )
 {
-	$str = '';
-
-	switch ( $this->_mode )
-	{
-		case 'category':
-		case 'user':
-			$str .= '/'.$this->_mode;
-			$str .= '/'.intval($this->_param_out);
-			return $str;
-
-		case 'tag':
-		case 'date':
-		case 'place':
-		case 'search':
-			$str .= '/'.$this->_mode;
-			$str .= '/'. rawurlencode($this->_param_out);
-			return $str;
+	if ( empty($get_sort) ) {
+		$get_sort = $this->_get_sort;
 	}
 
-	return $str;
+	if ( $this->check_show_navi_sort( $get_sort ) ) {
+		$url = $this->build_uri_list_navi_url( $get_sort );
+		return $this->build_navi( $url, $total, $limit, $get_page );
+	}
+
+	$arr = array(
+		'show_navi' => false
+	);
+	return $arr;
+}
+
+//---------------------------------------------------------
+// uri class
+//---------------------------------------------------------
+function get_uri_list_pathinfo_param()
+{
+	return $this->_uri_class->get_list_pathinfo_param( $this->_mode );
+}
+
+function build_uri_list_navi_url( $get_sort )
+{
+	return $this->_uri_class->build_list_navi_url( $this->_mode, $this->_param_out, $get_sort );
+}
+
+function build_uri_list_sort()
+{
+	return $this->_uri_class->build_list_sort(
+		$this->_mode, $this->_param_out, $this->_get_viewtype );
+}
+
+function build_uri_list_link( $param )
+{
+	return $this->_uri_class->build_list_link( $this->_mode, $param );
 }
 
 // --- class end ---

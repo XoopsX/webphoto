@@ -1,10 +1,16 @@
 <?php
-// $Id: group_permission.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: group_permission.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// correct SQL error
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -92,8 +98,15 @@ function _get_permission( $dirname )
 {
 	$perms = 0 ;
 
+// correct SQL error
+// no action when not installed this module
+	$mid = $this->_get_mid( $dirname );
+	if ( empty($mid) ) {
+		return $perms;
+	}
+
 	$sql  = "SELECT gperm_itemid FROM ". $this->_db->prefix( 'group_permission' );
-	$sql .= " WHERE gperm_modid=". $this->_get_mid( $dirname ) ;
+	$sql .= " WHERE gperm_modid=". intval($mid) ;
 	$sql .= " AND gperm_name=".$this->quote( _C_WEBPHOTO_GPERM_NAME );
 	$sql .= " AND ( ". $this->_build_where_groupid(). " )";
 

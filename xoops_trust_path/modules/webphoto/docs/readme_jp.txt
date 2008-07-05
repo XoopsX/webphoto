@@ -1,11 +1,65 @@
-$Id: readme_jp.txt,v 1.2 2008/06/22 10:17:56 ohwada Exp $
+$Id: readme_jp.txt,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+
+=================================================
+Version: 0.20
+Date:   2008-07-05
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 動画機能の拡張
+(1) ffmpeg が必要です
+http://ffmpeg.mplayerhq.hu/
+
+(2) 再生時間を自動取得する
+(3) サムネイルを自動生成する
+(4) Flash 動画を自動生成する
+
+2. Flash 動画の再生
+(1) mediaplayer.swf  による再生
+http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
+
+3. Pathinfo が使用できない環境にも対応した
+
+4. バグ対策
+(1) RSS にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
+
+(2) spinner40.gif が 404 error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
+
+(3) typo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=821
+
+(4) <br> が出力する
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=823&forum=13
+
+(5) imagemaneger にて fatal error
+
+5. データベース構造
+(1) mime テーブルに mime_ffmpeg 項目を追加した
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2)  管理者画面にてモジュール・アップデートを実行する
+
+
+● 使用上の注意
+ffmpeg は バージョンやコンパイル・オプションで動作が異なります。
+Flash 動画の生成には、ファイル種別毎に個別の対応が必要になることがあります。
+mime テーブルに Flash 動画生成時のコマンド・オプションが設定できます。
+デフォルトでは、avi に "-ar 44100" を設定しています。
+
 
 =================================================
 Version: 0.10
 Date:   2008-06-21
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

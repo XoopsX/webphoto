@@ -1,10 +1,16 @@
 <?php
-// $Id: show_main.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: show_main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// used build_uri_category() build_main_navi_url() etc
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -108,11 +114,12 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_preload_class   =& webphoto_d3_preload::getInstance();
 	$this->_preload_class->init( $dirname , $trust_dirname );
 
-	$cfg_newphotos          = $this->get_config_by_name('newphotos');
-	$cfg_viewcattype        = $this->get_config_by_name('viewcattype');
-	$cfg_sort               = $this->get_config_by_name('sort');
-	$cfg_use_popbox         = $this->get_config_by_name('use_popbox');
-	$this->_cfg_gmap_apikey = $this->get_config_by_name('gmap_apikey');
+	$cfg_newphotos           = $this->get_config_by_name('newphotos');
+	$cfg_viewcattype         = $this->get_config_by_name('viewcattype');
+	$cfg_sort                = $this->get_config_by_name('sort');
+	$cfg_use_popbox          = $this->get_config_by_name('use_popbox');
+	$this->_cfg_gmap_apikey  = $this->get_config_by_name('gmap_apikey');
+	$this->_cfg_use_pathinfo = $this->get_config_by_name('use_pathinfo');
 
 	$this->_MAX_PHOTOS         = $cfg_newphotos;
 	$this->_VIEWTYPE_DEFAULT   = $cfg_viewcattype;
@@ -120,6 +127,13 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class->set_photo_sort_default( $cfg_sort );
+
+// separator
+	if ( $this->_cfg_use_pathinfo ) {
+		$this->_pagenavi_class->set_separator_path(  '/' );
+		$this->_pagenavi_class->set_separator_query( '/' );
+	}
+
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -325,9 +339,12 @@ function get_categories_by_pid( $parent_id )
 			$child_id = $row_child['cat_id'] ;
 
 			$sub_arr = $this->build_show_cat( $row_child );
-			$sub_arr['photo_small_sum']  = $this->_photo_handler->get_count_public_by_catid( $child_id ) ;
-			$sub_arr['photo_total_sum'] = $this->build_photo_total_in_parent_all_children( $child_id ) ;
-			$sub_arr['number_of_subcat'] = count( $this->_cat_handler->get_first_child_id( $child_id ) ) ;
+			$sub_arr['photo_small_sum']  
+				= $this->_photo_handler->get_count_public_by_catid( $child_id ) ;
+			$sub_arr['photo_total_sum'] 
+				= $this->build_photo_total_in_parent_all_children( $child_id ) ;
+			$sub_arr['number_of_subcat'] 
+				= count( $this->_cat_handler->get_first_child_id( $child_id ) ) ;
 
 			$subcat[] = $sub_arr;
 		}
@@ -340,9 +357,11 @@ function get_categories_by_pid( $parent_id )
 		$imgurl = $this->_cat_handler->build_show_imgurl( $row );
 
 		$main_arr = $this->build_show_cat( $row );
-		$main_arr['photo_small_sum'] = $this->_photo_handler->get_count_public_by_catid( $cat_id ) ;
-		$main_arr['photo_total_sum'] = $this->build_photo_total_in_parent_all_children( $cat_id ) ;
-		$main_arr['subcategories']   = $subcat ;
+		$main_arr['photo_small_sum'] 
+			= $this->_photo_handler->get_count_public_by_catid( $cat_id ) ;
+		$main_arr['photo_total_sum'] 
+			= $this->build_photo_total_in_parent_all_children( $cat_id ) ;
+		$main_arr['subcategories'] = $subcat ;
 
 		$ret[] = $main_arr;
 	}
@@ -395,7 +414,7 @@ function build_cat_sub_title( $cat_id )
 	for ( $i=$start; $i >= 0; $i-- )
 	{
 		$row  = $rows[$i];
-		$url  = $this->_MODULE_URL.'/index.php/category/'. $row['cat_id'] .'/';
+		$url  = $this->build_uri_category( $row['cat_id'] ) ;
 
 		$str .= '<a href="'. $url .'">';
 		if ( $i == $start ) {
@@ -446,12 +465,6 @@ function add_viewtype( $url )
 //---------------------------------------------------------
 // sort class
 //---------------------------------------------------------
-function get_photo_sort_name_by_pathinfo()
-{
-	return $this->_sort_class->get_photo_sort_name(
-		$this->_pathinfo_class->get_text( 'sort' ) );
-}
-
 function get_orderby_by_post()
 {
 	return $this->_sort_class->sort_to_orderby( $this->_get_sort );
@@ -470,23 +483,13 @@ function get_lang_sortby( $name )
 //---------------------------------------------------------
 // pagenavi class
 //---------------------------------------------------------
-function build_navi_with_check_sort( $mode, $total, $limit, $get_page=null, $get_sort=null )
+function build_main_navi( $mode, $total, $limit, $get_page=null )
 {
-	if ( empty($get_sort) ) {
-		$get_sort = $this->_get_sort;
-	}
-
-	if ( $this->check_show_navi_sort( $get_sort ) ) {
-		return $this->build_navi( $mode, $total, $limit );
-	}
-
-	$arr = array(
-		'show_navi' => false
-	);
-	return $arr;
+	$url = $this->build_uri_main_navi_url( $mode );
+	return $this->build_navi( $url, $total, $limit, $get_page );
 }
 
-function build_navi( $mode, $total, $limit, $get_page=null )
+function build_navi( $url, $total, $limit, $get_page=null )
 {
 	if ( empty($get_page) ) {
 		$get_page = $this->_get_page;
@@ -498,7 +501,7 @@ function build_navi( $mode, $total, $limit, $get_page=null )
 
 	if ( $total > $limit ) {
 		$show      = true ;
-		$navi_page = $this->build_navi_page( $mode, $get_page, $limit, $total ) ;
+		$navi_page = $this->build_navi_page( $url, $get_page, $limit, $total ) ;
 		$navi_info = $this->build_navi_info( $get_page, $limit, $total );
 	}
 
@@ -510,15 +513,9 @@ function build_navi( $mode, $total, $limit, $get_page=null )
 	return $arr;
 }
 
-function build_navi_page( $mode, $page, $limit, $total )
+function build_navi_page( $url, $page, $limit, $total )
 {
-	$url = $this->_MODULE_URL .'/index.php/'. $this->build_param_navi( $mode ) ;
-
-	$this->_pagenavi_class->set_separator_path(  '/' );
-	$this->_pagenavi_class->set_separator_query( '/' );
-	$navi = $this->_pagenavi_class->build( $url, $page, $limit, $total );
-
-	return $navi;
+	return $this->_pagenavi_class->build( $url, $page, $limit, $total );
 }
 
 function build_navi_info( $page, $limit, $total )
@@ -587,7 +584,7 @@ function build_notification_select()
 		$_GET['cat_id'] = $this->_get_catid;
 	}
 
-	$param = $this->_notification_select_class->build();
+	$param = $this->_notification_select_class->build( $this->_cfg_use_pathinfo );
 	if ( is_array($param) && count($param) ) {
 		$show  = true;
 	}
@@ -600,77 +597,49 @@ function build_notification_select()
 }
 
 //---------------------------------------------------------
+// uri class
+//---------------------------------------------------------
+function build_uri_main_navi_url( $mode )
+{
+	return $this->_uri_class->build_main_navi_url( $mode, $this->_get_sort );
+}
+
+function build_uri_main_sort( $mode )
+{
+	return $this->_uri_class->build_main_sort( $mode );
+}
+
+//---------------------------------------------------------
 // get pathinfo param
 //---------------------------------------------------------
 function get_pathinfo_param()
 {
-	$this->_get_op       = $this->_pathinfo_class->get('op');
-	$this->_get_tag      = $this->_pathinfo_class->get('tag');
-	$this->_get_date     = $this->_pathinfo_class->get('date');
-	$this->_get_place    = $this->_pathinfo_class->get('place');
-//	$this->_get_viewtype = $this->_pathinfo_class->get('viewtype', $this->_VIEWTYPE_DEFAULT );
-	$this->_get_catid    = $this->_pathinfo_class->get_int('cat_id');
-	$this->_get_uid      = $this->_pathinfo_class->get_int('uid',  $this->_UID_DEFAULT );
-	$this->_get_page     = $this->_pathinfo_class->get_int('page', $this->_PAGE_DEFAULT );
-	$this->_get_query    = trim( $this->_pathinfo_class->get_text('query') );
-	$this->_get_sort     = $this->get_photo_sort_name_by_pathinfo();
+	$this->_get_op   = $this->get_pathinfo_op() ;
+	$this->_get_page = $this->get_pathinfo_page() ;
+	$this->_get_sort = $this->get_photo_sort_name_by_pathinfo();
+}
 
-	$path0 = $this->_pathinfo_class->get_path( 0 );
-	$path1 = $this->_pathinfo_class->get_path( 1 );
+function get_pathinfo_op()
+{
+	$op = $this->_pathinfo_class->get('op');
+	if ( $op ) { return $op ; }
 
-	switch ( $path0 )
-	{
-		case 'latest':
-		case 'popular':
-		case 'highrate':
-		case 'random':
-			$this->_get_op    = $path0;
-			$this->_get_sort = '';
-			break;
+	return $this->_pathinfo_class->get_path( 0 ) ;
+}
 
-		case 'category':
-			if ( empty($this->_get_catid) ) {
-				$this->_get_catid = intval($path1);
-			}
-			break;
-
-		case 'user':
-			if (( $this->_get_uid == $this->_UID_DEFAULT ) &&
-				( $path1 !== false )) {
-				$this->_get_uid = intval($path1);
-			}
-			break;
-
-		case 'tags':
-			if ( empty($this->_get_tag) ) {
-				$this->_get_tag = $path1;
-			}
-			break;
-
-		case 'date':
-			if ( empty($this->_get_date) ){
-				$this->_get_date = $path1;
-			}
-			break;
-
-		case 'place':
-			if ( empty($this->_get_place) ){
-				$this->_get_place = $path1;
-			}
-			break;
-
-		case 'search':
-			$this->_get_op  = $path0;
-			if ( empty($this->_get_query) ) {
-				$this->_get_query = $path1;
-			}
-			break;
-
-		case 'myphoto':
-			$this->_get_op  = 'user';
-			$this->_get_uid = $this->_xoops_uid;
-			break;
+function get_pathinfo_page()
+{
+	$page = $this->_pathinfo_class->get_int('page');
+	if ( $page < $this->_PAGE_DEFAULT ) {
+		 $page = $this->_PAGE_DEFAULT ;
 	}
+	return $page ;
+}
+
+function get_photo_sort_name_by_pathinfo()
+{
+	return $this->_sort_class->get_photo_sort_name(
+		$this->_pathinfo_class->get_text( 'sort' ) );
 }
 
 //---------------------------------------------------------
@@ -730,14 +699,11 @@ function build_get_param( $mode )
 	$arr = array(
 		'mode'              => $mode,
 		'op'                => $this->_get_op,
-		'cat_id'            => $this->_get_catid,
-		'uid'               => $this->_get_uid,
-		'tag_name'          => $this->_get_tag,
 		'page'              => $this->_get_page,
 		'sort'              => $this->_get_sort,
 //		'viewtype'          => $this->_get_viewtype,
 //		'param_viewtype'    => $this->build_param_viewtype( $mode ) ,
-		'param_sort'        => $this->build_param_sort( $mode ) ,
+		'param_sort'        => $this->build_uri_main_sort( $mode ) ,
 		'lang_cursortedby'  => $this->get_lang_sortby( $this->_get_sort ),
 	);
 	return $arr;
@@ -745,66 +711,7 @@ function build_get_param( $mode )
 
 function build_param_viewtype( $mode )
 {
-	$str = $this->build_param_common( $mode );
-	if ( $this->_get_sort ) {
-		$str .= '/sort='.$this->_get_sort;
-	}
-	if ( $this->_get_page ) {
-		$str .= '/page='.$this->_get_page;
-	}
-	$str = $this->strip_slash_from_head( $str );
-	return $str;
-}
-
-function build_param_sort( $mode )
-{
-	$str = $this->build_param_common( $mode );
-	if ( $this->_get_viewtype ) {
-		$str .= '/viewtype='.$this->_get_viewtype;
-	}
-	$str = $this->strip_slash_from_head( $str );
-	return $str;
-}
-
-function build_param_navi( $mode )
-{
-	$str = $this->build_param_common( $mode );
-	if ( $this->_get_sort ) {
-		$str .= '/sort='.$this->_get_sort;
-	}
-	if ( $this->_get_viewtype ) {
-		$str .= '/viewtype='.$this->_get_viewtype;
-	}
-	$str = $this->strip_slash_from_head( $str );
-	return $str;
-}
-
-function build_param_common( $mode )
-{
-	$str = '';
-
-	switch ( $mode )
-	{
-		case 'category':
-		case 'user':
-			$str .= '/'.$mode;
-			$str .= '/'.intval($this->_param);
-			return $str;
-
-		case 'tags':
-		case 'date':
-		case 'place':
-		case 'search':
-			$str .= '/'.$mode;
-			$str .= '/'. urlencode($this->_param);
-			return $str;
-	}
-
-	if ( $this->_get_op ) {
-		$str .= '/'.$this->_get_op;
-	}
-
-	return $str;
+	return null ;	// dummy
 }
 
 //---------------------------------------------------------

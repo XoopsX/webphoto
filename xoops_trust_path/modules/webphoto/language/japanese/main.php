@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.2 2008/06/22 05:25:42 ohwada Exp $
+// $Id: main.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -82,8 +82,8 @@ define("_WEBPHOTO_RADIO_ROTATE270" , "左に90度回転" ) ;
 define("_WEBPHOTO_SUBMIT_RECEIVED","画像を登録しました。ご投稿有難うございます。");
 define("_WEBPHOTO_SUBMIT_ALLPENDING","すべての投稿画像は確認のため仮登録となります。");
 
-define("_WEBPHOTO_ERR_MUSTREGFIRST","申し訳ありませんがアクセス権限がありません。<br>登録するか、ログイン後にお願いします。");
-define("_WEBPHOTO_ERR_MUSTADDCATFIRST","追加するためにはカテゴリが必要です。<br>まずカテゴリを作成して下さい。");
+define("_WEBPHOTO_ERR_MUSTREGFIRST","申し訳ありませんがアクセス権限がありません。<br />登録するか、ログイン後にお願いします。");
+define("_WEBPHOTO_ERR_MUSTADDCATFIRST","追加するためにはカテゴリが必要です。<br />まずカテゴリを作成して下さい。");
 define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","画像未選択：アップロードすべき画像ファイルを選択して下さい。");
 define("_WEBPHOTO_ERR_FILE","画像アップロードに失敗：画像ファイルが見つからないか容量制限を越えてます。");
 define("_WEBPHOTO_ERR_FILEREAD","画像読込失敗：なんらかの理由でアップロードされた画像ファイルを読み出せません。");
@@ -499,6 +499,9 @@ define("_WEBPHOTO_MIME_TYPE" ,  "MIMEタイプ" ) ;
 define("_WEBPHOTO_MIME_NAME" ,  "MIME名称" ) ;
 define("_WEBPHOTO_MIME_PERMS" , "パーミッション" ) ;
 
+// added in v0.20
+define("_WEBPHOTO_MIME_FFMPEG" , "ffmpeg オプション" ) ;
+
 // tag table
 define("_WEBPHOTO_TAG_TABLE" , "タグテーブル" ) ;
 define("_WEBPHOTO_TAG_ID" ,          "タグID" ) ;
@@ -696,6 +699,23 @@ define("_WEBPHOTO_JA_KUTEN",   "。");
 define("_WEBPHOTO_JA_DOKUTEN", "、");
 define("_WEBPHOTO_JA_PERIOD",  "．");
 define("_WEBPHOTO_JA_COMMA",   "，");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL", "動画のサムネイルを選択する");
+define("_WEBPHOTO_TITLE_VIDEO_REDO","アップロード済みの動画より Flash動画とサムネイルを生成する");
+define("_WEBPHOTO_CAP_REDO_THUMB","サムネイルを生成する");
+define("_WEBPHOTO_CAP_REDO_FLASH","Flash 動画を生成する");
+define("_WEBPHOTO_ERR_VIDEO_FLASH", "Flash 動画を生成できなかった");
+define("_WEBPHOTO_ERR_VIDEO_THUMB", "動画のサムネイルが生成できなかったので、アイコンで代用した");
+define("_WEBPHOTO_BUTTON_SELECT", "選択");
+
+define("_WEBPHOTO_DSC_DOWNLOAD_PLAY","ダウンロードして再生する");
+define("_WEBPHOTO_ICON_VIDEO", "動画");
+define("_WEBPHOTO_HOUR", "時間");
+define("_WEBPHOTO_MINUTE", "分");
+define("_WEBPHOTO_SECOND", "秒");
 
 // === define end ===
 }

@@ -1,10 +1,16 @@
 <?php
-// $Id: main.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// $fct -> $WEBPHOTO_FCT
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -27,9 +33,9 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'preload/debug.php' );
 
 // fork each pages
-$fct = webphoto_fct() ;
-$file_trust_fct   = WEBPHOTO_TRUST_PATH .'/main/'.$fct.'.php' ;
-$file_root_fct    = WEBPHOTO_ROOT_PATH  .'/main/'.$fct.'.php' ;
+$WEBPHOTO_FCT     = webphoto_fct() ;
+$file_trust_fct   = WEBPHOTO_TRUST_PATH .'/main/'. $WEBPHOTO_FCT .'.php' ;
+$file_root_fct    = WEBPHOTO_ROOT_PATH  .'/main/'. $WEBPHOTO_FCT .'.php' ;
 $file_trust_index = WEBPHOTO_TRUST_PATH .'/main/index.php' ;
 $file_root_index  = WEBPHOTO_ROOT_PATH  .'/main/index.php' ;
 

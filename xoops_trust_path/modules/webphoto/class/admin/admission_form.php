@@ -1,10 +1,16 @@
 <?php
-// $Id: admission_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: admission_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// bug fix
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -51,8 +57,8 @@ function print_list_admission( $photo_rows )
 	$onclick_admin  = ' onclick="document.MainForm.action.value=\'admit\'; submit();" ';
 	$onclick_delete = ' onclick="if(confirm(\''. _AM_WEBPHOTO_JS_REMOVECONFIRM .'\')){document.MainForm.action.value=\'delete\'; submit();}" ';
 
-	$url_index = $this->_MODULE_URL.'/index.php?';
-	$url_edit  = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id=';
+	$url_category = $this->_MODULE_URL.'/index.php?fct=category&amp;p=';
+	$url_edit     = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id=';
 
 	$img_edit     = $this->build_img_edit();
 	$img_deadlink = $this->build_img_deadlink();
@@ -83,8 +89,8 @@ function print_list_admission( $photo_rows )
 		$desc_disp   = $this->_photo_handler->build_show_description_disp( $row ) ;
 		$submitter_s = $this->get_xoops_user_name( $row['photo_uid'] );
 		$cat_path    = $this->_cat_handler->get_nice_path_from_id(
-			$row['photo_cat_id'] , 'cat_title', $url_index ) ;
-		$link =       $this->_PHOTOS_URL.'/'. $id .'.'. $row['photo_file_ext'];
+			$row['photo_cat_id'] , 'cat_title', $url_category, true ) ;
+		$link        = $row['photo_cont_url'];
 
 		$editbutton  = '<a href="'. $url_edit . $id .'" target="_blank">';
 		$editbutton .= $img_edit;
