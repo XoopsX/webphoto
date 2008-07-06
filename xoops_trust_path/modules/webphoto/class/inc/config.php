@@ -1,10 +1,16 @@
 <?php
-// $Id: config.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: config.php,v 1.2 2008/07/06 04:41:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// webphoto_xoops_base -> xoops_gethandler()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -67,8 +73,15 @@ function _init_cache( $dirname )
 //---------------------------------------------------------
 function _get_xoops_config( $dirname )
 {
-	$xoops_class =& webphoto_xoops_base::getInstance();
-	return $xoops_class->get_module_config_by_dirname( $dirname ); 
+	$module_handler =& xoops_gethandler('module');
+	$module = $module_handler->getByDirname( $dirname );
+	if ( !is_object($module) ) {
+		return false;
+	}
+	$mid = $module->getVar( 'mid' );
+
+	$config_handler =& xoops_gethandler('config');
+	return $config_handler->getConfigsByCat( 0, $mid );
 }
 
 // --- class end ---

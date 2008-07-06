@@ -1,5 +1,5 @@
 <?php
-// $Id: group_permission.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: group_permission.php,v 1.3 2008/07/06 04:41:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-07-01 K.OHWADA
-// correct SQL error
+// webphoto_xoops_base -> xoops_gethandler()
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -19,9 +19,11 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_group_permission extends webphoto_inc_handler
 {
-	var $_xoops_class;
-
 	var $_cached_perms = array();
+
+	var $_xoops_mid = 0;
+	var $_xoops_uid = 0;
+	var $_xoops_groups = null;
 
 //---------------------------------------------------------
 // constructor
@@ -29,8 +31,6 @@ class webphoto_inc_group_permission extends webphoto_inc_handler
 function webphoto_inc_group_permission()
 {
 	$this->webphoto_inc_handler();
-
-	$this->_xoops_class =& webphoto_xoops_base::getInstance();
 }
 
 function &getInstance()
@@ -45,6 +45,7 @@ function &getInstance()
 function init( $dirname )
 {
 	$this->init_handler( $dirname );
+	$this->_init_xoops( $dirname );
 	$this->_init_cache( $dirname );
 }
 
@@ -70,23 +71,20 @@ function _has_perm_by_bit( $bit )
 
 function _get_cached_perm()
 {
-	$uid = $this->_get_uid();
-	if ( isset( $this->_cached_perms[ $this->_DIRNAME ][ $uid ] ) ) {
-		return  $this->_cached_perms[ $this->_DIRNAME ][ $uid ] ;
+	if ( isset( $this->_cached_perms[ $this->_DIRNAME ][ $this->_xoops_uid ] ) ) {
+		return  $this->_cached_perms[ $this->_DIRNAME ][ $this->_xoops_uid ] ;
 	}
 	return false;
 }
 
 function _init_cache( $dirname )
 {
-	$uid = $this->_get_uid();
-
 // probably uid is unnecessary
 // because one process runing by same user
 
 // set if not set
-	if ( !isset( $this->_cached_perms[ $dirname ][ $uid ] ) ) {
-		$this->_cached_perms[ $dirname ][ $uid ]
+	if ( !isset( $this->_cached_perms[ $dirname ][ $this->_xoops_uid ] ) ) {
+		$this->_cached_perms[ $dirname ][ $this->_xoops_uid ]
 			= $this->_get_permission( $dirname ) ; 
 	}
 }
@@ -100,13 +98,12 @@ function _get_permission( $dirname )
 
 // correct SQL error
 // no action when not installed this module
-	$mid = $this->_get_mid( $dirname );
-	if ( empty($mid) ) {
+	if ( empty($this->_xoops_mid) ) {
 		return $perms;
 	}
 
 	$sql  = "SELECT gperm_itemid FROM ". $this->_db->prefix( 'group_permission' );
-	$sql .= " WHERE gperm_modid=". intval($mid) ;
+	$sql .= " WHERE gperm_modid=". intval( $this->_xoops_mid ) ;
 	$sql .= " AND gperm_name=".$this->quote( _C_WEBPHOTO_GPERM_NAME );
 	$sql .= " AND ( ". $this->_build_where_groupid(). " )";
 
@@ -124,11 +121,9 @@ function _get_permission( $dirname )
 
 function _build_where_groupid()
 {
-	$groups = $this->_get_groups();
-
-	if( is_array($groups) && count($groups) ) {
+	if( is_array($this->_xoops_groups) && count($this->_xoops_groups) ) {
 		$where = "gperm_groupid IN (" ;
-		foreach( $groups as $groupid ) {
+		foreach( $this->_xoops_groups as $groupid ) {
 			$where .= "$groupid," ;
 		}
 		$where = substr( $where , 0 , -1 ) . ")" ;
@@ -143,19 +138,19 @@ function _build_where_groupid()
 //---------------------------------------------------------
 // xoops class
 //---------------------------------------------------------
-function _get_mid( $dirname )
+function _init_xoops( $dirname )
 {
-	return $this->_xoops_class->get_module_mid_by_dirname( $dirname );
-}
+	$module_handler =& xoops_gethandler('module');
+	$module = $module_handler->getByDirname( $dirname );
+	if ( is_object($module) ) {
+		$this->_xoops_mid = $module->getVar( 'mid' );
+	}
 
-function _get_uid()
-{
-	return $this->_xoops_class->get_my_user_uid();
-}
-
-function _get_groups()
-{
-	return $this->_xoops_class->get_my_user_groups();
+	global $xoopsUser;
+	if ( is_object($xoopsUser) ) {
+		$this->_xoops_uid    = $xoopsUser->getVar( 'uid' );
+		$this->_xoops_groups = $xoopsUser->getGroups();
+	}
 }
 
 // --- class end ---

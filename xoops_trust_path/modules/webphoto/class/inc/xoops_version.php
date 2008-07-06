@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.5 2008/07/05 17:05:03 ohwada Exp $
+// $Id: xoops_version.php,v 1.6 2008/07/06 04:41:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,8 @@
 // change log
 // 2008-07-01 K.OHWADA
 // added use_ffmpeg use_pathinfo
+// webphoto_xoops_base -> xoops_gethandler()
+//
 // 2008-06-30 K.OHWADA
 // typo
 //---------------------------------------------------------
@@ -928,9 +930,11 @@ function _init_xoops_group_permission( $dirname )
 //---------------------------------------------------------
 function _init_xoops_module( $dirname )
 {
-	$xoops_class =& webphoto_xoops_base::getInstance();
-
-	$this->_MODULE_ID = $xoops_class->get_module_mid_by_dirname( $dirname );
+	$module_handler =& xoops_gethandler('module');
+	$module = $module_handler->getByDirname( $dirname );
+	if ( is_object($module) ) {
+		$this->_MODULE_ID = $module->getVar( 'mid' );
+	}
 }
 
 // --- class end ---

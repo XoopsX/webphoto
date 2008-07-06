@@ -1,11 +1,18 @@
 <?php
-// $Id: xoops_version.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: xoops_version.php,v 1.2 2008/07/06 04:41:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// remove class/xoops/base.php
+//---------------------------------------------------------
+
+// webphoto_xoops_base -> xoops_gethandler()
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
 //---------------------------------------------------------
@@ -18,7 +25,6 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'preload/debug.php',              $MY_DIRNAME );
 webphoto_include_once( 'include/constants.php',          $MY_DIRNAME );
 webphoto_include_once( 'include/version.php',            $MY_DIRNAME );
-webphoto_include_once( 'class/xoops/base.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
