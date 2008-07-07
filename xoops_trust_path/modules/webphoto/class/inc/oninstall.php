@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: oninstall.php,v 1.4 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -21,7 +21,7 @@ class webphoto_inc_oninstall extends webphoto_inc_handler
 {
 	var $_table_mime ;
 
-	var $_is_xoops_2018 = false;
+	var $_IS_XOOPS_2018 = false;
 
 	var $_msg_array = array();
 
@@ -128,14 +128,8 @@ function _init( $trust_dirname , &$module )
 	$this->_table_mime = $this->prefix_dirname( 'mime' );
 
 // preload
-	$preload_file = $this->_TRUST_DIR  .'/preload/constants.php';
-
-	if ( is_file( $preload_file ) ) {
-		include_once $preload_file;
-	}
-
 	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
-		$this->_is_xoops_2018 = true ;
+		$this->_IS_XOOPS_2018 = (bool)_C_WEBPHOTO_PRELOAD_XOOPS_2018 ;
 	}
 }
 
@@ -324,7 +318,7 @@ function _template_common()
 	$TPL_ROOT_PATH  = $this->_MODULE_DIR .'/templates';
 
 // read webphoto_xxx.html in root_path
-	if ( $this->_is_xoops_2018 ) {
+	if ( $this->_IS_XOOPS_2018 ) {
 		$tpl_path = $TPL_ROOT_PATH . '/';
 		$prefix   = ''; 
 
@@ -503,7 +497,8 @@ function _mime_update()
 {
 	$this->_mime_add_column_ffmpeg();
 	$this->_mime_add_record_flv();
-	$this->_mime_update_record_avi();
+	$this->_mime_update_record_ffmpeg();
+	$this->_mime_delete_record_asx();
 }
 
 function _mime_add_column_ffmpeg()
@@ -542,9 +537,9 @@ function _mime_add_record_flv()
 		'mime_name'        => 'Flash Video' ,
 		'mime_ext'         => 'flv' ,
 		'mime_medium'      => 'video' ,
-		'mime_type'        => 'video/x-flv' ,
+		'mime_type'        => 'video/x-flv application/octet-stream' ,
 		'mime_perms'       => '&1&' ,
-		'mime_ffmpeg'      => '' ,
+		'mime_ffmpeg'      => '-ar 44100' ,
 	);
 
 	$ret = $this->_mime_insert_record( $row );
@@ -558,23 +553,44 @@ function _mime_add_record_flv()
 
 }
 
-function _mime_update_record_avi()
+function _mime_update_record_ffmpeg()
 {
-	$row = $this->_mime_get_row_by_ext( 'avi' );
+	$list = array( 'avi', 'mov', 'mpeg', 'mpg', 'wmv' );
+
+	foreach ( $list as $ext ) 
+	{
+		$row  = $this->_mime_get_row_by_ext( $ext );
 
 // return if already set
-	if ( $row['mime_ffmpeg'] ) {
-		return true;
+		if ( $row['mime_ffmpeg'] ) {
+			continue;
+		}
+
+		$row['mime_ffmpeg'] = '-ar 44100' ;
+
+		$ret = $this->_mime_update_record( $row );
+		if ( $ret ) {
+			$this->_set_msg( 'Update '. $ext .' in <b>'. $this->_table_mime .'</b>' );
+		} else {
+			$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		}
 	}
 
-	$row['mime_ffmpeg'] = '-ar 44100' ;
+}
 
-	$ret = $this->_mime_update_record( $row );
+function _mime_delete_record_asx()
+{
+	$row = $this->_mime_get_row_by_ext( 'asx' );
+	if ( !is_array($row) ) {
+		return true;	// no action
+	}
+
+	$ret = $this->_mime_delete_by_id( $row['mime_id'] );
 	if ( $ret ) {
-		$this->_set_msg( 'Update avi in <b>'. $this->_table_mime .'</b>' );
+		$this->_set_msg( 'Delete asx in <b>'. $this->_table_mime .'</b>' );
 		return true;
 	} else {
-		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		$this->_set_msg( $this->highlight( 'ERROR: Could not delete <b>'. $this->_table_mime .'</b>.' ) );
 		return false;
 	}
 
@@ -631,6 +647,13 @@ function _mime_update_record( $row )
 
 	$sql .= 'WHERE mime_id='.intval($mime_id);
 
+	return $this->query( $sql );
+}
+
+function _mime_delete_by_id( $id )
+{
+	$sql  = 'DELETE FROM '. $this->_table_mime ;
+	$sql .= ' WHERE mime_id='.intval( $id );
 	return $this->query( $sql );
 }
 

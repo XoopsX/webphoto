@@ -1,10 +1,16 @@
 <?php
-// $Id: preload.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: preload.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added include_once_preload_trust_files()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,14 +19,16 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_d3_preload
 {
-	var $_DIRNAME;
-	var $_MODULE_DIR;
-	var $_MODULE_URL;
-
 	var $_dh;
 	var $_dir_name;
 
 	var $_errors = array();
+
+	var $_TRUST_DIRNAME;
+	var $_TRUST_DIR;
+	var $_DIRNAME;
+	var $_MODULE_DIR;
+	var $_MODULE_URL;
 
 //---------------------------------------------------------
 // constructor
@@ -41,22 +49,36 @@ function &getInstance()
 
 function init( $dirname , $trust_dirname )
 {
-	$this->_DIRNAME       = $dirname;
-	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->init_trust( $trust_dirname );
 
+	$this->_DIRNAME    = $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
+}
+
+function init_trust( $trust_dirname )
+{
+	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 }
 
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
+function include_once_preload_trust_files()
+{
+	$path = $this->_TRUST_DIR .'/preload';
+	$ext  = 'php';
+
+	return $this->include_once_files_in_dir( $path, $ext );
+}
+
 function include_once_preload_files()
 {
-	$dirname = 'modules/'. $this->_DIRNAME .'/preload';
-	$ext     = 'php';
+	$path = $this->_MODULE_DIR .'/preload';
+	$ext  = 'php';
 
-	return $this->include_once_files_in_dir( $dirname, $ext );
+	return $this->include_once_files_in_dir( $path, $ext );
 }
 
 function &get_class_instance( $name )
@@ -153,47 +175,51 @@ function get_preload_const_array()
 //---------------------------------------------------------
 // dir handler
 //---------------------------------------------------------
-function include_once_files_in_dir( $dirname, $ext )
+function include_once_files_in_dir( $path, $ext )
 {
-	$files = $this->get_files_in_dir( $dirname, $ext );
+	$files = $this->get_files_in_dir( $path, $ext );
 	if ( !is_array($files) || !count($files) ) { return false; } 
 
 	foreach ( $files as $file ) 
 	{
 		if ( preg_match( "/^_/", $file) ) { continue; }
-		include_once XOOPS_ROOT_PATH. '/'. $dirname .'/'. $file;
+		include_once $path .'/'. $file;
 	}
 	return true;
 }
 
-function get_files_in_dir( $dirname, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false  )
+function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false  )
 {
 	$arr   = array();
 	$false = false;
 
-	$dirname = $this->strip_slash_from_tail( $dirname );
+	$path = $this->strip_slash_from_tail( $path );
 
-	$ret = $this->opendir($dirname);
+	$ret = $this->opendir( $path );
 	if ( !$ret ) { return $false; }
 
 	$pattern = "/\.". preg_quote($ext) ."$/";
 
 	foreach ( $this->readdir_array() as $file ) 
 	{
-		$xoops_file = XOOPS_ROOT_PATH .'/'. $dirname .'/'. $file;
+		$path_file = $path .'/'. $file;
 
-		if ( !is_dir($xoops_file) && is_file($xoops_file) ) {
-			if (( $ext && preg_match($pattern, $file) )||( $ext === '' )) {
-				$file_out = $file;
-				if ( $flag_dir ) {
-					$file_out = $dirname .'/'. $file;
-				}
-				if ( $id_as_key ) {
-					$arr[ $file ] = $file_out;
-				} else {
-					$arr[] = $file_out;
-				}
-			}
+		if ( is_dir($path_file) || !is_file($path_file) ) {
+			continue;
+		}
+
+		if ( $ext && !preg_match($pattern, $file) ) {
+			continue;
+		}
+
+		$file_out = $file;
+		if ( $flag_dir ) {
+			$file_out = $dirname .'/'. $file;
+		}
+		if ( $id_as_key ) {
+			$arr[ $file ] = $file_out;
+		} else {
+			$arr[] = $file_out;
 		}
 	}
 

@@ -1,10 +1,16 @@
 <?php
-// $Id: oninstall.inc.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: oninstall.inc.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// use webphoto_include_once_trust()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -27,6 +33,8 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'include/constants.php',   $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',   $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall.php', $MY_DIRNAME );
+
+webphoto_include_once_trust( 'preload/constants.php' );
 
 //=========================================================
 // onInstall function

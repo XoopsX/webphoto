@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.2 2008/07/05 15:45:11 ohwada Exp $
+// $Id: ffmpeg.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,13 +22,13 @@ class webphoto_lib_ffmpeg
 
 	var $_errors = array();
 
-	var $_EXT_FLV  = 'flv';
-
-	var $_DEBUG = false;
-
 	var $_CMD_INFO          = 'ffmpeg -i %s';
 	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
 	var $_CMD_CREATE_FLASH  = 'ffmpeg -i %s -vcodec flv %s -f flv %s';
+
+	var $_EXT_FLV     = 'flv';
+
+	var $_DEBUG = false;
 
 //---------------------------------------------------------
 // constructor
@@ -99,6 +99,7 @@ function get_duration_size( $file )
 {
 	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_INFO, $file );
 
+	$outputs = null;
 	exec( "$cmd 2>&1", $outputs );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
@@ -125,6 +126,11 @@ function get_duration_size( $file )
 		}
 	}
 
+	if ( empty($duration) ) {
+		$this->_set_error( $cmd );
+		$this->_set_error( $outputs );
+	}
+
 	$arr = array(
 		'duration' => $duration ,
 		'width'    => $width ,
@@ -149,6 +155,7 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 
 		$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_THUMBS, $sec, $file_in, $file_out );
 
+		$outputs = null;
 		exec( "$cmd 2>&1", $outputs );
 		if ( $this->_DEBUG ) {
 			echo $cmd."<br />\n";
@@ -185,8 +192,10 @@ function create_flash( $file_in, $file_out, $extra=null )
 		return false;
 	}
 
-	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_FLASH, $file_in, $extra, $file_out );
+	$cmd = $this->_CMD_PATH . sprintf( 
+		$this->_CMD_CREATE_FLASH, $file_in, $extra, $file_out );
 
+	$outputs = null;
 	exec( "$cmd 2>&1", $outputs );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";

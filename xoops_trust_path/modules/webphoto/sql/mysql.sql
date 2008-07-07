@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+# $Id: mysql.sql,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -268,18 +268,18 @@ INSERT INTO gicon VALUES (10, 0, 0, 'yellow 18x28', '/modules/{DIRNAME}/images/m
 # MS IE 6 use ' image/x-png image/pjpeg '
 #
 
-INSERT INTO mime VALUES (1, 0, 0, 'asx', 'video', 'video/x-ms-asf', 'Advanced Stream Redirector File', '&1&', '');
-INSERT INTO mime VALUES (2, 0, 0, 'avi', 'video', 'video/x-msvideo', 'Audio Video Interleave File', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (3, 0, 0, 'bmp','image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '');
-INSERT INTO mime VALUES (4, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '');
+INSERT INTO mime VALUES (1, 0, 0, 'avi', 'video', 'video/x-msvideo', 'Audio Video Interleave File', '&1&', '-ar 44100');
+INSERT INTO mime VALUES (2, 0, 0, 'bmp','image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '');
+INSERT INTO mime VALUES (3, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '');
+INSERT INTO mime VALUES (4, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (5, 0, 0, 'gif', 'image', 'image/gif', 'Graphic Interchange Format', '&1&2&', '');
 INSERT INTO mime VALUES (6, 0, 0, 'jpg','image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '');
 INSERT INTO mime VALUES (7, 0, 0, 'jpeg','image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '');
 INSERT INTO mime VALUES (8, 0, 0, 'mid', 'audio','audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '');
-INSERT INTO mime VALUES (9, 0, 0, 'mov','video', 'video/quicktime', 'QuickTime Video Clip', '&1&', '');
+INSERT INTO mime VALUES (9, 0, 0, 'mov','video', 'video/quicktime', 'QuickTime Video Clip', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (10, 0, 0, 'mp3','audio', 'audio/mpeg', 'MPEG Audio Stream, Layer III', '&1&', '');
-INSERT INTO mime VALUES (11, 0, 0, 'mpeg','video', 'video/mpeg', 'MPEG Movie', '&1&', '');
-INSERT INTO mime VALUES (12, 0, 0, 'mpg','video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '');
+INSERT INTO mime VALUES (11, 0, 0, 'mpeg','video', 'video/mpeg', 'MPEG Movie', '&1&', '-ar 44100');
+INSERT INTO mime VALUES (12, 0, 0, 'mpg','video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (13, 0, 0, 'pdf','', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '');
 INSERT INTO mime VALUES (14, 0, 0, 'png', 'image', 'image/png image/x-png', 'Portable (Public) Network Graphic', '&1&2&', '');
 INSERT INTO mime VALUES (15, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '');
@@ -288,8 +288,7 @@ INSERT INTO mime VALUES (17, 0, 0, 'rar','', 'application/x-rar-compressed', 'Wi
 INSERT INTO mime VALUES (18, 0, 0, 'swf','', 'application/x-shockwave-flash', 'Macromedia Flash Format File', '&1&', '');
 INSERT INTO mime VALUES (29, 0, 0, 'txt','', 'text/plain', 'Text File', '&1&', '');
 INSERT INTO mime VALUES (20, 0, 0, 'wav', 'audio', 'audio/x-wav', 'Waveform Audio', '&1&', '');
-INSERT INTO mime VALUES (21, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Media File', '&1&', '');
+INSERT INTO mime VALUES (21, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Media File', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (22, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel','&1&', '');
 INSERT INTO mime VALUES (23, 0, 0, 'zip', '', 'application/zip', 'Compressed Archive File', '&1&', '');
-INSERT INTO mime VALUES (24, 0, 0, 'flv', 'video', 'video/x-flv', 'Flash Video', '&1&', '');
 

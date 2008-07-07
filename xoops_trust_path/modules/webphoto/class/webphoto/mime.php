@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: mime.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -26,6 +26,9 @@ class webphoto_mime
 	var $_cached_mime_array = array();
 
 	var $_VIDEO_MEDIUM = 'video';
+
+// asx is meta file (text)
+	var $_EXT_ASX = 'asx';
 
 //---------------------------------------------------------
 // constructor
@@ -152,6 +155,9 @@ function add_mime_to_info_if_empty( $info, $mime_in=null )
 
 function is_video_ext( $ext )
 {
+	if ( $ext == $this->_EXT_ASX ) {
+		return false;
+	}
 	$mime = $this->get_cached_mime_type_by_ext( $ext );
 	return $this->is_video_mime( $mime );
 }

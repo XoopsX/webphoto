@@ -1,10 +1,16 @@
 <?php
-// $Id: blocks.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: blocks.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// use webphoto_include_once_trust()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -35,5 +41,7 @@ webphoto_include_once( 'class/inc/blocks.php',       $MY_DIRNAME );
 webphoto_include_once( 'blocks/functions.php',       $MY_DIRNAME );
 
 webphoto_include_language( 'blocks.php', $MY_DIRNAME );
+
+webphoto_include_once_trust( 'preload/constants.php' );
 
 ?>

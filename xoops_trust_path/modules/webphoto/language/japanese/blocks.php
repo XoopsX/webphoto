@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: blocks.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,6 +29,11 @@ define($constpref."TEXT_BLOCK_WIDTH","最大表示サイズ");
 define($constpref."TEXT_BLOCK_WIDTH_NOTES","（※ ここを0にした場合、サムネイル画像をそのままのサイズで表示します）");
 define($constpref."TEXT_RANDOMCYCLE","画像の切り替え周期（単位は秒）");
 define($constpref."TEXT_COLS","画像の列数");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define($constpref."POPBOX_REVERT", "クリックすると、元の小さい写真になる");
 
 // === define end ===
 }

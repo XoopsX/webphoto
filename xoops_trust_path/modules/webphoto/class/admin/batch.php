@@ -1,5 +1,5 @@
 <?php
-// $Id: batch.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: batch.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -205,10 +205,15 @@ function _exec_submit()
 
 		$ext  = $this->parse_ext( $file_name ) ;
 		$node = substr( $file_name , 0 , - strlen( $ext ) - 1 ) ;
-		$src_file = $dir.'/'.$node.'.'.$ext ;
+		$src_file = $dir .'/'. $file_name ;
 
-		if ( ! is_readable( $src_file ) || ! in_array( strtolower( $ext ) , $allowed_exts ) ) {
-			echo ' Skip : '. $this->sanitize($file_name) ."<br />\n" ;
+		if ( ! is_readable( $src_file ) ) {
+			echo ' Skip : can not read : '. $this->sanitize($file_name)."<br />\n" ;
+			continue;
+		}
+
+		if ( ! in_array( strtolower( $ext ) , $allowed_exts ) ) {
+			echo ' Skip : not allow ext : '. $this->sanitize($file_name) ."<br />\n" ;
 			continue;
 		}
 
@@ -302,11 +307,11 @@ function _exec_each_file( $src_file, $photo_ext, $title )
 			$newid, $this->_video_class->get_flash_ext() );
 
 		$ret1 = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
-		if ( $ret1 ) {
+		if ( $ret1 == _C_WEBPHOTO_VIDEO_CREATED ) {
 			echo ' create flash, ' ;
 			$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
-		} else {
-			echo ' fail to create flash, ' ;
+		} elseif ( $ret1 == _C_WEBPHOTO_VIDEO_FAILED ) {
+			echo $this->highlight( ' fail to create flash, ' ) ;
 		}
 
 // create video thumb

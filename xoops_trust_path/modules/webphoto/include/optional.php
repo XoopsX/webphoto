@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: optional.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-07-01 K.OHWADA
+// added  webphoto_include_once_trust()
 // change webphoto_fct()
 //---------------------------------------------------------
 
@@ -31,6 +32,13 @@ function webphoto_fct()
 
 	$d3_class =& webphoto_d3_optional::getInstance();
 	return $d3_class->get_fct( $page_array );
+}
+
+function webphoto_include_once_trust( $file, $debug=true )
+{
+	$d3_class =& webphoto_d3_optional::getInstance();
+	$d3_class->init_trust( WEBPHOTO_TRUST_DIRNAME );
+	return $d3_class->include_once_trust_file( $file, $debug );
 }
 
 function webphoto_include_once( $file, $dirname=null, $debug=true )
@@ -66,6 +74,13 @@ function webphoto_include_once_preload( $dirname=null )
 	$preload_class =& webphoto_d3_preload::getInstance();
 	$preload_class->init( webphoto_get_dirname( $dirname ), WEBPHOTO_TRUST_DIRNAME );
 	return $preload_class->include_once_preload_files();
+}
+
+function webphoto_include_once_preload_trust()
+{
+	$preload_class =& webphoto_d3_preload::getInstance();
+	$preload_class->init_trust( WEBPHOTO_TRUST_DIRNAME );
+	return $preload_class->include_once_preload_trust_files();
 }
 
 function webphoto_get_dirname( $dirname )

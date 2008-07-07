@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.3 2008/07/05 16:10:30 ohwada Exp $
+// $Id: blocks.php,v 1.4 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
+// _assign_xoops_header() -> _get_popbox_js()
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -140,7 +141,8 @@ function _top_show_common( $mode , $options )
 
 	$use_popbox = ( $show_popbox && $this->_cfg_use_popbox ) ? true : false ;
 
-	$this->_assign_xoops_header( $mode, $use_popbox );
+	list ( $show_popbox_js , $popbox_js )
+		= $this->_get_popbox_js( $mode, $use_popbox );
 
 	$template = 'db:'. $this->_DIRNAME .'_block_'. $mode .'.html';
 
@@ -162,10 +164,12 @@ function _top_show_common( $mode , $options )
 		$block['photo'][$count++] = $arr ;
 	}
 
-	$block['dirname']      = $this->_DIRNAME ;
-	$block['cols']         = $cols ;
-	$block['show_popbox']  = $use_popbox ;
-	$block['use_pathinfo'] = $this->_cfg_use_pathinfo ;
+	$block['dirname']        = $this->_DIRNAME ;
+	$block['cols']           = $cols ;
+	$block['show_popbox']    = $use_popbox ;
+	$block['show_popbox_js'] = $show_popbox_js ;
+	$block['popbox_js']      = $popbox_js ;
+	$block['use_pathinfo']   = $this->_cfg_use_pathinfo ;
 
 	if ( $disable_renderer ) {
 		return $block ;
@@ -437,21 +441,30 @@ function _get_catselbox( $preset_id=0, $none=0, $sel_name="", $onchange="" )
 //---------------------------------------------------------
 // xoops header class
 //---------------------------------------------------------
-function _assign_xoops_header( $mode, $show_popbox )
+function _get_popbox_js( $mode, $show_popbox )
 {
+	$show_popbox_js = false ;
+	$popbox_js      = null ;
+
 	switch( $mode )
 	{
 		case 'topnews_p':
 		case 'tophits_p':
 		case 'rphoto':
 			$header_class =& webphoto_inc_xoops_header::getInstance();
-			$header_class->assign_for_block( $this->_DIRNAME, $show_popbox, null );
+			$popbox_js = $header_class->assign_or_get_popbox_js( 
+				$this->_DIRNAME, $show_popbox, $this->_constant( 'POPBOX_REVERT' ) );
 			break;
 
 		default:
 			break;
 	}
 
+	if ( $popbox_js ) {
+		$show_popbox_js = true;
+	}
+
+	return array( $show_popbox_js , $popbox_js );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.4 2008/07/05 15:45:11 ohwada Exp $
+// $Id: photo_edit.php,v 1.5 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -379,17 +379,6 @@ function overwrite_photo_cont_exif( $val )
 }
 
 //---------------------------------------------------------
-// photo cont duration
-//---------------------------------------------------------
-function overwrite_photo_cont_duration( $val )
-{
-	$val = intval($val);
-	if ( $val ) {
-		$this->_photo_cont_duration = $val;
-	}
-}
-
-//---------------------------------------------------------
 // upload
 //---------------------------------------------------------
 function upload_fetch_photo( $flag_allow_all=false )
@@ -544,7 +533,7 @@ function create_video_flash_thumb( $photo_id, $photo_info )
 		$height   = $param['height'] ;
 
 		if ( $duration ) {
-			$this->overwrite_photo_cont_duration( $duration );
+			$photo_info['photo_cont_duration'] = $duration ;
 		}
 		if ( $width && $height ) {
 			$photo_info['photo_cont_width']  = $width ;
@@ -571,10 +560,14 @@ function create_video_flash( $photo_id, $photo_file )
 {
 	$flash_name = $this->_image_class->build_photo_name( 
 		 $photo_id, $this->_video_class->get_flash_ext() );
+
 	$ret = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
-	if ( $ret ) {
+	if ( $ret == _C_WEBPHOTO_VIDEO_CREATED ) {
 		return true;
+	} elseif ( $ret == _C_WEBPHOTO_VIDEO_SKIPPED ) {
+		return false;
 	}
+
 	$this->_msg_class->set_msg( $this->get_constant('ERR_VIDEO_FLASH') ) ;
 	if ( $this->_is_module_admin ) {
 		$this->_msg_class->set_msg( $this->_video_class->get_errors() ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: import.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -448,10 +448,10 @@ function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 			$photo_id, $this->_video_class->get_flash_ext() );
 
 		$ret = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
-		if ( $ret ) {
+		if ( $ret == _C_WEBPHOTO_VIDEO_CREATED ) {
 			echo ' create flash, ' ;
 			$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
-		} else {
+		} elseif ( $ret == _C_WEBPHOTO_VIDEO_FAILED ) {
 			echo $this->highlight( ' fail to create flash, ' ) ;
 		}
 

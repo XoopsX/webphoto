@@ -1,10 +1,16 @@
 <?php
-// $Id: optional.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: optional.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added include_once_trust_file()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -43,15 +49,20 @@ function &getInstance()
 
 function init( $dirname , $trust_dirname )
 {
-	$this->_DIRNAME       = $dirname;
-	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->init_trust( $trust_dirname );
 
+	$this->_DIRNAME    = $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH  .'/modules/'. $dirname;
-	$this->_TRUST_DIR  = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 
 	$constpref = strtoupper( '_C_' . $dirname. '_' ) ;
 	$this->set_debug_include_by_const_name( $constpref.'DEBUG_INCLUDE' );
 	$this->set_debug_error_by_const_name(   $constpref.'DEBUG_ERROR' );
+}
+
+function init_trust( $trust_dirname )
+{
+	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 }
 
 //---------------------------------------------------------
@@ -105,6 +116,20 @@ function _try_to_get_fct( $page_array )
 	}
 
 	return $fct;
+}
+
+function include_once_trust_file( $file )
+{
+	$file_trust = $this->_TRUST_DIR  . '/' . $file ;
+
+	if( file_exists( $file_trust ) ) {
+		$this->debug_msg_include_file( $file_trust );
+		include_once $file_trust;
+		return true;
+	}
+
+	$this->debug_msg_error( 'CANNOT include '. $file_trust ) ;
+	return false;
 }
 
 function include_once_file( $file )

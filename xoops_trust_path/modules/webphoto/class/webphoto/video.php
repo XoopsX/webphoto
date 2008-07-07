@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.2 2008/07/05 15:45:11 ohwada Exp $
+// $Id: video.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -218,12 +218,12 @@ function create_flash( $file_in, $name_out )
 	$ext = $this->_utility_class->parse_ext( $file_in );
 
 	if ( !$this->_cfg_use_ffmpeg ) {
-		return false;
+		return _C_WEBPHOTO_VIDEO_SKIPPED ;
 	}
 
 // return input file is flash video
 	if ( $ext == $this->_FLASH_EXT ) {
-		return false;
+		return _C_WEBPHOTO_VIDEO_SKIPPED ;
 	}
 
 	$path_out = $this->_PHOTOS_PATH .'/'. $name_out ;
@@ -239,7 +239,7 @@ function create_flash( $file_in, $name_out )
 		if ( $this->_DEBUG ) {
 			print_r( $errors );
 		}
-		return false;
+		return _C_WEBPHOTO_VIDEO_FAILED ;
 	}
 
 	$this->_flash_info = array(
@@ -252,7 +252,7 @@ function create_flash( $file_in, $name_out )
 		'photo_file_size'   => filesize( $file_out ) ,
 	);
 
-	return true;
+	return _C_WEBPHOTO_VIDEO_CREATED ;
 }
 
 function get_flash_info()

@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.1 2008/06/21 12:22:16 ohwada Exp $
+// $Id: blocks.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,6 +29,11 @@ define($constpref."TEXT_BLOCK_WIDTH","Displays max");
 define($constpref."TEXT_BLOCK_WIDTH_NOTES","(if you set this to 0, the thumbnail image displays in its original size.)");
 define($constpref."TEXT_RANDOMCYCLE","Switching cycle of random images (sec)");
 define($constpref."TEXT_COLS","Columns of Photos");
+
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define($constpref."POPBOX_REVERT", "Click the image to shrink it.");
 
 // === define end ===
 }

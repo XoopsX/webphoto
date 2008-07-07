@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: constants.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -64,6 +64,10 @@ define("_C_WEBPHOTO_IMAGE_COPIED" ,     2 ) ;
 define("_C_WEBPHOTO_IMAGE_SKIPPED" ,    3 ) ;
 define("_C_WEBPHOTO_IMAGE_ICON" ,       4 ) ;
 define("_C_WEBPHOTO_IMAGE_RESIZE" ,     5 ) ;
+
+define("_C_WEBPHOTO_VIDEO_FAILED" ,  -1 ) ;
+define("_C_WEBPHOTO_VIDEO_CREATED" ,  1 ) ;
+define("_C_WEBPHOTO_VIDEO_SKIPPED" ,  2 ) ;
 
 define("_C_WEBPHOTO_UPLOADER_NOT_FOUND"         , 1 ) ;
 define("_C_WEBPHOTO_UPLOADER_INVALID_FILE_SIZE" , 2 ) ;

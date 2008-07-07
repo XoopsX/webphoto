@@ -1,10 +1,17 @@
 <?php
-// $Id: xoops_header.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: xoops_header.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added $_XOOPS_MODULE_HADER
+// assign_for_block() -> assign_or_get_popbox_js()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -22,8 +29,10 @@ class webphoto_inc_xoops_header
 	var $_LIBS_URL;
 	var $_POPBOX_URL;
 
-	var $_LANG_POPBOX_REVERT = 'Click the image to shrink it.';
 	var $_LIMIT = 100;
+	var $_LANG_POPBOX_REVERT = 'Click the image to shrink it.';
+	var $_XOOPS_MODULE_HADER = 'xoops_module_header';
+	var $_BLOCK_POPBOX_JS    = false;
 
 //---------------------------------------------------------
 // constructor
@@ -42,13 +51,22 @@ function &getInstance()
 	return $instance;
 }
 
-
 function _init( $dirname )
 {
 	$this->_DIRNAME = $dirname;
 	$this->_MODULE_URL = XOOPS_URL.'/modules/'.$dirname;
 	$this->_LIBS_URL   = $this->_MODULE_URL .'/libs';
 	$this->_POPBOX_URL = $this->_MODULE_URL .'/images/popbox';
+
+// preload
+	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER") ) {
+		$this->_XOOPS_MODULE_HADER = _C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER ;
+	}
+
+	if ( defined("_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS") ) {
+		$this->_BLOCK_POPBOX_JS = (bool)_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS ;
+	}
+
 }
 
 //--------------------------------------------------------
@@ -64,9 +82,19 @@ function assign_for_main( $param )
 		$this->_build_xoops_header( $param ) );
 }
 
-function assign_for_block( $dirname, $flag_popbox, $lang_popbox_revert )
+function assign_or_get_popbox_js( $dirname, $flag_popbox, $lang_popbox_revert )
 {
 	$this->_init( $dirname );
+
+	if ( !$flag_popbox ) {
+		return null;
+	}
+
+	$this->_LANG_POPBOX_REVERT = $lang_popbox_revert;
+
+	if ( $this->_BLOCK_POPBOX_JS ) {
+		return $this->_build_header_once( 'popbox_js' );
+	}
 
 	$param = array(
 		'flag_popbox'        => $flag_popbox ,
@@ -74,6 +102,8 @@ function assign_for_block( $dirname, $flag_popbox, $lang_popbox_revert )
 	);
 	$this->_assign_xoops_module_header( 
 		$this->_build_xoops_header( $param ) );
+
+	return null;
 }
 
 //--------------------------------------------------------
@@ -216,8 +246,8 @@ function _assign_xoops_module_header( $var )
 
 	if ( $var ) {
 		$xoopsTpl->assign(
-			'xoops_module_header', 
-			$var."\n".$xoopsTpl->get_template_vars('xoops_module_header')
+			$this->_XOOPS_MODULE_HADER , 
+			$var."\n".$xoopsTpl->get_template_vars( $this->_XOOPS_MODULE_HADER )
 		);
 	}
 }

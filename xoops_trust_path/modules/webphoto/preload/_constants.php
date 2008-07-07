@@ -1,5 +1,5 @@
 <?php
-// $Id: _constants.php,v 1.1 2008/06/21 17:20:29 ohwada Exp $
+// $Id: _constants.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -18,7 +18,14 @@ define("_C_WEBPHOTO_PRELOAD_LOADED", 1 ) ;
 // Constant
 //=========================================================
 
-define("_C_WEBPHOTO_PRELOAD_XOOPS_2018", 1 ) ;
+// for XOOPS 2.0.18
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_2018", 1 ) ;
+
+// for style_sheet javascript 
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER", "xoops_webphoto_header" ) ;
+
+// for block
+//define("_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS", 1 ) ;
 
 // === define end ===
 }
