@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: photo.php,v 1.3 2008/07/08 00:04:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -185,6 +185,8 @@ function main()
 
 	$tags_param = $this->_build_tags_param( $photo_id );
 
+	$noti_param = $this->build_notification_select();
+
 	$cat_id = $this->_get_catid_row_or_post( $row ) ;
 
 	$this->assign_xoops_header( 'category', $cat_id, $show_gmap );
@@ -199,10 +201,9 @@ function main()
 		'show_photo_exif' => true ,
 		'photo_total_all' => $total_all ,
 		'lang_thereare'   => $this->build_lang_thereare( $total_all ) ,
-		'notification_select' => $this->_build_notification_select() ,
 	);
 
-	$ret = array_merge( $arr, $gmap_param, $tags_param );
+	$ret = array_merge( $arr, $gmap_param, $tags_param, $noti_param );
 	return $this->add_box_list( $ret );
 }
 
@@ -245,14 +246,6 @@ function _build_navi( $photo_id, $cat_id )
 	$id_array = $this->_photo_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
 
 	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
-}
-
-function _build_notification_select()
-{
-// for core's notificationSubscribableCategoryInfo
-	$_SERVER['PHP_SELF'] = $this->_notification_select_class->get_new_php_self();
-
-	return $this->_notification_select_class->build();
 }
 
 function _build_tags_param( $photo_id )
