@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.4 2008/07/07 23:34:23 ohwada Exp $
+// $Id: oninstall.php,v 1.5 2008/07/08 10:09:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -496,7 +496,7 @@ function _groupperm_install()
 function _mime_update()
 {
 	$this->_mime_add_column_ffmpeg();
-	$this->_mime_add_record_flv();
+	$this->_mime_add_record_asf_etc();
 	$this->_mime_update_record_ffmpeg();
 	$this->_mime_delete_record_asx();
 }
@@ -523,15 +523,44 @@ function _mime_add_column_ffmpeg()
 
 }
 
-function _mime_add_record_flv()
+function _mime_add_record_asf_etc()
 {
-// return if already exists
-	$row = $this->_mime_get_row_by_ext( 'flv' );
-	if ( is_array($row) ) {
-		return true;
-	}
+	$mime_list = array();
 
-	$row = array(
+	$mime_list[] = array(
+		'mime_time_create' => 0 ,
+		'mime_time_update' => 0 ,
+		'mime_name'        => 'Third Generation Partnership Project 2 File Format' ,
+		'mime_ext'         => '3g2' ,
+		'mime_medium'      => 'video' ,
+		'mime_type'        => 'video/3gpp2' ,
+		'mime_perms'       => '&1&' ,
+		'mime_ffmpeg'      => '-ar 44100' ,
+	);
+
+	$mime_list[] = array(
+		'mime_time_create' => 0 ,
+		'mime_time_update' => 0 ,
+		'mime_name'        => 'Third Generation Partnership Project File Format' ,
+		'mime_ext'         => '3gp' ,
+		'mime_medium'      => 'video' ,
+		'mime_type'        => 'video/3gpp' ,
+		'mime_perms'       => '&1&' ,
+		'mime_ffmpeg'      => '-ar 44100' ,
+	);
+
+	$mime_list[] = array(
+		'mime_time_create' => 0 ,
+		'mime_time_update' => 0 ,
+		'mime_name'        => 'Advanced Systems Format' ,
+		'mime_ext'         => 'asf' ,
+		'mime_medium'      => 'video' ,
+		'mime_type'        => 'video/x-ms-asf' ,
+		'mime_perms'       => '&1&' ,
+		'mime_ffmpeg'      => '-ar 44100' ,
+	);
+
+	$mime_list[] = array(
 		'mime_time_create' => 0 ,
 		'mime_time_update' => 0 ,
 		'mime_name'        => 'Flash Video' ,
@@ -542,15 +571,23 @@ function _mime_add_record_flv()
 		'mime_ffmpeg'      => '-ar 44100' ,
 	);
 
-	$ret = $this->_mime_insert_record( $row );
-	if ( $ret ) {
-		$this->_set_msg( 'Add flv in <b>'. $this->_table_mime .'</b>' );
-		return true;
-	} else {
-		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
-		return false;
-	}
+	foreach ( $mime_list as $mime_row ) 
+	{
+		$ext = $mime_row['mime_ext'];
 
+// skip if already exists
+		$row = $this->_mime_get_row_by_ext( $ext );
+		if ( is_array($row) ) {
+			continue;
+		}
+
+		$ret = $this->_mime_insert_record( $mime_row );
+		if ( $ret ) {
+			$this->_set_msg( 'Add '. $ext .' in <b>'. $this->_table_mime .'</b>' );
+		} else {
+			$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_mime .'</b>.' ) );
+		}
+	}
 }
 
 function _mime_update_record_ffmpeg()
@@ -561,7 +598,7 @@ function _mime_update_record_ffmpeg()
 	{
 		$row  = $this->_mime_get_row_by_ext( $ext );
 
-// return if already set
+// skip if already set
 		if ( $row['mime_ffmpeg'] ) {
 			continue;
 		}
