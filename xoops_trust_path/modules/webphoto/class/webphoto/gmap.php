@@ -1,10 +1,16 @@
 <?php
-// $Id: gmap.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: gmap.php,v 1.2 2008/07/08 20:31:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// not use webphoto_convert_to_utf8()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -163,7 +169,7 @@ function build_list_location( $photo_row, $limit=0, $offset=0 )
 	$arr = array();
 	foreach ( $rows as $row )
 	{
-		$row['info'] = webphoto_convert_to_utf8( $this->_build_gmap_info( $row ) );
+		$row['info']     = $this->_build_gmap_info( $row );
 		$row['gicon_id'] = $this->_build_icon_id( $row );
 		$arr[] = $row;
 	}

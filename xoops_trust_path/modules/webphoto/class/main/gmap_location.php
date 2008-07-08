@@ -1,10 +1,16 @@
 <?php
-// $Id: gmap_location.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: gmap_location.php,v 1.2 2008/07/08 20:31:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// added _build_list_location()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -93,10 +99,8 @@ function _assign_template( $cfg_gmap_apikey )
 			$gmap_longitude    = $row['photo_gmap_longitude'];
 			$gmap_zoom         = $row['photo_gmap_zoom'];
 
-			$gmap_list = $this->_gmap_class->build_list_location( $row );
-			if ( is_array($gmap_list) ) {
-				$show_gmap = true;
-			}
+			list( $show_gmap, $gmap_list ) 
+				= $this->_build_list_location( $row );
 		}
 	}
 
@@ -136,6 +140,32 @@ function _assign_template( $cfg_gmap_apikey )
 	$tpl->assign('lang_search',           $this->_constant('SR_SEARCH') );
 
 	$tpl->display( $this->_TEMPLATE );
+}
+
+function _build_list_location( $row )
+{
+	$show_gmap = false;
+	$gmap_list = null;
+
+	$list = $this->_gmap_class->build_list_location( $row );
+	if ( !is_array($list) || !count($list) ) {
+		return array( $show_gmap, $gmap_list );
+	}
+
+// convert to UTF-8
+	$gmap_list = array();
+	foreach ( $list as $loc ) 
+	{
+		$temp         = $loc;
+		$temp['info'] = $this->_utf8( $loc['info'] );
+		$gmap_list[]  = $temp ;
+	}
+
+	if ( is_array($gmap_list) && count($gmap_list)) {
+		$show_gmap = true;
+	}
+
+	return array( $show_gmap, $gmap_list );
 }
 
 function _constant( $name )

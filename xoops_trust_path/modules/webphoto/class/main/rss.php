@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: rss.php,v 1.2 2008/07/08 20:31:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -46,11 +46,8 @@ class webphoto_main_rss extends webphoto_lib_rss
 	var $_MAX_SUMMARY  = 500;
 	var $_MODE_DEFAULT = 'latest';
 
-//	var $_CACHE_TIME_RAMDOM = 60;	// 1 min
-//	var $_CACHE_TIME_LATEST = 3600;	// 1 hour
-
-	var $_CACHE_TIME_RAMDOM = 0;	// 1 min
-	var $_CACHE_TIME_LATEST = 0;	// 1 hour
+	var $_CACHE_TIME_RAMDOM = 60;	// 1 min
+	var $_CACHE_TIME_LATEST = 3600;	// 1 hour
 
 	var $_LIMIT_DEFAULT = 20;
 	var $_LIMIT_MAX = 100;
