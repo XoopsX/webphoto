@@ -1,5 +1,5 @@
 <?php
-// $Id: preload.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
+// $Id: preload.php,v 1.3 2008/07/08 21:07:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -20,7 +20,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_d3_preload
 {
 	var $_dh;
-	var $_dir_name;
+	var $_opened_path = null;
 
 	var $_errors = array();
 
@@ -29,6 +29,8 @@ class webphoto_d3_preload
 	var $_DIRNAME;
 	var $_MODULE_DIR;
 	var $_MODULE_URL;
+
+	var $_DEBUG = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -178,13 +180,24 @@ function get_preload_const_array()
 function include_once_files_in_dir( $path, $ext )
 {
 	$files = $this->get_files_in_dir( $path, $ext );
-	if ( !is_array($files) || !count($files) ) { return false; } 
+	if ( !is_array($files) || !count($files) ) {
+		return false; 
+	}
 
 	foreach ( $files as $file ) 
 	{
-		if ( preg_match( "/^_/", $file) ) { continue; }
-		include_once $path .'/'. $file;
+// omit _xxx
+		if ( preg_match( "/^_/", $file) ) {
+			continue; 
+		}
+
+		$path_file = $path .'/'. $file;
+		include_once $path_file;
+		if ( $this->_DEBUG ) {
+			echo "include_once $path_file <br />\n";
+		}
 	}
+
 	return true;
 }
 
@@ -196,7 +209,9 @@ function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, 
 	$path = $this->strip_slash_from_tail( $path );
 
 	$ret = $this->opendir( $path );
-	if ( !$ret ) { return $false; }
+	if ( !$ret ) {
+		return $false; 
+	}
 
 	$pattern = "/\.". preg_quote($ext) ."$/";
 
@@ -236,33 +251,27 @@ function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, 
 //---------------------------------------------------------
 // basic function
 //---------------------------------------------------------
-function opendir( $dirname=null )
+function opendir( $path=null )
 {
 	$this->_dh = null;
 
-	if ( empty($dirname) ) {
-		$dirname = $this->_dir_name;
+	if ( empty($path) ) {
+		$path = $this->_opened_path;
 	}
 
-	if ( !$this->check_dirname( $dirname ) ){
+	if ( !is_dir($path) ) {
+		$this->set_error( "not directory: ".$path );
 		return false;
 	}
 
-	$xoops_dir = $this->add_slash_to_tail( XOOPS_ROOT_PATH.'/'.$dirname );
-
-	if ( !is_dir($xoops_dir) ) {
-		$this->set_error( "not directory: ".$xoops_dir );
-		return false;
-	}
-
-	$dh = opendir($xoops_dir);
+	$dh = opendir($path);
 	if ( !$dh ) {
-		$this->set_error( "cannot open directory: ".$xoops_dir );
+		$this->set_error( "cannot open directory: ".$path );
 		return false;
 	}
 
 	$this->_dh =& $dh;
-	$this->_dir_name = $dirname;
+	$this->_opened_path = $path;
 	return true;
 }
 
@@ -271,7 +280,7 @@ function closedir()
 	if ( $this->_dh ) {
 		$ret = closedir($this->_dh);
 		if ( !$ret ) {
-			$this->set_error( "cannot close directory: ".$this->_dir_name );
+			$this->set_error( "cannot close directory: " . $this->_opened_path );
 			return false;	// NG
 		}
 	}

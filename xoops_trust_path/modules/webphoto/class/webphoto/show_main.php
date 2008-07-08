@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: show_main.php,v 1.3 2008/07/08 21:07:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -93,6 +93,8 @@ class webphoto_show_main extends webphoto_show_photo
 
 	var $_ARRAY_CHECKSORT_NAVI     = array();
 
+	var $_DEBUG = false ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -150,8 +152,20 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function init_preload()
 {
+	$this->_preload_error();
 	$this->_preload_constant();
 	$this->_preload_photo_sort_array();
+}
+
+function _preload_error()
+{
+	$errors = $this->_preload_class->get_errors();
+	if ( is_array($errors) && count($errors) ) {
+		$this->set_error( $errors );
+		if ( $this->_DEBUG ) {
+			print_r( $errors );
+		}
+	}
 }
 
 function _preload_constant()
