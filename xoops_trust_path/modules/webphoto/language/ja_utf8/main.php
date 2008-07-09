@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: main.php,v 1.3 2008/07/09 09:52:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -499,6 +499,9 @@ define("_WEBPHOTO_MIME_MEDIUM" ,  "メディアタイプ" ) ;
 define("_WEBPHOTO_MIME_TYPE" ,  "MIMEタイプ" ) ;
 define("_WEBPHOTO_MIME_NAME" ,  "MIME名称" ) ;
 define("_WEBPHOTO_MIME_PERMS" , "パーミッション" ) ;
+
+// added in v0.20
+define("_WEBPHOTO_MIME_FFMPEG" , "ffmpeg オプション" ) ;
 
 // tag table
 define("_WEBPHOTO_TAG_TABLE" , "タグテーブル" ) ;
