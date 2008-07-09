@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+$Id: readme_jp.txt,v 1.4 2008/07/09 06:15:12 ohwada Exp $
 
 =================================================
 Version: 0.20
-Date:   2008-07-05
+Date:   2008-07-09
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -20,12 +20,24 @@ http://ffmpeg.mplayerhq.hu/
 (4) Flash 動画を自動生成する
 
 2. Flash 動画の再生
-(1) mediaplayer.swf  による再生
+(1) mediaplayer.swf による再生
 http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
 
-3. Pathinfo が使用できない環境にも対応した
+3. MIME タイプ
+(1) 3g2, 3gp, asf, flv を追加した
+(2) asx はメタ形式だったので、削除した
 
-4. バグ対策
+4. 下記の場合に Exif 情報を取得する
+(1) ユーザ画面の新規登録と変更
+(2) 管理者画面の myalbum と imagemanger からのインポート
+(3) 管理者画面の画像一括登録
+(4) 管理者画面のサムネイルの再構築
+
+5. Pathinfo が使用できない環境にも対応した
+
+6. xoops_module_header 競合の回避策を用意した
+
+7. バグ対策
 (1) RSS にて fatal error
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
 
@@ -40,7 +52,7 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=823&forum=13
 
 (5) imagemaneger にて fatal error
 
-5. データベース構造
+8. データベース構造
 (1) mime テーブルに mime_ffmpeg 項目を追加した
 
 
@@ -51,10 +63,61 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=823&forum=13
 
 
 ● 使用上の注意
+1. ffmpeg
 ffmpeg は バージョンやコンパイル・オプションで動作が異なります。
 Flash 動画の生成には、ファイル種別毎に個別の対応が必要になることがあります。
 mime テーブルに Flash 動画生成時のコマンド・オプションが設定できます。
-デフォルトでは、avi に "-ar 44100" を設定しています。
+デフォルトでは、全てのビデオに "-ar 44100" を設定しています。
+
+2. xoops_module_header 競合の回避策
+ブロックにて写真のポップアップが出来ないことがあります。
+原因の１つに、テンプレート変数 xoops_module_header の使用が他のモジュールやブロックと競合していることがあります。
+これを回避する方法を２つ用意した。
+
+2.1 専用のテンプレート変数を用意する方法
+(1) テーマのテンプレートに専用のテンプレート変数を追加する
+
+XOOPS_ROOT_PATH/themes/貴方のテーマ/theme.html
+-----
+<{$xoops_module_header}>
+<{* 下記を追記する *}>
+<{$xoops_webphoto_header}>
+-----
+
+(2) preload ファイルをリネームする
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
+ -> constants.php (アンダーバーなし)
+
+(3) _C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER を有効にする
+先頭の // を削除する
+-----
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER", "xoops_webphoto_header" )
+-----
+
+(4) 管理者画面 -> システム設定メイン -> 一般設定 にて
+「themes/ ディレクトリからの自動アップデートを有効にする」を「はい」にする
+
+(5) ブロックにて写真のポップアップが確認できたら、
+「themes/ ディレクトリからの自動アップデートを有効にする」を「いいえ」にする
+
+2.2 body 部に style_sheet と javascript を記述する方法
+body 部に style_sheet を記述するのは、HTML 文法違反ですが、ブラウザの動作には支障ないようです。
+
+(1) preload ファイルをリネームする
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
+ -> constants.php (アンダーバーなし)
+
+(2) _C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS を有効にする
+先頭の // を削除する
+-----
+//define("_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS", "1" )
+-----
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
 
 
 =================================================
@@ -157,10 +220,16 @@ Warning [Xoops]: Smarty error: unable to read resource: "db:_inc_gmap_js.html" i
 -----
 
 2. xoops 2.0.18
-上記に加えて、preload ファイルをリネームする
-
+上記に加えて
+(1) preload ファイルをリネームする
 XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
  -> constants.php (アンダーバーなし)
+
+(2) _C_WEBPHOTO_PRELOAD_XOOPS_2018 を有効にする
+先頭の // を削除する
+-----
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_2018", 1 ) ;
+-----
 
 
 ● モジュール複製

@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+$Id: readme_en.txt,v 1.4 2008/07/09 06:15:12 ohwada Exp $
 
 =================================================
 Version: 0.20
-Date:   2008-07-05
+Date:   2008-07-09
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -23,9 +23,21 @@ http://ffmpeg.mplayerhq.hu/
 (1) using mediaplayer.swf
 http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
 
-3. Supported the server which can not be used Pathinfo
+3. MIME type
+(1) added 3g2, 3gp, asf, flv
+(2) removed asx, because meta file
 
-4. Bug fix
+4. Getting Exif in the following.
+(1) "Add Photo" and "Edit Photo" in user mode
+(2) "Import" from malbum and imagemanger in the admin cp
+(3) "Batch Register" in the admin cp
+(4) "Rebuild Thumbnails" in the admin cp
+
+5. Supported the server which can not be used Pathinfo
+
+6. Avoid for conflict to use "xoops_module_header"
+
+7. Bug fix
 (1) fatal error in RSS
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=818
 
@@ -40,7 +52,7 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=823&forum=13
 
 (5) fatal error in imagemaneger
 
-5. Database structure
+8. Database structure
 (1) added mime_ffmpeg column in mime table
 
 
@@ -51,10 +63,63 @@ Please copy and overwrite in the directory which XOOPS correspond
 
 
 * Notice for usage *
+1. ffmpeg
 "ffmpeg" is operated depends on the version and the compilation option.
 Sometimes you have to set options, when create Flash video.
 You can set "ffmpeg" command option for creating Flash video in mime table.
-In default, set "-ar 44100" in avi.
+In default, set "-ar 44100" in all video types.
+
+2. Avoid for conflict to use "xoops_module_header"
+Sometime dont work popup photo in block.
+Is is one of the cause that other module or other block conflict to use the template variable xoops_module_header.
+webphoto prepared two ways of avoiding this.
+
+2.1 The way to prepare the special template variable
+(1) please add the special template variable to the theme template file
+
+XOOPS_ROOT_PATH/themes/YOUR_THEME/theme.html
+-----
+<{$xoops_module_header}>
+<{* add the following *}>
+<{$xoops_webphoto_header}>
+-----
+
+(2) rename preload file
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (with undebar)
+ -> constants.php (without undebar)
+
+(3) change _C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER in valid
+remove // at the head.
+-----
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_MODULE_HEADER", "xoops_webphoto_header" )
+-----
+
+(4) admin CP -> Preferences Main -> General Settings
+set "Yes" in "Check templates for modifications ?"
+
+(5) after confirm to work popup photo in block,
+set "No" in "Check templates for modifications ?"
+
+
+2.2 The way to describe style_sheet and javascript in boby part in the block
+it is the HTML validation error that describe style_sheet in boby part.
+however, it seems that the WEB browser operate well
+
+(1) rename preload file
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (with undebar)
+ -> constants.php (without undebar)
+
+(2) change _C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS in valid
+remove // at the head.
+-----
+//define("_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS", "1" )
+-----
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
 
 
 =================================================
@@ -156,10 +221,17 @@ Warning [Xoops]: Smarty error: unable to read resource: "db:_inc_gmap_js.html" i
 -----
 
 2. xoops 2.0.18
-in addition to the above, rename preload file.
+in addition to the above
 
+(1) rename preload file.
 XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (with undebar)
  -> constants.php (without undebar)
+
+(2) change _C_WEBPHOTO_PRELOAD_XOOPS_2018 in valid
+remove // at the head.
+-----
+//define("_C_WEBPHOTO_PRELOAD_XOOPS_2018", "1" )
+-----
 
 
 * Module Duplication *

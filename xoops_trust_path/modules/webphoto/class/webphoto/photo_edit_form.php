@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.4 2008/07/09 06:13:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -37,6 +37,7 @@ class webphoto_photo_edit_form extends webphoto_form_this
 
 	var $_VIDEO_THUMB_WIDTH = 120;
 	var $_VIDEO_ICON_WIDTH  = 64;
+	var $_FLASH_EXT         = 'flv';
 
 //---------------------------------------------------------
 // constructor
@@ -45,12 +46,8 @@ function webphoto_photo_edit_form( $dirname, $trust_dirname )
 {
 	$this->webphoto_form_this( $dirname, $trust_dirname );
 
-	$this->_preload_class =& webphoto_d3_preload::getInstance();
-	$this->_preload_class->init( $dirname , $trust_dirname );
-
 	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
-
-	$this->_perm_class =& webphoto_permission::getInstance( $dirname );
+	$this->_perm_class    =& webphoto_permission::getInstance( $dirname );
 
 	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
@@ -112,6 +109,7 @@ function print_form_common( $row, $param )
 	$has_resize    = $param['has_resize'];
 	$has_rotate    = $param['has_rotate'];
 	$allowed_exts  = $param['allowed_exts'];
+	$is_video      = isset($param['is_video']) ? (bool)$param['is_video'] : false ;
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
@@ -658,6 +656,8 @@ function print_form_redo( $row, $param )
 		return ;
 	}
 
+	$this->set_row( $row );
+
 	echo $this->build_form_begin();
 	echo $this->build_html_token();
 	echo $this->build_input_hidden( 'op',       'redo' );
@@ -691,8 +691,17 @@ function _build_ele_redo_thumb()
 
 function _build_ele_redo_flash()
 {
+	$file_url_s = $this->get_row_by_key( 'photo_file_url' );
+	$file_ext   = $this->get_row_by_key( 'photo_file_ext' );
+
 	$text  = $this->build_input_checkbox_yes( 'redo_flash', 1 );
 	$text .= ' '.$this->get_constant('CAP_REDO_FLASH') ;
+
+	if ( $file_url_s && ( $file_ext == $this->_FLASH_EXT ) ) {
+		$text .= "<br />\n";
+		$text .= '<a href="'. $file_url_s .'" target="_blank">'. $file_url_s .'</a>'."<br />\n";
+	}
+
 	return $text;
 }
 
