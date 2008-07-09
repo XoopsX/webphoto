@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: handler.php,v 1.4 2008/07/09 06:41:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-07-01 K.OHWADA
 // added exists_column()
+// added is_video_mime()
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -187,6 +188,14 @@ function set_normal_exts( $val )
 	} else {
 		$this->_NORMAL_EXTS = explode( '|', $val );
 	}
+}
+
+function is_video_mime( $mime )
+{
+	if ( preg_match('/^video/', $mime ) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

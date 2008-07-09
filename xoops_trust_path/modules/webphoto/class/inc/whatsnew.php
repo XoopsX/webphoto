@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.3 2008/07/05 16:57:40 ohwada Exp $
+// $Id: whatsnew.php,v 1.4 2008/07/09 06:41:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
+// used is_video_mime()
 //---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -111,10 +112,11 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 			'description' => $this->_build_description( $row ) ,
 		);
 
-		$is_normal_ext = $this->is_normal_ext( $row['photo_cont_ext'] );
+		$is_image = $this->is_normal_ext( $row['photo_cont_ext'] );
+		$is_video = $this->is_video_mime( $row['photo_cont_mime'] );
 
 // photo image
-		if (( $is_normal_ext || $this->_FLAG_SUBSTITUTE ) && 
+		if (( $is_image || $is_video || $this->_FLAG_SUBSTITUTE ) && 
 		      $row['photo_thumb_url'] ) {
 			$arr['image']  = $row['photo_thumb_url'];
 			$arr['width']  = $row['photo_thumb_width'];
@@ -122,7 +124,7 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 		}
 
 // media rss
-		if ( $is_normal_ext ) {
+		if ( $is_image ) {
 			$arr['content_url']      = $row['photo_cont_url'];
 			$arr['content_width']    = $row['photo_cont_width'];
 			$arr['content_height']   = $row['photo_cont_height'];

@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.3 2008/07/05 16:57:40 ohwada Exp $
+// $Id: search.php,v 1.4 2008/07/09 06:41:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
+// used is_video_mime()
 //---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -83,9 +84,11 @@ function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
 		$arr['image']   = 'images/icons/search.png';
 		$arr['context'] = $this->_build_context( $row, $query_array );
 
+		$is_image = $this->is_normal_ext( $row['photo_cont_ext'] );
+		$is_video = $this->is_video_mime( $row['photo_cont_mime'] );
+
 		// photo image
-		if (( $this->is_normal_ext( $row['photo_cont_ext'] ) || 
-		      $this->_FLAG_SUBSTITUTE ) && 
+		if (( $is_image || $is_video || $this->_FLAG_SUBSTITUTE ) && 
 		      $row['photo_thumb_url'] ) {
 			$arr['img_url']    = $row['photo_thumb_url'];
 			$arr['img_width']  = $row['photo_thumb_width'];
