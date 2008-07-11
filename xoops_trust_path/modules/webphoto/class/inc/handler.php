@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.4 2008/07/09 06:41:27 ohwada Exp $
+// $Id: handler.php,v 1.5 2008/07/11 20:17:03 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 // added exists_column()
 // added is_video_mime()
 //---------------------------------------------------------
+
+// exists_table( $table )
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -111,9 +113,27 @@ function get_rows_by_sql( $sql, $limit=0, $offset=0, $key=null )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
+function exists_table( $table )
+{
+	$sql = "SHOW TABLES LIKE ". $this->quote($table);
+
+	$res = $this->query($sql); 
+	if ( !$res ) {
+		return false;
+	}
+
+	while ( $row = $this->_db->fetchRow( $res ) ) {
+		if ( strtolower( $row[0] ) == strtolower( $table ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function exists_column( $table, $column )
 {
-	$row =& $this->get_column_row( $table, $column );
+	$row = $this->get_column_row( $table, $column );
 	if ( is_array($row) ) {
 		return true;
 	}

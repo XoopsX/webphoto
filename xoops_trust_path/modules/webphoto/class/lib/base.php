@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: base.php,v 1.3 2008/07/11 20:19:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -130,6 +130,25 @@ function get_admin_title( $name )
 		return constant($const_name_2);
 	}
 	return $const_name_2;
+}
+
+function print_admin_msg( $msg, $flag_highlight=false, $flag_br=false )
+{
+	echo $this->build_admin_msg( $msg, $flag_highlight, $flag_br ) ;
+}
+
+function build_admin_msg( $msg, $flag_highlight=false, $flag_br=false )
+{
+	if ( !$this->_is_module_admin ) {
+		return null;
+	}
+	if ( $flag_highlight ) {
+		$msg = $this->highlight( $msg );
+	}
+	if ( $flag_br ) {
+		$msg .= "<br />\n";
+	}
+	return $msg ;
 }
 
 //---------------------------------------------------------

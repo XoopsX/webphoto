@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.5 2008/07/08 10:09:43 ohwada Exp $
+// $Id: oninstall.php,v 1.6 2008/07/11 20:17:03 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,6 +11,8 @@
 // 2008-07-01 K.OHWADA
 // added _mime_update()
 //---------------------------------------------------------
+
+// _table_update()
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -166,7 +168,7 @@ function _exec_update()
 
 	$this->_config_update();
 	$this->_mime_update();
-	$this->_table_update();
+//	$this->_table_update();
 	$this->_template_update();
 
 	return true ;
@@ -213,7 +215,6 @@ function _table_install()
 	$sqlutil->splitMySqlFile( $pieces , $sql_query ) ;
 	if ( !is_array( $pieces ) || !count( $pieces ) ) { return true; } 	// no action
 
-	$created_tables = array() ;
 	foreach ( $pieces as $piece ) 
 	{
 		$prefixed_query = $sqlutil->prefixQuery( $piece , $prefix_mod ) ;
@@ -234,9 +235,8 @@ function _table_install()
 		$table = $prefixed_query[4];
 		$table_name_s = $this->sanitize( $prefix_mod. '_'. $table );
 
-		if ( ! in_array( $table , $created_tables ) ) {
+		if ( $this->_parse_create_table( $sql ) ) {
 			$this->_set_msg( 'Table <b>'.  $table_name_s .'</b> created' );
-			$created_tables[] = $table;
 
 		} else {
 			$this->_set_msg( 'Data inserted to table <b>'. $table_name_s .'</b>' );
@@ -249,7 +249,75 @@ function _table_install()
 
 function _table_update()
 {
-	// TABLES (write here ALTER TABLE etc. if necessary)
+	$sql_file_path = $this->_get_table_sql();
+	if ( ! $sql_file_path ) {
+		return true;	// no action
+	}
+
+	$prefix_mod = $this->_db->prefix() . '_' . $this->_DIRNAME ;
+
+	if( file_exists( XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ) ) {
+		include_once XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ;
+		$sqlutil =& new OldSqlUtility ;
+	} else {
+		include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php' ;
+		$sqlutil =& new SqlUtility ;
+	}
+
+	$sql_query = trim( file_get_contents( $sql_file_path ) ) ;
+	$sqlutil->splitMySqlFile( $pieces , $sql_query ) ;
+	if ( !is_array( $pieces ) || !count( $pieces ) ) { 
+		return true;  	// no action
+	}
+
+	$sql_array = array() ;
+
+// get added table
+	foreach ( $pieces as $piece ) 
+	{
+		$prefixed_query = $sqlutil->prefixQuery( $piece , $prefix_mod ) ;
+		if( ! $prefixed_query ) {
+			$this->_set_msg( "Invalid SQL <b>". $this->sanitize($piece) ."</b>" );
+			return false ;
+		}
+
+		$sql = $prefixed_query[0];
+
+// get create table
+		$table = $this->_parse_create_table( $sql );
+		if ( empty($table) ) {
+			continue;
+		}
+
+// already exists
+		if ( $this->exists_table( $table ) ) {
+			continue;
+		}
+
+		$sql_array[ $table ] = $sql ;
+	}
+
+	if ( !is_array( $sql_array ) || !count( $sql_array ) ) { 
+		return true;  	// no action
+	}
+
+	$this->_set_msg( "SQL file found at <b>". $this->sanitize($sql_file_path) ."</b>" );
+	$this->_set_msg( "Creating tables..." );
+
+// create added table
+	foreach ( $sql_array as $table => $sql ) 
+	{
+		$ret = $this->query( $sql );
+		if ( ! $ret ) {
+			$this->_set_msg( $this->get_db_error() ) ;
+			return false ;
+		}
+
+		$table_name_s = $this->sanitize( $table );
+		$this->_set_msg( 'Table <b>'.  $table_name_s .'</b> created' );
+	}
+
+	return true;
 }
 
 function _table_uninstall()
@@ -266,18 +334,21 @@ function _table_uninstall()
 
 	foreach ( $sql_lines as $sql_line ) 
 	{
-		if( preg_match( '/^CREATE TABLE \`?([a-zA-Z0-9_-]+)\`? /i' , $sql_line , $regs ) ) {
-			$table_name   = $prefix_mod.'_'.$regs[1];
-			$table_name_s = $this->sanitize( $table_name );
-			$sql = 'DROP TABLE '. $table_name ;
+	// get create table
+		$table = $this->_parse_create_table( $sql_line );
+		if ( empty($table) ) {
+			continue;
+		}
 
-			$ret = $this->query($sql) ;
-			if ( $ret ) {
-				$this->_set_msg( 'Table <b>'. $table_name_s .'</b> dropped' );
-			} else {
-				$this->_set_msg( $this->highlight( 'ERROR: Could not drop table <b>'. $table_name_s .'<b>.' ) );
-				$this->_set_msg( $this->get_db_error() ) ;
-			}
+		$table_name_s = $this->sanitize( $table_name );
+		$sql = 'DROP TABLE '. $table_name ;
+
+		$ret = $this->query($sql) ;
+		if ( $ret ) {
+			$this->_set_msg( 'Table <b>'. $table_name_s .'</b> dropped' );
+		} else {
+			$this->_set_msg( $this->highlight( 'ERROR: Could not drop table <b>'. $table_name_s .'<b>.' ) );
+			$this->_set_msg( $this->get_db_error() ) ;
 		}
 	}
 
@@ -293,6 +364,14 @@ function _get_table_sql()
 		return $sql_root_path;
 	} elseif( is_file( $sql_trust_path ) ) {
 		return $sql_trust_path;
+	}
+	return false;
+}
+
+function _parse_create_table( $sql )
+{
+	if ( preg_match( '/^CREATE TABLE \`?([a-zA-Z0-9_-]+)\`? /i' , $sql, $match ) ) {
+		return $match[1];
 	}
 	return false;
 }
