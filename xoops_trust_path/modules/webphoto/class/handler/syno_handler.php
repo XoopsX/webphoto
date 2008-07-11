@@ -1,10 +1,16 @@
 <?php
-// $Id: syno_handler.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: syno_handler.php,v 1.2 2008/07/11 20:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-01 K.OHWADA
+// _C_ -> _P_
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,7 +29,7 @@ function webphoto_syno_handler( $dirname )
 	$this->set_table_prefix_dirname( 'syno' );
 	$this->set_id_name( 'syno_id' );
 
-	$constpref = strtoupper( '_C_' . $dirname. '_' ) ;
+	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
 	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: mime_handler.php,v 1.3 2008/07/11 20:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -30,7 +30,7 @@ function webphoto_mime_handler( $dirname )
 	$this->set_table_prefix_dirname( 'mime' );
 	$this->set_id_name( 'mime_id' );
 
-	$constpref = strtoupper( '_C_' . $dirname. '_' ) ;
+	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
 	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
 
