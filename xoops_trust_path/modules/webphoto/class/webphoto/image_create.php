@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: image_create.php,v 1.4 2008/07/11 20:25:25 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -419,15 +419,20 @@ function cmd_create_thumb( $src_file , $node , $ext )
 	return $this->_image_cmd_class->create_thumb( $src_file , $node , $ext );
 }
 
+function cmd_set_mode_rotate( $val )
+{
+	$this->_image_cmd_class->set_mode_rotate( $val );
+}
+
 function set_mode_rotate_by_post()
 {
 	$rotate = $this->_post_class->get_post( 'rotate' );
-	$this->_image_cmd_class->set_mode_rotate(  $rotate );
+	$this->cmd_set_mode_rotate(  $rotate );
 }
 
 function reset_mode_rotate()
 {
-	$this->_image_cmd_class->set_mode_rotate( null );
+	$this->cmd_set_mode_rotate( null );
 }
 
 // --- class end ---

@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.4 2008/07/08 10:09:43 ohwada Exp $
+# $Id: mysql.sql,v 1.5 2008/07/11 20:28:02 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -192,12 +192,12 @@ CREATE TABLE mime (
   mime_id int(11) NOT NULL auto_increment,
   mime_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
   mime_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  mime_ext    varchar(10) NOT NULL default '',
-  mime_medium varchar(255) NOT NULL default '',
-  mime_type   varchar(255) NOT NULL default '',
-  mime_name   varchar(255) NOT NULL default '',
-  mime_perms  varchar(255) NOT NULL default '',
-  mime_ffmpeg varchar(255) NOT NULL default '',
+  mime_ext    VARCHAR(10) NOT NULL default '',
+  mime_medium VARCHAR(255) NOT NULL default '',
+  mime_type   VARCHAR(255) NOT NULL default '',
+  mime_name   VARCHAR(255) NOT NULL default '',
+  mime_perms  VARCHAR(255) NOT NULL default '',
+  mime_ffmpeg VARCHAR(255) NOT NULL default '',
   PRIMARY KEY mime_id (mime_id),
   KEY (mime_ext)
 ) TYPE=MyISAM;
@@ -241,8 +241,8 @@ CREATE TABLE syno (
  syno_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
  syno_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
  syno_weight INT(5) UNSIGNED NOT NULL DEFAULT 0,
- syno_key   varchar(255) NOT NULL default '',
- syno_value varchar(255) NOT NULL default '',
+ syno_key   VARCHAR(255) NOT NULL default '',
+ syno_value VARCHAR(255) NOT NULL default '',
  PRIMARY KEY (syno_id)
 ) TYPE=MyISAM;
 
