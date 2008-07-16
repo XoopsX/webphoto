@@ -1,10 +1,16 @@
 <?php
-// $Id: exif.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: exif.php,v 1.3 2008/07/16 11:17:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-07-16 K.OHWADA
+// use DateTimeOriginal
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -51,27 +57,33 @@ function read_file( $filename )
 		return false;
 	}
 
-	$datetime     = '';
+	$datetime = '';
 	$datetime_gnu = '';
-	if ( isset( $exif['IFD0']['DateTime'] ) ) {
-		$datetime = $exif['IFD0']['DateTime'];
+	$maker = '';
+	$model = '';
+	$equipment = '';
+	$all_date  = '';
 
+	if ( isset( $exif['EXIF']['DateTimeOriginal'] ) && $exif['EXIF']['DateTimeOriginal'] ) {
+		$datetime = $exif['EXIF']['DateTimeOriginal'];
+	} elseif ( isset( $exif['IFD0']['DateTime'] ) ) {
+		$datetime = $exif['IFD0']['DateTime'];
+	}
+
+	if ( $datetime ) {
 // yyyy:mm:dd -> yyy-mm-dd
 // http://www.gnu.org/software/tar/manual/html_node/General-date-syntax.html
 		$datetime_gnu = preg_replace('/(\d{4}):(\d{2}):(\d{2})(.*)/', '$1-$2-$3$4', $datetime );
 	}
 
-	$maker = '';
 	if ( isset(  $exif['IFD0']['Make'] ) ) {
 		$maker = $exif['IFD0']['Make'];
 	}
 
-	$model = '';
 	if ( isset(  $exif['IFD0']['Model'] ) ) {
 		$model = $exif['IFD0']['Model'];
 	}
 
-	$equipment = '';
 	if ( $maker && $model ) {
 		if ( strpos( $model, $maker ) === false ) {
 			$equipment = $maker.' '.$model;
@@ -85,12 +97,12 @@ function read_file( $filename )
 	}
 
 // set all data when has IFD0
-	$str = '';
+
 	if ( isset( $exif['IFD0'] ) ) {
 		foreach ($exif as $key => $section) {
 			foreach ($section as $name => $val) {
-				$str .= $key .'.'. $name .': ';
-				$str .= $this->str_replace_control_code( $val ) ."\n";
+				$all_date .= $key .'.'. $name .': ';
+				$all_date .= $this->str_replace_control_code( $val ) ."\n";
 			}
 		}
 	}
@@ -101,7 +113,7 @@ function read_file( $filename )
 		'model'        => $model,
 		'datetime_gnu' => $datetime_gnu,
 		'equipment'    => $equipment,
-		'all_data'     => $str,
+		'all_data'     => $all_date,
 	);
 	return $arr;
 }
