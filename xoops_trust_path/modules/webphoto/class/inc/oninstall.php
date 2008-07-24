@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.6 2008/07/11 20:17:03 ohwada Exp $
+// $Id: oninstall.php,v 1.7 2008/07/24 13:10:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,11 +8,11 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-07-24 K.OHWADA
+// BUG : undefined variable table_name
 // 2008-07-01 K.OHWADA
 // added _mime_update()
 //---------------------------------------------------------
-
-// _table_update()
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -339,6 +339,9 @@ function _table_uninstall()
 		if ( empty($table) ) {
 			continue;
 		}
+
+// BUG : undefined variable table_name
+		$table_name = $prefix_mod. '_'. $table ;
 
 		$table_name_s = $this->sanitize( $table_name );
 		$sql = 'DROP TABLE '. $table_name ;
