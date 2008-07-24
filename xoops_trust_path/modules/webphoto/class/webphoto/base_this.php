@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: base_this.php,v 1.4 2008/07/24 13:08:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-07-24 K.OHWADA
+// BUG : wrong judgment in check_dir
 // 2008-07-01 K.OHWADA
 // added exif_to_mysql_datetime()
 // used config use_pathinfo
@@ -120,19 +122,14 @@ function get_config_by_name( $name )
 //---------------------------------------------------------
 // check
 //---------------------------------------------------------
+// BUG : wrong judgment in check_dir
 function check_dir( $dir )
 {
-	if( is_writable( $dir ) && ! is_readable( $dir ) ) {
+	if ( $dir && is_dir( $dir ) && is_writable( $dir ) && is_readable( $dir ) ) {
 		return 0;
 	}
-
-	$ret = chmod( $dir, 0777 ) ;
-	if( !$ret ) {
-		$this->set_error( 'chmod 0777 into '. $dir . 'failed' );
-		return _C_WEBPHOTO_ERR_CHECK_DIR ;
-	}
-
-	return 0;
+	$this->set_error( 'dir error : '.$dir );
+	return _C_WEBPHOTO_ERR_CHECK_DIR ;
 }
 
 //---------------------------------------------------------
