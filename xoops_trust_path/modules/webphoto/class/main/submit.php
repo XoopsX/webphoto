@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: submit.php,v 1.4 2008/08/05 13:00:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-05 K.OHWADA
+// BUG: cannot preview
 // 2008-07-01 K.OHWADA
 // added _exec_video()
 // used  build_uri_category()
@@ -25,7 +27,8 @@ class webphoto_main_submit extends webphoto_photo_edit
 	var $_has_insertable  = false;
 	var $_has_superinsert = false;
 
-	var $_created_row    = null;
+	var $_is_preview  = false;
+	var $_created_row = null;
 
 	var $_REDIRECT_URL;
 
@@ -67,8 +70,8 @@ function check_submit()
 {
 	$this->_check();
 
-	$op = $this->_post_class->get_post('op');
-	switch ( $op ) 
+// BUG: cannot preview
+	switch ( $this->_get_action() ) 
 	{
 		case 'submit':
 			$this->_check_token_exit();
@@ -94,6 +97,20 @@ function print_form()
 	} else {
 		$this->_print_form_submit();
 	}
+}
+
+// BUG: cannot preview
+function _get_action()
+{
+	$this->_is_preview = false;
+
+	$preview = $this->_post_class->get_post_text( 'preview' );
+	$op      = $this->_post_class->get_post_text('op');
+	if ( $preview ) {
+		$this->_is_preview = true;
+		return 'preview';
+	}
+	return $op;
 }
 
 //---------------------------------------------------------
@@ -476,16 +493,6 @@ function _get_new_status()
 //---------------------------------------------------------
 // preview
 //---------------------------------------------------------
-function _is_preview()
-{
-	$post_preview = $this->_post_class->get_post_text( 'preview' );
-
-	if( $post_preview ) {
-		return true;
-	}
-	return false;
-}
-
 function _preview()
 {
 	if ( $this->is_readable_new_photo() ) {
@@ -519,10 +526,7 @@ function _preview()
 
 function _preview_new()
 {
-// init uploader
-	$this->upload_init();
-
-	$ret = $this->upload_fetch_photo();
+	$ret = $this->upload_fetch_photo( true );
 	if ( $ret < 0 ) {
 		return $this->_preview_no_image();
 	}
@@ -569,7 +573,7 @@ function _get_photo_default()
 //---------------------------------------------------------
 function _print_form_submit()
 {
-	if ( $this->_is_preview() ) {
+	if ( $this->_is_preview ) {
 		$row = $this->_preview();
 	} else {
 		$row = $this->_get_photo_default();
