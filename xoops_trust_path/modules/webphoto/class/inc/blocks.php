@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.4 2008/07/07 23:34:23 ohwada Exp $
+// $Id: blocks.php,v 1.5 2008/08/06 11:43:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-05 K.OHWADA
+// BUG: cannot select category
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
 // _assign_xoops_header() -> _get_popbox_js()
@@ -394,19 +396,22 @@ function _get_photo_rows_top_common( $mode, $options )
 
 	// Category limitation
 	$where = '' ;
-	if( $cat_limitation ) {
-		if( $cat_limit_recursive ) {
-			$cattree = new XoopsTree( $table_cat , "cat_id" , "pid" ) ;
+	if ( $cat_limitation ) {
+		if ( $cat_limit_recursive ) {
+
+// BUG: cannot select category
+			$cattree = new XoopsTree( $table_cat , 'cat_id' , 'cat_pid' ) ;
+
 			$children = $cattree->getAllChildId( $cat_limitation ) ;
 
-			$where = "p.cat_id IN (" ;
+			$where = 'p.photo_cat_id IN (' ;
 			foreach( $children as $child ) {
-				$where .= "$child," ;
+				$where .= intval($child) . ',' ;
 			}
-			$where .= "$cat_limitation)" ;
+			$where .= intval($cat_limitation) .')' ;
 
 		} else {
-			$where = "p.cat_id='$cat_limitation'" ;
+			$where = 'p.photo_cat_id='. intval($cat_limitation) ;
 		}
 
 	}
@@ -424,11 +429,12 @@ function _get_photo_rows_top_common( $mode, $options )
 	return $this->get_rows_by_sql( $sql, $photos_num );
 }
 
-function _get_catselbox( $preset_id=0, $none=0, $sel_name="", $onchange="" )
+function _get_catselbox( $preset_id=0, $none=0, $sel_name='', $onchange='' )
 {
 	$table_cat = $this->prefix_dirname( 'cat' ) ;
 
-	$cattree = new XoopsTree( $table_cat , "cat_id" , "pid" ) ;
+// BUG: cannot select category
+	$cattree = new XoopsTree( $table_cat , 'cat_id' , 'cat_pid' ) ;
 
 	ob_start() ;
 	$cattree->makeMySelBox( 'cat_title', 'cat_title', $preset_id, $none, $sel_name, $onchange ) ;
