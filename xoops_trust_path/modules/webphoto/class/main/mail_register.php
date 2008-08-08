@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_register.php,v 1.2 2008/08/08 08:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -271,7 +271,7 @@ function print_form()
 	echo $this->build_bread_crumb( 
 		$this->get_constant('TITLE_MAIL_REGISTER'), $this->_REDIRECT_THIS_URL );
 
-	echo $this->get_constant('HELP_MAIL_DSC1');
+	echo $this->get_constant('HELP_MAIL_DSC');
 	echo "<br /><br />\n";
 
 	if ( $this->has_error() ) {
