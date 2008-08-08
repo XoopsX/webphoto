@@ -1,4 +1,4 @@
-<{* $Id: webphoto_block_rphoto.html,v 1.4 2008/07/07 23:46:16 ohwada Exp $ *}>
+<{* $Id: webphoto_block_rphoto.html,v 1.5 2008/08/08 04:57:00 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -6,8 +6,19 @@
 <{/if}>
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
-<tr>
+
+<{* count begins from 1 *}>
 <{foreach item=photo key=count from=$block.photo}>
+
+<{* -- open table row -- *}>
+  <{if $block.cols == 1}>
+    <tr>
+  <{elseif ( $count mod $block.cols ) == 1 }>
+    <tr>
+  <{elseif $count == 1 }>
+    <tr>
+  <{/if}>
+
   <td align="center" style="margin:0px;padding:5px 0px;">
     <{if $photo.title_short_s != '' }>
       <{if $block.use_pathinfo }>
@@ -46,11 +57,14 @@
     <{/if}>
   </td>
 
-  <{if $count is div by $block.cols }>
+<{* -- close table row -- *}>
+  <{if $block.cols == 1}>
     </tr>
-    <tr>
+  <{elseif $count is div by $block.cols }>
+    </tr>
+  <{elseif $count == $block.photo_num }>
+    </tr>
   <{/if}>
 
 <{/foreach}>
-</tr>
 </table>

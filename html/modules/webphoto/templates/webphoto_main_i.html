@@ -1,0 +1,105 @@
+<html>
+<head>
+<{* $Id: webphoto_main_i.html,v 1.1 2008/08/08 04:57:32 ohwada Exp $ *}>
+<meta http-equiv="content-type" content="text/html; charset=<{$charset}>" >
+<title><{$pagetitle_conv}> - <{$sitename_conv}></title>
+</head>
+<body>
+
+<{* === photo body === *}>
+<{if $show_photo }>
+<div align="center">
+
+<{* IMAGE PART *}>
+
+<{* BIG NORMAL IMAGES *}>
+<{if $photo.is_normal_image && ( $size == 1 ) }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/i.php?id=<{$photo.photo_id}>">
+  <{if $photo.middle_width && $photo.middle_height }>
+    <img src="<{$photo.imgsrc_photo}>" alt="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_photo}>" alt="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+  <{/if}>
+  </a>
+
+<{* NORMAL IMAGES *}>
+<{elseif $photo.is_normal_image }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/i.php?id=<{$photo.photo_id}>&amp;s=1">
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_conv}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" >
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_conv}>" width="<{$cfg_thumb_width}>" >
+  <{/if}>
+  </a>
+
+<{* MOBILE VIDEO , OTHERS *}>
+<{else}>
+  <a href="<{$photo.cont_url_s}>">
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_conv}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" >
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_conv}>" width="<{$cfg_thumb_width}>" >
+  <{/if}>
+  </a>
+
+<{/if}>
+<br>
+
+<{* PHOTO"S SUBJECT *}>
+<{$photo.title_conv}><br>
+
+<{* SUBMITTER *}>
+<{$photo.uname_conv}><br>
+
+<{* DATE *}>
+<{if $photo.datetime_disp != '' }>
+  <{$photo.datetime_disp}><br>
+<{/if}>
+
+<{* PLACE *}>
+<{if $photo.place_conv != '' }>
+  <{$photo.place_conv}><br>
+<{/if}>
+
+<{* DURATION *}>
+<{if $photo.is_video }>
+  <{$lang_video_conv}>
+  <{if $photo.cont_duration > 0 }>
+    <{$photo.cont_duration}> <{$lang_second_conv}> <br>
+  <{/if}>
+<{/if}>
+
+<{* SUMMARY *}>
+<{if $photo.summary_conv != '' }>
+  <{$photo.summary_conv}><br>
+<{/if}>
+
+</div>
+<{/if}>
+<{* === photo body end === *}> 
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/i.php">
+<{$modulename_conv}></a><br>
+
+<{* === photo list begin === *}>
+<{foreach item=photo_l from=$photo_list}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/i.php?id=<{$photo_l.photo_id}>">
+  - <{$photo_l.title_conv}>
+  </a> (<{$photo_l.time_update_m}>) <br>
+<{/foreach}>
+<{* === photo list end === *}>
+
+<{if $navi != '' }>
+  <{$navi}><br>
+<{/if}>
+
+<{* === retrieve === *}>
+<{if $show_retrieve }>
+  <br>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/i.php?op=retrieve">
+  <{$lang_retrieve_conv}>
+  </a><br>
+<{/if}>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_menu.html,v 1.2 2008/07/05 12:52:06 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_menu.html,v 1.3 2008/08/08 04:57:00 ohwada Exp $ *}>
 
 <div class="webphoto_page_menu">
 
@@ -82,6 +82,30 @@
 </div>
 
 <{* --- 2nd line --- *}>
+<{if $show_menu_mail || $show_menu_file }>
+  <div class="webphoto_page_menu_line">
+   | 
+
+  <{if $show_menu_mail }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=mail_register">
+    <{$lang_title_mail_register}>
+    </a> |
+
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=mail_retrieve">
+    <{$lang_title_mail_retrieve}>
+    </a> |
+  <{/if}>
+
+  <{if $show_menu_file }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit_file">
+    <{$lang_title_submit_file}>
+    </a> |
+  <{/if}>
+
+  </div>
+<{/if}>
+
+<{* --- 3rd line --- *}>
 <div class="webphoto_page_menu_line">
  | 
 
