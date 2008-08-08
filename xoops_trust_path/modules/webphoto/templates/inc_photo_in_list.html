@@ -1,10 +1,10 @@
-<{* $Id: inc_photo_in_list.html,v 1.2 2008/07/05 12:54:16 ohwada Exp $ *}>
+<{* $Id: inc_photo_in_list.html,v 1.3 2008/08/08 07:24:45 ohwada Exp $ *}>
 
 <table><tr>
 
 <{* IMAGE PART *}>
-<td width="150" align="center">
-<div align="webphoto_list_image">
+<td class="webphoto_list_td_image">
+<div class="webphoto_list_image">
 
 <{* NORMAL IMAGES with popbox  *}>
 <{if $photo.is_normal_image && $use_popbox_js }>
@@ -50,7 +50,7 @@
 </td>
 
 <{* INFORMATION PART *}>
-<td align="left">
+<td class="webphoto_list_td_info">
   <{include file="db:`$mydirname`_inc_photo_info.html"}>
 </td>
 
