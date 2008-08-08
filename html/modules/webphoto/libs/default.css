@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.1 2008/06/21 12:29:25 ohwada Exp $ */
+/* $Id: default.css,v 1.2 2008/08/08 07:21:33 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -158,10 +158,21 @@ div.webphoto_memory_usage
 }
 
 /* photo list */
+td.webphoto_list_td_image
+{
+	width: 150px;
+	text-align: center;
+}
+
+td.webphoto_list_td_info
+{
+	text-align: left;
+}
+
 div.webphoto_list_image
 {
-	padding: 10px;
-	margin:  10px;
+	padding: 3px;
+	margin:  3px;
 	text-align: center;
 }
 
