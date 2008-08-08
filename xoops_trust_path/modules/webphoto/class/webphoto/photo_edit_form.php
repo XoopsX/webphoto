@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.4 2008/07/09 06:13:20 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added print_form_file()
 // 2008-07-01 K.OHWADA
 // added print_form_video()
 //---------------------------------------------------------
@@ -593,6 +595,10 @@ function print_form_video_thumb( $row, $param )
 			$fct = 'edit';
 			break;
 
+		case 'file':
+			$fct = 'file';
+			break;
+
 		case 'submit':
 		default:
 			$fct = 'submit';
@@ -602,7 +608,6 @@ function print_form_video_thumb( $row, $param )
 	$max = $video_class->get_thumb_plural_max();
 
 	echo $this->build_form_begin();
-	echo $this->build_html_token();
 	echo $this->build_input_hidden( 'op',       'video' );
 	echo $this->build_input_hidden( 'fct',      $fct );
 	echo $this->build_input_hidden( 'photo_id', $photo_id );
@@ -620,12 +625,13 @@ function print_form_video_thumb( $row, $param )
 
 	 	$name = $video_class->build_thumb_name( $photo_id, $i, true );
 		$file = $this->_TMP_DIR .'/'. $name ;
-		$src  = $this->_TMP_URL .'/'. $name ;
 
 		if ( is_file($file) ) {
+			$name_encode = rawurlencode( $name );
+			$url = $this->_MODULE_URL.'/index.php?fct=image&amp;name='. $name_encode ;
 			echo '<td align="center" class="odd">';
-			echo '<img src="'. $src .'" width="'. $width .'"><br />';
-			echo '<input type="radio" name="num" value="'.$i.'" />';
+			echo '<img src="'. $url .'" width="'. $width .'"><br />';
+			echo '<input type="radio" name="name" value="'. $name_encode .'" />';
 			echo "</td>\n";
 		}
 	}
@@ -659,7 +665,6 @@ function print_form_redo( $row, $param )
 	$this->set_row( $row );
 
 	echo $this->build_form_begin();
-	echo $this->build_html_token();
 	echo $this->build_input_hidden( 'op',       'redo' );
 	echo $this->build_input_hidden( 'fct',      'edit' );
 	echo $this->build_input_hidden( 'photo_id', $photo_id );
@@ -706,33 +711,60 @@ function _build_ele_redo_flash()
 }
 
 //---------------------------------------------------------
-// xoops param
+// form file
 //---------------------------------------------------------
-function build_form_user_select( $sel_name, $sel_value, $none=false )
+function print_form_file( $param )
 {
-	$list = $this->get_xoops_user_list();
+	$has_resize    = $param['has_resize'];
+	$allowed_exts  = $param['allowed_exts'];
 
-	$opt = '';
+	echo $this->build_form_begin();
+	echo $this->build_input_hidden( 'fct', 'file' );
+	echo $this->build_input_hidden( 'op',  'submit' );
 
-	if ( $none ) {
-		$opt .= '<option value="0">';
-		$opt .= _AM_WEBPHOTO_OPT_NOCHANGE;
-		$opt .= "</option>\n" ;
-	}
+	echo $this->build_table_begin();
+	echo $this->build_line_title( $this->get_constant('TITLE_SUBMIT_FILE') );
 
-	foreach ( $list as $uid => $uname_s )
-	{
-		$selected = $this->build_form_selected( $uid, $sel_value );
-		$opt .= '<option value="'. $uid .'" '. $selected .' ">';
-		$opt .= $uname_s;
-		$opt .= "</option>\n";
-	}
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'), 
+		$this->_build_ele_maxpixel( $has_resize ) );
 
-	$text  = '<select name="'. $sel_name .'">';
-	$text .= $opt;
-	$text .= "</select>\n";
+	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'), 
+		$this->_build_ele_file_maxsize() );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
+		$this->_build_ele_allowed_exts( $allowed_exts ) );
+
+	echo $this->build_line_ele( 
+		$this->get_constant('CATEGORY'), $this->_build_ele_category() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('PHOTO_TITLE'), $this->_build_ele_title() );
+
+	echo $this->build_row_dhtml( $this->get_constant('PHOTO_DESCRIPTION'), 'photo_description' );
+
+	echo $this->build_line_ele( 'file', $this->_build_ele_file_file() );
+
+	echo $this->build_line_add();
+
+	echo $this->build_table_end();
+	echo $this->build_form_end();
+
+}
+
+function _build_ele_file_maxsize()
+{
+	$cfg_file_size  = $this->_config_class->get_by_name( 'file_size' );
+	$text = $this->format_filesize( $cfg_file_size );
 	return $text;
+}
 
+function _build_ele_file_file()
+{
+	$options = $this->_utility_class->get_files_in_dir( $this->_FILE_DIR, null, false, true, true );
+	if ( !is_array($options) || !count($options) ) {
+		return '---';
+	}
+	return $this->build_form_select( 'file', null, $options );
 }
 
 // --- class end ---

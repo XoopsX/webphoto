@@ -1,9 +1,9 @@
 <?php
-// $Id: module.php,v 1.1 2008/06/21 12:22:18 ohwada Exp $
+// $Id: module.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
-// Happy Linux Framework Module
-// 2006-07-10 K.OHWADA
+// webphoto module
+// 2008-04-02 K.OHWADA
 //=========================================================
 
 //=========================================================
@@ -24,8 +24,7 @@ function webphoto_xoops_module()
 function &getInstance()
 {
 	static $instance;
-	if (!isset($instance)) 
-	{
+	if (!isset($instance)) {
 		$instance = new webphoto_xoops_module();
 	}
 

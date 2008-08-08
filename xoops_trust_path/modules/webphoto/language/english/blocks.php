@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
+// $Id: blocks.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -34,6 +34,11 @@ define($constpref."TEXT_COLS","Columns of Photos");
 // v0.20
 //---------------------------------------------------------
 define($constpref."POPBOX_REVERT", "Click the image to shrink it.");
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+define($constpref."TEXT_CACHETIME", "Cache Time");
 
 // === define end ===
 }

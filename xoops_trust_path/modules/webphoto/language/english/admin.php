@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.3 2008/07/09 08:58:31 ohwada Exp $
+// $Id: admin.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -251,6 +251,9 @@ define( "_AM_WEBPHOTO_GPERM_TELLAFRIEND" , "Tell a friend" ) ;
 // add for webphoto
 define( "_AM_WEBPHOTO_GPERM_TAGEDIT" , "Edit Tag" ) ;
 
+// v0.30
+define( "_AM_WEBPHOTO_GPERM_MAIL" , "Post by Mail" ) ;
+define( "_AM_WEBPHOTO_GPERM_FILE" , "Post by FTP" ) ;
 
 //=========================================================
 // add for webphoto
@@ -354,6 +357,28 @@ define("_AM_WEBPHOTO_PATHINFO_SUCCESS" , "Success!<br />Perhaps, you can use 'Pa
 define("_AM_WEBPHOTO_CAP_REDO_EXIF" , "Get Exif" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY" , "Get when not set" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_ALWAYS" , "Get always" ) ;
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// checkconfigs
+define("_AM_WEBPHOTO_DIRECTORYFOR_FILE" , "Directory for FTP File" ) ;
+define("_AM_WEBPHOTO_WARN_GEUST_CAN_READ" ,  "Anoymous user can read file in this directory" ) ;
+define("_AM_WEBPHOTO_WARN_RECOMMEND_PATH" ,  "Recommend to set it except under the document root" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_LINK" , "Check that 'Charset Convert' is working correctly in your server)" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_DSC" , "If the page linked to from here doesn't display correctly, you should not use 'Charset Convert' " ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_SUCCESS" , "Can you read this sentence correctly, wihout character garble ? " ) ;
+
+// maillog manager
+define("_AM_WEBPHOTO_SHOW_LIST" ,  "Show list" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_REJECT" ,  "Rejected mail" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_PARTIAL" , "Mail which reject some of attached files" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_SUBMIT" ,  "Submitted mail" ) ;
+define("_AM_WEBPHOTO_BUTTON_SUBMIT_MAIL" ,  "SUBMIT MAIL" ) ;
+define("_AM_WEBPHOTO_ERR_MAILLOG_NO_ATTACH" ,  "You must select the attached files" ) ;
+
+// mimetype
+define("_AM_WEBPHOTO_MIME_ADD_NEW" ,  "Add New MIME Type" ) ;
 
 // === define end ===
 }

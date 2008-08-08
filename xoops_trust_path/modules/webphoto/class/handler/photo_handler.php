@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: photo_handler.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added force in insert() update()
+// added get_rows_public_imode_by_orderby()
 // 2008-07-01 K.OHWADA
 // removed build_row_by_photo_info() build_row_by_thumb_info()
 //--------------------------------------------------------
@@ -124,7 +127,7 @@ function create( $flag_new=false )
 //---------------------------------------------------------
 // insert
 //---------------------------------------------------------
-function insert( $row )
+function insert( $row, $force=false )
 {
 	extract( $row ) ;
 
@@ -254,7 +257,7 @@ function insert( $row )
 
 	$sql .= ')';
 
-	$ret = $this->query( $sql );
+	$ret = $this->query( $sql, 0, 0, $force );
 	if ( !$ret ) { return false; }
 
 	return $this->_db->getInsertId();
@@ -263,7 +266,7 @@ function insert( $row )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
-function update( $row )
+function update( $row, $force=false )
 {
 	extract( $row ) ;
 
@@ -327,7 +330,7 @@ function update( $row )
 	$sql .= 'photo_search='.$this->quote($photo_search).' ';
 	$sql .= 'WHERE photo_id='.intval($photo_id);
 
-	return $this->query( $sql );
+	return $this->query( $sql, 0, 0, $force );
 }
 
 function update_status_by_id_array( $id_array )
@@ -426,6 +429,12 @@ function get_count_public_by_like_datetime( $datetime )
 	return $this->get_count_by_where( $where );
 }
 
+function get_count_public_imode()
+{
+	$where = $this->build_where_public_imode();
+	return $this->get_count_by_where( $where );
+}
+
 //---------------------------------------------------------
 // get row
 //---------------------------------------------------------
@@ -485,6 +494,12 @@ function get_rows_public_by_uid_orderby( $uid, $orderby, $limit=0, $offset=0 )
 function get_rows_public_by_datetime_orderby( $datetime, $orderby, $limit=0, $offset=0 )
 {
 	$where = $this->build_where_public_by_datetime( $datetime );
+	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
+}
+
+function get_rows_public_imode_by_orderby( $orderby, $limit=0, $offset=0 )
+{
+	$where = $this->build_where_public_imode();
 	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
 }
 
@@ -652,6 +667,13 @@ function build_where_public_photo_by_catid( $cat_id )
 	return $where;
 }
 
+function build_where_public_imode()
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_imode();
+	return $where;
+}
+
 function build_where_public()
 {
 	$where = ' photo_status > 0 ';
@@ -661,6 +683,16 @@ function build_where_public()
 function build_where_waiting()
 {
 	$where = ' photo_status = 0 ';
+	return $where;
+}
+
+function build_where_imode()
+{
+	$where  = " ( photo_cont_ext='gif' ";
+	$where .= "OR photo_cont_ext='jpg' ";
+	$where .= "OR photo_cont_ext='jpeg' ";
+	$where .= "OR photo_cont_ext='3gp' ";
+	$where .= "OR photo_cont_ext='3g2' )";
 	return $where;
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.7 2008/07/24 13:10:07 ohwada Exp $
+// $Id: oninstall.php,v 1.8 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// changed _table_update() _groupperm_install()
 // 2008-07-24 K.OHWADA
 // BUG : undefined variable table_name
 // 2008-07-01 K.OHWADA
@@ -107,7 +109,7 @@ function uninstall( $trust_dirname , &$module )
 	$msg_arr = $this->_get_msg_array();
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
-			$ret[] = $msg;
+			$ret[] = $msg."<br />";
 		}
 	}
 
@@ -168,7 +170,7 @@ function _exec_update()
 
 	$this->_config_update();
 	$this->_mime_update();
-//	$this->_table_update();
+	$this->_table_update();
 	$this->_template_update();
 
 	return true ;
@@ -556,6 +558,8 @@ function _groupperm_install()
 		_B_WEBPHOTO_GPERM_RATEVOTE    | _B_WEBPHOTO_GPERM_RATEVIEW ,
 		_B_WEBPHOTO_GPERM_TELLAFRIEND ,
 		_B_WEBPHOTO_GPERM_TAGEDIT ,
+		_B_WEBPHOTO_GPERM_MAIL ,
+		_B_WEBPHOTO_GPERM_FILE ,
 	) ;
 
 	foreach( $global_perms_array as $perms_id ) 

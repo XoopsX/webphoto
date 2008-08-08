@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: main.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,7 +7,7 @@
 //=========================================================
 
 // === define begin ===
-if( !defined("_MB_WEBPHOTO_LANGLOADED") ) 
+if( !defined("_MB_WEBPHOTO_LANG_LOADED") ) 
 {
 
 define("_MB_WEBPHOTO_LANG_LOADED" , 1 ) ;
@@ -716,6 +716,105 @@ define("_WEBPHOTO_ICON_VIDEO", "動画");
 define("_WEBPHOTO_HOUR", "時間");
 define("_WEBPHOTO_MINUTE", "分");
 define("_WEBPHOTO_SECOND", "秒");
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// user table
+define("_WEBPHOTO_USER_TABLE" , "ユーザ補助テーブル" ) ;
+define("_WEBPHOTO_USER_ID" ,          "ユーザ補助ID" ) ;
+define("_WEBPHOTO_USER_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_USER_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_USER_UID" , "ユーザ番号" ) ;
+define("_WEBPHOTO_USER_CAT_ID" , "カテゴリ番号" ) ;
+define("_WEBPHOTO_USER_EMAIL" , "メールアドレス" ) ;
+define("_WEBPHOTO_USER_TEXT1" ,  "text1" ) ;
+define("_WEBPHOTO_USER_TEXT2" ,  "text2" ) ;
+define("_WEBPHOTO_USER_TEXT3" ,  "text3" ) ;
+define("_WEBPHOTO_USER_TEXT4" ,  "text4" ) ;
+define("_WEBPHOTO_USER_TEXT5" ,  "text5" ) ;
+
+// maillog
+define("_WEBPHOTO_MAILLOG_TABLE" , "メールログ・テーブル" ) ;
+define("_WEBPHOTO_MAILLOG_ID" ,          "メールログID" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_MAILLOG_PHOTO_IDS" , "写真番号" ) ;
+define("_WEBPHOTO_MAILLOG_STATUS" , "状態" ) ;
+define("_WEBPHOTO_MAILLOG_FROM" , "送信者メールアドレス" ) ;
+define("_WEBPHOTO_MAILLOG_SUBJECT" , "題名" ) ;
+define("_WEBPHOTO_MAILLOG_BODY" ,  "本文" ) ;
+define("_WEBPHOTO_MAILLOG_FILE" ,  "ファイル名" ) ;
+define("_WEBPHOTO_MAILLOG_ATTACH" ,  "添付ファイル" ) ;
+define("_WEBPHOTO_MAILLOG_COMMENT" ,  "コメント" ) ;
+
+// mail register
+define("_WEBPHOTO_TITLE_MAIL_REGISTER" ,  "メルアド登録" ) ;
+define("_WEBPHOTO_CAT_USER" ,  "ユーザ名" ) ;
+define("_WEBPHOTO_BUTTON_REGISTER" ,  "登録" ) ;
+define("_WEBPHOTO_NOMATCH_USER","該当するユーザがいない");
+define("_WEBPHOTO_ERR_MAIL_EMPTY","メールアドレスが必要です");
+define("_WEBPHOTO_ERR_MAIL_ILLEGAL","メールアドレスの形式がおかしい");
+
+// mail retrieve
+define("_WEBPHOTO_TITLE_MAIL_RETRIEVE" ,  "メール受信" ) ;
+define("_WEBPHOTO_DSC_MAIL_RETRIEVE" ,  "メールサーバーからメールを受信する" ) ;
+define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "メール受信" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "メールサーバーにアクセスします" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "受信したメールを解読します" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "メールに添付された写真を登録します" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRIEVE" ,  "メールサーバーにアクセスする" ) ;
+define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "アクセス制限中です" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "１分後にアクセスしてください" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "メールを受信できなかった。<br />一時的な通信障害と思われます。<br />しばらく時間をあけてから、試みてください。" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_NEW" ,  "新着メールはありません" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "%s 件のメールを受信しました" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "有効なメールはありません" ) ;
+define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "%s 件の写真を登録しました" ) ;
+define("_WEBPHOTO_GOTO_INDEX" ,  "モジュールのトップページへ" ) ;
+
+// file
+define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "ファイルからの画像追加" ) ;
+define("_WEBPHOTO_ERR_EMPTY_FILE" , "ファイルを指定してください" ) ;
+define("_WEBPHOTO_ERR_EMPTY_CAT" , "カテゴリを指定してください" ) ;
+define("_WEBPHOTO_ERR_INVALID_CAT" , "無効なカテゴリです" ) ;
+define("_WEBPHOTO_ERR_CREATE_PHOTO" , "画像を登録できなかった" ) ;
+define("_WEBPHOTO_ERR_CREATE_THUMB" , "サムネイルを登録できなかった" ) ;
+
+// help
+define("_WEBPHOTO_HELP_MUST_LOGIN","詳しい説明を読むには、ログインしてください");
+define("_WEBPHOTO_HELP_NOT_PERM", "貴方には許可されていません。管理者までお問い合わせください。");
+define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メール");
+define("_WEBPHOTO_HELP_MAIL_DSC", "携帯電話からメールを送信して、写真や動画を投稿することができます");
+define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
+<b>準備</b><br />
+携帯電話のメールアドレスを登録してください<br />
+<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">「メールアドレス登録」</a><br /><br />
+<b>投稿方法</b><br />
+下記のメールアドレスにメールを送信する<br />
+<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
+<b>写真の回転</b><br />
+題名 (Subject) の末尾に下記のように記入することで、写真が回転します。<br />
+ R@ : 右回転 <br />
+ L@ : 左回転 <br /><br />
+<b>メールの受信と、写真の掲載</b><br />
+メールを送信したら、数秒後に <a href="{MODULE_URL}/index.php?fct=mail_retrieve" target="_blank">「メール受信」</a> をクリックしてください。<br />
+あなたが送信したメールを取り込んで、写真や動画を掲載します。<br />' );
+define("_WEBPHOTO_HELP_MAIL_GUEST", "これは見本です。権限がないと、正しいメールアドレスは表示されません");
+
+define("_WEBPHOTO_HELP_FILE_TITLE", "FTP による投稿");
+define("_WEBPHOTO_HELP_FILE_DSC", "FTP によりファイルをアップロードすることで、ファイル容量の大きな写真や動画を投稿することができます");
+define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
+<b>投稿方法</b><br />
+(1) 指定された FTP サーバーにファイルをアップロードする<br />
+(2) <a href="{MODULE_URL}/index.php?fct=submit_file" target="_blank">「ファイルからの画像追加」</a> をクリックする<br />
+(3) アップロードしたファイルを指定して投稿する' );
+
+// mail check
+// for Japanese
+define("_WEBPHOTO_MAIL_DENY_TITLE_PREG", "/((未|末)\s?承\s?(諾|認)\s?広\s?告|相互リンク|18禁|サイトのご紹介)/i" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_1", "会員登録は無料  充実した出品アイテムなら MSN オークション" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_2", "友達と24時間ホットライン「MSN メッセンジャー」、今すぐダウンロード！" ) ;
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.4 2008/07/24 13:08:11 ohwada Exp $
+// $Id: base_this.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added exists_cat_record()
+// used is_set_mail() has_mail()
+// tmppath -> tmpdir
 // 2008-07-24 K.OHWADA
 // BUG : wrong judgment in check_dir
 // 2008-07-01 K.OHWADA
@@ -38,9 +42,8 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_THUMBS_PATH;
 	var $_THUMBS_DIR;
 	var $_THUMBS_URL;
-	var $_TMP_PATH;
 	var $_TMP_DIR;
-	var $_TMP_URL;
+	var $_FILE_DIR;
 
 	var $_NORMAL_EXTS ;
 
@@ -61,14 +64,13 @@ function webphoto_base_this( $dirname, $trust_dirname )
 
 	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
 	$this->_THUMBS_PATH = $this->_config_class->get_thumbs_path();
-	$this->_TMP_PATH    = $this->_config_class->get_tmp_path();
+	$this->_TMP_DIR     = $this->_config_class->get_by_name( 'tmpdir' );
+	$this->_FILE_DIR    = $this->_config_class->get_by_name( 'file_dir' );
 
 	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR  = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
-	$this->_TMP_DIR     = XOOPS_ROOT_PATH . $this->_TMP_PATH ;
 	$this->_PHOTOS_URL  = XOOPS_URL       . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL  = XOOPS_URL       . $this->_THUMBS_PATH ;
-	$this->_TMP_URL     = XOOPS_URL       . $this->_TMP_PATH ;
 
 	$this->_ICONS_URL = $this->_MODULE_URL .'/images/icons';
 
@@ -83,6 +85,13 @@ function webphoto_base_this( $dirname, $trust_dirname )
 function get_photo_globals()
 {
 	$cfg_colsoftableview = $this->get_config_by_name('colsoftableview');
+	$cfg_is_set_mail     = $this->_config_class->is_set_mail() ;
+	$cfg_file_dir        = $this->get_config_by_name('file_dir') ;
+	$has_mail            = $this->_perm_class->has_mail() ;
+	$has_file            = $this->_perm_class->has_file() ;
+
+	$show_menu_mail = ( $cfg_is_set_mail && $has_mail );
+	$show_menu_file = ( $cfg_file_dir    && $has_file );
 
 	$arr = array(
 		'mydirname'           => $this->_DIRNAME ,
@@ -94,12 +103,16 @@ function get_photo_globals()
 		'cfg_middle_width'    => $this->get_config_by_name('middle_width') ,
 		'cfg_middle_height'   => $this->get_config_by_name('middle_height') ,
 		'cfg_usehits'         => $this->get_config_by_name('usehits') ,
-		'cfg_colsoftableview' => $cfg_colsoftableview,
+		'cfg_is_set_mail'     => $cfg_is_set_mail ,
+		'cfg_file_dir'        => $cfg_file_dir ,
+		'cfg_colsoftableview' => $cfg_colsoftableview ,
 		'width_of_tableview'  => intval( 100 / $cfg_colsoftableview ),
 		'has_rateview'        => $this->_perm_class->has_rateview() ,
 		'has_ratevote'        => $this->_perm_class->has_ratevote() ,
 		'has_tellafriend'     => $this->_perm_class->has_tellafriend() ,
 		'has_insertable'      => $this->_perm_class->has_insertable(),
+		'show_menu_mail'      => $show_menu_mail ,
+		'show_menu_file'      => $show_menu_file ,
 		'cat_main_width'      => _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT ,
 		'cat_main_height'     => _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT ,
 		'cat_sub_width'       => _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT ,
@@ -227,6 +240,20 @@ function decode_uri_str( $str )
 //---------------------------------------------------------
 // cat handler
 //---------------------------------------------------------
+function exists_cat_record()
+{
+	return $this->_cat_handler->exists_record() ;
+}
+
+function check_valid_catid( $id )
+{
+	$row = $this->_cat_handler->get_cached_row_by_id( $id );
+	if ( is_array($row) ) {
+		return true;
+	}
+	return false;
+}
+
 function get_cached_cat_title_by_id( $cat_id, $flag_sanitize=false )
 {
 	return $this->_cat_handler->get_cached_value_by_id_name( $cat_id, 'cat_title', $flag_sanitize );

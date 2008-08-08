@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: main.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -87,7 +87,7 @@ define("_WEBPHOTO_ERR_MUSTADDCATFIRST","Sorry, there are no categories to add to
 define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","No photo was uploaded");
 define("_WEBPHOTO_ERR_FILE","Photos are too big or there is a problem with the configuration");
 define("_WEBPHOTO_ERR_FILEREAD","Photos are not readable.");
-define("_WEBPHOTO_ERR_TITLE","You need to enter a TITLE");
+define("_WEBPHOTO_ERR_TITLE","You must enter 'Title' ");
 
 
 //---------------------------------------------------------
@@ -716,6 +716,105 @@ define("_WEBPHOTO_ICON_VIDEO", "Video");
 define("_WEBPHOTO_HOUR", "hour");
 define("_WEBPHOTO_MINUTE", "min");
 define("_WEBPHOTO_SECOND", "sec");
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// user table
+define("_WEBPHOTO_USER_TABLE" , "User Aux Table" ) ;
+define("_WEBPHOTO_USER_ID" ,          "User Aux ID" ) ;
+define("_WEBPHOTO_USER_TIME_CREATE" , "Create Time" ) ;
+define("_WEBPHOTO_USER_TIME_UPDATE" , "Update Time" ) ;
+define("_WEBPHOTO_USER_UID" , "Uesr ID" ) ;
+define("_WEBPHOTO_USER_CAT_ID" , "Category ID" ) ;
+define("_WEBPHOTO_USER_EMAIL" , "Email Address" ) ;
+define("_WEBPHOTO_USER_TEXT1" ,  "text1" ) ;
+define("_WEBPHOTO_USER_TEXT2" ,  "text2" ) ;
+define("_WEBPHOTO_USER_TEXT3" ,  "text3" ) ;
+define("_WEBPHOTO_USER_TEXT4" ,  "text4" ) ;
+define("_WEBPHOTO_USER_TEXT5" ,  "text5" ) ;
+
+// maillog
+define("_WEBPHOTO_MAILLOG_TABLE" , "Maillog Table" ) ;
+define("_WEBPHOTO_MAILLOG_ID" ,          "Maillog ID" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_CREATE" , "Create Time" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_UPDATE" , "Update Time" ) ;
+define("_WEBPHOTO_MAILLOG_PHOTO_IDS" , "Photo IDs" ) ;
+define("_WEBPHOTO_MAILLOG_STATUS" , "Status" ) ;
+define("_WEBPHOTO_MAILLOG_FROM" , "Mail From Address" ) ;
+define("_WEBPHOTO_MAILLOG_SUBJECT" , "Subject" ) ;
+define("_WEBPHOTO_MAILLOG_BODY" ,  "Body" ) ;
+define("_WEBPHOTO_MAILLOG_FILE" ,  "File Name" ) ;
+define("_WEBPHOTO_MAILLOG_ATTACH" ,  "Attach Files" ) ;
+define("_WEBPHOTO_MAILLOG_COMMENT" ,  "Comment" ) ;
+
+// mail register
+define("_WEBPHOTO_TITLE_MAIL_REGISTER" ,  "Mail Address Register" ) ;
+define("_WEBPHOTO_CAT_USER" ,  "User Name" ) ;
+define("_WEBPHOTO_BUTTON_REGISTER" ,  "REGISTER" ) ;
+define("_WEBPHOTO_NOMATCH_USER","There are no user");
+define("_WEBPHOTO_ERR_MAIL_EMPTY","You must enter 'Mail Address' ");
+define("_WEBPHOTO_ERR_MAIL_ILLEGAL","Illegal format of mail address");
+
+// mail retrieve
+define("_WEBPHOTO_TITLE_MAIL_RETRIEVE" ,  "Mail Retrieve" ) ;
+define("_WEBPHOTO_DSC_MAIL_RETRIEVE" ,  "Retrieve mails from the mail server" ) ;
+define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "RETRIEVE" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "Accessing the mail server" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "Parsing the received mails" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "Submiting the photos attached to mails" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRIEVE" ,  "Access mail server" ) ;
+define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "In access limitation" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "Access 1 minute later" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "Cannot retrieve mail.<br />Probably temporary communication failure.<br />Please retry after a while" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_NEW" ,  "There no new mail" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "Retrieved %s mails" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "There no valid mail" ) ;
+define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "Submited %s photos" ) ;
+define("_WEBPHOTO_GOTO_INDEX" ,  "Goto the module top page" ) ;
+
+// file
+define("_WEBPHOTO_TITLE_FILE" , "Add Photo from File" ) ;
+define("_WEBPHOTO_ERR_EMPTY_FILE" , "You must select the file" ) ;
+define("_WEBPHOTO_ERR_EMPTY_CAT" , "You must select the category" ) ;
+define("_WEBPHOTO_ERR_INVALID_CAT" , "Invalid category" ) ;
+define("_WEBPHOTO_ERR_CREATE_PHOTO" , "Cannot create photo" ) ;
+define("_WEBPHOTO_ERR_CREATE_THUMB" , "Cannot create thumb image" ) ;
+
+// help
+define("_WEBPHOTO_HELP_MUST_LOGIN","Please login, if you want to read more detail");
+define("_WEBPHOTO_HELP_NOT_PERM", "You have no permission. Please contact the webmaster");
+define("_WEBPHOTO_HELP_MAIL_TITLE", "Mobile Mail");
+define("_WEBPHOTO_HELP_MAIL_DSC", "You can post the photo and video by email from the mobile phone");
+define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
+<b>Prepare</b><br />
+Register your mail address of mobile phone<br />
+<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">Register Mail Addrtess</a><br /><br />
+<b>Post photo</b><br />
+Send mail to the fllowing address with attaching photo file.<br />
+<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
+<b>Rotation for photo</b><br />
+You can turn the photo right or left, since you enter the end of "Subject" as following<br />
+ R@ : turn right <br />
+ L@ : turn left <br /><br />
+<b>Retrive mail and submit photo</b><br />
+click <a href="{MODULE_URL}/index.php?fct=mail_retrieve" target="_blank">Retrive Mail</a>, after few seconds sent mail.<br />
+Webphoto retrive the mail which you sent, submit and show the attached photo<br />' );
+define("_WEBPHOTO_HELP_MAIL_GUEST", "This is sample. You can look the REAL mail address, if you have the permission.");
+
+define("_WEBPHOTO_HELP_FILE_TITLE", "Post by FTP");
+define("_WEBPHOTO_HELP_FILE_DSC", "You can post the big size photo and video, when you upload the file by FTP");
+define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
+<b>Post photo</b><br />
+(1) Upload the file in FTP server<br />
+(2) Click <a href="{MODULE_URL}/index.php?fct=submit_file" target="_blank">Add Photo from File</a><br />
+(3) Select the uploaded file and post' );
+
+// mail check
+// for Japanese
+define("_WEBPHOTO_MAIL_DENY_TITLE_PREG", "" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_1", "" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_2", "" ) ;
 
 // === define end ===
 }

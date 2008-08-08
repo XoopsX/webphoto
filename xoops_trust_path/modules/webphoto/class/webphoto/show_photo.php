@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
+// $Id: show_photo.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// typo summry -> summary
 // 2008-07-01 K.OHWADA
 // added build_show_is_video()
 //---------------------------------------------------------
@@ -46,8 +48,9 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_MAX_SUMMARY   = 100;
 	var $_SUMMARY_TAIL  = ' ...';
 
-	var $_MEDIUM_VIDEO = 'video';
+	var $_MEDIUM_VIDEO    = 'video';
 	var $_EXT_FLASH_VIDEO = 'flv';
+	var $_EXT_MOBILE_VIDEO_ARRAY = array( '3gp', '3g2' );
 
 //---------------------------------------------------------
 // constructor
@@ -178,7 +181,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
 		'is_owner'  => $this->is_photo_owner( $photo_uid ),
 		'is_video'  => $this->build_show_is_video( $photo_cont_medium ) ,
-		'is_flash_video' => $this->build_show_is_flash_video( $photo_file_ext ) ,
+		'is_flash_video'  => $this->build_show_is_flash_video( $photo_file_ext ) ,
+		'is_mobile_video' => $this->build_show_is_mobile_video( $photo_cont_ext ) ,
 
 	);
 
@@ -247,7 +251,7 @@ function build_photo_show( $row )
 		'cat_text4_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text4', true ),
 		'cat_text5_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text5', true ),
 
-		'summry'            => $this->build_show_summary( $photo_description ) ,
+		'summary'            => $this->build_show_summary( $photo_description ) ,
 		'info_votes'        => $this->build_show_info_vote( $photo_rating, $photo_votes ) ,
 		'rank'              => $this->build_show_rank( $photo_rating ) ,
 		'can_edit'          => $this->has_editable_by_uid( $photo_uid ) ,
@@ -362,17 +366,25 @@ function build_show_is_owner( $uid )
 	return false;
 }
 
-function build_show_is_video( $photo_cont_medium )
+function build_show_is_video( $medium )
 {
-	if ( $photo_cont_medium == $this->_MEDIUM_VIDEO ) {
+	if ( $medium == $this->_MEDIUM_VIDEO ) {
 		return true ;
 	}
 	return false;
 }
 
-function build_show_is_flash_video( $photo_file_ext )
+function build_show_is_flash_video( $ext )
 {
-	if ( $photo_file_ext == $this->_EXT_FLASH_VIDEO ) {
+	if ( $ext == $this->_EXT_FLASH_VIDEO ) {
+		return true ;
+	}
+	return false ;
+}
+
+function build_show_is_mobile_video( $ext )
+{
+	if ( in_array( $ext, $this->_EXT_MOBILE_VIDEO_ARRAY ) ) {
 		return true ;
 	}
 	return false ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: admin.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -251,6 +251,9 @@ define( "_AM_WEBPHOTO_GPERM_TELLAFRIEND" , "Í§¿Í¤ËÃÎ¤é¤»¤ë" ) ;
 // add for webphoto
 define( "_AM_WEBPHOTO_GPERM_TAGEDIT" , "¥¿¥°ÊÔ½¸²Ä¡Ê¾µÇ§ÉÔÍ×¡Ë" ) ;
 
+// v0.30
+define( "_AM_WEBPHOTO_GPERM_MAIL" , "¥á¡¼¥ëÅê¹Æ²Ä¡Ê¾µÇ§ÉÔÍ×¡Ë" ) ;
+define( "_AM_WEBPHOTO_GPERM_FILE" , "¥Õ¥¡¥¤¥ëÅê¹Æ²Ä¡Ê¾µÇ§ÉÔÍ×¡Ë" ) ;
 
 //=========================================================
 // add for webphoto
@@ -354,6 +357,28 @@ define("_AM_WEBPHOTO_PATHINFO_SUCCESS" , "À®¸ù¤·¤Þ¤·¤¿!<br />¤ª¤½¤é¤¯¡¢¤³¤Î¥µ¡¼¥
 define("_AM_WEBPHOTO_CAP_REDO_EXIF" , "Exif ¤Î¼èÆÀ" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY" , "ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤¤È¤­¤Ë¼èÆÀ" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_ALWAYS" , "¾ï¤Ë¼èÆÀ¤¹¤ë" ) ;
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// checkconfigs
+define("_AM_WEBPHOTO_DIRECTORYFOR_FILE" ,    "FTP ¥Õ¥¡¥¤¥ë ¥Ç¥£¥ì¥¯¥È¥ê" ) ;
+define("_AM_WEBPHOTO_WARN_GEUST_CAN_READ" ,  "¤³¤Î¥Ç¥£¥ì¥¯¥È¥ê¤Ï¥²¥¹¥È¤âÆÉ¤à¤³¤È¤¬½ÐÍè¤Þ¤¹" ) ;
+define("_AM_WEBPHOTO_WARN_RECOMMEND_PATH" ,  "¥É¥­¥å¥á¥ó¥È¡¦¥ë¡¼¥È°Ê³°¤ËÀßÄê¤¹¤ë¤³¤È¤ò¤ª´«¤á¤·¤Þ¤¹" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_LINK" , "Ê¸»ú¥³¡¼¥ÉÊÑ´¹¤¬Æ°¤¯¤«¤É¤¦¤«¤Î¥Á¥§¥Ã¥¯" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_DSC" , "¡Ê¤³¤Î¥ê¥ó¥¯Àè¤¬Àµ¾ï¤ËÉ½¼¨¤µ¤ì¤Ê¤±¤ì¤Ð¡¢Ê¸»ú¥³¡¼¥ÉÊÑ´¹¤¬Æ°¤«¤Ê¤¤¤è¤¦¤Ç¤¹¡Ë" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_SUCCESS" , "¤³¤ÎÊ¸¤¬Ê¸»ú²½¤±¤»¤º¤ËÉ½¼¨¤µ¤ì¤Æ¤¤¤Þ¤¹¤«¡©" ) ;
+
+// maillog manager
+define("_AM_WEBPHOTO_SHOW_LIST" ,  "°ìÍ÷É½¼¨" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_REJECT" ,  "µñÈÝ¤µ¤ì¤¿¥á¡¼¥ë" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_PARTIAL" , "°ìÉô¤ÎÅºÉÕ¥Õ¥¡¥¤¥ë¤¬µñÈÝ¤µ¤ì¤¿¥á¡¼¥ë" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_SUBMIT" ,  "Åê¹Æ¤µ¤ì¤¿¥á¡¼¥ë" ) ;
+define("_AM_WEBPHOTO_BUTTON_SUBMIT_MAIL" ,  "¤³¤Î¥á¡¼¥ë¤òÅê¹Æ¤¹¤ë" ) ;
+define("_AM_WEBPHOTO_ERR_MAILLOG_NO_ATTACH" ,  "ÅºÉÕ¥Õ¥¡¥¤¥ë¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ê¤¤" ) ;
+
+// mimetype
+define("_AM_WEBPHOTO_MIME_ADD_NEW" ,  "MIME ¥¿¥¤¥×¤òÄÉ²Ã¤¹¤ë" ) ;
 
 // === define end ===
 }

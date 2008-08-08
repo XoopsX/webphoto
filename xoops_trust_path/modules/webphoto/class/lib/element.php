@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: element.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added build_row_label_time()
+// typo substite_empty() -> substitute_empty()
 // 2008-07-01 K.OHWADA
 // change build_row_url()
 //---------------------------------------------------------
@@ -45,6 +48,7 @@ class webphoto_lib_element extends webphoto_lib_error
 	var $_CHECKED  = 'checked="checked"';
 
 	var $_TIME_FORMAT = 'Y/m/d H:i';
+	var $_TEXT_EMPTY_SUBSUTITUTE = '---';
 
 	var $_SIZE_PERPAGE = 10;
 
@@ -223,10 +227,10 @@ function build_js_checkbox( $value )
 	return $text;
 }
 
-function substite_empty( $str )
+function substitute_empty( $str, $substitute='---' )
 {
 	if ( empty($str) ) {
-		$str = '---';
+		$str = $substitute ;
 	}
 	return $str;
 }
@@ -240,6 +244,10 @@ function build_form_dhtml( $name, $value, $rows=5, $cols=50, $hiddentext='xoopsH
 
 function build_form_select( $name, $value, $options, $size=5 )
 {
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
 	$text = '<select id="'. $name.'" name="'. $name.'" size="'. $size .'">'."\n";
 	foreach ( $options as $k => $v )
 	{
@@ -271,34 +279,41 @@ function build_form_radio_yesno( $name, $value )
 
 function build_form_radio( $name, $value, $options, $del='')
 {
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
 	$text = '';
 	foreach ( $options as $k => $v )
 	{
-		$text .= $this->build_input_radio( $name, $v, $this->build_form_checked( $v, $value ) );
+		$text .= $this->build_input_radio( 
+			$name, $v, $this->build_form_checked( $v, $value ) );
+
 		$text .= ' ';
 		$text .= $k;
 		$text .= ' ';
 		$text .= $del;
 	}
-
 	return $text;
 }
 
 function build_form_checkbox( $name, $value, $options, $del='' )
 {
-	$text = '';
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
 
+	$text = '';
 	foreach ($options as $k => $v)
 	{
-		$checked = $this->build_form_checked( $v, $value);
+		$text .= $this->build_input_checkbox( 
+			$name, $v, $this->build_form_checked( $v, $value) );
 
-		$text .= $this->build_input_checkbox( $name, $v, $checked );
 		$text .= ' ';
 		$text .= $k;
 		$text .= ' ';
 		$text .= $del;
 	}
-
 	return $text;
 }
 
@@ -364,6 +379,15 @@ function build_line_ele( $title, $ele, $flag_sanitaize=false )
 	return $text;
 }
 
+function build_line_buttom( $val )
+{
+	$text  = '<tr><td class="head"></td>';
+	$text .= '<td class="head">';
+	$text .= $val ;
+	$text .= "</td></tr>\n";
+	return $text;
+}
+
 function set_row( $row )
 {
 	if ( is_array($row) ) {
@@ -379,7 +403,7 @@ function get_row()
 function get_row_by_key( $name, $default=null, $flag_sanitaize=true )
 {
 	if ( isset( $this->_row[$name] ) ) {
-		$ret = $this->_row[$name];
+		$ret =  $this->_row[$name];
 		if ( $flag_sanitaize ) {
 			$ret = $this->sanitize( $ret );
 		}
@@ -395,10 +419,18 @@ function build_row_hidden( $name )
 	return $text;
 }
 
-function build_row_label( $title, $name, $flag_sanitaize=false )
+function build_row_label( $title, $name, $flag_sanitaize=true )
+{
+	$value = $this->get_row_by_key( $name, $flag_sanitaize );
+	$value = $this->substitute_empty( $value );
+	$text  = $this->build_line_ele( $title, $value );
+	return $text;
+}
+
+function build_row_label_time( $title, $name )
 {
 	$value = $this->get_row_by_key( $name );
-	$value = $this->substite_empty( $value );
+	$value = date( $this->_TIME_FORMAT, $value );
 	$text  = $this->build_line_ele( $title, $value );
 	return $text;
 }
@@ -466,26 +498,21 @@ function build_row_radio_yesno( $title, $name )
 
 function build_line_add()
 {
-	return $this->build_line_submit( 'add', _ADD );
-}
-
-function build_line_submit( $name='submit', $value=_SUBMIT )
-{
-	$text  = '<tr><td class="head"></td>';
-	$text .= '<td class="head">';
-	$text .= $this->build_input_submit( $name, $value );
-	$text .= "</td></tr>\n";
-	return $text;
+	$text  = $this->build_input_submit( 'add',   _ADD );
+	return $this->build_line_buttom( $text );
 }
 
 function build_line_edit()
 {
-	$text  = '<tr><td class="head"></td>';
-	$text .= '<td class="head">';
-	$text .= $this->build_input_submit( 'edit',   _EDIT );
+	$text  = $this->build_input_submit( 'edit',   _EDIT );
 	$text .= $this->build_input_submit( 'delete', _DELETE );
-	$text .= "</td></tr>\n";
-	return $text;
+	return $this->build_line_buttom( $text );
+}
+
+function build_line_submit( $name='submit', $value=_SUBMIT )
+{
+	$text = $this->build_input_submit( $name, $value );
+	return $this->build_line_buttom( $text );
 }
 
 function get_alternate_class()

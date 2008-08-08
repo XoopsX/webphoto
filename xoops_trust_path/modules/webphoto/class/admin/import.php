@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: import.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// use create_from_file()
 // 2008-07-01 K.OHWADA
 // added _import_image_read_src() _import_image_each_photo()
 // xoops_error() -> build_error_msg()
@@ -23,7 +25,6 @@ class webphoto_admin_import extends webphoto_import
 	var $_image_handler;
 	var $_groupperm_class;
 	var $_form_class;
-	var $_mime_class;
 
 	var $_image_cat_row = null;
 
@@ -48,8 +49,6 @@ function webphoto_admin_import( $dirname , $trust_dirname )
 	$this->_image_handler =& webphoto_xoops_image_handler::getInstance();
 	$this->_image_handler->set_debug_error( 1 );
 	$this->_image_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
-
-	$this->_mime_class  =& webphoto_mime::getInstance( $dirname );
 
 	$this->_groupperm_class =& webphoto_xoops_groupperm::getInstance();
 }
@@ -238,88 +237,26 @@ function _import_image_read_src( $image_row, $tmp_file, $imgcat_storetype )
 	return true;
 }
 
-function _import_image_each_photo( $image_row, $tmp_file, $new_cid )
+function _import_image_each_photo( $row, $tmp_file, $cat_id )
 {
-	extract( $image_row ) ;
+	$created = $row['image_created'] ;
 
-// insert
-	$row = $this->_photo_handler->create();
-	$row['photo_title']         = $image_nicename;
-	$row['photo_time_create']   = $image_created;
-	$row['photo_time_update']   = $image_created;
-	$row['photo_cat_id']        = $new_cid;
-	$row['photo_uid']           = $this->_xoops_uid;
-	$row['photo_status']        = $image_display;
+	$param = array(
+		'src_file'    => $tmp_file ,
+		'title'       => $row['image_nicename'] ,
+		'cat_id'      => $cat_id ,
+		'uid'         => $this->_xoops_uid ,
+		'time_create' => $created ,
+		'time_update' => $created ,
+		'description' => '' ,
+		'status'      => $row['image_display'] ,
+	);
 
-// at last
-	$row['photo_search']        = $this->build_photo_search( $row );
-
-// insert record
-	$newid = $this->_photo_handler->insert( $row );
-	if ( !$newid ) {
-		echo ' db error ' ;
-		$this->set_error( $this->_photo_handler->get_errors() );
-		return false;
-	}
-
-	$photo_ext  = $this->parse_ext( $image_name ) ;
-	$photo_name = $this->_image_class->build_photo_name( $newid, $photo_ext );
-	$photo_path = $this->_PHOTOS_PATH .'/'. $photo_name ;
-	$photo_file = XOOPS_ROOT_PATH . $photo_path ;
-
-// exif
-	$base_info = $this->get_exif_info( $tmp_file );
-
-// modify photo
-	if ( $this->_FLAG_RESIZE && $this->is_normal_ext( $photo_ext ) ) {
-		$ret1 = $this->_image_class->cmd_modify_photo( $tmp_file , $photo_file );
-		if ( $ret1 == _C_WEBPHOTO_IMAGE_RESIZE ) {
-			echo ' resize photo, ';
-		}
-
-// copy
-	} else {
-		$this->copy_file( $tmp_file , $photo_file ) ;
-	}
+	$this->_photo_class->create_from_file( $param );
 
 // remove tmp file
 	$this->unlink_file( $tmp_file );
 
-	$photo_info = $this->_image_class->build_photo_full_info( 
-		$photo_path, $photo_name, $photo_ext );
-	$photo_info = $this->_mime_class->add_mime_to_info_if_empty( $photo_info );
-
-// create thumb
-	if ( $this->_cfg_makethumb ) {
-		echo ' create thumb ' ;
-		$this->_image_class->create_thumb_from_photo( 
-			$newid, $photo_path, $photo_ext );
-		$thumb_info = $this->_image_class->get_thumb_info();
-
-// substitute with photo image
-	} else {
-		$this->_image_class->create_thumb_substitute( $photo_path, $photo_ext );
-		$thumb_info = $this->_image_class->get_thumb_info();
-	}
-
-	$photo_thumb_info
-		= $this->_image_class->merge_photo_thumb_info( $photo_info, $thumb_info, $base_info );
-
-// update record
-	if ( is_array($photo_thumb_info) ) {
-		$row['photo_id'] = $newid;
-		$update_row = array_merge( $row, $photo_thumb_info );
-		$update_row['photo_search'] = $this->build_photo_search( $update_row );
-
-		$ret2 = $this->_photo_handler->update( $update_row );
-		if ( !$ret2 ) {
-			echo ' db error ' ;
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return false;
-		}
-	}
-
-	return true;
 }
 
 //---------------------------------------------------------
@@ -364,11 +301,7 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 {
 	echo "<h4>photo</h4>\n";
 
-	list ( $allowed_mime_types, $allowed_exts )
-		= $this->_mime_class->get_my_allowed_mimes();
-
 	$myalbum_rows = $this->_myalbum_handler->get_photos_rows_by_cid( $src_cid );
-
 	$import_count = 0;
 
 	foreach ( $myalbum_rows as $myalbum_row )
@@ -380,7 +313,7 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 
 		echo 'photo : '.$lid.' '.$this->sanitize($ext).' '.$this->sanitize($title).' : ' ;
 
-		if (  ! in_array( strtolower( $ext ) , $allowed_exts ) ) {
+		if ( ! $this->_mime_class->is_my_allow_ext( $ext ) ) {
 			echo " <b>Skip : not allow ext</b> <br />\n" ;
 			continue;
 		}
@@ -566,7 +499,8 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_row )
 {
 // insert
 	$row = $webphoto_row;
-	$row['photo_id'] = 0;
+	$row['photo_id']     = 0 ;
+	$row['photo_cat_id'] = $new_cid ;
 	$newid = $this->_photo_handler->insert( $row );
 	if ( !$newid ) {
 		echo ' db error ' ;

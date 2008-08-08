@@ -1,10 +1,16 @@
 <?php
-// $Id: permission.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: permission.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// added has_mail() has_file()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -25,6 +31,8 @@ class webphoto_permission
 	var $_has_ratevote ;  
 	var $_has_tellafriend  ; 
 	var $_has_tagedit ;
+	var $_has_mail ;
+	var $_has_file ;
 
 //---------------------------------------------------------
 // constructor
@@ -60,6 +68,8 @@ function _init( $dirname )
 	$this->_has_ratevote         = $perm_handler->has_perm( 'ratevote' );
 	$this->_has_tellafriend      = $perm_handler->has_perm( 'tellafriend' );
 	$this->_has_tagedit          = $perm_handler->has_perm( 'tagedit' );
+	$this->_has_mail             = $perm_handler->has_perm( 'mail' );
+	$this->_has_file             = $perm_handler->has_perm( 'file' );
 }
 
 //---------------------------------------------------------
@@ -123,6 +133,16 @@ function has_tellafriend()
 function has_tagedit()
 {
 	return $this->_has_tagedit ;
+}
+
+function has_mail()
+{
+	return $this->_has_mail ;
+}
+
+function has_file()
+{
+	return $this->_has_file ;
 }
 
 // --- class end ---

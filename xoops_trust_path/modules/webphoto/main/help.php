@@ -1,10 +1,16 @@
 <?php
-// $Id: help.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: help.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// use main()
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -24,6 +30,7 @@ include XOOPS_ROOT_PATH . '/header.php' ;
 
 $xoopsTpl->assign( $manage->get_photo_globals() ) ;
 $xoopsTpl->assign( $manage->get_lang_array() ) ;
+$xoopsTpl->assign( $manage->main() ) ;
 
 include XOOPS_ROOT_PATH .'/footer.php' ;
 exit();

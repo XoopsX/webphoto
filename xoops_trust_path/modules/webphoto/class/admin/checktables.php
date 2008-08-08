@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: checktables.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added webphoto_user_handler webphoto_maillog_handler
 // 2008-07-01 K.OHWADA
 // added $admin_link
 //---------------------------------------------------------
@@ -25,6 +27,8 @@ class webphoto_admin_checktables extends webphoto_base_this
 	var $_tag_handler;
 	var $_p2t_handler;
 	var $_syno_handler;
+	var $_user_handler;
+	var $_maillog_handler;
 	var $_xoops_comments_handler;
 
 //---------------------------------------------------------
@@ -34,12 +38,15 @@ function webphoto_admin_checktables( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_vote_handler   =& webphoto_vote_handler::getInstance( $dirname );
-	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
-	$this->_mime_handler   =& webphoto_mime_handler::getInstance( $dirname );
-	$this->_tag_handler    =& webphoto_tag_handler::getInstance( $dirname );
-	$this->_p2t_handler    =& webphoto_p2t_handler::getInstance( $dirname );
-	$this->_syno_handler   =& webphoto_syno_handler::getInstance( $dirname );
+	$this->_vote_handler    =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_gicon_handler   =& webphoto_gicon_handler::getInstance( $dirname );
+	$this->_mime_handler    =& webphoto_mime_handler::getInstance( $dirname );
+	$this->_tag_handler     =& webphoto_tag_handler::getInstance( $dirname );
+	$this->_p2t_handler     =& webphoto_p2t_handler::getInstance( $dirname );
+	$this->_syno_handler    =& webphoto_syno_handler::getInstance( $dirname );
+	$this->_user_handler    =& webphoto_user_handler::getInstance( $dirname );
+	$this->_maillog_handler =& webphoto_maillog_handler::getInstance( $dirname );
+
 	$this->_xoops_comments_handler =& webphoto_xoops_comments_handler::getInstance();
 }
 
@@ -141,6 +148,22 @@ function _print_check()
 
 	echo _AM_WEBPHOTO_NUMBEROFRECORED.": ";
 	echo $this->_syno_handler->get_count_all();
+	echo "<br /><br />\n" ;
+
+	echo _WEBPHOTO_USER_TABLE.": ";
+	echo $this->_user_handler->get_table();
+	echo " &nbsp; " ;
+
+	echo _AM_WEBPHOTO_NUMBEROFRECORED.": ";
+	echo $this->_user_handler->get_count_all();
+	echo "<br /><br />\n" ;
+
+	echo _WEBPHOTO_MAILLOG_TABLE.": ";
+	echo $this->_maillog_handler->get_table();
+	echo " &nbsp; " ;
+
+	echo _AM_WEBPHOTO_NUMBEROFRECORED.": ";
+	echo $this->_maillog_handler->get_count_all();
 	echo "<br /><br />\n" ;
 
 	echo _AM_WEBPHOTO_COMMENTSTABLE.": ";

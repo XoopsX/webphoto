@@ -1,10 +1,16 @@
 <?php
-// $Id: rss.php,v 1.1 2008/06/21 12:22:28 ohwada Exp $
+// $Id: rss.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// used webphoto_lib_multibyte
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -54,6 +60,8 @@ class webphoto_lib_rss
 	var $_MODULE_ID ;
 	var $_MODULE_NAME;
 
+	var $_multibyte_class;
+
 	var $_xoops_sitename;
 	var $_xoops_adminmail;
 	var $_xoops_slogan;
@@ -62,19 +70,18 @@ class webphoto_lib_rss
 
 	var $_template   = null;
 
-	var $_CHARSET = _CHARSET;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_lib_rss( $dirname )
 {
+	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+
 	$this->_DIRNAME     = $dirname;
 	$this->_MODULE_PATH = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 	$this->_MODULE_URL  = XOOPS_URL       .'/modules/'. $dirname;
 
 	$this->_init_xoops_param();
-	$this->set_internal_encoding( _CHARSET );
 }
 
 function &getInstance( $dirname )
@@ -315,49 +322,14 @@ function clear_compiled_tpl()
 //---------------------------------------------------------
 // multibyte
 //---------------------------------------------------------
-function set_internal_encoding( $charset )
-{
-	if ( function_exists('iconv_get_encoding') && 
-	     function_exists('iconv_set_encoding') ) {
-
-		$current = iconv_get_encoding( 'internal_encoding' );
-		$ret = iconv_set_encoding( 'internal_encoding', $charset );
-		if ( $ret === false ) {
-			iconv_set_encoding( 'internal_encoding', $current );
-		}
-		return $ret;
-	}
-
-	if ( function_exists('mb_internal_encoding') ) {
-
-		$current = mb_internal_encoding();
-		$ret = mb_internal_encoding( $charset );
-		if ( $ret === false ) {
-			mb_internal_encoding( $current );
-		}
-		return $ret;
-	}
-
-	return true;	// dummy
-}
-
 function http_output( $encoding )
 {
-	if ( function_exists('mb_http_output') ) {
-		return mb_http_output( $encoding );
-	}
-	return false;
+	return $this->_multibyte_class->m_mb_http_output( $encoding );
 }
 
 function utf8( $str )
 {
-	if ( function_exists('iconv') ) {
-		return iconv( $this->_CHARSET, 'UTF-8//IGNORE' , $str );
-	}
-	if ( function_exists('mb_convert_encoding') ) {
-		return mb_convert_encoding( $str, $this->_CHARSET, 'UTF-8' );
-	}
-	$str = utf8_encode( $str );
+	return $this->_multibyte_class->convert_to_utf8( $str );
 }
 
 function utf8_array( $arr_in )

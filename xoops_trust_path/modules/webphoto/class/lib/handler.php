@@ -1,10 +1,16 @@
 <?php
-// $Id: handler.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: handler.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// added force in query()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -139,16 +145,16 @@ function update( &$row )
 //---------------------------------------------------------
 // delete
 //---------------------------------------------------------
-function delete( &$row )
+function delete( $row, $force=false )
 {
-	return $this->delete_by_id( $this->get_id_from_row( $row ) );
+	return $this->delete_by_id( $this->get_id_from_row( $row ), $force );
 }
 
-function delete_by_id( $id )
+function delete_by_id( $id, $force=false )
 {
 	$sql  = 'DELETE FROM '. $this->_table;
 	$sql .= ' WHERE '. $this->_id_name .'='. intval($id);
-	return $this->query( $sql );
+	return $this->query( $sql, 0, 0, $force );
 }
 
 function delete_by_id_array( $id_array )
@@ -181,6 +187,14 @@ function truncate_table()
 //---------------------------------------------------------
 // count
 //---------------------------------------------------------
+function exists_record()
+{
+	if ( $this->get_count_all() > 0 ) {
+		return true;
+	}
+	return false;
+}
+
 function get_count_all()
 {
 	$sql  = 'SELECT COUNT(*) FROM '.$this->_table;
@@ -363,8 +377,12 @@ function get_first_rows_by_sql( $sql, $limit=0, $offset=0 )
 	return $arr;
 }
 
-function query( $sql, $limit=0, $offset=0 )
+function query( $sql, $limit=0, $offset=0, $force=false )
 {
+	if ( $force ) {
+		return $this->queryF( $sql, $limit, $offset );
+	}
+
 	if ( $this->_DEBUG_SQL ) {
 		echo $this->sanitize( $sql ) .': limit='. $limit .' :offset='. $offset. "<br />\n";
 	}
@@ -387,7 +405,7 @@ function query( $sql, $limit=0, $offset=0 )
 function queryF( $sql, $limit=0, $offset=0 )
 {
 	if ( $this->_DEBUG_SQL ) {
-		echo $this->sanitize( $sql )."<br />\n";
+		echo $this->sanitize( $sql ) .': limit='. $limit .' :offset='. $offset. "<br />\n";
 	}
 
 	$res = $this->_db->queryF( $sql, intval($limit), intval($offset) );

@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.6 2008/08/05 13:01:28 ohwada Exp $
+// $Id: edit.php,v 1.7 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-06 K.OHWADA
+// used update_video_thumb()
+// not use msg_class
 // 2008-08-05 K.OHWADA
 // BUG: undefined method _check_uid()
 // 2008-07-01 K.OHWADA
@@ -63,7 +66,7 @@ function check_action()
 	switch ( $action ) 
 	{
 		case 'submit':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_modify();
 			if ( $this->_is_video_thumb_form ) {
 				break;
@@ -71,7 +74,7 @@ function check_action()
 			exit();
 
 		case 'redo':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_redo();
 			if ( $this->_is_video_thumb_form ) {
 				break;
@@ -79,12 +82,12 @@ function check_action()
 			exit();
 
 		case 'video':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_video();
 			exit();
 
 		case 'delete':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_delete();
 			exit();
 
@@ -197,16 +200,9 @@ function _get_action()
 	return '';
 }
 
-function _check_token_exit()
+function _check_token_and_redirect()
 {
-	if ( ! $this->check_token() )  {
-		$msg = 'Token Error';
-		if ( $this->_is_module_admin ) {
-			$msg .= '<br />'.$this->get_token_errors();
-		}
-		redirect_header( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL , $msg );
-		exit();
-	}
+	$this->check_token_and_redirect( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL );
 }
 
 //---------------------------------------------------------
@@ -242,15 +238,18 @@ function _modify()
 			exit();
 
 		case _C_WEBPHOTO_ERR_FILE:
-			redirect_header( $this->_REDIRECT_THIS_URL , $this->_TIME_FAIL, $this->get_constant('ERR_FILE') ) ;
+			redirect_header( $this->_REDIRECT_THIS_URL , $this->_TIME_FAIL, 
+				$this->get_constant('ERR_FILE') ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_NO_IMAGE;
-			redirect_header( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL, $this->get_constant('ERR_NOIMAGESPECIFIED') ) ;
+			redirect_header( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL, 
+				$this->get_constant('ERR_NOIMAGESPECIFIED') ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_FILEREAD:
-			redirect_header( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL, $this->get_constant('ERR_FILEREAD') ) ;
+			redirect_header( $this->_REDIRECT_THIS_URL, $this->_TIME_FAIL, 
+				$this->get_constant('ERR_FILEREAD') ) ;
 			exit();
 
 		case 0:
@@ -266,8 +265,8 @@ function _modify_success()
 	$time = $this->_TIME_SUCCESS ;
 	$msg  = '';
 
-	if ( $this->_msg_class->has_msg() ) {
-		$msg .= $this->_msg_class->get_format_msg() ;
+	if ( $this->has_msg_array() ) {
+		$msg .= $this->get_format_msg_array() ;
 		$msg .= "<br />\n";
 		$time = $this->_TIME_PENDING ;
 	}
@@ -284,7 +283,7 @@ function _exec_modify()
 	$thumb_tmp_name = null;
 	$image_info     = null;
 
-	$this->_msg_class->clear_msgs();
+	$this->clear_msg_array();
 
 // load
 	$row = $this->_row_current;
@@ -397,7 +396,7 @@ function _redo()
 
 function _exec_redo()
 {
-	$this->_msg_class->clear_msgs();
+	$this->clear_msg_array();
 
 	$this->_is_video_thumb_form = false;
 	$file_info = null;
@@ -466,7 +465,7 @@ function _exec_redo()
 //---------------------------------------------------------
 function _video()
 {
-	$ret = $this->_exec_video();
+	$ret = $this->exec_video_thumb() ;
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_DB:
@@ -480,33 +479,6 @@ function _video()
 	}
 
 	$this->_modify_success();
-}
-
-function _exec_video()
-{
-	$photo_id = $this->_post_class->get_post('photo_id');
-	$num      = $this->_post_class->get_post('num');
-
-	$this->_msg_class->clear_msgs();
-
-	$row = $this->_photo_handler->get_row_by_id( $photo_id );
-	if ( !is_array($row) ) {
-		return _C_WEBPHOTO_ERR_NO_RECORD;
-	}
-
-	$thumb_info = $this->create_video_thumb( $row, $num );
-
-// update
-	if ( is_array($thumb_info) && count($thumb_info) ) {
-		$row_update = array_merge( $row, $thumb_info );
-		$ret = $this->_photo_handler->update( $row_update );
-		if ( !$ret ) {
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return _C_WEBPHOTO_ERR_DB;
-		}
-	}
-
-	return 0;
 }
 
 //---------------------------------------------------------
@@ -675,15 +647,6 @@ function _get_confirm_photo()
 		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , _NOPERM ) ;
 		exit();
 	}
-
-//	$row = $this->_photo_handler->get_row_by_id( $this->_post_photo_id );
-//	if ( !is_array($row) ) {
-//		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
-//		exit ;
-//	}
-
-// save
-//	$this->_row = $row;
 
 }
 

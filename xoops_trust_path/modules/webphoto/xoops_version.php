@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.2 2008/07/06 04:41:31 ohwada Exp $
+// $Id: xoops_version.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,11 +8,12 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// use WEBPHOTO_TRUST_DIRNAME
 // 2008-07-01 K.OHWADA
 // remove class/xoops/base.php
 //---------------------------------------------------------
 
-// webphoto_xoops_base -> xoops_gethandler()
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
 //---------------------------------------------------------
@@ -35,6 +36,6 @@ webphoto_include_language( 'modinfo.php',                $MY_DIRNAME );
 // main
 //---------------------------------------------------------
 $webphoto_inc_xoops_version =& webphoto_inc_xoops_version::getInstance();
-$modversion = $webphoto_inc_xoops_version->build_modversion( $MY_DIRNAME );
+$modversion = $webphoto_inc_xoops_version->build_modversion( $MY_DIRNAME, WEBPHOTO_TRUST_DIRNAME );
 
 ?>

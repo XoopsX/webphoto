@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: modinfo.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -67,8 +67,8 @@ define( $constpref."CFG_WIDTH" , "最大画像幅" ) ;
 define( $constpref."CFG_DESCWIDTH" , "画像アップロード時に自動調整されるメイン画像の最大幅。<br />GDモードでTrueColorを扱えない時には単なるサイズ制限" ) ;
 define( $constpref."CFG_HEIGHT" , "最大画像高" ) ;
 define( $constpref."CFG_DESCHEIGHT" , "最大幅と同じ意味です" ) ;
-define( $constpref."CFG_FSIZE" , "最大ファイルサイズ" ) ;
-define( $constpref."CFG_DESCFSIZE" , "アップロード時のファイルサイズ制限(byte)" ) ;
+define( $constpref."CFG_FSIZE" , "最大ファイル容量" ) ;
+define( $constpref."CFG_DESCFSIZE" , "アップロード時のファイル容量制限(byte)" ) ;
 
 //define( $constpref."CFG_MIDDLEPIXEL" , "シングルビューでの最大画像サイズ" ) ;
 //define( $constpref."CFG_DESCMIDDLEPIXEL" , "幅x高さ で指定します。<br />（例 480x480）" ) ;
@@ -159,7 +159,9 @@ define($constpref."OPT_SORT_RATINGD","評価 (高→低)");
 define($constpref."OPT_SORT_RANDOM","ランダム");
 
 define($constpref."CFG_GICONSPATH" , "Google アイコンファイルの保存先ディレクトリ" ) ;
-define($constpref."CFG_TMPPATH" ,   "一時ファイルの保存先ディレクトリ" ) ;
+
+//define($constpref."CFG_TMPPATH" ,   "一時ファイルの保存先ディレクトリ" ) ;
+
 define($constpref."CFG_MIDDLE_WIDTH" ,  "シングルビューでの画像の幅" ) ;
 define($constpref."CFG_MIDDLE_HEIGHT" , "シングルビューでの画像の高さ" ) ;
 define($constpref."CFG_THUMB_WIDTH" ,  "サムネイル画像の幅" ) ;
@@ -209,10 +211,37 @@ define($constpref."ADMENU_SYNO_TABLE_MANAGE","類似語テーブル管理");
 //---------------------------------------------------------
 // v0.20
 //---------------------------------------------------------
-define( $constpref."CFG_USE_FFMPEG"  , "ffmpeg を使用する" ) ;
-define( $constpref."CFG_FFMPEGPATH"  , "ffmpeg の実行パス" ) ;
-define( $constpref."CFG_DESCFFMPEGPATH" , "ffmpeg の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「ffmpeg を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
+define($constpref."CFG_USE_FFMPEG"  , "ffmpeg を使用する" ) ;
+define($constpref."CFG_FFMPEGPATH"  , "ffmpeg の実行パス" ) ;
+define($constpref."CFG_DESCFFMPEGPATH" , "ffmpeg の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「ffmpeg を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
 define($constpref."CFG_USE_PATHINFO","pathinfo を使用する");
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+define($constpref."CFG_TMPDIR" ,   "一時ファイルの保存先ディレクトリ" ) ;
+define($constpref."CFG_TMPDIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします");
+define($constpref."CFG_MAIL_HOST"  , "メール サーバー ホスト名" ) ;
+define($constpref."CFG_MAIL_USER"  , "メール ユーザーID" ) ;
+define($constpref."CFG_MAIL_PASS"  , "メール パスワード" ) ;
+define($constpref."CFG_MAIL_ADDR"  , "投稿先 メールアドレス" ) ;
+define($constpref."CFG_MAIL_CHARSET"  , "メールの文字コード" ) ;
+define($constpref."CFG_MAIL_CHARSET_DSC" , "'|' で区切って入力して下さい。<br />文字コードによるチェックを行わない時には、ここを空欄にします" ) ;
+define($constpref."CFG_MAIL_CHARSET_LIST","ISO-2022-JP|JIS|Shift_JIS|EUC-JP|UTF-8");
+define($constpref."CFG_FILE_DIR"  , "FTP ファイルの保存先ディレクトリ" ) ;
+define($constpref."CFG_FILE_DIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします" ) ;
+define($constpref."CFG_FILE_SIZE"  , "FTP 最大ファイル容量 (byte)" ) ;
+define($constpref."CFG_FILE_DESC"  , "FTP ヘルプ説明文");
+define($constpref."CFG_FILE_DESC_DSC"  , "「ファイル投稿」の権限がある場合に、ヘルプに表示されます");
+define($constpref."CFG_FILE_DESC_TEXT"  , "
+<b>FTP サーバー</b><br />
+FTP サーバー ホスト名: xxx<br />
+FTP ユーザーID: xxx<br />
+FTP パスワード: xxx<br />" ) ;
+
+define($constpref."ADMENU_MAILLOG_MANAGER","メールログ管理");
+define($constpref."ADMENU_MAILLOG_TABLE_MANAGE","メールログ・テーブル管理");
+define($constpref."ADMENU_USER_TABLE_MANAGE","ユーザ補助テーブル管理");
 
 }
 // === define begin ===

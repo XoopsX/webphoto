@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: import.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// used create_video_flash_thumb()
 // 2008-07-01 K.OHWADA
 // used webphoto_lib_exif webphoto_video
 //---------------------------------------------------------
@@ -25,8 +27,7 @@ class webphoto_import extends webphoto_base_this
 	var $_image_class;
 	var $_build_class;
 	var $_mime_class;
-	var $_video_class;
-	var $_exif_class;
+	var $_photo_class;
 
 // post
 	var $_post_op;
@@ -85,8 +86,9 @@ function webphoto_import( $dirname , $trust_dirname )
 	$this->_image_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 	$this->_build_class =& webphoto_photo_build::getInstance( $dirname );
 	$this->_mime_class  =& webphoto_mime::getInstance( $dirname );
-	$this->_video_class =& webphoto_video::getInstance( $dirname );
-	$this->_exif_class  =& webphoto_lib_exif::getInstance();
+
+	$this->_photo_class =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
+	$this->_photo_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
 
 	$this->_ICON_EXT_DIR = $this->_MODULE_DIR .'/images/exts';
 	$this->_ICON_EXT_URL = $this->_MODULE_URL .'/images/exts';
@@ -389,7 +391,8 @@ function print_finish()
 function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 {
 	$base_info = null;
-	$flag_video_thumb = false;
+	$flag_video_thumb     = false;
+	$video_thumb_tmp_file = null ;
 
 	$src_name_ext       = $src_id .'.'. $src_ext;
 	$src_name_gif       = $src_id .'.'. $this->_EXT_GIF ;
@@ -435,36 +438,20 @@ function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 		return false;
 	}
 
-	$thumb_src_path  = $photo_path;
-	$thumb_src_ext   = $photo_ext;
+	$thumb_src_file = $photo_file;
+	$thumb_src_ext  = $photo_ext;
 
 	$photo_info = $this->_mime_class->add_mime_to_info_if_empty( $photo_info );
 
-// if video
-	if ( $this->_mime_class->is_video_ext( $photo_ext ) && $this->_cfg_use_ffmpeg ) {
-		$photo_info = $this->_video_class->add_duration_size_to_info( $photo_info );
-
-		$flash_name = $this->_image_class->build_photo_name( 
-			$photo_id, $this->_video_class->get_flash_ext() );
-
-		$ret = $this->_video_class->create_flash( $photo_file, $flash_name ) ;
-		if ( $ret == _C_WEBPHOTO_VIDEO_CREATED ) {
-			echo ' create flash, ' ;
-			$photo_info = array_merge( $photo_info, $this->_video_class->get_flash_info() );
-		} elseif ( $ret == _C_WEBPHOTO_VIDEO_FAILED ) {
-			echo $this->highlight( ' fail to create flash, ' ) ;
-		}
-
-// create video thumb
-		if ( $this->_cfg_makethumb ) {
-			$video_thumb_path = $this->_video_class->create_single_thumb( $photo_id, $photo_file ) ;
-			if ( $video_thumb_path ) {
-				$flag_video_thumb = true;
-				$thumb_src_path   = $video_thumb_path;
-				$thumb_src_ext    = $this->_video_class->get_thumb_ext();
-			}
-		}
-
+// create video
+	$param_video = $this->_photo_class->create_video_flash_thumb( 
+		_C_WEBPHOTO_VIDEO_THUMB_SINGLE, $photo_id, $photo_info );
+	if ( is_array($param_video) ) {
+		$photo_info       = $param_video['photo_info'];
+		$flag_video_thumb = $param_video['thumb_flag'];
+		$thumb_src_file   = $param_video['thumb_file'];
+		$thumb_src_ext    = $param_video['thumb_ext'];
+		$video_thumb_tmp_file = $thumb_src_file ;
 	}
 
 // if exists thumb file
@@ -484,8 +471,8 @@ function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 
 // create thumb
 		if ( $this->_cfg_makethumb ) {
-			$this->_image_class->create_thumb_from_photo( 
-				$photo_id, $thumb_src_path, $thumb_src_ext );
+			$this->_image_class->create_thumb_from_image_file( 
+				$thumb_src_file, $photo_id, $thumb_src_ext );
 			$thumb_info = $this->_image_class->get_thumb_info();
 			if ( is_array($thumb_info) ) {
 				echo ' create thumb, ' ;
@@ -505,6 +492,11 @@ function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 		$thumb_info = $this->_image_class->get_thumb_info();
 	}
 
+// remove temp file
+	if ( $video_thumb_tmp_file ) {
+		$this->_utility_class->unlink_file( $video_thumb_tmp_file );
+	}
+
 	$photo_thumb_info
 		= $this->_image_class->merge_photo_thumb_info( $photo_info, $thumb_info, $base_info );
 
@@ -513,13 +505,13 @@ function copy_photo_from_myalbum( $src_id, $photo_id, $src_ext )
 
 function get_exif_info( $file )
 {
-	$exif_info = $this->_exif_class->read_file( $file );
+	$exif_info = $this->_photo_class->get_exif_info( $file );
 	if ( !is_array($exif_info) ) {
 		return null;
 	}
 
 	$base_info = array();
-	$datetime  = $this->exif_to_mysql_datetime( $exif_info );
+	$datetime  = $exif_info['datetime_mysql'];
 	$equipment = $exif_info['equipment'] ;
 	$exif      = $exif_info['all_data'] ;
 	if ( $datetime ) {
@@ -529,8 +521,10 @@ function get_exif_info( $file )
 		$base_info['photo_equipment'] = $equipment ;
 	}
 	if ( $exif ) {
-		echo ' get exif, ';
+		echo ' get exif, ' ;
 		$base_info['photo_cont_exif'] = $exif ;
+	} else {
+		echo ' no exif, ' ;
 	}
 
 	return $base_info;
@@ -597,7 +591,7 @@ function copy_photo_from_webphoto( $photo_id, $webphoto_row )
 // create thumb
 	} elseif ( $this->_cfg_makethumb ) {
 		echo ' create thumb ' ;
-		$this->_image_class->create_thumb_from_photo( $photo_id, $photo_path, $photo_ext ) ;
+		$this->_image_class->create_thumb_from_image_file( $photo_file, $photo_id, $photo_ext ) ;
 		$thumb_info = $this->_image_class->get_thumb_info();
 
 // substitute with photo image

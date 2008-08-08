@@ -1,10 +1,17 @@
 <?php
-// $Id: config.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: config.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// added is_set_mail()
+// removed get_tmp_path()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -86,11 +93,6 @@ function get_gicons_path()
 	return $this->_get_path_by_name( 'giconspath' );
 }
 
-function get_tmp_path()
-{
-	return $this->_get_path_by_name( 'tmppath' );
-}
-
 function get_middle_wh()
 {
 	$width  = $this->get_by_name('middle_width');
@@ -121,7 +123,23 @@ function get_thumb_wh()
 
 function _get_path_by_name( $name )
 {
-	return $this->add_slash_to_head( $this->get_by_name( $name ) );
+	$path = $this->get_by_name( $name );
+	if ( $path ) {
+		return $this->add_slash_to_head( $path );
+	}
+	return null;
+}
+
+function is_set_mail()
+{
+	$host = $this->get_by_name('mail_host');
+	$user = $this->get_by_name('mail_user');
+	$pass = $this->get_by_name('mail_pass');
+	
+	if ( $host && $user && $pass ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

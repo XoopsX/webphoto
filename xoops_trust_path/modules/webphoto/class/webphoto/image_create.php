@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.4 2008/07/11 20:25:25 ohwada Exp $
+// $Id: image_create.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added create_thumb_from_image_file(), copy_thumb_icon_in_dir()
 // 2008-07-01 K.OHWADA
 // create_photo_thumb()
 //  -> create_photo() create_thumb_from_upload() etc
@@ -167,34 +169,43 @@ function create_thumb_from_upload( $photo_id, $tmp_name )
 	return $ret;
 }
 
-function create_thumb_from_photo( $photo_id, $photo_path, $photo_ext )
+function create_thumb_from_photo_path( $photo_id, $src_path, $src_ext )
+{
+	$src_file = XOOPS_ROOT_PATH . $src_path;
+	return $this->create_thumb_from_image_file( $src_file, $photo_id, $src_ext ) ;
+}
+
+function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null )
 {
 	$this->_thumb_info = null;
 
+	if ( empty($src_ext) ) {
+		$src_ext = $this->parse_ext( $src_file );
+	}
+
 // check config
-	if ( !$this->_cfg_makethumb ) {
+	if ( ! $this->_cfg_makethumb ) {
 		return _C_WEBPHOTO_IMAGE_SKIPPED;
 	}
 
-	if ( ! $this->is_normal_ext( $photo_ext ) ) {
+	if ( ! $this->is_normal_ext( $src_ext ) ) {
 		return _C_WEBPHOTO_IMAGE_SKIPPED ;
 	}
 
-	$photo_file = XOOPS_ROOT_PATH . $photo_path;
 	$photo_node = $this->build_photo_node( $photo_id );
-	$photo_name = $photo_node .'.'. $photo_ext ;
+	$photo_name = $photo_node .'.'. $src_ext ;
 
 // check main photo
-	if ( empty($photo_path) ) {
+	if ( empty($src_file) ) {
 		return _C_WEBPHOTO_IMAGE_SKIPPED;
 	}
 
 // return error if not read file
-	if ( !is_readable( $photo_file ) ) {
+	if ( !is_readable( $src_file ) ) {
 		return _C_WEBPHOTO_IMAGE_READFAULT ;
 	}
 
-	$ret = $this->cmd_create_thumb( $photo_file , $photo_node , $photo_ext );
+	$ret = $this->cmd_create_thumb( $src_file , $photo_node , $src_ext );
 	if (( $ret == _C_WEBPHOTO_IMAGE_READFAULT )||
 	    ( $ret == _C_WEBPHOTO_IMAGE_SKIPPED )) {
 		return $ret;
@@ -207,6 +218,7 @@ function create_thumb_from_photo( $photo_id, $photo_path, $photo_ext )
 	$this->_thumb_info = $this->build_thumb_info_full( $thumb_path, $thumb_name, $thumb_ext );
 	return $ret;
 }
+
 
 // substitute with photo image
 function create_thumb_substitute( $photo_path, $photo_ext )
@@ -248,12 +260,20 @@ function create_thumb_icon( $photo_id, $photo_ext )
 
 function copy_thumb_icon( $base_path, $node, $ext )
 {
-	$name_ext = $node .'.'. $ext ;
+	$dir = XOOPS_ROOT_PATH . $base_path ;
+	$name_png = $this->copy_thumb_icon_in_dir( $dir, $node, $ext );
+
+	$thumb_path_png = $base_path .'/'. $name_png;
+
+	return array( $thumb_path_png, $name_png, $this->_EXT_PNG );
+}
+
+function copy_thumb_icon_in_dir( $dir, $node, $ext )
+{
 	$name_png = $node .'.'. $this->_EXT_PNG ;
 	$ext_png  = $ext  .'.'. $this->_EXT_PNG ;
 
-	$thumb_path_png = $base_path .'/'. $name_png;
-	$thumb_file_png = XOOPS_ROOT_PATH . $thumb_path_png ;
+	$thumb_file_png = $dir .'/'. $name_png;
 	$icon_file_png  = $this->_ICON_EXT_DIR .'/'. $ext_png;
 
 	$this->unlink_file( $thumb_file_png ) ;
@@ -264,7 +284,7 @@ function copy_thumb_icon( $base_path, $node, $ext )
 		$this->copy_file( $this->_ICON_EXT_DEFAULT, $thumb_file_png ) ;
 	}
 
-	return array( $thumb_path_png, $name_png, $this->_EXT_PNG );
+	return $name_png ;
 }
 
 function get_photo_info()
@@ -362,7 +382,7 @@ function build_preview( $preview_name )
 	$ext = $this->parse_ext( $preview_name );
 
 	$path_photo   = $this->_TMP_DIR .'/'. $preview_name;
-	$ahref_file   = $this->_TMP_URL .'/'. $preview_name;
+	$ahref_file   = $this->_MODULE_URL.'/index.php?fct=image&amp;name='. rawurlencode( $preview_name ) ;
 	$imgsrc_thumb = $ahref_file;
 
 // image type

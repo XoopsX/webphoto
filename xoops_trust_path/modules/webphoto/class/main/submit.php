@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.4 2008/08/05 13:00:08 ohwada Exp $
+// $Id: submit.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-06 K.OHWADA
+// used webphoto_xoops_user
+// used update_video_thumb()
+// not use msg_class
 // 2008-08-05 K.OHWADA
 // BUG: cannot preview
 // 2008-07-01 K.OHWADA
@@ -23,6 +27,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_submit extends webphoto_photo_edit
 {
 	var $_notification_class;
+	var $_xoops_user_class;
 
 	var $_has_insertable  = false;
 	var $_has_superinsert = false;
@@ -32,9 +37,6 @@ class webphoto_main_submit extends webphoto_photo_edit
 
 	var $_REDIRECT_URL;
 
-	var $_ERR_NO_CATEGORY = -1;
-	var $_ERR_NO_CATID    = -2;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -42,6 +44,7 @@ function webphoto_main_submit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
 
+	$this->_xoops_user_class   =& webphoto_xoops_user::getInstance();
 	$this->_notification_class =& webphoto_notification_event::getInstance(
 		$dirname , $trust_dirname );
 
@@ -74,7 +77,7 @@ function check_submit()
 	switch ( $this->_get_action() ) 
 	{
 		case 'submit':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_submit();
 			if ( $this->_is_video_thumb_form ) {
 				break;
@@ -82,7 +85,7 @@ function check_submit()
 			exit();
 
 		case 'video':
-			$this->_check_token_exit();
+			$this->_check_token_and_redirect();
 			$this->_video();
 			exit();
 	}
@@ -90,12 +93,18 @@ function check_submit()
 
 function print_form()
 {
-	echo $this->build_bread_crumb( $this->get_constant('TITLE_ADDPHOTO'), $this->_REDIRECT_URL );
+	echo $this->build_bread_crumb( 
+		$this->get_constant('TITLE_ADDPHOTO'), $this->_REDIRECT_URL );
 
 	if ( $this->_is_video_thumb_form ) {
 		$this->_print_form_video_thumb();
 	} else {
-		$this->_print_form_submit();
+		if ( $this->_is_preview ) {
+			$row = $this->_preview();
+		} else {
+			$row = $this->_get_photo_default();
+		}
+		$this->_print_form_submit( $row );
 	}
 }
 
@@ -124,15 +133,21 @@ function _check()
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_NO_PERM:
-			redirect_header( XOOPS_URL.'/user.php' , $this->_TIME_FAIL , $this->get_constant('ERR_MUSTREGFIRST') ) ;
+			redirect_header( XOOPS_URL.'/user.php' , $this->_TIME_FAIL , 
+				$this->get_constant('ERR_MUSTREGFIRST') ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_CHECK_DIR:
-			redirect_header( $this->_INDEX_PHP, $this->_TIME_FAIL, $this->get_format_error() );
+			$msg = 'Directory Error';
+			if ( $this->_is_module_admin ) {
+				$msg .= '<br />'.$this->get_format_error();
+			}
+			redirect_header( $this->_INDEX_PHP, $this->_TIME_FAIL, $msg );
 			exit();
 
-		case $this->_ERR_NO_CATEGORY :
-			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('ERR_MUSTADDCATFIRST') ) ;
+		case _C_WEBPHOTO_ERR_NO_CAT_RECORD :
+			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , 
+				$this->get_constant('ERR_MUSTADDCATFIRST') ) ;
 			exit ;
 
 		default;
@@ -146,8 +161,8 @@ function _exec_check()
 		return _C_WEBPHOTO_ERR_NO_PERM ; 
 	}
 
-	if ( ! $this->exists_category() ) { 
-		return $this->_ERR_NO_CATEGORY ; 
+	if ( ! $this->exists_cat_record() ) { 
+		return _C_WEBPHOTO_ERR_NO_CAT_RECORD ; 
 	}
 
 	$ret1 = $this->check_dir( $this->_PHOTOS_DIR );
@@ -160,19 +175,17 @@ function _exec_check()
 		return $ret2; 
 	}
 
+	$ret3 = $this->check_dir( $this->_TMP_DIR );
+	if ( $ret3 < 0 ) {
+		return $ret3; 
+	}
+
 	return 0;
 }
 
-function _check_token_exit()
+function _check_token_and_redirect()
 {
-	if ( ! $this->check_token() )  {
-		$msg = 'Token Error';
-		if ( $this->_is_module_admin ) {
-			$msg .= '<br />'.$this->get_token_errors();
-		}
-		redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL , $msg );
-		exit();
-	}
+	$this->check_token_and_redirect( $this->_REDIRECT_URL, $this->_TIME_FAIL );
 }
 
 //---------------------------------------------------------
@@ -180,6 +193,7 @@ function _check_token_exit()
 //---------------------------------------------------------
 function _submit()
 {
+	$msg = null;
 	$ret = $this->_exec_submit();
 
 	if ( $this->_is_video_thumb_form ) {
@@ -188,48 +202,54 @@ function _submit()
 
 	switch ( $ret )
 	{
-		case $this->_ERR_NO_CATID:
-			redirect_header( $this->_REDIRECT_URL , $this->_TIME_FAIL , 'Category is not specified.' ) ;
-			exit() ;
+		case _C_WEBPHOTO_ERR_EMPTY_CAT:
+			$msg = $this->get_constant('ERR_EMPTY_CAT') ;
+			break;
+
+		case _C_WEBPHOTO_ERR_INVALID_CAT:
+			$msg = $this->get_constant('ERR_INVALID_CAT') ;
+			break;
+
+		case _C_WEBPHOTO_ERR_NO_SPECIFIED:
+			$msg = 'UPLOAD error: file name not specified';
+			break;
 
 		case _C_WEBPHOTO_ERR_DB:
 			$msg = 'DB Error';
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_format_error();
 			}
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg ) ;
-			exit();
+			break;
 
 		case _C_WEBPHOTO_ERR_UPLOAD;
 			$msg  = 'File Upload Error';
 			$msg .= '<br />'.$this->get_format_error( false );
-			redirect_header( $this->_REDIRECT_URL , $this->_TIME_FAIL , $msg ) ;
-			exit();
-
-		case _C_WEBPHOTO_ERR_NO_SPECIFIED:
-			$msg = 'UPLOAD error: file name not specified';
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg );
-			exit();
+			break;
 
 		case _C_WEBPHOTO_ERR_FILE:
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $this->get_constant('ERR_FILE') ) ;
-			exit();
+			$msg = $this->get_constant('ERR_FILE') ;
+			break;
 
 		case _C_WEBPHOTO_ERR_NO_IMAGE;
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $this->get_constant('ERR_NOIMAGESPECIFIED') ) ;
-			exit();
+			$msg = $this->get_constant('ERR_NOIMAGESPECIFIED') ;
+			break;
 
 		case _C_WEBPHOTO_ERR_FILEREAD:
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $this->get_constant('ERR_FILEREAD') ) ;
-			exit();
+			$msg = $this->get_constant('ERR_FILEREAD') ;
+			break;
 
 		case _C_WEBPHOTO_ERR_NO_TITLE:
-			redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $this->get_constant('ERR_TITLE') ) ;
-			exit();
+			$msg = $this->get_constant('ERR_TITLE') ;
+			break;
 
 		case 0:
 		default:
 			break;
+	}
+
+	if ( $msg ) {
+		redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg );
+		exit();
 	}
 
 	$this->submit_success();
@@ -243,7 +263,7 @@ function _exec_submit()
 
 	$cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
 
-	$this->_msg_class->clear_msgs();
+	$this->clear_msg_array();
 
 	$ret = $this->_check_submit();
 	if ( $ret < 0 ) {
@@ -287,8 +307,12 @@ function _check_submit()
 {
 
 // Check if cid is valid
-	if ( ! $this->exists_post_cat_id() ) {
-		return $this->_ERR_NO_CATID;
+	if ( empty( $this->_post_photo_catid ) ) {
+		return _C_WEBPHOTO_ERR_EMPTY_CAT ;
+	}
+
+	if ( ! $this->check_valid_catid( $this->_post_photo_catid ) ) {
+		return _C_WEBPHOTO_ERR_INVALID_CAT ;
 	}
 
 // Check if upload file name specified
@@ -326,7 +350,8 @@ function _add_to_handler( $photo_tmp_name, $thumb_tmp_name )
 		return _C_WEBPHOTO_ERR_DB; 
 	}
 
-	$this->_xoops_user_increment_post();
+	$cfg_addposts = $this->_config_class->get_by_name( 'addposts' );
+	$this->_xoops_user_class->increment_post_by_num_own( $cfg_addposts );
 
 // Trigger Notification when supper insert
 	if ( $this->_get_new_status() ) {
@@ -347,22 +372,6 @@ function _get_thumb_tmp_name()
 	$this->_thumb_tmp_name;
 }
 
-function _xoops_user_increment_post()
-{
-	$cfg_addposts  = $this->_config_class->get_by_name( 'addposts' );
-
-	// Update User's Posts (Should be modified when need admission.)
-	$user_handler =& xoops_gethandler('user') ;
-	$submitter_obj =& $user_handler->get( $this->_xoops_uid ) ;
-
-	if( is_object( $submitter_obj ) ) {
-		for( $i = 0 ; $i < $cfg_addposts ; $i ++ ) 
-		{
-			$submitter_obj->incrementPost() ;
-		}
-	}
-}
-
 //---------------------------------------------------------
 // overwrite by submit_imagemanager
 //---------------------------------------------------------
@@ -376,8 +385,8 @@ function submit_success()
 		$time = $this->_TIME_SUCCESS ;
 		$msg  = '';
 
-		if ( $this->_msg_class->has_msg() ) {
-			$msg .= $this->_msg_class->get_format_msg() ;
+		if ( $this->has_msg_array() ) {
+			$msg .= $this->get_format_msg_array() ;
 			$msg .= "<br />\n";
 			$time = $this->_TIME_PENDING ;
 		}
@@ -399,13 +408,12 @@ function check_xoops_upload_file_submit()
 	return $this->check_xoops_upload_file( true );
 }
 
-
 //---------------------------------------------------------
 // video
 //---------------------------------------------------------
 function _video()
 {
-	$ret = $this->_exec_video();
+	$ret = $this->exec_video_thumb() ;
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_DB:
@@ -419,36 +427,6 @@ function _video()
 	}
 
 	$this->submit_success();
-}
-
-function _exec_video()
-{
-	$this->_msg_class->clear_msgs();
-
-	$photo_id = $this->_post_class->get_post('photo_id');
-	$num      = $this->_post_class->get_post('num');
-
-	$row = $this->_photo_handler->get_row_by_id( $photo_id );
-	if ( !is_array($row) ) {
-		return _C_WEBPHOTO_ERR_NO_RECORD;
-	}
-
-// set for redirect
-	$this->_post_photo_catid = $row['photo_cat_id'];
-
-	$thumb_info = $this->create_video_thumb( $row, $num );
-
-// update
-	if ( is_array($thumb_info) && count($thumb_info) ) {
-		$row_update = array_merge( $row, $thumb_info );
-		$ret = $this->_photo_handler->update( $row_update );
-		if ( !$ret ) {
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return _C_WEBPHOTO_ERR_DB;
-		}
-	}
-
-	return 0;
 }
 
 //---------------------------------------------------------
@@ -534,8 +512,10 @@ function _preview_new()
 	$photo_tmp_name = $this->_photo_tmp_name;
 
 // overwrite preview name
-	$this->set_preview_name(
-		str_replace( _C_WEBPHOTO_UPLOADER_PREFIX , _C_WEBPHOTO_UPLOADER_PREFIX_PREV , $photo_tmp_name ) );
+	$this->set_preview_name( str_replace( 
+		_C_WEBPHOTO_UPLOADER_PREFIX , 
+		_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
+		$photo_tmp_name ) );
 
 	return $this->_image_class->create_preview_new(
 		$this->get_preview_name(), $photo_tmp_name );
@@ -571,14 +551,8 @@ function _get_photo_default()
 //---------------------------------------------------------
 // print form
 //---------------------------------------------------------
-function _print_form_submit()
+function _print_form_submit( $row )
 {
-	if ( $this->_is_preview ) {
-		$row = $this->_preview();
-	} else {
-		$row = $this->_get_photo_default();
-	}
-
 	list ( $types, $allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
 
 	$param = array(
@@ -591,7 +565,8 @@ function _print_form_submit()
 		'allowed_exts'    => $allowed_exts ,
 	);
 
-	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form_class =& webphoto_photo_edit_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_common( $row, $param );
 }
 

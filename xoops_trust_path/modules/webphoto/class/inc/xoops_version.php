@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.6 2008/07/06 04:41:31 ohwada Exp $
+// $Id: xoops_version.php,v 1.7 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,10 +8,14 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added TRUST_DIRNAME
+// added mail_host
+// added cachetime in _build_blocks()
+// tmppath -> tmpdir
 // 2008-07-01 K.OHWADA
 // added use_ffmpeg use_pathinfo
 // webphoto_xoops_base -> xoops_gethandler()
-//
 // 2008-06-30 K.OHWADA
 // typo
 //---------------------------------------------------------
@@ -23,14 +27,15 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_xoops_version extends webphoto_inc_handler
 {
-	var $_MODULE_ID = 0;
-
 	var $_cfg_catonsubmenu = false;
 	var $_cfg_use_pathinfo = false;
 	var $_has_insertable   = false;
 	var $_has_rateview     = false;
 
-	var $_UPLOAD_DIR;
+	var $_TRUST_DIRNAME = null ;
+	var $_MODULE_ID     = 0;
+	var $_PATH_UPLOADS_MOD      = null;
+	var $_DIR_TRUST_MOD_UPLOADS = null;
 
 //---------------------------------------------------------
 // constructor
@@ -52,9 +57,9 @@ function &getInstance()
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-function build_modversion( $dirname )
+function build_modversion( $dirname, $trust_dirname )
 {
-	$this->_init( $dirname );
+	$this->_init( $dirname, $trust_dirname );
 
 	$arr           = $this->_build_basic();
 	$arr['sub']    = $this->_build_sub();
@@ -64,14 +69,20 @@ function build_modversion( $dirname )
 	return $arr;
 }
 
-function _init( $dirname )
+function _init( $dirname, $trust_dirname )
 {
+	$this->_TRUST_DIRNAME = $trust_dirname ;
+
 	$this->init_handler( $dirname );
 	$this->_init_xoops_module( $dirname );
 	$this->_init_xoops_config( $dirname );
 	$this->_init_xoops_group_permission( $dirname );
 
-	$this->_UPLOAD_DIR = '/uploads/'.$dirname;
+	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
+
+	$this->_DIR_TRUST_MOD_UPLOADS 
+		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
+
 }
 
 //---------------------------------------------------------
@@ -300,7 +311,7 @@ function _build_blocks()
 	$arr[1]['description'] = "Shows recently added photos";
 	$arr[1]['show_func'] = "b_webphoto_topnews_show";
 	$arr[1]['edit_func'] = "b_webphoto_topnews_edit";
-	$arr[1]['options'] = $this->_DIRNAME.'|5|0|1|20|1' ;
+	$arr[1]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0' ;
 	$arr[1]['template'] = '' ;
 	$arr[1]['can_clone'] = true ;
 
@@ -309,7 +320,7 @@ function _build_blocks()
 	$arr[2]['description'] = "Shows most viewed photos";
 	$arr[2]['show_func'] = "b_webphoto_tophits_show";
 	$arr[2]['edit_func'] = "b_webphoto_tophits_edit";
-	$arr[2]['options'] = $this->_DIRNAME.'|5|0|1|20|1';
+	$arr[2]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
 	$arr[2]['template'] = '' ;
 	$arr[2]['can_clone'] = true ;
 
@@ -318,7 +329,7 @@ function _build_blocks()
 	$arr[3]['description'] = "Shows recently added photos";
 	$arr[3]['show_func'] = "b_webphoto_topnews_p_show";
 	$arr[3]['edit_func'] = "b_webphoto_topnews_edit";
-	$arr[3]['options'] = $this->_DIRNAME.'|5|0|1|20|1';
+	$arr[3]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
 	$arr[3]['template'] = '' ;
 	$arr[3]['can_clone'] = true ;
 
@@ -327,7 +338,7 @@ function _build_blocks()
 	$arr[4]['description'] = "Shows most viewed photos";
 	$arr[4]['show_func'] = "b_webphoto_tophits_p_show";
 	$arr[4]['edit_func'] = "b_webphoto_tophits_edit";
-	$arr[4]['options'] = $this->_DIRNAME.'|5|0|1|20|1';
+	$arr[4]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
 	$arr[4]['template'] = '' ;
 	$arr[4]['can_clone'] = true ;
 
@@ -336,7 +347,7 @@ function _build_blocks()
 	$arr[5]['description'] = "Shows a random photo";
 	$arr[5]['show_func'] = "b_webphoto_rphoto_show";
 	$arr[5]['edit_func'] = "b_webphoto_rphoto_edit";
-	$arr[5]['options'] = $this->_DIRNAME.'|5|0|1|20|1';
+	$arr[5]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
 	$arr[5]['template'] = '' ;
 	$arr[5]['can_clone'] = true ;
 
@@ -366,7 +377,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCPHOTOSPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_UPLOAD_DIR.'/photos' ,
+		'default'		=> $this->_PATH_UPLOADS_MOD.'/photos' ,
 		'options'		=> array()
 	) ;
 
@@ -376,7 +387,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCTHUMBSPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_UPLOAD_DIR.'/thumbs' ,
+		'default'		=> $this->_PATH_UPLOADS_MOD.'/thumbs' ,
 		'options'		=> array()
 	) ;
 
@@ -387,18 +398,18 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCTHUMBSPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_UPLOAD_DIR.'/gicons' ,
+		'default'		=> $this->_PATH_UPLOADS_MOD.'/gicons' ,
 		'options'		=> array()
 	) ;
 
 // add for webphoto
 	$arr[] = array(
-		'name'			=> 'tmppath' ,
-		'title'			=> $this->_constant_name( 'CFG_TMPPATH' ) ,
-		'description'	=> $this->_constant_name( 'CFG_DESCTHUMBSPATH' ) ,
+		'name'			=> 'tmpdir' ,
+		'title'			=> $this->_constant_name( 'CFG_TMPDIR' ) ,
+		'description'	=> $this->_constant_name( 'CFG_TMPDIR_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_UPLOAD_DIR.'/tmp' ,
+		'default'		=> $this->_DIR_TRUST_MOD_UPLOADS.'/tmp' ,
 		'options'		=> array()
 	) ;
 
@@ -446,7 +457,7 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
-// add for webphoto
+// for webphoto
 	$arr[] = array(
 		'name'			=> 'use_ffmpeg' ,
 		'title'			=> $this->_constant_name( 'CFG_USE_FFMPEG' ) ,
@@ -457,7 +468,7 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
-// add for webphoto
+// for webphoto
 	$arr[] = array(
 		'name'			=> 'ffmpegpath' ,
 		'title'			=> $this->_constant_name( 'CFG_FFMPEGPATH' ) ,
@@ -494,7 +505,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCFSIZE' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '100000' ,
+		'default'		=> '102400' , // 100 KB
 		'options'		=> array()
 	) ;
 
@@ -724,7 +735,7 @@ function _build_config()
 		'name'			=> 'gmap_latitude' ,
 		'title'			=> $this->_constant_name( 'CFG_LATITUDE' ) ,
 		'description'	=> '' ,
-		'formtype'		=> 'text' ,
+		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> '2' ,
 		'options'		=> array()
@@ -734,7 +745,7 @@ function _build_config()
 		'name'			=> 'gmap_longitude' ,
 		'title'			=> $this->_constant_name( 'CFG_LONGITUDE' ) ,
 		'description'	=> '' ,
-		'formtype'		=> 'text' ,
+		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> '-155' ,
 		'options'		=> array()
@@ -744,7 +755,7 @@ function _build_config()
 		'name'			=> 'gmap_zoom' ,
 		'title'			=> $this->_constant_name( 'CFG_ZOOM' ) ,
 		'description'	=> '' ,
-		'formtype'		=> 'text' ,
+		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '2' ,
 		'options'		=> array()
@@ -777,6 +788,86 @@ function _build_config()
 		'formtype'		=> 'textarea' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> $this->_build_config_index_desc() ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'mail_host' ,
+		'title'			=> $this->_constant_name( 'CFG_MAIL_HOST' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'mail_user' ,
+		'title'			=> $this->_constant_name( 'CFG_MAIL_USER' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'mail_pass' ,
+		'title'			=> $this->_constant_name( 'CFG_MAIL_PASS' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'mail_addr' ,
+		'title'			=> $this->_constant_name( 'CFG_MAIL_ADDR' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'mail_charset' ,
+		'title'			=> $this->_constant_name( 'CFG_MAIL_CHARSET' ) ,
+		'description'	=> $this->_constant_name( 'CFG_MAIL_CHARSET_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> $this->_constant( 'CFG_MAIL_CHARSET_LIST' ) ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'file_dir' ,
+		'title'			=> $this->_constant_name( 'CFG_FILE_DIR' ) ,
+		'description'	=> $this->_constant_name( 'CFG_FILE_DIR_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'file_size' ,
+		'title'			=> $this->_constant_name( 'CFG_FILE_SIZE' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '102400' , // 100 KB
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'file_desc' ,
+		'title'			=> $this->_constant_name( 'CFG_FILE_DESC' ) ,
+		'description'	=> $this->_constant_name( 'CFG_FILE_DESC_DSC' ) ,
+		'formtype'		=> 'textarea' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> $this->_constant( 'CFG_FILE_DESC_TEXT' ) ,
 		'options'		=> array()
 	) ;
 

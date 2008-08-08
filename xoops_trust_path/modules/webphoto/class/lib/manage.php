@@ -1,5 +1,5 @@
 <?php
-// $Id: manage.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: manage.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added _manage_delete_all_each()
 // 2008-07-01 K.OHWADA
 // change build_comp_url()
 // xoops_error() -> build_error_msg()
@@ -37,6 +39,11 @@ class webphoto_lib_manage extends webphoto_lib_form
 
 	var $_PAEPAGE_DEFAULT = 50;
 	var $_MAX_SORTID      = 2;
+
+	var $_LANG_SHOW_LIST  = 'show list';
+	var $_LANG_ADD_RECORD = 'add record';
+	var $_LANG_NO_RECORD  = 'there are no record';
+	var $_LANG_THERE_ARE  = 'there are %s records';
 
 //---------------------------------------------------------
 // constructor
@@ -103,6 +110,26 @@ function set_manage_title_by_name( $name )
 	$this->set_manage_title( $this->get_admin_title( $name ) );
 }
 
+function set_lang_show_list( $val )
+{
+	$this->_LANG_SHOW_LIST  = $val ;
+}
+
+function set_lang_add_record( $val )
+{
+	$this->_LANG_ADD_RECORD  = $val ;
+}
+
+function set_lang_no_record( $val )
+{
+	$this->_LANG_NO_RECORD  = $val ;
+}
+
+function set_lang_there_are( $val )
+{
+	$this->_LANG_THERE_ARE  = $val ;
+}
+
 //---------------------------------------------------------
 // id
 //---------------------------------------------------------
@@ -141,26 +168,32 @@ function manage_list()
 	echo $this->build_show_title();
 	echo $this->build_show_desc();
 
-	$total = $this->get_list_total();
-	if ( $total == 0 ) {
-		echo $this->highlight( 'there are no record' );
+	$total_all = $this->get_total_all();
+	if ( $total_all == 0 ) {
+		echo $this->build_show_no_record( true );
 		echo "<br /><br />\n";
 		echo $this->build_show_add_record();
 		return false;
 	}
 
-	$this->_pagenavi_class->set_total( $total );
-	$limit = $this->_pagenavi_class->get_perpage();
-	$start = $this->_pagenavi_class->calc_start();
-
-	$rows = $this->get_list_rows( $limit, $start );
+	$total = $this->get_list_total();
 
 	echo $this->build_sub_title_list();
 	echo $this->build_show_add_record();
 	echo $this->build_sub_title();
 	echo $this->build_show_there_are( $total );
 
+	if ( $total == 0 ) {
+		return true;
+	}
+
+	$this->_pagenavi_class->set_total( $total );
+	$limit = $this->_pagenavi_class->get_perpage();
+	$start = $this->_pagenavi_class->calc_start();
+	$rows = $this->get_list_rows( $limit, $start );
+
 	$this->print_list( $rows );
+
 	return true;
 }
 
@@ -184,7 +217,9 @@ function build_sub_title_list()
 	{
 		$text .= '<li><a href="'. $this->_THIS_FCT_URL .'&amp;sortid='. $i .'">';
 		$text .= $this->get_sub_title_by_num( $i );
-		$text .= '</a></li>'."\n";
+		$text .= '</a> (';
+		$text .= $this->_get_count_by_sortid( $i );
+		$text .= ') </li>'."\n";
 	}
 
 	$text .= '</ul>'."\n";
@@ -206,6 +241,11 @@ function get_sub_title_by_num( $num )
 		return $this->_manage_sub_title_array[ $num ];
 	}
 	return false;
+}
+
+function get_total_all()
+{
+	return $this->_manage_handler->get_count_all();
 }
 
 function get_list_total()
@@ -313,18 +353,36 @@ function manage_form()
 
 function manage_form_with_error( $msg=null )
 {
+// show error if noo record
+	$row = $this->get_manage_row_by_id();
+	if ( !is_array($row) ) {
+		return false; 
+	}
+
+	echo $this->build_manage_bread_crumb();
+
 	if ( $msg ) {
 		echo $this->build_error_msg( $msg );
 	}
-	$this->manage_print_form();
+
+	$this->_manage_print_title_and_form( $row );
 }
 
 function manage_print_form()
 {
+// show error if no record
 	$row = $this->get_manage_row_by_id();
-	if ( !is_array($row) ) { return false; }
+	if ( !is_array($row) ) {
+		return false; 
+	}
 
 	echo $this->build_manage_bread_crumb();
+
+	$this->_manage_print_title_and_form( $row );
+}
+
+function _manage_print_title_and_form( $row )
+{
 	echo $this->build_show_title();
 	echo $this->build_show_list();
 	echo $this->build_show_add_record();
@@ -370,25 +428,44 @@ function manage_edit()
 	$row_edit = $this->_build_row_edit();
 	$id       = $this->get_manage_id( $row_edit );
 
-	$row_current = $this->_manage_handler->get_row_by_id( $id );
-	if ( !is_array($row_current) ) {
-		$msg  = 'DB error <br />';
-		$msg .= $this->_manage_handler->get_format_error();
+// exit if no record
+	$row_current = $this->_manage_edit_get_row( $id );
+
+// exit if failed
+	$this->_manage_edit_exec( array_merge( $row_current, $row_edit) );
+
+	redirect_header( $this->build_manage_form_url( $id ), $this->_MANAGE_TIME_SUCCESS, 'Updated' );
+	exit();
+}
+
+function _manage_edit_get_row( $id )
+{
+	return $this->_manage_get_row_or_exit( $id );
+}
+
+function _manage_get_row_or_exit( $id )
+{
+	$row = $this->_manage_handler->get_row_by_id( $id );
+	if ( !is_array($row) ) {
+		$msg = 'no match record';
 		redirect_header( $this->build_manage_form_url(), $this->_MANAGE_TIME_FAIL, $msg );
 		exit();
 	}
 
-	$row_update = array_merge( $row_current, $row_edit);
-	$ret = $this->_manage_handler->update( $row_update );
+	return $row;
+}
+
+function _manage_edit_exec( $row )
+{
+	$ret = $this->_manage_handler->update( $row );
 	if ( !$ret ) {
 		$msg  = 'DB error <br />';
 		$msg .= $this->_manage_handler->get_format_error();
 		redirect_header( $this->build_manage_form_url( $id ), $this->_MANAGE_TIME_FAIL, $msg );
 		exit();
 	}
-
-	redirect_header( $this->build_manage_form_url( $id ), $this->_MANAGE_TIME_SUCCESS, 'Updated' );
-	exit();
+	
+	return true;
 }
 
 //---------------------------------------------------------
@@ -396,21 +473,23 @@ function manage_edit()
 //---------------------------------------------------------
 function manage_delete()
 {
-	$this->_manage_delete();
+// exit if no record
+	$row = $this->_manage_delete_get_row();
+
+	$this->_manage_delete_option( $row );
+	$this->_manage_delete_exec( $row );
 
 	redirect_header( $this->_THIS_FCT_URL, $this->_MANAGE_TIME_SUCCESS, 'Deleted' );
 	exit();
 }
 
-function _manage_delete()
+function _manage_delete_get_row()
 {
-	$row = $this->_manage_handler->get_row_by_id( $this->get_post_id() );
-	if ( !is_array($row) ) {
-		echo $this->build_link_index_admin(). "<br /><br />\n";
-		echo $this->highlight( 'there are no record' );
-		return false;
-	}
+	return $this->_manage_get_row_or_exit( $this->get_post_id() );
+}
 
+function _manage_delete_exec( $row )
+{
 	$id  = $this->get_manage_id( $row );
 	$ret = $this->_manage_handler->delete( $row );
 	if ( !$ret ) {
@@ -432,12 +511,8 @@ function manage_delete_all()
 
 	foreach ( $id_arr as $id )
 	{
-		$row = $this->_manage_handler->get_row_by_id( $id );
-		if ( !is_array($row) ) { continue; }
-
-		$ret = $this->_manage_handler->delete( $row );
+		$ret = $this->_manage_delete_all_each( $id );
 		if ( !$ret ) {
-			$this->_set_error( $this->_manage_handler->get_errors() );
 			$flag_error = true;
 		}
 	}
@@ -451,6 +526,24 @@ function manage_delete_all()
 
 	redirect_header( $url, $this->_MANAGE_TIME_SUCCESS, 'Deleted' );
 	exit();
+}
+
+function _manage_delete_all_each( $id )
+{
+	$row = $this->_manage_handler->get_row_by_id( $id );
+	if ( !is_array($row) ) {
+		return true; 
+	}
+
+	$this->_manage_delete_all_each_option( $row );
+
+	$ret = $this->_manage_handler->delete( $row );
+	if ( !$ret ) {
+		$this->_set_error( $this->_manage_handler->get_errors() );
+		return false;
+	}
+
+	return true;
 }
 
 //---------------------------------------------------------
@@ -501,17 +594,26 @@ function get_manage_total_print_error()
 	$total = $this->get_manage_total();
 	if ( $total == 0 ) {
 		echo $this->build_manage_bread_crumb();
-		echo $this->highlight( 'there are no record' );
+		echo $this->build_show_no_record( true );
 		return 0;
 	}
 
 	return $total;
 }
 
+function build_show_no_record( $flag_highlight=false )
+{
+	$text = $this->_LANG_NO_RECORD;
+	if ( $flag_highlight ) {
+		$text = $this->highlight( $text );
+	}
+	return $text ;
+}
+
 function build_show_list()
 {
 	$text  = '<a href="'. $this->_THIS_FCT_URL .'">';
-	$text .= 'show list';
+	$text .= $this->_LANG_SHOW_LIST ;
 	$text .= '</a>';
 	$text .= "<br /><br >\n";
 	return $text;
@@ -520,7 +622,7 @@ function build_show_list()
 function build_show_add_record()
 {
 	$text  = '<a href="'. $this->_THIS_FCT_URL .'&amp;op=form">';
-	$text .= 'add record';
+	$text .= $this->_LANG_ADD_RECORD ;
 	$text .= '</a>';
 	$text .= "<br /><br />\n";
 	return $text;
@@ -528,7 +630,7 @@ function build_show_add_record()
 
 function build_show_there_are( $total )
 {
-	$text = sprintf( 'there are %s records', $total ) ."<br /><br />\n";
+	$text = sprintf( $this->_LANG_THERE_ARE , $total ) ."<br /><br />\n";
 	return $text;
 }
 
@@ -607,7 +709,7 @@ function get_manage_row_by_id( $id=null )
 		$row = $this->_manage_handler->get_row_by_id( $id );
 		if ( !is_array($row) ) {
 			echo $this->build_manage_bread_crumb();
-			echo $this->highlight( 'there are no record' );
+			echo $this->build_show_no_record( true );
 			return $false;
 		}
 		$op = 'edit';
@@ -654,7 +756,7 @@ function build_manage_id( $row=null )
 	if ( empty($title) ) {
 		$title = $this->_MANAGE_TITLE_ID_DEFAULT;
 	}
-	$id = $this->substite_empty( $this->get_manage_id( $row ) );
+	$id = $this->substitute_empty( $this->get_manage_id( $row ) );
 	return $this->build_line_ele( $title, $id );
 }
 
@@ -682,6 +784,11 @@ function build_comp_td( $name )
 function build_comp_label( $name )
 {
 	return $this->build_row_label( $this->get_constant( $name ), $name );
+}
+
+function build_comp_label_time( $name )
+{
+	return $this->build_row_label_time( $this->get_constant( $name ), $name );
 }
 
 function build_comp_text( $name, $size=50 )
@@ -791,17 +898,23 @@ function _get_op()
 //=========================================================
 function _get_list_total()
 {
-	switch ( $this->pagenavi_get_sortid() )
+	$total = $this->_get_count_by_sortid( $this->pagenavi_get_sortid() );
+	$this->_manage_total = $total;
+	return $total;
+}
+
+function _get_count_by_sortid( $sortid )
+{
+	switch ( $sortid )
 	{
 		case 0:
 		case 1:
 		default:
-			$total = $this->_manage_handler->get_count_all();
+			$count = $this->_manage_handler->get_count_all();
 			break;
 	}
 
-	$this->_manage_total = $total;
-	return $total;
+	return $count;
 }
 
 function _get_list_rows( $limit, $start )
@@ -849,6 +962,16 @@ function _print_list( $total, $rows )
 function _print_form()
 {
 	// dummy;
+}
+
+function _manage_delete_option( $row )
+{
+	// dummy
+}
+
+function _manage_delete_all_each_option( $row )
+{
+	// dummy
 }
 
 // --- class end ---

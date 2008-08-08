@@ -1,10 +1,16 @@
 <?php
-// $Id: video.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: video.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-07-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// tmppath -> tmpdir
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -26,7 +32,6 @@ class webphoto_video extends webphoto_lib_error
 
 	var $_PHOTOS_PATH ;
 	var $_PHOTOS_DIR ;
-	var $_TMP_PATH ;
 	var $_TMP_DIR ;
 
 	var $_PLURAL_MAX    = 5;
@@ -59,9 +64,8 @@ function webphoto_video( $dirname )
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 
 	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
-	$this->_TMP_PATH    = $this->_config_class->get_tmp_path();
+	$this->_TMP_DIR     = $this->_config_class->get_by_name( 'tmpdir' );
 	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
-	$this->_TMP_DIR     = XOOPS_ROOT_PATH . $this->_TMP_PATH ;
 
 	$cfg_ffmpegpath        = $this->_config_class->get_dir_by_name( 'ffmpegpath' );
 	$this->_cfg_use_ffmpeg = $this->_config_class->get_by_name( 'use_ffmpeg' );
@@ -154,7 +158,7 @@ function create_single_thumb( $id, $file )
 	$count = $this->_ffmpeg_class->create_thumbs( 
 		$file, $this->_SINGLE_MAX, $this->_SINGLE_SECOND );
 	if ( $count ) {
-		$path = $this->_TMP_PATH .'/'. $this->build_thumb_name( $id, $this->_SINGLE_FIRST, false );
+		$path = $this->_TMP_DIR .'/'. $this->build_thumb_name( $id, $this->_SINGLE_FIRST, false );
 	} else {
 		$errors = $this->_ffmpeg_class->get_errors();
 		$this->set_error( $errors );

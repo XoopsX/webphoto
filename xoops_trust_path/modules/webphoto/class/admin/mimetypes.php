@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: mimetypes.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added _print_show_allowed_mime_all()
 // 2008-07-01 K.OHWADA
 // added mime_ffmpeg
 //---------------------------------------------------------
@@ -37,6 +39,8 @@ function webphoto_admin_mimetypes( $dirname , $trust_dirname )
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
 	$this->_mime_handler =& webphoto_mime_handler::getInstance( $dirname );
+
+	$this->_xoops_group_objs = $this->get_xoops_group_objs();
 
 	$this->_ADMIN_MIME_PHP = $this->_MODULE_URL .'/admin/index.php?fct=mimetypes';
 }
@@ -86,6 +90,7 @@ function main()
 			break;
 
 		case 'main':
+		case 'list':
 		default:
 			$this->_print_list();
 			break;
@@ -257,7 +262,7 @@ function _print_edit_form()
 	xoops_cp_footer();
 }
 
-function _print_form_mimetype($mime_id = 0)
+function _print_form_mimetype( $mime_id=0 )
 {
 	$mime_id = intval($mime_id);
 
@@ -280,14 +285,20 @@ function _print_form_mimetype($mime_id = 0)
 //---------------------------------------------------------
 function _print_list()
 {
-	$get_start = $this->_post_class->get_get_int('start');
+	$get_group_id = $this->_post_class->get_get_int('group_id');
+	$get_start    = $this->_post_class->get_get_int('start');
+
+	$standard_groups = array( XOOPS_GROUP_ADMIN, XOOPS_GROUP_USERS, XOOPS_GROUP_ANONYMOUS );
+	if ( empty($get_group_id) || in_array( $get_group_id, $standard_groups ) ) {
+		$group_id = XOOPS_GROUP_ANONYMOUS ;
+	} else {
+		$group_id = $get_group_id ;
+	}
 
 	$image_edit    = $this->_build_image( 'edit',    _AM_WEBPHOTO_MIME_ICO_EDIT );
 	$image_delete  = $this->_build_image( 'delete',  _AM_WEBPHOTO_MIME_ICO_DELETE );
 	$this->_image_online  = $this->_build_image( 'online',  _AM_WEBPHOTO_MIME_ICO_ONLINE );
 	$this->_image_offline = $this->_build_image( 'offline', _AM_WEBPHOTO_MIME_ICO_OFFLINE );
-
-	$this->get_xoops_group_objs();
 
 	$rows_all       = $this->_mime_handler->get_rows_all_orderby_ext();
 	$mime_total_all = $this->_mime_handler->get_count_all();
@@ -303,11 +314,10 @@ function _print_list()
 
 	foreach ( $rows_all as $row ) 
 	{
-		$perm_array = $this->str_to_array( $row['mime_perms'], '&' );
-
-		$this->_build_allowed_mime_array( XOOPS_GROUP_ADMIN,     $row['mime_ext'], $perm_array );
-		$this->_build_allowed_mime_array( XOOPS_GROUP_USERS,     $row['mime_ext'], $perm_array );
-		$this->_build_allowed_mime_array( XOOPS_GROUP_ANONYMOUS, $row['mime_ext'], $perm_array );
+		$this->_build_allowed_mime_array_all(
+			$row['mime_ext'], 
+			$this->str_to_array( $row['mime_perms'], '&' ) 
+		);
 
 		if (( $i >= $get_start )&&( $i < ($get_start + $this->_PERPAGE) ) ) {
 			$rows_sel[] = $row;
@@ -325,18 +335,7 @@ function _print_list()
 	echo "<div style='padding: 8px;'>" . _AM_WEBPHOTO_MIME_INFOTEXT . "</div>\n";
 	echo "</fieldset><br />\n";
 
-	$this->_print_form_mimetype();
-//	$this->_print_mime_form_mimefind();
-
-	echo "<fieldset><legend style='font-weight: bold; color: #900;'>";
-	echo _AM_WEBPHOTO_MIME_ALLOWED;
-	echo "</legend>\n";
-
-	echo $this->_build_show_allowed_mime( XOOPS_GROUP_ADMIN );
-	echo $this->_build_show_allowed_mime( XOOPS_GROUP_USERS );
-	echo $this->_build_show_allowed_mime( XOOPS_GROUP_ANONYMOUS );
-
-	echo "</fieldset><br />\n";
+	$this->_print_show_allowed_mime_all();
 
 // --- table begin ---
 	echo "<table border='0' width='100%' cellpadding ='2' cellspacing='1' class='outer'>\n";
@@ -352,18 +351,19 @@ function _print_list()
 	echo $this->get_xoops_group_name( XOOPS_GROUP_USERS );
 	echo "</b></td>";
 	echo "<td align='center' class='bg3'><b>";
-	echo $this->get_xoops_group_name( XOOPS_GROUP_ANONYMOUS );
+	echo $this->get_xoops_group_name( $group_id );
 	echo "</b></td>";
 	echo "</tr>";
 
 	foreach ( $rows_sel as $row ) 
 	{
 		$perm_array = $this->str_to_array( $row['mime_perms'], '&' );
-	
+		$url = $this->_ADMIN_MIME_PHP .'&amp;op=edit&amp;mime_id='. $row['mime_id'] ;
+
 		echo "<tr>";
 
 		echo "<td align='center' class='even'>";
-		echo '<a href="'. $this->_ADMIN_MIME_PHP .'&amp;op=edit&amp;mime_id='. $row['mime_id'] .'">';
+		echo '<a href="'. $url .'">';
 		echo sprintf( "%03d", $row['mime_id'] );
 		echo "</a> \n";
 		echo "</td>";
@@ -385,7 +385,7 @@ function _print_list()
 		echo "</td>";
 
 		echo "<td align='center' width='10%' class='even'>";
-		echo $this->_build_show_on_off( XOOPS_GROUP_ANONYMOUS, $perm_array );
+		echo $this->_build_show_on_off( $group_id, $perm_array );
 		echo "</td>";
 
 		echo "</tr>\n";
@@ -405,7 +405,68 @@ function _print_list()
 	xoops_cp_footer();
 }
 
-function _build_allowed_mime_array( $id, $mime_ext, $perm_array )
+function _build_show_on_off( $id, $perm_array )
+{
+	$text = in_array( $id, $perm_array ) ? $this->_image_online : $this->_image_offline;
+	return $text;
+}
+
+function _build_image( $icon, $alt )
+{
+	$text = '<img src="'. $this->_MODULE_URL.'/images/mime_icons/'. $icon .'.png" alt="'. $alt. '" align="middle">';
+	return $text;
+}
+
+//---------------------------------------------------------
+// show_allowed_mime_all
+//---------------------------------------------------------
+function _print_show_allowed_mime_all()
+{
+	echo "<fieldset><legend style='font-weight: bold; color: #900;'>";
+	echo _AM_WEBPHOTO_MIME_ALLOWED;
+	echo "</legend>\n";
+
+	foreach ( $this->_xoops_group_objs as $obj ) 
+	{
+		echo $this->_build_show_allowed_mime_single( 
+			$obj->getVar('groupid'), $obj->getVar('name') );
+	}
+
+	$url = $this->_ADMIN_MIME_PHP .'&amp;op=edit' ;
+	echo '<a href="'. $url .'">';
+	echo _AM_WEBPHOTO_MIME_ADD_NEW ;
+	echo "</a><br />\n";
+
+	echo "</fieldset><br />\n";
+}
+
+function _build_show_allowed_mime_single( $group_id, $name_s )
+{
+	$mimes = $this->_get_allowed_mime_array( $group_id );
+	$url   = $this->_ADMIN_MIME_PHP .'&amp;op=list&amp;group_id='. $group_id ;
+
+	$text  = '<a href="'. $url .'">';
+	$text .= $name_s ;
+	$text .= "</a><br />\n";
+
+	if ( is_array($mimes) && count($mimes) ) {
+		$text .= "<div style='padding: 8px;'>" . implode('|', $mimes) . "</div>\n";
+	} else {
+		$text .= "<div style='padding: 8px;'>" . _AM_WEBPHOTO_MIME_NOMIMEINFO . "</div>";
+	}
+	return $text;
+}
+
+function _build_allowed_mime_array_all( $mime_ext, $perm_array )
+{
+	foreach ( $this->_xoops_group_objs as $obj ) 
+	{
+		$this->_build_allowed_mime_array_single( 
+			$obj->getVar('groupid'), $mime_ext, $perm_array );
+	}
+}
+
+function _build_allowed_mime_array_single( $id, $mime_ext, $perm_array )
 {
 	$perm = in_array( $id, $perm_array );
 	if ( $perm ) {
@@ -419,34 +480,6 @@ function _get_allowed_mime_array( $id )
 		return  $this->_allowed_mime_array[ $id ];
 	}
 	return null;
-}
-
-function _build_show_allowed_mime( $id )
-{
-	$mimes = $this->_get_allowed_mime_array( $id );
-
-	$text  = "<div style='padding: 8px;'><b>";
-	$text .= $this->get_xoops_group_name( $id );
-	$text .= "</b></div>\n";
-
-	if ( is_array($mimes) && count($mimes) ) {
-		$text .= "<div style='padding: 8px;'>" . implode('|', $mimes) . "</div>\n";
-	} else {
-		$text .= "<div style='padding: 8px;'>" . _AM_WEBPHOTO_MIME_NOMIMEINFO . "</div>";
-	}
-	return $text;
-}
-
-function _build_show_on_off( $id, $perm_array )
-{
-	$text = in_array( $id, $perm_array ) ? $this->_image_online : $this->_image_offline;
-	return $text;
-}
-
-function _build_image( $icon, $alt )
-{
-	$text = '<img src="'. $this->_MODULE_URL.'/images/mime_icons/'. $icon .'.png" alt="'. $alt. '" align="middle">';
-	return $text;
 }
 
 //---------------------------------------------------------

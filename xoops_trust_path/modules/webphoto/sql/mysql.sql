@@ -1,13 +1,17 @@
-# $Id: mysql.sql,v 1.5 2008/07/11 20:28:02 ohwada Exp $
+# $Id: mysql.sql,v 1.6 2008/08/08 04:36:09 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
 
+# =========================================================
 # change log
+# 2008-08-01 K.OHWADA
+# added user table, maillog table
 # 2008-07-01 K.OHWADA
 # added mime_ffmpeg
+# =========================================================
 
 #
 # Table structure for table `photo`
@@ -244,6 +248,49 @@ CREATE TABLE syno (
  syno_key   VARCHAR(255) NOT NULL default '',
  syno_value VARCHAR(255) NOT NULL default '',
  PRIMARY KEY (syno_id)
+) TYPE=MyISAM;
+
+#
+# Table structure for table `user`
+#
+
+CREATE TABLE user (
+ user_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+ user_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+ user_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+ user_uid INT(5) UNSIGNED NOT NULL DEFAULT 0,
+ user_cat_id INT(5) UNSIGNED NOT NULL DEFAULT 0,
+ user_email VARCHAR(255) NOT NULL default '',
+ user_text1 VARCHAR(255) NOT NULL DEFAULT '',
+ user_text2 VARCHAR(255) NOT NULL DEFAULT '',
+ user_text3 VARCHAR(255) NOT NULL DEFAULT '',
+ user_text4 VARCHAR(255) NOT NULL DEFAULT '',
+ user_text5 VARCHAR(255) NOT NULL DEFAULT '', 
+ PRIMARY KEY (user_id),
+ KEY (user_uid),
+ KEY (user_cat_id),
+ KEY (user_email(40))
+) TYPE=MyISAM;
+
+#
+# Table structure for table `maillog`
+#
+
+CREATE TABLE maillog (
+ maillog_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+ maillog_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+ maillog_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+ maillog_photo_ids   VARCHAR(255) NOT NULL default '',
+ maillog_status  TINYINT(2) NOT NULL DEFAULT '0',
+ maillog_from    VARCHAR(255) NOT NULL default '',
+ maillog_subject VARCHAR(255) NOT NULL default '',
+ maillog_body    VARCHAR(255) NOT NULL default '',
+ maillog_file    VARCHAR(255) NOT NULL default '',
+ maillog_attach  TEXT NOT NULL,
+ maillog_comment TEXT NOT NULL,
+ PRIMARY KEY (maillog_id),
+ KEY (maillog_status),
+ KEY (maillog_from(40))
 ) TYPE=MyISAM;
 
 #

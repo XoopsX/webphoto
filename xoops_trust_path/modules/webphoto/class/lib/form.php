@@ -1,10 +1,16 @@
 <?php
-// $Id: form.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: form.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// added build_error_msg()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -198,6 +204,11 @@ function mysql_datetime_to_str( $datetime )
 function get_mysql_date_today()
 {
 	return $this->_utility_class->get_mysql_date_today();
+}
+
+function build_error_msg( $msg, $title='', $flag_sanitize=true )
+{
+	return $this->_utility_class->build_error_msg( $msg, $title, $flag_sanitize );
 }
 
 //---------------------------------------------------------

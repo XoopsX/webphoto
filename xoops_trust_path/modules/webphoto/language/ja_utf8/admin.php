@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: admin.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -252,6 +252,9 @@ define( "_AM_WEBPHOTO_GPERM_TELLAFRIEND" , "友人に知らせる" ) ;
 // add for webphoto
 define( "_AM_WEBPHOTO_GPERM_TAGEDIT" , "タグ編集可（承認不要）" ) ;
 
+// v0.30
+define( "_AM_WEBPHOTO_GPERM_MAIL" , "メール投稿可（承認不要）" ) ;
+define( "_AM_WEBPHOTO_GPERM_FILE" , "ファイル投稿可（承認不要）" ) ;
 
 //=========================================================
 // add for webphoto
@@ -345,6 +348,7 @@ define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "全てのグループ" ) ;
 define("_AM_WEBPHOTO_FMT_IMPORTFROM_WEBPHOTO" , 'webphoto モジュール: 「%s」 からの取り込み（カテゴリー単位）' ) ;
 define("_AM_WEBPHOTO_IMPORT_COMMENT_NO" , "コメントをコピーしない" ) ;
 define("_AM_WEBPHOTO_IMPORT_COMMENT_YES" , "コメントをコピーする" ) ;
+
 //---------------------------------------------------------
 // v0.20
 //---------------------------------------------------------
@@ -354,6 +358,28 @@ define("_AM_WEBPHOTO_PATHINFO_SUCCESS" , "成功しました!<br />おそらく�
 define("_AM_WEBPHOTO_CAP_REDO_EXIF" , "Exif の取得" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY" , "設定されていないときに取得" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_ALWAYS" , "常に取得する" ) ;
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// checkconfigs
+define("_AM_WEBPHOTO_DIRECTORYFOR_FILE" ,    "FTP ファイル ディレクトリ" ) ;
+define("_AM_WEBPHOTO_WARN_GEUST_CAN_READ" ,  "このディレクトリはゲストも読むことが出来ます" ) ;
+define("_AM_WEBPHOTO_WARN_RECOMMEND_PATH" ,  "ドキュメント・ルート以外に設定することをお勧めします" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_LINK" , "文字コード変換が動くかどうかのチェック" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_DSC" , "（このリンク先が正常に表示されなければ、文字コード変換が動かないようです）" ) ;
+define("_AM_WEBPHOTO_MULTIBYTE_SUCCESS" , "この文が文字化けせずに表示されていますか？" ) ;
+
+// maillog manager
+define("_AM_WEBPHOTO_SHOW_LIST" ,  "一覧表示" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_REJECT" ,  "拒否されたメール" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_PARTIAL" , "一部の添付ファイルが拒否されたメール" ) ;
+define("_AM_WEBPHOTO_MAILLOG_STATUS_SUBMIT" ,  "投稿されたメール" ) ;
+define("_AM_WEBPHOTO_BUTTON_SUBMIT_MAIL" ,  "このメールを投稿する" ) ;
+define("_AM_WEBPHOTO_ERR_MAILLOG_NO_ATTACH" ,  "添付ファイルが選択されていない" ) ;
+
+// mimetype
+define("_AM_WEBPHOTO_MIME_ADD_NEW" ,  "MIME タイプを追加する" ) ;
 
 // === define end ===
 }

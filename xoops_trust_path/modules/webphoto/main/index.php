@@ -1,16 +1,21 @@
 <?php
-// $Id: index.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: index.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-08-01 K.OHWADA
+// remove xoops_template.php
+//---------------------------------------------------------
+
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 webphoto_include_once( 'main/header.php' );
 webphoto_include_once( 'class/main/index.php' );
-webphoto_include_once( 'class/inc/xoops_template.php' );
 
 //=========================================================
 // main

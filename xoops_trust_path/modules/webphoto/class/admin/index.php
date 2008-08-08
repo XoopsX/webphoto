@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: index.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added DIR_TRUST_MOD_UPLOADS
 // 2008-07-01 K.OHWADA
 // added to check PATH_INFO
 //---------------------------------------------------------
@@ -21,11 +23,14 @@ class webphoto_admin_index extends webphoto_base_this
 {
 	var $_check_class;
 
-	var $_UPLOADS_MOD_DIR;
-
 	var $_GICONS_PATH;
 	var $_GICONS_URL;
 	var $_GICONS_DIR;
+
+	var $_DIR_UPLOADS_MOD;
+	var $_DIR_TRUST_MOD_UPLOADS;
+
+	var $_MKDIR_MODE = 0777;
 
 //---------------------------------------------------------
 // constructor
@@ -36,11 +41,14 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 
 	$this->_check_class =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
 
-	$this->_UPLOADS_MOD_DIR = XOOPS_ROOT_PATH .'/uploads/'. $dirname .'/';
-
 	$this->_GICONS_PATH = $this->_config_class->get_gicons_path();
 	$this->_GICONS_URL  = XOOPS_URL       . $this->_GICONS_PATH;
 	$this->_GICONS_DIR  = XOOPS_ROOT_PATH . $this->_GICONS_PATH;
+
+	$this->_DIR_UPLOADS_MOD = XOOPS_ROOT_PATH .'/uploads/'. $dirname .'/';
+
+	$this->_DIR_TRUST_MOD_UPLOADS 
+		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';
 
 }
 
@@ -84,8 +92,12 @@ function main()
 //---------------------------------------------------------
 function _print_check()
 {
-	if ( strpos( $this->_PHOTOS_DIR, $this->_UPLOADS_MOD_DIR ) !== false ) {
-		 echo $this->_make_dir( $this->_UPLOADS_MOD_DIR );
+	if ( strpos( $this->_PHOTOS_DIR, $this->_DIR_UPLOADS_MOD ) !== false ) {
+		 echo $this->_make_dir( $this->_DIR_UPLOADS_MOD );
+	}
+
+	if ( strpos( $this->_TMP_DIR, $this->_DIR_TRUST_MOD_UPLOADS ) !== false ) {
+		 echo $this->_make_dir( $this->_DIR_TRUST_MOD_UPLOADS );
 	}
 
 	echo $this->_make_dir( $this->_PHOTOS_DIR );
@@ -119,12 +131,10 @@ function _make_dir( $dir )
 		return $this->highlight( 'At first create & chmod 777 "'. $dir .'" by ftp or shell.' )."<br />\n";
 	}
 
-	$ret = mkdir( $dir, 0777 ) ;
+	$ret = mkdir( $dir, $this->_MKDIR_MODE ) ;
 	if ( !$ret ) {
 		return $this->highlight( 'can not create directory : <b>'. $dir .'</b>' )."<br />\n";
 	}
-
-	@chmod( $dir, 0777 ) ;
 
 	$msg = 'create directory: <b>'. $dir .'</b>'."<br />\n";
 	return $msg;

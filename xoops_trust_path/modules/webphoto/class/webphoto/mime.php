@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: mime.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// added get_allowed_mimes_by_groups() is_my_allow_mime()
 // 2008-07-01 K.OHWADA
 // added is_video_ext()
 //---------------------------------------------------------
@@ -23,6 +25,7 @@ class webphoto_mime
 	var $_utility_class ;
 	var $_xoops_class ;
 
+	var $_cached_my_allowed_mimes = null;
 	var $_cached_mime_array = array();
 
 	var $_VIDEO_MEDIUM = 'video';
@@ -53,13 +56,31 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // get mime type
 //---------------------------------------------------------
+function get_cached_my_allowed_mimes()
+{
+	if ( is_array( $this->_cached_my_allowed_mimes ) ) {
+		    return $this->_cached_my_allowed_mimes;
+	}
+
+	$ret = $this->get_my_allowed_mimes();
+	$this->_cached_my_allowed_mimes = $ret;
+
+	return $ret;
+}
+
 function get_my_allowed_mimes( $limit=0, $offset=0 )
+{
+	return $this->get_allowed_mimes_by_groups(
+		$this->_xoops_class->get_my_user_groups(), $limit, $offset );
+}
+
+function get_allowed_mimes_by_groups( $groups, $limit=0, $offset=0 )
 {
 	$type_arr = array();
 	$ext_arr  = array();
 
 	$rows = $this->_mime_handler->get_rows_by_mygroups(
-		$this->_xoops_class->get_my_user_groups(), $limit, $offset );
+		$groups, $limit, $offset );
 
 	if ( !is_array($rows) || !count($rows) ) {
 		return false;
@@ -173,6 +194,31 @@ function is_video_mime( $mime )
 function get_video_medium()
 {
 	return $this->_VIDEO_MEDIUM ;
+}
+
+//---------------------------------------------------------
+// is my allow mime
+//---------------------------------------------------------
+function is_my_allow_mime( $mime )
+{
+	list ( $allowed_mimes, $allowed_exts ) 
+		= $this->get_cached_my_allowed_mimes();
+
+	if ( $mime && in_array( strtolower($mime), $allowed_mimes ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_my_allow_ext( $ext )
+{
+	list ( $allowed_mimes, $allowed_exts ) 
+		= $this->get_cached_my_allowed_mimes();
+
+	if ( $ext && in_array( strtolower($ext), $allowed_exts ) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

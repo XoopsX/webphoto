@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-01 K.OHWADA
+// removed msg.php
 // 2008-07-01 K.OHWADA
 // added ffmpeg.php
 //---------------------------------------------------------
@@ -25,7 +27,6 @@ include_once XOOPS_ROOT_PATH."/class/xoopsformloader.php";
 webphoto_include_once( 'main/header.php' );
 webphoto_include_once( 'class/d3/notification_event.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
-webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/uploader.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: modinfo.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -159,7 +159,9 @@ define($constpref."OPT_SORT_RATINGD","Rating (Highest Score to Lowest Score)");
 define($constpref."OPT_SORT_RANDOM","Random");
 
 define($constpref."CFG_GICONSPATH" , "Path to Google Icons" ) ;
-define($constpref."CFG_TMPPATH" ,   "Path to temporary" ) ;
+
+//define($constpref."CFG_TMPPATH" ,   "Path to temporary" ) ;
+
 define($constpref."CFG_MIDDLE_WIDTH" ,  "Image Width in single view" ) ;
 define($constpref."CFG_MIDDLE_HEIGHT" , "Image Height in single view" ) ;
 define($constpref."CFG_THUMB_WIDTH" ,  "Thumb Image Width" ) ;
@@ -213,6 +215,33 @@ define( $constpref."CFG_USE_FFMPEG"  , "Use ffmpeg" ) ;
 define( $constpref."CFG_FFMPEGPATH"  , "Path to ffmpeg" ) ;
 define( $constpref."CFG_DESCFFMPEGPATH" , "Alhough the full path to 'ffmpeg' should be written, leave it blank in most environments.<br />This configuration is significant only when 'Use ffmpeg' is yes" ) ;
 define($constpref."CFG_USE_PATHINFO","Use pathinfo");
+
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+define($constpref."CFG_TMPDIR" ,   "Path to temporary" ) ;
+define($constpref."CFG_TMPDIR_DSC" , "Fill the fullpath (The first character must be '/'. The last character should not be '/'.)<br />Recommend to set to this out of the document route.");
+define($constpref."CFG_MAIL_HOST"  , "Mail Server Hostname" ) ;
+define($constpref."CFG_MAIL_USER"  , "Mail User ID" ) ;
+define($constpref."CFG_MAIL_PASS"  , "Mail Password" ) ;
+define($constpref."CFG_MAIL_ADDR"  , "Mail Addresss" ) ;
+define($constpref."CFG_MAIL_CHARSET"  , "Mail Charset" ) ;
+define($constpref."CFG_MAIL_CHARSET_DSC" , "Input Charset with separator '|'.<br />If you want not to be checked by MIME Type, leave this blank" ) ;
+define($constpref."CFG_MAIL_CHARSET_LIST","ISO-8859-1|US-ASCII");
+define($constpref."CFG_FILE_DIR"  , "Path to files by FTP" ) ;
+define($constpref."CFG_FILE_DIR_DSC" , "Fill the fullpath (The first character must be '/'. The last character should not be '/'.)Recommend to set to this out of the document route." ) ;
+define($constpref."CFG_FILE_SIZE"  , "Max file size by FTP (byte)" ) ;
+define($constpref."CFG_FILE_DESC"  , "FTP Help Description");
+define($constpref."CFG_FILE_DESC_DSC"  , "Show in Help, when has the permission of 'Post by FTP' ");
+define($constpref."CFG_FILE_DESC_TEXT"  , "
+<b>FTP Server</b><br />
+FTP Server Host: xxx<br />
+FTP UserID: xxx<br />
+FTP Password: xxx<br />" ) ;
+
+define($constpref."ADMENU_MAILLOG_MANAGER","Maillog Management");
+define($constpref."ADMENU_MAILLOG_TABLE_MANAGE","Maillog Table Management");
+define($constpref."ADMENU_USER_TABLE_MANAGE","User Aux Table Management");
 
 }
 // === define begin ===
