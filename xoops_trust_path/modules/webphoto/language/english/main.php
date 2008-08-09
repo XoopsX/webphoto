@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: main.php,v 1.5 2008/08/09 08:09:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -750,6 +750,7 @@ define("_WEBPHOTO_MAILLOG_COMMENT" ,  "Comment" ) ;
 
 // mail register
 define("_WEBPHOTO_TITLE_MAIL_REGISTER" ,  "Mail Address Register" ) ;
+define("_WEBPHOTO_MAIL_HELP" ,  "Please refer 'Help' for usage" ) ;
 define("_WEBPHOTO_CAT_USER" ,  "User Name" ) ;
 define("_WEBPHOTO_BUTTON_REGISTER" ,  "REGISTER" ) ;
 define("_WEBPHOTO_NOMATCH_USER","There are no user");
