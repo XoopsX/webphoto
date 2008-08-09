@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: help.php,v 1.3 2008/08/09 09:19:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -134,10 +134,13 @@ function _build_perm( $perm )
 
 function _assign_xoops_header()
 {
-	$header_class =& webphoto_inc_xoops_header::getInstance();
-	$header_class->_assign_xoops_module_header(
-		$header_class->_build_header_once( 'css' )
+	$param = array(
+		'dirname'     => $this->_DIRNAME ,
+		'flag_css'    => true ,
 	);
+
+	$header_class =& webphoto_inc_xoops_header::getInstance();
+	$header_class->assign_for_main( $param );
 }
 
 // --- class end ---
