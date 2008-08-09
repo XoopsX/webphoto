@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_parse.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_parse.php,v 1.2 2008/08/09 22:40:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -98,16 +98,9 @@ function get_result()
 	return $this->_result;
 }
 
-function parse_mail_to( $head ) 
-{
-	if (preg_match("/(?:^|\n|\r)To:[ \t]*([^\r\n]+)/i", $head, $match)){
-		return $match[1];
-	}
-	return null ;
-}
-
 function parse_mailer( $head ) 
 {
+// X-Mailer: XOOPS Cube
 	if ( eregi("(X-Mailer|X-Mail-Agent):[ \t]*([^\r\n]+)", $head, $match) ) {
 		return $match[2];
 	}
@@ -116,8 +109,9 @@ function parse_mailer( $head )
 
 function parse_charset( $head ) 
 {
-	if ( preg_match("/charset[\s]*=[\s]*['|\"]?([^\r\n]+)['|\"]?/", $head, $match) ) {
-		$charset = $match[1];
+// Content-Type: text/plain; charset="iso-2022-jp"
+	if ( preg_match("/charset[\s]*=[\s]*(['\"]?)([^\r\n]+)\\1/", $head, $match) ) {
+		$charset = $match[2];
 		if ( $charset ) {
 			$this->_CHARSET_FROM = $charset;
 		}
@@ -128,6 +122,7 @@ function parse_charset( $head )
 
 function parse_date( $head ) 
 {
+// Date: Fri, 1 Aug 2008 10:44:39 +0900 (JST)
 	if ( eregi("Date:[ \t]*([^\r\n]+)", $head, $match) ) {
 		return $match[1];
 	}
@@ -145,6 +140,7 @@ function build_datetime( $date )
 
 function parse_subject( $head ) 
 {
+// Subject: abc
 	if (preg_match("/\nSubject:[ \t]*(.+?)(\n[\w-_]+:|$)/is", $head, $match)) {
 		$subject = str_replace(array("\r","\n"),"",$match[1]);
 		$subject = $this->remove_space_between_encode( $subject );
@@ -174,8 +170,18 @@ function decode_if_mime_q( $str )
 	return $str;
 }
 
+function parse_mail_to( $head ) 
+{
+// To: user@exsample.com
+	if (preg_match("/(?:^|\n|\r)To:[ \t]*([^\r\n]+)/i", $head, $match)){
+		return $match[1];
+	}
+	return null ;
+}
+
 function parse_mail_from( $head ) 
 {
+// From: user@exsample.com
 	if (eregi("From:[ \t]*([^\r\n]+)", $head, $match)) {
 		return $this->parse_mail_addr( $match[1] );
 	}
@@ -184,6 +190,7 @@ function parse_mail_from( $head )
 
 function parse_reply_to( $head ) 
 {
+// Reply-To: user@exsample.com
 	if (eregi("Reply-To:[ \t]*([^\r\n]+)", $head, $match)) {
 		return $this->parse_mail_addr( $match[1] );
 	}
@@ -192,6 +199,7 @@ function parse_reply_to( $head )
 
 function parse_return_path( $head ) 
 {
+// Return-Path: user@exsample.com
 	if (eregi("Return-Path:[ \t]*([^\r\n]+)", $head, $match)) {
 		return $this->parse_mail_addr( $match[1] );
 	}
@@ -210,6 +218,7 @@ function parse_mail_addr( $addr )
 
 function parse_content_type( $head ) 
 {
+// Content-Type: image/jpeg;
 	if ( eregi("Content-type: *([^;\r\n]+)", $head, $match)) {
 		return trim( $match[1] );
 	}
