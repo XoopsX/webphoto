@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.6 2008/08/09 09:54:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -742,7 +742,8 @@ function print_form_file( $param )
 
 	echo $this->build_row_dhtml( $this->get_constant('PHOTO_DESCRIPTION'), 'photo_description' );
 
-	echo $this->build_line_ele( 'file', $this->_build_ele_file_file() );
+	echo $this->build_line_ele( $this->get_constant('CAP_FILE_SELECT'), 
+		$this->_build_ele_file_file() );
 
 	echo $this->build_line_add();
 

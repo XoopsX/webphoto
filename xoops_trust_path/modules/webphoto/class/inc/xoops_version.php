@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.8 2008/08/09 09:46:34 ohwada Exp $
+// $Id: xoops_version.php,v 1.9 2008/08/09 09:51:29 ohwada Exp $
 
 //=========================================================
 // webphoto module

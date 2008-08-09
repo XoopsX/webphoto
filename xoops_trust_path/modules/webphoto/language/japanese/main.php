@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.5 2008/08/09 08:09:42 ohwada Exp $
+// $Id: main.php,v 1.6 2008/08/09 09:46:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -776,6 +776,7 @@ define("_WEBPHOTO_GOTO_INDEX" ,  "モジュールのトップページへ" ) ;
 
 // file
 define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "ファイルからの画像追加" ) ;
+define("_WEBPHOTO_CAP_FILE_SELECT", "ファイルの選択");
 define("_WEBPHOTO_ERR_EMPTY_FILE" , "ファイルを指定してください" ) ;
 define("_WEBPHOTO_ERR_EMPTY_CAT" , "カテゴリを指定してください" ) ;
 define("_WEBPHOTO_ERR_INVALID_CAT" , "無効なカテゴリです" ) ;
