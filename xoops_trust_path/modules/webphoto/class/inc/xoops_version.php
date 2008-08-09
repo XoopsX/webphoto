@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.7 2008/08/08 04:36:09 ohwada Exp $
+// $Id: xoops_version.php,v 1.8 2008/08/09 09:46:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -857,7 +857,7 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'text' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> '102400' , // 100 KB
+		'default'		=> '1049000' , // 1.0 MB
 		'options'		=> array()
 	) ;
 
