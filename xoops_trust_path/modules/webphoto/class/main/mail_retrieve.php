@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.2 2008/08/09 22:40:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -16,12 +16,20 @@ class webphoto_main_mail_retrieve extends webphoto_mail_retrieve
 	var $_TIME_FAIL     = 5;
 	var $_REDIRECT_THIS_URL;
 
+	var $_DEBUG_MAIL = null;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_main_mail_retrieve( $dirname , $trust_dirname )
 {
 	$this->webphoto_mail_retrieve( $dirname , $trust_dirname );
+
+	if ( $this->_DEBUG_MAIL ) {
+		$this->_DEBUG_MAIL_FILE = $this->_DEBUG_MAIL;
+		$this->_TIME_ACCESS = 1;
+		$this->_FLAG_UNLINK_FILE = false;
+	}
 }
 
 function &getInstance( $dirname , $trust_dirname )

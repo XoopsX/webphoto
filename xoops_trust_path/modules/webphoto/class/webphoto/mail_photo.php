@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.2 2008/08/09 08:01:46 ohwada Exp $
+// $Id: mail_photo.php,v 1.3 2008/08/09 22:40:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -26,6 +26,7 @@ class webphoto_mail_photo extends webphoto_photo_create
 	var $_MAX_BODY    = 250;
 
 	var $_FLAG_STRICT = true;
+	var $_FLAG_UNLINK_FILE = true;
 
 //---------------------------------------------------------
 // constructor
@@ -380,7 +381,10 @@ function add_photo_from_attaches( $param_in )
 			$id_array[] = $newid;
 		}
 
-		$this->unlink_file( $src_file );
+		if ( $this->_FLAG_UNLINK_FILE ) {
+			$this->unlink_file( $src_file );
+		}
+
 		$i ++;
 	}
 
