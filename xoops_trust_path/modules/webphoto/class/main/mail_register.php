@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.2 2008/08/08 08:04:17 ohwada Exp $
+// $Id: mail_register.php,v 1.3 2008/08/09 08:19:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -273,6 +273,11 @@ function print_form()
 
 	echo $this->get_constant('HELP_MAIL_DSC');
 	echo "<br /><br />\n";
+
+	$url = $this->_uri_class->build_full_uri_mode( 'help' );
+	echo '<a href="'. $url .'" target="_blank">';
+	echo $this->get_constant('MAIL_HELP');
+	echo "</a><br /><br />\n";
 
 	if ( $this->has_error() ) {
 		echo $this->build_error_msg( 
