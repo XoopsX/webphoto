@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_help.html,v 1.4 2008/08/09 11:56:36 ohwada Exp $ *}>
+<{* $Id: webphoto_main_help.html,v 1.5 2008/08/09 19:34:18 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -12,8 +12,9 @@
 <{$lang_help_dsc}>
 <br />
 
-<h4 style="border: 1px dotted #8b0000; padding: 3px;">
-<{$lang_help_piclens_title}></h4>
+<div class="webphoto_help_subtitle">
+<{$lang_help_piclens_title}>
+</div>
 
 <{$lang_help_piclens_dsc}>
 <br />
@@ -22,8 +23,9 @@
 <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/help/piclens_off.png" border="0" />
 <br /><br />
 
-<h4 style="border: 1px dotted #8b0000; padding: 3px;">
-<{$lang_help_mediarssslideshow_title}></h4>
+<div class="webphoto_help_subtitle">
+<{$lang_help_mediarssslideshow_title}>
+</div>
 
 <{$lang_help_mediarssslideshow_dsc}>
 
@@ -37,9 +39,17 @@
 
 </a><br />
 
+<div class="webphoto_help_subtitle">
+<{$lang_help_mobile_title}>
+</div>
+
+<{$lang_help_mobile_dsc}><br /><br />
+<{$lang_help_mobile_text}><br /><br />
+
 <{if $show_help_mail }>
-  <h4 style="border: 1px dotted #8b0000; padding: 3px;">
-  <{$lang_help_mail_title}></h4>
+  <div class="webphoto_help_subtitle">
+  <{$lang_help_mail_title}>
+  </div>
   <{$lang_help_mail_dsc}><br /><br />
   <{if $lang_help_mail_perm }>
     <{$lang_help_mail_perm}><br /><br />
@@ -50,8 +60,9 @@
 <{/if}>
 
 <{if $show_help_file }>
-  <h4 style="border: 1px dotted #8b0000; padding: 3px;">
-  <{$lang_help_file_title}></h4>
+  <div class="webphoto_help_subtitle">
+  <{$lang_help_file_title}>
+  </div>
   <{$lang_help_file_dsc}><br /><br />
   <{if $lang_help_file_perm }>
     <{$lang_help_file_perm}><br /><br />
