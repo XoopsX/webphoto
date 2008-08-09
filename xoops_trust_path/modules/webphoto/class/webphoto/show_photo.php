@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
+// $Id: show_photo.php,v 1.6 2008/08/09 18:19:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -104,7 +104,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 {
 	extract( $row ) ;
 
-	$desc_disp = $this->build_show_desc_disp( 
+	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
 
 	$datetime_disp = $this->mysql_datetime_to_str( $photo_datetime );
@@ -174,6 +174,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $photo_place ),
 		'equipment_urlencode' => $this->rawurlencode_uri_encode_str( $photo_equipment ),
 		'description_disp'    => $desc_disp ,
+		'summary'             => $summary ,
 		'cont_exif_disp'      => $this->_photo_handler->build_show_cont_exif_disp( $row ) ,
 		'cont_size_disp'      => $this->_utility_class->format_filesize( $photo_cont_size, 1 ) ,
 		'cont_duration_disp'  => $this->format_time( $photo_cont_duration ) ,
@@ -251,10 +252,9 @@ function build_photo_show( $row )
 		'cat_text4_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text4', true ),
 		'cat_text5_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text5', true ),
 
-		'summary'            => $this->build_show_summary( $photo_description ) ,
-		'info_votes'        => $this->build_show_info_vote( $photo_rating, $photo_votes ) ,
-		'rank'              => $this->build_show_rank( $photo_rating ) ,
-		'can_edit'          => $this->has_editable_by_uid( $photo_uid ) ,
+		'info_votes'       => $this->build_show_info_vote( $photo_rating, $photo_votes ) ,
+		'rank'             => $this->build_show_rank( $photo_rating ) ,
+		'can_edit'         => $this->has_editable_by_uid( $photo_uid ) ,
 
 		'is_newphoto'      => $is_newphoto ,
 		'is_updatedphoto'  => $is_updatedphoto ,
@@ -270,13 +270,17 @@ function build_photo_show( $row )
 	return array_merge( $arr1, $arr2 );
 }
 
-function build_show_desc_disp( $row, $flag_highlight=false, $keyword_array=null )
+function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
 {
-	$text = $this->_photo_handler->build_show_description_disp( $row );
+	$desc = $this->_photo_handler->build_show_description_disp( $row );
+	$summary= $this->_multibyte_class->build_summary( 
+		$desc, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL, $this->_is_japanese );
+
 	if ( $flag_highlight ) {
-		$text = $this->_highlight_class->build_highlight_keyword_array( $text, $keyword_array );
+		$desc = $this->_highlight_class->build_highlight_keyword_array( $desc, $keyword_array );
 	}
-	return $text;
+
+	return array($desc, $summary);
 }
 
 function build_show_rank( $rating )
@@ -485,15 +489,6 @@ function build_show_tags_from_tag_name_array( $tag_name_array )
 function get_tag_name_array_by_photoid( $photo_id )
 {
 	return $this->_tag_class->get_tag_name_array_by_photoid( $photo_id );
-}
-
-//---------------------------------------------------------
-// multibyte class
-//---------------------------------------------------------
-function build_show_summary( $str )
-{
-	return $this->_multibyte_class->build_summary( 
-		$str, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL, $this->_is_japanese );
 }
 
 //---------------------------------------------------------
