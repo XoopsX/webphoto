@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: admin.php,v 1.4 2008/08/09 08:48:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -96,7 +96,7 @@ define( "_AM_WEBPHOTO_PIPEFORIMAGES" , "画像処理プログラム" ) ;
 //define( "_AM_WEBPHOTO_DIRECTORYFORPHOTOS" , "メイン画像ディレクトリ" ) ;
 //define( "_AM_WEBPHOTO_DIRECTORYFORTHUMBS" , "サムネイルディレクトリ" ) ;
 
-define( "_AM_WEBPHOTO_ERR_LASTCHAR" , "エラー: 最後の文字は'/'でなければなりません" ) ;
+define( "_AM_WEBPHOTO_ERR_LASTCHAR" , "エラー: 最後の文字の'/'は必要ありません" ) ;
 define( "_AM_WEBPHOTO_ERR_FIRSTCHAR" , "エラー: 最初の文字は'/'でなければなりません" ) ;
 define( "_AM_WEBPHOTO_ERR_PERMISSION" , "エラー: まずこのディレクトリをつくって下さい。その上で、書込可能に設定して下さい。Unixではchmod 777、Windowsでは読み取り専用属性を外します" ) ;
 define( "_AM_WEBPHOTO_ERR_NOTDIRECTORY" , "エラー: 指定されたディレクトリがありません." ) ;
