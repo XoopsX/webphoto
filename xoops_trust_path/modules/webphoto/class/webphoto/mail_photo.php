@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_photo.php,v 1.2 2008/08/09 08:01:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -133,7 +133,7 @@ function parse_single_mail( $maillog_id, $filename, $specified_array=null )
 	$this->print_msg_level_admin( $msg, false, true );
 
 	$attaches_new = $this->parse_attaches( $filename, $attaches, $specified_array );
-	if ( !is_array($attaches_new) || !count($attaches_new) ) {
+	if ( is_array($attaches_new) && count($attaches_new) ) {
 // rewrite attaches
 		$param['attaches'] = $attaches_new;	
 

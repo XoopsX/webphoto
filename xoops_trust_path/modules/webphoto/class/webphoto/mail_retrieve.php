@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.2 2008/08/09 08:01:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,8 @@ class webphoto_mail_retrieve extends webphoto_mail_photo
 
 	var $_FILE_ACCESS = null;
 	var $_TIME_ACCESS = 60; // 60 sec ( 1 min )
+
+	var $_DEBUG_MAIL = null;
 
 //---------------------------------------------------------
 // constructor
@@ -137,13 +139,20 @@ function renew_access_time()
 
 function retrieve_exec()
 {
-	$ret = $this->mail_pop();
-	if ( $ret < 0 ) {
-		return $ret;
-	}
+	if ( $this->_DEBUG_MAIL ) {
+		$this->_mail_count = 1 ;
+		$this->_mail_array = array( 
+			$this->build_mail_file( $this->_DEBUG_MAIL ) ) ;
 
-	if ( !is_array($this->_mail_array) || !count($this->_mail_array) ) {
-		return _C_WEBPHOTO_RETRIEVE_CODE_NO_NEW ;
+	} else {
+		$ret = $this->mail_pop();
+		if ( $ret < 0 ) {
+			return $ret;
+		}
+
+		if ( !is_array($this->_mail_array) || !count($this->_mail_array) ) {
+			return _C_WEBPHOTO_RETRIEVE_CODE_NO_NEW ;
+		}
 	}
 
 	$this->clear_maillog( $this->_MAX_MAILLOG );
