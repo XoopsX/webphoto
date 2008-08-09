@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.3 2008/08/09 09:19:08 ohwada Exp $
+// $Id: help.php,v 1.4 2008/08/09 11:50:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -19,6 +19,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_help extends webphoto_base_this
 {
+	var $_cfg_is_set_mail = false ;
+	var $_cfg_file_dir    = false ;
+	var $_has_perm_mail   = false ;
+	var $_has_perm_file   = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -26,6 +30,19 @@ class webphoto_main_help extends webphoto_base_this
 function webphoto_main_help( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
+
+	$this->_cfg_is_set_mail = $this->_config_class->is_set_mail() ;
+	$this->_cfg_file_dir    = $this->get_config_by_name('file_dir') ;
+	$has_mail               = $this->_perm_class->has_mail() ;
+	$has_file               = $this->_perm_class->has_file() ;
+
+	if ( $this->_cfg_is_set_mail && $has_mail ) {
+		$this->_has_perm_mail = true;
+	}
+
+	if ( $this->_cfg_file_dir && $has_file ) {
+		$this->_has_perm_file = true;
+	}
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -45,8 +62,12 @@ function main()
 	$this->_assign_xoops_header();
 
 	$param = array(
+		'show_help_mail'        => $this->_cfg_is_set_mail ,
+		'show_help_mail_text'   => $this->_build_show_mail_text() ,
 		'lang_help_mail_perm'   => $this->_build_mail_perm() ,
 		'lang_help_mail_text'   => $this->_build_mail_text() ,
+		'show_help_file'        => $this->_cfg_file_dir ,
+		'show_help_file_text'   => $this->_build_show_file_text() ,
 		'lang_help_file_perm'   => $this->_build_file_perm() ,
 		'lang_help_file_text_1' => $this->_build_file_text_1() ,
 		'lang_help_file_text_2' => $this->_build_file_text_2() ,
@@ -54,14 +75,24 @@ function main()
 	return $param;
 }
 
+function _build_show_mail_text()
+{
+	if ( $this->_has_perm_mail ) {
+		return true;
+	} elseif ( $this->_is_login_user ) {
+		return true;
+	}
+	return false;
+}
+
 function _build_mail_perm()
 {
-	return $this->_build_perm( $this->_check_mail_perm() ) ;
+	return $this->_build_perm( $this->_has_perm_mail ) ;
 }
 
 function _build_mail_text()
 {
-	if ( $this->_check_mail_perm() ) {
+	if ( $this->_has_perm_mail ) {
 		$mail_addr  = $this->sanitize( $this->get_config_by_name('mail_addr') );
 		$mail_guest = null;
 	} else {
@@ -76,12 +107,11 @@ function _build_mail_text()
 	return $str;
 }
 
-function _check_mail_perm()
+function _build_show_file_text()
 {
-	$cfg_is_set_mail = $this->_config_class->is_set_mail() ;
-	$has_mail        = $this->_perm_class->has_mail() ;
-
-	if ( $cfg_is_set_mail && $has_mail ) {
+	if ( $this->_has_perm_file ) {
+		return true;
+	} elseif ( $this->_is_login_user ) {
 		return true;
 	}
 	return false;
@@ -89,7 +119,7 @@ function _check_mail_perm()
 
 function _build_file_perm()
 {
-	return $this->_build_perm( $this->_check_file_perm() ) ;
+	return $this->_build_perm( $this->_has_perm_file ) ;
 }
 
 function _build_file_text_1()
@@ -101,23 +131,12 @@ function _build_file_text_1()
 
 function _build_file_text_2()
 {
-	if ( $this->_check_file_perm() ) {
+	if ( $this->_has_perm_file ) {
 		$str = $this->get_config_by_name('file_desc') ;
 	} else {
 		$str = null ;
 	}
 	return $str;
-}
-
-function _check_file_perm()
-{
-	$cfg_file_dir  = $this->get_config_by_name('file_dir') ;
-	$has_file      = $this->_perm_class->has_file() ;
-
-	if ( $cfg_file_dir && $has_file ) {
-		return true;
-	}
-	return false;
 }
 
 function _build_perm( $perm )
