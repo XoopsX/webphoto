@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: i.php,v 1.2 2008/08/09 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -89,8 +89,8 @@ function main()
 	$op = $this->_post_class->get_get_text('op');
 	switch ( $op )
 	{
-		case 'retrieve':
-			$this->_retrieve();
+		case 'post':
+			$this->_post();
 			break;
 
 		default:
@@ -101,22 +101,22 @@ function main()
 }
 
 //---------------------------------------------------------
-// retrieve
+// post
 //---------------------------------------------------------
-function _retrieve()
+function _post()
 {
 	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
 
 	$text  = $this->build_html_head( $this->sanitize($title), $this->_CHARSET_OUTPUT );
 	$text .= $this->build_html_body_begin();
-	$text .= $this->_retrieve_exec();
+	$text .= $this->_post_exec();
 	$text .= $this->_build_goto();
 	$text .= $this->build_html_body_end();
 
 	echo $this->conv( $text );
 }
 
-function _retrieve_exec()
+function _post_exec()
 {
 	$text = '';
 
@@ -125,7 +125,7 @@ function _retrieve_exec()
 		return $text ;
 	}
 
-	$text .= "<h4>".$this->get_constant('SUBTITLE_MAIL_ACCESS')."</h4>\n";
+	$text .= $this->get_constant('TITLE_MAIL_POST')."<br>\n";
 	ob_start();
 
 	if ( $this->_is_module_admin ) {
@@ -181,13 +181,13 @@ function _check_perm()
 
 function _build_retry()
 {
-	$url = $this->_MODULE_URL . '/i.php?op=retrieve';
+	$url = $this->_MODULE_URL . '/i.php?op=post';
 	$text  = $this->get_constant('TEXT_MAIL_ACCESS_TIME') ;
 	$text .= "<br>\n";
 	$text .= $this->get_constant('TEXT_MAIL_RETRY') ;
 	$text .= "<br>\n";
 	$text .= '<a href="'. $url .'">';
-	$text .= $this->get_constant('TEXT_MAIL_RETRIEVE') ;
+	$text .= $this->get_constant('TITLE_MAIL_POST') ;
 	$text .= "</a><br>\n";
 	return $text;
 }
@@ -240,15 +240,15 @@ function _show_exec()
 		'charset'       => $this->_CHARSET_OUTPUT,
 		'size'          => $size,
 		'show_photo'    => $show_photo ,
-		'show_retrieve' => $this->_check_perm() ,
+		'show_post'     => $this->_check_perm() ,
 		'token'         => $this->get_token() ,
 
-		'sitename_conv'      => $this->conv( $this->sanitize( $this->_xoops_sitename ) ) ,
-		'pagetitle_conv'     => $this->conv( $this->sanitize( $pagetitle ) ) ,
-		'modulename_conv'    => $this->conv( $this->sanitize( $this->_MODULE_NAME ) ) ,
-		'lang_video_conv'    => $this->conv( $this->get_constant('ICON_VIDEO') ) ,
-		'lang_second_conv'   => $this->conv( $this->get_constant('SECOND') ) ,
-		'lang_retrieve_conv' => $this->conv( $this->get_constant('TEXT_MAIL_RETRIEVE') ) ,
+		'sitename_conv'    => $this->conv( $this->sanitize( $this->_xoops_sitename ) ) ,
+		'pagetitle_conv'   => $this->conv( $this->sanitize( $pagetitle ) ) ,
+		'modulename_conv'  => $this->conv( $this->sanitize( $this->_MODULE_NAME ) ) ,
+		'lang_video_conv'  => $this->conv( $this->get_constant('ICON_VIDEO') ) ,
+		'lang_second_conv' => $this->conv( $this->get_constant('SECOND') ) ,
+		'lang_post_conv'   => $this->conv( $this->get_constant('TITLE_MAIL_POST') ) ,
 	);
 
 	return $arr;

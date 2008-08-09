@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.6 2008/08/09 09:46:34 ohwada Exp $
+// $Id: main.php,v 1.7 2008/08/09 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -761,10 +761,9 @@ define("_WEBPHOTO_ERR_MAIL_ILLEGAL","メールアドレスの形式がおかしい");
 define("_WEBPHOTO_TITLE_MAIL_RETRIEVE" ,  "メール受信" ) ;
 define("_WEBPHOTO_DSC_MAIL_RETRIEVE" ,  "メールサーバーからメールを受信する" ) ;
 define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "メール受信" ) ;
-define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "メールサーバーにアクセスします" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "メールサーバーにアクセスする" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "受信したメールを解読します" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "メールに添付された写真を登録します" ) ;
-define("_WEBPHOTO_TEXT_MAIL_RETRIEVE" ,  "メールサーバーにアクセスする" ) ;
 define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "アクセス制限中です" ) ;
 define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "１分後にアクセスしてください" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "メールを受信できなかった。<br />一時的な通信障害と思われます。<br />しばらく時間をあけてから、試みてください。" ) ;
@@ -773,6 +772,9 @@ define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "%s 件のメールを受信しました" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "有効なメールはありません" ) ;
 define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "%s 件の写真を登録しました" ) ;
 define("_WEBPHOTO_GOTO_INDEX" ,  "モジュールのトップページへ" ) ;
+
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_POST" ,  "メールから投稿する" ) ;
 
 // file
 define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "ファイルからの画像追加" ) ;
@@ -786,7 +788,14 @@ define("_WEBPHOTO_ERR_CREATE_THUMB" , "サムネイルを登録できなかった" ) ;
 // help
 define("_WEBPHOTO_HELP_MUST_LOGIN","詳しい説明を読むには、ログインしてください");
 define("_WEBPHOTO_HELP_NOT_PERM", "貴方には許可されていません。管理者までお問い合わせください。");
-define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メール");
+
+define("_WEBPHOTO_HELP_MOBILE_TITLE", "携帯電話");
+define("_WEBPHOTO_HELP_MOBILE_DSC", "携帯電話にて、写真や動画を表示することができます<br/>240×320 程度の画面サイズです");
+define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
+<b>アクセスURL</b><br />
+<a href="{MODULE_URL}/i.php" target="_blank">{MODULE_URL}/i.php</a>');
+
+define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メールによる投稿");
 define("_WEBPHOTO_HELP_MAIL_DSC", "携帯電話からメールを送信して、写真や動画を投稿することができます");
 define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
 <b>準備</b><br />
@@ -799,8 +808,8 @@ define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
 題名 (Subject) の末尾に下記のように記入することで、写真が回転します。<br />
  R@ : 右回転 <br />
  L@ : 左回転 <br /><br />
-<b>メールの受信と、写真の掲載</b><br />
-メールを送信したら、数秒後に <a href="{MODULE_URL}/index.php?fct=mail_retrieve" target="_blank">「メール受信」</a> をクリックしてください。<br />
+<b>メールの受信と、写真の投稿</b><br />
+メールを送信したら、数秒後に <a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />
 あなたが送信したメールを取り込んで、写真や動画を掲載します。<br />' );
 define("_WEBPHOTO_HELP_MAIL_GUEST", "これは見本です。権限がないと、正しいメールアドレスは表示されません");
 

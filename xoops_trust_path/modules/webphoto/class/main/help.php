@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.4 2008/08/09 11:50:04 ohwada Exp $
+// $Id: help.php,v 1.5 2008/08/09 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -62,6 +62,7 @@ function main()
 	$this->_assign_xoops_header();
 
 	$param = array(
+		'lang_help_mobile_text' => $this->_build_mobile_text() ,
 		'show_help_mail'        => $this->_cfg_is_set_mail ,
 		'show_help_mail_text'   => $this->_build_show_mail_text() ,
 		'lang_help_mail_perm'   => $this->_build_mail_perm() ,
@@ -73,6 +74,13 @@ function main()
 		'lang_help_file_text_2' => $this->_build_file_text_2() ,
 	);
 	return $param;
+}
+
+function _build_mobile_text()
+{
+	$str = $this->get_constant('HELP_MOBILE_TEXT_FMT');
+	$str = str_replace('{MODULE_URL}', $this->_MODULE_URL, $str );
+	return $str;
 }
 
 function _build_show_mail_text()

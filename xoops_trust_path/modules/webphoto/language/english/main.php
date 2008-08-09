@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.6 2008/08/09 09:46:34 ohwada Exp $
+// $Id: main.php,v 1.7 2008/08/09 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -764,7 +764,6 @@ define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "RETRIEVE" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "Accessing the mail server" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "Parsing the received mails" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "Submiting the photos attached to mails" ) ;
-define("_WEBPHOTO_TEXT_MAIL_RETRIEVE" ,  "Access mail server" ) ;
 define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "In access limitation" ) ;
 define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "Access 1 minute later" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "Cannot retrieve mail.<br />Probably temporary communication failure.<br />Please retry after a while" ) ;
@@ -773,6 +772,9 @@ define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "Retrieved %s mails" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "There no valid mail" ) ;
 define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "Submited %s photos" ) ;
 define("_WEBPHOTO_GOTO_INDEX" ,  "Goto the module top page" ) ;
+
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_POST" ,  "Post by Mail" ) ;
 
 // file
 define("_WEBPHOTO_TITLE_FILE" , "Add Photo from File" ) ;
@@ -786,6 +788,13 @@ define("_WEBPHOTO_ERR_CREATE_THUMB" , "Cannot create thumb image" ) ;
 // help
 define("_WEBPHOTO_HELP_MUST_LOGIN","Please login, if you want to read more detail");
 define("_WEBPHOTO_HELP_NOT_PERM", "You have no permission. Please contact the webmaster");
+
+define("_WEBPHOTO_HELP_MOBILE_TITLE", "Mobile Phone");
+define("_WEBPHOTO_HELP_MOBILE_DSC", "You can look the photo and video in the mobile phone<br/>the size of screen is about 240Å~320 ");
+define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
+<b>Access URL</b><br />
+<a href="{MODULE_URL}/i.php" target="_blank">{MODULE_URL}/i.php</a>');
+
 define("_WEBPHOTO_HELP_MAIL_TITLE", "Mobile Mail");
 define("_WEBPHOTO_HELP_MAIL_DSC", "You can post the photo and video by email from the mobile phone");
 define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
@@ -800,7 +809,7 @@ You can turn the photo right or left, since you enter the end of "Subject" as fo
  R@ : turn right <br />
  L@ : turn left <br /><br />
 <b>Retrive mail and submit photo</b><br />
-click <a href="{MODULE_URL}/index.php?fct=mail_retrieve" target="_blank">Retrive Mail</a>, after few seconds sent mail.<br />
+click <a href="{MODULE_URL}/i.php?op=post" target="_blank">Post by Mail</a>, after few seconds sent mail.<br />
 Webphoto retrive the mail which you sent, submit and show the attached photo<br />' );
 define("_WEBPHOTO_HELP_MAIL_GUEST", "This is sample. You can look the REAL mail address, if you have the permission.");
 
