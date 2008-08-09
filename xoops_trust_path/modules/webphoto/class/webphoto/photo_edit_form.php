@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.6 2008/08/09 09:54:44 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.7 2008/08/09 10:51:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -719,7 +719,7 @@ function print_form_file( $param )
 	$allowed_exts  = $param['allowed_exts'];
 
 	echo $this->build_form_begin();
-	echo $this->build_input_hidden( 'fct', 'file' );
+	echo $this->build_input_hidden( 'fct', 'submit_file' );
 	echo $this->build_input_hidden( 'op',  'submit' );
 
 	echo $this->build_table_begin();

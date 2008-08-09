@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: submit_file.php,v 1.2 2008/08/09 10:49:33 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -49,7 +49,7 @@ function webphoto_main_submit_file( $dirname , $trust_dirname )
 	$this->_has_file      = $this->_perm_class->has_file();
 	$this->_has_resize    = $this->_photo_class->has_resize();
 
-	$this->_REDIRECT_URL  = $this->_MODULE_URL .'/index.php?fct=file';
+	$this->_REDIRECT_URL  = $this->_MODULE_URL .'/index.php?fct=submit_file';
 }
 
 function &getInstance( $dirname , $trust_dirname )
