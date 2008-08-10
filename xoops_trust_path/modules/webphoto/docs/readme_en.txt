@@ -1,11 +1,113 @@
-$Id: readme_en.txt,v 1.4 2008/07/09 06:15:12 ohwada Exp $
+$Id: readme_en.txt,v 1.5 2008/08/10 00:35:54 ohwada Exp $
+
+=================================================
+Version: 0.30
+Date:   2008-08-10
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Supported mobile phone
+1.1 Post from the mobile phone
+(1) the user can post the photo and video by email from the mobile phone
+(2) firstly, the user register the email address of mobile phone
+(3) show the explanation to the user in "Help".
+
+1.2 View for the mobile phone
+(1) prepared about 240Å~320 pixel web page. i.php
+(2) the operation depends on the model of the mobile phone.
+refer "Notice for usage"
+
+1.3 Mail log management
+(1) this module preserves the received emails in "Path to temporary" .
+(2) this module permits to post only email from the registered email address.
+(3) this module manages emails from the unregistered e-mail address as "reject mails"
+(4) the admin can post "reject mails"
+
+2. Post by FTP
+(1) the user can post the big size photo and video, when the user upload the file by FTP
+(2) show the explanation to the user in "Help".
+(3) refer "Notice for usage"
+
+3. Added the cache of blocks
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=824
+
+4. Changed Exif datetime
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=828
+
+5. Bug fix
+(1) cannot uninstall the module
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=832
+
+(2) cannot preview in submit
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=834&forum=13
+
+(3) cannot delete photo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=838&forum=13
+
+(4) cannot select category in block
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=840&forum=13
+
+6. Database structure
+(1) added user table which save user's email address
+(2) added maillog table which save the log of posting by email
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Webphoto is chaneged to specify by the full path in "Path to temporary" .
+please confirm "Check Configuration" and "Preferences"
+(4) After updating, the admin has no permission for "Post by Mail" and "Post by FTP" .
+Please set permission in "Global Permissions" as occasion demands .
+
+
+* Notice for usage *
+1. Mobile phone
+1.1 Model dependent
+I tested in Japanese DoCoMo imodo simulator and the actual phone N903i.
+By the case of N903i.
+The phone can show the photo which the same phone posted.
+But the phone show broken photo which bigger than.
+The phone can show the video (i motion)  which the same phone posted.
+But the phone cannot show other format video.
+I am happy when you teach me the other model's information .
+
+1.2 Path to temporary
+this module preserves the received emails in this derectory.
+It is not desirably that preserve emails in the accessible area by the WEB browsers such as the document route, because the email has personal information.
+Recommend to set to this out of the document route.
+
+2. Post by FTP
+Because http protocol has a time limit and file size limit, 
+the user cannot upload the large file.
+This limitation is eased to use FTP.
+On the other hand, with the FTP, the user can access XOOPS files.
+Please operate in the pal who can trust.
+Or, if the admin can add two or more FTP users,
+operate by the setting which the user cannot access XOOPS files.
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Referred mailbbs module about mobile phone . 
+- http://xoops.hypweb.net/modules/mailbbs/
+Special thanks to authors.
+
 
 =================================================
 Version: 0.20
 Date:   2008-07-09
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -120,6 +222,13 @@ remove // at the head.
 Although there are no big problem, but I think that there are any small problem. 
 Even if some problems come out, only those who can do somehow personally need to use. 
 Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Referred informations in the internet about ffmpeg . 
+Specifically, the following page was useful about getting duration time .
+- http://blog.ishiro.com/?p=182
+Special thanks to authors.
 
 
 =================================================
@@ -274,4 +383,14 @@ This is alpha version of full scratch.
 Although there are no big problem, but I think that there are any small problem. 
 Even if some problems come out, only those who can do somehow personally need to use. 
 Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Referred myalbum module about general specification . 
+- http://xoops.peak.ne.jp/md/mydownloads/singlefile.php?lid=61&cid=1
+Referred gnavi module about google icon . 
+- http://xoops.iko-ze.net/modules/d3downloads/index.php?page=singlefile&cid=1&lid=5
+Referred wf-downloads module about MIME management . 
+- http://smartfactory.ca/modules/wfdownloads/singlefile.php?cid=16&lid=49
+Special thanks to authors.
 
