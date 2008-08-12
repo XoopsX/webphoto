@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.6 2008/08/08 04:36:09 ohwada Exp $
+// $Id: photo_edit.php,v 1.7 2008/08/12 12:03:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-12 K.OHWADA
+// BUG: not show description in preview
 // 2008-08-01 K.OHWADA
 // used webphoto_photo_create
 // not use msg_class
@@ -640,6 +642,9 @@ function build_preview_template( $row )
 	$tpl->assign( 'mydirname' ,     $this->_DIRNAME ) ;
 	$tpl->assign( $this->get_photo_globals() ) ;
 	$tpl->assign( 'photo' , $row ) ;
+
+// BUG: not show description in preview
+	$tpl->assign( 'show_photo_desc' , true ) ;
 
 	$template = 'db:'. $this->_DIRNAME .'_inc_photo_in_list.html';
 	return $tpl->fetch( $template ) ;
