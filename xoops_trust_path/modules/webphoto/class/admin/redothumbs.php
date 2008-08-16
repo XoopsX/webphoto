@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: redothumbs.php,v 1.3 2008/08/16 00:04:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-15 K.OHWADA
+// BUG: undefined method create_thumb_from_photo()
 // 2008-07-01 K.OHWADA
 // used webphoto_lib_exif
 // used create_thumb_from_photo()
@@ -332,7 +334,7 @@ function _update_no_image( $row )
 
 	$this->_set_msg( ' not image ' ) ;
 
-	if ( $this->_post_forceredo || !$this->check_file( $thumb_full_path ) ) {
+	if ( ! $this->check_file( $thumb_full_path ) ) {
 		$ret = $this->_create_update_thumb(
 			$row, $photo_cont_path , $photo_id , $photo_cont_ext );
 
@@ -443,16 +445,17 @@ function _redo_photo_size( $photo_cont_path, $photo_cont_ext )
 
 	$this->_set_msg( _AM_WEBPHOTO_PHOTORESIZED." &nbsp; " );
 
-	$photo_info = $this->_image_class->build_photo_info( $cont_full_path, $photo_cont_ext );
+// BUG: not set new size
+	$photo_info = $this->_image_class->build_photo_info( $photo_cont_path, $photo_cont_ext );
 
 	$photo_size = array(
-		'cont_size'     => $photo_info['width'] ,
-		'cont_width'    => $photo_info['height'] ,
-		'cont_height'   => $photo_info['size'] ,
+		'cont_width'    => $photo_info['width'] ,
+		'cont_height'   => $photo_info['height'] ,
+		'cont_size'     => $photo_info['size'] ,
 		'middle_width'  => $photo_info['middle_width'] ,
 		'middle_height' => $photo_info['middle_height'] ,
 	);
-		
+
 	return $photo_size;
 }
 
@@ -487,7 +490,7 @@ function _update_thumb( $row )
 
 		if ( $this->_post_forceredo ) {
 			$retcode = $this->_create_update_thumb(
-				$row_update, $photo_cont_path, $photo_id , $photo_cont_ext );
+				$row, $photo_cont_path, $photo_id , $photo_cont_ext );
 
 		} else {
 			$retcode = _C_WEBPHOTO_IMAGE_SKIPPED ;
@@ -545,8 +548,11 @@ function _create_update_thumb( $row, $src_path , $id , $ext )
 {
 // create thumb
 	if ( $this->is_normal_ext( $ext ) ) {
-		$ret1 = $this->_image_class->create_thumb_from_photo( 
-			$id, $src_path, $ext );
+
+// BUG: undefined method create_thumb_from_photo()
+		$ret1 = $this->_image_class->create_thumb_from_image_file( 
+			XOOPS_ROOT_PATH.$src_path, $id, $ext );
+
 		$thumb_info = $this->_image_class->get_thumb_info();
 
 // thumb icon

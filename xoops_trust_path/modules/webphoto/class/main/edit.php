@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.7 2008/08/08 04:36:09 ohwada Exp $
+// $Id: edit.php,v 1.8 2008/08/16 00:05:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-15 K.OHWADA
+// BUG: undefined create_video_flash()
 // 2008-08-06 K.OHWADA
 // used update_video_thumb()
 // not use msg_class
@@ -24,6 +26,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_photo_edit
 {
+	var $_video_class;
+
 	var $_form_action   = null;
 	var $_has_editable  = false;
 	var $_has_deletable = false;
@@ -39,6 +43,8 @@ class webphoto_main_edit extends webphoto_photo_edit
 function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
+
+	$this->_video_class  =& webphoto_video::getInstance( $dirname );
 
 	$this->_has_editable  = $this->_perm_class->has_editable();
 	$this->_has_deletable = $this->_perm_class->has_deletable();
@@ -424,7 +430,11 @@ function _exec_redo()
 // save file
 		$this->rename_file( $photo_file_file, $tmp_file );
 
-		$ret = $this->create_video_flash( $photo_id, $photo_cont_file );
+// BUG: undefined create_video_flash()
+		$flash_name = $this->_image_class->build_photo_name( 
+			$photo_id, $this->_video_class->get_flash_ext() );
+		$ret = $this->_video_class->create_flash( $photo_cont_file, $flash_name );
+
 		if ( $ret ) {
 // remove file if success
 			$this->unlink_file( $tmp_file );
@@ -438,8 +448,11 @@ function _exec_redo()
 
 // create video thumb
 	if ( $post_redo_thumb && $this->_cfg_makethumb ) {
+
+// BUG: undefined create_video_plural_thumbs()
 		$this->_is_video_thumb_form 
-			= $this->create_video_plural_thumbs( $photo_id, $photo_cont_file, $photo_cont_ext ) ;
+			= $this->_photo_class->create_video_plural_thumbs(
+				$photo_id, $photo_cont_file, $photo_cont_ext ) ;
 	}
 
 // update
