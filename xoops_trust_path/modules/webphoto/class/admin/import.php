@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: import.php,v 1.5 2008/08/25 20:35:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -482,10 +482,21 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
 		$name = 'item_file_id_'.$i ;
+		$item_row[ $name ] = 0 ;
 		$webphoto_file_id = $webphoto_item_row[ $name ];
 		if ( $webphoto_file_id > 0 ) {
-			$this->_add_file_from_webphoto( $item_id, $webphoto_file_id ) ;
+			$file_newid = $this->_add_file_from_webphoto( $item_id, $webphoto_file_id ) ;
+			if ( $file_newid > 0 ) {
+				$item_row[ $name ] = $file_newid ;
+			}
 		}
+	}
+
+	$ret = $this->_item_handler->update( $item_row );
+	if ( !$ret ) {
+		echo ' db error ' ;
+		$this->set_error( $this->_item_handler->get_errors() );
+		return false;
 	}
 
 	return $item_id ;
@@ -502,14 +513,14 @@ function _add_file_from_webphoto( $item_id, $webphoto_file_id )
 	$file_row['file_id']      = 0 ;
 	$file_row['file_item_id'] = $item_id ;
 
-	$ret = $this->_file_handler->insert( $file_row );
-	if ( !$ret ) {
+	$newid = $this->_file_handler->insert( $file_row );
+	if ( !$newid ) {
 		echo ' db error ' ;
 		$this->set_error( $this->_file_handler->get_errors() );
 		return false;
 	}
 
-	return $ret;
+	return $newid;
 }
 
 function _add_votes_from_webphoto( $src_id, $newid )
