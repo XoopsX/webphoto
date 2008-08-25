@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
+// $Id: import.php,v 1.6 2008/08/25 21:18:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -505,8 +505,8 @@ function copy_photo_from_myalbum( $item_row, $myalbum_row )
 
 // --- create video flash , video docomo---
 	if ( $this->is_video_kind( $item_kind ) && is_array( $cont_param ) ) {
-		$flash_param  = $this->_photo_class->create_video_flash_param( $item_id, $param );
-		$docomo_param = $this->_photo_class->create_video_docomo_param( $photo_id, $cont_param );
+		$flash_param  = $this->_photo_class->create_video_flash_param(  $item_id, $param );
+		$docomo_param = $this->_photo_class->create_video_docomo_param( $item_id, $cont_param );
 	}
 
 	$file_params = array(

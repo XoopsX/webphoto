@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.4 2008/08/25 21:20:41 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,7 +22,7 @@ class webphoto_main_mail_retrieve extends webphoto_mail_retrieve
 	var $_TIME_FAIL     = 5;
 	var $_REDIRECT_THIS_URL;
 
-	var $_DEBUG_MAIL_FILE = 'mail_simo_sh905i.txt';
+	var $_DEBUG_MAIL_FILE = null ;
 
 //---------------------------------------------------------
 // constructor

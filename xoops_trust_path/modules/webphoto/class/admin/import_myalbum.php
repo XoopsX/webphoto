@@ -1,5 +1,5 @@
 <?php
-// $Id: import_myalbum.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: import_myalbum.php,v 1.4 2008/08/25 21:17:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -82,6 +82,12 @@ function main()
 			}
 			break;
 
+		case "confirm_truncate":
+			if ( $this->check_token() ) {
+				$this->_form_truncate( 'truncate' );
+			}
+			break;
+
 		case "truncate":
 			if ( $this->check_token() ) {
 				$this->_truncate();
@@ -121,7 +127,7 @@ This program overwrite MySQL tables. <br />
 <?php
 
 	$this->_form_sel_myalbum();
-	$this->_form_truncate();
+	$this->_form_truncate( 'confirm_truncate' );
 
 }
 
@@ -226,6 +232,8 @@ function _import_photo()
 		echo $lid.' : '.$this->sanitize($title);
 
 		$this->add_photo_from_myalbum( $lid, $cid, $myalbum_row );
+
+		echo "<br />\n";
 	}
 
 	if ( $total > $next ) {
@@ -374,15 +382,18 @@ function _form_sel_myalbum()
 	$this->_form_class->print_form_sel_myalbum( $title, $options );
 }
 
-function _form_truncate()
+function _form_truncate( $op )
 {
 	$title  = 'STEP 0 : initalize';
-	$op     = 'truncate';
 	$submit = 'GO STEP 0';
 
 	echo "<h4>".$title."</h4>\n";
 	echo "Truncate tables.<br />\n";
-	echo "If you want to redo <br />\n";
+	echo "If you want to redo <br /><br />\n";
+	if ( $op == 'truncate' ) {
+		echo $this->highlight( "Are you sure ?" )."<br />\n";
+	}
+
 	$this->_print_form_next($title, $op, $submit);
 }
 
