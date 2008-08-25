@@ -1,10 +1,16 @@
 <?php
-// $Id: maillog_manager.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: maillog_manager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,7 +21,7 @@ class webphoto_admin_maillog_manager extends webphoto_lib_manage
 {
 	var $_config_class;
 	var $_cat_handler;
-	var $_photo_handler;
+	var $_item_handler;
 	var $_photo_class;
 	var $_form_class;
 	var $_unlink_class;
@@ -44,13 +50,14 @@ function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
-	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
+	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
 	$this->_photo_class   =& webphoto_mail_photo::getInstance( $dirname , $trust_dirname );
 	$this->_form_class    =& webphoto_form_this::getInstance( $dirname , $trust_dirname );
 	$this->_unlink_class  =& webphoto_mail_unlink::getInstance( $dirname );
 
 	$this->_photo_class->set_mail_groups( XOOPS_GROUP_ADMIN );
 	$this->_photo_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
+	$this->_photo_class->set_flag_print_first_msg( true );
 	$this->_photo_class->set_flag_strict( false );
 
 }
@@ -340,7 +347,7 @@ function _build_ele_photo_ids()
 	{
 		$photo_id = intval($photo_id);
 		$url = $this->_MODULE_URL .'/index.php?fct=photo&amp;p='. $photo_id ;
-		$title_s = $this->_photo_handler->get_cached_value_by_id_name(
+		$title_s = $this->_item_handler->get_cached_value_by_id_name(
 			$photo_id, 'photo_title', true );
 
 		$text .= '<a href="'. $url .'" target="_blank">';

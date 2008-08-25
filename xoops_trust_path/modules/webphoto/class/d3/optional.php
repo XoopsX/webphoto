@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: optional.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// set_langauge
 // 2008-07-01 K.OHWADA
 // added include_once_trust_file()
 //---------------------------------------------------------
@@ -35,7 +37,7 @@ class webphoto_d3_optional
 //---------------------------------------------------------
 function webphoto_d3_optional()
 {
-	$this->_init_xoops_param();
+	// dummy;
 }
 
 function &getInstance()
@@ -274,10 +276,9 @@ function _highlight( $str )
 //---------------------------------------------------------
 // xoops param
 //---------------------------------------------------------
-function _init_xoops_param()
+function set_language( $val )
 {
-	global $xoopsConfig;
-	$this->_xoops_language = $xoopsConfig['language'];
+	$this->_xoops_language = $val;
 }
 
 //----- class end -----

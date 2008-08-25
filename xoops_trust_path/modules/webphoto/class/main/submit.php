@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.5 2008/08/08 04:36:09 ohwada Exp $
+// $Id: submit.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-08-06 K.OHWADA
 // used webphoto_xoops_user
 // used update_video_thumb()
@@ -32,6 +34,8 @@ class webphoto_main_submit extends webphoto_photo_edit
 	var $_has_insertable  = false;
 	var $_has_superinsert = false;
 
+	var $_cfg_allownoimage = false ;
+
 	var $_is_preview  = false;
 	var $_created_row = null;
 
@@ -50,6 +54,8 @@ function webphoto_main_submit( $dirname , $trust_dirname )
 
 	$this->_has_insertable  = $this->_perm_class->has_insertable();
 	$this->_has_superinsert = $this->_perm_class->has_superinsert();
+
+	$this->_cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
 
 // overwrite by submit_imagemanager
 	$this->_REDIRECT_URL  = $this->_MODULE_URL .'/index.php?fct=submit';
@@ -100,11 +106,11 @@ function print_form()
 		$this->_print_form_video_thumb();
 	} else {
 		if ( $this->_is_preview ) {
-			$row = $this->_preview();
+			$item_row = $this->_preview();
 		} else {
-			$row = $this->_get_photo_default();
+			$item_row = $this->_get_item_default();
 		}
-		$this->_print_form_submit( $row );
+		$this->_print_form_submit( $item_row );
 	}
 }
 
@@ -261,8 +267,6 @@ function _exec_submit()
 	$photo_tmp_name = null;
 	$thumb_tmp_name = null;
 
-	$cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
-
 	$this->clear_msg_array();
 
 	$ret = $this->_check_submit();
@@ -291,11 +295,11 @@ function _exec_submit()
 			$photo_tmp_name = $this->get_preview_name() ;
 
 // check title
-		} elseif ( ! $this->is_fill_photo_title() ) {
+		} elseif ( ! $this->is_fill_item_title() ) {
 			return _C_WEBPHOTO_ERR_NO_TITLE;
 
 // check allow no image mode
-		} elseif( !$cfg_allownoimage ) {
+		} elseif( ! $this->_cfg_allownoimage ) {
 			return _C_WEBPHOTO_ERR_NO_IMAGE;
 		}
 	}
@@ -307,11 +311,11 @@ function _check_submit()
 {
 
 // Check if cid is valid
-	if ( empty( $this->_post_photo_catid ) ) {
+	if ( empty( $this->_post_item_cat_id ) ) {
 		return _C_WEBPHOTO_ERR_EMPTY_CAT ;
 	}
 
-	if ( ! $this->check_valid_catid( $this->_post_photo_catid ) ) {
+	if ( ! $this->check_valid_catid( $this->_post_item_cat_id ) ) {
 		return _C_WEBPHOTO_ERR_INVALID_CAT ;
 	}
 
@@ -325,24 +329,23 @@ function _check_submit()
 
 function _add_to_handler( $photo_tmp_name, $thumb_tmp_name )
 {
-	$ret13 = $this->_photo_handler_add();
+	$ret13 = $this->_insert_item_handler();
 	if ( !$ret13 ) {
 		return _C_WEBPHOTO_ERR_DB;
 	}
 
-	$newid = $this->_created_row['photo_id'];
+	$newid = $this->_created_row['item_id'];
 
 	$ret14 = $this->create_photo_thumb( $newid, $photo_tmp_name, $thumb_tmp_name );
-	if ( $ret14 < 0 ) { return $ret14; }
+	if ( $ret14 < 0 ) {
+		return $ret14;
+	}
 
-	$info = $this->get_photo_thumb_info();
-	if ( is_array($info) && count($info) ) {
-		$row_update = array_merge( $this->_created_row, $info );
-		$ret15 = $this->_photo_handler->update( $row_update );
-		if ( !$ret15 ) {
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return _C_WEBPHOTO_ERR_DB;
-		}
+	$file_params = $this->get_file_params();
+
+	$ret15 = $this->_update_item_handler( $this->_created_row, $file_params );
+	if ( $ret15 < 0 ) {
+		return $ret15;
 	}
 
 	$ret16 = $this->tag_handler_add_tags( $newid, $this->get_tag_name_array() );
@@ -356,7 +359,7 @@ function _add_to_handler( $photo_tmp_name, $thumb_tmp_name )
 // Trigger Notification when supper insert
 	if ( $this->_get_new_status() ) {
 		$this->_notification_class->notify_new_photo( 
-			$newid, $this->_post_photo_catid, $this->get_photo_title() );
+			$newid, $this->_post_item_cat_id, $this->get_item_title() );
 	}
 
 	return 0;
@@ -381,7 +384,7 @@ function submit_success()
 		$param = array(
 			'orderby' => 'dated'
 		);
-		$url  = $this->build_uri_category( $this->_post_photo_catid, $param );
+		$url  = $this->build_uri_category( $this->_post_item_cat_id, $param );
 		$time = $this->_TIME_SUCCESS ;
 		$msg  = '';
 
@@ -430,37 +433,89 @@ function _video()
 }
 
 //---------------------------------------------------------
-// photo_handler
+// item handler
 //---------------------------------------------------------
 function _create_by_post()
 {
-	$row = $this->_photo_handler->create( true );
+	$item_row = $this->_item_handler->create( true );
 
-	$row_post = $this->build_row_by_post( $row );
+	$row_post = $this->build_row_by_post( $item_row );
 
-	$row_post['photo_cat_id']    = $this->_post_photo_catid;
-	$row_post['photo_uid']       = $this->_xoops_uid;
+	$row_post['item_cat_id']    = $this->_post_item_cat_id;
+	$row_post['item_uid']       = $this->_xoops_uid;
 
 	return $row_post;
 }
 
-function _photo_handler_add()
+function _insert_item_handler()
 {
-	$row = $this->_create_by_post();
+	$item_row = $this->_create_by_post();
 
-	$row['photo_status'] = $this->_get_new_status();
-	$row['photo_search'] = $this->build_search_for_edit( $row, $this->get_tag_name_array() );
+	$item_row['item_status'] = $this->_get_new_status();
+	$item_row['item_search'] = $this->build_search_for_edit( $item_row, $this->get_tag_name_array() );
 
-	$newid = $this->_photo_handler->insert( $row );
+	$newid = $this->_item_handler->insert( $item_row );
 	if ( !$newid ) {
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
-	$row['photo_id'] = $newid;
-	$this->_created_row = $row;
+	$item_row['item_id'] = $newid;
+	$this->_created_row = $item_row;
 
 	return true;
+}
+
+function _update_item_handler( $item_row, $file_params )
+{
+	if ( ! is_array($file_params) ) {
+		return 0;
+	}
+
+	$item_id = $item_row['item_id'];
+
+	$cont_param   = $file_params['cont'] ;
+	$thumb_param  = $file_params['thumb'] ;
+	$middle_param = $file_params['middle'] ;
+	$flash_param  = $file_params['flash'] ;
+	$docomo_param = $file_params['docomo'] ;
+
+	$cont_id   = 0 ;
+	$thumb_id  = 0 ;
+	$middle_id = 0 ;
+	$flash_id  = 0 ;
+	$docomo_id = 0 ;
+
+	if ( is_array($cont_param) ) {
+		$cont_id = $this->_photo_class->insert_file( $item_id, $cont_param );
+	}
+	if ( is_array($thumb_param) ) {
+		$thumb_id = $this->_photo_class->insert_file( $item_id, $thumb_param );
+	}
+	if ( is_array($middle_param) ) {
+		$middle_id = $this->_photo_class->insert_file( $item_id, $middle_param );
+	}
+	if ( is_array($flash_param) ) {
+		$flash_id = $this->_photo_class->insert_file( $item_id, $flash_param );
+	}
+	if ( is_array($docomo_param) ) {
+		$docomo_id = $this->_photo_class->insert_file( $item_id, $docomo_param );
+	}
+
+	$update_row                   = $item_row;
+	$update_row['item_file_id_1'] = $cont_id;
+	$update_row['item_file_id_2'] = $thumb_id;
+	$update_row['item_file_id_3'] = $middle_id;
+	$update_row['item_file_id_4'] = $flash_id;
+	$update_row['item_file_id_5'] = $docomo_id;
+
+	$ret15 = $this->_item_handler->update( $update_row );
+	if ( !$ret15 ) {
+		$this->set_error( $this->_item_handler->get_errors() );
+		return _C_WEBPHOTO_ERR_DB;
+	}
+
+	return 0; 
 }
 
 function _get_new_status()
@@ -486,20 +541,20 @@ function _preview()
 	}
 
 	// Display Preview
-	$row = $this->_create_by_post();
+	$item_row = $this->_create_by_post();
 
-	$show1 = $this->show_build_preview_submit( $row, $this->get_tag_name_array() );
+	$show1 = $this->show_build_preview_submit( $item_row, $this->get_tag_name_array() );
 	$show2 = array_merge( $show1, $image_info );
 
 	echo $this->build_preview_template( $show2 );
 
-	if ( $row['photo_datetime'] ) {
-		$this->set_checkbox_by_name( 'photo_datetime_checkbox', _C_WEBPHOTO_YES );
+	if ( $item_row['item_datetime'] ) {
+		$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_YES );
 	} else {
-		$row['photo_datetime'] = $this->get_mysql_date_today();
+		$item_row['item_datetime'] = $this->get_mysql_date_today();
 	}
 
-	return $row;
+	return $item_row;
 }
 
 function _preview_new()
@@ -535,23 +590,23 @@ function _preview_no_image()
 //---------------------------------------------------------
 // default
 //---------------------------------------------------------
-function _get_photo_default()
+function _get_item_default()
 {
 // set checked
-	$this->set_checkbox_by_name( 'photo_datetime_checkbox', _C_WEBPHOTO_NO );
+	$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_NO );
 
 // new row
-	$row = $this->_photo_handler->create();
-	$row['photo_cat_id']   = $this->_post_photo_catid;
-	$row['photo_datetime'] = $this->get_mysql_date_today();
+	$item_row = $this->_item_handler->create();
+	$item_row['item_cat_id']   = $this->_post_item_cat_id;
+	$item_row['item_datetime'] = $this->get_mysql_date_today();
 
-	return $row;
+	return $item_row;
 }
 
 //---------------------------------------------------------
 // print form
 //---------------------------------------------------------
-function _print_form_submit( $row )
+function _print_form_submit( $item_row )
 {
 	list ( $types, $allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
 
@@ -567,7 +622,7 @@ function _print_form_submit( $row )
 
 	$form_class =& webphoto_photo_edit_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_common( $row, $param );
+	$form_class->print_form_common( $item_row, $param );
 }
 
 function _print_form_video_thumb()

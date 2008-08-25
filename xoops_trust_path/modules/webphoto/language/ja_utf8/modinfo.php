@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: modinfo.php,v 1.4 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -79,7 +79,9 @@ define( $constpref."CFG_DESCADDPOSTS" , "常識的には0か1です。負の値�
 define( $constpref."CFG_CATONSUBMENU" , "サブメニューへのトップカテゴリーの登録" ) ;
 define( $constpref."CFG_NAMEORUNAME" , "投稿者名の表示" ) ;
 define( $constpref."CFG_DESCNAMEORUNAME" , "ログイン名かハンドル名か選択して下さい" ) ;
-define( $constpref."CFG_VIEWCATTYPE" , "一覧表示の表示タイプ" ) ;
+
+//define( $constpref."CFG_VIEWCATTYPE" , "一覧表示の表示タイプ" ) ;
+define( $constpref."CFG_VIEWTYPE" , "一覧表示の表示タイプ" ) ;
 
 //define( $constpref."CFG_COLSOFTABLEVIEW" , "テーブル表示時のカラム数" ) ;
 define( $constpref."CFG_COLSOFTABLE" , "テーブル表示時のカラム数" ) ;
@@ -243,6 +245,15 @@ FTP パスワード: xxx<br />" ) ;
 define($constpref."ADMENU_MAILLOG_MANAGER","メールログ管理");
 define($constpref."ADMENU_MAILLOG_TABLE_MANAGE","メールログ・テーブル管理");
 define($constpref."ADMENU_USER_TABLE_MANAGE","ユーザ補助テーブル管理");
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+define($constpref."CFG_BIN_PASS" , "コマンドのパスワード" ) ;
+
+define($constpref."ADMENU_UPDATE", "アップデート");
+define($constpref."ADMENU_ITEM_TABLE_MANAGE", "アイテム・テーブル管理");
+define($constpref."ADMENU_FILE_TABLE_MANAGE", "ファイル・テーブル管理");
 
 }
 // === define begin ===

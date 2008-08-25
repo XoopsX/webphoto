@@ -1,10 +1,16 @@
 <?php
-// $Id: cat_selbox.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: cat_selbox.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,7 +20,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_cat_selbox
 {
 	var $_cat_handler;
-	var $_photo_handler;
+	var $_item_handler;
 
 //---------------------------------------------------------
 // constructor
@@ -35,8 +41,8 @@ function &getInstance()
 
 function init( $dirname )
 {
-	$this->_photo_handler = new webphoto_photo_handler( $dirname );
-	$this->_cat_handler   = new webphoto_cat_handler(   $dirname );
+	$this->_item_handler = new webphoto_item_handler( $dirname );
+	$this->_cat_handler  = new webphoto_cat_handler(  $dirname );
 }
 
 //---------------------------------------------------------
@@ -67,7 +73,7 @@ function build_selbox( $order='cat_title', $preset_id=0, $none_title='--', $sel_
 		$title  = $row['cat_title'];
 		$prefix = $row['prefix'];
 
-		$num = $this->_photo_handler->get_count_by_catid( $catid );
+		$num = $this->_item_handler->get_count_by_catid( $catid );
 
 		if ( $prefix ) {
 			$prefix = str_replace(".", '--', $prefix ).' ';

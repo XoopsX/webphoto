@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: notification.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// table_photo -> table_item
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
 //---------------------------------------------------------
@@ -43,31 +45,31 @@ function &getInstance()
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function notify( $dirname, $category, $item_id )
+function notify( $dirname, $category, $id )
 {
 	$this->_init( $dirname );
 
-	$item = array();
+	$info = array();
 
 	switch ( $category )
 	{
 		case 'global':
-			$item['name'] = '';
-			$item['url']  = '';
+			$info['name'] = '';
+			$info['url']  = '';
 			break;
 
 		case 'category':
-			$item['name'] = $this->_get_cat_title( $item_id );
-			$item['url']  = $this->_get_url( $category, $item_id ) ;
+			$info['name'] = $this->_get_cat_title( $id );
+			$info['url']  = $this->_get_url( $category, $id ) ;
 			break;
 
 		case 'photo':
-			$item['name'] = $this->_get_photo_title( $item_id );
-			$item['url']  = $this->_get_url( $category, $item_id ) ;
+			$info['name'] = $this->_get_item_title( $id );
+			$info['url']  = $this->_get_url( $category, $id ) ;
 			break;
 	}
 
-	return $item;
+	return $info;
 }
 
 function _init( $dirname )
@@ -78,52 +80,35 @@ function _init( $dirname )
 	$this->_INDEX_URL = $this->_MODULE_URL .'/index.php';
 }
 
-function _get_url( $category, $item_id )
+function _get_url( $category, $id )
 {
 	if ( $this->_cfg_use_pathinfo ) {
-		$url = $this->_MODULE_URL .'/index.php/'. $category .'/'. $item_id .'/' ;
+		$url = $this->_MODULE_URL .'/index.php/'. $category .'/'. $id .'/' ;
 	} else {
-		$url = $this->_MODULE_URL .'/index.php?fct='. $category .'&amp;p='. $item_id ;
+		$url = $this->_MODULE_URL .'/index.php?fct='. $category .'&amp;p='. $id ;
 	}
 	return $url;
 }
 
 //---------------------------------------------------------
-// photo handler
+// handler
 //---------------------------------------------------------
-function _get_photo_title( $photo_id )
+function _get_item_title( $item_id )
 {
-	$row = $this->_get_photo_row( $photo_id );
-	if ( isset( $row['photo_title'] ) ) {
-		return $row['photo_title'];
+	$row = $this->get_item_row_by_id( $item_id );
+	if ( isset( $row['item_title'] ) ) {
+		return  $row['item_title'];
 	}
 	return false;
 }
 
-function _get_photo_row( $photo_id )
-{
-	$sql  = 'SELECT * FROM '.$this->prefix_dirname( 'photo' );
-	$sql .= ' WHERE photo_id='. intval($photo_id);
-	return $this->get_row_by_sql( $sql );
-}
-
-//---------------------------------------------------------
-// cat handler
-//---------------------------------------------------------
 function _get_cat_title( $cat_id )
 {
-	$row = $this->_get_cat_row( $cat_id );
+	$row = $this->get_cat_row_by_id( $cat_id );
 	if ( isset( $row['cat_title'] ) ) {
-		return $row['cat_title'];
+		return  $row['cat_title'];
 	}
 	return false;
-}
-
-function _get_cat_row( $cat_id )
-{
-	$sql  = 'SELECT * FROM '.$this->prefix_dirname( 'cat' );
-	$sql .= ' WHERE cat_id='. intval($cat_id);
-	return $this->get_row_by_sql( $sql );
 }
 
 //---------------------------------------------------------

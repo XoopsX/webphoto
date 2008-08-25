@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.7 2008/08/09 19:28:05 ohwada Exp $
+// $Id: main.php,v 1.8 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -826,6 +826,90 @@ define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
 define("_WEBPHOTO_MAIL_DENY_TITLE_PREG", "" ) ;
 define("_WEBPHOTO_MAIL_AD_WORD_1", "" ) ;
 define("_WEBPHOTO_MAIL_AD_WORD_2", "" ) ;
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TABLE" , "Item Table" ) ;
+define("_WEBPHOTO_ITEM_ID" , "Item ID" ) ;
+define("_WEBPHOTO_ITEM_TIME_CREATE" , "Create Time" ) ;
+define("_WEBPHOTO_ITEM_TIME_UPDATE" , "Update Time" ) ;
+define("_WEBPHOTO_ITEM_CAT_ID" ,  "Category ID" ) ;
+define("_WEBPHOTO_ITEM_GICON_ID" , "GoogleMap Icon ID" ) ;
+define("_WEBPHOTO_ITEM_UID" ,   "User ID" ) ;
+define("_WEBPHOTO_ITEM_KIND" , "File Kind" ) ;
+define("_WEBPHOTO_ITEM_EXT" ,  "File Extention" ) ;
+define("_WEBPHOTO_ITEM_DATETIME" ,  "Photo Datetime" ) ;
+define("_WEBPHOTO_ITEM_TITLE" , "Photo Title" ) ;
+define("_WEBPHOTO_ITEM_PLACE" , "Place" ) ;
+define("_WEBPHOTO_ITEM_EQUIPMENT" , "Equipment" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LATITUDE" ,  "GoogleMap Latitude" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LONGITUDE" , "GoogleMap Longitude" ) ;
+define("_WEBPHOTO_ITEM_GMAP_ZOOM" ,      "GoogleMap Zoom" ) ;
+define("_WEBPHOTO_ITEM_GMAP_TYPE" ,      "GoogleMap Type" ) ;
+define("_WEBPHOTO_ITEM_PERM_READ" , "Read Permission" ) ;
+define("_WEBPHOTO_ITEM_STATUS" ,   "Status" ) ;
+define("_WEBPHOTO_ITEM_HITS" ,     "Hits" ) ;
+define("_WEBPHOTO_ITEM_RATING" ,   "Rating" ) ;
+define("_WEBPHOTO_ITEM_VOTES" ,    "Votes" ) ;
+define("_WEBPHOTO_ITEM_DESCRIPTION" ,  "Photo Description" ) ;
+define("_WEBPHOTO_ITEM_EXIF" , "Exif Information" ) ;
+define("_WEBPHOTO_ITEM_SEARCH" ,  "Search" ) ;
+define("_WEBPHOTO_ITEM_COMMENTS" , "Comments" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_1" ,  "File ID: Content" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_2" ,  "File ID: Thumbnail" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_3" ,  "File ID: MIddle" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "File ID: Flash Video" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "File ID: Docomo Video" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "file6" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "file7" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
+define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
+define("_WEBPHOTO_ITEM_TEXT_2" ,  "text2" ) ;
+define("_WEBPHOTO_ITEM_TEXT_3" ,  "text3" ) ;
+define("_WEBPHOTO_ITEM_TEXT_4" ,  "text4" ) ;
+define("_WEBPHOTO_ITEM_TEXT_5" ,  "text5" ) ;
+define("_WEBPHOTO_ITEM_TEXT_6" ,  "text6" ) ;
+define("_WEBPHOTO_ITEM_TEXT_7" ,  "text7" ) ;
+define("_WEBPHOTO_ITEM_TEXT_8" ,  "text8" ) ;
+define("_WEBPHOTO_ITEM_TEXT_9" ,  "text9" ) ;
+define("_WEBPHOTO_ITEM_TEXT_10" , "text10" ) ;
+
+// file table
+define("_WEBPHOTO_FILE_TABLE" , "File Table" ) ;
+define("_WEBPHOTO_FILE_ID" , "File ID" ) ;
+define("_WEBPHOTO_FILE_TIME_CREATE" , "Create Time" ) ;
+define("_WEBPHOTO_FILE_TIME_UPDATE" , "Update Time" ) ;
+define("_WEBPHOTO_FILE_ITEM_ID" ,  "Item ID" ) ;
+define("_WEBPHOTO_FILE_KIND" , "File Kind" ) ;
+define("_WEBPHOTO_FILE_URL" ,    "URL" ) ;
+define("_WEBPHOTO_FILE_PATH" ,   "File Path" ) ;
+define("_WEBPHOTO_FILE_NAME" ,   "File Name" ) ;
+define("_WEBPHOTO_FILE_EXT" ,    "File Extention" ) ;
+define("_WEBPHOTO_FILE_MIME" ,   "MIME type" ) ;
+define("_WEBPHOTO_FILE_MEDIUM" , "Medium Type" ) ;
+define("_WEBPHOTO_FILE_SIZE" ,   "File Size" ) ;
+define("_WEBPHOTO_FILE_WIDTH" ,  "Image Width" ) ;
+define("_WEBPHOTO_FILE_HEIGHT" , "Image Height" ) ;
+define("_WEBPHOTO_FILE_DURATION" , "Video Duration Time" ) ;
+
+// file kind ( for admin checktables )
+define("_WEBPHOTO_FILE_KIND_1" ,  "Content" ) ;
+define("_WEBPHOTO_FILE_KIND_2" ,  "Thumbnail" ) ;
+define("_WEBPHOTO_FILE_KIND_3" ,  "MIddle" ) ;
+define("_WEBPHOTO_FILE_KIND_4" ,  "Flash Video" ) ;
+define("_WEBPHOTO_FILE_KIND_5" ,  "Docomo Video" ) ;
+define("_WEBPHOTO_FILE_KIND_6" ,  "file6" ) ;
+define("_WEBPHOTO_FILE_KIND_7" ,  "file7" ) ;
+define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
+define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
+define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
+
+// index
+define("_WEBPHOTO_MOBILE_MAILTO" , "Send URL to the mobile phone" ) ;
 
 // === define end ===
 }

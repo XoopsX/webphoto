@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.5 2008/07/11 20:17:03 ohwada Exp $
+// $Id: handler.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,12 +8,12 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added is_image_kind() get_cat_cached_row_by_id()
 // 2008-07-01 K.OHWADA
 // added exists_column()
 // added is_video_mime()
 //---------------------------------------------------------
-
-// exists_table( $table )
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -60,6 +60,54 @@ function init_handler( $dirname )
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_INC_SQL' );
 	$this->set_debug_error_by_const_name( $constpref.'DEBUG_INC_ERROR' );
+}
+
+//---------------------------------------------------------
+// cat handler
+//---------------------------------------------------------
+function get_cat_row_by_id( $cat_id )
+{
+	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'cat' );
+	$sql .= ' WHERE cat_id='.intval($cat_id);
+	return $this->get_row_by_sql( $sql );
+}
+
+//---------------------------------------------------------
+// item handler
+//---------------------------------------------------------
+function get_item_row_by_id( $item_id )
+{
+	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'item' );
+	$sql .= ' WHERE item_id='. intval($item_id);
+	return $this->get_row_by_sql( $sql );
+}
+
+//---------------------------------------------------------
+// file handler
+//---------------------------------------------------------
+function get_file_row_by_kind( $item_row, $kind )
+{
+	$id = $this->get_file_id_by_kind( $item_row, $kind );
+	if ( $id > 0 ) {
+		return $this->get_file_row_by_id( $id );
+	}
+	return false ;
+}
+
+function get_file_id_by_kind( $item_row, $kind )
+{
+	$name = 'item_file_id_'.$kind;
+	if ( isset( $item_row[ $name ] ) ) {
+		return  $item_row[ $name ] ;
+	}
+	return false ;
+}
+
+function get_file_row_by_id( $file_id )
+{
+	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'file' );
+	$sql .= ' WHERE file_id='. intval($file_id) ;
+	return $this->get_row_by_sql( $sql );
 }
 
 //---------------------------------------------------------
@@ -213,6 +261,22 @@ function set_normal_exts( $val )
 function is_video_mime( $mime )
 {
 	if ( preg_match('/^video/', $mime ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_image_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
+		return true;
+	}
+	return false;
+}
+
+function is_video_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_VIDEO ) {
 		return true;
 	}
 	return false;

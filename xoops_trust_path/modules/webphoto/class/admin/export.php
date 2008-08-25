@@ -1,5 +1,5 @@
 <?php
-// $Id: export.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: export.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // xoops_error() -> build_error_msg()
 //---------------------------------------------------------
@@ -123,35 +125,47 @@ function _export_image()
 
 	$imgcat_storetype = $cat_row['imgcat_storetype'];
 
-	$photo_rows = $this->_photo_handler->get_rows_by_catid( $this->_src_catid );
-	if ( !is_array($photo_rows) || !count($photo_rows) ) {
+	$item_rows = $this->_item_handler->get_rows_by_catid( $this->_src_catid );
+	if ( !is_array($item_rows) || !count($item_rows) ) {
 		echo 'no photo image';
 		return false;
 	}
 
 	$export_count = 0 ;
 
-	foreach( $photo_rows as $photo_row )
+	foreach( $item_rows as $item_row )
 	{
-		extract( $photo_row ) ;
+		$item_id          = $item_row['item_id'];
+		$item_title       = $item_row['item_title'];
+		$item_kind        = $item_row['item_kind'];
+		$item_status      = $item_row['item_status'];
+		$item_time_update = $item_row['item_time_update'];
 
-		echo $photo_id.' '.$this->sanitize($photo_title).' : ';
+		echo $item_id.' '.$this->sanitize($item_title).' : ';
 
-		if ( !$this->is_normal_ext( $photo_cont_ext) ) {
-			echo " skip not image <br />\n";
+		if ( ! $this->is_image_kind( $item_kind ) ) {
+			echo " skip non-image <br />\n";
 			continue;
 		}
 
 		if ( $use_thumb ) {
-			$src_file = XOOPS_ROOT_PATH . $photo_thumb_path ;
-			$ext      = $photo_thumb_ext ;
-			$mime     = $photo_thumb_mime ;
+			$file_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+			if ( !is_array($file_row) ) {
+				echo " cannot get thumb row <br />\n";
+				continue;
+			}
 
 		} else {
-			$src_file = XOOPS_ROOT_PATH . $photo_cont_path ;
-			$ext      = $photo_cont_ext ;
-			$mime     = $photo_cont_mime ;
+			$file_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+			if ( !is_array($file_row) ) {
+				echo " cannot get cont row <br />\n";
+				continue;
+			}
 		}
+
+		$src_file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
+		$ext      = $file_row['file_ext'] ;
+		$mime     = $file_row['file_mime'] ;
 
 		$image_name = uniqid( 'img' ) .'.'. $ext ;
 		$dst_file   = XOOPS_UPLOAD_PATH . '/' . $image_name ;
@@ -177,10 +191,10 @@ function _export_image()
 		// insert into image table
 		$image_row = array(
 			'image_name'     => $image_name ,
-			'image_nicename' => $photo_title ,
-			'image_created'  => $photo_time_update ,
+			'image_nicename' => $item_title ,
+			'image_created'  => $item_time_update ,
 			'image_mimetype' => $mime ,
-			'image_display'  => $photo_status ? 1 : 0 ,
+			'image_display'  => $item_status ? 1 : 0 ,
 			'image_weight'   => 0 ,
 			'imgcat_id'      => $this->_img_catid ,
 		);

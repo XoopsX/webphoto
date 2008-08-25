@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.4 2008/08/09 08:48:27 ohwada Exp $
+// $Id: admin.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -108,8 +108,10 @@ define( "_AM_WEBPHOTO_GD2SUCCESS" , "成功しました!<br />おそらく、こ
 
 define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "メイン画像とサムネイルのリンクチェック" ) ;
 define( "_AM_WEBPHOTO_NOWCHECKING" , "チェック中 ." ) ;
-define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "メイン画像 (%s) が読めません." ) ;
-define( "_AM_WEBPHOTO_FMT_THUMBNOTREADABLE" , "サムネイル画像 (%s) が読めません." ) ;
+
+//define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "メイン画像 (%s) が読めません." ) ;
+//define( "_AM_WEBPHOTO_FMT_THUMBNOTREADABLE" , "サムネイル画像 (%s) が読めません." ) ;
+
 define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADPHOTOS" , "画像のないレコードが %s 個ありました。" ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADTHUMBS" , "サムネイルが %s 個未作成です" ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFREMOVEDTMPS" , "テンポラリを %s 個削除しました" ) ;
@@ -380,6 +382,20 @@ define("_AM_WEBPHOTO_ERR_MAILLOG_NO_ATTACH" ,  "添付ファイルが選択さ�
 
 // mimetype
 define("_AM_WEBPHOTO_MIME_ADD_NEW" ,  "MIME タイプを追加する" ) ;
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+// index
+define("_AM_WEBPHOTO_MUST_UPDATE" , "アップデートが必要です" ) ;
+define("_AM_WEBPHOTO_TITLE_BIN" , "コマンドの管理" ) ;
+define("_AM_WEBPHOTO_TEST_BIN" , "コマンドのテスト実行" ) ;
+
+// redothumbs
+define("_AM_WEBPHOTO_ERR_GET_IMAGE_SIZE", "image size が取得できない" ) ;
+
+// checktables
+define("_AM_WEBPHOTO_FMT_NOT_READABLE" , "%s (%s) が読めません." ) ;
 
 // === define end ===
 }

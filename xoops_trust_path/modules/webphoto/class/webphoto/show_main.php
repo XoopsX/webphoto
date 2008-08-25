@@ -1,13 +1,17 @@
 <?php
-// $Id: show_main.php,v 1.3 2008/07/08 21:07:32 ohwada Exp $
+// $Id: show_main.php,v 1.4 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
-
+ 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+// added build_qr_code()
+// used preload_init()
 // 2008-07-01 K.OHWADA
 // used build_uri_category() build_main_navi_url() etc
 //---------------------------------------------------------
@@ -19,13 +23,13 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_show_main extends webphoto_show_photo
 {
+	var $_user_handler;
 	var $_pathinfo_class;
 	var $_gmap_class;
 	var $_header_class;
 	var $_pagenavi_class;
 	var $_d3_notification_select_class;
 	var $_sort_class;
-	var $_preload_class;
 
 	var $_sort_name;
 
@@ -59,11 +63,13 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_CAT_CATLIST_COLS    = 3;
 	var $_CAT_CATLIST_DELMITA = '<br />';
 
-	var $_PHOTO_LIST_LIMIT = 1;
-	var $_PHOTO_LIST_ORDER = 'photo_time_update DESC, photo_id DESC';
-	var $_PHOTO_LIST_DATE_ORDER = 'photo_datetime DESC, photo_id DESC';
+	var $_PHOTO_LIST_LIMIT      = 1;
+	var $_PHOTO_LIST_ORDER      = 'item_time_update DESC, item_id DESC';
+	var $_PHOTO_LIST_DATE_ORDER = 'item_datetime DESC, item_id DESC';
 	var $_MODE_DEFAULT = 'latest';
 	var $_RSS_LIMIT    = 100;
+
+	var $_QR_MODULE_SIZE = 3;
 
 // set by config
 	var $_MAX_PHOTOS       = 10;
@@ -93,7 +99,7 @@ class webphoto_show_main extends webphoto_show_photo
 
 	var $_ARRAY_CHECKSORT_NAVI     = array();
 
-	var $_DEBUG = false ;
+	var $_DEBUG_PRELOAD = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -102,7 +108,8 @@ function webphoto_show_main( $dirname, $trust_dirname )
 {
 	$this->webphoto_show_photo( $dirname, $trust_dirname );
 
-	$this->_gmap_class =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
+	$this->_user_handler =& webphoto_user_handler::getInstance( $dirname );
+	$this->_gmap_class   =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
 
 	$this->_notification_select_class =& webphoto_d3_notification_select::getInstance();
 	$this->_notification_select_class->init( $dirname ); 
@@ -112,9 +119,6 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_pagenavi_class->set_mark_id_next( '<b>'. $this->get_constant('NAVI_NEXT') .'</b>' );
 
 	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
-
-	$this->_preload_class   =& webphoto_d3_preload::getInstance();
-	$this->_preload_class->init( $dirname , $trust_dirname );
 
 	$cfg_newphotos           = $this->get_config_by_name('newphotos');
 	$cfg_viewcattype         = $this->get_config_by_name('viewcattype');
@@ -135,7 +139,6 @@ function webphoto_show_main( $dirname, $trust_dirname )
 		$this->_pagenavi_class->set_separator_path(  '/' );
 		$this->_pagenavi_class->set_separator_query( '/' );
 	}
-
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -152,47 +155,10 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function init_preload()
 {
-	$this->_preload_error();
-	$this->_preload_constant();
+	$this->preload_init();
+	$this->preload_error( $this->_DEBUG_PRELOAD );
+	$this->preload_constant();
 	$this->_preload_photo_sort_array();
-}
-
-function _preload_error()
-{
-	$errors = $this->_preload_class->get_errors();
-	if ( is_array($errors) && count($errors) ) {
-		$this->set_error( $errors );
-		if ( $this->_DEBUG ) {
-			print_r( $errors );
-		}
-	}
-}
-
-function _preload_constant()
-{
-	$arr = $this->_preload_class->get_preload_const_array();
-
-	if ( !is_array($arr) || !count($arr) ) {
-		return true;	// no action
-	}
-
-	foreach( $arr as $k => $v )
-	{
-		$local_name = strtoupper( '_' . $k );
-
-// array type
-		if ( strpos($k, 'array_') === 0 ) {
-			$temp = $this->str_to_array( $v, '|' );
-			if ( is_array($temp) && count($temp) ) {
-				$this->$local_name = $temp;
-			}
-
-// string type
-		} else {
-			$this->$local_name = $v;
-		}
-	}
-
 }
 
 function _preload_photo_sort_array()
@@ -212,7 +178,7 @@ function _preload_photo_sort_array()
 function build_list_common( $const_name, $show_photo_desc=false )
 {
 	$title_s   = $this->sanitize( $this->get_constant( $const_name ) );
-	$total_all = $this->_photo_handler->get_count_public();
+	$total_all = $this->_item_handler->get_count_public();
 
 	$arr = array(
 		'xoops_pagetitle'   => $title_s ,
@@ -272,7 +238,7 @@ function build_photo_show_from_id_array( $id_array )
 	foreach ( $id_array as $id )
 	{
 		$arr[] = $this->build_photo_show( 
-			$this->_photo_handler->get_row_by_id( $id ) ) ;
+			$this->_item_handler->get_row_by_id( $id ) ) ;
 	}
 	return $arr;
 }
@@ -354,7 +320,7 @@ function get_categories_by_pid( $parent_id )
 
 			$sub_arr = $this->build_show_cat( $row_child );
 			$sub_arr['photo_small_sum']  
-				= $this->_photo_handler->get_count_public_by_catid( $child_id ) ;
+				= $this->_item_handler->get_count_public_by_catid( $child_id ) ;
 			$sub_arr['photo_total_sum'] 
 				= $this->build_photo_total_in_parent_all_children( $child_id ) ;
 			$sub_arr['number_of_subcat'] 
@@ -366,13 +332,13 @@ function get_categories_by_pid( $parent_id )
 		// Total sum of photos
 		$catid_arr = $this->_cat_handler->get_all_child_id( $cat_id ) ;
 		array_push( $catid_arr , $cat_id ) ;
-		$photo_total_sum = $this->_photo_handler->get_count_public_by_catid_array( $catid_arr ) ;
+		$photo_total_sum = $this->_item_handler->get_count_public_by_catid_array( $catid_arr ) ;
 
 		$imgurl = $this->_cat_handler->build_show_imgurl( $row );
 
 		$main_arr = $this->build_show_cat( $row );
 		$main_arr['photo_small_sum'] 
-			= $this->_photo_handler->get_count_public_by_catid( $cat_id ) ;
+			= $this->_item_handler->get_count_public_by_catid( $cat_id ) ;
 		$main_arr['photo_total_sum'] 
 			= $this->build_photo_total_in_parent_all_children( $cat_id ) ;
 		$main_arr['subcategories'] = $subcat ;
@@ -387,7 +353,7 @@ function build_photo_total_in_parent_all_children( $cat_id )
 {
 	$catid_arr = $this->_cat_handler->get_all_child_id( $cat_id ) ;
 	array_push( $catid_arr , $cat_id ) ;
-	return $this->_photo_handler->get_count_public_by_catid_array( $catid_arr ) ;
+	return $this->_item_handler->get_count_public_by_catid_array( $catid_arr ) ;
 }
 
 function build_cat_path( $cat_id )
@@ -492,6 +458,11 @@ function get_orderby_default()
 function get_lang_sortby( $name )
 {
 	return $this->_sort_class->get_lang_sortby( $name );
+}
+
+function convert_orderby_join( $str )
+{
+	return $this->_sort_class->convert_orderby_join( $str );
 }
 
 //---------------------------------------------------------
@@ -690,7 +661,7 @@ function build_box_list( $param )
 
 function build_init_param( $mode, $show_photo_desc=false )
 {
-	$total_all = $this->_photo_handler->get_count_public();
+	$total_all = $this->_item_handler->get_count_public();
 
 	$arr = array(
 		'use_popbox_js'   => $this->_USE_POPBOX_JS ,
@@ -715,8 +686,6 @@ function build_get_param( $mode )
 		'op'                => $this->_get_op,
 		'page'              => $this->_get_page,
 		'sort'              => $this->_get_sort,
-//		'viewtype'          => $this->_get_viewtype,
-//		'param_viewtype'    => $this->build_param_viewtype( $mode ) ,
 		'param_sort'        => $this->build_uri_main_sort( $mode ) ,
 		'lang_cursortedby'  => $this->get_lang_sortby( $this->_get_sort ),
 	);
@@ -798,6 +767,46 @@ function is_in_array( $needle, $haystack )
 		}
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// qr code
+//---------------------------------------------------------
+function create_mobile_qr( $id )
+{
+	$file = $this->_PHOTOS_DIR.'/'.$this->build_mobile_filename( $id );
+	if ( !is_file( $file) ) {
+		$qrimage=new Qrcode_image;
+		$qrimage->set_module_size( $this->_QR_MODULE_SIZE ); 
+		$qrimage->qrcode_image_out( $this->build_mobile_url( $id ), 'png', $file );
+	}
+}
+
+function build_mobile_url( $id )
+{
+	$url = $this->_MODULE_URL.'/i.php';
+	if ( $id > 0 ) {
+		$url .= '?id='.$id;
+	}
+	return $url;
+}
+
+function build_mobile_filename( $id )
+{
+	$file = 'qr_index.png';
+	if ( $id > 0 ) {
+		$file = 'qr_id_'.$id.'.png';
+	}
+	return $file;
+}
+
+function get_mobile_email()
+{
+	$row = $this->_user_handler->get_row_by_uid( $this->_xoops_uid );
+	if ( is_array($row) ) {
+		return $row['user_email'] ;
+	}
+	return null;
 }
 
 //---------------------------------------------------------

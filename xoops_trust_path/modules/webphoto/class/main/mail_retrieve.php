@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_retrieve.php,v 1.2 2008/08/09 22:40:39 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// preload
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,7 +22,7 @@ class webphoto_main_mail_retrieve extends webphoto_mail_retrieve
 	var $_TIME_FAIL     = 5;
 	var $_REDIRECT_THIS_URL;
 
-	var $_DEBUG_MAIL = null;
+	var $_DEBUG_MAIL_FILE = 'mail_simo_sh905i.txt';
 
 //---------------------------------------------------------
 // constructor
@@ -25,8 +31,11 @@ function webphoto_main_mail_retrieve( $dirname , $trust_dirname )
 {
 	$this->webphoto_mail_retrieve( $dirname , $trust_dirname );
 
-	if ( $this->_DEBUG_MAIL ) {
-		$this->_DEBUG_MAIL_FILE = $this->_DEBUG_MAIL;
+// preload
+	$this->preload_init();
+	$this->preload_constant();
+
+	if ( $this->_DEBUG_MAIL_FILE ) {
 		$this->_TIME_ACCESS = 1;
 		$this->_FLAG_UNLINK_FILE = false;
 	}

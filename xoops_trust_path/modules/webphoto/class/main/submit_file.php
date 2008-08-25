@@ -1,10 +1,16 @@
 <?php
-// $Id: submit_file.php,v 1.2 2008/08/09 10:49:33 ohwada Exp $
+// $Id: submit_file.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,7 +23,7 @@ class webphoto_main_submit_file extends webphoto_base_this
 	var $_notification_class;
 	var $_xoops_user_class;
 
-	var $_post_catid;
+	var $_post_item_cat_id;
 	var $_post_file;
 
 	var $_cfg_file_size = 0;
@@ -29,9 +35,9 @@ class webphoto_main_submit_file extends webphoto_base_this
 
 	var $_REDIRECT_URL = null;
 
-	var $_TIME_SUCCESS  = 1;
-	var $_TIME_PENDING  = 3;
-	var $_TIME_FAIL     = 5;
+	var $_TIME_SUCCESS  = 100;
+	var $_TIME_PENDING  = 300;
+	var $_TIME_FAIL     = 500;
 
 //---------------------------------------------------------
 // constructor
@@ -104,8 +110,8 @@ function print_form()
 //---------------------------------------------------------
 function _check()
 {
-	$this->_post_catid = $this->_post_class->get_post_get_int('photo_cat_id') ;
-	$this->_post_file  = $this->_post_class->get_post_text( 'file' ) ;
+	$this->_post_item_cat_id = $this->_post_class->get_post_get_int('item_cat_id') ;
+	$this->_post_file        = $this->_post_class->get_post_text( 'file' ) ;
 
 	$ret = $this->_exec_check();
 	switch ( $ret )
@@ -250,7 +256,7 @@ function _submit_success()
 	$param = array(
 		'orderby' => 'dated'
 	);
-	$url  = $this->build_uri_category( $this->_post_catid, $param );
+	$url  = $this->build_uri_category( $this->_post_item_cat_id, $param );
 	$time = $this->_TIME_SUCCESS ;
 	$msg  = '';
 
@@ -273,11 +279,11 @@ function _check_submit()
 	$src_file = $this->_FILE_DIR .'/'. $this->_post_file ;
 
 // Check if cid is valid
-	if ( empty( $this->_post_catid ) ) {
+	if ( empty( $this->_post_item_cat_id ) ) {
 		return _C_WEBPHOTO_ERR_EMPTY_CAT ;
 	}
 
-	if ( ! $this->check_valid_catid( $this->_post_catid ) ) {
+	if ( ! $this->check_valid_catid( $this->_post_item_cat_id ) ) {
 		return _C_WEBPHOTO_ERR_INVALID_CAT ;
 	}
 
@@ -328,12 +334,12 @@ function _exec_submit()
 	$title = empty( $post_title ) ? addslashes( $node ) : $post_title ;
 
 	$param = array(
-		'src_file'    => $src_file ,
-		'cat_id'      => $this->_post_catid ,
-		'uid'         => $this->_xoops_uid ,
-		'title'       => $title ,
-		'description' => $post_desc ,
-		'status'      => _C_WEBPHOTO_STATUS_APPROVED ,
+		'src_file'         => $src_file ,
+		'cat_id'           => $this->_post_item_cat_id ,
+		'uid'              => $this->_xoops_uid ,
+		'title'            => $title ,
+		'description'      => $post_desc ,
+		'status'           => _C_WEBPHOTO_STATUS_APPROVED ,
 		'mode_video_thumb' => _C_WEBPHOTO_VIDEO_THUMB_PLURAL ,
 	);
 
@@ -353,7 +359,7 @@ function _exec_submit()
 
 	$this->unlink_file( $src_file );
 
-	$photo_id = $row['photo_id'];
+	$item_id = $row['item_id'];
 	$this->_created_row = $row ;
 
 	if ( $this->_photo_class->get_resized() ) {
@@ -377,7 +383,7 @@ function _exec_submit()
 
 // Trigger Notification when supper insert
 	$this->_notification_class->notify_new_photo( 
-		$photo_id, $this->_post_catid, $title );
+		$item_id, $this->_post_item_cat_id, $title );
 
 	return 0;
 }
@@ -439,7 +445,7 @@ function _exec_video()
 	}
 
 // set for redirect
-	$this->_post_catid = $this->_photo_class->get_photo_cat_id() ;
+	$this->_post_item_cat_id = $this->_photo_class->get_item_cat_id() ;
 
 	return 0;
 }
@@ -464,7 +470,7 @@ function _print_form_submit()
 
 function _print_form_video_thumb()
 {
-	$this->print_form_video_thumb_common( 'file', $this->_created_row );
+	$this->print_form_video_thumb_common( 'submit_file', $this->_created_row );
 }
 
 function print_form_video_thumb_common( $mode, $row )

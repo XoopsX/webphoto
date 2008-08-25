@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: mime.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added ext_to_kind()
 // 2008-08-01 K.OHWADA
 // added get_allowed_mimes_by_groups() is_my_allow_mime()
 // 2008-07-01 K.OHWADA
@@ -28,10 +30,13 @@ class webphoto_mime
 	var $_cached_my_allowed_mimes = null;
 	var $_cached_mime_array = array();
 
-	var $_VIDEO_MEDIUM = 'video';
+	var $_IMAGE_MEDIUM = 'image' ;
+	var $_VIDEO_MEDIUM = 'video' ;
 
 // asx is meta file (text)
 	var $_EXT_ASX = 'asx';
+
+	var $_NORMAL_EXTS ;
 
 //---------------------------------------------------------
 // constructor
@@ -42,6 +47,7 @@ function webphoto_mime( $dirname )
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
 
+	$this->_NORMAL_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 }
 
 function &getInstance( $dirname )
@@ -131,47 +137,38 @@ function get_cached_mime_type_by_ext( $ext )
 }
 
 //---------------------------------------------------------
-// add mime type
+// judge mime type
 //---------------------------------------------------------
-function add_mime_to_info_if_empty( $info, $mime_in=null )
+function ext_to_kind( $ext )
 {
-	$medium = null ;
-
-// no image  info
-	if ( !is_array($info) || !count($info) ) {
-		return $info;
+	$kind = 0 ;
+	if ( $this->is_image_ext( $ext ) ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_IMAGE ;
+	} elseif ( $this->is_video_ext( $ext ) ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_VIDEO ;
 	}
+	return $kind ;
+}
 
-// if set mime
-	if ( $info['photo_cont_mime'] ) {
-		return $info;
+function ext_to_mime( $ext )
+{
+	return $this->get_cached_mime_type_by_ext( $ext );
+}
+
+function mime_to_medium( $mime )
+{
+	$medium = '' ;
+	if ( $this->is_image_mime( $mime ) ) {
+		$medium = $this->_IMAGE_MEDIUM ;
+	} elseif ( $this->is_video_mime( $mime ) ) {
+		$medium = $this->_VIDEO_MEDIUM ;
 	}
+	return $medium ;
+}
 
-// if not set mime
-	if ( $mime_in ) {
-		$mime = $mime_in ;
-	} else {
-		$mime = $this->get_cached_mime_type_by_ext( $info['photo_cont_ext'] );
-	}
-
-// set mime
-	if ( $mime ) {
-		$info['photo_file_mime'] = $mime ;
-		$info['photo_cont_mime'] = $mime ;
-
-// if video type
-		if ( $this->is_video_mime( $mime ) ) {
-			$medium = $this->_VIDEO_MEDIUM ;
-		}
-	}
-			
-// set medium
-	if ( $medium ) {
-		$info['photo_file_medium'] = $medium ;
-		$info['photo_cont_medium'] = $medium ;
-	}
-
-	return $info;
+function is_image_ext( $ext )
+{
+	return $this->is_normal_ext( $ext );
 }
 
 function is_video_ext( $ext )
@@ -179,8 +176,16 @@ function is_video_ext( $ext )
 	if ( $ext == $this->_EXT_ASX ) {
 		return false;
 	}
-	$mime = $this->get_cached_mime_type_by_ext( $ext );
-	return $this->is_video_mime( $mime );
+	return $this->is_video_mime( 
+		$this->ext_to_mime( $ext ) );
+}
+
+function is_image_mime( $mime )
+{
+	if ( preg_match('/^image/', $mime ) ) {
+		return true;
+	}
+	return false;
 }
 
 function is_video_mime( $mime )
@@ -189,6 +194,11 @@ function is_video_mime( $mime )
 		return true;
 	}
 	return false;
+}
+
+function get_image_medium()
+{
+	return $this->_IMAGE_MEDIUM ;
 }
 
 function get_video_medium()
@@ -224,6 +234,14 @@ function is_my_allow_ext( $ext )
 //---------------------------------------------------------
 // utility
 //---------------------------------------------------------
+function is_normal_ext( $ext )
+{
+	if ( in_array( strtolower( $ext ) , $this->_NORMAL_EXTS ) ) {
+		return true;
+	}
+	return false;
+}
+
 function str_to_array( $str, $pattern )
 {
 	return $this->_utility_class->str_to_array( $str, $pattern );

@@ -1,10 +1,16 @@
 <?php
-// $Id: rate.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: rate.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -139,7 +145,7 @@ function _exec_rate()
 	if ( $this->_xoops_uid != 0 ) {
 
 		// Check if Photo POSTER is voting
-		$photo_count = $this->_photo_handler->get_count_by_photoid_uid( $post_photo_id, $this->_xoops_uid );
+		$photo_count = $this->_item_handler->get_count_by_itemid_uid( $post_photo_id, $this->_xoops_uid );
 		if ( $photo_count ) { return $this->_ERR_VOTE_OWN; }
 
 		// Check if REG user is trying to vote twice.
@@ -185,9 +191,9 @@ function update_rating_by_photoid( $photo_id )
 
 	$finalrating = number_format( $totalrating / $votesDB , 4 ) ;
 
-	$ret = $this->_photo_handler->update_rating_by_id( $photo_id, $finalrating, $votesDB );
+	$ret = $this->_item_handler->update_rating_by_id( $photo_id, $finalrating, $votesDB );
 	if ( !$ret ) {
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
@@ -205,8 +211,8 @@ function get_photo()
 		$_SESSION[ $this->_session_name ] = $_SERVER['HTTP_REFERER'] ;
 	}
 
-	$row = $this->_photo_handler->get_row_by_id( $get_photo_id );
-	if ( !is_array($row) || ($row['photo_status'] == 0) ) {
+	$row = $this->_item_handler->get_row_by_id( $get_photo_id );
+	if ( !is_array($row) || ($row['item_status'] == 0) ) {
 		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit ;
 	}

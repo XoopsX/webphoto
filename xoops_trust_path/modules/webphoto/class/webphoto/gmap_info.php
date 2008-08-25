@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: gmap_info.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used build_uri_photo()
 //---------------------------------------------------------
@@ -42,28 +44,28 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // gmap
 //---------------------------------------------------------
-function build_info( $row )
+function build_info( $param )
 {
-	return $this->build_info_default( $row );
+	return $this->build_info_default( $param );
 }
 
-function build_info_default( $row )
+function build_info_default( $param )
 {
 	$info  = '<div style="text-align:center; font-size: 80%; ">';
-	$info .= $this->build_info_thumb( $row );
-	$info .= $this->build_info_title( $row );
-	$info .= $this->build_info_author( $row );
-	$info .= $this->build_info_datetime( $row );
-	$info .= $this->build_info_place( $row );
+	$info .= $this->build_info_thumb(    $param );
+	$info .= $this->build_info_title(    $param );
+	$info .= $this->build_info_author(   $param );
+	$info .= $this->build_info_datetime( $param );
+	$info .= $this->build_info_place(    $param );
 	$info .= '</div>';
 
 	return $info;
 }
 
-function build_info_thumb( $row )
+function build_info_thumb( $param )
 {
-	$a_photo   = $this->build_a_photo( $row );
-	$img_thumb = $this->build_img_thumb( $row );
+	$a_photo   = $this->build_a_photo(   $param );
+	$img_thumb = $this->build_img_thumb( $param );
 
 	$str = null;
 	if ( $img_thumb && $a_photo ) {
@@ -74,15 +76,15 @@ function build_info_thumb( $row )
 	return $str;
 }
 
-function build_info_title( $row )
+function build_info_title( $param )
 {
 	$str = '';
 
-	$title_s = $this->sanitize( $row['photo_title'] );
-	$a_photo = $this->build_a_photo( $row );
+	$title_s = $this->sanitize( $param['item_title'] );
+	$a_photo = $this->build_a_photo( $param );
 
-	if ( $this->has_editable_by_uid( $row['photo_uid'] ) ) {
-		$href = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id='.intval($row['photo_id']);
+	if ( $this->has_editable_by_uid( $param['item_uid'] ) ) {
+		$href = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id='.intval($param['item_id']);
 		$str .= '<a href="'. $href .'" target="_top" >';
 		$str .= $this->_IMG_EDIT;
 		$str .= '</a> ';
@@ -96,9 +98,9 @@ function build_info_title( $row )
 	return $str;
 }
 
-function build_info_author( $row )
+function build_info_author( $param )
 {
-	$uid   = intval( $row['photo_uid'] );
+	$uid   = intval( $param['item_uid'] );
 	$href  = $this->build_uri_user( $uid ) ;
 	$uname = $this->get_xoops_uname_by_uid( $uid );
 	if ( $uid > 0 ) {
@@ -110,9 +112,9 @@ function build_info_author( $row )
 	return $str;
 }
 
-function build_info_datetime( $row )
+function build_info_datetime( $param )
 {
-	$datetime_disp = $this->mysql_datetime_to_str( $row['photo_datetime'] );
+	$datetime_disp = $this->mysql_datetime_to_str( $param['item_datetime'] );
 	if ( $datetime_disp ) {
 		$str = $datetime_disp .'<br />';
 		return $str;
@@ -120,9 +122,9 @@ function build_info_datetime( $row )
 	return null;
 }
 
-function build_info_place( $row )
+function build_info_place( $param )
 {
-	$place_s = $this->sanitize( $row['photo_place'] );
+	$place_s = $this->sanitize( $param['item_place'] );
 	if ( $place_s ) {
 		$str = $place_s .'<br />';
 		return $str;
@@ -130,12 +132,12 @@ function build_info_place( $row )
 	return null;
 }
 
-function build_img_thumb( $row )
+function build_img_thumb( $param )
 {
-	$title_s = $this->sanitize( $row['photo_title'] );
-	$url_s   = $this->sanitize( $row['photo_thumb_url'] );
-	$width   = intval( $row['photo_thumb_width'] );
-	$height  = intval( $row['photo_thumb_height'] );
+	$title_s = $this->sanitize( $param['item_title'] );
+	$url_s   = $this->sanitize( $param['thumb_url'] );
+	$width   = intval( $param['thumb_width'] );
+	$height  = intval( $param['thumb_height'] );
 
 	$img = null;
 	if ( $url_s && $width && $height ) {
@@ -147,10 +149,10 @@ function build_img_thumb( $row )
 	return $img;
 }
 
-function build_a_photo( $row )
+function build_a_photo( $param )
 {
-	$href   = $this->build_href_photo( $row );
-	$target = $this->build_target_photo( $row );
+	$href   = $this->build_href_photo(   $param );
+	$target = $this->build_target_photo( $param );
 	if ( $href && $target ) {
 		$str = '<a href="'. $href .'" target="'. $target .'">';
 		return $str;
@@ -158,23 +160,23 @@ function build_a_photo( $row )
 	return null;
 }
 
-function build_href_photo( $row )
+function build_href_photo( $param )
 {
-	return $this->build_uri_photo( $row['photo_id'] ) ;
+	return $this->build_uri_photo( $param['item_id'] ) ;
 }
 
-function build_target_photo( $row )
+function build_target_photo( $param )
 {
 	$str = '_top';
-	if ( ! $this->check_normal_ext( $row ) ) {
+	if ( ! $this->check_normal_ext( $param ) ) {
 		$str = '_blank';
 	}
 	return $str;
 }
 
-function check_normal_ext( $row )
+function check_normal_ext( $param )
 {
-	return $this->is_normal_ext( $row['photo_cont_ext'] );
+	return $this->is_normal_ext( $param['item_ext'] );
 }
 
 // --- class end ---

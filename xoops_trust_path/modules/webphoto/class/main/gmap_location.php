@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.2 2008/07/08 20:31:22 ohwada Exp $
+// $Id: gmap_location.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // added _build_list_location()
 //---------------------------------------------------------
@@ -92,12 +94,12 @@ function _assign_template( $cfg_gmap_apikey )
 	}
 
 	if ( $get_photo_id > 0 ) {
-		$row = $this->_photo_handler->get_row_by_id( $get_photo_id );
+		$row = $this->_item_handler->get_row_by_id( $get_photo_id );
 		if ( is_array($row) && $this->_gmap_class->exist_gmap( $row ) ) { 
 			$flag_set_location = true;
-			$gmap_latitude     = $row['photo_gmap_latitude'];
-			$gmap_longitude    = $row['photo_gmap_longitude'];
-			$gmap_zoom         = $row['photo_gmap_zoom'];
+			$gmap_latitude     = $row['item_gmap_latitude'];
+			$gmap_longitude    = $row['item_gmap_longitude'];
+			$gmap_zoom         = $row['item_gmap_zoom'];
 
 			list( $show_gmap, $gmap_list ) 
 				= $this->_build_list_location( $row );

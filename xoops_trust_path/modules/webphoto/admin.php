@@ -1,10 +1,16 @@
 <?php
-// $Id: admin.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: admin.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// use $mydirname
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -38,6 +44,7 @@ require_once XOOPS_ROOT_PATH.'/include/cp_functions.php' ;
 //---------------------------------------------------------
 $mytrustdirname = basename( dirname( __FILE__ ) ) ;
 $mytrustdirpath = XOOPS_TRUST_PATH.'/modules/'.$mytrustdirname ;
+$mydirname      = $MY_DIRNAME;
 $mydirpath      = XOOPS_ROOT_PATH.'/modules/'.$MY_DIRNAME ;
 
 if( ! empty( $_GET['lib'] ) ) {

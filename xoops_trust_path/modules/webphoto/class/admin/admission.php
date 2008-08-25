@@ -1,10 +1,16 @@
 <?php
-// $Id: admission.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: admission.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -103,13 +109,13 @@ function _admission()
 
 	$post_ids = $this->_post_class->get_post('ids');
 
-	$this->_photo_handler->update_status_by_id_array( $post_ids );
+	$this->_item_handler->update_status_by_id_array( $post_ids );
 
-	$rows = $this->_photo_handler->get_rows_by_id_array( $post_ids );
-	foreach ( $rows as $row )
+	$item_rows = $this->_item_handler->get_rows_by_id_array( $post_ids );
+	foreach ( $item_rows as $item_row )
 	{
 		$this->_notification_class->notify_new_photo( 
-			$row['photo_id'], $row['photo_cat_id'], $row['photo_title'] );
+			$item_row['item_id'], $item_row['item_cat_id'], $item_row['item_title'] );
 	}
 
 	redirect_header( $this->_ADIMISSION_PHP , 1 , _AM_WEBPHOTO_ADMITTING ) ;
@@ -135,9 +141,9 @@ function _delete()
 function _print_form()
 {
 	$keyword_array = $this->str_to_array( $this->_get_txt, ' ' );
-	$where         = $this->_photo_handler->build_where_waiting_by_keyword_array( $keyword_array );
-	$photo_count   = $this->_photo_handler->get_count_by_where( $where );
-	$photo_rows    = $this->_photo_handler->get_rows_by_where(  $where, $this->_PERPAGE, $this->_get_pos );
+	$where         = $this->_item_handler->build_where_waiting_by_keyword_array( $keyword_array );
+	$photo_count   = $this->_item_handler->get_count_by_where( $where );
+	$photo_rows    = $this->_item_handler->get_rows_by_where(  $where, $this->_PERPAGE, $this->_get_pos );
 
 
 // Page Navigation

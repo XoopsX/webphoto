@@ -1,10 +1,16 @@
 <?php
-// $Id: waiting.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: waiting.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// table_photo -> table_item
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -40,7 +46,7 @@ function waiting( $dirname )
 
 	$ret = array();
 	$ret['adminlink']  = $this->_MODULE_URL .'/admin/index.php?fct=admission';
-	$ret['pendingnum'] = $this->_get_photo_count();
+	$ret['pendingnum'] = $this->_get_item_count();
 
 // this constant is defined in wating module
 	$ret['lang_linkname'] = _PI_WAITING_WAITINGS ;
@@ -48,10 +54,10 @@ function waiting( $dirname )
 	return $ret;
 }
 
-function _get_photo_count()
+function _get_item_count()
 {
-	$sql  = "SELECT COUNT(*) FROM ". $this->prefix_dirname( 'photo' );
-	$sql .= " WHERE photo_status=0";
+	$sql  = "SELECT COUNT(*) FROM ". $this->prefix_dirname( 'item' );
+	$sql .= " WHERE item_status=0";
 	return $this->get_count_by_sql( $sql );
 }
 

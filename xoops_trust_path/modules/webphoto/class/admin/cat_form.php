@@ -1,10 +1,16 @@
 <?php
-// $Id: cat_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: cat_form.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -223,7 +229,7 @@ function _print_line( $row )
 
 	$prefix  = str_replace( '.' , '&nbsp;--' , substr( $row['prefix'] , 1 ) ) ;
 
-	$photos_num  = $this->_photo_handler->get_count_by_catid( $cat_id );
+	$photos_num  = $this->_item_handler->get_count_by_catid( $cat_id );
 
 	echo '<tr>';
 	echo '<td class="'. $oddeven .'" width="100%">';

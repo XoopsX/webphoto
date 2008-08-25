@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.6 2008/08/09 18:19:50 ohwada Exp $
+// $Id: show_photo.php,v 1.7 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
 // typo summry -> summary
 // 2008-07-01 K.OHWADA
@@ -104,87 +106,70 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 {
 	extract( $row ) ;
 
+	list( $cont_size , $cont_duration )
+		= $this->get_cont_size_duration_by_kind( $row );
+
+	list( $flash_video_url , $has_flash_video )
+		= $this->get_file_url_has_kind( $row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
+
+	list( $docomo_video_url , $has_docomo_video )
+		= $this->get_file_url_has_kind( $row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
+
 	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
 
-	$datetime_disp = $this->mysql_datetime_to_str( $photo_datetime );
+	$datetime_disp = $this->mysql_datetime_to_str( $item_datetime );
 
 	$arr = array(
-		'photo_id'       => $photo_id ,
-		'time_cretae'    => $photo_time_create,
-		'time_update'    => $photo_time_update,
-		'cat_id'         => $photo_cat_id ,
-		'uid'            => $photo_uid ,
-		'datetime'       => $photo_datetime,
-		'title'          => $photo_title ,
-		'place'          => $photo_place ,
-		'equipment'      => $photo_equipment ,
-		'file_url'       => $photo_file_url,
-		'file_path'      => $photo_file_path ,
-		'file_name'      => $photo_file_name ,
-		'file_ext'       => $photo_file_ext ,
-		'file_mime'      => $photo_file_mime ,
-		'file_medium'    => $photo_file_medium ,
-		'file_size'      => $photo_file_size ,
-		'cont_url'       => $photo_cont_url,
-		'cont_path'      => $photo_cont_path,
-		'cont_name'      => $photo_cont_name,
-		'cont_ext'       => $photo_cont_ext,
-		'cont_mime'      => $photo_cont_mime,
-		'cont_medium'    => $photo_cont_medium,
-		'cont_ext'       => $photo_cont_ext,
-		'cont_size'      => $photo_cont_size,
-		'cont_width'     => $photo_cont_width,
-		'cont_height'    => $photo_cont_height,
-		'cont_duration'  => $photo_cont_duration,
-		'cont_exif'      => $photo_cont_exif,
-		'middle_width'   => $photo_middle_width,
-		'middle_height'  => $photo_middle_height,
-		'thumb_url'      => $photo_thumb_url,
-		'thumb_path'     => $photo_thumb_path,
-		'thumb_name'     => $photo_thumb_name,
-		'thumb_ext'      => $photo_thumb_ext,
-		'thumb_mime'     => $photo_thumb_mime,
-		'thumb_medium'   => $photo_thumb_medium,
-		'thumb_size'     => $photo_thumb_size,
-		'thumb_width'    => $photo_thumb_width,
-		'thumb_height'   => $photo_thumb_height,
-		'gmap_latitude'  => $photo_gmap_latitude,
-		'gmap_longitude' => $photo_gmap_longitude,
-		'gmap_zoom'      => $photo_gmap_zoom,
-		'status'         => $photo_status ,
-		'hits'           => $photo_hits ,
-		'rating'         => $photo_rating ,
-		'votes'          => $photo_votes ,
-		'comments'       => $photo_comments ,
-		'description'    => $photo_description,
-		'search'         => $photo_search,
+		'photo_id'       => $item_id ,
+		'time_cretae'    => $item_time_create,
+		'time_update'    => $item_time_update,
+		'cat_id'         => $item_cat_id ,
+		'uid'            => $item_uid ,
+		'datetime'       => $item_datetime,
+		'title'          => $item_title ,
+		'place'          => $item_place ,
+		'equipment'      => $item_equipment ,
+		'gmap_latitude'  => $item_gmap_latitude,
+		'gmap_longitude' => $item_gmap_longitude,
+		'gmap_zoom'      => $item_gmap_zoom,
+		'status'         => $item_status ,
+		'hits'           => $item_hits ,
+		'rating'         => $item_rating ,
+		'votes'          => $item_votes ,
+		'comments'       => $item_comments ,
+		'description'    => $item_description,
+		'search'         => $item_search,
 
-		'title_s'        => $this->sanitize( $photo_title ) ,
-		'place_s'        => $this->sanitize( $photo_place ) ,
-		'equipment_s'    => $this->sanitize( $photo_equipment ) ,
-		'file_url_s'     => $this->sanitize( $photo_file_url ),
-		'cont_url_s'     => $this->sanitize( $photo_cont_url ),
-		'thumb_ur_sl'    => $this->sanitize( $photo_thumb_url ),		
-		'uname_s'        => $this->build_show_uname( $photo_uid ),
+		'title_s'        => $this->sanitize( $item_title ) ,
+		'place_s'        => $this->sanitize( $item_place ) ,
+		'equipment_s'    => $this->sanitize( $item_equipment ) ,
+		'uname_s'        => $this->build_show_uname( $item_uid ),
 
-		'time_update_m'       => formatTimestamp( $photo_time_update , 'm' ) ,
+		'time_update_m'       => formatTimestamp( $item_time_update , 'm' ) ,
 		'datetime_disp'       => $datetime_disp ,
 		'datetime_urlencode'  => $this->rawurlencode_uri_encode_str( $datetime_disp ) ,
-		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $photo_place ),
-		'equipment_urlencode' => $this->rawurlencode_uri_encode_str( $photo_equipment ),
+		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $item_place ),
+		'equipment_urlencode' => $this->rawurlencode_uri_encode_str( $item_equipment ),
 		'description_disp'    => $desc_disp ,
 		'summary'             => $summary ,
-		'cont_exif_disp'      => $this->_photo_handler->build_show_cont_exif_disp( $row ) ,
-		'cont_size_disp'      => $this->_utility_class->format_filesize( $photo_cont_size, 1 ) ,
-		'cont_duration_disp'  => $this->format_time( $photo_cont_duration ) ,
+		'cont_exif_disp'      => $this->_item_handler->build_show_exif_disp( $row ) ,
 
 		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
-		'is_owner'  => $this->is_photo_owner( $photo_uid ),
-		'is_video'  => $this->build_show_is_video( $photo_cont_medium ) ,
-		'is_flash_video'  => $this->build_show_is_flash_video( $photo_file_ext ) ,
-		'is_mobile_video' => $this->build_show_is_mobile_video( $photo_cont_ext ) ,
+		'is_owner'  => $this->is_photo_owner( $item_uid ),
+		'is_video'  => $this->is_video_kind( $row['item_kind'] ) ,
 
+		'cont_size'           => $cont_size ,
+		'cont_duration'       => $cont_duration ,
+		'cont_size_disp'      => $this->_utility_class->format_filesize( $cont_size, 1 ) ,
+		'cont_duration_disp'  => $this->format_time( $cont_duration ) ,
+
+		'flash_video_url'     => $flash_video_url ,
+		'flash_video_url_s'   => $this->sanitize( $flash_video_url ),
+		'is_flash_video'      => $has_flash_video ,
+		'docomo_video_url'    => $docomo_video_url ,
+		'docomo_video_url_s'  => $this->sanitize( $docomo_video_url ),
+		'is_mobile_video'     => $has_docomo_video ,
 	);
 
 	$show_desc = false;
@@ -196,10 +181,10 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$arr2 = array();
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_PHOTO_TEXT; $i++ ) 
 	{
-		$name_i       = 'text'.$i;
-		$photo_name_i = 'photo_'.$name_i;
-		$text_i   = $row[ $photo_name_i ];
-		$text_i_s =  $this->sanitize( $text_i );
+		$name_i      = 'text_'.$i;
+		$item_name_i = 'item_'.$name_i;
+		$text_i      = $row[ $item_name_i ];
+		$text_i_s    = $this->sanitize( $text_i );
 
 		if ( $text_i ) {
 			$show_desc = true;
@@ -209,7 +194,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		$arr[ $name_i.'_s' ] = $text_i_s ;
 
 		$arr2[ $i ] = array(
-			'lang'   => $this->get_constant( $photo_name_i ) ,
+			'lang'   => $this->get_constant( $item_name_i ) ,
 			'text'   => $text_i,
 			'text_s' => $text_i_s,
 		);
@@ -236,32 +221,32 @@ function build_photo_show_light( $row, $tag_name_array=null )
 // Get photo's array to assign into template (heavy version)
 function build_photo_show( $row )
 {
-	$tag_name_array = $this->get_tag_name_array_by_photoid( $row['photo_id'] );
+	$tag_name_array = $this->get_tag_name_array_by_photoid( $row['item_id'] );
 	$arr1 = $this->build_photo_show_light( $row, $tag_name_array );
 
 	extract( $row ) ;
 
 	list( $is_newphoto, $is_updatedphoto )
-		= $this->build_show_is_new_updated( $photo_time_update, $photo_status );
+		= $this->build_show_is_new_updated( $item_time_update, $item_status );
 
 	$arr2 = array(
-		'cat_title_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_title', true ),
-		'cat_text1_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text1', true ),
-		'cat_text2_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text2', true ),
-		'cat_text3_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text3', true ),
-		'cat_text4_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text4', true ),
-		'cat_text5_s'      => $this->get_cached_cat_value_by_id( $photo_cat_id, 'cat_text5', true ),
+		'cat_title_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_title', true ),
+		'cat_text1_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text1', true ),
+		'cat_text2_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text2', true ),
+		'cat_text3_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text3', true ),
+		'cat_text4_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text4', true ),
+		'cat_text5_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text5', true ),
 
-		'info_votes'       => $this->build_show_info_vote( $photo_rating, $photo_votes ) ,
-		'rank'             => $this->build_show_rank( $photo_rating ) ,
-		'can_edit'         => $this->has_editable_by_uid( $photo_uid ) ,
+		'info_votes'       => $this->build_show_info_vote( $item_rating, $item_votes ) ,
+		'rank'             => $this->build_show_rank( $item_rating ) ,
+		'can_edit'         => $this->has_editable_by_uid( $item_uid ) ,
 
 		'is_newphoto'      => $is_newphoto ,
 		'is_updatedphoto'  => $is_updatedphoto ,
-		'is_popularphoto'  => $this->build_show_is_popularphoto( $photo_hits ),
-		'taf_target_uri'   => $this->build_show_taf_target_uri( $photo_id ),
-		'taf_mailto'       => $this->build_show_taf_mailto( $photo_id ) ,
-		'info_morephotos'  => $this->build_show_info_morephotos( $photo_uid ),
+		'is_popularphoto'  => $this->build_show_is_popularphoto( $item_hits ),
+		'taf_target_uri'   => $this->build_show_taf_target_uri( $item_id ),
+		'taf_mailto'       => $this->build_show_taf_mailto( $item_id ) ,
+		'info_morephotos'  => $this->build_show_info_morephotos( $item_uid ),
 
 		'window_x'         => $arr1['photo_width']  + $this->_WINDOW_MERGIN ,
 		'window_y'         => $arr1['photo_height'] + $this->_WINDOW_MERGIN ,
@@ -272,7 +257,7 @@ function build_photo_show( $row )
 
 function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
 {
-	$desc = $this->_photo_handler->build_show_description_disp( $row );
+	$desc = $this->_item_handler->build_show_description_disp( $row );
 	$summary= $this->_multibyte_class->build_summary( 
 		$desc, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL, $this->_is_japanese );
 
@@ -362,30 +347,6 @@ function build_show_taf_mailto( $photo_id )
 	return $str;
 }
 
-function build_show_is_owner( $uid )
-{
-	if ( $this->_xoops_uid == $uid || $this->_is_module_admin ) {
-		return true;
-	}
-	return false;
-}
-
-function build_show_is_video( $medium )
-{
-	if ( $medium == $this->_MEDIUM_VIDEO ) {
-		return true ;
-	}
-	return false;
-}
-
-function build_show_is_flash_video( $ext )
-{
-	if ( $ext == $this->_EXT_FLASH_VIDEO ) {
-		return true ;
-	}
-	return false ;
-}
-
 function build_show_is_mobile_video( $ext )
 {
 	if ( in_array( $ext, $this->_EXT_MOBILE_VIDEO_ARRAY ) ) {
@@ -405,69 +366,99 @@ function format_time( $time )
 //---------------------------------------------------------
 function build_show_imgsrc( $row )
 {
-	extract( $row ) ;
-
-	$ahref_file   = '';
-	$imgsrc_photo = '';
-	$imgsrc_thumb = '';
+	$ahref_file    = '';
+	$imgsrc_photo  = '';
+	$imgsrc_thumb  = '';
+	$imgsrc_middle = '';
 	$is_normal_image = false ;
 
-	$photo_file_url_s  = $this->sanitize( $photo_file_url );
-	$photo_cont_url_s  = $this->sanitize( $photo_cont_url );
-	$photo_thumb_url_s = $this->sanitize( $photo_thumb_url );
-	$photo_width       = intval($photo_cont_width);
-	$photo_height      = intval($photo_cont_height);
-	$middle_width      = intval($photo_middle_width);
-	$middle_height     = intval($photo_middle_height);
-	$thumb_width       = intval($photo_thumb_width);
-	$thumb_height      = intval($photo_thumb_height);
+	$is_image_kind = $this->is_image_kind( $row['item_kind'] );
 
-// normal exts
-	if ( $photo_cont_url_s && $photo_thumb_url_s ) {
-		$ahref_file   = $photo_cont_url_s;
-		$imgsrc_photo = $photo_cont_url_s;
-		$imgsrc_thumb = $photo_thumb_url_s;
+	list( $cont_url, $cont_width, $cont_height )
+		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_CONT );
 
-// image without thumbnail
-	} elseif ( $photo_cont_url_s && $this->is_normal_ext( $photo_cont_ext ) ) {
-		$ahref_file   = $photo_cont_url_s;
-		$imgsrc_photo = $photo_cont_url_s;
-		$imgsrc_thumb = $photo_cont_url_s;
-		list( $thumb_width, $thumb_height )
-			= $this->_image_class->adjust_thumb_size( $photo_width, $photo_height );
+	list( $thumb_url, $thumb_width, $thumb_height )
+		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
-// icon gif (not normal exts)
-	} elseif ( $photo_thumb_url_s ) {
-		$ahref_file   = $photo_file_url_s;
-		$imgsrc_photo = $photo_thumb_url_s;
-		$imgsrc_thumb = $photo_thumb_url_s;
+	list( $middle_url, $middle_width, $middle_height )
+		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_MIDDLE );
 
-// no image without thumbnail
-	} elseif ( $photo_cont_url_s ) {
-		$ahref_file   = $photo_cont_url_s;
-		$imgsrc_photo = $this->_URL_DEFAULT_IMAGE;
-		$imgsrc_thumb = $this->_URL_DEFAULT_IMAGE;
-		$thumb_width  = $this->_DEFAULT_IMAGE_WIDTH;
-		$thumb_height = $this->_DEFAULT_IMAGE_HEIGHT;
+	$cont_url_s   = $this->sanitize( $cont_url );
+	$thumb_url_s  = $this->sanitize( $thumb_url );
+	$middle_url_s = $this->sanitize( $middle_url );
+
+// photo image
+	if ( $cont_url_s && $is_image_kind ) {
+		$imgsrc_photo = $cont_url_s;
+
+	} elseif ( $middle_url_s ) {
+		$imgsrc_photo = $middle_url_s;
+
+	} elseif ( $thumb_url_s ) {
+		$imgsrc_photo = $thumb_url_s;
 
 	} else {
-		$ahref_file   = $photo_file_url_s;
 		$imgsrc_photo = $this->_URL_DEFAULT_IMAGE;
+	}
+
+// thumb image
+	if ( $thumb_url_s ) {
+		$imgsrc_thumb = $thumb_url_s;
+
+	} elseif ( $cont_url_s && $is_image_kind ) {
+		$imgsrc_thumb = $cont_url_s;
+		$thumb_width  = $cont_width;
+		$thumb_height = $cont_height;
+
+	} else {
 		$imgsrc_thumb = $this->_URL_PIXEL_IMAGE;
 		$thumb_width  = 1;
 		$thumb_height = 1;
 	}
 
-	if ( $photo_cont_url_s && $this->is_normal_ext($photo_cont_ext) ) {
+	list( $thumb_width, $thumb_height )
+		= $this->_image_class->adjust_thumb_size( $thumb_width, $thumb_height );
+
+// middle image
+	if ( $middle_url_s ) {
+		$imgsrc_middle = $middle_url_s;
+
+	} elseif ( $cont_url_s && $is_image_kind ) {
+		$imgsrc_middle = $cont_url_s;
+		$middle_width  = $cont_width;
+		$middle_height = $cont_height;
+
+	} elseif ( $thumb_url_s ) {
+		$imgsrc_middle = $thumb_url_s;
+		$middle_width  = $thumb_width;
+		$middle_height = $thumb_height;
+
+	} else {
+		$imgsrc_middle = $this->_URL_DEFAULT_IMAGE;
+		$middle_width  = 1;
+		$middle_height = 1;
+	}
+
+	list( $middle_width, $middle_height )
+		= $this->_image_class->adjust_middle_size( $middle_width, $middle_height );
+
+	if ( $cont_url_s && $is_image_kind ) {
 		$is_normal_image = true ;
 	}
 
 	$arr = array(
-		'ahref_file'       => $ahref_file ,
-		'imgsrc_thumb'     => $imgsrc_thumb ,
+		'cont_url'         => $cont_url ,
+		'thumb_url'        => $thumb_url ,
+		'middle_url'       => $middle_url ,
+		'cont_url_s'       => $cont_url_s ,
+		'thumb_url_s'      => $thumb_url_s ,
+		'middle_url_s'     => $middle_url_s ,
+		'ahref_file'       => $cont_url_s ,
 		'imgsrc_photo'     => $imgsrc_photo ,
-		'photo_width'      => $photo_width ,
-		'photo_height'     => $photo_height ,
+		'imgsrc_thumb'     => $imgsrc_thumb ,
+		'imgsrc_middle'    => $imgsrc_middle ,
+		'photo_width'      => $cont_width ,
+		'photo_height'     => $cont_height ,
 		'middle_width'     => $middle_width ,
 		'middle_height'    => $middle_height ,
 		'thumb_width'      => $thumb_width ,
@@ -476,6 +467,53 @@ function build_show_imgsrc( $row )
 	);
 	return $arr;
 
+}
+
+//---------------------------------------------------------
+// file handler
+//---------------------------------------------------------
+function get_cont_size_duration_by_kind( $item_row )
+{
+	$size     = 0 ;
+	$duration = 0 ;
+
+	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( is_array($cont_row) ) {
+		$size     = $cont_row['file_size'] ;
+		$duration = $cont_row['file_duration'] ;
+	}
+	
+	return array( $size, $duration );
+}
+
+function get_file_u_w_h_by_kind( $item_row, $kind )
+{
+	$url    = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	$file_row = $this->get_cached_file_row_by_kind( $item_row, $kind );
+	if ( is_array($file_row) ) {
+		$url    = $file_row['file_url'] ;
+		$width  = $file_row['file_width'] ;
+		$height = $file_row['file_height'] ;
+	}
+
+	return array( $url, $width, $height );
+}
+
+function get_file_url_has_kind( $item_row, $kind )
+{
+	$url = null ;
+	$has = false ;
+
+	$file_row = $this->get_cached_file_row_by_kind( $item_row, $kind );
+	if ( is_array($file_row) ) {
+		$url = $file_row['file_url'] ;
+		$has = true ;
+	}
+
+	return array( $url, $has );
 }
 
 //---------------------------------------------------------

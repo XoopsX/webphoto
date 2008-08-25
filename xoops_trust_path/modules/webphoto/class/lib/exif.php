@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.5 2008/08/09 22:42:31 ohwada Exp $
+// $Id: exif.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// parse_gps() -> parse_gps_docomo()
 // 2008-08-01 K.OHWADA
 // docomo gps
 // 2008-07-16 K.OHWADA
@@ -18,6 +20,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_lib_exif
+// http://park2.wakwak.com/~tsuruzoh/Computer/Digicams/exif.html
 //=========================================================
 class webphoto_lib_exif
 {
@@ -61,7 +64,7 @@ function read_file( $filename )
 
 	list( $datetime, $datetime_gnu )   = $this->parse_datetime( $exif );
 	list( $maker, $model, $equipment ) = $this->parse_model( $exif );
-	list( $lat_lon_arr, $lat, $lon )   = $this->parse_gps( $exif );
+	list( $gps_docomo, $lat, $lon )   = $this->parse_gps_docomo( $exif );
 	$all_data = $this->parse_all_data( $exif );
 
 	$arr = array(
@@ -72,7 +75,7 @@ function read_file( $filename )
 		'equipment'    => $equipment,
 		'latitude'     => $lat,
 		'longitude'    => $lon,
-		'lat_lon'      => $lat_lon_arr,
+		'gps_docomo'   => $gps_docomo,
 		'all_data'     => $all_data,
 	);
 	return $arr;
@@ -127,44 +130,6 @@ function parse_model( $exif )
 	return array($maker, $model, $equipment);
 }
 
-function parse_gps( $exif )
-{
-// docomo
-	$lat_arr = null;
-	$lon_arr = null;
-	$lat     = '';
-	$lon     = '';
-
-	if ( isset( $exif['GPS'] ) ) {
-		if ( isset( $exif['GPS']['GPSLatitude'] ) ) {
-			$lat_arr = $exif['GPS']['GPSLatitude'] ;
-			$lat     = $this->parse_gps_array( $lat_arr );
-		}
-		if ( isset( $exif['GPS']['GPSLongitude'] ) ) {
-			$lon_arr = $exif['GPS']['GPSLongitude'] ;
-			$lon     = $this->parse_gps_array( $lon_arr );
-		}
-	}
-
-	return array( array($lat_arr, $lon_arr), $lat, $lon);
-}
-
-function parse_gps_array( $arr )
-{
-// docomo
-	$fig = 0;
-	if ( isset( $arr[0] ) ) {
-		$fig += floatval( $arr[0] );
-	}
-	if ( isset( $arr[1] ) ) {
-		$fig += floatval( $arr[1] ) / 60 ;
-	}
-	if ( isset( $arr[2] ) ) {
-		$fig += floatval( $arr[2] ) / 3600000 ;
-	}
-	return $fig;
-}
-
 function parse_all_data( $exif )
 {
 // set all data when has IFD0
@@ -206,6 +171,63 @@ function print_info( $filename )
 	$exif = exif_read_data( $filename, 0, true );
 
 	echo $this->parse_array( $exif );
+}
+
+//---------------------------------------------------------
+// GPSLatitudeRef: N
+// GPSLatitude.0: 35/1
+// GPSLatitude.1: 00/1
+// GPSLatitude.2: 35600/1000
+// GPSLongitudeRef: E
+// GPSLongitude.0: 135/1
+// GPSLongitude.1: 41/1
+// GPSLongitude.2: 35600/1000
+//---------------------------------------------------------
+function parse_gps_docomo( $exif )
+{
+	$gps      = null;
+	$lat      = null;
+	$lon      = null;
+	$lat_sign = +1;
+	$lon_sign = +1;
+
+	if ( isset( $exif['GPS'] ) ) {
+		$gps = $exif['GPS'];
+		if ( isset( $gps['GPSLatitudeRef'] ) ) {
+			if ( $gps['GPSLatitudeRef'] == 'S' ) {
+				$lat_sign = -1;
+			}
+		}
+		if ( isset( $gps['GPSLongitudeRef'] ) ) {
+			if ( $gps['GPSLongitudeRef'] == 'W' ) {
+				$lon_sign = -1;
+			}
+		}
+		if ( isset( $gps['GPSLatitude'] ) ) {
+			$lat = $this->parse_gps_docomo_array( $lat_sign, $gps['GPSLatitude'] );
+		}
+		if ( isset( $gps['GPSLongitude'] ) ) {
+			$lon = $this->parse_gps_docomo_array( $lon_sign, $gps['GPSLongitude'] );
+		}
+	}
+
+	return array( $gps, $lat, $lon );
+}
+
+function parse_gps_docomo_array( $sign, $arr )
+{
+	$fig = 0;
+	if ( isset( $arr[0] ) ) {
+		$fig += floatval( $arr[0] );
+	}
+	if ( isset( $arr[1] ) ) {
+		$fig += floatval( $arr[1] ) / 60 ;
+	}
+	if ( isset( $arr[2] ) ) {
+		$fig += floatval( $arr[2] ) / 3600000 ;
+	}
+	$fig = $sign * $fig;
+	return $fig;
 }
 
 //---------------------------------------------------------

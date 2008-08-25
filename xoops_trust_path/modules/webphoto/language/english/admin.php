@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: admin.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -107,8 +107,10 @@ define( "_AM_WEBPHOTO_GD2SUCCESS" , "Success!<br />Perhaps, you can use GD2 (tru
 
 define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "Photos & Thumbs Link Check" ) ;
 define( "_AM_WEBPHOTO_NOWCHECKING" , "Now, checking ." ) ;
-define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "a main photo (%s) is not readable." ) ;
-define( "_AM_WEBPHOTO_FMT_THUMBNOTREADABLE" , "a thumbnail (%s) is not readable." ) ;
+
+//define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "a main photo (%s) is not readable." ) ;
+//define( "_AM_WEBPHOTO_FMT_THUMBNOTREADABLE" , "a thumbnail (%s) is not readable." ) ;
+
 define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADPHOTOS" , "%s dead photo files have been found." ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADTHUMBS" , "%s thumbnails should be rebuilt." ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFREMOVEDTMPS" , "%s garbage files have been removed." ) ;
@@ -379,6 +381,20 @@ define("_AM_WEBPHOTO_ERR_MAILLOG_NO_ATTACH" ,  "You must select the attached fil
 
 // mimetype
 define("_AM_WEBPHOTO_MIME_ADD_NEW" ,  "Add New MIME Type" ) ;
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+// index
+define("_AM_WEBPHOTO_MUST_UPDATE" , "You MUST update" ) ;
+define("_AM_WEBPHOTO_TITLE_BIN" , "Command Management" ) ;
+define("_AM_WEBPHOTO_TEST_BIN" ,  "Test Execute" ) ;
+
+// redothumbs
+define("_AM_WEBPHOTO_ERR_GET_IMAGE_SIZE", "cannot get image size" ) ;
+
+// checktables
+define("_AM_WEBPHOTO_FMT_NOT_READABLE" , "%s (%s) is not readable." ) ;
 
 // === define end ===
 }

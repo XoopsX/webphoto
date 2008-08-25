@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_sort.php,v 1.1 2008/06/21 12:22:23 ohwada Exp $
+// $Id: photo_sort.php,v 1.2 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -89,17 +95,17 @@ function mode_to_sort( $mode )
 function photo_sort_array_default()
 {
 	$arr = array(
-		'ida'     => array( 'photo_id ASC' ,           $this->get_constant('SORT_IDA') ) ,
-		'idd'     => array( 'photo_id DESC' ,          $this->get_constant('SORT_IDD') ) ,
-		'titlea'  => array( 'photo_title ASC' ,        $this->get_constant('SORT_TITLEA') ) ,
-		'titled'  => array( 'photo_title DESC' ,       $this->get_constant('SORT_TITLED') ) ,
-		'datea'   => array( 'photo_time_update ASC' ,  $this->get_constant('SORT_DATEA') ) ,
-		'dated'   => array( 'photo_time_update DESC' , $this->get_constant('SORT_DATED') ) ,
-		'hitsa'   => array( 'photo_hits ASC' ,         $this->get_constant('SORT_HITSA') ) ,
-		'hitsd'   => array( 'photo_hits DESC' ,        $this->get_constant('SORT_HITSD') ) ,
-		'ratinga' => array( 'photo_rating ASC' ,       $this->get_constant('SORT_RATINGA') ) ,
-		'ratingd' => array( 'photo_rating DESC' ,      $this->get_constant('SORT_RATINGD') ) ,
-		'random'  => array( $this->_ORDERBY_RANDOM ,   $this->get_constant('SORT_RANDOM') ) ,
+		'ida'     => array( 'item_id ASC' ,           $this->get_constant('SORT_IDA') ) ,
+		'idd'     => array( 'item_id DESC' ,          $this->get_constant('SORT_IDD') ) ,
+		'titlea'  => array( 'item_title ASC' ,        $this->get_constant('SORT_TITLEA') ) ,
+		'titled'  => array( 'item_title DESC' ,       $this->get_constant('SORT_TITLED') ) ,
+		'datea'   => array( 'item_time_update ASC' ,  $this->get_constant('SORT_DATEA') ) ,
+		'dated'   => array( 'item_time_update DESC' , $this->get_constant('SORT_DATED') ) ,
+		'hitsa'   => array( 'item_hits ASC' ,         $this->get_constant('SORT_HITSA') ) ,
+		'hitsd'   => array( 'item_hits DESC' ,        $this->get_constant('SORT_HITSD') ) ,
+		'ratinga' => array( 'item_rating ASC' ,       $this->get_constant('SORT_RATINGA') ) ,
+		'ratingd' => array( 'item_rating DESC' ,      $this->get_constant('SORT_RATINGD') ) ,
+		'random'  => array( $this->_ORDERBY_RANDOM ,  $this->get_constant('SORT_RANDOM') ) ,
 	) ;
 	return $arr;
 }
@@ -115,8 +121,8 @@ function sort_to_orderby( $sort )
 {
 	$orderby = $this->get_photo_sort( $sort, 0 );
 
-	if (($orderby != 'photo_id DESC')&&( $orderby != 'rand()')) {
-		$orderby = $orderby.', photo_id DESC';
+	if (($orderby != 'item_id DESC')&&( $orderby != 'rand()')) {
+		$orderby = $orderby.', item_id DESC';
 	}
 	return $orderby;
 }
@@ -153,6 +159,14 @@ function set_photo_sort_default( $val )
 function get_random_orderby()
 {
 	return $this->_ORDERBY_RANDOM;
+}
+
+//---------------------------------------------------------
+// join sql
+//---------------------------------------------------------
+function convert_orderby_join( $str )
+{
+	return str_replace( 'item_', 'i.item_', $str );
 }
 
 //---------------------------------------------------------

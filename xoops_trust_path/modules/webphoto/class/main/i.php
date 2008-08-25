@@ -1,10 +1,16 @@
 <?php
-// $Id: i.php,v 1.2 2008/08/09 19:28:05 ohwada Exp $
+// $Id: i.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,6 +23,7 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_retrieve_class;
 	var $_pagenavi_class;
 	var $_multibyte_class;
+	var $_image_create_class;
 
 	var $_xoops_sitename = null;
 
@@ -25,10 +32,15 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_CHARSET        = _CHARSET ;
 	var $_CHARSET_OUTPUT = _CHARSET ;
 
+	var $_LATEST_LIMIT   = 1;
 	var $_RANDOM_LIMIT   = 1;
 	var $_RAMDOM_ORDERBY = 'rand()';
 	var $_LIST_LIMIT     = 10;
-	var $_LIST_ORDERBY   = 'photo_time_update DESC, photo_id DESC';
+	var $_LIST_ORDERBY   = 'item_time_update DESC, item_id DESC';
+	var $_NAVI_WINDOWS   = 4;
+
+	var $_MAX_MOBILE_WIDTH  = 480;
+	var $_MAX_MOBILE_HEIGHT = 480;
 
 //---------------------------------------------------------
 // constructor
@@ -41,6 +53,7 @@ function webphoto_main_i( $dirname , $trust_dirname )
 	$this->_retrieve_class  =& webphoto_mail_retrieve::getInstance( $dirname , $trust_dirname );
 	$this->_pagenavi_class  =& webphoto_lib_pagenavi::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 
 	$this->_set_charset_output();
 	$this->_set_mobile_array();
@@ -194,7 +207,7 @@ function _build_retry()
 
 function _build_goto()
 {
-	$url = $this->_MODULE_URL . '/i.php';
+	$url = $this->_MODULE_URL . '/i.php?op=latest';
 	$text  = "<br><br>\n";
 	$text .= '<a href="'. $url .'">';
 	$text .= $this->sanitize( $this->_MODULE_NAME ) ;
@@ -216,14 +229,15 @@ function _show_exec()
 {
 	$id   = $this->_post_class->get_get_int('id');
 	$size = $this->_post_class->get_get_int('s');
-	$page = $this->_post_class->get_get_int('page',1);
+	$page = $this->_post_class->get_get_int('page', 1);
+	$op   = $this->_post_class->get_get_text('op');
 
 	$show_photo = false;
 	$photo      = null;
 
 // if noto specify page
 	if ( $page <= 1 ) {
-		$photo = $this->_get_photo( $id );
+		$photo = $this->_get_photo( $op, $id );
 	}
 
 	$pagetitle = $this->_MODULE_NAME ;
@@ -242,6 +256,7 @@ function _show_exec()
 		'show_photo'    => $show_photo ,
 		'show_post'     => $this->_check_perm() ,
 		'token'         => $this->get_token() ,
+		'mobile_width'  => $this->_MAX_MOBILE_WIDTH ,
 
 		'sitename_conv'    => $this->conv( $this->sanitize( $this->_xoops_sitename ) ) ,
 		'pagetitle_conv'   => $this->conv( $this->sanitize( $pagetitle ) ) ,
@@ -254,27 +269,35 @@ function _show_exec()
 	return $arr;
 }
 
-function _get_photo( $id )
+function _get_photo( $op, $id )
 {
-	$row   = null;
-	$photo = null;
+	$item_row = null;
+	$photo    = null;
 
-// get if specify
-	if ( $id > 0 ) {
-		$row = $this->_photo_handler->get_row_by_id( $id );
+// latest
+	if ( $op == 'latest' ) {
+		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby(
+			$this->_LIST_ORDERBY, $this->_LATEST_LIMIT );
+		if ( isset($item_rows[0]) ) {
+			$item_row = $item_rows[0] ;
+		}
+
+// specified
+	} elseif ( $id > 0 ) {
+		$item_row = $this->_item_handler->get_row_by_id( $id );
 	}
 
-// get random if not specify 
-	if ( !is_array($row) ) {
-		$rows = $this->_photo_handler->get_rows_public_imode_by_orderby( 
+// random
+	if ( !is_array($item_row) ) {
+		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby( 
 			$this->_RAMDOM_ORDERBY, $this->_RANDOM_LIMIT );
-		if ( isset($rows[0]) ) {
-			$row = $rows[0] ;
+		if ( isset($item_rows[0]) ) {
+			$item_row = $item_rows[0] ;
 		}
 	}
 
-	if ( is_array($row) ) {
-		$photo = $this->build_show_conv( $row );
+	if ( is_array($item_row) ) {
+		$photo = $this->build_show_conv( $item_row );
 	}
 
 	return $photo;
@@ -284,24 +307,25 @@ function _get_photo_list( $page )
 {
 	$this->_pagenavi_class->set_page( $page );
 	$start = $this->_pagenavi_class->calc_start( $page, $this->_LIST_LIMIT );
-	$rows   = $this->_photo_handler->get_rows_public_imode_by_orderby(
+	$item_rows  = $this->_item_handler->get_rows_public_imode_by_orderby(
 		$this->_LIST_ORDERBY, $this->_LIST_LIMIT, $start );
-	return $this->build_show_conv_from_rows( $rows );
+	return $this->build_show_conv_from_rows( $item_rows );
 }
 
 function _build_navi( $page )
 {
 	$url = $this->_MODULE_URL .'/i.php?';
-	$total = $this->_photo_handler->get_count_public_imode();
-	return $this->_pagenavi_class->build( $url, $page, $this->_LIST_LIMIT, $total );
+	$total = $this->_item_handler->get_count_public_imode();
+	return $this->_pagenavi_class->build( 
+		$url, $page, $this->_LIST_LIMIT, $total, $this->_NAVI_WINDOWS );
 }
 
 //---------------------------------------------------------
 // build show
 //---------------------------------------------------------
-function build_show_conv( $row )
+function build_show_conv( $item_row )
 {
-	$photo = $this->build_photo_show( $row );
+	$photo = $this->build_photo_show( $item_row );
 
 	$photo['title_conv']       = $this->conv( $photo['title_s'] ) ;
 	$photo['place_conv']       = $this->conv( $photo['place_s'] ) ;
@@ -313,11 +337,11 @@ function build_show_conv( $row )
 	return $photo;
 }
 
-function build_show_conv_from_rows( $rows )
+function build_show_conv_from_rows( $item_rows )
 {
 	$arr = array();
-	foreach ( $rows as $row ) {
-		$arr[] = $this->build_show_conv( $row ) ;
+	foreach ( $item_rows as $item_row ) {
+		$arr[] = $this->build_show_conv( $item_row ) ;
 	}
 	return $arr;
 }

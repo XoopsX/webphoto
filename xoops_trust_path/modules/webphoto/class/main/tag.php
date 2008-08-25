@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: tag.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used set_mode()
 // decode_tag() -> decode_uri_str()
@@ -70,7 +72,7 @@ function list_get_photo_list()
 
 	$this->_list_rows = $list_rows;
 
-	$orderby = str_replace( 'photo_', 'p.photo_', $this->_PHOTO_LIST_ORDER );
+	$orderby = $this->convert_orderby_join( $this->_PHOTO_LIST_ORDER );
 
 	$i   = 0;
 	$arr = array();
@@ -82,7 +84,7 @@ function list_get_photo_list()
 		$id_array = $this->_tag_class->get_photo_id_array_public_latest_by_tag_orderby(
 			$tag_name, $orderby, $this->_PHOTO_LIST_LIMIT );
 		if ( isset( $id_array[0] ) ) {
-			$photo_row = $this->_photo_handler->get_row_by_id( $id_array[0] );
+			$photo_row = $this->_item_handler->get_row_by_id( $id_array[0] );
 		}
 
 		$arr[] = $this->list_build_photo_array(
@@ -131,7 +133,7 @@ function list_build_detail( $tag_in )
 	$rows    = null ;
 	$limit   = $this->_MAX_PHOTOS;
 	$start   = $this->pagenavi_calc_start( $limit );
-	$orderby = str_replace( 'photo_', 'p.photo_', $this->get_orderby_by_post() );
+	$orderby = $this->convert_orderby_join( $this->get_orderby_by_post() );
 
 	$tag_name = $this->decode_uri_str( $tag_in );
 
@@ -145,7 +147,7 @@ function list_build_detail( $tag_in )
 			$tag_name, $orderby, $limit, $start );
 
 		if ( is_array($id_array) && count($id_array) ) {
-			$rows = $this->_photo_handler->get_rows_from_id_array( $id_array );
+			$rows = $this->_item_handler->get_rows_from_id_array( $id_array );
 		}
 	}
 

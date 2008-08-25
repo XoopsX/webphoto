@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: checktables.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
 // added webphoto_user_handler webphoto_maillog_handler
 // 2008-07-01 K.OHWADA
@@ -86,12 +88,20 @@ function _print_check()
 //
 	echo "<h4>"._AM_WEBPHOTO_H4_TABLE."</h4>\n" ;
 
-	echo _WEBPHOTO_PHOTO_TABLE.": ";
-	echo $this->_photo_handler->get_table();
+	echo _WEBPHOTO_ITEM_TABLE.": ";
+	echo $this->_item_handler->get_table();
 	echo " &nbsp; " ;
 
 	echo _AM_WEBPHOTO_NUMBEROFPHOTOS.": ";
-	echo $this->_photo_handler->get_count_all();
+	echo $this->_item_handler->get_count_all();
+	echo "<br /><br />\n" ;
+
+	echo _WEBPHOTO_FILE_TABLE.": ";
+	echo $this->_file_handler->get_table();
+	echo " &nbsp; " ;
+
+	echo _AM_WEBPHOTO_NUMBEROFPHOTOS.": ";
+	echo $this->_file_handler->get_count_all();
 	echo "<br /><br />\n" ;
 
 	echo _WEBPHOTO_CAT_TABLE.": ";
@@ -178,60 +188,52 @@ function _print_check()
 // CONSISTEMCY CHECK
 //
 	echo "<h4>"._AM_WEBPHOTO_H4_PHOTOLINK."</h4>\n" ;
-
-	$dead_photos = 0 ;
-	$dead_thumbs = 0 ;
 	echo _AM_WEBPHOTO_NOWCHECKING ;
 
-	$rows = $this->_photo_handler->get_rows_all_asc();
-	foreach ( $rows as $row )
+	$dead = array() ;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
+		$dead[ $i ] = 0 ;
+	}
+
+	$item_rows = $this->_item_handler->get_rows_all_asc();
+	foreach ( $item_rows as $item_row )
 	{
-		$id         = $row['photo_id'];
-		$ext        = $row['photo_file_ext'];
-		$file_path  = $row['photo_file_path'];
-		$file_ext   = $row['photo_file_ext'];
-		$photo_path = $row['photo_cont_path'];
-		$photo_ext  = $row['photo_cont_ext'];
-		$thumb_path = $row['photo_thumb_path'];
-		$thumb_ext  = $row['photo_thumb_ext'];
+		$item_id  = $item_row['item_id'];
+		$item_ext = $item_row['item_ext'];
 
-		$file_full_path  = XOOPS_ROOT_PATH  . $file_path ;
-		$photo_full_path = XOOPS_ROOT_PATH . $photo_path ;
-		$thumb_full_path = XOOPS_ROOT_PATH . $thumb_path ;
-
-		$admin_url  = $this->_MODULE_URL .'/admin/index.php?fct=photo_table_manage&amp;op=form&amp;id='.$id;
-		$admin_link = '<a href="'. $admin_url .'" target="_blank">'. sprintf("%04d", $id) .'</a> : '."\n";
+		$admin_url  = $this->_MODULE_URL .'/admin/index.php?fct=item_table_manage&amp;op=form&amp;id='.$item_id;
+		$admin_link = '<a href="'. $admin_url .'" target="_blank">'. sprintf("%04d", $item_id) .'</a> : '."\n";
 
 		echo ". " ;
 
-		if ( $file_path && ! is_readable( $file_full_path ) ) {
-			echo "<br />\n";
-			echo $admin_link;
-			printf( _AM_WEBPHOTO_FMT_PHOTONOTREADABLE , $file_full_path ) ;
-			echo "<br />\n";
-			$dead_photos ++ ;
+		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+		{
+			$file_file = null ;
+			$file_row  = $this->get_file_row_by_kind( $item_row, $i );
+			if ( is_array($file_row) ) {
+				$file_file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
+			}
 
-		} elseif ( $photo_path && ! is_readable( $photo_full_path ) ) {
-			echo "<br />\n";
-			echo $admin_link;
-			printf( _AM_WEBPHOTO_FMT_PHOTONOTREADABLE , $photo_full_path ) ;
-			echo "<br />\n";
-			$dead_photos ++ ;
+			if ( $file_file && ! is_readable( $file_file ) ) {
+				$name = $this->get_constant( 'FILE_KIND_'.$i );
+				echo "<br />\n";
+				echo $admin_link;
+				printf( _AM_WEBPHOTO_FMT_NOT_READABLE , $name, $file_file ) ;
+				echo "<br />\n";
+				$dead[ $i ] ++ ;
+			}
 		}
 
-		if ( $thumb_path && ! is_readable( $thumb_full_path ) ) {
-			echo "<br />\n";
-			echo $admin_link;
-			printf( _AM_WEBPHOTO_FMT_THUMBNOTREADABLE , $thumb_full_path ) ;
-			echo "<br />\n";
-			$dead_thumbs ++ ;
-		}
 	}
 
 // show result
-	if( $dead_photos == 0 ) {
+	$dead_photos = $dead[ _C_WEBPHOTO_FILE_KIND_CONT ];
+	$dead_thumbs = $dead[ _C_WEBPHOTO_FILE_KIND_THUMB ];
+
+	if ( $dead_photos == 0 ) {
 		if( ! $cfg_makethumb || $dead_thumbs == 0 ) {
 			$this->_print_green( 'ok' );
+
 		} else {
 			$msg = sprintf( _AM_WEBPHOTO_FMT_NUMBEROFDEADTHUMBS , $dead_thumbs ) ;
 			echo "<br />\n";

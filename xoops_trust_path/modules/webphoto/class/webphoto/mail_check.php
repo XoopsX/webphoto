@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_check.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: mail_check.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// supported i-phone
+//---------------------------------------------------------
 
 //=========================================================
 // class webphoto_mail_check
@@ -37,6 +43,10 @@ class webphoto_mail_check
 		"http://bb.yahoo.co.jp/" ,
 		"http://messenger.msn.co.jp" ,
 	);
+
+// for i-phone
+	var $_ALLOW_BODY_US_ASCII = true;
+	var $_US_ASCII = 'us-ascii';
 
 	var $_FLAG_STRICT       = true;
 
@@ -269,7 +279,7 @@ function check_mail( $param )
 	$param['mail_from'] = $mail_from ;
 	$param['subject']   = $subject ;
 	$param['rotate']    = $rotate ;
-	$param['body']      = $this->proofread_body( $bodies ) ;
+	$param['body']      = $this->proofread_bodies( $bodies ) ;
 	$param['attaches']  = $this->check_attaches( $attaches );
 
 	$this->_result = $param;
@@ -295,7 +305,7 @@ function check_mailto( $mailto )
 function check_mailer( $mailer ) 
 {
 	if ( $mailer && $this->_DENY_MAILER_PREG ){
-		if (preg_match( $this->_DENY_MAILER_PREG, $mreg[2]) ) {
+		if ( preg_match( $this->_DENY_MAILER_PREG, $mailer ) ) {
 			$this->set_reject_msg('not allow mailer : '. $mailer );
 			return false;
 		}
@@ -303,20 +313,28 @@ function check_mailer( $mailer )
 	return true;
 }
 
-function check_charset( $charset ) 
+function check_charset( $charset, $flag_us_ascii=false ) 
 {
 // no check if not detect charset
 	if ( empty($charset) ){
 		return true;
 	}
+
 // no check if not set config
 	if ( !is_array($this->_allowed_charsets) || !count($this->_allowed_charsets) ) {
 		return true;
 	}
+
 // ok if in config
 	if ( in_array( strtolower($charset), $this->_allowed_charsets ) ) {
 		return true;
 	}
+
+// ok if us_ascii
+	if ( $flag_us_ascii && ( strtolower($charset) == $this->_US_ASCII ) ) {
+		return true;
+	}
+
 	$this->set_reject_msg('not allow charset : '. $charset );
 	return false;
 }
@@ -391,13 +409,29 @@ function select_mail_from( $param )
 //---------------------------------------------------------
 function check_bodies( $bodies ) 
 {
-	$text    = $bodies['text'] ;
-	$html    = $bodies['html'] ;
-	$plane   = $bodies['plane'] ;
-	$charset = $bodies['charset'] ;
-	$type    = $bodies['type'] ;
+	if ( !is_array($bodies) || !count($bodies) ) {
+		return true;
+	}
 
-	if ( ! $this->check_charset( $charset ) ) {
+	foreach ( $bodies as $body) {
+		$ret = $this->check_single_body( $body );
+		if ( !$ret ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function check_single_body( $body ) 
+{
+	$text    = $body['text'] ;
+	$html    = $body['html'] ;
+	$plane   = $body['plane'] ;
+	$charset = $body['charset'] ;
+	$type    = $body['type'] ;
+
+	if ( ! $this->check_charset( $charset, $this->_ALLOW_BODY_US_ASCII ) ) {
 		return false;
 	}
 
@@ -418,7 +452,7 @@ function check_bodies( $bodies )
 
 function check_body_text( $text ) 
 {
-	if ( $text && isset( $this->_DENY_BODY_PREG ) ) {
+	if ( $text && isset( $this->_DENY_BODY_PREG ) && $this->_DENY_BODY_PREG ) {
 		if ( preg_match( $this->_DENY_BODY_PREG, $text )) {
 			$msg  = 'not allow word in body';
 			$msg .= $this->shorten_text( $text, $this->_BODY_REJECT_MAXBYTE );
@@ -440,12 +474,26 @@ function shorten_text( $text, $max )
 //---------------------------------------------------------
 // proofread body
 //---------------------------------------------------------
-function proofread_body( $bodies ) 
+function proofread_bodies( $bodies ) 
 {
-	if ( $bodies['plane'] ) {
-		$text = $bodies['plane'];
+	if ( !is_array($bodies) || !count($bodies) ) {
+		return null;
+	}
+
+	$str = '';
+	foreach ( $bodies as $body) {
+		$str .= $this->proofread_single_body( $body ) ;
+	}
+
+	return $str;
+}
+
+function proofread_single_body( $body ) 
+{
+	if ( $body['plane'] ) {
+		$text = $body['plane'];
 	} else {
-		$text = $bodies['text'] ;
+		$text = $body['text'] ;
 	}
 
 	$text = $this->replace_return_code( $text );

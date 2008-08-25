@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.6 2008/08/08 04:36:09 ohwada Exp $
+// $Id: blocks.php,v 1.7 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// table_photo -> table_item
 // 2008-08-06 K.OHWADA
 // added cache_time
 // 2008-08-05 K.OHWADA
@@ -28,7 +30,7 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 
 	var $_cfg_use_popbox   = false;
 	var $_cfg_use_pathinfo = false;
-	var $_normal_exts      = null;
+	var $_cfg_thumb_width  = 0 ;
 
 	var $_URL_DEFUALT_ICON;
 	var $_URL_PIXEL_GIF;
@@ -47,8 +49,6 @@ function webphoto_inc_blocks()
 	$this->webphoto_inc_handler();
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-
-	$this->_normal_exts = explode('|', _C_WEBPHOTO_IMAGE_EXTS);
 
 	$this->_CATLIMIT_OPTIONS = array(
 		1 => _YES ,
@@ -211,24 +211,26 @@ function _build_block( $mode , $options )
 	$count = 1 ;
 
 	$block = array() ;
-	$block['dirname']      = $this->_DIRNAME ;
-	$block['cols']         = $cols ;
-	$block['use_pathinfo'] = $this->_cfg_use_pathinfo ;
+	$block['dirname']         = $this->_DIRNAME ;
+	$block['cols']            = $cols ;
+	$block['use_pathinfo']    = $this->_cfg_use_pathinfo ;
+	$block['cfg_thumb_width'] = $this->_cfg_thumb_width ;
 
-	$rows = $this->_get_photo_rows_top_common( $mode , $options );
-	if ( !is_array($rows) || !count($rows) ) {
+	$item_rows = $this->_get_item_rows_top_common( $mode , $options );
+	if ( !is_array($item_rows) || !count($item_rows) ) {
 		$block['photo']     = null ;
 		$block['photo_num'] = 0 ;
 		return $block ; 
 	}
 
-	foreach ( $rows as $row )
+	foreach ( $item_rows as $item_row )
 	{
-		$arr = array_merge( $row, $this->_build_imgsrc( $row ) );
+		$arr = array_merge( $item_row, $this->_build_imgsrc( $item_row ) );
 
-		$arr['title_s']       = $this->sanitize( $row['photo_title'] ) ;
-		$arr['title_short_s'] = $this->_build_short_title( $row['photo_title'], $title_max_length ) ;
-		$arr['hits_suffix']   = $this->_build_hits_suffix( $row['photo_hits'] ) ;
+		$arr['photo_id']      = $item_row['item_id'] ;
+		$arr['title_s']       = $this->sanitize( $item_row['item_title'] ) ;
+		$arr['title_short_s'] = $this->_build_short_title( $item_row['item_title'], $title_max_length ) ;
+		$arr['hits_suffix']   = $this->_build_hits_suffix( $item_row['item_hits'] ) ;
 
 		$block['photo'][ $count ++ ] = $arr ;
 	}
@@ -349,52 +351,61 @@ function _get_option_cols( $options, $num )
 	return $val;
 }
 
-function _build_imgsrc( $row )
+function _build_imgsrc( $item_row )
 {
-	extract( $row ) ;
-
 	$ahref_file   = '';
 	$imgsrc_photo = '';
 	$imgsrc_thumb = '';
 	$is_normal_image = false ;
 
-	$photo_file_url_s  = $this->sanitize( $photo_file_url );
-	$photo_cont_url_s  = $this->sanitize( $photo_cont_url );
-	$photo_thumb_url_s = $this->sanitize( $photo_thumb_url );
-	$photo_width       = intval($photo_cont_width);
-	$photo_height      = intval($photo_cont_height);
-	$middle_width      = intval($photo_middle_width);
-	$middle_height     = intval($photo_middle_height);
-	$thumb_width       = intval($photo_thumb_width);
-	$thumb_height      = intval($photo_thumb_height);
+	$cont_url     = null;
+	$cont_width   = 0;
+	$cont_height  = 0;
+	$thumb_url    = null;
+	$thumb_width  = 0;
+	$thumb_height = 0;
+
+	$item_kind = $item_row['item_kind'];
+
+	$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+	if ( is_array($cont_row) ) {
+		$cont_url    = $cont_row['file_url'];
+		$cont_width  = $cont_row['file_width'];
+		$cont_height = $cont_row['file_height'];
+	}
+
+	if ( is_array($thumb_row) ) {
+		$thumb_url    = $thumb_row['file_url'];
+		$thumb_width  = $thumb_row['file_width'];
+		$thumb_height = $thumb_row['file_height'];
+	}
+
+	$cont_url_s  = $this->sanitize( $cont_url );
+	$thumb_url_s = $this->sanitize( $thumb_url );
 
 // normal exts
-	if ( $photo_cont_url_s && $photo_thumb_url_s ) {
-		$ahref_file   = $photo_cont_url_s;
-		$imgsrc_photo = $photo_cont_url_s;
-		$imgsrc_thumb = $photo_thumb_url_s;
+	if ( $cont_url_s && $thumb_url_s ) {
+		$ahref_file   = $cont_url_s;
+		$imgsrc_photo = $cont_url_s;
+		$imgsrc_thumb = $thumb_url_s;
 
 // no thumbnail
-	} elseif ( $photo_cont_url_s ) {
-		$ahref_file   = $photo_cont_url_s;
-		$imgsrc_photo = $photo_cont_url_s;
-		$imgsrc_thumb = $photo_cont_url_s;
-
-// icon gif (not normal exts)
-	} elseif ( $photo_thumb_url_s ) {
-		$ahref_file   = $photo_file_url_s;
-		$imgsrc_photo = $photo_thumb_url_s;
-		$imgsrc_thumb = $photo_thumb_url_s;
+	} elseif ( $cont_url_s ) {
+		$ahref_file   = $cont_url_s;
+		$imgsrc_photo = $cont_url_s;
+		$imgsrc_thumb = $cont_url_s;
 
 	} else {
-		$ahref_file   = $photo_file_url_s;
+		$ahref_file   = $cont_url_s;
 		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
 		$imgsrc_thumb = $this->_URL_PIXEL_GIF;
 		$thumb_width  = 1;
 		$thumb_height = 1;
 	}
 
-	if ( $photo_cont_url_s && $this->_is_normal_ext( $photo_cont_ext ) ) {
+	if ( $cont_url_s && $this->is_image_kind( $item_kind ) ) {
 		$is_normal_image = true ;
 	}
 
@@ -402,24 +413,14 @@ function _build_imgsrc( $row )
 		'ahref_file'       => $ahref_file ,
 		'imgsrc_thumb'     => $imgsrc_thumb ,
 		'imgsrc_photo'     => $imgsrc_photo ,
-		'photo_width'      => $photo_width ,
-		'photo_height'     => $photo_height ,
-		'middle_width'     => $middle_width ,
-		'middle_height'    => $middle_height ,
+		'photo_width'      => $cont_width ,
+		'photo_height'     => $cont_height ,
 		'thumb_width'      => $thumb_width ,
 		'thumb_height'     => $thumb_height ,
 		'is_normal_image'  => $is_normal_image ,
 	);
 	return $arr;
 
-}
-
-function _is_normal_ext( $ext )
-{
-	if ( in_array( strtolower($ext) , $this->_normal_exts ) ) {
-		return true;
-	}
-	return false;
 }
 
 function _build_short_title( $str, $max )
@@ -462,7 +463,7 @@ function _shorten_text( $str, $max )
 //---------------------------------------------------------
 // database handler
 //---------------------------------------------------------
-function _get_photo_rows_top_common( $mode, $options )
+function _get_item_rows_top_common( $mode, $options )
 {
 	$photos_num          = $this->_get_option_int(  $options, 1, 5 ) ;
 	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
@@ -472,7 +473,7 @@ function _get_photo_rows_top_common( $mode, $options )
 	{
 		case 'tophits':
 		case 'tophits_p':
-			$orderby = 'p.photo_hits DESC, p.photo_id DESC';
+			$orderby = 'i.item_hits DESC, i.item_id DESC';
 			break;
 
 		case 'rphoto':
@@ -482,12 +483,12 @@ function _get_photo_rows_top_common( $mode, $options )
 		case 'topnews':
 		case 'topnews_p':
 		default:
-			$orderby = 'p.photo_time_update DESC, p.photo_id DESC';
+			$orderby = 'i.item_time_update DESC, i.item_id DESC';
 			break;
 	}
 
-	$table_photo = $this->prefix_dirname( 'photo' ) ;
-	$table_cat   = $this->prefix_dirname( 'cat' ) ;
+	$table_item = $this->prefix_dirname( 'item' ) ;
+	$table_cat  = $this->prefix_dirname( 'cat' ) ;
 
 	// Category limitation
 	$where = '' ;
@@ -499,23 +500,23 @@ function _get_photo_rows_top_common( $mode, $options )
 
 			$children = $cattree->getAllChildId( $cat_limitation ) ;
 
-			$where = 'p.photo_cat_id IN (' ;
+			$where = 'i.item_cat_id IN (' ;
 			foreach( $children as $child ) {
 				$where .= intval($child) . ',' ;
 			}
 			$where .= intval($cat_limitation) .')' ;
 
 		} else {
-			$where = 'p.photo_cat_id='. intval($cat_limitation) ;
+			$where = 'i.item_cat_id='. intval($cat_limitation) ;
 		}
 
 	}
 
-	$sql  = 'SELECT p.* , c.* ';
-	$sql .= 'FROM '. $table_photo .' p ';
+	$sql  = 'SELECT i.* , c.* ';
+	$sql .= 'FROM '. $table_item .' i ';
 	$sql .= 'LEFT JOIN '. $table_cat .' c ';
-	$sql .= 'ON p.photo_cat_id = c.cat_id ';
-	$sql .= 'WHERE p.photo_status > 0 ';
+	$sql .= 'ON i.item_cat_id = c.cat_id ';
+	$sql .= 'WHERE i.item_status > 0 ';
 	if ( $where ) {
 		$sql .= 'AND '. $where;
 	}
@@ -578,6 +579,7 @@ function _init_xoops_config( $dirname )
 
 	$this->_cfg_use_popbox   = $config_handler->get_by_name('use_popbox');
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
+	$this->_cfg_thumb_width  = $config_handler->get_by_name('thumb_width');
 }
 
 // --- class end ---

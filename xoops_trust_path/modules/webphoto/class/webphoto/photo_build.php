@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_build.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: photo_build.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_photo_build extends webphoto_lib_error
 {
-	var $_photo_handler;
+	var $_item_handler;
 	var $_cat_handler;
 	var $_syno_handler;
 
@@ -32,7 +38,7 @@ function webphoto_photo_build( $dirname )
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
-	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
+	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
 	$this->_cat_handler   =& webphoto_cat_handler::getInstance(   $dirname );
 	$this->_syno_handler  =& webphoto_syno_handler::getInstance(  $dirname );
 }
@@ -55,16 +61,16 @@ function build_search_with_tag( $row )
 
 	return $this->build_search(
 		$row, 
-		$tag_class->get_tag_name_array_by_photoid( $row['photo_id'] ) );
+		$tag_class->get_tag_name_array_by_photoid( $row['item_id'] ) );
 }
 
 function build_search( $row, $tag_name_array=null )
 {
-	$str  = $this->_photo_handler->build_search( $row );
+	$str  = $this->_item_handler->build_search( $row );
 	$str .= ' ';
 
 // add category
-	$cat_rows = $this->_cat_handler->get_parent_path_array( $row['photo_cat_id'] );
+	$cat_rows = $this->_cat_handler->get_parent_path_array( $row['item_cat_id'] );
 	foreach ( $cat_rows as $cat_row ) {
 		$str .= $cat_row['cat_title'].' ';
 	}

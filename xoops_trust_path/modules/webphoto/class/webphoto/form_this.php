@@ -1,5 +1,5 @@
 <?php
-// $Id: form_this.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: form_this.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+// added preload_init()
 // 2008-08-01 K.OHWADA
 // added getInstance()
 // tmppath -> tmpdir
@@ -23,9 +26,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_form_this extends webphoto_lib_form
 {
 	var $_cat_handler;
-	var $_photo_handler;
+	var $_item_handler;
 	var $_gicon_handler;
 	var $_config_class;
+	var $_preload_class;
 
 	var $_is_japanese    = false;
 	var $_checkbox_array = array();
@@ -56,8 +60,9 @@ function webphoto_form_this( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_form( $dirname , $trust_dirname );
 
-	$this->_photo_handler  =& webphoto_photo_handler::getInstance( $dirname );
-	$this->_cat_handler    =& webphoto_cat_handler::getInstance(   $dirname );
+	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
+	$this->_file_handler  =& webphoto_file_handler::getInstance( $dirname );
+	$this->_cat_handler   =& webphoto_cat_handler::getInstance(   $dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
@@ -133,16 +138,64 @@ function build_img_catedit()
 	return $str;
 }
 
-function exists_photo( $row )
+function exists_photo( $item_row )
 {
-	$file_path  = $row['photo_file_path'];
-	$photo_path = $row['photo_cont_path'];
+	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( is_array($cont_row) ) {
+		$cont_path = $cont_row['file_path'];
+	} else {
+		return false;
+	}
 
-	if ( $file_path  && is_readable( XOOPS_ROOT_PATH.$file_path ) &&
-	     $photo_path && is_readable( XOOPS_ROOT_PATH.$photo_path ) ) {
+	if ( $cont_path  && is_readable( XOOPS_ROOT_PATH . $cont_path ) ) {
 		return true;
 	}
 	return false;
+}
+
+function get_cached_file_row_by_kind( $item_row, $kind )
+{
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_cached_row_by_id( $file_id );
+	}
+	return null;
+}
+
+//---------------------------------------------------------
+// preload class
+//---------------------------------------------------------
+function preload_init()
+{
+	$this->_preload_class =& webphoto_d3_preload::getInstance();
+	$this->_preload_class->init( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+}
+
+function preload_constant()
+{
+	$arr = $this->_preload_class->get_preload_const_array();
+
+	if ( !is_array($arr) || !count($arr) ) {
+		return true;	// no action
+	}
+
+	foreach( $arr as $k => $v )
+	{
+		$local_name = strtoupper( '_' . $k );
+
+// array type
+		if ( strpos($k, 'array_') === 0 ) {
+			$temp = $this->str_to_array( $v, '|' );
+			if ( is_array($temp) && count($temp) ) {
+				$this->$local_name = $temp;
+			}
+
+// string type
+		} else {
+			$this->$local_name = $v;
+		}
+	}
+
 }
 
 //---------------------------------------------------------

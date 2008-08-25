@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_register.php,v 1.3 2008/08/09 08:19:02 ohwada Exp $
+// $Id: mail_register.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// added print_user_form()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -183,8 +189,6 @@ function _check_token_exit()
 	}
 }
 
-
-
 //---------------------------------------------------------
 // modify
 //---------------------------------------------------------
@@ -296,8 +300,23 @@ function print_form()
 	);
 
 	$form =& webphoto_mail_register_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form->print_form( $row, $param );
 
+	if ( $this->_check_user_form() ) {
+		$form->print_user_form( $row );
+		echo "<br />\n";
+	}
+
+	$form->print_submit_form( $row, $param );
+
+}
+
+function _check_user_form()
+{
+	$action = $this->_get_action();
+	if ( $this->_is_module_admin && ( $action != 'submit' ) && ( $action != 'form' ) ) {
+		return true;
+	}
+	return false;
 }
 
 // --- class end ---

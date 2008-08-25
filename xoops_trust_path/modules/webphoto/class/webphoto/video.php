@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: video.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// get_flash_info -> get_flash_param
 // 2008-08-01 K.OHWADA
 // tmppath -> tmpdir
 //---------------------------------------------------------
@@ -43,10 +45,10 @@ class webphoto_video extends webphoto_lib_error
 	var $_SINGLE_SECOND = 1;
 	var $_SINGLE_FIRST  = 0;
 
-	var $_THUMB_PREFIX = _C_WEBPHOTO_VIDEO_THUMB_PREFIX;
+	var $_THUMB_PREFIX = _C_WEBPHOTO_VIDEO_THUMB_PREFIX ;	// tmp_video_
 	var $_THUMB_EXT    = 'jpg';
 	var $_ICON_EXT     = 'png';
-	var $_FLASH_EXT    = 'flv';
+	var $_FLASH_EXT    = _C_WEBPHOTO_VIDEO_FLASH_EXT ;	// flv
 	var $_FLASH_MIME   = 'video/x-flv';
 	var $_FLASH_MEDIUM = 'video';
 
@@ -91,39 +93,11 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // duration
 //---------------------------------------------------------
-function add_duration_size_to_info( $info )
-{
-	if ( !is_array( $info ) ) {
-		return $info;
-	}
-
-	$param = $this->get_duration_size( XOOPS_ROOT_PATH . $info['photo_cont_path'] );
-	if ( !is_array($param) ) {
-		return $info;
-	}
-
-	$duration = $param['duration'] ;
-	$width    = $param['width'] ;
-	$height   = $param['height'] ;
-
-	if ( $duration ) {
-		$info['photo_cont_duration'] = $duration ;
-	}
-	if ( $width && $height ) {
-		$info['photo_cont_width']  = $width ;
-		$info['photo_cont_height'] = $height ;
-	}
-
-	return $info;
-
-}
-
 function get_duration_size( $file )
 {
 	if ( !$this->_cfg_use_ffmpeg ) {
 		return null;
 	}
-
 	return $this->_ffmpeg_class->get_duration_size( $file );
 }
 
@@ -217,7 +191,7 @@ function get_thumb_plural_max()
 //---------------------------------------------------------
 function create_flash( $file_in, $name_out )
 {
-	$this->_flash_info = null;
+	$this->_flash_param = null;
 
 	$ext = $this->_utility_class->parse_ext( $file_in );
 
@@ -246,22 +220,22 @@ function create_flash( $file_in, $name_out )
 		return _C_WEBPHOTO_VIDEO_FAILED ;
 	}
 
-	$this->_flash_info = array(
-		'photo_file_url'    => $url_out ,
-		'photo_file_path'   => $path_out ,
-		'photo_file_name'   => $name_out ,
-		'photo_file_ext'    => $this->_FLASH_EXT ,
-		'photo_file_mime'   => $this->_FLASH_MIME ,
-		'photo_file_medium' => $this->_FLASH_MEDIUM ,
-		'photo_file_size'   => filesize( $file_out ) ,
+	$this->_flash_param = array(
+		'url'    => $url_out ,
+		'path'   => $path_out ,
+		'name'   => $name_out ,
+		'ext'    => $this->_FLASH_EXT ,
+		'mime'   => $this->_FLASH_MIME ,
+		'medium' => $this->_FLASH_MEDIUM ,
+		'size'   => filesize( $file_out ) ,
 	);
 
 	return _C_WEBPHOTO_VIDEO_CREATED ;
 }
 
-function get_flash_info()
+function get_flash_param()
 {
-	return $this->_flash_info;
+	return $this->_flash_param;
 }
 
 function get_flash_ext()

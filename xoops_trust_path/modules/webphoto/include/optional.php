@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: optional.php,v 1.4 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// webphoto_get_language()
 // 2008-07-01 K.OHWADA
 // added  webphoto_include_once_trust()
 // change webphoto_fct()
@@ -48,17 +50,19 @@ function webphoto_include_once( $file, $dirname=null, $debug=true )
 	return $d3_class->include_once_file( $file, $debug );
 }
 
-function webphoto_include_once_language( $file, $dirname=null )
+function webphoto_include_once_language( $file, $dirname=null, $language=null )
 {
 	$d3_class =& webphoto_d3_optional::getInstance();
 	$d3_class->init( webphoto_get_dirname( $dirname ), WEBPHOTO_TRUST_DIRNAME );
+	$d3_class->set_language( webphoto_get_language( $language ) );
 	return $d3_class->include_once_language( $file );
 }
 
-function webphoto_include_language( $file, $dirname=null )
+function webphoto_include_language( $file, $dirname=null, $language=null )
 {
 	$d3_class =& webphoto_d3_optional::getInstance();
 	$d3_class->init( webphoto_get_dirname( $dirname ), WEBPHOTO_TRUST_DIRNAME );
+	$d3_class->set_language( webphoto_get_language( $language ) );
 	return $d3_class->include_language( $file );
 }
 
@@ -98,6 +102,16 @@ function webphoto_get_dirname( $dirname )
 	}
 
 	return $dirname;
+}
+
+function webphoto_get_language( $language=null )
+{
+	if ( $language ) {
+		return $language;
+	}
+
+	global $xoopsConfig;
+	return $xoopsConfig['language'];
 }
 
 ?>

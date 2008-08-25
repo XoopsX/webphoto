@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: show_list.php,v 1.3 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used get_list_pathinfo_param()
 //---------------------------------------------------------
@@ -96,87 +98,6 @@ function list_get_pathinfo_param()
 			$this->_mode  = 'user';
 			break;
 	}
-
-	return;
-// ====
-
-	$this->_get_tag      = $this->_pathinfo_class->get('tag');
-	$this->_get_date     = $this->_pathinfo_class->get('date');
-	$this->_get_place    = $this->_pathinfo_class->get('place');
-	$this->_get_uid      = $this->_pathinfo_class->get_int('uid',  $this->_UID_DEFAULT );
-	$this->_get_query    = trim( $this->_pathinfo_class->get_text('query') );
-	$this->_get_page     = $this->_pathinfo_class->get_int('page', $this->_PAGE_DEFAULT );
-	$this->_get_sort     = $this->get_photo_sort_name_by_pathinfo();
-
-	$path0 = $this->_pathinfo_class->get_path( 0 );
-	$path1 = $this->_pathinfo_class->get_path( 1 );
-
-	if ( empty($mode) ) {
-		$mode = $path0;
-	}
-
-	$this->_mode  = $mode;
-	$this->_param = null;
-
-	switch ( $mode )
-	{
-		case 'category':
-			if ( $this->_get_catid ) {
-				$this->_param = $this->_get_catid;
-			} else {
-				$this->_param = intval($path1);
-			}
-			break;
-
-		case 'user':
-			$this->_param = $this->_UID_DEFAULT;
-			if ( $this->_get_uid >= 0 ) {
-				$this->_param = $this->_get_uid;
-			} elseif (( $this->_get_uid == $this->_UID_DEFAULT ) &&
-				      ( $path1 !== false )) {
-				$this->_param = intval($path1);
-			}
-			break;
-
-		case 'tag':
-			if ( $this->_get_tag ) {
-				$this->_param = $this->_get_tag;
-			} else {
-				$this->_param = $path1;
-			}
-			break;
-
-		case 'date':
-			if ( $this->_get_date ) {
-				$this->_param = $this->_get_date;
-			} else {
-				$this->_param = $path1;
-			}
-			break;
-
-		case 'place':
-			if ( $this->_get_place ) {
-				$this->_param = $this->_get_place;
-			} else {
-				$this->_param = $path1;
-			}
-			break;
-
-		case 'search':
-			if ( $this->_get_query ) {
-				$this->_param = $this->_get_query;
-			} else {
-				$this->_param = $path1;
-			}
-			break;
-
-		case 'myphoto':
-			$this->_mode  = 'user';
-			$this->_param = $this->_xoops_uid;
-			break;
-	}
-
-	$this->set_param_out( $this->_param );
 }
 
 function set_param_out( $val )
@@ -206,7 +127,7 @@ function list_build_list_common( $show_photo_desc=false, $title=null )
 	}
 
 	$title_s   = $this->sanitize( $title );
-	$total_all = $this->_photo_handler->get_count_public();
+	$total_all = $this->_item_handler->get_count_public();
 
 	$arr = array(
 		'xoops_pagetitle'   => $title_s ,
@@ -292,7 +213,7 @@ function list_build_detail_common( $title, $total, $rows, $photos=null )
 
 function list_build_init_param( $show_photo_desc=false )
 {
-	$total_all = $this->_photo_handler->get_count_public();
+	$total_all = $this->_item_handler->get_count_public();
 
 	$arr = array(
 		'mode'              => $this->_mode,

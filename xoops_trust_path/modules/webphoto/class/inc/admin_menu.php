@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: admin_menu.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added item_table_manage
 // 2008-08-01 K.OHWADA
 // added maillog_manager
 //---------------------------------------------------------
@@ -78,26 +80,33 @@ function define_menu()
 	$menu[13]['title'] = 'CHECKTABLES' ;
 	$menu[13]['fct']   = 'checktables';
 
-	$menu[14]['title'] = 'PHOTO_TABLE_MANAGE' ;
-	$menu[14]['fct']   = 'photo_table_manage';
-	$menu[15]['title'] = 'CAT_TABLE_MANAGE' ;
-	$menu[15]['fct']   = 'cat_table_manage';
-	$menu[16]['title'] = 'VOTE_TABLE_MANAGE' ;
-	$menu[16]['fct']   = 'vote_table_manage';
-	$menu[17]['title'] = 'GICON_TABLE_MANAGE' ;
-	$menu[17]['fct']   = 'gicon_table_manage';
-	$menu[18]['title'] = 'MIME_TABLE_MANAGE' ;
-	$menu[18]['fct']   = 'mime_table_manage';
-	$menu[19]['title'] = 'TAG_TABLE_MANAGE' ;
-	$menu[19]['fct']   = 'tag_table_manage';
-	$menu[20]['title'] = 'P2T_TABLE_MANAGE' ;
-	$menu[20]['fct']   = 'p2t_table_manage';
-	$menu[21]['title'] = 'SYNO_TABLE_MANAGE' ;
-	$menu[21]['fct']   = 'syno_table_manage';
-	$menu[22]['title'] = 'USER_TABLE_MANAGE' ;
-	$menu[22]['fct']   = 'user_table_manage';
-	$menu[23]['title'] = 'MAILLOG_TABLE_MANAGE' ;
-	$menu[23]['fct']   = 'maillog_table_manage';
+	$menu[14]['title'] = 'ITEM_TABLE_MANAGE' ;
+	$menu[14]['fct']   = 'item_table_manage';
+	$menu[15]['title'] = 'FILE_TABLE_MANAGE' ;
+	$menu[15]['fct']   = 'file_table_manage';
+	$menu[16]['title'] = 'CAT_TABLE_MANAGE' ;
+	$menu[16]['fct']   = 'cat_table_manage';
+	$menu[17]['title'] = 'VOTE_TABLE_MANAGE' ;
+	$menu[17]['fct']   = 'vote_table_manage';
+	$menu[18]['title'] = 'GICON_TABLE_MANAGE' ;
+	$menu[18]['fct']   = 'gicon_table_manage';
+	$menu[19]['title'] = 'MIME_TABLE_MANAGE' ;
+	$menu[19]['fct']   = 'mime_table_manage';
+	$menu[20]['title'] = 'TAG_TABLE_MANAGE' ;
+	$menu[20]['fct']   = 'tag_table_manage';
+	$menu[21]['title'] = 'P2T_TABLE_MANAGE' ;
+	$menu[21]['fct']   = 'p2t_table_manage';
+	$menu[22]['title'] = 'SYNO_TABLE_MANAGE' ;
+	$menu[22]['fct']   = 'syno_table_manage';
+	$menu[23]['title'] = 'USER_TABLE_MANAGE' ;
+	$menu[23]['fct']   = 'user_table_manage';
+	$menu[24]['title'] = 'MAILLOG_TABLE_MANAGE' ;
+	$menu[24]['fct']   = 'maillog_table_manage';
+	$menu[25]['title'] = 'PHOTO_TABLE_MANAGE' ;
+	$menu[25]['fct']   = 'photo_table_manage';
+
+	$menu[26]['title'] = 'UPDATE' ;
+	$menu[26]['fct']   = 'update';
 
 	return $menu;
 }

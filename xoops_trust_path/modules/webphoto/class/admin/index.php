@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: index.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added _print_check_update()
 // 2008-08-01 K.OHWADA
 // added DIR_TRUST_MOD_UPLOADS
 // 2008-07-01 K.OHWADA
@@ -21,6 +23,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_index extends webphoto_base_this
 {
+	var $_photo_handler;
 	var $_check_class;
 
 	var $_GICONS_PATH;
@@ -39,7 +42,8 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_check_class =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
+	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
+	$this->_check_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
 
 	$this->_GICONS_PATH = $this->_config_class->get_gicons_path();
 	$this->_GICONS_URL  = XOOPS_URL       . $this->_GICONS_PATH;
@@ -82,7 +86,9 @@ function main()
 	echo $this->build_admin_title( 'CHECKCONFIGS' );
 
 	$this->_print_check();
+	$this->_print_check_update();
 	$this->_check_class->check();
+	$this->_print_command_url();
 
 	xoops_cp_footer();
 }
@@ -113,7 +119,7 @@ function _print_check()
 	}
 
 // Waiting Admission
-	$waiting = $this->_photo_handler->get_count_waiting();
+	$waiting = $this->_item_handler->get_count_waiting();
 	if ( $waiting > 0 ) {
 		echo '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=admission" style="color:red;">';
 		echo sprintf( _AM_WEBPHOTO_CAT_FMT_NEEDADMISSION , $waiting ) ;
@@ -121,6 +127,17 @@ function _print_check()
 	}
 
 	echo "<br />\n";
+}
+
+function _print_check_update()
+{
+	if (( $this->_photo_handler->get_count_all() > 0 )&&
+	    ( $this->_item_handler->get_count_all() == 0 )) {
+		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=update">';
+		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
+		$msg .= '</a>';
+		echo $this->build_error_msg( $msg, '', false );
+	}
 }
 
 function _make_dir( $dir )
@@ -138,6 +155,17 @@ function _make_dir( $dir )
 
 	$msg = 'create directory: <b>'. $dir .'</b>'."<br />\n";
 	return $msg;
+}
+
+function _print_command_url()
+{
+	$pass = $this->get_config_by_name('bin_pass');
+	$url  = $this->_MODULE_URL . '/bin/retrieve.php?pass='.$pass;
+
+	echo '<h4>'. _AM_WEBPHOTO_TITLE_BIN ."</h4>\n";
+	echo '<a href="'.$url.'">';
+	echo _AM_WEBPHOTO_TEST_BIN .': bin/retrieve.php';
+	echo "</a><br /><br/>\n";
 }
 
 // --- class end ---

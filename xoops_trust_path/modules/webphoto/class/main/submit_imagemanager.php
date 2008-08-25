@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used upload_fetch_photo()
 //---------------------------------------------------------
@@ -121,7 +123,7 @@ function _print_footer()
 //---------------------------------------------------------
 function _print_form_imagemanager()
 {
-	$row = $this->_get_photo_default();
+	$row = $this->_get_item_default();
 
 	$param = array(
 		'has_resize'    => $this->_has_resize,

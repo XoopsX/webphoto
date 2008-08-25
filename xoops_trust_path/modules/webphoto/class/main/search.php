@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: search.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used set_mode()
 //---------------------------------------------------------
@@ -111,12 +113,12 @@ function _get_photos( $query, $orderby, $limit, $start )
 		return $arr;
 	}
 
-	$where  = $this->_photo_handler->build_where_public();
-	$where .= ' AND '.$this->_search_class->build_sql_query( 'photo_search' );
-	$total = $this->_photo_handler->get_count_by_where( $where );
+	$where  = $this->_item_handler->build_where_public();
+	$where .= ' AND '.$this->_search_class->build_sql_query( 'item_search' );
+	$total = $this->_item_handler->get_count_by_where( $where );
 
 	if ( $total > 0 ) {
-		$rows = $this->_photo_handler->get_rows_by_where_orderby( $where, $orderby, $limit, $start );
+		$rows = $this->_item_handler->get_rows_by_where_orderby( $where, $orderby, $limit, $start );
 	}
 
 	$arr = array(

@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.7 2008/08/09 19:28:05 ohwada Exp $
+// $Id: main.php,v 1.8 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -827,6 +827,90 @@ define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
 define("_WEBPHOTO_MAIL_DENY_TITLE_PREG", "/((未|末)\s?承\s?(諾|認)\s?広\s?告|相互リンク|18禁|サイトのご紹介)/i" ) ;
 define("_WEBPHOTO_MAIL_AD_WORD_1", "会員登録は無料  充実した出品アイテムなら MSN オークション" ) ;
 define("_WEBPHOTO_MAIL_AD_WORD_2", "友達と24時間ホットライン「MSN メッセンジャー」、今すぐダウンロード！" ) ;
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TABLE" , "アイテム・テーブル" ) ;
+define("_WEBPHOTO_ITEM_ID" , "アイテムID" ) ;
+define("_WEBPHOTO_ITEM_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_ITEM_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_ITEM_CAT_ID" ,  "カテゴリ番号" ) ;
+define("_WEBPHOTO_ITEM_GICON_ID" , "GoogleMap アイコン番号" ) ;
+define("_WEBPHOTO_ITEM_UID" ,   "ユーザ番号" ) ;
+define("_WEBPHOTO_ITEM_KIND" , "種別" ) ;
+define("_WEBPHOTO_ITEM_EXT" ,  "拡張子" ) ;
+define("_WEBPHOTO_ITEM_DATETIME" ,  "撮影日時" ) ;
+define("_WEBPHOTO_ITEM_TITLE" , "写真タイトル" ) ;
+define("_WEBPHOTO_ITEM_PLACE" , "撮影場所" ) ;
+define("_WEBPHOTO_ITEM_EQUIPMENT" , "撮影機材" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LATITUDE" ,  "GoogleMap 緯度" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LONGITUDE" , "GoogleMap 経度" ) ;
+define("_WEBPHOTO_ITEM_GMAP_ZOOM" ,      "GoogleMap ズーム" ) ;
+define("_WEBPHOTO_ITEM_GMAP_TYPE" ,      "GoogleMap タイプ" ) ;
+define("_WEBPHOTO_ITEM_PERM_READ" , "閲覧権限" ) ;
+define("_WEBPHOTO_ITEM_STATUS" ,   "状態" ) ;
+define("_WEBPHOTO_ITEM_HITS" ,     "ヒット数" ) ;
+define("_WEBPHOTO_ITEM_RATING" ,   "評価" ) ;
+define("_WEBPHOTO_ITEM_VOTES" ,    "投票数" ) ;
+define("_WEBPHOTO_ITEM_DESCRIPTION" ,  "写真説明文" ) ;
+define("_WEBPHOTO_ITEM_EXIF" , "Exif 情報" ) ;
+define("_WEBPHOTO_ITEM_SEARCH" ,  "検索文" ) ;
+define("_WEBPHOTO_ITEM_COMMENTS" , "コメント数" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_1" ,  "ファイル番号：コンテンツ" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_2" ,  "ファイル番号：サムネイル" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_3" ,  "ファイル番号：ミドル" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "ファイル番号：Flash ビデオ" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "ファイル番号：ドコモ ビデオ" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "file6" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "file7" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
+define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
+define("_WEBPHOTO_ITEM_TEXT_2" ,  "text2" ) ;
+define("_WEBPHOTO_ITEM_TEXT_3" ,  "text3" ) ;
+define("_WEBPHOTO_ITEM_TEXT_4" ,  "text4" ) ;
+define("_WEBPHOTO_ITEM_TEXT_5" ,  "text5" ) ;
+define("_WEBPHOTO_ITEM_TEXT_6" ,  "text6" ) ;
+define("_WEBPHOTO_ITEM_TEXT_7" ,  "text7" ) ;
+define("_WEBPHOTO_ITEM_TEXT_8" ,  "text8" ) ;
+define("_WEBPHOTO_ITEM_TEXT_9" ,  "text9" ) ;
+define("_WEBPHOTO_ITEM_TEXT_10" , "text10" ) ;
+
+// file table
+define("_WEBPHOTO_FILE_TABLE" , "ファイル・テーブル" ) ;
+define("_WEBPHOTO_FILE_ID" , "ファイルID" ) ;
+define("_WEBPHOTO_FILE_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_FILE_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_FILE_ITEM_ID" ,  "アイテム番号" ) ;
+define("_WEBPHOTO_FILE_KIND" , "種別" ) ;
+define("_WEBPHOTO_FILE_URL" ,    "URL" ) ;
+define("_WEBPHOTO_FILE_PATH" ,   "パス" ) ;
+define("_WEBPHOTO_FILE_NAME" ,   "ファイル名" ) ;
+define("_WEBPHOTO_FILE_EXT" ,    "拡張子" ) ;
+define("_WEBPHOTO_FILE_MIME" ,   "MIMEタイプ" ) ;
+define("_WEBPHOTO_FILE_MEDIUM" , "メディアタイプ" ) ;
+define("_WEBPHOTO_FILE_SIZE" ,   "ファイルサイズ" ) ;
+define("_WEBPHOTO_FILE_WIDTH" ,  "画像横幅" ) ;
+define("_WEBPHOTO_FILE_HEIGHT" , "画像高さ" ) ;
+define("_WEBPHOTO_FILE_DURATION" , "ビデオ再生時間" ) ;
+
+// file kind ( for admin checktables )
+define("_WEBPHOTO_FILE_KIND_1" ,  "コンテンツ" ) ;
+define("_WEBPHOTO_FILE_KIND_2" ,  "サムネイル" ) ;
+define("_WEBPHOTO_FILE_KIND_3" ,  "ミドル" ) ;
+define("_WEBPHOTO_FILE_KIND_4" ,  "Flash ビデオ" ) ;
+define("_WEBPHOTO_FILE_KIND_5" ,  "ドコモ ビデオ" ) ;
+define("_WEBPHOTO_FILE_KIND_6" ,  "file6" ) ;
+define("_WEBPHOTO_FILE_KIND_7" ,  "file7" ) ;
+define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
+define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
+define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
+
+// index
+define("_WEBPHOTO_MOBILE_MAILTO" , "携帯電話にURLを送信する" ) ;
 
 // === define end ===
 }

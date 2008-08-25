@@ -1,5 +1,5 @@
 <?php
-// $Id: admission_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: admission_form.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // bug fix
 //---------------------------------------------------------
@@ -51,7 +53,7 @@ function print_form_admission_search( $txt )
 
 }
 
-function print_list_admission( $photo_rows )
+function print_list_admission( $item_rows )
 {
 	$onclick_all = ' onclick="with(document.MainForm){for(i=0;i<length;i++){if(elements[i].type==\'checkbox\'){elements[i].checked=this.checked;}}}" ';
 	$onclick_admin  = ' onclick="document.MainForm.action.value=\'admit\'; submit();" ';
@@ -67,67 +69,73 @@ function print_list_admission( $photo_rows )
 	echo $this->build_html_token();
 	echo $this->build_input_hidden( 'action', '' );
 
-	echo "<table width='100%' class='outer' cellpadding='4' cellspacing='1'>";
-	echo "<tr valign='middle'>";
-	echo "<th width='5'>";
+	echo '<table width="100%" class="outer" cellpadding="4" cellspacing="1">';
+	echo '<tr valign="middle">';
+	echo '<th width="5">';
 	echo '<input type="checkbox" name="dummy" '. $onclick_all .' />';
-	echo "</th>";
-	echo "<th></th>";
-	echo "<th>"._WEBPHOTO_SUBMITTER."</th>";
-	echo "<th>"._WEBPHOTO_PHOTO_TITLE."</th>";
-	echo "<th>"._WEBPHOTO_PHOTO_DESCRIPTION."</th>";
-	echo "<th>"._WEBPHOTO_CATEGORY."</th>";
+	echo '</th>';
+	echo '<th></th>';
+	echo '<th>'._WEBPHOTO_SUBMITTER.'</th>';
+	echo '<th>'._WEBPHOTO_PHOTO_TITLE.'</th>';
+	echo '<th>'._WEBPHOTO_PHOTO_DESCRIPTION.'</th>';
+	echo '<th>'._WEBPHOTO_CATEGORY.'</th>';
 	echo "</tr>\n";
 
 // Listing
-	foreach ( $photo_rows as $row )
+	foreach ( $item_rows as $item_row )
 	{
 		$oddeven = $this->get_alternate_class();
 
-		$id          = $row['photo_id'] ;
-		$title_s     = $this->sanitize( $row['photo_title'] ) ;
-		$desc_disp   = $this->_photo_handler->build_show_description_disp( $row ) ;
-		$submitter_s = $this->get_xoops_user_name( $row['photo_uid'] );
+		$cont_url_s = null ;
+
+		$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+		if ( is_array($cont_row) ) {
+			$cont_url_s = $this->sanitize( $cont_row['file_url'] );
+		}
+
+		$id          = $item_row['item_id'] ;
+		$title_s     = $this->sanitize( $item_row['item_title'] ) ;
+		$desc_disp   = $this->_item_handler->build_show_description_disp( $item_row ) ;
+		$submitter_s = $this->get_xoops_user_name( $item_row['item_uid'] );
 		$cat_path    = $this->_cat_handler->get_nice_path_from_id(
-			$row['photo_cat_id'] , 'cat_title', $url_category, true ) ;
-		$link        = $row['photo_cont_url'];
+			$item_row['item_cat_id'] , 'cat_title', $url_category, true ) ;
 
 		$editbutton  = '<a href="'. $url_edit . $id .'" target="_blank">';
 		$editbutton .= $img_edit;
 		$editbutton .= "</a>  ";
 
 		$deadlinkbutton = '';
-		if ( !$this->exists_photo( $row ) ) {
+		if ( !$this->exists_photo( $item_row ) ) {
 			$deadlinkbutton = $img_deadlink;
 		}
 
-		echo "<tr>";
-		echo "<td class='". $oddeven ."'>";
-		echo "<input type='checkbox' name='ids[]' value='". $id ."' />";
-		echo "</td>";
-		echo "<td class='". $oddeven ."'>". $editbutton .' '. $deadlinkbutton ."</td>";
-		echo "<td class='". $oddeven ."'>". $submitter_s ."</td>";
-		echo "<td class='". $oddeven ."'>";
-		echo "<a href='". $link ."' target='_blank'>". $title_s. "</a>";
-		echo "</td>";
-		echo "<td class='". $oddeven ."'>". $desc_disp. "</td>";
-		echo "<td class='". $oddeven ."'>". $cat_path ."</td>";
+		echo '<tr>';
+		echo '<td class="'. $oddeven .'">';
+		echo '<input type="checkbox" name="ids[]" value="'. $id .'" />';
+		echo '</td>';
+		echo '<td class="'. $oddeven .'">'. $editbutton .' '. $deadlinkbutton .'</td>';
+		echo '<td class="'. $oddeven .'">'. $submitter_s .'</td>';
+		echo '<td class="'. $oddeven .'">';
+		echo '<a href="'. $cont_url_s .'" target="_blank">'. $title_s. '</a>';
+		echo '</td>';
+		echo '<td class="'. $oddeven .'">'. $desc_disp. '</td>';
+		echo '<td class="'. $oddeven .'">'. $cat_path .'</td>';
 		echo "</tr>\n" ;
 
 	}
 
-	echo "<tr>";
-	echo "<td colspan='8' align='left'>";
+	echo '<tr>';
+	echo '<td colspan="8" align="left">';
 	echo _AM_WEBPHOTO_LABEL_ADMIT;
 	echo ' <input type="button" value="'. _AM_WEBPHOTO_BUTTON_ADMIT .'" '. $onclick_admin .' />';
-	echo "</td>";
+	echo '</td>';
 	echo "</tr>\n";
 	
-	echo "<tr>";
-	echo "<td colspan='8' align='left'>";
+	echo '<tr>';
+	echo '<td colspan="8" align="left">';
 	echo _AM_WEBPHOTO_LABEL_REMOVE ;
 	echo ' <input type="button" value="'. _DELETE .'" '. $onclick_delete .' />';
-	echo "</td>";
+	echo '</td>';
 	echo "</tr>\n";
 
 	echo "</table>\n";

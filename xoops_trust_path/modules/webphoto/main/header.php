@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: header.php,v 1.3 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added item_handler.php qrcode_img.php
 // 2008-07-01 K.OHWADA
 // added uri.php
 //---------------------------------------------------------
@@ -22,7 +24,10 @@ include_once XOOPS_ROOT_PATH.'/class/template.php';
 //---------------------------------------------------------
 // webphoto files
 //---------------------------------------------------------
+define("QRCODE_DATA_PATH", WEBPHOTO_TRUST_PATH.'/class/qrcode/qrcode_data' );
+
 webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'class/qrcode/qrcode_img.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
@@ -42,12 +47,14 @@ webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/cloud.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
-webphoto_include_once( 'class/handler/photo_handler.php' );
+webphoto_include_once( 'class/handler/item_handler.php' );
+webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/tag_handler.php' );
 webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
+webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );

@@ -1,10 +1,16 @@
 <?php
-// $Id: photomanager.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: photomanager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -137,7 +143,7 @@ function _update()
 	}
 
 	$post_new_datetime_checkbox = $this->_post_class->get_post_int( 'new_datetime_checkbox');
-	$post_new_datetime          = $this->_photo_handler->build_datetime_by_post( 'new_datetime' );
+	$post_new_datetime          = $this->_item_handler->build_datetime_by_post( 'new_datetime' );
 
 	$post_new_time_update_checkbox = $this->_post_class->get_post_int( 'new_time_update_checkbox');
 	$post_new_time_update          = $this->_post_class->get_post_text('new_time_update');
@@ -192,50 +198,50 @@ function _update()
 
 	foreach( $_POST[ 'ids' ] as $id ) 
 	{
-		$row = $this->_photo_handler->get_row_by_id( $id );
+		$row = $this->_item_handler->get_row_by_id( $id );
 		if ( !is_array($row) ) {	continue;	}
 
 		if ( $flag_cat_id ) {
-			$row['photo_cat_id'] = $post_cat_id;
+			$row['item_cat_id'] = $post_cat_id;
 		}
 
 		if ( $flag_uid ) {
-			$row['photo_uid'] = $post_uid;
+			$row['item_uid'] = $post_uid;
 		}
 
 		if ( $flag_title ) {
-			$row['photo_title'] = $post_title;
+			$row['item_title'] = $post_title;
 		}
 
 		if ( $flag_place ) {
-			$row['photo_place'] = $post_place;
+			$row['item_place'] = $post_place;
 		}
 
 		if ( $flag_equipment ) {
-			$row['photo_equipment'] = $post_equipment;
+			$row['item_equipment'] = $post_equipment;
 		}
 
 		if ( $flag_description ) {
-			$row['photo_description'] = $post_description;
+			$row['item_description'] = $post_description;
 		}
 
 		for ( $i=1; $i <= _C_WEBPHOTO_MAX_PHOTO_TEXT; $i++ ) {
 			if ( $post_text[ $i ] ) {
-				$row[ 'photo_text'.$i ] = $post_text[ $i ];
+				$row[ 'item_text_'.$i ] = $post_text[ $i ];
 			}
 		}
 
 		if ( $flag_datetime ) {
-			$row['photo_datetime'] = $post_datetime;
+			$row['item_datetime'] = $post_datetime;
 		}
 
 		if ( $flag_time_update ) {
-			$row['photo_time_update'] = $post_time_update;
+			$row['item_time_update'] = $post_time_update;
 		}
 
-		$row['photo_search']  = $this->_build_class->build_search_with_tag( $row );
+		$row['item_search']  = $this->_build_class->build_search_with_tag( $row );
 
-		$this->_photo_handler->update( $row );
+		$this->_item_handler->update( $row );
 	}
 
 	$url  = 'index.php?fct=photomanager&amp;perpage='. $this->_get_perpage;
@@ -254,19 +260,19 @@ function _print_form()
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$keyword_array = $this->str_to_array( $this->_get_txt, ' ' );
-	$where = $this->_photo_handler->build_where_by_keyword_array_catid(
+	$where = $this->_item_handler->build_where_by_keyword_array_catid(
 		$keyword_array, $this->_get_catid );
 
 	$limit = $this->_get_perpage;
 	$start = $this->_get_pos;
 
 	if ( $where ) {
-		$total = $this->_photo_handler->get_count_by_where( $where );
-		$rows  = $this->_photo_handler->get_rows_by_where( $where, $limit, $start );
+		$total = $this->_item_handler->get_count_by_where( $where );
+		$rows  = $this->_item_handler->get_rows_by_where( $where, $limit, $start );
 
 	} else {
-		$total = $this->_photo_handler->get_count_all();
-		$rows  = $this->_photo_handler->get_rows_all_asc( $limit, $start );
+		$total = $this->_item_handler->get_count_all();
+		$rows  = $this->_item_handler->get_rows_all_asc( $limit, $start );
 	}
 
 // Information of page navigating

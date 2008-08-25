@@ -1,10 +1,17 @@
 <?php
-// $Id: photo_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: photo_form.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+// used preload_init()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,7 +20,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_photo_form extends webphoto_form_this
 {
-	var $_preload_class;
 	var $_show_class;
 	var $_cat_selbox_class;
 	var $_multibyte_class;
@@ -40,15 +46,15 @@ function webphoto_admin_photo_form( $dirname , $trust_dirname )
 	$this->webphoto_form_this( $dirname , $trust_dirname );
 	$this->init_pagenavi();
 
-	$this->_preload_class =& webphoto_d3_preload::getInstance();
-	$this->_preload_class->init( $dirname , $trust_dirname );
-
 	$this->_cat_selbox_class =& webphoto_cat_selbox::getInstance();
 	$this->_cat_selbox_class->init( $dirname );
 
 	$this->_show_class   =& webphoto_show_photo::getInstance( $dirname , $trust_dirname );
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+
+// preload
+	$this->preload_init();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -222,7 +228,6 @@ function _print_photo( $row )
 	$show = $this->_show_class->build_photo_show_light( $row );
 
 	$photo_id       = $show['photo_id'];
-	$photo_file_ext = $show['file_ext'];
 	$photo_title    = $show['title'];
 	$photo_status   = $show['status'];
 	$ahref_file     = $show['ahref_file'];

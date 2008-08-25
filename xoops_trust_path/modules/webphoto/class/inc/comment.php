@@ -1,10 +1,16 @@
 <?php
-// $Id: comment.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: comment.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// table_photo -> table_item
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -34,14 +40,14 @@ function &getInstance()
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function update_photo_comments( $dirname, $photo_id, $comments )
+function update_photo_comments( $dirname, $item_id, $comments )
 {
 	$this->init_handler( $dirname );
 
-	$sql  = 'UPDATE '. $this->prefix_dirname( 'photo' );
+	$sql  = 'UPDATE '. $this->prefix_dirname( 'item' );
 	$sql .= ' SET ';
-	$sql .= 'photo_comments='. intval($comments) .' ';
-	$sql .= 'WHERE photo_id='. intval($photo_id);
+	$sql .= 'item_comments='. intval($comments) .' ';
+	$sql .= 'WHERE item_id='. intval($item_id);
 
 	return $this->query( $sql );
 }

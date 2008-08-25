@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_photo.php,v 1.3 2008/08/09 22:40:39 ohwada Exp $
+// $Id: mail_photo.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// supported gps
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -301,10 +307,15 @@ function add_photo_from_attaches( $param_in )
 	$id_array     = array();
 	$reject_files = array();
 
+	$gmap_latitude  = 0 ;
+	$gmap_longitude = 0 ;
+	$gmap_zoom      = 0 ;
+
 	$attaches   = $param_in['attaches'];
 	$subject_in = $param_in['subject']; 
 	$body       = $param_in['body'];
 	$datetime   = $param_in['datetime'];
+	$gps        = $param_in['gps'];
 
 	if ( $subject_in ) {
 		$subject = $subject_in ;
@@ -318,15 +329,25 @@ function add_photo_from_attaches( $param_in )
 		$time_update = time() ;
 	}
 
+	if ( isset($gps['flag']) && $gps['flag'] ) {
+		$gmap_latitude  = $gps['gmap_latitude'] ;
+		$gmap_longitude = $gps['gmap_longitude'] ;
+		$gmap_zoom      = $this->_GMAP_ZOOM ;
+	}
+
 	$param_photo = array(
-		'time_create' => $time_update ,
-		'time_update' => $time_update ,
-		'title'       => $subject ,
-		'cat_id'      => $param_in['cat_id'] ,
-		'uid'         => $param_in['uid'] ,
-		'description' => $param_in['body'] ,
-		'rotate'      => $param_in['rotate'] ,
-		'status'      => _C_WEBPHOTO_STATUS_APPROVED ,
+		'time_create'      => $time_update ,
+		'time_update'      => $time_update ,
+		'title'            => $subject ,
+		'cat_id'           => $param_in['cat_id'] ,
+		'uid'              => $param_in['uid'] ,
+		'description'      => $param_in['body'] ,
+		'rotate'           => $param_in['rotate'] ,
+		'rotate'           => $param_in['rotate'] ,
+		'latitude'         => $gmap_latitude ,
+		'longitude'        => $gmap_longitude ,
+		'zoom'             => $gmap_zoom ,
+		'status'           => _C_WEBPHOTO_STATUS_APPROVED ,
 		'mode_video_thumb' => _C_WEBPHOTO_VIDEO_THUMB_SINGLE ,
 	);
 

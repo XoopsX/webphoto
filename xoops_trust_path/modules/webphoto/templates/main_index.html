@@ -1,4 +1,4 @@
-<{* $Id: main_index.html,v 1.2 2008/07/05 12:54:16 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.3 2008/08/25 19:28:06 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -286,42 +286,42 @@
 
   <{$lang_sort_title}> (
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=titlea">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="" /></a>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" /></a>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=titled">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
   </a> ) &nbsp; 
 
   <{$lang_sort_date}> (
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=datea">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
   </a>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=dated">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
   </a> ) &nbsp; 
 
   <{$lang_sort_hits}> (
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=hitsa">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
   </a>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=hitsd">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
   </a> ) &nbsp; 
 
   <{if $has_rateview }>
     <{$lang_sort_rating}> (
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=ratinga">
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="" />
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
     </a>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=ratingd">
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="" />
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
     </a> ) 
   <{/if}>
 
   <{if $show_sort_random }>
     <{$lang_sort_random}> (
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=random">
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="" />
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="" />
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
     </a> ) 
   <{/if}>
 
@@ -350,7 +350,12 @@
   <div class="webphoto_index_photo_body">
 
 <{* -- list type -- *}>
-  <div id="webphoto_box_photo_a">
+  <{if $cfg_viewtype == 'list'}>
+    <div id="webphoto_box_photo_a">
+  <{else}>
+    <div id="webphoto_box_photo_a" style="display:none">
+  <{/if}>
+
     <{foreach name=webphoto_list item=photo from=$photos}>
       <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
     <{/foreach}>
@@ -360,7 +365,12 @@
   </div>
 
 <{* -- table type -- *}>
-  <div id="webphoto_box_photo_b" style="display:none">
+  <{if $cfg_viewtype == 'table'}>
+    <div id="webphoto_box_photo_b">
+  <{else}>
+    <div id="webphoto_box_photo_b" style="display:none">
+  <{/if}>
+
     <table border="0">
     <{foreach name=webphoto_list item=photo from=$photos}>
 <{* -- open table photo -- *}>
@@ -395,6 +405,11 @@
   </div>
 <{/if}>
 <{* === photo footer end === *}>
+
+<div align="center">
+<img src="<{$photos_url}>/qr_index.png" border="0" alt="qr_index" /><br />
+<a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
+</div>
 
 <{if $show_notification_select }>
   <div align="center">

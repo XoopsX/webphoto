@@ -1,5 +1,5 @@
 <?php
-// $Id: import_myalbum.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: import_myalbum.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // xoops_error() -> build_error_msg()
 //---------------------------------------------------------
@@ -29,8 +31,6 @@ class webphoto_admin_import_myalbum extends webphoto_import
 function webphoto_admin_import_myalbum( $dirname , $trust_dirname )
 {
 	$this->webphoto_import( $dirname , $trust_dirname );
-
-//	$this->init_for_import();
 
 	$this->_form_class =& webphoto_admin_import_form::getInstance( $dirname , $trust_dirname );
 }
@@ -220,25 +220,12 @@ function _import_photo()
 	foreach ($myalbum_rows as $myalbum_row)
 	{
 		$lid   = $myalbum_row['lid'];
-		$ext   = $myalbum_row['ext'];
 		$title = $myalbum_row['title'];
 		$cid   = $myalbum_row['cid'];
 
 		echo $lid.' : '.$this->sanitize($title);
 
-// copy photo
-		$photo_thumb_info = $this->copy_photo_from_myalbum( $lid, $lid, $ext );
-		echo " <br />\n";
-
-// new row
-		$row = $this->create_photo_row_from_myalbum( $lid, $cid, $myalbum_row );
-		if ( is_array($photo_thumb_info) ) {
-			$row = array_merge( $row, $photo_thumb_info );
-		}
-		$row['photo_search'] = $this->build_photo_search( $row );
-
-		$this->_photo_handler->insert( $row );
-
+		$this->add_photo_from_myalbum( $lid, $cid, $myalbum_row );
 	}
 
 	if ( $total > $next ) {
@@ -309,8 +296,11 @@ function _truncate()
 	echo "<h4>Truncate category table</h4>";
 	$this->_cat_handler->truncate_table();
 
-	echo "<h4>Truncate photo table</h4>";
-	$this->_photo_handler->truncate_table();
+	echo "<h4>Truncate item table</h4>";
+	$this->_item_handler->truncate_table();
+
+	echo "<h4>Truncate file table</h4>";
+	$this->_file_handler->truncate_table();
 
 	echo "<h4>Truncate vote table</h4>";
 	$this->_vote_handler->truncate_table();

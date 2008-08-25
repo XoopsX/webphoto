@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: import.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
 // use create_from_file()
 // 2008-07-01 K.OHWADA
@@ -33,7 +35,8 @@ class webphoto_admin_import extends webphoto_import
 	var $_webphoto_photos_path ;
 	var $_webphoto_thumbs_path ;
 	var $_webphoto_cat_handler   ;
-	var $_webphoto_photo_handler ;
+	var $_webphoto_item_handler ;
+	var $_webphoto_file_handler ;
 	var $_webphoto_vote_handler  ;
 
 //---------------------------------------------------------
@@ -313,7 +316,7 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 
 		echo 'photo : '.$lid.' '.$this->sanitize($ext).' '.$this->sanitize($title).' : ' ;
 
-		if ( ! $this->_mime_class->is_my_allow_ext( $ext ) ) {
+		if ( ! $this->_photo_class->is_my_allow_ext( $ext ) ) {
 			echo " <b>Skip : not allow ext</b> <br />\n" ;
 			continue;
 		}
@@ -323,7 +326,7 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 			continue;
 		}
 
-		$newid = $this->_add_photo_from_myalbum( $new_cid, $myalbum_row );
+		$newid = $this->add_photo_from_myalbum( 0, $new_cid, $myalbum_row );
 		if ( !$newid ) {
 			echo "<br />\n";
 			continue;
@@ -342,43 +345,6 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 	}
 
 	$this->print_import_count( $import_count );
-}
-
-function _add_photo_from_myalbum( $new_cid, $myalbum_row )
-{
-	$lid = $myalbum_row['lid'];
-	$ext = $myalbum_row['ext'];
-
-// insert
-	$row = $this->create_photo_row_from_myalbum( 0, $new_cid, $myalbum_row );
-	$row['photo_search'] = $this->build_photo_search( $row );
-
-	$newid = $this->_photo_handler->insert( $row );
-	if ( !$newid ) {
-		echo ' db error ' ;
-		$this->set_error( $this->_photo_handler->get_errors() );
-		return false;
-	}
-
-// copy photo
-	$photo_thumb_info = $this->copy_photo_from_myalbum( $lid, $newid, $ext );
-	if ( !is_array($photo_thumb_info) ) {
-		return false;
-	}
-
-// update
-	$row['photo_id'] = $newid;
-	$update_row = array_merge( $row, $photo_thumb_info );
-	$update_row['photo_search'] = $this->build_photo_search( $update_row );
-
-	$ret = $this->_photo_handler->update( $update_row );
-	if ( !$ret ) {
-		echo ' db error ' ;
-		$this->set_error( $this->_photo_handler->get_errors() );
-		return false;
-	}
-
-	return $newid;
 }
 
 function _add_votes_from_myalbum( $lid, $newid )
@@ -442,9 +408,10 @@ function _init_webphoto( $src_dirname )
 	$this->_webphoto_photos_path = $config_class->get_by_name( 'photospath' );
 	$this->_webphoto_thumbs_path = $config_class->get_by_name( 'thumbspath' );
 
-	$this->_webphoto_cat_handler   = new webphoto_cat_handler(   $src_dirname );
-	$this->_webphoto_photo_handler = new webphoto_photo_handler( $src_dirname );
-	$this->_webphoto_vote_handler  = new webphoto_vote_handler(  $src_dirname );
+	$this->_webphoto_cat_handler  = new webphoto_cat_handler(  $src_dirname );
+	$this->_webphoto_item_handler = new webphoto_item_handler( $src_dirname );
+	$this->_webphoto_file_handler = new webphoto_file_handler( $src_dirname );
+	$this->_webphoto_vote_handler = new webphoto_vote_handler( $src_dirname );
 
 	return $mid;
 }
@@ -468,18 +435,18 @@ function _import_webphoto_photos( $src_cid, $new_cid )
 {
 	echo "<h4>photo</h4>\n";
 
-	$webphoto_rows = $this->_webphoto_photo_handler->get_rows_by_catid( $src_cid );
+	$webphoto_item_rows = $this->_webphoto_item_handler->get_rows_by_catid( $src_cid );
 
 	$import_count = 0;
 
-	foreach ( $webphoto_rows as $webphoto_row )
+	foreach ( $webphoto_item_rows as $webphoto_item_row )
 	{
-		$src_id  = $webphoto_row['photo_id'];
-		$title_s = $this->sanitize( $webphoto_row['photo_title'] );
+		$src_id  = $webphoto_item_row['item_id'];
+		$title_s = $this->sanitize( $webphoto_item_row['item_title'] );
 
 		echo "photo : $src_id $title_s ";
 
-		$newid = $this->_add_photo_from_webphoto( $new_cid, $webphoto_row );
+		$newid = $this->_add_photo_from_webphoto( $new_cid, $webphoto_item_row );
 		echo "<br />\n";
 
 		$this->_add_votes_from_webphoto( $src_id, $newid );
@@ -495,35 +462,54 @@ function _import_webphoto_photos( $src_cid, $new_cid )
 	$this->print_import_count( $import_count );
 }
 
-function _add_photo_from_webphoto( $new_cid, $webphoto_row )
+function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 {
 // insert
-	$row = $webphoto_row;
-	$row['photo_id']     = 0 ;
-	$row['photo_cat_id'] = $new_cid ;
-	$newid = $this->_photo_handler->insert( $row );
+	$item_row = $webphoto_item_row;
+	$item_row['item_id']     = 0 ;
+	$item_row['item_cat_id'] = $new_cid ;
+
+	$newid = $this->_item_handler->insert( $item_row );
 	if ( !$newid ) {
 		echo ' db error ' ;
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
-// copy photo
-	$photo_thumb_info = $this->copy_photo_from_webphoto( $newid, $webphoto_row );
+	$item_id             = $newid ;
+	$item_row['item_id'] = $item_id;
 
-// update
-	if ( is_array($photo_thumb_info) ) {
-		$row['photo_id'] = $newid;
-		$update_row = array_merge( $row, $photo_thumb_info );
-		$ret = $this->_photo_handler->update( $update_row );
-		if ( !$ret ) {
-			echo ' db error ' ;
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return false;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+	{
+		$name = 'item_file_id_'.$i ;
+		$webphoto_file_id = $webphoto_item_row[ $name ];
+		if ( $webphoto_file_id > 0 ) {
+			$this->_add_file_from_webphoto( $item_id, $webphoto_file_id ) ;
 		}
 	}
 
-	return $newid;
+	return $item_id ;
+}
+
+function _add_file_from_webphoto( $item_id, $webphoto_file_id )
+{
+	$file_row = $this->_webphoto_file_handler->get_row_by_id( $webphoto_file_id );
+	if ( !is_array($file_row) ){
+		echo ' no src file record ' ;
+		return false;
+	}
+
+	$file_row['file_id']      = 0 ;
+	$file_row['file_item_id'] = $item_id ;
+
+	$ret = $this->_file_handler->insert( $file_row );
+	if ( !$ret ) {
+		echo ' db error ' ;
+		$this->set_error( $this->_file_handler->get_errors() );
+		return false;
+	}
+
+	return $ret;
 }
 
 function _add_votes_from_webphoto( $src_id, $newid )

@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.8 2008/08/16 00:05:38 ohwada Exp $
+// $Id: edit.php,v 1.9 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-08-15 K.OHWADA
 // BUG: undefined create_video_flash()
 // 2008-08-06 K.OHWADA
@@ -26,7 +28,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_photo_edit
 {
-	var $_video_class;
+//	var $_video_class;
 
 	var $_form_action   = null;
 	var $_has_editable  = false;
@@ -44,7 +46,7 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
 
-	$this->_video_class  =& webphoto_video::getInstance( $dirname );
+//	$this->_video_class  =& webphoto_video::getInstance( $dirname );
 
 	$this->_has_editable  = $this->_perm_class->has_editable();
 	$this->_has_deletable = $this->_perm_class->has_deletable();
@@ -166,28 +168,28 @@ function _exec_check()
 		return _C_WEBPHOTO_ERR_NO_PERM;
 	}
 
-	$row = $this->_photo_handler->get_row_by_id( $this->_post_photo_id );
-	if ( !is_array($row) ) {
+	$item_row = $this->_item_handler->get_row_by_id( $this->_post_photo_id );
+	if ( !is_array($item_row) ) {
 		return _C_WEBPHOTO_ERR_NO_RECORD;
 	}
 
-	if ( ! $this->_check_perm( $row ) ) {
+	if ( ! $this->_check_perm( $item_row ) ) {
 		return _C_WEBPHOTO_ERR_NO_PERM; 
 	}
 
 // save
-	$this->_row_current = $row;
+	$this->_row_current = $item_row;
 	return 0;
 }
 
-function _check_perm( $row )
+function _check_perm( $item_row )
 {
 	if ( $this->_is_module_admin ) {
 		return true;
 	}
 
 // user can touch photos status > 0
-	if ( ( $row['photo_uid'] == $this->_xoops_uid ) && ( $row['photo_status'] > 0 ) ) {
+	if ( ( $item_row['item_uid'] == $this->_xoops_uid ) && ( $item_row['item_status'] > 0 ) ) {
 		return true;
 	}
 	return false;
@@ -292,13 +294,22 @@ function _exec_modify()
 	$this->clear_msg_array();
 
 // load
-	$row = $this->_row_current;
+	$item_row = $this->_row_current;
 
-	$current_file_path  = $row['photo_file_path'];
-	$current_cont_path  = $row['photo_cont_path'];
-	$current_thumb_path = $row['photo_thumb_path'];
+	$current_cont_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_path' ) ;
 
-	$current_file_ext = $row['photo_file_ext'];
+	$current_thumb_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB, 'file_path' ) ;
+
+	$current_middle_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE, 'file_path' ) ;
+
+	$current_flash_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, 'file_path' ) ;
+
+	$current_docomo_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO, 'file_path' ) ;
 
 // Check if upload file name specified
 	if ( !$this->check_xoops_upload_file() ) {
@@ -320,14 +331,16 @@ function _exec_modify()
 
 // no upload
 	if ( empty($photo_tmp_name) && empty($thumb_tmp_name) ) {
-		return $this->_handler_update_photo_no_image( $row );
+		return $this->_handler_update_photo_no_image( $item_row );
 	}
 
 // remove old photo & thumb file
 	if ( $photo_tmp_name ) {
-		$this->unlink_path( $current_file_path );
 		$this->unlink_path( $current_cont_path );
 		$this->unlink_path( $current_thumb_path );
+		$this->unlink_path( $current_middle_path );
+		$this->unlink_path( $current_flash_path );
+		$this->unlink_path( $current_docomo_path );
 
 // remove old thumb file
 	} elseif ( empty($photo_tmp_name) && $thumb_tmp_name ) {
@@ -336,10 +349,12 @@ function _exec_modify()
 
 	$ret12 = $this->create_photo_thumb(
 		$this->_post_photo_id, $photo_tmp_name, $thumb_tmp_name );
-	if ( $ret12 < 0 ) { return $ret12; }
-	$image_info = $this->get_photo_thumb_info();
+	if ( $ret12 < 0 ) {
+		return $ret12; 
+	}
+	$file_params = $this->get_file_params();
 
-	return $this->_handler_update_photo_image( $row, $image_info );
+	return $this->_handler_update_photo_image( $item_row, $file_params );
 }
 
 function _build_new_status( $current_status )
@@ -405,65 +420,86 @@ function _exec_redo()
 	$this->clear_msg_array();
 
 	$this->_is_video_thumb_form = false;
-	$file_info = null;
+	$flash_param = null;
 
 	$post_redo_thumb = $this->_post_class->get_post_text('redo_thumb' );
 	$post_redo_flash = $this->_post_class->get_post_text('redo_flash' );
 
 // load
-	$row = $this->_row_current;
+	$item_row = $this->_row_current;
 
-	$photo_id         = $row['photo_id'];
-	$photo_file_path  = $row['photo_file_path'];
-	$photo_cont_path  = $row['photo_cont_path'];
-	$photo_cont_ext   = $row['photo_cont_ext'];
-	$photo_thumb_path = $row['photo_thumb_path'];
+	$item_id   = $item_row['item_id'];
+	$item_ext  = $item_row['item_ext'];
+	$item_kind = $item_row['item_kind'];
 
-	$photo_file_file  = XOOPS_ROOT_PATH . $photo_file_path ;
-	$photo_cont_file  = XOOPS_ROOT_PATH . $photo_cont_path ;
-	$photo_thumb_file = XOOPS_ROOT_PATH . $photo_thumb_path ;
+	$cont_file = null ;
+	$param     = null ;
 
-	$tmp_file = $this->_TMP_DIR .'/tmp_' . uniqid( $photo_id.'_' ) ;
+	$cont_row = $this->get_file_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ;
+	if ( is_array($cont_row) ) {
+		$cont_path     = $cont_row['file_path'];
+		$cont_width    = $cont_row['file_width'];
+		$cont_height   = $cont_row['file_height'];
+		$cont_duration = $cont_row['file_duration'];
+		$cont_file     = XOOPS_ROOT_PATH . $cont_path ;
+
+		$param                = array() ;
+		$param['src_file']    = $cont_file ;
+		$param['src_kind']    = $item_kind ;
+		$param['video_param'] = array(
+			'width'    => $cont_width ,
+			'height'   => $cont_height ,
+			'duration' => $cont_duration ,
+		);
+	}
+
+	$flash_path  = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, 'file_path' ) ;
+
+	$flash_file = XOOPS_ROOT_PATH . $flash_path ;
+
+	$flash_tmp_file = $this->_TMP_DIR .'/tmp_' . uniqid( $item_id.'_' ) ;
 
 // create flash
-	if ( $post_redo_flash ) {
+	if ( $post_redo_flash && is_array($param) ) {
 // save file
-		$this->rename_file( $photo_file_file, $tmp_file );
+		$this->rename_file( $flash_file, $flash_tmp_file );
 
 // BUG: undefined create_video_flash()
-		$flash_name = $this->_image_class->build_photo_name( 
-			$photo_id, $this->_video_class->get_flash_ext() );
-		$ret = $this->_video_class->create_flash( $photo_cont_file, $flash_name );
-
-		if ( $ret ) {
+		$flash_param = $this->_photo_class->create_video_flash_param( $item_id, $param );
+		if ( is_array($flash_param) ) {
 // remove file if success
-			$this->unlink_file( $tmp_file );
-			$file_info = $this->_video_class->get_flash_info();
+			$this->unlink_file( $flash_tmp_file );
 
 		} else {
-// recover file if fail
-			$this->rename_file( $tmp_file, $photo_file_file );
+// recovery file if fail
+			$this->rename_file( $flash_tmp_file, $flash_file );
 		}
 	}
 
 // create video thumb
-	if ( $post_redo_thumb && $this->_cfg_makethumb ) {
+	if ( $post_redo_thumb && $this->_cfg_makethumb && $cont_file ) {
 
 // BUG: undefined create_video_plural_thumbs()
 		$this->_is_video_thumb_form 
 			= $this->_photo_class->create_video_plural_thumbs(
-				$photo_id, $photo_cont_file, $photo_cont_ext ) ;
+				$item_id, $cont_file, $item_ext ) ;
 	}
 
 // update
-	$row_update = $row ;
-	if ( is_array($file_info) && count($file_info) ) {
-		$row_update = array_merge( $row_update, $file_info );
+	$row_update = $item_row ;
 
-		$ret = $this->_photo_handler->update( $row_update );
-		if ( !$ret ) {
-			$this->set_error( $this->_photo_handler->get_errors() );
-			return _C_WEBPHOTO_ERR_DB;
+	if ( is_array($flash_param) ) {
+		$flash_id = $this->_photo_class->insert_file( $item_id, $flash_param );
+		if ( $flash_id > 0 ) {
+			$row_update['item_file_id_4'] = $flash_id;
+
+			$ret = $this->_item_handler->update( $row_update );
+			if ( !$ret ) {
+				$this->set_error( $this->_item_handler->get_errors() );
+				return _C_WEBPHOTO_ERR_DB;
+			}
 		}
 	}
 
@@ -497,44 +533,87 @@ function _video()
 //---------------------------------------------------------
 // photo handler
 //---------------------------------------------------------
-function _handler_update_photo_no_image( $row )
+function _handler_update_photo_no_image( $item_row )
 {
-	$row_update = $this->_build_update_row_by_post( $row );
+	$this->_update_all_file_duration( $item_row );
 
-	$ret = $this->_photo_handler->update( $row_update );
+	$row_update = $this->_build_update_row_by_post( $item_row );
+
+	$ret = $this->_item_handler->update( $row_update );
 	if ( !$ret ) {
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
 	}
 
-	$ret16 = $this->tag_handler_update_tags( $this->_post_photo_id , $this->get_tag_name_array() );
-	if ( !$ret16 ) {
-		return _C_WEBPHOTO_ERR_DB;
-	}
+	$this->tag_handler_update_tags( $this->_post_photo_id , $this->get_tag_name_array() );
 
 	$this->_xoops_notify_if_apporve( $row_update );
 
 	return 0;
 }
 
-function _handler_update_photo_image( $row, $image_info )
+function _handler_update_photo_image( $item_row, $file_params )
 {
-	$row_update = $this->_build_update_row_by_post( $row );
+	$item_id   = $item_row['item_id'] ;
+	$cont_id   = 0 ;
+	$thumb_id  = 0 ;
+	$middle_id = 0 ;
+	$flash_id  = 0 ;
+	$docomo_id = 0 ;
 
-	if ( is_array($image_info) && count($image_info) ) {
-		$row_update = array_merge( $row_update, $image_info );
+	if ( is_array($file_params) ) {
+		$cont_param   = $file_params['cont'] ;
+		$thumb_param  = $file_params['thumb'] ;
+		$middle_param = $file_params['middle'] ;
+		$flash_param  = $file_params['flash'] ;
+		$docomo_param = $file_params['docomo'] ;
+
+		if ( is_array($cont_param) ) {
+			$cont_id = $this->_photo_class->insert_file( $item_id, $cont_param );
+		}
+		if ( is_array($thumb_param) ) {
+			$thumb_id = $this->_photo_class->insert_file( $item_id, $thumb_param );
+		}
+		if ( is_array($middle_param) ) {
+			$middle_id = $this->_photo_class->insert_file( $item_id, $middle_param );
+		}
+		if ( is_array($flash_param) ) {
+			$flash_id = $this->_photo_class->insert_file( $item_id, $flash_param );
+		}
+		if ( is_array($docomo_param) ) {
+			$docomo_id = $this->_photo_class->insert_file( $item_id, $docomo_param );
+		}
 	}
 
-	$ret = $this->_photo_handler->update( $row_update );
+	if ( $cont_id == 0 ) {
+		$this->_update_all_file_duration( $item_row );
+	}
+
+	$row_update = $this->_build_update_row_by_post( $item_row );
+
+	if ( $cont_id > 0 ) {
+		$row_update['item_file_id_1'] = $cont_id;
+	}
+	if ( $thumb_id > 0 ) {
+		$row_update['item_file_id_2'] = $thumb_id;
+	}
+	if ( $middle_id > 0 ) {
+		$row_update['item_file_id_3'] = $middle_id;
+	}
+	if ( $flash_id > 0 ) {
+		$row_update['item_file_id_4'] = $flash_id;
+	}
+	if ( $docomo_id > 0 ) {
+		$row_update['item_file_id_5'] = $docomo_id;
+	}
+
+	$ret = $this->_item_handler->update( $row_update );
 	if ( !$ret ) {
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
 	}
 
-	$ret16 = $this->tag_handler_update_tags( $this->_post_photo_id, $this->get_tag_name_array() );
-	if ( !$ret16 ) {
-		return _C_WEBPHOTO_ERR_DB;
-	}
+	$this->tag_handler_update_tags( $this->_post_photo_id, $this->get_tag_name_array() );
 
 	$this->_xoops_notify_if_apporve( $row_update );
 
@@ -544,48 +623,80 @@ function _handler_update_photo_image( $row, $image_info )
 	return 0;
 }
 
-function _xoops_notify_if_apporve( $row )
+function _update_all_file_duration( $item_row )
 {
-// when approve
-	if ( $row['photo_status'] == 1 ) {
-		$this->xoops_notify_for_edit( $this->_post_photo_id, $row['photo_cat_id'], $row['photo_title'] );
+	$duration = $this->get_photo_duration();
+	$cont_duration = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_duration' ) ;
+
+	if ( $duration != $cont_duration ) {
+		$this->_update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+		$this->_update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
+		$this->_update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
 	}
 }
 
-function _build_update_row_by_post( $row )
+function _update_file_duration( $duration, $item_row, $kind )
 {
-	$new_status = $this->_build_new_status( $row['photo_status'] );
+	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
+	if ( !is_array($file_row ) ) {
+		return true;
+	}
 
-	$row_update = $this->_build_preview_row_by_post( $row );
+	$file_row['file_duration'] = $duration ;
 
-	$row_update['photo_status'] = $new_status;
-	$row_update['photo_search'] = $this->build_search_for_edit( $row_update, $this->get_tag_name_array() );
+	$ret = $this->_file_handler->update( $file_row );
+	if ( !$ret ) {
+		$this->set_error( $this->_file_handler->get_errors() );
+		return false;
+	}
+	return true;
+}
+
+function _xoops_notify_if_apporve( $item_row )
+{
+// when approve
+	if ( $item_row['item_status'] == 1 ) {
+		$this->xoops_notify_for_edit( 
+			$this->_post_photo_id, $item_row['item_cat_id'], $item_row['item_title'] );
+	}
+}
+
+function _build_update_row_by_post( $item_row )
+{
+	$new_status = $this->_build_new_status( $item_row['item_status'] );
+
+	$row_update = $this->_build_preview_row_by_post( $item_row );
+
+	$row_update['item_status'] = $new_status;
+	$row_update['item_search'] = $this->build_search_for_edit( 
+		$row_update, $this->get_tag_name_array() );
 
 	return $row_update;
 }
 
-function _build_preview_row_by_post( $row )
+function _build_preview_row_by_post( $item_row )
 {
 	$post_preview              = $this->_post_class->get_post_text('preview');
 	$post_submit               = $this->_post_class->get_post_text('submit' );
-	$post_time_update_checkbox = $this->_post_class->get_post_int( 'photo_time_update_checkbox' );
-	$post_time_update          = $this->_post_class->get_post_time('photo_time_update' );
+	$post_time_update_checkbox = $this->_post_class->get_post_int( 'item_time_update_checkbox' );
+	$post_time_update          = $this->_post_class->get_post_time('item_time_update' );
 
 	if ( $post_preview || $post_submit ) {
 
-		$row = $this->build_row_by_post( $row );
+		$item_row = $this->build_row_by_post( $item_row );
 
 		if ( $this->_is_module_admin ) {
 			if ( $post_time_update_checkbox ) {
-				$row['photo_time_update'] = $post_time_update;
+				$item_row['item_time_update'] = $post_time_update;
 			}
 		} else {
-			$row['photo_time_update'] = time();
+			$item_row['item_time_update'] = time();
 		}
 
 	}
 
-	return $row;
+	return $item_row;
 }
 
 //---------------------------------------------------------
@@ -633,13 +744,13 @@ function _exec_delete()
 		return _C_WEBPHOTO_ERR_NO_PERM;
 	}
 
-	$row = $this->_photo_handler->get_row_by_id( $this->_post_photo_id );
-	if ( !is_array($row) ) {
+	$item_row = $this->_item_handler->get_row_by_id( $this->_post_photo_id );
+	if ( !is_array($item_row) ) {
 		return _C_WEBPHOTO_ERR_NO_RECORD;
 	}
 
 // BUG: undefined method _check_uid()
-	if ( ! $this->_check_perm( $row ) ) {
+	if ( ! $this->_check_perm( $item_row ) ) {
 		return _C_WEBPHOTO_ERR_NO_PERM;
 	}
 
@@ -670,22 +781,22 @@ function _get_photo_row()
 {
 
 // set checked
-	$this->set_checkbox_by_name( 'photo_datetime_checkbox',    _C_WEBPHOTO_YES );
-	$this->set_checkbox_by_name( 'photo_time_update_checkbox', _C_WEBPHOTO_YES );
-	$this->set_checkbox_by_name( 'thumb_checkbox',             _C_WEBPHOTO_YES );
+	$this->set_checkbox_by_name( 'item_datetime_checkbox',    _C_WEBPHOTO_YES );
+	$this->set_checkbox_by_name( 'item_time_update_checkbox', _C_WEBPHOTO_YES );
+	$this->set_checkbox_by_name( 'thumb_checkbox',            _C_WEBPHOTO_YES );
 
 // load
-	$row = $this->_row_current;
+	$item_row = $this->_row_current;
 
 // get current tags
 	$this->set_tag_name_array( $this->tag_handler_tag_name_array( $this->_post_photo_id ) );
 
-	return $row;
+	return $item_row;
 }
 
-function _print_preview( $row )
+function _print_preview( $item_row )
 {
-	$row_preview = $this->_build_preview_row_by_post( $row );
+	$row_preview = $this->_build_preview_row_by_post( $item_row );
 
 	$show = $this->show_build_preview_edit( $row_preview, $this->get_tag_name_array() );
 	echo $this->build_preview_template( $show );
@@ -700,13 +811,19 @@ function _print_form_default()
 {
 	echo $this->_build_bread_crumb_edit();
 
-	$row = $this->_get_photo_row();
-	$row = $this->_print_preview( $row );
+	$item_row = $this->_get_photo_row();
+	$item_row = $this->_print_preview( $item_row );
 
-	$photo_cont_ext = $row['photo_cont_ext'];
+	$item_id   = $item_row['item_id'];
+	$item_kind = $item_row['item_kind'];
 
-	$is_image = $this->is_normal_ext( $photo_cont_ext ) ;
-	$is_video = $this->_mime_class->is_video_ext( $photo_cont_ext ) ;
+	if ( $this->_is_module_admin ) {
+		$url = $this->_MODULE_URL .'/admin/index.php?fct=item_table_manage&op=form&id='. $item_id ;
+		echo '<a href="'. $url .'">goto admin item table: '. $item_id ."</a><br />\n";
+	}
+
+	$is_image  = $this->is_image_kind( $item_kind ) ;
+	$is_video  = $this->is_video_kind( $item_kind ) ;
 
 	list ( $types, $allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
 
@@ -723,20 +840,34 @@ function _print_form_default()
 	);
 
 	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form->print_form_common( $row, $param );
-	$form->print_form_redo(   $row, $param );
+	$form->print_form_common( $item_row, $param );
+	$form->print_form_redo(   $item_row, $param );
+
+	if ( $this->_is_module_admin ) {
+		$url = $this->_MODULE_URL .'/admin/index.php' ;
+		echo "<br />\n";
+		echo '<a href="'. $url .'">';
+		echo $this->get_constant('goto_admin');
+		echo "</a><br />\n";
+	}
 
 }
 
 function _print_form_confirm()
 {
 // load
-	$row = $this->_row_current;
+	$item_row = $this->_row_current;
 
-	if ( $row['photo_thumb_url'] ) {
-		$src = $row['photo_thumb_url'];
-	} elseif ( $row['photo_cont_url'] && $this->is_nomrl_ext( $row['photo_cont_ext'] ) ) {
-		$src = $row['photo_cont_url'];
+	$cont_url = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_url' ) ;
+
+	$thumb_url = $this->get_file_value_by_kind_name( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB, 'file_url' ) ;
+
+	if ( $thumb_url ) {
+		$src = $thumb_url ;
+	} elseif ( $cont_url && $this->is_image_kind( $item_row['item_kind'] ) ) {
+		$src = $cont_url ;
 	}
 
 	echo $this->_build_bread_crumb_edit();
@@ -750,7 +881,7 @@ function _print_form_confirm()
 	echo "<br />\n";
 
 	$form =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form->print_form_delete_confirm( $row['photo_id'] );
+	$form->print_form_delete_confirm( $item_row['item_id'] );
 }
 
 function _print_form_video_thumb()

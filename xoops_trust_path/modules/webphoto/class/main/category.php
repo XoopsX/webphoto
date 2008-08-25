@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: category.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used set_mode()
 //---------------------------------------------------------
@@ -101,14 +103,14 @@ function _get_photo_for_list( $cat_id )
 	$catid_array = $this->_cat_handler->get_all_child_id( $cat_id );
 	array_push( $catid_array , $cat_id ) ;
 
-	$this_sum = $this->_photo_handler->get_count_public_by_catid( $cat_id );
-	$total    = $this->_photo_handler->get_count_public_by_catid_array( $catid_array );
+	$this_sum = $this->_item_handler->get_count_public_by_catid( $cat_id );
+	$total    = $this->_item_handler->get_count_public_by_catid_array( $catid_array );
 
 	if ( $total > 0 ) {
 
 // this category
 		if ( $this_sum > 0 ) {
-			$photo_rows = $this->_photo_handler->get_rows_public_by_catid_orderby( 
+			$photo_rows = $this->_item_handler->get_rows_public_by_catid_orderby( 
 				$cat_id, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
 
 			if ( is_array($photo_rows) && count($photo_rows) ) {
@@ -223,21 +225,21 @@ function _get_photos_for_detail( $cat_id, $orderby, $limit, $start )
 	$catid_array = $this->_cat_handler->get_all_child_id( $cat_id );
 	array_push( $catid_array , $cat_id ) ;
 
-	$this_sum = $this->_photo_handler->get_count_public_by_catid( $cat_id );
-	$total    = $this->_photo_handler->get_count_public_by_catid_array( $catid_array );
+	$this_sum = $this->_item_handler->get_count_public_by_catid( $cat_id );
+	$total    = $this->_item_handler->get_count_public_by_catid_array( $catid_array );
 
 	if ( $total > 0 ) {
 
 // this category
 		if ( $this_sum > 0 ) {
-			$where = $this->_photo_handler->build_where_public_by_catid( $cat_id );
+			$where = $this->_item_handler->build_where_public_by_catid( $cat_id );
 
 // this category & all children
 		} else {
-			$where = $this->_photo_handler->build_where_public_by_catid_array( $catid_array );
+			$where = $this->_item_handler->build_where_public_by_catid_array( $catid_array );
 		}
 
-		$photo_rows = $this->_photo_handler->get_rows_by_where_orderby(
+		$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
 			$where, $orderby, $limit, $start );
 	}
 

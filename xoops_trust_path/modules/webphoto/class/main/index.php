@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: index.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+// QR code
 // 2008-07-01 K.OHWADA
 // build_navi() -> build_main_navi()
 //---------------------------------------------------------
@@ -50,7 +53,7 @@ function main()
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
 
-	$total = $this->_photo_handler->get_count_public();
+	$total = $this->_item_handler->get_count_public();
 
 	if ( $total > 0 ) {
 		$show_photo = true;
@@ -70,6 +73,8 @@ function main()
 
 	$this->assign_xoops_header( $mode, null, $show_gmap );
 
+	$this->create_mobile_qr( 0 );
+
 	$arr = array(
 		'xoops_pagetitle'   => $this->sanitize( $this->_MODULE_NAME ),
 		'title_bread_crumb' => $sub_title_s,
@@ -82,6 +87,8 @@ function main()
 		'show_nomatch'      => $this->build_show_nomatch( $total ) ,
 		'random_more_url_s' => $this->_build_random_more_url_s_by_mode( $mode ) ,
 		'index_desc'        => $this->_build_index_desc( $mode ) ,
+		'mobile_email'      => $this->get_mobile_email() ,
+		'mobile_url'        => $this->build_mobile_url( 0 ) ,
 	);
 
 	$ret = array_merge( $arr, $init_param, $navi_param, $tagcloud_param, $catlist_param, $gmap_param, $noti_param );
@@ -114,7 +121,7 @@ function _get_action()
 function _get_photos_by_mode( $mode, $limit, $start )
 {
 	$orderby  = $this->_sort_class->mode_to_orderby( $mode );
-	$rows     = $this->_photo_handler->get_rows_public_by_orderby( $orderby, $limit, $start );
+	$rows     = $this->_item_handler->get_rows_public_by_orderby( $orderby, $limit, $start );
 	return $this->build_photo_show_from_rows( $rows );
 }
 

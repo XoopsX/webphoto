@@ -1,15 +1,16 @@
 <?php
-// $Id: imagemanager.php,v 1.1 2008/06/21 12:22:18 ohwada Exp $
+// $Id: imagemanager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-//=========================================================
-// webphoto module
-// 2008-04-02 K.OHWADA
-//=========================================================
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -22,7 +23,8 @@ class webphoto_main_imagemanager extends webphoto_inc_handler
 	var $_perm_class;
 
 	var $_cat_table;
-	var $_photo_table;
+	var $_item_table;
+	var $_file_table;
 
 	var $_DIRNAME;
 
@@ -45,8 +47,9 @@ function webphoto_main_imagemanager( $dirname )
 
 	$this->_perm_class =& webphoto_permission::getInstance( $dirname );
 
-	$this->_cat_table   = $this->prefix_dirname( 'cat' );
-	$this->_photo_table = $this->prefix_dirname( 'photo' );
+	$this->_cat_table  = $this->prefix_dirname( 'cat' );
+	$this->_item_table = $this->prefix_dirname( 'item' );
+	$this->_file_table = $this->prefix_dirname( 'file' );
 
 	$this->_DIRNAME = $dirname;
 }
@@ -158,7 +161,7 @@ function main()
 		$cat_options = $this->build_cat_options( $cat_id, $cat_tree );
 
 		if ( $cat_id > 0 ) {
-			$total  = $this->get_photo_count_by_catid( $cat_id ) ;
+			$total  = $this->get_item_count_by_catid( $cat_id ) ;
 		}
 	}
 
@@ -172,37 +175,57 @@ function main()
 
 		$i = 1 ;
 
-		$rows = $this->get_photo_rows_by_catid( $cat_id, $num , $start );
-		foreach( $rows as $row )
+		$item_rows = $this->get_item_rows_by_catid( $cat_id, $num , $start );
+		foreach( $item_rows as $item_row )
 		{
-			extract( $row ) ;
+			$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+			$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
-			$photo_url = $photo_cont_url ;
-			$thumb_url = $photo_thumb_url ;
-
-			if ( $cfg_usesiteimg ) {
-				$photo_url = str_replace( XOOPS_URL.'/' , '', $photo_cont_url );
-				$thumb_url = str_replace( XOOPS_URL.'/' , '', $photo_thumb_url );
+			if ( !is_array($cont_row) ) {
+				continue;
 			}
 
-			$xcodel  = "[{$URL}={$photo_url}][{$IMG} align=left]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcodec  = "[{$URL}={$photo_url}][{$IMG}]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcoder  = "[{$URL}={$photo_url}][{$IMG} align=right]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcodebl = "[{$IMG} align=left]{$photo_url}[/{$IMG}]";
-			$xcodebc = "[{$IMG}]{$photo_url}[/{$IMG}]";
-			$xcodebr = "[{$IMG} align=right]{$photo_url}[/{$IMG}]";
+			if ( !is_array($thumb_row) ) {
+				continue;
+			}
 
-			$can_edit = ( $has_editable && ( $my_uid == $photo_uid || $is_module_admin ) ) ;
+			$item_id    = $item_row['item_id'];
+			$item_uid   = $item_row['item_uid'];
+			$item_title = $item_row['item_title'];
+			$item_kind  = $item_row['item_kind'];
+
+			$cont_url    = $cont_row['file_url'];
+			$cont_width  = $cont_row['file_width'];
+			$cont_height = $cont_row['file_height'];
+			$cont_ext    = $cont_row['file_ext'];
+
+			$thumb_url    = $thumb_row['file_url'];
+			$thumb_width  = $thumb_row['file_width'];
+			$thumb_height = $thumb_row['file_height'];
+
+			if ( $cfg_usesiteimg ) {
+				$cont_url  = str_replace( XOOPS_URL.'/' , '', $cont_url );
+				$thumb_url = str_replace( XOOPS_URL.'/' , '', $thumb_url );
+			}
+
+			$xcodel  = "[{$URL}={$cont_url}][{$IMG} align=left]{$thumb_url}[/{$IMG}][/{$URL}]";
+			$xcodec  = "[{$URL}={$cont_url}][{$IMG}]{$thumb_url}[/{$IMG}][/{$URL}]";
+			$xcoder  = "[{$URL}={$cont_url}][{$IMG} align=right]{$thumb_url}[/{$IMG}][/{$URL}]";
+			$xcodebl = "[{$IMG} align=left]{$cont_url}[/{$IMG}]";
+			$xcodebc = "[{$IMG}]{$cont_url}[/{$IMG}]";
+			$xcodebr = "[{$IMG} align=right]{$cont_url}[/{$IMG}]";
+
+			$can_edit = ( $has_editable && ( $my_uid == $item_uid || $is_module_admin ) ) ;
 
 			$photos[] = array(
-				'photo_id'     => $photo_id ,
-				'cont_ext'     => $photo_cont_ext ,
-				'cont_width'   => $photo_cont_width ,
-				'cont_height'  => $photo_cont_height ,
-				'thumb_width'  => $photo_thumb_width ,
-				'thumb_height' => $photo_thumb_height ,
-				'nicename'     => htmlspecialchars( $photo_title, ENT_QUOTES ) ,
-				'src'          => $photo_thumb_url ,
+				'photo_id'     => $item_id ,
+				'cont_ext'     => $cont_ext ,
+				'cont_width'   => $cont_width ,
+				'cont_height'  => $cont_height ,
+				'thumb_width'  => $thumb_width ,
+				'thumb_height' => $thumb_height ,
+				'nicename'     => htmlspecialchars( $item_title, ENT_QUOTES ) ,
+				'src'          => $thumb_url ,
 				'can_edit'     => $can_edit ,
 				'xcodel'       => $xcodel ,
 				'xcodec'       => $xcodec ,
@@ -210,7 +233,7 @@ function main()
 				'xcodebl'      => $xcodebl ,
 				'xcodebc'      => $xcodebc ,
 				'xcodebr'      => $xcodebr ,
-				'is_normal'    => $this->is_normal_ext( $photo_cont_ext ) ,
+				'is_normal'    => $this->is_image_kind( $item_kind ) ,
 				'count'        => $i ,
 			) ;
 
@@ -250,6 +273,32 @@ function main()
 	return array( $param, $photos );
 }
 
+function is_image_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
+		return true;
+	}
+	return false;
+}
+
+function get_file_row_by_kind( $item_row, $kind )
+{
+	$id = $this->get_file_id_by_kind( $item_row, $kind );
+	if ( $id > 0 ) {
+		return $this->get_file_row_by_id( $id );
+	}
+	return false ;
+}
+
+function get_file_id_by_kind( $item_row, $kind )
+{
+	$name = 'item_file_id_'.$kind;
+	if ( isset( $item_row[ $name ] ) ) {
+		return  $item_row[ $name ] ;
+	}
+	return false ;
+}
+
 //---------------------------------------------------------
 // handler
 //---------------------------------------------------------
@@ -257,7 +306,7 @@ function build_cat_options( $cat_id, $cat_tree )
 {
 	// select box for category
 	$photo_counts = array() ;
-	$catlist = $this->get_photo_catlist();
+	$catlist = $this->get_item_catlist();
 
 	if ( !is_array($catlist) || !count($catlist) ) {
 		return null;
@@ -267,8 +316,8 @@ function build_cat_options( $cat_id, $cat_tree )
 		return null;
 	}
 
-	foreach ( $catlist as $row ) {
-		$photo_counts[ $row['photo_cat_id'] ] = $row['photo_sum'] ;
+	foreach ( $catlist as $item_row ) {
+		$photo_counts[ $item_row['item_cat_id'] ] = $item_row['photo_sum'] ;
 	}
 
 	$cat_options = '<option value="0">--</option>'."\n" ;
@@ -294,31 +343,38 @@ function get_cat_tree()
 	return $cattree->getChildTreeArray( 0 , 'cat_title' ) ;
 }
 
-function get_photo_catlist( $limit=0 , $offset=0 )
+function get_item_catlist( $limit=0 , $offset=0 )
 {
-	$sql  = 'SELECT photo_cat_id, COUNT(photo_id) AS photo_sum ';
-	$sql .= ' FROM .'. $this->_photo_table ;
-	$sql .= ' WHERE photo_status > 0 ';
-	$sql .= ' GROUP BY photo_cat_id' ;
-	$sql .= ' ORDER BY photo_cat_id' ;
+	$sql  = 'SELECT item_cat_id, COUNT(item_id) AS photo_sum ';
+	$sql .= ' FROM .'. $this->_item_table ;
+	$sql .= ' WHERE item_status > 0 ';
+	$sql .= ' GROUP BY item_cat_id' ;
+	$sql .= ' ORDER BY item_cat_id' ;
 	return $this->get_rows_by_sql( $sql, $limit , $offset );
 }
 
-function get_photo_count_by_catid( $cat_id )
+function get_item_count_by_catid( $cat_id )
 {
-	$sql  = 'SELECT COUNT(*) FROM '. $this->_photo_table ;
-	$sql .= ' WHERE photo_cat_id='.intval($cat_id);
-	$sql .= ' AND photo_status > 0 ';
+	$sql  = 'SELECT COUNT(*) FROM '. $this->_item_table ;
+	$sql .= ' WHERE item_cat_id='.intval($cat_id);
+	$sql .= ' AND item_status > 0 ';
 	return $this->get_count_by_sql( $sql );
 }
 
-function get_photo_rows_by_catid( $cat_id, $limit=0 , $offset=0 )
+function get_item_rows_by_catid( $cat_id, $limit=0 , $offset=0 )
 {
-	$sql  = 'SELECT * FROM '. $this->_photo_table ;
-	$sql .= ' WHERE photo_cat_id='.intval($cat_id);
-	$sql .= ' AND photo_status > 0 ';
-	$sql .= ' ORDER BY photo_time_update DESC';
+	$sql  = 'SELECT * FROM '. $this->_item_table ;
+	$sql .= ' WHERE item_cat_id='.intval($cat_id);
+	$sql .= ' AND item_status > 0 ';
+	$sql .= ' ORDER BY item_time_update DESC';
 	return $this->get_rows_by_sql( $sql, $limit , $offset );
+}
+
+function get_file_row_by_id( $file_id )
+{
+	$sql  = 'SELECT * FROM .'. $this->_file_table ;
+	$sql .= ' WHERE file_id='.intval($file_id);
+	return $this->get_row_by_sql( $sql );
 }
 
 // --- class end ---

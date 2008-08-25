@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.3 2008/07/08 00:04:14 ohwada Exp $
+// $Id: photo.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+// QR code
 // 2008-07-01 K.OHWADA
 // used build_uri_photo() build_photo_pagenavi()
 //---------------------------------------------------------
@@ -76,7 +79,7 @@ function _check()
 	$this->_get_cat_id   = $this->_pathinfo_class->get_int( 'cat_id' );
 	$this->_get_order    = $this->_pathinfo_class->get( 'order' );
 
-	$row = $this->_photo_handler->get_row_public_by_id( $this->_get_photo_id ) ;
+	$row = $this->_item_handler->get_row_public_by_id( $this->_get_photo_id ) ;
 	if( !is_array($row) ) {
 		redirect_header( $this->_MODULE_URL.'/' , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit();
@@ -146,7 +149,7 @@ function _excute_edittag()
 // load row
 	$row = $this->_row;
 
-	$photo_id  = $row['photo_id'];
+	$photo_id  = $row['item_id'];
 
 	$post_tags  = $this->_post_class->get_post_text( 'tags' );
 	$post_array = $this->_tag_class->str_to_tag_name_array( $post_tags );
@@ -166,8 +169,8 @@ function main()
 {
 // load row
 	$row = $this->_row;
-	$photo_id  = $row['photo_id'];
-	$photo_uid = $row['photo_uid'];
+	$photo_id  = $row['item_id'];
+	$photo_uid = $row['item_uid'];
 
 // for xoops comment & notification
 	$_GET['photo_id'] = $photo_id;
@@ -175,9 +178,9 @@ function main()
 	$this->set_keyword_array_by_get();
 
 // countup hits
-	$this->_photo_handler->update_hits( $photo_id );
+	$this->_item_handler->update_hits( $photo_id );
 
-	$total_all  = $this->_photo_handler->get_count_public();
+	$total_all  = $this->_item_handler->get_count_public();
 	$photo      = $this->build_photo_show( $row );
 
 	$gmap_param = $this->_build_gmap_param( $row );
@@ -191,6 +194,8 @@ function main()
 
 	$this->assign_xoops_header( 'category', $cat_id, $show_gmap );
 
+	$this->create_mobile_qr( $photo_id );
+
 	$arr = array(
 		'xoops_pagetitle' => $photo['title_s'],
 		'photo'           => $photo,
@@ -201,6 +206,9 @@ function main()
 		'show_photo_exif' => true ,
 		'photo_total_all' => $total_all ,
 		'lang_thereare'   => $this->build_lang_thereare( $total_all ) ,
+		'mobile_email'    => $this->get_mobile_email() ,
+		'mobile_url'      => $this->build_mobile_url( $photo_id ) ,
+		'mobile_qr_image' => $this->build_mobile_filename( $photo_id ) ,
 	);
 
 	$ret = array_merge( $arr, $gmap_param, $tags_param, $noti_param );
@@ -212,7 +220,7 @@ function main()
 //---------------------------------------------------------
 function _get_catid_row_or_post( $row )
 {
-	$cat_id = ( $row['photo_cat_id'] > 0 ) ? $row['photo_cat_id'] : $this->_get_cat_id ;
+	$cat_id = ( $row['item_cat_id'] > 0 ) ? $row['item_cat_id'] : $this->_get_cat_id ;
 	return $cat_id;
 }
 
@@ -231,9 +239,9 @@ function _build_gmap_param( $row )
 		'show_gmap'       => $show,
 		'gmap_photo'      => $photo,
 		'gmap_icons'      => $icons ,
-		'gmap_latitude'   => $row['photo_gmap_latitude'] ,
-		'gmap_longitude'  => $row['photo_gmap_longitude'] ,
-		'gmap_zoom'       => $row['photo_gmap_zoom'] ,
+		'gmap_latitude'   => $row['item_gmap_latitude'] ,
+		'gmap_longitude'  => $row['item_gmap_longitude'] ,
+		'gmap_zoom'       => $row['item_gmap_zoom'] ,
 		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
 	);
 	return $arr;
@@ -243,7 +251,7 @@ function _build_navi( $photo_id, $cat_id )
 {
 	$script   = $this->_uri_class->build_photo_pagenavi() ;
 	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
-	$id_array = $this->_photo_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
+	$id_array = $this->_item_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
 
 	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
 }

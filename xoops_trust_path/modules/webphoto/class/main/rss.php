@@ -1,10 +1,16 @@
 <?php
-// $Id: rss.php,v 1.2 2008/07/08 20:31:22 ohwada Exp $
+// $Id: rss.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -28,7 +34,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_rss extends webphoto_lib_rss
 {
-	var $_photo_handler;
+	var $_item_handler;
+	var $_file_handler;
 	var $_cat_handler;
 	var $_pathinfo_class;
 	var $_multibyte_class;
@@ -62,7 +69,8 @@ function webphoto_main_rss( $dirname, $trust_dirname )
 	$this->webphoto_lib_rss( $dirname ) ;
 	$this->set_template( 'db:'.$dirname.'_main_rss.html' );
 
-	$this->_photo_handler  =& webphoto_photo_handler::getInstance( $dirname );
+	$this->_item_handler   =& webphoto_item_handler::getInstance( $dirname );
+	$this->_file_handler   =& webphoto_file_handler::getInstance( $dirname );
 	$this->_cat_handler    =& webphoto_cat_handler::getInstance(   $dirname );
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
 	$this->_search_class   =& webphoto_lib_search::getInstance();
@@ -189,12 +197,14 @@ function build_items()
 	$rows = $this->_get_photo_rows();
 	foreach ( $rows as $row )
 	{
-		$cat_row = $this->_cat_handler->get_cached_row_by_id( $row['photo_cat_id'] );
+		$cat_row   = $this->_cat_handler->get_cached_row_by_id( $row['item_cat_id'] );
+		$cont_row  = $this->_get_file_row_by_kind( $row, _C_WEBPHOTO_FILE_KIND_CONT );
+		$thumb_row = $this->_get_file_row_by_kind( $row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 		$link_xml  = $this->xml_text( $this->_build_link( $row ) ) ;
-		$title_xml = $this->xml_text( $row['photo_title'] ) ;
-		$pubdate   = date('r', $row['photo_time_update'] ) ;
-		list( $content, $summary, $desc ) = $this->_build_description( $row );
+		$title_xml = $this->xml_text( $row['item_title'] ) ;
+		$pubdate   = date('r', $row['item_time_update'] ) ;
+		list( $content, $summary, $desc ) = $this->_build_description( $row, $thumb_row );
 
 		$media_title_xml        = '';
 		$media_description      = '';
@@ -212,32 +222,33 @@ function build_items()
 		$media_thumbnail_large_height = '' ;
 		$media_thumbnail_large_width  = '' ;
 
-		if ( $row['photo_cont_url'] ) {
+
+		if ( is_array($cont_row) ) {
 
 			$media_title_xml        = $title_xml ;
 			$media_description      = $summary ;
-			$media_content_url      = $row['photo_cont_url'] ;
-			$media_content_filesize = $row['photo_cont_size'];
-			$media_content_height   = $row['photo_cont_height'];
-			$media_content_width    = $row['photo_cont_width'];
-			$media_content_duration = $row['photo_cont_duration'];
-			$media_content_type     = $row['photo_cont_mime'];
+			$media_content_url      = $cont_row['file_url'] ;
+			$media_content_filesize = $cont_row['file_size'];
+			$media_content_height   = $cont_row['file_height'];
+			$media_content_width    = $cont_row['file_width'];
+			$media_content_duration = $cont_row['file_duration'];
+			$media_content_type     = $cont_row['file_mime'];
 
 // imaeg type
-			if ( $this->_is_image( $row ) ) {
+			if ( $this->_is_kind_image( $row ) ) {
 				$media_content_medium   = 'image';
 
-				if ( $row['photo_thumb_url'] ) {
-					$media_thumbnail_url          = $row['photo_thumb_url'] ;
-					$media_thumbnail_height       = $row['photo_thumb_height'];
-					$media_thumbnail_width        = $row['photo_thumb_width'];
+				if ( is_array($thumb_row) ) {
+					$media_thumbnail_url          = $thumb_row['file_url'] ;
+					$media_thumbnail_height       = $thumb_row['file_height'];
+					$media_thumbnail_width        = $thumb_row['file_width'];
 					$media_thumbnail_large_url    = $media_content_url ;
 					$media_thumbnail_large_height = $media_content_height ;
 					$media_thumbnail_large_width  = $media_content_width ;
 				}
 
 // video type
-			} elseif ( $this->_is_video( $row ) ) {
+			} elseif ( $this->_is_kind_video( $row ) ) {
 				$media_content_medium   = 'video';
 			}
 		}
@@ -273,20 +284,20 @@ function build_items()
 	return $ret;
 }
 
-function _build_description( $row )
+function _build_description( $row, $thumb_row )
 {
 	$context = $this->_build_context( $row );
 	$summary = $this->_multibyte_class->build_summary( $context, $this->_MAX_SUMMARY );
 
 	$desc = '';
 
-	$thumb_url    = $row['photo_thumb_url'] ;
-	$thumb_width  = intval( $row['photo_thumb_width'] );
-	$thumb_height = intval( $row['photo_thumb_height'] );
-
-	if ( $thumb_url && $this->_is_image( $row ) ) {
+	if ( $this->_is_kind_image( $row ) && is_array($thumb_row) ) {
+		$thumb_url    = $thumb_row['file_url'] ;
+		$thumb_height = $thumb_row['file_height'];
+		$thumb_width  = $thumb_row['file_width'];
+	
 		$img  = '<img src="'. $thumb_url .'" ' ;
-		$img .= 'alt="'. $row['photo_title'] .'" ';
+		$img .= 'alt="'. $row['item_title'] .'" ';
 		if ( $thumb_width && $thumb_height ) {
 			$img .= 'width="'.  $thumb_width  .'" '  ;
 			$img .= 'height="'. $thumb_height .'" ' ;
@@ -308,31 +319,38 @@ function _build_description( $row )
 
 function _build_context( $row )
 {
-	return $this->_photo_handler->build_show_description_disp( $row );
+	return $this->_item_handler->build_show_description_disp( $row );
 }
 
 function _build_link( $row )
 {
-	$link = $this->_MODULE_URL .'/index.php/photo/'. $row['photo_id'] .'/';
+	$link = $this->_MODULE_URL .'/index.php/photo/'. $row['item_id'] .'/';
 	return $link;
 }
 
-function _is_image( $row )
+function _is_kind_image( $row )
 {
-	if ( $row['photo_cont_medium'] == 'image' ) {
-		return true;
-	} elseif ( in_array( strtolower( $row['photo_cont_ext'] ) , $this->_NORMAL_EXTS ) ) {
+	if ( $row['item_kind'] == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
 		return true;
 	}
 	return false;
 }
 
-function _is_video( $row )
+function _is_kind_video( $row )
 {
-	if ( $row['photo_cont_medium'] == 'video' ) {
-		return true;
+	if ( $row['item_kind'] == _C_WEBPHOTO_ITEM_KIND_VIDEO ) {
+		return true ;
 	}
 	return false;
+}
+
+function _get_file_row_by_kind( $row, $kind )
+{
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( $row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_row_by_id( $file_id );
+	}
+	return null;
 }
 
 //---------------------------------------------------------
@@ -355,25 +373,25 @@ function _get_photo_rows()
 	{
 		case 'tag':
 			if ( $param ) {
-				$orderby = str_replace( 'photo_', 'p.photo_', $orderby_default );
+				$orderby  = $this->_sort_class->convert_orderby_join( $orderby_default );
 				$id_array = $this->_tag_class->get_photo_id_array_public_latest_by_tag_orderby(
 					$param, $orderby, $limit );
-				$rows = $this->_photo_handler->get_rows_from_id_array( $id_array );
+				$rows = $this->_item_handler->get_rows_from_id_array( $id_array );
 			}
 			break;
 
 		case 'date':
 			if ( $param ) {
-				$where = $this->_photo_handler->build_where_public_by_like_datetime( $param );
+				$where = $this->_item_handler->build_where_public_by_like_datetime( $param );
 			}
 			break;
 
 		case 'place':
 			if ( $param == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
-				$where = $this->_photo_handler->build_where_public_by_place(
+				$where = $this->_item_handler->build_where_public_by_place(
 					_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
 			} elseif ( is_array($place_arr) && count($place_arr) ) {
-				$where = $this->_photo_handler->build_where_public_by_place_array( $place_arr );
+				$where = $this->_item_handler->build_where_public_by_place_array( $place_arr );
 			}
 			break;
 
@@ -385,13 +403,13 @@ function _get_photo_rows()
 
 		case 'category':
 			if ( $param_int > 0 ) {
-				$where = $this->_photo_handler->build_where_public_by_catid( $param_int );
+				$where = $this->_item_handler->build_where_public_by_catid( $param_int );
 			}
 			break;
 
 		case 'user':
 			if ( $param_int > 0 ) {
-				$where = $this->_photo_handler->build_where_public_by_uid( $param_int );
+				$where = $this->_item_handler->build_where_public_by_uid( $param_int );
 			}
 			break;
 
@@ -399,9 +417,9 @@ function _get_photo_rows()
 		case 'random':
 			$orderby = $this->_sort_class->get_random_orderby();
 			if ( $param_int > 0 ) {
-				$where = $this->_photo_handler->build_where_public_photo_by_catid( $param_int );
+				$where = $this->_item_handler->build_where_public_photo_by_catid( $param_int );
 			} else {
-				$where = $this->_photo_handler->build_where_public_photo();
+				$where = $this->_item_handler->build_where_public_photo();
 			}
 			break;
 
@@ -411,7 +429,7 @@ function _get_photo_rows()
 		default:
 			$orderby = $this->_sort_class->mode_to_orderby( $this->_mode );
 			if ( $param_int > 0 ) {
-				$where = $this->_photo_handler->build_where_public_by_catid( $param_int );
+				$where = $this->_item_handler->build_where_public_by_catid( $param_int );
 			}
 			break;
 	}
@@ -421,14 +439,14 @@ function _get_photo_rows()
 	}
 
 	if ( empty($where) ) {
-		$where = $this->_photo_handler->build_where_public();
+		$where = $this->_item_handler->build_where_public();
 	}
 
 	if ( empty($orderby) ) {
 		$orderby = $orderby_default;
 	}
 
-	$rows = $this->_photo_handler->get_rows_by_where_orderby( $where, $orderby, $limit );
+	$rows = $this->_item_handler->get_rows_by_where_orderby( $where, $orderby, $limit );
 	return $rows;
 }
 
@@ -448,7 +466,7 @@ function _build_where_by_query( $query )
 		return false;
 	}
 
-	$where = $this->_search_class->build_sql_query( 'photo_search' );
+	$where = $this->_search_class->build_sql_query( 'item_search' );
 	return $where;
 }
 

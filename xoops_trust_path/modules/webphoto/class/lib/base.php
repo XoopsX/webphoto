@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: base.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added build_set_msg()
 // 2008-08-01 K.OHWADA
 // added set_msg_array() check_token_and_redirect()
 // 2008-07-01 K.OHWADA
@@ -295,7 +297,7 @@ function get_msg_array()
 	return $this->_msg_array;
 }
 
-function get_format_msg_array( $flag_sanitize=true, $flag_highlight=true )
+function get_format_msg_array( $flag_sanitize=true, $flag_highlight=true, $flag_br=true )
 {
 	$val = '';
 	foreach (  $this->_msg_array as $msg )
@@ -303,7 +305,10 @@ function get_format_msg_array( $flag_sanitize=true, $flag_highlight=true )
 		if ( $flag_sanitize ) {
 			$msg = $this->sanitize($msg);
 		}
-		$val .= $msg . "<br />\n";
+		$val .= $msg ;
+		if ( $flag_br ) {
+			$val .= "<br />\n";
+		}
 	}
 
 	if ( $flag_highlight ) {
@@ -327,6 +332,12 @@ function set_msg_array( $msg )
 			$this->_msg_array[] = $m;
 		}
 	}
+}
+
+function build_set_msg( $msg, $flag_highlight=false, $flag_br=false )
+{
+	$this->set_msg_array(
+		$this->build_msg( $msg, $flag_highlight, $flag_br ) );
 }
 
 function set_msg_level( $val )

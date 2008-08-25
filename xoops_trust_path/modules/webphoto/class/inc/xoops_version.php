@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.9 2008/08/09 09:51:29 ohwada Exp $
+// $Id: xoops_version.php,v 1.10 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added bin_pass
 // 2008-08-01 K.OHWADA
 // added TRUST_DIRNAME
 // added mail_host
@@ -681,9 +683,10 @@ function _build_config()
 		)
 	) ;
 
+// viewcattype -> viewtype
 	$arr[] = array(
-		'name'			=> 'viewcattype' ,
-		'title'			=> $this->_constant_name( 'CFG_VIEWCATTYPE' ) ,
+		'name'			=> 'viewtype' ,
+		'title'			=> $this->_constant_name( 'CFG_VIEWTYPE' ) ,
 		'description'	=> '' ,
 		'formtype'		=> 'select' ,
 		'valuetype'		=> 'text' ,
@@ -868,6 +871,16 @@ function _build_config()
 		'formtype'		=> 'textarea' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> $this->_constant( 'CFG_FILE_DESC_TEXT' ) ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'bin_pass' ,
+		'title'			=> $this->_constant_name( 'CFG_BIN_PASS' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> xoops_makepass() ,
 		'options'		=> array()
 	) ;
 

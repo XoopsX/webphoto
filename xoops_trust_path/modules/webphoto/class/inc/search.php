@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.4 2008/07/09 06:41:27 ohwada Exp $
+// $Id: search.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// table_photo -> table_item
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
 // used is_video_mime()
@@ -61,38 +63,55 @@ function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
 {
 	$this->_init( $dirname );
 
-	$rows = $this->_get_photo_rows( $query_array, $andor, $uid, $limit, $offset );
-	if ( !is_array($rows) ) { return array(); }
+	$item_rows = $this->_get_item_rows( $query_array, $andor, $uid, $limit, $offset );
+	if ( !is_array($item_rows) ) {
+		return array(); 
+	}
 
 	$keywords = urlencode( implode(' ', $query_array) );
 
 	$i   = 0;
 	$ret = array();
 
-	foreach( $rows as $row )
+	foreach( $item_rows as $item_row )
 	{
+		$item_id   = $item_row['item_id'];
+		$item_kind = $item_row['item_kind'];
+	
+		$thumb_url    = null;
+		$thumb_width  = 0;
+		$thumb_height = 0;
+
+		$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+		if ( is_array($thumb_row) ) {
+			$thumb_url    = $thumb_row['file_url'];
+			$thumb_width  = $thumb_row['file_width'];
+			$thumb_height = $thumb_row['file_height'];
+		}
+
 		if ( $this->_cfg_use_pathinfo ) {
-			$link = 'index.php/photo/'. $row['photo_id'] .'/keywords='. $keywords .'/' ;
+			$link = 'index.php/photo/'. $item_id .'/keywords='. $keywords .'/' ;
 		} else {
-			$link = 'index.php?fct=photo&amp;p='. $row['photo_id'] .'&amp;keywords='. $keywords ;
+			$link = 'index.php?fct=photo&amp;p='. $item_id .'&amp;keywords='. $keywords ;
 		}
 
 		$arr['link']    = $link ;
-		$arr['title']   = $row['photo_title'];
-		$arr['time']    = $row['photo_time_update'];
-		$arr['uid']     = $row['photo_uid'];
+		$arr['title']   = $item_row['item_title'];
+		$arr['time']    = $item_row['item_time_update'];
+		$arr['uid']     = $item_row['item_uid'];
 		$arr['image']   = 'images/icons/search.png';
-		$arr['context'] = $this->_build_context( $row, $query_array );
+		$arr['context'] = $this->_build_context( $item_row, $query_array );
 
-		$is_image = $this->is_normal_ext( $row['photo_cont_ext'] );
-		$is_video = $this->is_video_mime( $row['photo_cont_mime'] );
+		$is_image = $this->is_image_kind( $item_kind );
+		$is_video = $this->is_image_kind( $item_kind );
 
 		// photo image
 		if (( $is_image || $is_video || $this->_FLAG_SUBSTITUTE ) && 
-		      $row['photo_thumb_url'] ) {
-			$arr['img_url']    = $row['photo_thumb_url'];
-			$arr['img_width']  = $row['photo_thumb_width'];
-			$arr['img_height'] = $row['photo_thumb_height'];
+		      $thumb_url ) {
+			$arr['img_url']    = $thumb_url;
+			$arr['img_width']  = $thumb_width;
+			$arr['img_height'] = $thumb_height;
 		}
 
 		$ret[ $i ] = $arr;
@@ -126,17 +145,17 @@ function _build_context( $row, $query_array )
 function _build_desc_disp( $row )
 {
 	$myts =& MyTextSanitizer::getInstance();
-	return $myts->displayTarea( $row['photo_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
+	return $myts->displayTarea( $row['item_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
 }
 
 //---------------------------------------------------------
-// photo handler
+// handler
 //---------------------------------------------------------
-function _get_photo_rows( $query_array, $andor, $uid, $limit=0, $offset=0 )
+function _get_item_rows( $query_array, $andor, $uid, $limit=0, $offset=0 )
 {
-	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'photo' );
+	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'item' );
 	$sql .= ' WHERE '. $this->_build_where_for_search( $query_array, $andor, $uid );
-	$sql .= ' ORDER BY photo_time_update DESC, photo_id DESC';
+	$sql .= ' ORDER BY item_time_update DESC, item_id DESC';
 	return $this->get_rows_by_sql( $sql, $limit, $offset );
 }
 
@@ -146,7 +165,7 @@ function _build_where_for_search( $keyword_array, $andor, $uid )
 
 	$where_uid = null;
 	if ( $uid != 0 ) {
-		$where_uid = 'uid='. intval($uid);
+		$where_uid = 'item_uid='. intval($uid);
 	}
 
 	$where = null;
@@ -159,7 +178,7 @@ function _build_where_for_search( $keyword_array, $andor, $uid )
 	}
 
 	if ( $where ) {
-		$where .= ' AND photo_status > 0 ';
+		$where .= ' AND item_status > 0 ';
 	}
 
 	return $where;
@@ -208,7 +227,7 @@ function _build_where_by_keyword_array( $keyword_array, $andor='AND' )
 
 function _build_where_search_single( $str )
 {
-	$text = "photo_search LIKE '%" . addslashes( $str ) . "%'" ;
+	$text = "item_search LIKE '%" . addslashes( $str ) . "%'" ;
 	return $text;
 }
 

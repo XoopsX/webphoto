@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: constants.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added _C_WEBPHOTO_MAX_ITEM_FILE_ID
 // 2008-08-01 K.OHWADA
 // added _B_WEBPHOTO_GPERM_MAIL
 // 2008-07-01 K.OHWADA
@@ -50,6 +52,9 @@ define("_C_WEBPHOTO_GPERM_NAME", "webphoto" ) ;
 
 // constants
 define("_C_WEBPHOTO_IMAGE_EXTS" , "jpg|jpeg|gif|png" ) ;
+define("_C_WEBPHOTO_VIDEO_FLASH_EXT"  , "flv" ) ;
+define("_C_WEBPHOTO_VIDEO_DOCOMO_EXT" , "3gp" ) ;
+
 define("_C_WEBPHOTO_CFG_OPT_PERPAGE" , "10|20|50|100" ) ;
 
 define("_C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT" ,  120 ) ;
@@ -62,6 +67,19 @@ define("_C_WEBPHOTO_MAX_CAT_TEXT" ,   5 ) ;
 
 // v0.30
 define("_C_WEBPHOTO_MAX_USER_TEXT" ,  5 ) ;
+
+// v0.40
+define("_C_WEBPHOTO_MAX_ITEM_FILE_ID" , 10 ) ;
+define("_C_WEBPHOTO_MAX_ITEM_TEXT"    , 10 ) ;
+
+define("_C_WEBPHOTO_ITEM_KIND_IMAGE" , 1 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_VIDEO" , 2 ) ;
+
+define("_C_WEBPHOTO_FILE_KIND_CONT"          , 1 ) ;
+define("_C_WEBPHOTO_FILE_KIND_THUMB"         , 2 ) ;
+define("_C_WEBPHOTO_FILE_KIND_MIDDLE"        , 3 ) ;
+define("_C_WEBPHOTO_FILE_KIND_VIDEO_FLASH"   , 4 ) ;
+define("_C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO"  , 5 ) ;
 
 define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
@@ -131,6 +149,8 @@ define("_C_WEBPHOTO_PERM_ALLOW_ALL" , "*" ) ;
 define("_C_WEBPHOTO_PERM_DENOY_ALL" , "x" ) ;
 define("_C_WEBPHOTO_PERM_SEPARATOR" , "&" ) ;
 
+define("_C_WEBPHOTO_GMAP_ZOOM" , "12" ) ;
+
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;
 define("_C_WEBPHOTO_ERR_NO_RECORD",       -102 ) ;
@@ -154,6 +174,9 @@ define("_C_WEBPHOTO_ERR_EXT",             -117 ) ;
 define("_C_WEBPHOTO_ERR_FILE_SIZE",       -118 ) ;
 define("_C_WEBPHOTO_ERR_CREATE_PHOTO",    -119 ) ;
 define("_C_WEBPHOTO_ERR_CREATE_THUMB",    -120 ) ;
+
+// v0.40
+define("_C_WEBPHOTO_ERR_GET_IMAGE_SIZE",  -121 ) ;
 
 // for Japanese
 define("_C_WEBPHOTO_JPAPANESE" , "japanese|japaneseutf|ja_utf8" ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: date.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // used set_mode()
 // decode_str() -> decode_uri_str()
@@ -46,9 +48,9 @@ function &getInstance( $dirname , $trust_dirname )
 // overwrite
 function list_get_photo_list()
 {
-	$groupby = 'photo_datetime';
-	$orderby = 'photo_datetime DESC, photo_id DESC';
-	$list_rows = $this->_photo_handler->get_rows_by_groupby_orderby( $groupby , $orderby );
+	$groupby = 'item_datetime';
+	$orderby = 'item_datetime DESC, item_id DESC';
+	$list_rows = $this->_item_handler->get_rows_by_groupby_orderby( $groupby , $orderby );
 	if ( !is_array($list_rows) || !count($list_rows) ) {
 		return false;
 	}
@@ -61,7 +63,7 @@ function list_get_photo_list()
 // year month list
 	foreach ( $list_rows as $row )
 	{
-		$year_month = $this->_utility_class->mysql_datetime_to_year_month( $row['photo_datetime'] );
+		$year_month = $this->_utility_class->mysql_datetime_to_year_month( $row['item_datetime'] );
 		$year       = $this->_utility_class->mysql_datetime_to_year( $year_month );
 
 // set year
@@ -74,18 +76,18 @@ function list_get_photo_list()
 			$year_month_arr_1[ $year_month ]['type'] = 2;	// month type
 
 // set total
-			$where = $this->_photo_handler->build_where_public_by_like_datetime( $year_month );
-			$total = $this->_photo_handler->get_count_by_where( $where );
+			$where = $this->_item_handler->build_where_public_by_like_datetime( $year_month );
+			$total = $this->_item_handler->get_count_by_where( $where );
 			$year_month_arr_1[ $year_month ]['total'] = $total;
 
 // get first row
-			$photo_rows = $this->_photo_handler->get_rows_by_where_orderby(
+			$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
 				$where, $this->_PHOTO_LIST_DATE_ORDER, 1 );
 
 // set row
 			if ( isset( $photo_rows[0] ) ) {
 				$row      = $photo_rows[0];
-				$photo_id = $row['photo_id'];
+				$photo_id = $row['item_id'];
 				$year_month_arr_1[ $year_month ]['row'] = $row;
 
 // set id array
@@ -107,12 +109,12 @@ function list_get_photo_list()
 		}
 
 // set total
-		$where = $this->_photo_handler->build_where_public_by_like_datetime( $year_month );
-		$total = $this->_photo_handler->get_count_by_where( $where );
+		$where = $this->_item_handler->build_where_public_by_like_datetime( $year_month );
+		$total = $this->_item_handler->get_count_by_where( $where );
 		$year_month_arr_2[ $year_month ]['total'] = $total;
 
 // get all rows
-		$photo_rows = $this->_photo_handler->get_rows_by_where_orderby(
+		$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
 			$where, $this->_PHOTO_LIST_DATE_ORDER );
 
 		if ( !is_array($photo_rows) || !count($photo_rows) ) {
@@ -123,7 +125,7 @@ function list_get_photo_list()
 		$flag = false;
 		foreach ( $photo_rows as $row )
 		{
-			$photo_id = $row['photo_id'];
+			$photo_id = $row['item_id'];
 
 // found
 			if ( !isset( $id_arr[ $photo_id ] ) ) {
@@ -154,9 +156,9 @@ function list_get_photo_list()
 
 // get new if not set
 		} else {
-			$where = $this->_photo_handler->build_where_public_by_like_datetime( $year_month );
-			$total = $this->_photo_handler->get_count_by_where( $where );
-			$photo_rows = $this->_photo_handler->get_rows_by_where_orderby(
+			$where = $this->_item_handler->build_where_public_by_like_datetime( $year_month );
+			$total = $this->_item_handler->get_count_by_where( $where );
+			$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
 				$where, $this->_PHOTO_LIST_DATE_ORDER, 1 );
 			if ( isset( $photo_rows[0] ) ) {
 				$row = $photo_rows[0];
@@ -201,11 +203,11 @@ function list_build_detail( $datetime_in )
 		$title = $this->get_constant('PHOTO_DATETIME') .' : '. $datetime ;
 	}
 
-	$where = $this->_photo_handler->build_where_public_by_like_datetime( $datetime );
+	$where = $this->_item_handler->build_where_public_by_like_datetime( $datetime );
 
-	$total = $this->_photo_handler->get_count_by_where( $where );
+	$total = $this->_item_handler->get_count_by_where( $where );
 	if ( $total > 0 ) {
-		$rows = $this->_photo_handler->get_rows_by_where_orderby(
+		$rows = $this->_item_handler->get_rows_by_where_orderby(
 			$where, $orderby, $limit, $start );
 	}
 

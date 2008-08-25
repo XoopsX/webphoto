@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.6 2008/08/08 04:36:09 ohwada Exp $
+# $Id: mysql.sql,v 1.7 2008/08/25 19:28:06 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,11 +7,197 @@
 
 # =========================================================
 # change log
+# 2008-08-24 K.OHWADA
+# added item table, file table
 # 2008-08-01 K.OHWADA
 # added user table, maillog table
 # 2008-07-01 K.OHWADA
 # added mime_ffmpeg
 # =========================================================
+
+#
+# Table structure for table `item`
+#
+
+CREATE TABLE item (
+  item_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  item_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  item_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  item_cat_id   INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_gicon_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_uid      INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_kind     TINYINT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_ext       VARCHAR(255) NOT NULL DEFAULT '',
+  item_datetime  DATETIME NOT NULL,
+  item_title     VARCHAR(255) NOT NULL DEFAULT '',
+  item_place     VARCHAR(255) NOT NULL DEFAULT '',
+  item_equipment VARCHAR(255) NOT NULL DEFAULT '',
+  item_gmap_latitude  DOUBLE(10,8) NOT NULL DEFAULT '0',
+  item_gmap_longitude DOUBLE(11,8) NOT NULL DEFAULT '0',
+  item_gmap_zoom      TINYINT(2) NOT NULL DEFAULT '0',
+  item_gmap_type      TINYINT(2) NOT NULL DEFAULT '0',
+  item_status TINYINT(2) NOT NULL DEFAULT '0',
+  item_hits   INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_rating DOUBLE(6,4) NOT NULL DEFAULT '0.0000',
+  item_votes    INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_comments INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_perm_read VARCHAR(255) NOT NULL DEFAULT '',
+  item_file_id_1  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_2  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_3  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_4  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_5  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_6  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_7  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_8  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_9  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_file_id_10 INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_text_1  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_2  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_3  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_4  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_5  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_6  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_7  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_8  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_9  VARCHAR(255) NOT NULL DEFAULT '',
+  item_text_10 VARCHAR(255) NOT NULL DEFAULT '',
+  item_description TEXT NOT NULL,
+  item_exif   TEXT NOT NULL,
+  item_search TEXT NOT NULL,
+  PRIMARY KEY (item_id),
+  KEY (item_time_update),
+  KEY (item_cat_id),
+  KEY (item_gicon_id),
+  KEY (item_uid),
+  KEY (item_file_id_1),
+  KEY (item_file_id_2),
+  KEY (item_file_id_3),
+  KEY (item_file_id_4),
+  KEY (item_file_id_5),
+  KEY (item_file_id_6),
+  KEY (item_file_id_7),
+  KEY (item_file_id_8),
+  KEY (item_file_id_9),
+  KEY (item_file_id_10),
+  KEY (item_status),
+  KEY (item_hits),
+  KEY (item_rating),
+  KEY (item_datetime),
+  KEY (item_title(40)),
+  KEY (item_place(40)),
+  KEY (item_equipment(40)),
+  KEY (item_search(40)),
+  KEY (item_gmap_latitude, item_gmap_longitude, item_gmap_zoom)
+) TYPE=MyISAM;
+
+#
+# Table structure for table `file`
+#
+
+CREATE TABLE file (
+  file_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  file_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  file_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  file_item_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  file_kind    TINYINT(11) UNSIGNED NOT NULL DEFAULT '0',
+  file_url     VARCHAR(255) NOT NULL DEFAULT '',
+  file_path    VARCHAR(255) NOT NULL DEFAULT '',
+  file_name    VARCHAR(255) NOT NULL DEFAULT '',
+  file_ext     VARCHAR(10) NOT NULL DEFAULT '',
+  file_mime    VARCHAR(255) NOT NULL DEFAULT '',
+  file_medium  VARCHAR(255) NOT NULL DEFAULT '',
+  file_size     INT(5) NOT NULL DEFAULT '0',
+  file_width    INT(5) NOT NULL DEFAULT '0',
+  file_height   INT(5) NOT NULL DEFAULT '0',
+  file_duration INT(5) NOT NULL DEFAULT '0',
+  PRIMARY KEY (file_id),
+  KEY (file_time_update),
+  KEY (file_item_id),
+  KEY (file_kind)
+) TYPE=MyISAM;
+
+#
+# Table structure for table `photo`
+#
+
+CREATE TABLE photo (
+  photo_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  photo_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  photo_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  photo_cat_id  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_gicon_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_uid     INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_datetime  DATETIME NOT NULL,
+  photo_title VARCHAR(255) NOT NULL DEFAULT '',
+  photo_place     VARCHAR(255) NOT NULL DEFAULT '',
+  photo_equipment VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_url     VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_path    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_name    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_ext     VARCHAR(10)  NOT NULL DEFAULT '',
+  photo_file_mime    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_medium  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_file_size    INT(5) NOT NULL DEFAULT '0',
+  photo_cont_url     VARCHAR(255) NOT NULL DEFAULT '',
+  photo_cont_path    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_cont_name    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_cont_ext     VARCHAR(10) NOT NULL DEFAULT '',
+  photo_cont_mime    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_cont_medium  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_cont_size     INT(5) NOT NULL DEFAULT '0',
+  photo_cont_width    INT(5) NOT NULL DEFAULT '0',
+  photo_cont_height   INT(5) NOT NULL DEFAULT '0',
+  photo_cont_duration INT(5) NOT NULL DEFAULT '0',
+  photo_cont_exif     TEXT NOT NULL,
+  photo_middle_width  INT(5) NOT NULL DEFAULT '0',
+  photo_middle_height INT(5) NOT NULL DEFAULT '0',
+  photo_thumb_url     VARCHAR(255) NOT NULL DEFAULT '',
+  photo_thumb_path    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_thumb_name    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_thumb_ext     VARCHAR(10) NOT NULL DEFAULT '',
+  photo_thumb_mime    VARCHAR(255) NOT NULL DEFAULT '',
+  photo_thumb_medium  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_thumb_size    INT(5) NOT NULL DEFAULT '0',
+  photo_thumb_width   INT(5) NOT NULL DEFAULT '0',
+  photo_thumb_height  INT(5) NOT NULL DEFAULT '0',
+  photo_gmap_latitude  DOUBLE(10,8) NOT NULL DEFAULT '0',
+  photo_gmap_longitude DOUBLE(11,8) NOT NULL DEFAULT '0',
+  photo_gmap_zoom      TINYINT(2) NOT NULL DEFAULT '0',
+  photo_gmap_type      TINYINT(2) NOT NULL DEFAULT '0',
+  photo_status TINYINT(2) NOT NULL DEFAULT '0',
+  photo_hits   INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_rating DOUBLE(6,4) NOT NULL DEFAULT '0.0000',
+  photo_votes    INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_comments INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  photo_perm_read VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text1  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text2  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text3  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text4  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text5  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text6  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text7  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text8  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text9  VARCHAR(255) NOT NULL DEFAULT '',
+  photo_text10 VARCHAR(255) NOT NULL DEFAULT '',
+  photo_description TEXT NOT NULL,
+  photo_search TEXT NOT NULL,
+  PRIMARY KEY (photo_id),
+  KEY (photo_time_update),
+  KEY (photo_cat_id),
+  KEY (photo_gicon_id),
+  KEY (photo_uid),
+  KEY (photo_status),
+  KEY (photo_hits),
+  KEY (photo_rating),
+  KEY (photo_datetime),
+  KEY (photo_title(40)),
+  KEY (photo_place(40)),
+  KEY (photo_equipment(40)),
+  KEY (photo_search(40)),
+  KEY (photo_gmap_latitude, photo_gmap_longitude, photo_gmap_zoom)
+) TYPE=MyISAM;
 
 #
 # Table structure for table `photo`

@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: modinfo.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -78,7 +78,9 @@ define($constpref."CFG_DESCADDPOSTS" , "Normally, 0 or 1. Under 0 mean 0" ) ;
 define($constpref."CFG_CATONSUBMENU" , "Register top categories into submenu" ) ;
 define($constpref."CFG_NAMEORUNAME" , "Poster name displayed" ) ;
 define($constpref."CFG_DESCNAMEORUNAME" , "Select which 'name' is displayed" ) ;
-define($constpref."CFG_VIEWCATTYPE" , "Type of view in category" ) ;
+
+//define($constpref."CFG_VIEWCATTYPE" , "Type of view in category" ) ;
+define($constpref."CFG_VIEWTYPE" , "Type of view " ) ;
 
 //define($constpref."CFG_COLSOFTABLEVIEW" , "Number of columns in table view" ) ;
 define($constpref."CFG_COLSOFTABLE" , "Number of columns in table view" ) ;
@@ -242,6 +244,15 @@ FTP Password: xxx<br />" ) ;
 define($constpref."ADMENU_MAILLOG_MANAGER","Maillog Management");
 define($constpref."ADMENU_MAILLOG_TABLE_MANAGE","Maillog Table Management");
 define($constpref."ADMENU_USER_TABLE_MANAGE","User Aux Table Management");
+
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+define($constpref."CFG_BIN_PASS" , "Command Password" ) ;
+
+define($constpref."ADMENU_UPDATE", "Update");
+define($constpref."ADMENU_ITEM_TABLE_MANAGE", "Item Table Management");
+define($constpref."ADMENU_FILE_TABLE_MANAGE", "File Table Management");
 
 }
 // === define begin ===
