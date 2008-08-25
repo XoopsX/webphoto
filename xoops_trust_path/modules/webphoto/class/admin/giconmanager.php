@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: giconmanager.php,v 1.4 2008/08/25 20:20:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -40,8 +40,8 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 	var $_SHADOW_FIELD_NAME = 'shadow_file';
 	var $_SHADOW_NAME_EXTRA = 's0';
 
-	var $_TIME_SUCCESS = 100;
-	var $_TIME_FAIL    = 500;
+	var $_TIME_SUCCESS = 1;
+	var $_TIME_FAIL    = 5;
 
 //---------------------------------------------------------
 // constructor
