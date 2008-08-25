@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: item_table_manage.php,v 1.2 2008/08/25 23:33:51 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -203,7 +203,7 @@ function _build_row_file_id( $i )
 //---------------------------------------------------------
 function manage_delete()
 {
-	$this->_delete_class->delete_item( $this->get_post_id() );
+	$this->_delete_class->delete_photo( $this->get_post_id() );
 
 	redirect_header( $this->_THIS_FCT_URL, $this->_MANAGE_TIME_SUCCESS, 'Deleted' );
 	exit();

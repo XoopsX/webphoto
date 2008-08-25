@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.2 2008/08/25 21:00:40 ohwada Exp $
+// $Id: update.php,v 1.3 2008/08/25 23:33:51 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -92,20 +92,24 @@ function main()
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'UPDATE' );
 
-	if ( $this->_item_handler->get_count_all() > 0 ) {
-		$msg = 'You dont need update.<br />already exists item records';
-	} elseif ( $this->_photo_handler->get_count_all() > 0 ) {
-		$msg = _AM_WEBPHOTO_MUST_UPDATE ;
+	$op = $this->_post_class->get_post_text('op');
+
+// when form
+	if ( empty($op) ) {
+		if ( $this->_item_handler->get_count_all() > 0 ) {
+			$msg = 'You dont need update.<br />already exists item records';
+		} elseif ( $this->_photo_handler->get_count_all() > 0 ) {
+			$msg = _AM_WEBPHOTO_MUST_UPDATE ;
+		}
+		echo $this->build_error_msg( $msg, '', false );
+		echo "<br />\n";
 	}
 
-	echo $this->build_error_msg( $msg, '', false );
-	echo "<br />\n";
 	echo "Update v0.30 to v0.40 <br /><br />\n";
 
-	$op = $this->_post_class->get_post_text('op');
 	switch ( $op ) 
 	{
-		case "update_photo":
+		case 'update_photo':
 			if ( $this->check_token() ) {
 				$this->_update_photo();
 			}
@@ -174,7 +178,7 @@ function _update_photo()
 				_C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, $photo_row );
 
 // for fdiving
-		} elseif ( $file_ext == 'html' ) {
+		} elseif (( $file_ext == 'htm' )||( $file_ext == 'html' )) {
 			$file_id_html = $this->_insert_file_file( 10, $photo_row );
 		}
 

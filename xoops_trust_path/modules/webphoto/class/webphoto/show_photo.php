@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.7 2008/08/25 19:28:06 ohwada Exp $
+// $Id: show_photo.php,v 1.8 2008/08/25 23:37:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -107,13 +107,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	extract( $row ) ;
 
 	list( $cont_size , $cont_duration )
-		= $this->get_cont_size_duration_by_kind( $row );
-
-	list( $flash_video_url , $has_flash_video )
-		= $this->get_file_url_has_kind( $row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
-
-	list( $docomo_video_url , $has_docomo_video )
-		= $this->get_file_url_has_kind( $row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
+		= $this->get_file_cont_size_duration( $row );
 
 	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
@@ -163,13 +157,6 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'cont_duration'       => $cont_duration ,
 		'cont_size_disp'      => $this->_utility_class->format_filesize( $cont_size, 1 ) ,
 		'cont_duration_disp'  => $this->format_time( $cont_duration ) ,
-
-		'flash_video_url'     => $flash_video_url ,
-		'flash_video_url_s'   => $this->sanitize( $flash_video_url ),
-		'is_flash_video'      => $has_flash_video ,
-		'docomo_video_url'    => $docomo_video_url ,
-		'docomo_video_url_s'  => $this->sanitize( $docomo_video_url ),
-		'is_mobile_video'     => $has_docomo_video ,
 	);
 
 	$show_desc = false;
@@ -179,7 +166,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	}
 
 	$arr2 = array();
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_PHOTO_TEXT; $i++ ) 
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
 	{
 		$name_i      = 'text_'.$i;
 		$item_name_i = 'item_'.$name_i;
@@ -202,6 +189,40 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 
 	if ( is_array($arr2) && count($arr2) ) {
 		$arr['texts'] = $arr2;
+	}
+
+	$arr3 = array();
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+	{
+		$name_i      = 'file_url_'.$i;
+		$item_name_i = 'item_file_id_'.$i;
+		$cont_name_i = 'FILE_KIND_'.$i;
+
+		$url_i   = $this->get_file_url_by_kind( $row, $i );
+		$url_i_s = $this->sanitize( $url_i );
+
+		$arr[ $name_i ]      = $url_i ;
+		$arr[ $name_i.'_s' ] = $url_i_s ;
+
+		$arr3[ $i ] = array(
+			'lang'  => $this->get_constant( $cont_name_i ) ,
+			'url'   => $url_i,
+			'url_s' => $url_i_s,
+		);
+	}
+
+	$flash_video_url   = $arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
+	$docomo_video_url  = $arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO ] ;
+
+	$arr['flash_video_url']     = $flash_video_url ;
+	$arr['flash_video_url_s']   = $this->sanitize(     $flash_video_url ) ;
+	$arr['is_flash_video']      = $this->has_file_url( $flash_video_url ) ;
+	$arr['docomo_video_url']    = $docomo_video_url ;
+	$arr['docomo_video_url_s']  = $this->sanitize(     $docomo_video_url ) ;
+	$arr['is_mobile_video']     = $this->has_file_url( $docomo_video_url ) ;
+
+	if ( is_array($arr3) && count($arr3) ) {
+		$arr['urls'] = $arr3;
 	}
 
 	$arr['show_desc'] = $show_desc;
@@ -472,7 +493,7 @@ function build_show_imgsrc( $row )
 //---------------------------------------------------------
 // file handler
 //---------------------------------------------------------
-function get_cont_size_duration_by_kind( $item_row )
+function get_file_cont_size_duration( $item_row )
 {
 	$size     = 0 ;
 	$duration = 0 ;
@@ -502,18 +523,21 @@ function get_file_u_w_h_by_kind( $item_row, $kind )
 	return array( $url, $width, $height );
 }
 
-function get_file_url_has_kind( $item_row, $kind )
+function get_file_url_by_kind( $item_row, $kind )
 {
-	$url = null ;
-	$has = false ;
-
 	$file_row = $this->get_cached_file_row_by_kind( $item_row, $kind );
 	if ( is_array($file_row) ) {
-		$url = $file_row['file_url'] ;
-		$has = true ;
+		return $file_row['file_url'] ;
 	}
+	return null ;
+}
 
-	return array( $url, $has );
+function has_file_url( $url )
+{
+	if ( $url ) {
+		return true ;
+	}
+	return false ;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.9 2008/08/25 19:28:05 ohwada Exp $
+// $Id: edit.php,v 1.10 2008/08/25 23:35:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -296,20 +296,20 @@ function _exec_modify()
 // load
 	$item_row = $this->_row_current;
 
-	$current_cont_path  = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_path' ) ;
+	$current_cont_path  = $this->get_file_path_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 
-	$current_thumb_path  = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB, 'file_path' ) ;
+	$current_thumb_path  = $this->get_file_path_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
 
-	$current_middle_path  = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE, 'file_path' ) ;
+	$current_middle_path  = $this->get_file_path_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
 
-	$current_flash_path  = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, 'file_path' ) ;
+	$current_flash_path  = $this->get_file_path_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 
-	$current_docomo_path  = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO, 'file_path' ) ;
+	$current_docomo_path  = $this->get_file_path_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO ) ;
 
 // Check if upload file name specified
 	if ( !$this->check_xoops_upload_file() ) {
@@ -625,9 +625,8 @@ function _handler_update_photo_image( $item_row, $file_params )
 
 function _update_all_file_duration( $item_row )
 {
-	$duration = $this->get_photo_duration();
-	$cont_duration = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_duration' ) ;
+	$duration      = $this->get_photo_duration();
+	$cont_duration = $this->get_file_cont_duration( $item_row ); 
 
 	if ( $duration != $cont_duration ) {
 		$this->_update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
