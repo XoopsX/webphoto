@@ -1,4 +1,116 @@
-$Id: readme_jp.txt,v 1.5 2008/08/10 00:35:54 ohwada Exp $
+$Id: readme_jp.txt,v 1.6 2008/08/25 21:27:34 ohwada Exp $
+
+=================================================
+Version: 0.40
+Date:   2008-08-26
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 携帯電話 対応 第２弾
+1.1 携帯メールによる投稿
+(1) GPS 対応
+画像あるいは本文に位置情報があると、GoogleMap を設定する
+(2) i-phone 対応
+
+1.2 携帯電話用の表示
+(1) 「携帯電話にURLを送信する」を表示した
+(2) URL情報をQRコードにて表示した
+(3) 携帯電話でも表示できるように中間サイズ(480×480)の画像を作成した
+
+1.3 メール受信のコマンド化
+ユーザはメールを送信するだけです。
+後は、サーバー側で自動的に投稿処理を行います。
+「使用上の注意」参照
+
+2. 「一般設定」の「一覧表示の表示タイプ」を有効にした
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=845&forum=13
+
+3. バグ対策
+(1) プレビューにて説明文が表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=841
+
+(2)「サムネイルの再構築」にて fatal error 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=843
+
+(3)「編集画面」にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=844&forum=13
+
+(4) 「イマージマネジャー」からの登録にて fatal error
+
+(5) 他のD3モジュールと衝突する
+
+4. データベース構造
+photo テーブルを廃止して、下記のテーブルを追加した
+(1) item テーブル: photo テーブルの代わりとなる記事単位のテーブル
+(2) file テーブル: photo テーブルの代わりとなる写真・動画単位のテーブル
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) 今回、テーブル構造を大きく変更しました。
+モジュール・アップデート後は、Webphoto の管理者画面にて「アップデート」を実行してください。
+
+
+● 使用上の注意
+1. GPS 対応
+(1) ドコモでは写真のExifに下記のような位置情報が挿入できます
+---
+GPSLatitudeRef: N
+GPSLatitude.0: 35/1
+GPSLatitude.1: 00/1
+GPSLatitude.2: 35600/1000
+GPSLongitudeRef: E
+GPSLongitude.0: 135/1
+GPSLongitude.1: 41/1
+GPSLongitude.2: 35600/1000
+----
+
+(2) ドコモでは本文中に下記のような位置情報が挿入できます
+http://www.docomo.co.jp/gps.cgi?lat=%2B35.00.35.600&lon=%2B135.41.35.600&geo=wgs84&x-acc=3
+
+2. メール受信のコマンド化
+(1) ユーザはメールを送信するだけで、サーバー側で自動的に投稿処理を行います
+上級者向けです。
+どういう動作をするのか理解したうえでお使いください。
+
+(2) コマンドラインモードで動作させる
+-----
+php -q -f /XOOPS_ROOT_PATH/modules/webphoto/bin/retrieve.php -pass=xxx
+-----
+xxx はパスワード。
+「一般設定」の「コマンドのパスワード 」に表示されている
+
+(3) メール用のディレクトリィにある .forward に設定する
+サーバーにメールが到着した時点(送信から数秒後)でコマンドが起動される
+----
+| php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
+----
+
+(4) crontab に設定する
+下記の例では１時間ごとにコマンドが起動される
+----
+12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
+----
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
+
+● 謝辞
+下記にて配布されている「ＱＲコードクラスライブラリ」を使用しました。
+- http://www.swetake.com/qr/
+作者の方に、感謝します。
+
 
 =================================================
 Version: 0.30

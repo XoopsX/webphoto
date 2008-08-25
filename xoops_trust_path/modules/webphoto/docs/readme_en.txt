@@ -1,4 +1,118 @@
-$Id: readme_en.txt,v 1.5 2008/08/10 00:35:54 ohwada Exp $
+$Id: readme_en.txt,v 1.6 2008/08/25 21:27:34 ohwada Exp $
+
+=================================================
+Version: 0.40
+Date:   2008-08-26
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Supported mobile phone: 2nd version
+1.1 Post from the mobile phone
+(1) Supported GPS
+this module sets GoogleMap, 
+when there is GPS information in the image or this message body. 
+(2) Supported i-phone
+
+1.2 View for the mobile phone
+(1) Show "Send URL to the mobile phone"
+(2) Show QR code with URL
+(3) Creat and show the small image (480Å~480) for the mobile phone
+
+1.3 Command for retrieveing mails
+The user sends email, 
+and then the server processes to post the image automatically.
+refer "Notice for usage"
+
+2. Enabled "Type of view" in "Preferences"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=845&forum=13
+
+3. Bug fix
+(1) cannot preview description in submit form
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=841
+
+(2) fatal error in "Rebuild Thumbnails"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=843
+
+(3) fatal error in "Edit Photo"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=844&forum=13
+
+(4) fatal error in "Image Manager"
+
+(5) conflict with other D3 module
+
+4. Database structure
+abolished photo table and added following tables.
+(1) item table: the table for each item which replaces photo table
+(2) file table: the table for each photo/video file which replaces photo table
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Webphoto is chaneged database structure .
+please execute "Update" in webphoto's admin cp
+
+
+* Notice for usage *
+1. Supported GPS
+(1) In DoCoMo phone, the GPS information can be embedded in Exif of the photo.
+---
+GPSLatitudeRef: N
+GPSLatitude.0: 35/1
+GPSLatitude.1: 00/1
+GPSLatitude.2: 35600/1000
+GPSLongitudeRef: E
+GPSLongitude.0: 135/1
+GPSLongitude.1: 41/1
+GPSLongitude.2: 35600/1000
+----
+
+(2) In DoCoMo phone, the GPS information can be inserted in massage body
+http://www.docomo.co.jp/gps.cgi?lat=%2B35.00.35.600&lon=%2B135.41.35.600&geo=wgs84&x-acc=3
+
+2. Command for retrieveing mails
+(1) The user sends email, 
+  and then the server processes to post the image automatically.
+For expert user.
+Please use after understanding how operation.
+
+(2) works by the command line mode
+-----
+php -q -f /XOOPS_ROOT_PATH/modules/webphoto/bin/retrieve.php -pass=xxx
+-----
+xxx is password.
+password is shown in "Command Password" in "Preferences"
+
+(3) sets to ".forward" in the directory for the email.
+the command is executed, when the email arrives at the server ( few seconds later from the sending email ).
+----
+| php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
+----
+
+(4) sets in crontab
+the command is executed every 1 hour in the following sample
+----
+12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
+----
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Used "QR code class library" in the following site.
+- http://www.swetake.com/qr/
+Special thanks to authors.
+
 
 =================================================
 Version: 0.30
