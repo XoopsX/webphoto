@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: update.php,v 1.2 2008/08/25 21:00:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -92,6 +92,14 @@ function main()
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'UPDATE' );
 
+	if ( $this->_item_handler->get_count_all() > 0 ) {
+		$msg = 'You dont need update.<br />already exists item records';
+	} elseif ( $this->_photo_handler->get_count_all() > 0 ) {
+		$msg = _AM_WEBPHOTO_MUST_UPDATE ;
+	}
+
+	echo $this->build_error_msg( $msg, '', false );
+	echo "<br />\n";
 	echo "Update v0.30 to v0.40 <br /><br />\n";
 
 	$op = $this->_post_class->get_post_text('op');
