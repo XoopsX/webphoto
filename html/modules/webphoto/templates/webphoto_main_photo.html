@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.4 2008/08/08 04:57:00 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.5 2008/08/25 19:53:34 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -86,9 +86,9 @@
     <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
 
     <{if $photo.middle_width && $photo.middle_height }>
-      <img src="<{$photo.imgsrc_photo}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
+      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
     <{else}>
-      <img src="<{$photo.imgsrc_photo}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
     <{/if}>
 
     <br />
@@ -105,8 +105,8 @@
 		s1.addParam("allowfullscreen","true");
 		s1.addVariable("width","320");
 		s1.addVariable("height","240");
-		s1.addVariable("file","<{$photo.file_url_s}>");
-		s1.addVariable("image","<{$photo.imgsrc_thumb}>");
+		s1.addVariable("file","<{$photo.flash_video_url_s}>");
+		s1.addVariable("image","<{$photo.imgsrc_middle}>");
 		s1.write("webphoto_flash_video");
 	</script>
 
@@ -147,8 +147,20 @@
   <{include file="db:`$mydirname`_inc_photo_info.html"}>
 </div>
 
+<{* EDIT ICON *}>
+<{if $photo.can_edit}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /><{$lang_title_edit}></a><br />
+<{/if}>
+
 <div align="center">
   <{$photo_nav}>
+</div>
+<br />
+
+<div align="center">
+<img src="<{$photos_url}>/<{$mobile_qr_image}>" border="0" alt="qr_image" /><br />
+<a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
 </div>
 <br />
 

@@ -1,17 +1,19 @@
 <?php
-// $Id: mytrustdirname.php,v 1.2 2008/06/21 17:15:23 ohwada Exp $
+// $Id: mytrustdirname.php,v 1.3 2008/08/25 19:53:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+// $mydirname = $MY_DIRNAME;
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 $GLOBALS['MY_DIRNAME'] = $MY_DIRNAME;
 
 // for altsys
-$mydirname = $MY_DIRNAME;
+// $mydirname = $MY_DIRNAME;
 
 $MY_TRUST_DIRNAME = 'webphoto' ;
 

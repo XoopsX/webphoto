@@ -1,4 +1,4 @@
-<{* $Id: webphoto_block_rphoto.html,v 1.5 2008/08/08 04:57:00 ohwada Exp $ *}>
+<{* $Id: webphoto_block_rphoto.html,v 1.6 2008/08/25 19:53:34 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -35,7 +35,7 @@
       <{if $photo.thumb_width && $photo.thumb_height }>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
       <{else}>
-        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
+        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
       <{/if}>
 
 <{* NORMAL IMAGES *}>
@@ -50,7 +50,7 @@
       <{if $photo.thumb_width && $photo.thumb_height }>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
       <{else}>
-        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>"  />
       <{/if}>
       </a>
 
