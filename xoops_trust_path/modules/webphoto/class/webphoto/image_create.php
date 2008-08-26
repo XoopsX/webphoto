@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
+// $Id: image_create.php,v 1.7 2008/08/26 16:36:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -48,6 +48,8 @@ class webphoto_image_create extends webphoto_image_info
 	var $_ICON_EXT_DEFAULT ;
 
 	var $_EXT_PNG = 'png';
+
+	var $_flag_chmod = false;
 
 //---------------------------------------------------------
 // constructor
@@ -117,6 +119,12 @@ function has_rotate()
 	return $this->_has_rotate ;
 }
 
+function set_flag_chmod( $val )
+{
+	$this->_flag_chmod = (bool)$val ;
+	$this->_image_cmd_class->set_flag_chmod( $val );
+}
+
 //---------------------------------------------------------
 // create photo
 //---------------------------------------------------------
@@ -138,7 +146,7 @@ function create_photo( $src_file, $photo_id )
 
 // copy
 	} else {
-		$this->copy_file( $src_file , $photo_file ) ;
+		$this->copy_file( $src_file , $photo_file, $this->_flag_chmod ) ;
 		$ret = _C_WEBPHOTO_IMAGE_COPIED ;
 	}
 
@@ -301,9 +309,9 @@ function copy_thumb_icon_in_dir( $dir, $node, $ext )
 	$this->unlink_file( $thumb_file_png ) ;
 
 	if ( is_file( $icon_file_png ) ) {
-		$this->copy_file( $icon_file_png , $thumb_file_png ) ;
+		$this->copy_file( $icon_file_png , $thumb_file_png, $this->_flag_chmod  ) ;
 	} else {
-		$this->copy_file( $this->_ICON_EXT_DEFAULT, $thumb_file_png ) ;
+		$this->copy_file( $this->_ICON_EXT_DEFAULT, $thumb_file_png, $this->_flag_chmod ) ;
 	}
 
 	return $name_png ;
@@ -432,7 +440,7 @@ function create_image( $base_path, $id, $tmp_name )
 	$file = XOOPS_ROOT_PATH . $path;
 
 	$ret = $this->cmd_modify_photo( $tmp_file , $file );
-	if ( $ret == 0 ) {
+	if ( $ret == _C_WEBPHOTO_IMAGE_READFAULT ) {
 		return _C_WEBPHOTO_ERR_FILEREAD;
 	}
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: utility.php,v 1.5 2008/08/26 16:36:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// changed write_file()
 // 2008-08-01 K.OHWADA
 // added get_files_in_dir()
 // 2008-07-01 K.OHWADA
@@ -215,10 +217,17 @@ function unlink_file( $file )
 	return false;
 }
 
-function copy_file( $src, $dst )
+function copy_file( $src, $dst, $flag_chmod=false )
 {
 	if ( $this->check_file( $src ) ) {
-		return copy( $src, $dst );
+		$ret = copy( $src, $dst );
+
+// the user can delete this file which apache made.
+		if ( $ret && $flag_chmod ) {
+			chmod( $dst, 0777 );
+		}
+
+		return $ret;
 	}
 	return false;
 }
@@ -249,14 +258,20 @@ function read_file( $file, $mode='r' )
 	return $date;
 }
 
-function write_file( $file, $data, $mode='w' )
+function write_file( $file, $data, $mode='w', $flag_chmod=false )
 {
 	$fp = fopen( $file , $mode ) ;
 	if ( !$fp ) { return false ; }
 
-	$ret = fwrite( $fp , $data ) ;
+	$byte = fwrite( $fp , $data ) ;
 	fclose( $fp ) ;
-	return $ret;
+
+// the user can delete this file which apache made.
+	if (( $byte > 0 )&& $flag_chmod ) {
+		chmod( $file, 0777 );
+	}
+
+	return $byte;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photo_create.php,v 1.3 2008/08/26 16:36:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1034,6 +1034,12 @@ function set_flag_force_db( $val )
 function set_flag_print_first_msg( $val )
 {
 	$this->_flag_print_first_msg = (bool)$val;
+}
+
+function set_image_video_flag_chmod( $val )
+{
+	$this->_image_class->set_flag_chmod( $val );
+	$this->_video_class->set_flag_chmod( $val );
 }
 
 //---------------------------------------------------------

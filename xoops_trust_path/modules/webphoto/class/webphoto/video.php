@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
+// $Id: video.php,v 1.6 2008/08/26 16:36:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -88,6 +88,14 @@ function &getInstance( $dirname )
 		$instance = new webphoto_video( $dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// set param
+//---------------------------------------------------------
+function set_flag_chmod( $val )
+{
+	$this->_ffmpeg_class->set_flag_chmod( $val );
 }
 
 //---------------------------------------------------------

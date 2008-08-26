@@ -1,10 +1,16 @@
 <?php
-// $Id: ffmpeg.php,v 1.3 2008/07/07 23:34:23 ohwada Exp $
+// $Id: ffmpeg.php,v 1.4 2008/08/26 16:36:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-07-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// flag_chmod
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -19,6 +25,7 @@ class webphoto_lib_ffmpeg
 	var $_prefix   = 'thumb';
 	var $_ext      = 'jpg';
 	var $_offset   = 0;
+	var $_flag_chmod = false;
 
 	var $_errors = array();
 
@@ -26,9 +33,9 @@ class webphoto_lib_ffmpeg
 	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
 	var $_CMD_CREATE_FLASH  = 'ffmpeg -i %s -vcodec flv %s -f flv %s';
 
-	var $_EXT_FLV     = 'flv';
+	var $_EXT_FLV = 'flv';
 
-	var $_DEBUG = false;
+	var $_DEBUG   = false;
 
 //---------------------------------------------------------
 // constructor
@@ -76,6 +83,11 @@ function set_ext( $val )
 function set_offset( $val )
 {
 	$this->_offset = $val;
+}
+
+function set_flag_chmod( $val )
+{
+	$this->_flag_chmod = (bool)$val ;
 }
 
 function set_debug( $val )
@@ -164,6 +176,9 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 		}
 
 		if ( is_file($file_out) && filesize( $file_out ) ) {
+			if ( $this->_flag_chmod ) {
+				chmod( $file_out, 0777 );
+			}
 			$count ++;
 		} else {
 			$this->_set_error( $cmd );
@@ -203,6 +218,9 @@ function create_flash( $file_in, $file_out, $extra=null )
 	}
 
 	if ( is_file($file_out) && filesize( $file_out ) ) {
+		if ( $this->_flag_chmod ) {
+			chmod( $file_out, 0777 );
+		}
 		return true ;
 	}
 

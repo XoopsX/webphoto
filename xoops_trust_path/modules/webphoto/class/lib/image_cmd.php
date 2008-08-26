@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.4 2008/07/05 12:54:16 ohwada Exp $
+// $Id: image_cmd.php,v 1.5 2008/08/26 16:36:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,11 +15,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// exec_modify_photo()
 // 2008-07-01 K.OHWADA
 // changed rename to copy in modify_photo
 // removed unlink in modify_photo
 // removed create thumb icon
-//
 // 2008-04-02 K.OHWADA
 // supported gif functions of GD
 //---------------------------------------------------------
@@ -42,6 +43,7 @@ class webphoto_lib_image_cmd
 	var $_cfg_thumbrule    = 'w';
 	var $_normal_exts      = array( 'jpg', 'jpeg', 'gif', 'png' );
 	var $_mode_rotate      = null;
+	var $_flag_chmod       = false;
 
 	var $_thumb_path = null;
 	var $_thumb_name = null;
@@ -146,6 +148,11 @@ function set_mode_rotate( $val )
 	$this->_mode_rotate = $val;
 }
 
+function set_flag_chmod( $val )
+{
+	$this->_flag_chmod = (bool)$val ;
+}
+
 function _add_separator_to_tail( $str )
 {
 // Check the path to binaries of imaging packages
@@ -158,10 +165,10 @@ function _add_separator_to_tail( $str )
 //---------------------------------------------------------
 // modify
 // return value
-//   0 : read fault
-//   1 : complete created
-//   2 : copied
-//   5 : resize
+//   -1 : read fault
+//   1  : complete created
+//   2  : copied
+//   5  : resize
 //---------------------------------------------------------
 function modify_photo( $src_file , $dst_file )
 {
@@ -169,22 +176,25 @@ function modify_photo( $src_file , $dst_file )
 		return $this->_CODE_READFAULT ;	// read fault
 	}
 
-	$ext = $this->parse_ext( $dst_file );
+	$src_ext = $this->parse_ext( $src_file );
 
-	if ( ! $this->is_normal_ext( $ext ) ) {
+	if ( ! $this->is_normal_ext( $src_ext ) ) {
 		return $this->_CODE_SKIPPED ;
 	}
 
-//	if( !$this->is_normal_ext($ext) ) {
-//		$this->rename_file( $src_file , $dst_file ) ;
-//		return $this->_CODE_COPIED;	// copied
-//	}
+	$ret = $this->exec_modify_photo( $src_file , $dst_file, $src_ext );
+	if ( $this->_flag_chmod ) {
+		chmod( $dst_file, 0777 );
+	}
+	return $ret;
+}
 
+function exec_modify_photo( $src_file , $dst_file, $src_ext )
+{
 	// only copy when small enough and no rotate
 	if (( !$this->has_resize() || !$this->require_resize( $src_file ) ) &&
 		( !$this->has_rotate() || !$this->require_rotate() ) ) {
 
-//		$this->rename_file( $src_file , $dst_file ) ;
 		$this->copy_file( $src_file , $dst_file ) ;
 		return $this->_CODE_COPIED;	// copied
 	}
@@ -528,30 +538,45 @@ function modify_photo_by_netpbm( $src_file , $dst_file )
 //---------------------------------------------------------
 // create_thumb Wrapper
 // return value
-//   0 : read fault
-//   1 : complete created
-//   2 : copied
-//   3 : skipped
-//   4 : icon (not normal exts)
+//   -1 : read fault
+//   1  : complete created
+//   2  : copied
+//   3  : skipped
+//   4  : icon (not normal exts)
 //---------------------------------------------------------
-function create_thumb( $src_file , $node , $ext )
+function create_thumb( $src_file , $node , $src_ext=null )
 {
-	$thumb_name = $node .'.'. $ext;
-	$thumb_path = $this->_cfg_thumbs_path .'/'. $thumb_name;
-	$thumb_file = XOOPS_ROOT_PATH . $thumb_path ;
-
-	if ( ! $this->is_normal_ext( $ext ) ) {
-		return $this->_CODE_SKIPPED ;
+	if ( empty($src_ext) ) {
+		$src_ext = $this->parse_ext( $src_file );
 	}
 
-	if( ! is_readable( $src_file ) ) {
+	if ( ! is_readable( $src_file ) ) {
 		return $this->_CODE_READFAULT ;	// read fault
 	}
 
+	if ( ! $this->is_normal_ext( $src_ext ) ) {
+		return $this->_CODE_SKIPPED ;
+	}
+
+	$thumb_name = $node .'.'. $src_ext;
+	$thumb_path = $this->_cfg_thumbs_path .'/'. $thumb_name;
+	$thumb_file = XOOPS_ROOT_PATH . $thumb_path ;
+
 	$this->_thumb_path = $thumb_path;
 	$this->_thumb_name = $thumb_name;
-	$this->_thumb_ext  = $ext;
+	$this->_thumb_ext  = $src_ext;
 
+	$ret = $this->exec_create_thumb( $src_file , $thumb_file );
+
+	if ( $this->_flag_chmod ) {
+		chmod( $thumb_file, 0777 );
+	}
+
+	return $ret;
+}
+
+function exec_create_thumb( $src_file , $thumb_file )
+{
 	if( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) {
 		return $this->create_thumb_by_imagick( $src_file , $thumb_file ) ;
 	} else if( $this->_cfg_imagingpipe == $this->_PIPEID_NETPBM ) {
