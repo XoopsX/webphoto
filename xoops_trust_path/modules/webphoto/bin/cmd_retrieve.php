@@ -1,5 +1,5 @@
 <?php
-// $Id: cmd_retrieve.php,v 1.1 2008/08/26 10:56:58 ohwada Exp $
+// $Id: cmd_retrieve.php,v 1.2 2008/08/26 11:40:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,6 +15,7 @@
 //=========================================================
 $path    = null ;
 $dirname = null ;
+define('XOOPS_CHECK_PATH', 0);
 
 // parse arg
 if ( $_SERVER['argc'] > 1 ) {
