@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.3 2008/08/25 23:33:51 ohwada Exp $
+// $Id: update.php,v 1.4 2008/08/26 06:28:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,6 +24,7 @@ class webphoto_admin_update extends webphoto_base_this
 	var $_next;
 
 	var $_LIMIT = 50;
+	var $_FLAG_FDIVING = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -43,6 +44,11 @@ function webphoto_admin_update( $dirname , $trust_dirname )
 	$this->_cfg_middle_height = $this->get_config_by_name( 'middle_height' ) ;
 
 	$this->_init_image_cmd();
+
+	$this->preload_init();
+	$this->preload_constant();
+	
+	echo "flag: ".$this->_FLAG_FDIVING ;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -154,7 +160,7 @@ function _update_photo()
 		$file_id_middle = 0;
 		$file_id_flash  = 0 ;
 		$file_id_docomo = 0 ;
-		$file_id_html   = 0 ;
+		$file_id_10     = 0 ;
 
 		echo $photo_id.' : '.$this->sanitize($title).' : ';
 
@@ -176,10 +182,6 @@ function _update_photo()
 		if ( $file_ext == 'flv' ) {
 			$file_id_flash = $this->_insert_file_file(
 				_C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, $photo_row );
-
-// for fdiving
-		} elseif (( $file_ext == 'htm' )||( $file_ext == 'html' )) {
-			$file_id_html = $this->_insert_file_file( 10, $photo_row );
 		}
 
 // create middle image
@@ -188,12 +190,17 @@ function _update_photo()
 			$file_id_middle = $this->_insert_file_middle( $photo_row, $param );
 		}
 
+// for fdiving
+		if ( $this->_FLAG_FDIVING ) {
+			$file_id_10 = $this->_insert_file_file( 10, $photo_row );
+		}
+
 		$item_row['item_file_id_1']  = $file_id_cont ;
 		$item_row['item_file_id_2']  = $file_id_thumb ;
 		$item_row['item_file_id_3']  = $file_id_middle ;
 		$item_row['item_file_id_4']  = $file_id_flash ;
 		$item_row['item_file_id_5']  = $file_id_docomo ;
-		$item_row['item_file_id_10'] = $file_id_html ;
+		$item_row['item_file_id_10'] = $file_id_10 ;
 		$this->_item_handler->update( $item_row );
 
 		echo "<br />\n";
