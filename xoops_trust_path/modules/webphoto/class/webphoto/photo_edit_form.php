@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.8 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.9 2008/08/26 11:35:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -538,12 +538,12 @@ function print_form_imagemanager( $row, $param )
 //---------------------------------------------------------
 // delete confirm
 //---------------------------------------------------------
-function print_form_delete_confirm( $item_id )
+function print_form_delete_confirm( $photo_id )
 {
 	$hiddens = array(
 		'fct'      => 'edit' ,
 		'op'       => 'delete' ,
-		'item_id' => $item_id ,
+		'photo_id' => $photo_id ,
 	);
 
 	echo $this->build_form_confirm( $hiddens, $this->_THIS_URL, $this->get_constant('CONFIRM_PHOTODEL'), _YES, _NO );

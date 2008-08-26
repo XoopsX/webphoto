@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.10 2008/08/25 23:35:36 ohwada Exp $
+// $Id: edit.php,v 1.11 2008/08/26 11:35:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -857,11 +857,11 @@ function _print_form_confirm()
 // load
 	$item_row = $this->_row_current;
 
-	$cont_url = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_CONT, 'file_url' ) ;
+	$cont_url = $this->get_file_url_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 
-	$thumb_url = $this->get_file_value_by_kind_name( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB, 'file_url' ) ;
+	$thumb_url = $this->get_file_url_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
 
 	if ( $thumb_url ) {
 		$src = $thumb_url ;

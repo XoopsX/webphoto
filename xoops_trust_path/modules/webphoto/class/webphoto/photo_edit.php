@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.9 2008/08/25 23:37:20 ohwada Exp $
+// $Id: photo_edit.php,v 1.10 2008/08/26 11:35:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -722,6 +722,15 @@ function build_preview_template( $row )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
+function get_file_url_by_kind( $item_row, $kind )
+{
+	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
+	if ( is_array($file_row) ) {
+		return $file_row['file_url'];
+	}
+	return null;
+}
+
 function get_file_path_by_kind( $item_row, $kind )
 {
 	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
