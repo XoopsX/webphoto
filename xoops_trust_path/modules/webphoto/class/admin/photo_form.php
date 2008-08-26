@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photo_form.php,v 1.3 2008/08/26 06:49:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -236,7 +236,8 @@ function _print_photo( $row )
 	$thumb_height   = $show['thumb_height'];
 
 	if ( strlen($photo_title) > $this->_TITLE_LENGTH ) {
-		$photo_title = $this->_multibyte_class->sub_str( $photo_title, 1, $this->_TITLE_LENGTH ).'...';
+		$photo_title = $this->_multibyte_class->sub_str( 
+			$photo_title, 0, $this->_TITLE_LENGTH ).'...';
 	} 
 
 	$photo_title_s = $this->sanitize($photo_title);
