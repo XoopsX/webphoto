@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_retrieve.php,v 1.3 2008/08/09 22:40:39 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.4 2008/08/26 11:46:28 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// small change mail_parse()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -233,7 +239,8 @@ function mail_parse( $file_arr )
 	$param_arr = $this->parse_mails( $file_arr );
 
 	if ( !is_array($param_arr) || !count($param_arr) ) {
-		echo $this->get_constant('TEXT_MAIL_NO_VALID')."<br />\n";
+		$msg = $this->get_constant('TEXT_MAIL_NO_VALID');
+		$this->print_msg_level_user( $msg, false, true );
 	}
 
 	return $param_arr;
