@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: item_handler.php,v 1.2 2008/08/27 06:45:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -557,17 +557,17 @@ function build_where_public_by_place_array( $place_array )
 	return $where;
 }
 
-function build_where_public_item()
+function build_where_public_photo()
 {
 	$where  = $this->build_where_public();
-	$where .= ' AND '. $this->build_where_item();
+	$where .= ' AND '. $this->build_where_photo();
 	return $where;
 }
 
-function build_where_public_item_by_catid( $cat_id )
+function build_where_public_photo_by_catid( $cat_id )
 {
 	$where  = $this->build_where_public();
-	$where .= ' AND '. $this->build_where_item();
+	$where .= ' AND '. $this->build_where_photo();
 	$where .= ' AND item_cat_id='. intval($cat_id);
 	return $where;
 }
@@ -601,7 +601,7 @@ function build_where_imode()
 	return $where;
 }
 
-function build_where_item()
+function build_where_photo()
 {
 	$where  = " ( item_ext='gif' ";
 	$where .= "OR item_ext='png' ";
