@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: redothumbs.php,v 1.3 2008/08/27 04:51:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// added maillog_handler.php
 // 2008-07-01 K.OHWADA
 // added exif.php
 //---------------------------------------------------------
@@ -29,8 +31,10 @@ webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
+webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
+webphoto_include_once( 'class/webphoto/mail_unlink.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/admin/redo_form.php' );
 webphoto_include_once( 'class/admin/redothumbs.php' );
