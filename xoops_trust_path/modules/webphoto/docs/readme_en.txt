@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.6 2008/08/25 21:27:34 ohwada Exp $
+$Id: readme_en.txt,v 1.7 2008/08/27 04:09:52 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -77,25 +77,14 @@ GPSLongitude.2: 35600/1000
 http://www.docomo.co.jp/gps.cgi?lat=%2B35.00.35.600&lon=%2B135.41.35.600&geo=wgs84&x-acc=3
 
 2. Command for retrieveing mails
-(1) The user sends email, 
-  and then the server processes to post the image automatically.
-For expert user.
-Please use after understanding how operation.
-
-(2) works by the command line mode
+(1) works by the command line mode
 -----
 php -q -f /XOOPS_ROOT_PATH/modules/webphoto/bin/retrieve.php -pass=xxx
 -----
 xxx is password.
 password is shown in "Command Password" in "Preferences"
 
-(3) sets to ".forward" in the directory for the email.
-the command is executed, when the email arrives at the server ( few seconds later from the sending email ).
-----
-| php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
-----
-
-(4) sets in crontab
+(2) sets in crontab
 the command is executed every 1 hour in the following sample
 ----
 12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx

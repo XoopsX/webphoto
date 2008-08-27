@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.6 2008/08/25 21:27:34 ohwada Exp $
+$Id: readme_jp.txt,v 1.7 2008/08/27 04:09:52 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -76,24 +76,14 @@ GPSLongitude.2: 35600/1000
 http://www.docomo.co.jp/gps.cgi?lat=%2B35.00.35.600&lon=%2B135.41.35.600&geo=wgs84&x-acc=3
 
 2. メール受信のコマンド化
-(1) ユーザはメールを送信するだけで、サーバー側で自動的に投稿処理を行います
-上級者向けです。
-どういう動作をするのか理解したうえでお使いください。
-
-(2) コマンドラインモードで動作させる
+(1) コマンドラインモードで動作させる
 -----
 php -q -f /XOOPS_ROOT_PATH/modules/webphoto/bin/retrieve.php -pass=xxx
 -----
 xxx はパスワード。
 「一般設定」の「コマンドのパスワード 」に表示されている
 
-(3) メール用のディレクトリィにある .forward に設定する
-サーバーにメールが到着した時点(送信から数秒後)でコマンドが起動される
-----
-| php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
-----
-
-(4) crontab に設定する
+(2) crontab に設定する
 下記の例では１時間ごとにコマンドが起動される
 ----
 12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
