@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.11 2008/08/26 11:35:20 ohwada Exp $
+// $Id: edit.php,v 1.12 2008/08/27 05:11:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
+// used webphoto_photo_delete
 // 2008-08-15 K.OHWADA
 // BUG: undefined create_video_flash()
 // 2008-08-06 K.OHWADA
@@ -28,7 +29,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_photo_edit
 {
-//	var $_video_class;
+	var $_delete_class;
 
 	var $_form_action   = null;
 	var $_has_editable  = false;
@@ -46,7 +47,7 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
 
-//	$this->_video_class  =& webphoto_video::getInstance( $dirname );
+	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
 
 	$this->_has_editable  = $this->_perm_class->has_editable();
 	$this->_has_deletable = $this->_perm_class->has_deletable();
@@ -753,7 +754,7 @@ function _exec_delete()
 		return _C_WEBPHOTO_ERR_NO_PERM;
 	}
 
-	$ret = $this->delete_photo( $this->_post_photo_id ) ;
+	$ret = $this->_delete_class->delete_photo( $this->_post_photo_id );
 	if ( !$ret ) {
 		return _C_WEBPHOTO_ERR_DB;
 	}

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: submit.php,v 1.4 2008/08/27 05:11:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// removed photo_delete.php
 // 2008-08-01 K.OHWADA
 // added class/xoops/user.php photo_create.php
 // removed msg.php
@@ -45,7 +47,6 @@ webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
-webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/webphoto/photo_edit.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );

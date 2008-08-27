@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.10 2008/08/26 11:35:20 ohwada Exp $
+// $Id: photo_edit.php,v 1.11 2008/08/27 05:11:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,7 @@
 // photo_handler -> item_handler
 // supported exif gps
 // used preload_init()
+// NOT use webphoto_photo_delete
 // 2008-08-12 K.OHWADA
 // BUG: not show description in preview
 // 2008-08-01 K.OHWADA
@@ -34,7 +35,6 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_image_class;
 	var $_show_class;
 	var $_build_class;
-	var $_delete_class;
 	var $_mime_class;
 	var $_photo_class;
 
@@ -102,7 +102,6 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 	$this->_upload_class =& webphoto_upload::getInstance( $dirname , $trust_dirname );
 	$this->_show_class   =& webphoto_show_photo::getInstance( $dirname , $trust_dirname );
 	$this->_build_class  =& webphoto_photo_build::getInstance( $dirname );
-	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
 	$this->_mime_class   =& webphoto_mime::getInstance( $dirname );
 	$this->_photo_class  =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
 
@@ -747,14 +746,6 @@ function get_file_cont_duration( $item_row )
 		return $cont_row['file_duration'] ;
 	}
 	return null;
-}
-
-//---------------------------------------------------------
-// delete
-//---------------------------------------------------------
-function delete_photo( $photo_id )
-{
-	return $this->_delete_class->delete_photo( $photo_id );
 }
 
 //---------------------------------------------------------
