@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_handler.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
+// $Id: maillog_handler.php,v 1.3 2008/08/27 23:05:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -188,9 +188,20 @@ function get_id_array_older( $limit=0, $offset=0 )
 //---------------------------------------------------------
 function build_photo_ids_array_to_str( $arr )
 {
+	if ( !is_array($arr) || !count($arr) ) {
+		return null;
+	}
+
 // array -> |1|2|3|
 	$utility_class =& webphoto_lib_utility::getInstance();
 	$str = $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	$ret = $this->build_photo_ids_with_separetor( $str ) ;
+	return $ret ;
+}
+
+function build_photo_ids_with_separetor( $str )
+{
+// str -> |1|
 	$ret = $this->_SEPARATOR . $str . $this->_SEPARATOR ;
 	return $ret ;
 }
@@ -203,6 +214,10 @@ function build_photo_ids_row_to_array( $row )
 
 function build_attach_array_to_str( $arr )
 {
+	if ( !is_array($arr) || !count($arr) ) {
+		return null;
+	}
+
 	$utility_class =& webphoto_lib_utility::getInstance();
 	return $utility_class->array_to_str( $arr, $this->_SEPARATOR );
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.3 2008/07/11 20:08:13 ohwada Exp $
+// $Id: mime_handler.php,v 1.4 2008/08/27 23:05:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// build_perms_array_to_str()
 // 2008-07-01 K.OHWADA
 // added mime_ffmpeg
 //---------------------------------------------------------
@@ -20,6 +22,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_mime_handler extends webphoto_lib_handler
 {
 	var $_cached_ext_array = array();
+
+	var $_SEPARATOR = '&';
 
 //---------------------------------------------------------
 // constructor
@@ -190,10 +194,40 @@ function get_rows_by_mygroups( $groups, $limit=0, $offset=0 )
 {
 	$arr = array();
 	foreach ( $groups as $group ) {
-		$arr[] = "mime_perms LIKE '%&". intval($group) . "&%'" ;
+		$like  = '%'. $this->_SEPARATOR . intval($group) . $this->_SEPARATOR . '%';
+		$arr[] = 'mime_perms LIKE '. $this->quote($like) ;
 	}
 	$where = implode( ' OR ', $arr );
 	return $this->get_rows_by_where( $where, $limit, $offset );
+}
+
+//---------------------------------------------------------
+// build
+//---------------------------------------------------------
+function build_perms_array_to_str( $arr )
+{
+	if ( !is_array($arr) || !count($arr) ) {
+		return null;
+	}
+
+// array -> &1&2&3&
+	$utility_class =& webphoto_lib_utility::getInstance();
+	$str = $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	$ret = $this->build_perms_with_separetor( $str ) ;
+	return $ret ;
+}
+
+function build_perms_with_separetor( $str )
+{
+// str -> &1&
+	$ret = $this->_SEPARATOR . $str . $this->_SEPARATOR ;
+	return $ret ;
+}
+
+function build_perms_row_to_array( $row )
+{
+	$utility_class =& webphoto_lib_utility::getInstance();
+	return $utility_class->str_to_array( $row['mime_perms'], $this->_SEPARATOR );
 }
 
 // --- class end ---

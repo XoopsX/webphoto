@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: mimetypes.php,v 1.4 2008/08/27 23:05:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-08-24 K.OHWADA
+// used build_perms_array_to_str()
 // 2008-08-01 K.OHWADA
 // added _print_show_allowed_mime_all()
 // 2008-07-01 K.OHWADA
@@ -145,7 +147,8 @@ function _save()
 	$row['mime_name']   = $this->_post_class->get_post_text('mime_name');
 	$row['mime_type']   = $this->_post_class->get_post_text('mime_type');
 	$row['mime_ffmpeg'] = $this->_post_class->get_post_text('mime_ffmpeg');
-	$row['mime_perms']  = $this->_build_save_perms();
+	$row['mime_perms']  = $this->_mime_handler->build_perms_array_to_str(
+		$this->_build_save_perms() );
 
 	if ( $post_mime_id > 0 ) {
 		$res = $this->_mime_handler->update($row);
@@ -170,22 +173,18 @@ function _build_save_perms()
 {
 	$post_perms = $this->_post_class->get_post('perms');
 
+	if ( !is_array($post_perms) || !count($post_perms) ) {
+		return null ;
+	}
+
 	$arr = array();
-	if ( is_array($post_perms) && count($post_perms) ) {
-		foreach( $post_perms as $k => $v )
-		{
-			if ( $v == 1 ) {
-				$arr[] = $k;
-			}
+	foreach( $post_perms as $k => $v ) {
+		if ( $v == 1 ) {
+			$arr[] = $k;
 		}
 	}
 
-	$mime_perms = '';
-	if ( is_array($post_perms) && count($post_perms) ) {
-		$mime_perms = '&'. $this->array_to_str( $arr, '&' ) .'&';
-	}
-
-	return $mime_perms;
+	return $arr ;
 }
 
 //---------------------------------------------------------
@@ -274,7 +273,8 @@ function _print_form_mimetype( $mime_id=0 )
 		}
 	} else {
 		$row = $this->_mime_handler->create( true );
-		$row['mime_perms'] = '&'. XOOPS_GROUP_ADMIN .'&';
+		$row['mime_perms'] 
+			= $this->_mime_handler->build_perms_with_separetor( XOOPS_GROUP_ADMIN ) ;
 	}
 
 	$this->_print_mime_form_mimetype( $row );
@@ -316,7 +316,7 @@ function _print_list()
 	{
 		$this->_build_allowed_mime_array_all(
 			$row['mime_ext'], 
-			$this->str_to_array( $row['mime_perms'], '&' ) 
+			$this->_mime_handler->build_perms_row_to_array( $row )
 		);
 
 		if (( $i >= $get_start )&&( $i < ($get_start + $this->_PERPAGE) ) ) {
@@ -357,7 +357,7 @@ function _print_list()
 
 	foreach ( $rows_sel as $row ) 
 	{
-		$perm_array = $this->str_to_array( $row['mime_perms'], '&' );
+		$perm_array = $this->_mime_handler->build_perms_row_to_array( $row );
 		$url = $this->_ADMIN_MIME_PHP .'&amp;op=edit&amp;mime_id='. $row['mime_id'] ;
 
 		echo "<tr>";
