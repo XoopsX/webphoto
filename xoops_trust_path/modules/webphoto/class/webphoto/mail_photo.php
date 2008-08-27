@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: mail_photo.php,v 1.5 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -26,6 +26,7 @@ class webphoto_mail_photo extends webphoto_photo_create
 	var $_unlink_class ;
 
 	var $_cfg_allownoimage = false;
+	var $_flag_mail_chmod  = false;
 
 	var $_SUBJECT_DEFAULT = 'No Subject';
 	var $_TIME_FORMAT = 'Y/m/d H:i';
@@ -75,6 +76,11 @@ function set_flag_strict( $val )
 function set_mail_groups( $val )
 {
 	$this->_check_class->set_mail_groups( $val );
+}
+
+function set_flag_mail_chmod( $val )
+{
+	$this->_flag_mail_chmod = (bool)$val ;
 }
 
 function parse_mails( $file_arr )
@@ -187,7 +193,8 @@ function parse_attaches( $mail_filename, $attaches_in, $specified_array=null )
 		    ( empty($specified_array) && empty($reject) )) { 
 
 			$file_save = $this->_utility_class->strip_ext( $mail_filename ).'-'.$filename ;
-			$this->_utility_class->write_file( $this->_TMP_DIR.'/'.$file_save, $content, 'wb' );
+			$this->_utility_class->write_file(
+				$this->_TMP_DIR.'/'.$file_save, $content, 'wb', $this->_flag_mail_chmod );
 			$reject = null;	// clear reject
 
 // with reject

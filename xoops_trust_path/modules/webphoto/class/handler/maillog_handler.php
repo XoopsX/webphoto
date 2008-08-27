@@ -1,10 +1,16 @@
 <?php
-// $Id: maillog_handler.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: maillog_handler.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-08-24 K.OHWADA
+// added get_rows_by_photoid()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -158,6 +164,15 @@ function get_rows_desc_by_status( $status, $limit=0, $start=0 )
 	return $this->get_rows_by_sql( $sql, $limit, $start  );
 }
 
+function get_rows_by_photoid( $photo_id, $limit=0, $start=0 )
+{
+	$like = '%'. $this->_SEPARATOR . intval($photo_id) . $this->_SEPARATOR . '%';
+	$sql  = 'SELECT * FROM '.$this->_table;
+	$sql .= ' WHERE maillog_photo_ids LIKE '. $this->quote($like) ;
+	$sql .= ' ORDER BY maillog_id DESC';
+	return $this->get_rows_by_sql( $sql, $limit, $start  );
+}
+
 //---------------------------------------------------------
 // get id array
 //---------------------------------------------------------
@@ -173,8 +188,11 @@ function get_id_array_older( $limit=0, $offset=0 )
 //---------------------------------------------------------
 function build_photo_ids_array_to_str( $arr )
 {
+// array -> |1|2|3|
 	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	$str = $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	$ret = $this->_SEPARATOR . $str . $this->_SEPARATOR ;
+	return $ret ;
 }
 
 function build_photo_ids_row_to_array( $row )

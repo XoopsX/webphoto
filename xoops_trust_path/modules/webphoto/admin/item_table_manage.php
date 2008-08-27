@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: item_table_manage.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -20,7 +20,9 @@ webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
+webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/mail_unlink.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/admin/item_table_manage.php' );

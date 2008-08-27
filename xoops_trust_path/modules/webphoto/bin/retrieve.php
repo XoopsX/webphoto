@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.1 2008/08/25 19:28:46 ohwada Exp $
+// $Id: retrieve.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -69,6 +69,8 @@ webphoto_include_once( 'class/webphoto/mail_photo.php' );
 webphoto_include_once( 'class/webphoto/mail_unlink.php' );
 webphoto_include_once( 'class/webphoto/mail_retrieve.php' );
 webphoto_include_once( 'class/bin/retrieve.php' );
+
+webphoto_include_once_preload();
 
 //=========================================================
 // main

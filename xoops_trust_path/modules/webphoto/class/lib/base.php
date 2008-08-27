@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
+// $Id: base.php,v 1.6 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -217,9 +217,9 @@ function rename_file( $old, $new )
 	return $this->_utility_class->rename_file( $old, $new );
 }
 
-function copy_file( $src, $dst )
+function copy_file( $src, $dst, $flag=false )
 {
-	return $this->_utility_class->copy_file( $src, $dst );
+	return $this->_utility_class->copy_file( $src, $dst, $flag );
 }
 
 function unlink_file( $file )

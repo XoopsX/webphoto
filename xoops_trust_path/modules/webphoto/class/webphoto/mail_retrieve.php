@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.5 2008/08/26 16:36:48 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.6 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-08-24 K.OHWADA
-// small change mail_parse()
+// added set_flag_chmod()
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -21,7 +21,7 @@ class webphoto_mail_retrieve extends webphoto_mail_photo
 {
 	var $_pop_class ;
 
-	var $_flag_chmod = false ;
+	var $_flag_retrive_chmod = false ;
 
 	var $_is_set_mail = false;
 	var $_has_mail    = false;
@@ -101,7 +101,8 @@ function has_mail()
 function set_flag_chmod( $val )
 {
 	$this->set_image_video_flag_chmod( $val );
-	$this->_flag_chmod = (bool)$val;
+	$this->set_flag_mail_chmod( $val );
+	$this->_flag_retrive_chmod = (bool)$val;
 }
 
 //---------------------------------------------------------
@@ -150,12 +151,13 @@ function check_access_time()
 function renew_access_time()
 {
 	$this->_utility_class->write_file( 
-		$this->_FILE_ACCESS, time(), 'w', $this->_flag_chmod );
+		$this->_FILE_ACCESS, time(), 'w', $this->_flag_retrive_chmod );
 }
 
 function retrieve_exec()
 {
 	if ( $this->_DEBUG_MAIL_FILE ) {
+		$this->print_msg_level_user( 'DEBUG MODE', false, true );
 		$this->_mail_count = 1 ;
 		$this->_mail_array = array( 
 			$this->build_mail_file( $this->_DEBUG_MAIL_FILE ) ) ;
@@ -219,7 +221,7 @@ function mail_pop()
 		$this->print_msg_level_admin(  $file, false, true );
 
 		$this->_utility_class->write_file( 
-			$this->_TMP_DIR.'/'.$file, $mail, 'w', $this->_flag_chmod );
+			$this->_TMP_DIR.'/'.$file, $mail, 'w', $this->_flag_retrive_chmod );
 		$file_arr[] = $this->build_mail_file( $file );
 	}
 

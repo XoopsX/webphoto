@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.1 2008/08/25 19:30:22 ohwada Exp $
+// $Id: base.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -19,6 +19,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_bin_base
 {
+	var $_preload_class ;
+
 	var $_DIRNAME;
 	var $_TRUST_DIRNAME;
 
@@ -109,6 +111,54 @@ function _init( $dirname , $trust_dirname )
 	}
 
 	$this->_file_admin_index = 'modules/'. $dirname .'/admin/index.php';
+}
+
+//---------------------------------------------------------
+// preload class
+//---------------------------------------------------------
+function preload_init()
+{
+	$this->_preload_class =& webphoto_d3_preload::getInstance();
+	$this->_preload_class->init( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+}
+
+function preload_constant()
+{
+	$arr = $this->_preload_class->get_preload_const_array();
+	if ( !is_array($arr) || !count($arr) ) {
+		return true;	// no action
+	}
+
+	foreach( $arr as $k => $v )
+	{
+		$local_name = strtoupper( '_' . $k );
+
+// array type
+		if ( strpos($k, 'array_') === 0 ) {
+			$temp = $this->str_to_array( $v, '|' );
+			if ( is_array($temp) && count($temp) ) {
+				$this->$local_name = $temp;
+			}
+
+// string type
+		} else {
+			$this->$local_name = $v;
+		}
+	}
+
+}
+
+function str_to_array( $str, $pattern )
+{
+	$arr1 = explode( $pattern, $str );
+	$arr2 = array();
+	foreach ( $arr1 as $v )
+	{
+		$v = trim($v);
+		if ($v == '') { continue; }
+		$arr2[] = $v;
+	}
+	return $arr2;
 }
 
 //---------------------------------------------------------

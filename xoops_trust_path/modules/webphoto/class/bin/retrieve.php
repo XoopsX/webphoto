@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.1 2008/08/25 19:30:22 ohwada Exp $
+// $Id: retrieve.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -19,6 +19,7 @@ class webphoto_bin_retrieve extends webphoto_bin_base
 	var $_TITLE = 'webphoto mail retrieve';
 
 	var $_FLAG_MAIL_SEND = true;
+	var $_DEBUG_BIN_RETRIVE = false;
 
 //---------------------------------------------------------
 // constructor
@@ -33,6 +34,11 @@ function webphoto_bin_retrieve( $dirname , $trust_dirname )
 	$this->_retrieve_class->set_flag_force_db( true );
 	$this->_retrieve_class->set_flag_print_first_msg( true );
 
+// preload
+	$this->_retrieve_class->preload_init();
+	$this->_retrieve_class->preload_constant();
+	$this->preload_init();
+	$this->preload_constant();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -57,7 +63,7 @@ function main()
 		return false;
 	}
 
-	if ( $this->_flag_print ) {
+	if ( $this->_flag_print || $this->_DEBUG_BIN_RETRIVE ) {
 		$this->_retrieve_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
 	}
 

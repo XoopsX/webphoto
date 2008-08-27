@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: maillog_manager.php,v 1.3 2008/08/27 03:58:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,6 +31,8 @@ class webphoto_admin_maillog_manager extends webphoto_lib_manage
 		_AM_WEBPHOTO_MAILLOG_STATUS_PARTIAL, 
 		_AM_WEBPHOTO_MAILLOG_STATUS_SUBMIT, 
 	);
+
+	var $_ADMIN_UID = 1;
 
 //---------------------------------------------------------
 // constructor
@@ -160,7 +162,7 @@ function _get_op()
 function _submit()
 {
 	$id     = $this->_post_class->get_post_get_int( 'maillog_id' );
-	$uid    = $this->_post_class->get_post_int( 'uid' );
+	$uid    = $this->_post_class->get_post_int( 'uid', $this->_ADMIN_UID );
 	$cat_id = $this->_post_class->get_post_int( 'cat_id' );
 	$attach = $this->_post_class->get_post( 'attach' );
 
