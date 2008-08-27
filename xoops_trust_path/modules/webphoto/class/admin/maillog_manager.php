@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.3 2008/08/27 03:58:02 ohwada Exp $
+// $Id: maillog_manager.php,v 1.4 2008/08/27 07:13:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -162,7 +162,7 @@ function _get_op()
 function _submit()
 {
 	$id     = $this->_post_class->get_post_get_int( 'maillog_id' );
-	$uid    = $this->_post_class->get_post_int( 'uid', $this->_ADMIN_UID );
+	$uid    = $this->_post_class->get_post_int( 'uid' );
 	$cat_id = $this->_post_class->get_post_int( 'cat_id' );
 	$attach = $this->_post_class->get_post( 'attach' );
 
@@ -328,7 +328,7 @@ function _build_line_submit( $status )
 function _build_ele_submitter()
 {
 	return $this->_form_class->build_form_user_select(
-		'uid', $this->get_row_by_key( 'uid' ) );
+		'uid', $this->_ADMIN_UID );
 }
 
 function _build_ele_category()
