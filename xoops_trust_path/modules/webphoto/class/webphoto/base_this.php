@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
+// $Id: base_this.php,v 1.7 2008/09/03 02:44:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,9 +8,10 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-08-24 K.OHWADA
+// 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 // added preload_init()
+// changed get_photo_globals()
 // 2008-08-01 K.OHWADA
 // added exists_cat_record()
 // used is_set_mail() has_mail()
@@ -102,38 +103,41 @@ function get_photo_globals()
 	$show_menu_file = ( $cfg_file_dir    && $has_file );
 
 	$arr = array(
-		'mydirname'           => $this->_DIRNAME ,
-		'photos_url'          => XOOPS_URL . $this->_PHOTOS_PATH ,
-		'thumbs_url'          => XOOPS_URL . $this->_THUMBS_PATH ,
-		'use_pathinfo'        => $this->get_config_by_name('use_pathinfo') ,
-		'cfg_viewtype'        => $this->get_config_by_name('viewtype') ,
-		'cfg_thumb_width'     => $this->get_config_by_name('thumb_width') ,
-		'cfg_thumb_height'    => $this->get_config_by_name('thumb_height') ,
-		'cfg_middle_width'    => $this->get_config_by_name('middle_width') ,
-		'cfg_middle_height'   => $this->get_config_by_name('middle_height') ,
-		'cfg_usehits'         => $this->get_config_by_name('usehits') ,
-		'cfg_is_set_mail'     => $cfg_is_set_mail ,
-		'cfg_file_dir'        => $cfg_file_dir ,
-		'cfg_colsoftableview' => $cfg_colsoftableview ,
-		'width_of_tableview'  => intval( 100 / $cfg_colsoftableview ),
-		'has_rateview'        => $this->_perm_class->has_rateview() ,
-		'has_ratevote'        => $this->_perm_class->has_ratevote() ,
-		'has_tellafriend'     => $this->_perm_class->has_tellafriend() ,
-		'has_insertable'      => $this->_perm_class->has_insertable(),
-		'show_menu_mail'      => $show_menu_mail ,
-		'show_menu_file'      => $show_menu_file ,
-		'cat_main_width'      => _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT ,
-		'cat_main_height'     => _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT ,
-		'cat_sub_width'       => _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT ,
-		'cat_sub_height'      => _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT ,
+		'mydirname'            => $this->_DIRNAME ,
+		'photos_url'           => XOOPS_URL . $this->_PHOTOS_PATH ,
+		'thumbs_url'           => XOOPS_URL . $this->_THUMBS_PATH ,
+		'use_pathinfo'         => $this->get_config_by_name('use_pathinfo') ,
+		'cfg_is_set_mail'      => $cfg_is_set_mail ,
+		'width_of_tableview'   => intval( 100 / $cfg_colsoftableview ),
+		'has_rateview'         => $this->_perm_class->has_rateview() ,
+		'has_ratevote'         => $this->_perm_class->has_ratevote() ,
+		'has_tellafriend'      => $this->_perm_class->has_tellafriend() ,
+		'has_insertable'       => $this->_perm_class->has_insertable(),
+		'show_menu_mail'       => $show_menu_mail ,
+		'show_menu_file'       => $show_menu_file ,
+		'cat_main_width'       => _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT ,
+		'cat_main_height'      => _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT ,
+		'cat_sub_width'        => _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT ,
+		'cat_sub_height'       => _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT ,
 
 // for XOOPS 2.0.18
-		'xoops_dirname'       => $this->_DIRNAME ,
-		'xoops_modulename'    => $this->sanitize( $this->_MODULE_NAME ) ,
+		'xoops_dirname'        => $this->_DIRNAME ,
+		'xoops_modulename'     => $this->sanitize( $this->_MODULE_NAME ) ,
 
 	);
 
+// config
+	$config_array = $this->get_config_array();
+	foreach ( $config_array as $k => $v ) {
+		$arr[ 'cfg_'.$k ] = $v ;
+	}
+
 	return $arr;
+}
+
+function get_config_array()
+{
+	return $this->_config_class->get_config_array();
 }
 
 function get_config_by_name( $name )

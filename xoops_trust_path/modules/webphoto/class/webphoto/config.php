@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: config.php,v 1.4 2008/09/03 02:44:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-01 K.OHWADA
+// added get_config_array()
 // 2008-08-01 K.OHWADA
 // added is_set_mail()
 // removed get_tmp_path()
@@ -53,6 +55,11 @@ function _init( $dirname )
 //---------------------------------------------------------
 // get
 //---------------------------------------------------------
+function get_config_array()
+{
+	return $this->_config_array ;
+}
+
 function get_by_name( $name )
 {
 	if ( isset($this->_config_array[ $name ]) ) {

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.11 2008/08/27 05:11:54 ohwada Exp $
+// $Id: photo_edit.php,v 1.12 2008/09/03 02:44:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,11 +8,12 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-08-24 K.OHWADA
+// 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 // supported exif gps
 // used preload_init()
 // NOT use webphoto_photo_delete
+// BUG: not show img alt
 // 2008-08-12 K.OHWADA
 // BUG: not show description in preview
 // 2008-08-01 K.OHWADA
@@ -713,6 +714,9 @@ function build_preview_template( $row )
 
 // BUG: not show description in preview
 	$tpl->assign( 'show_photo_desc' , true ) ;
+
+// BUG: not show img alt
+	$tpl->assign( $this->get_lang_array() ) ;
 
 	$template = 'db:'. $this->_DIRNAME .'_inc_photo_in_list.html';
 	return $tpl->fetch( $template ) ;

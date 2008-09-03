@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.10 2008/08/25 19:28:05 ohwada Exp $
+// $Id: xoops_version.php,v 1.11 2008/09/03 02:44:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-08-24 K.OHWADA
-// added bin_pass
+// 2008-09-01 K.OHWADA
+// added bin_pass comment_dirname
 // 2008-08-01 K.OHWADA
 // added TRUST_DIRNAME
 // added mail_host
@@ -882,6 +882,39 @@ function _build_config()
 		'valuetype'		=> 'text' ,
 		'default'		=> xoops_makepass() ,
 		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'comment_dirname' ,
+		'title'			=> $this->_constant_name( 'CFG_COM_DIRNAME' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'comment_forum_id' ,
+		'title'			=> $this->_constant_name( 'CFG_COM_FORUM_ID' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '0' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'comment_view' ,
+		'title'			=> $this->_constant_name( 'CFG_COM_VIEW' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'select' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> 'listposts_flat' ,
+		'options'		=> array(
+			'_FLAT'     => 'listposts_flat' ,
+			'_THREADED' => 'listtopics'
+		)
 	) ;
 
 	return $arr;
