@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.8 2008/09/04 00:46:47 ohwada Exp $
+$Id: readme_jp.txt,v 1.9 2008/09/04 01:01:06 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -96,6 +96,13 @@ xxx はパスワード。
 ----
 
 3. d3forumコメント統合
+3.1 一般設定
+webphoto の「一般設定」の下記の項目を設定する
+「コメント統合するd3forumのdirname」
+「コメント統合するフォーラムの番号」
+「コメント統合の表示方法」
+
+3.2 d3forum モジュール
 d3forum モジュールの「コメント統合時の参照方法」に、下記のように記載する
 -----
 webphoto::WebphotoD3commentContent::webphoto

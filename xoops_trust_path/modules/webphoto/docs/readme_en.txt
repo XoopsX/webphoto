@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.8 2008/09/04 00:46:47 ohwada Exp $
+$Id: readme_en.txt,v 1.9 2008/09/04 01:01:06 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -97,6 +97,13 @@ the command is executed every 1 hour in the following sample
 ----
 
 3. d3forum comment integration
+3.1 Preferences
+set the following at "Preferences" in webphoto module
+"Comment-integration: dirname of d3forum"
+"Comment-integration: forum ID"
+"View of Comment-integration"
+
+3.2 d3forum module
 fill the following at "Format for comment-integration" in d3forum module
 -----
 webphoto::WebphotoD3commentContent::webphoto
