@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.9 2008/09/04 01:01:06 ohwada Exp $
+$Id: readme_en.txt,v 1.10 2008/09/04 01:36:31 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -102,6 +102,22 @@ set the following at "Preferences" in webphoto module
 "Comment-integration: dirname of d3forum"
 "Comment-integration: forum ID"
 "View of Comment-integration"
+
+3.2 template
+change template file
+  XOOPS_TRUST_PATH/modules/webphoto/templates/main_photo.html
+remove asterrisk (*)
+-----
+<{* d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10 *}>
+
+ |
+
+<{d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10}>
+-----
+
+for xoops 2.0.18
+template file is
+  XOOPS_ROOT_PATH/modules/webphoto/templates/webphoto_main_photo.html
 
 3.2 d3forum module
 fill the following at "Format for comment-integration" in d3forum module

@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.9 2008/09/04 01:01:06 ohwada Exp $
+$Id: readme_jp.txt,v 1.10 2008/09/04 01:36:31 ohwada Exp $
 
 =================================================
 Version: 0.40
@@ -102,7 +102,19 @@ webphoto の「一般設定」の下記の項目を設定する
 「コメント統合するフォーラムの番号」
 「コメント統合の表示方法」
 
-3.2 d3forum モジュール
+3.2 テンプレート
+テンプレートファイルを変更する
+  XOOPS_TRUST_PATH/modules/webphoto/templates/main_photo.html 
+アスタリスク(*) を削除する
+-----
+<{* d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10 *}>
+
+ ↓
+
+<{d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10}>
+-----
+
+3.3 d3forum モジュール
 d3forum モジュールの「コメント統合時の参照方法」に、下記のように記載する
 -----
 webphoto::WebphotoD3commentContent::webphoto
