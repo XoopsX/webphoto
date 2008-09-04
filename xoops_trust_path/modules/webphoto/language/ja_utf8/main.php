@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.9 2008/09/04 00:46:47 ohwada Exp $
+// $Id: main.php,v 1.10 2008/09/04 10:28:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -798,20 +798,6 @@ define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
 
 define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メール");
 define("_WEBPHOTO_HELP_MAIL_DSC", "携帯電話からメールを送信して、写真や動画を投稿することができます");
-define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
-<b>準備</b><br />
-携帯電話のメールアドレスを登録してください<br />
-<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">「メールアドレス登録」</a><br /><br />
-<b>投稿方法</b><br />
-下記のメールアドレスにメールを送信する<br />
-<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
-<b>写真の回転</b><br />
-題名 (Subject) の末尾に下記のように記入することで、写真が回転します。<br />
- R@ : 右回転 <br />
- L@ : 左回転 <br /><br />
-<b>メールの受信と、写真の投稿</b><br />
-メールを送信したら、数秒後に <a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />
-あなたが送信したメールを取り込んで、写真や動画を掲載します。<br />' );
 define("_WEBPHOTO_HELP_MAIL_GUEST", "これは見本です。権限がないと、正しいメールアドレスは表示されません");
 
 define("_WEBPHOTO_HELP_FILE_TITLE", "FTP による投稿");
@@ -918,6 +904,26 @@ define("_WEBPHOTO_MAIL_MODEL", "機種" ) ;
 define("_WEBPHOTO_MAIL_BROWSER", "WEBブラウザ" ) ;
 define("_WEBPHOTO_MAIL_NOT_JUDGE", "機種が判定できない" ) ;
 define("_WEBPHOTO_MAIL_TO_WEBMASTER", "サイト管理者に連絡する" ) ;
+
+// help
+define("_WEBPHOTO_HELP_MAIL_POST_FMT", '
+<b>準備</b><br />
+携帯電話のメールアドレスを登録してください<br />
+<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">「メールアドレス登録」</a><br /><br />
+<b>投稿方法</b><br />
+下記のメールアドレスにメールを送信する<br />
+<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
+<b>写真の回転</b><br />
+題名 (Subject) の末尾に下記のように記入することで、写真が回転します。<br />
+ R@ : 右回転 <br />
+ L@ : 左回転 <br /><br />' );
+define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE", "<b>メールの受信と、写真の登録</b><br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_FMT", '
+メールを送信してから、数秒後に <a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />' );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "あなたが送信したメールを取り込んで、写真や動画を掲載します。<br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
+メールを送信すると、 %s 秒後に自動的に登録されます。<br />
+登録されない場合は、<a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />' );
 
 // === define end ===
 }

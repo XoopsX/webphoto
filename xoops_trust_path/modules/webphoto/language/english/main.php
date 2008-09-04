@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.9 2008/09/04 00:46:47 ohwada Exp $
+// $Id: main.php,v 1.10 2008/09/04 10:28:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -797,20 +797,6 @@ define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
 
 define("_WEBPHOTO_HELP_MAIL_TITLE", "Mobile Mail");
 define("_WEBPHOTO_HELP_MAIL_DSC", "You can post the photo and video by email from the mobile phone");
-define("_WEBPHOTO_HELP_MAIL_TEXT_FMT", '
-<b>Prepare</b><br />
-Register your mail address of mobile phone<br />
-<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">Register Mail Addrtess</a><br /><br />
-<b>Post photo</b><br />
-Send mail to the fllowing address with attaching photo file.<br />
-<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
-<b>Rotation for photo</b><br />
-You can turn the photo right or left, since you enter the end of "Subject" as following<br />
- R@ : turn right <br />
- L@ : turn left <br /><br />
-<b>Retrive mail and submit photo</b><br />
-click <a href="{MODULE_URL}/i.php?op=post" target="_blank">Post by Mail</a>, after few seconds sent mail.<br />
-Webphoto retrive the mail which you sent, submit and show the attached photo<br />' );
 define("_WEBPHOTO_HELP_MAIL_GUEST", "This is sample. You can look the REAL mail address, if you have the permission.");
 
 define("_WEBPHOTO_HELP_FILE_TITLE", "Post by FTP");
@@ -917,6 +903,27 @@ define("_WEBPHOTO_MAIL_MODEL", "Mobile Carrier" ) ;
 define("_WEBPHOTO_MAIL_BROWSER", "WEB Browser" ) ;
 define("_WEBPHOTO_MAIL_NOT_JUDGE", "Cannot judge the mobile carrier" ) ;
 define("_WEBPHOTO_MAIL_TO_WEBMASTER", "Mail to webmaster" ) ;
+
+// help
+define("_WEBPHOTO_HELP_MAIL_POST_FMT", '
+<b>Prepare</b><br />
+Register your mail address of mobile phone<br />
+<a href="{MODULE_URL}/index.php?fct=mail_register" target="_blank">Register Mail Addrtess</a><br /><br />
+<b>Post photo</b><br />
+Send mail to the fllowing address with attaching photo file.<br />
+<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
+<b>Rotation for photo</b><br />
+You can turn the photo right or left, since you enter the end of "Subject" as following<br />
+ R@ : turn right <br />
+ L@ : turn left <br /><br />' );
+define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE", "<b>Retrive mail and submit photo</b><br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_FMT", '
+Click <a href="{MODULE_URL}/i.php?op=post" target="_blank">Post by Mail</a>, after few seconds sent mail.<br />
+Webphoto retrive the mail which you sent, submit and show the attached photo<br />' );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "Webphoto retrive the mail which you sent, submit and show the attached photo<br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
+The mail is submitted automatically %s seconds later, when you send mail.<br />
+Please click <a href="{MODULE_URL}/i.php?op=post" target="_blank">Post by Mail</a>, if not submitted.<br />' );
 
 // === define end ===
 }

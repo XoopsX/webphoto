@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.5 2008/08/09 19:28:05 ohwada Exp $
+// $Id: help.php,v 1.6 2008/09/04 10:28:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,6 +24,8 @@ class webphoto_main_help extends webphoto_base_this
 	var $_has_perm_mail   = false ;
 	var $_has_perm_file   = false ;
 
+	var $_MAIL_RETRIEVE_AUTO_TIME = 0 ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -43,6 +45,9 @@ function webphoto_main_help( $dirname , $trust_dirname )
 	if ( $this->_cfg_file_dir && $has_file ) {
 		$this->_has_perm_file = true;
 	}
+
+	$this->preload_init();
+	$this->preload_constant();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -100,6 +105,13 @@ function _build_mail_perm()
 
 function _build_mail_text()
 {
+	$text  = $this->_build_mail_post();
+	$text .= $this->_build_mail_retrieve();
+	return $text;
+}
+
+function _build_mail_post()
+{
 	if ( $this->_has_perm_mail ) {
 		$mail_addr  = $this->sanitize( $this->get_config_by_name('mail_addr') );
 		$mail_guest = null;
@@ -108,11 +120,27 @@ function _build_mail_text()
 		$mail_guest = '<br />' . $this->get_constant('HELP_MAIL_GUEST');
 	}
 
-	$str = $this->get_constant('HELP_MAIL_TEXT_FMT');
+	$str = $this->get_constant('HELP_MAIL_POST_FMT');
 	$str = str_replace('{MODULE_URL}', $this->_MODULE_URL, $str );
 	$str = str_replace('{MAIL_ADDR}',  $mail_addr,  $str );
 	$str = str_replace('{MAIL_GUEST}', $mail_guest, $str );
 	return $str;
+}
+
+function _build_mail_retrieve()
+{
+	$text = $this->get_constant('HELP_MAIL_SUBTITLE_RETRIEVE');
+
+	if ( $this->_MAIL_RETRIEVE_AUTO_TIME > 0 ) {
+		$text .= sprintf( $this->get_constant('HELP_MAIL_RETRIEVE_AUTO_FMT'), 
+			$this->_MAIL_RETRIEVE_AUTO_TIME );
+	} else {
+		$str   = $this->get_constant('HELP_MAIL_RETRIEVE_FMT');
+		$text .= str_replace('{MODULE_URL}', $this->_MODULE_URL, $str );
+	}
+
+	$text .= $this->get_constant('HELP_MAIL_RETRIEVE_TEXT');
+	return $text;
 }
 
 function _build_show_file_text()
