@@ -1,4 +1,4 @@
-<{* $Id: main_photo.html,v 1.5 2008/09/03 02:49:54 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.6 2008/09/04 01:24:23 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -202,7 +202,8 @@
 
 <{* d3forum comment integration *}>
 <{if $cfg_comment_dirname && $cfg_comment_forum_id }>
-  <{d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10}>
+  <{* remove asterrisk (*) in the folloing, if you use *}>
+  <{* d3forum_comment dirname=$cfg_comment_dirname forum_id=$cfg_comment_forum_id class="WebphotoD3commentContent" mytrustdirname="webphoto" id=$photo.photo_id subject=$photo.title_s subject_escaped=1 view=$cfg_comment_view posts_num=10 *}>
 <{/if}>
 
 <{if $show_notification_select }>
