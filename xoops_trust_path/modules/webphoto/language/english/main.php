@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.8 2008/08/25 19:28:06 ohwada Exp $
+// $Id: main.php,v 1.9 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -27,8 +27,8 @@ define("_WEBPHOTO_ICON_LASTUPDATE","Last Update");
 define("_WEBPHOTO_ICON_HITS","Hits");
 define("_WEBPHOTO_ICON_COMMENTS","Comments");
 
-define("_WEBPHOTO_SORT_IDA","Record Number (Smaller to Bigger)");
-define("_WEBPHOTO_SORT_IDD","Record Number (Smaller is latter)");
+define("_WEBPHOTO_SORT_IDA","Record Number (Smaller ID to Bigger)");
+define("_WEBPHOTO_SORT_IDD","Record Number (Bigger ID to Smaller)");
 define("_WEBPHOTO_SORT_HITSA","Popularity (Least to Most Hits)");
 define("_WEBPHOTO_SORT_HITSD","Popularity (Most to Least Hits)");
 define("_WEBPHOTO_SORT_TITLEA","Title (A to Z)");
@@ -682,8 +682,8 @@ http://desktop.google.com/plugins/i/mediarssslideshow.html
 // others
 //---------------------------------------------------------
 define("_WEBPHOTO_RANDOM_MORE","More Photos at random");
-define("_WEBPHOTO_USAGE_PHOTO","Popup the big photo, wehen click the thumbnail image");
-define("_WEBPHOTO_USAGE_TITLE","Move to the photo page, wehen click the photo title");
+define("_WEBPHOTO_USAGE_PHOTO","Popup the big photo, when click the thumbnail image");
+define("_WEBPHOTO_USAGE_TITLE","Move to the photo page, when click the photo title");
 define("_WEBPHOTO_DATE_NOT_SET","Not set Photo Date");
 define("_WEBPHOTO_PLACE_NOT_SET","Not Set Photo Place");
 define("_WEBPHOTO_GOTO_ADMIN", "Goto Admin Control");
@@ -910,6 +910,13 @@ define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
 
 // index
 define("_WEBPHOTO_MOBILE_MAILTO" , "Send URL to the mobile phone" ) ;
+
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_JUDGE" ,  "Judge the mobile carrier" ) ;
+define("_WEBPHOTO_MAIL_MODEL", "Mobile Carrier" ) ;
+define("_WEBPHOTO_MAIL_BROWSER", "WEB Browser" ) ;
+define("_WEBPHOTO_MAIL_NOT_JUDGE", "Cannot judge the mobile carrier" ) ;
+define("_WEBPHOTO_MAIL_TO_WEBMASTER", "Mail to webmaster" ) ;
 
 // === define end ===
 }

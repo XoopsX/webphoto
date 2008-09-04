@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.8 2008/08/25 19:28:06 ohwada Exp $
+// $Id: main.php,v 1.9 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -911,6 +911,13 @@ define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
 
 // index
 define("_WEBPHOTO_MOBILE_MAILTO" , "携帯電話にURLを送信する" ) ;
+
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_JUDGE" ,  "携帯電話機の機種を判定する" ) ;
+define("_WEBPHOTO_MAIL_MODEL", "機種" ) ;
+define("_WEBPHOTO_MAIL_BROWSER", "WEBブラウザ" ) ;
+define("_WEBPHOTO_MAIL_NOT_JUDGE", "機種が判定できない" ) ;
+define("_WEBPHOTO_MAIL_TO_WEBMASTER", "サイト管理者に連絡する" ) ;
 
 // === define end ===
 }

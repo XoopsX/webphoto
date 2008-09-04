@@ -1,5 +1,5 @@
 <?php
-// $Id: extra.php,v 1.2 2008/08/25 19:28:06 ohwada Exp $
+// $Id: extra.php,v 1.3 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -20,7 +20,7 @@ define("_EX_WEBPHOTO_LANG_LOADED" , 1 ) ;
 // define("_WEBPHOTO_CHARSET_MOBILE", "ISO-8859-1");
 // define("_WEBPHOTO_MB_LANGUAGE",    "en");
 
-function webphoto_mobile_array()
+function webphoto_mobile_carrier_array()
 {
 	return null;	// dummy
 }

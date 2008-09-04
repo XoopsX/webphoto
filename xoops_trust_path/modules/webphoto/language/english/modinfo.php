@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
+// $Id: modinfo.php,v 1.6 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -249,6 +249,9 @@ define($constpref."ADMENU_USER_TABLE_MANAGE","User Aux Table Management");
 // v0.40
 //---------------------------------------------------------
 define($constpref."CFG_BIN_PASS" , "Command Password" ) ;
+define($constpref."CFG_COM_DIRNAME",  "Comment-integration: dirname of d3forum");
+define($constpref."CFG_COM_FORUM_ID", "Comment-integration: forum ID");
+define($constpref."CFG_COM_VIEW",     "View of Comment-integration");
 
 define($constpref."ADMENU_UPDATE", "Update");
 define($constpref."ADMENU_ITEM_TABLE_MANAGE", "Item Table Management");

@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.7 2008/08/27 04:09:52 ohwada Exp $
+$Id: readme_jp.txt,v 1.8 2008/09/04 00:46:47 ohwada Exp $
 
 =================================================
 Version: 0.40
-Date:   2008-08-26
+Date:   2008-09-01
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -30,7 +30,10 @@ Email:  webmaster@ohwada.jp
 2. 「一般設定」の「一覧表示の表示タイプ」を有効にした
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=845&forum=13
 
-3. バグ対策
+3. d3forumコメント統合に対応した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=850&forum=13
+
+4. バグ対策
 (1) プレビューにて説明文が表示されない
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=841
 
@@ -40,11 +43,14 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=843
 (3)「編集画面」にて fatal error
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=844&forum=13
 
-(4) 「イマージマネジャー」からの登録にて fatal error
+(4)「編集画面」にて アイコン画像の alt が表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=851&forum=13
 
-(5) 他のD3モジュールと衝突する
+(5) 「イマージマネジャー」からの登録にて fatal error
 
-4. データベース構造
+(6) 他のD3モジュールと衝突する
+
+5. データベース構造
 photo テーブルを廃止して、下記のテーブルを追加した
 (1) item テーブル: photo テーブルの代わりとなる記事単位のテーブル
 (2) file テーブル: photo テーブルの代わりとなる写真・動画単位のテーブル
@@ -88,6 +94,14 @@ xxx はパスワード。
 ----
 12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
 ----
+
+3. d3forumコメント統合
+d3forum モジュールの「コメント統合時の参照方法」に、下記のように記載する
+-----
+webphoto::WebphotoD3commentContent::webphoto
+-----
+最初の webphoto は XOOPS_ROOT_PATH 側のディレクトリ名 (モジュール複製により変更可)
+最後の webphoto は XOOPS_TRUST_PATH 側のディレクトリ名 (変更不可)
 
 
 ● 注意

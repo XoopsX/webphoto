@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.6 2008/08/27 03:58:02 ohwada Exp $
+// $Id: base.php,v 1.7 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-08-24 K.OHWADA
+// 2008-09-01 K.OHWADA
 // added build_set_msg()
 // 2008-08-01 K.OHWADA
 // added set_msg_array() check_token_and_redirect()
@@ -28,11 +28,13 @@ class webphoto_lib_base extends webphoto_lib_error
 	var $_xoops_class;
 
 // xoops param
-	var $_xoops_language;
-	var $_xoops_sitename;
-	var $_xoops_uid    = 0 ;
-	var $_xoops_uname  = null ;
-	var $_xoops_groups = null ;
+	var $_xoops_language  = null ;
+	var $_xoops_sitename  = null ;
+	var $_xoops_adminmail = null ;
+	var $_xoops_anonymous = null ;
+	var $_xoops_uname     = null ;
+	var $_xoops_groups    = null ;
+	var $_xoops_uid       = 0 ;
 	var $_is_module_admin = false;
 	var $_is_login_user   = false;
 
@@ -455,8 +457,10 @@ function check_token_and_redirect( $url, $time=5 )
 //---------------------------------------------------------
 function _init_xoops_param()
 {
-	$this->_xoops_language = $this->_xoops_class->get_config_by_name( 'language' );
-	$this->_xoops_sitename = $this->_xoops_class->get_config_by_name( 'sitename' );
+	$this->_xoops_language  = $this->_xoops_class->get_config_by_name( 'language' );
+	$this->_xoops_sitename  = $this->_xoops_class->get_config_by_name( 'sitename' );
+	$this->_xoops_adminmail = $this->_xoops_class->get_config_by_name( 'adminmail' );
+	$this->_xoops_anonymous = $this->_xoops_class->get_config_by_name( 'anonymous' );
 
 	$this->_MODULE_ID         = $this->_xoops_class->get_my_module_id();
 	$this->_MODULE_NAME       = $this->_xoops_class->get_my_module_name( 'n' );

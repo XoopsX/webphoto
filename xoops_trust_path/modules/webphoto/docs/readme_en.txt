@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.7 2008/08/27 04:09:52 ohwada Exp $
+$Id: readme_en.txt,v 1.8 2008/09/04 00:46:47 ohwada Exp $
 
 =================================================
 Version: 0.40
-Date:   2008-08-26
+Date:   2008-09-01
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -31,7 +31,10 @@ refer "Notice for usage"
 2. Enabled "Type of view" in "Preferences"
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=845&forum=13
 
-3. Bug fix
+3. Supported d3forum comment integration
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=850&forum=13
+
+4. Bug fix
 (1) cannot preview description in submit form
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=841
 
@@ -41,11 +44,14 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=843
 (3) fatal error in "Edit Photo"
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=844&forum=13
 
-(4) fatal error in "Image Manager"
+(4) not show alt of icon image in "Edit Photo"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=851&forum=13
 
-(5) conflict with other D3 module
+(5) fatal error in "Image Manager"
 
-4. Database structure
+(6) conflict with other D3 module
+
+5. Database structure
 abolished photo table and added following tables.
 (1) item table: the table for each item which replaces photo table
 (2) file table: the table for each photo/video file which replaces photo table
@@ -89,6 +95,16 @@ the command is executed every 1 hour in the following sample
 ----
 12 * * * * php -q -f /XOOPS_ROOT_PATH/.../retrieve.php -pass=xxx
 ----
+
+3. d3forum comment integration
+fill the following at "Format for comment-integration" in d3forum module
+-----
+webphoto::WebphotoD3commentContent::webphoto
+-----
+First "webphoto" is the directory name in XOOPS_ROOT_PATH 
+(you can change with the module duplication)
+Last "webphoto" is the directory name in XOOPS_TRUST_PATH 
+(you can NOT change)
 
 
 * Notice *

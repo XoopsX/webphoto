@@ -1,5 +1,5 @@
 <?php
-// $Id: extra.php,v 1.2 2008/08/25 19:28:06 ohwada Exp $
+// $Id: extra.php,v 1.3 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -20,13 +20,15 @@ define("_WEBPHOTO_MYSQL_CHARSET",  "utf8");
 define("_WEBPHOTO_CHARSET_MOBILE", "Shift_JIS");
 define("_WEBPHOTO_MB_LANGUAGE",    "ja");
 
-function webphoto_mobile_array()
+function webphoto_mobile_carrier_array()
 {
 	$arr = array(
 		'DoCoMo'     => 'docomo' ,
-		'J-PHONE'    => 'j-phone' ,
 		'KDDI'       => 'au' ,
 		'UP.Browser' => 'au' ,
+		'SoftBank'   => 'softbank' ,
+		'Vodafone'   => 'softbank' ,
+		'J-PHONE'    => 'softbank' ,
 	);
 	return $arr;
 }

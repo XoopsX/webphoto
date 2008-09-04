@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: i.php,v 1.4 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,9 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-08-24 K.OHWADA
+// 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
+// added _judge()
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -56,7 +57,7 @@ function webphoto_main_i( $dirname , $trust_dirname )
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 
 	$this->_set_charset_output();
-	$this->_set_mobile_array();
+	$this->_set_mobile_carrier_array();
 
 	$this->_TEMPLATE = 'db:'. $dirname .'_main_i.html';
 
@@ -81,12 +82,12 @@ function _set_charset_output()
 	}
 }
 
-function _set_mobile_array()
+function _set_mobile_carrier_array()
 {
-	if ( function_exists('webphoto_mobile_array') ) { 
-		$arr = webphoto_mobile_array();
+	if ( function_exists('webphoto_mobile_carrier_array') ) { 
+		$arr = webphoto_mobile_carrier_array();
 		if ( isset($arr) ) {
-			$this->_agent_class->set_mobile_array( $arr );
+			$this->_agent_class->set_mobile_carrier_array( $arr );
 		}
 	}
 }
@@ -104,6 +105,10 @@ function main()
 	{
 		case 'post':
 			$this->_post();
+			break;
+
+		case 'judge':
+			$this->_judge();
 			break;
 
 		default:
@@ -185,7 +190,7 @@ function _check_perm()
 {
 	if (  $this->_retrieve_class->is_set_mail() &&
 	    ( $this->_retrieve_class->has_mail() || 
-	      $this->_agent_class->parse_mobile() )) {
+	      $this->_agent_class->parse_mobile_carrier() )) {
 		return true ;
 	}
 
@@ -213,6 +218,49 @@ function _build_goto()
 	$text .= $this->sanitize( $this->_MODULE_NAME ) ;
 	$text .= "</a><br>\n";
 	return $text;
+}
+
+//---------------------------------------------------------
+// judge modle from user agent
+//---------------------------------------------------------
+function _judge()
+{
+	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
+
+	$text  = $this->build_html_head( $this->sanitize($title), $this->_CHARSET_OUTPUT );
+	$text .= $this->build_html_body_begin();
+	$text .= $this->_judge_exec();
+	$text .= $this->_build_goto();
+	$text .= $this->build_html_body_end();
+
+	echo $this->conv( $text );
+}
+
+function _judge_exec()
+{
+	$ua      = $this->_agent_class->get_user_agent();
+	$carrier = $this->_agent_class->parse_mobile_carrier( $ua );
+	$browser = $this->_agent_class->parse_browser( $ua );
+
+	$text  = '';
+	$text .= $this->get_constant('TITLE_MAIL_JUDGE')."<br><br>\n";
+	$text .= 'User Agent : '. $ua ."<br>\n";
+
+	if ( $carrier ) {
+		$text .= $this->get_constant('MAIL_MODEL').' : '. $carrier ."<br>\n";
+
+	} elseif ( $browser ) {
+		$text .= $this->get_constant('MAIL_BROWSER').' : '. $browser ."<br>\n";
+
+	} else {
+		$mailto = 'mailto:'. $this->_xoops_adminmail .'?subject=mobile_model&amp;body='. $ua ;
+		$text .= "<br>\n";
+		$text .= $this->get_constant('MAIL_NOT_JUDGE')."<br>\n";
+		$text .= '<a href="'. $mailto .'">';
+		$text .= $this->get_constant('MAIL_TO_WEBMASTER');
+		$text .= "<a><br>\n";
+	}
+	return $text ;
 }
 
 //---------------------------------------------------------
@@ -264,6 +312,7 @@ function _show_exec()
 		'lang_video_conv'  => $this->conv( $this->get_constant('ICON_VIDEO') ) ,
 		'lang_second_conv' => $this->conv( $this->get_constant('SECOND') ) ,
 		'lang_post_conv'   => $this->conv( $this->get_constant('TITLE_MAIL_POST') ) ,
+		'lang_judge_conv'  => $this->conv( $this->get_constant('TITLE_MAIL_JUDGE') ) ,
 	);
 
 	return $arr;

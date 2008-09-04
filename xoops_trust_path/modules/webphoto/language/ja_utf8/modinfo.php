@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.4 2008/08/25 19:28:06 ohwada Exp $
+// $Id: modinfo.php,v 1.5 2008/09/04 00:46:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -250,6 +250,9 @@ define($constpref."ADMENU_USER_TABLE_MANAGE","ユーザ補助テーブル管理"
 // v0.40
 //---------------------------------------------------------
 define($constpref."CFG_BIN_PASS" , "コマンドのパスワード" ) ;
+define($constpref."CFG_COM_DIRNAME",  "コメント統合するd3forumのdirname");
+define($constpref."CFG_COM_FORUM_ID", "コメント統合するフォーラムの番号");
+define($constpref."CFG_COM_VIEW",     "コメント統合の表示方法");
 
 define($constpref."ADMENU_UPDATE", "アップデート");
 define($constpref."ADMENU_ITEM_TABLE_MANAGE", "アイテム・テーブル管理");
