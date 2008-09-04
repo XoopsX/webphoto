@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.10 2008/09/04 10:28:29 ohwada Exp $
+// $Id: main.php,v 1.11 2008/09/04 10:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -790,7 +790,7 @@ define("_WEBPHOTO_HELP_MUST_LOGIN","Please login, if you want to read more detai
 define("_WEBPHOTO_HELP_NOT_PERM", "You have no permission. Please contact the webmaster");
 
 define("_WEBPHOTO_HELP_MOBILE_TITLE", "Mobile Phone");
-define("_WEBPHOTO_HELP_MOBILE_DSC", "You can look the photo and video in the mobile phone<br/>the size of screen is about 240Å~320 ");
+define("_WEBPHOTO_HELP_MOBILE_DSC", "You can look the photo and video in the mobile phone<br/>the size of screen is about 240x320 ");
 define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
 <b>Access URL</b><br />
 <a href="{MODULE_URL}/i.php" target="_blank">{MODULE_URL}/i.php</a>');
