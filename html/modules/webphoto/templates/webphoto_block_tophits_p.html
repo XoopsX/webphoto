@@ -1,4 +1,4 @@
-<{* $Id: webphoto_block_tophits_p.html,v 1.6 2008/08/25 19:53:34 ohwada Exp $ *}>
+<{* $Id: webphoto_block_tophits_p.html,v 1.7 2008/09/09 13:41:49 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -29,7 +29,7 @@
 
       <{$photo.title_short_s}></a> 
     <{/if}>
-    (<{$photo.photo_hits}> <{$photo.hits_suffix}>) <br />
+    (<{$photo.item_hits}> <{$photo.hits_suffix}>) <br />
 
 <{* NORMAL IMAGES with popbox  *}>
     <{if $photo.is_normal_image && $block.show_popbox }>
