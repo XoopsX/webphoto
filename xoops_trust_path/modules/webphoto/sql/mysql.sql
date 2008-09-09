@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.7 2008/08/25 19:28:06 ohwada Exp $
+# $Id: mysql.sql,v 1.8 2008/09/09 13:37:07 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2008-09-09 K.OHWADA
+# BUG: redeclare photo table
 # 2008-08-24 K.OHWADA
 # added item table, file table
 # 2008-08-01 K.OHWADA
@@ -115,88 +117,6 @@ CREATE TABLE file (
   KEY (file_time_update),
   KEY (file_item_id),
   KEY (file_kind)
-) TYPE=MyISAM;
-
-#
-# Table structure for table `photo`
-#
-
-CREATE TABLE photo (
-  photo_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  photo_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  photo_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  photo_cat_id  INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_gicon_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_uid     INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_datetime  DATETIME NOT NULL,
-  photo_title VARCHAR(255) NOT NULL DEFAULT '',
-  photo_place     VARCHAR(255) NOT NULL DEFAULT '',
-  photo_equipment VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_url     VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_path    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_name    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_ext     VARCHAR(10)  NOT NULL DEFAULT '',
-  photo_file_mime    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_medium  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_file_size    INT(5) NOT NULL DEFAULT '0',
-  photo_cont_url     VARCHAR(255) NOT NULL DEFAULT '',
-  photo_cont_path    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_cont_name    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_cont_ext     VARCHAR(10) NOT NULL DEFAULT '',
-  photo_cont_mime    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_cont_medium  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_cont_size     INT(5) NOT NULL DEFAULT '0',
-  photo_cont_width    INT(5) NOT NULL DEFAULT '0',
-  photo_cont_height   INT(5) NOT NULL DEFAULT '0',
-  photo_cont_duration INT(5) NOT NULL DEFAULT '0',
-  photo_cont_exif     TEXT NOT NULL,
-  photo_middle_width  INT(5) NOT NULL DEFAULT '0',
-  photo_middle_height INT(5) NOT NULL DEFAULT '0',
-  photo_thumb_url     VARCHAR(255) NOT NULL DEFAULT '',
-  photo_thumb_path    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_thumb_name    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_thumb_ext     VARCHAR(10) NOT NULL DEFAULT '',
-  photo_thumb_mime    VARCHAR(255) NOT NULL DEFAULT '',
-  photo_thumb_medium  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_thumb_size    INT(5) NOT NULL DEFAULT '0',
-  photo_thumb_width   INT(5) NOT NULL DEFAULT '0',
-  photo_thumb_height  INT(5) NOT NULL DEFAULT '0',
-  photo_gmap_latitude  DOUBLE(10,8) NOT NULL DEFAULT '0',
-  photo_gmap_longitude DOUBLE(11,8) NOT NULL DEFAULT '0',
-  photo_gmap_zoom      TINYINT(2) NOT NULL DEFAULT '0',
-  photo_gmap_type      TINYINT(2) NOT NULL DEFAULT '0',
-  photo_status TINYINT(2) NOT NULL DEFAULT '0',
-  photo_hits   INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_rating DOUBLE(6,4) NOT NULL DEFAULT '0.0000',
-  photo_votes    INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_comments INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  photo_perm_read VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text1  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text2  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text3  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text4  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text5  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text6  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text7  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text8  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text9  VARCHAR(255) NOT NULL DEFAULT '',
-  photo_text10 VARCHAR(255) NOT NULL DEFAULT '',
-  photo_description TEXT NOT NULL,
-  photo_search TEXT NOT NULL,
-  PRIMARY KEY (photo_id),
-  KEY (photo_time_update),
-  KEY (photo_cat_id),
-  KEY (photo_gicon_id),
-  KEY (photo_uid),
-  KEY (photo_status),
-  KEY (photo_hits),
-  KEY (photo_rating),
-  KEY (photo_datetime),
-  KEY (photo_title(40)),
-  KEY (photo_place(40)),
-  KEY (photo_equipment(40)),
-  KEY (photo_search(40)),
-  KEY (photo_gmap_latitude, photo_gmap_longitude, photo_gmap_zoom)
 ) TYPE=MyISAM;
 
 #

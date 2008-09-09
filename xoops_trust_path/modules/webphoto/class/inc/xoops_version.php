@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.11 2008/09/03 02:44:54 ohwada Exp $
+// $Id: xoops_version.php,v 1.12 2008/09/09 13:37:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-09 K.OHWADA
+// set default at use_ffmpeg
 // 2008-09-01 K.OHWADA
 // added bin_pass comment_dirname
 // 2008-08-01 K.OHWADA
@@ -466,7 +468,7 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '' ,
+		'default'		=> 0 ,
 		'options'		=> array()
 	) ;
 
