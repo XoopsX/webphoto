@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: imagemanager.php,v 1.3 2008/09/12 22:42:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-13 K.OHWADA
+// BUG: not show category list if there is not one photo
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -32,6 +34,8 @@ class webphoto_main_imagemanager extends webphoto_inc_handler
 	var $_YSIZE_SAMLL = 200;
 	var $_XSIZE_LARGE = 600;
 	var $_YSIZE_LARGE = 450;
+
+	var $_LANG_NO_CATEGORY = 'There are no category';
 
 //---------------------------------------------------------
 // constructor
@@ -133,6 +137,8 @@ function main()
 	$cat_options = null;
 	$pagenav = null;
 
+	$show_cat_form = false ;
+
 // config
 	$cfg_makethumb  = $this->_config_class->get_by_name( 'makethumb' );
 	$cfg_usesiteimg = $this->_config_class->get_by_name( 'usesiteimg' );
@@ -156,6 +162,8 @@ function main()
 	$cat_tree = $this->get_cat_tree();
 
 	if ( sizeof( $cat_tree ) > 0 ) {
+		$show_cat_form = true ;
+
 		$xsize = $this->_XSIZE_LARGE;
 		$ysize = $this->_YSIZE_LARGE;
 		$cat_options = $this->build_cat_options( $cat_id, $cat_tree );
@@ -268,6 +276,9 @@ function main()
 		'image_total' => $total ,
 		'pagenav'     => $pagenav ,
 
+		'show_cat_form'    => $show_cat_form ,
+		'lang_no_category' => $this->_LANG_NO_CATEGORY ,
+
 	);
 
 	return array( $param, $photos );
@@ -304,37 +315,37 @@ function get_file_id_by_kind( $item_row, $kind )
 //---------------------------------------------------------
 function build_cat_options( $cat_id, $cat_tree )
 {
-	// select box for category
-	$photo_counts = array() ;
-	$catlist = $this->get_item_catlist();
-
-	if ( !is_array($catlist) || !count($catlist) ) {
-		return null;
-	}
-
 	if ( !is_array($cat_tree) || !count($cat_tree) ) {
 		return null;
 	}
 
-	foreach ( $catlist as $item_row ) {
-		$photo_counts[ $item_row['item_cat_id'] ] = $item_row['photo_sum'] ;
+// select box for category
+
+// BUG: not show category list if there is not one photo
+	$count_arr = array() ;
+	$catlist = $this->get_item_catlist();
+
+	if ( is_array($catlist) && count($catlist) ) {
+		foreach ( $catlist as $item_row ) {
+			$count_arr[ $item_row['item_cat_id'] ] = $item_row['photo_sum'] ;
+		}
 	}
 
-	$cat_options = '<option value="0">--</option>'."\n" ;
+	$options = '<option value="0">--</option>'."\n" ;
 
 	foreach( $cat_tree as $cat ) 
 	{
-		$category_id = $cat['cat_id'] ;
+		$cid    = $cat['cat_id'] ;
 		$prefix = str_replace( '.' , '--' , substr( $cat['prefix'] , 1 ) ) ;
-		$photo_count = isset( $photo_counts[ $category_id ] ) ? $photo_counts[ $category_id ] : 0 ;
-		$selected = ( $cat_id == $category_id ) ? ' selected="selected" ' : null;
+		$count  = isset( $count_arr[ $cid ] ) ? $count_arr[ $cid ] : 0 ;
+		$selected = ( $cat_id == $cid ) ? ' selected="selected" ' : null;
 
-		$cat_options .= '<option value="'. $category_id .'" '. $selected .'>';
-		$cat_options .= $prefix . $cat['cat_title'] .' ('. $photo_count .')';
-		$cat_options .= "</option>\n" ;
+		$options .= '<option value="'. $cid .'" '. $selected .'>';
+		$options .= $prefix . $cat['cat_title'] .' ('. $count .')';
+		$options .= "</option>\n" ;
 	}
 
-	return $cat_options;
+	return $options;
 }
 
 function get_cat_tree()
