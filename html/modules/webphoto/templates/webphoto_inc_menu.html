@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_menu.html,v 1.3 2008/08/08 04:57:00 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_menu.html,v 1.4 2008/09/12 22:57:45 ohwada Exp $ *}>
 
 <div class="webphoto_page_menu">
 
@@ -68,8 +68,8 @@
 </a> | 
 
 <{if $has_insertable }>
-  <{if $use_pathinfo }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/submit/">
+  <{if $cat_id > 0 }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit&amp;cat_id=<{$cat_id}>">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit">
   <{/if}>
