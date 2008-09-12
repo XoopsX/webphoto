@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: catmanager.php,v 1.3 2008/09/12 22:51:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-13 K.OHWADA
+// BUG: fatal error
+// photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
 // xoops_error() -> build_error_msg()
 //---------------------------------------------------------
@@ -337,7 +340,7 @@ function _delete()
 		}
 
 		xoops_notification_deletebyitem( $this->_MODULE_ID , 'category' , $ch_id ) ;
-		$this->_delete_photos_by_catid( $cat_id );
+		$this->_delete_photos_by_catid( $ch_id );
 	}
 
 	$ret = $this->_cat_handler->delete_by_id( $post_catid );
@@ -362,11 +365,13 @@ function _delete()
 // Delete photos hit by the $whr clause
 function _delete_photos_by_catid( $cat_id )
 {
-	$photo_rows = $this->_photo_handler->get_rows_by_catid( $cat_id );
-	if ( !is_array($photo_rows) || !count($photo_rows) ) { return; }
+	$item_rows = $this->_item_handler->get_rows_by_catid( $cat_id );
+	if ( !is_array($item_rows) || !count($item_rows) ) {
+		return; 
+	}
 
-	foreach ( $photo_rows as $row ) {
-		$this->_delete_class->delete_photo( $row['photo_id'] ) ;
+	foreach ( $item_rows as $row ) {
+		$this->_delete_class->delete_photo( $row['item_id'] ) ;
 	}
 }
 

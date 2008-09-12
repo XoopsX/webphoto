@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: category.php,v 1.4 2008/09/12 22:51:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-13 K.OHWADA
+// show cat_id for submit
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -147,6 +149,9 @@ function list_build_detail( $cat_id )
 	$param['title_bread_crumb'] = '' ;
 	$param['sub_title_s']       = '' ;
 	$param['show_sort']         = $show_sort ;
+
+// for submit
+	$param['cat_id']            = $cat_id ;
 
 	$navi_param = $this->list_build_navi( $total, $limit );
 

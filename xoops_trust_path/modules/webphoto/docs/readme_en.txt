@@ -1,11 +1,40 @@
-$Id: readme_en.txt,v 1.10 2008/09/04 01:36:31 ohwada Exp $
+$Id: readme_en.txt,v 1.11 2008/09/12 22:51:28 ohwada Exp $
+
+=================================================
+Version: 0.41
+Date:   2008-09-13
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Bug fix
+(1) date in block
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=854
+
+(2) cannot install
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=855
+
+(3) not use image manager if there are no photo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=857
+
+(4) fatal error in category manager
+
+(5) not select category when open submit form from category
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 0.40
 Date:   2008-09-01
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -145,9 +174,6 @@ Special thanks to authors.
 =================================================
 Version: 0.30
 Date:   2008-08-10
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

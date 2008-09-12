@@ -1,11 +1,40 @@
-$Id: readme_jp.txt,v 1.10 2008/09/04 01:36:31 ohwada Exp $
+$Id: readme_jp.txt,v 1.11 2008/09/12 22:51:28 ohwada Exp $
+
+=================================================
+Version: 0.41
+Date:   2008-09-13
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ対策
+(1) ブロック内の日付とヒット数の表示
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=854
+
+(2) インストールできない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=855
+
+(3) 画像が登録されていないとイメージマネージャーが使えない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=857
+
+(4) カテゴリを削除すると、fatal error
+
+(5) カテゴリからの画像登録にて、カテゴリが選択されない
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 0.40
 Date:   2008-09-01
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
@@ -138,9 +167,6 @@ webphoto::WebphotoD3commentContent::webphoto
 =================================================
 Version: 0.30
 Date:   2008-08-10
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

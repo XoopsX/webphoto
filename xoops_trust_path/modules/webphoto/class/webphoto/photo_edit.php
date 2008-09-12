@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.12 2008/09/03 02:44:54 ohwada Exp $
+// $Id: photo_edit.php,v 1.13 2008/09/12 22:51:28 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-13 K.OHWADA
+// get_post_cat_id()
 // 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 // supported exif gps
@@ -140,9 +142,10 @@ function init_preload()
 //---------------------------------------------------------
 function get_post_param()
 {
+	$this->get_post_cat_id();
+
 	$this->_post_photo_id       = $this->_post_class->get_post_get_int( 'photo_id' );
 	$this->_photo_duration      = $this->_post_class->get_post_int(     'photo_duration' );
-	$this->_post_item_cat_id    = $this->_post_class->get_post_get_int( 'item_cat_id' );
 	$this->_item_exif           = $this->_post_class->get_post_text(    'item_exif' );
 	$this->_item_gmap_latitude  = $this->_post_class->get_post_float(   'item_gmap_latitude' );
 	$this->_item_gmap_longitude = $this->_post_class->get_post_float(   'item_gmap_longitude' );
@@ -155,6 +158,21 @@ function get_post_param()
 	$this->set_checkbox_by_post( 'item_time_update_checkbox' );
 
 	$this->set_preview_name( $this->_post_class->get_post_text( 'preview_name' ) );
+}
+
+function get_post_cat_id()
+{
+	$key1 = 'item_cat_id';
+	$key2 = 'cat_id';
+
+	$str = 0;
+	if (     isset( $_POST[ $key1 ] ) ) { $str = $_POST[ $key1 ]; }
+	elseif ( isset( $_GET[  $key1 ] ) ) { $str = $_GET[  $key1 ]; }
+
+// from category
+	elseif ( isset( $_GET[  $key2 ] ) ) { $str = $_GET[  $key2 ]; }
+
+	$this->_post_item_cat_id = intval( $str ) ;
 }
 
 function build_row_by_post( $row )
