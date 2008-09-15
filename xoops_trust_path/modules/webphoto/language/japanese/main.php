@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.10 2008/09/04 10:28:29 ohwada Exp $
+// $Id: main.php,v 1.11 2008/09/15 02:31:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -431,7 +431,7 @@ define("_WEBPHOTO_CAT_GICON_ID" ,  "GoogleMap アイコン番号" ) ;
 define("_WEBPHOTO_CAT_FORUM_ID" ,  "フォーラム番号" ) ;
 define("_WEBPHOTO_CAT_PID" ,    "親番号" ) ;
 define("_WEBPHOTO_CAT_TITLE" ,  "カテゴリ名" ) ;
-define("_WEBPHOTO_CAT_IMG_PATH" , "画像の相対パス" ) ;
+define("_WEBPHOTO_CAT_IMG_PATH" , "カテゴリ画像" ) ;
 define("_WEBPHOTO_CAT_IMG_MODE" , "画像の表示モード" ) ;
 define("_WEBPHOTO_CAT_ORIG_WIDTH" ,  "画像の原寸の横幅" ) ;
 define("_WEBPHOTO_CAT_ORIG_HEIGHT" , "画像の原寸の高さ" ) ;

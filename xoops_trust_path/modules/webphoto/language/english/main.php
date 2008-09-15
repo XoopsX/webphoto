@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.11 2008/09/04 10:39:45 ohwada Exp $
+// $Id: main.php,v 1.12 2008/09/15 02:31:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -431,7 +431,7 @@ define("_WEBPHOTO_CAT_GICON_ID" ,  "Icon ID" ) ;
 define("_WEBPHOTO_CAT_FORUM_ID" ,  "Forum ID" ) ;
 define("_WEBPHOTO_CAT_PID" ,    "Parent ID" ) ;
 define("_WEBPHOTO_CAT_TITLE" ,  "Category Title" ) ;
-define("_WEBPHOTO_CAT_IMG_PATH" , "Relative Path to Image" ) ;
+define("_WEBPHOTO_CAT_IMG_PATH" , "Category Image" ) ;
 define("_WEBPHOTO_CAT_IMG_MODE" , "Image View Mode" ) ;
 define("_WEBPHOTO_CAT_ORIG_WIDTH" ,  "Image Original Width" ) ;
 define("_WEBPHOTO_CAT_ORIG_HEIGHT" , "Image Original Height" ) ;
@@ -592,7 +592,7 @@ define("_WEBPHOTO_POPBOX_REVERT", "Click the image to shrink it.");
 //---------------------------------------------------------
 define("_WEBPHOTO_TAGS","Tags");
 define("_WEBPHOTO_EDIT_TAG","Edit Tags");
-define("_WEBPHOTO_DSC_TAG_DIVID", "divid the comma(,) when set two or more");
+define("_WEBPHOTO_DSC_TAG_DIVID", "divide by commas (,) when you want to use two or more tags");
 define("_WEBPHOTO_DSC_TAG_EDITABLE", "You can edit only the tags which you posted");
 
 //---------------------------------------------------------

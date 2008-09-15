@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.5 2008/08/25 19:28:06 ohwada Exp $
+// $Id: admin.php,v 1.6 2008/09/15 02:31:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -340,7 +340,7 @@ define("_AM_WEBPHOTO_ERR_NO_RECORD", "There are no record");
 //---------------------------------------------------------
 // cat manager
 //---------------------------------------------------------
-define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "Path from the directory installed XOOPS.<br />(The first character must be '/'.)" ) ;
+define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "Please upload the desired category image file<br />and set Path from the directory installed XOOPS.<br />(The first character must be '/'.)<br />Show folder icon if not set" ) ;
 define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "All Groups" ) ;
 
 //---------------------------------------------------------
