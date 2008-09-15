@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.8 2008/08/25 23:37:20 ohwada Exp $
+// $Id: show_photo.php,v 1.9 2008/09/15 08:48:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+
+// build_media_player()
+
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
@@ -114,12 +117,14 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 
 	$datetime_disp = $this->mysql_datetime_to_str( $item_datetime );
 
-	$arr = array(
+	$show_arr = array(
 		'photo_id'       => $item_id ,
 		'time_cretae'    => $item_time_create,
 		'time_update'    => $item_time_update,
 		'cat_id'         => $item_cat_id ,
 		'uid'            => $item_uid ,
+		'kind'           => $item_kind ,
+		'ext'            => $item_ext ,
 		'datetime'       => $item_datetime,
 		'title'          => $item_title ,
 		'place'          => $item_place ,
@@ -177,8 +182,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 			$show_desc = true;
 		}
 
-		$arr[ $name_i ]      = $text_i ;
-		$arr[ $name_i.'_s' ] = $text_i_s ;
+		$show_arr[ $name_i ]      = $text_i ;
+		$show_arr[ $name_i.'_s' ] = $text_i_s ;
 
 		$arr2[ $i ] = array(
 			'lang'   => $this->get_constant( $item_name_i ) ,
@@ -188,7 +193,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	}
 
 	if ( is_array($arr2) && count($arr2) ) {
-		$arr['texts'] = $arr2;
+		$show_arr['texts'] = $arr2;
 	}
 
 	$arr3 = array();
@@ -201,8 +206,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		$url_i   = $this->get_file_url_by_kind( $row, $i );
 		$url_i_s = $this->sanitize( $url_i );
 
-		$arr[ $name_i ]      = $url_i ;
-		$arr[ $name_i.'_s' ] = $url_i_s ;
+		$show_arr[ $name_i ]      = $url_i ;
+		$show_arr[ $name_i.'_s' ] = $url_i_s ;
 
 		$arr3[ $i ] = array(
 			'lang'  => $this->get_constant( $cont_name_i ) ,
@@ -211,23 +216,23 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		);
 	}
 
-	$flash_video_url   = $arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
-	$docomo_video_url  = $arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO ] ;
+	$flash_video_url   = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
+	$docomo_video_url  = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO ] ;
 
-	$arr['flash_video_url']     = $flash_video_url ;
-	$arr['flash_video_url_s']   = $this->sanitize(     $flash_video_url ) ;
-	$arr['is_flash_video']      = $this->has_file_url( $flash_video_url ) ;
-	$arr['docomo_video_url']    = $docomo_video_url ;
-	$arr['docomo_video_url_s']  = $this->sanitize(     $docomo_video_url ) ;
-	$arr['is_mobile_video']     = $this->has_file_url( $docomo_video_url ) ;
+	$show_arr['flash_video_url']     = $flash_video_url ;
+	$show_arr['flash_video_url_s']   = $this->sanitize(     $flash_video_url ) ;
+	$show_arr['is_flash_video']      = $this->has_file_url( $flash_video_url ) ;
+	$show_arr['docomo_video_url']    = $docomo_video_url ;
+	$show_arr['docomo_video_url_s']  = $this->sanitize(     $docomo_video_url ) ;
+	$show_arr['is_mobile_video']     = $this->has_file_url( $docomo_video_url ) ;
 
 	if ( is_array($arr3) && count($arr3) ) {
-		$arr['urls'] = $arr3;
+		$show_arr['urls'] = $arr3;
 	}
 
-	$arr['show_desc'] = $show_desc;
+	$show_arr['show_desc'] = $show_desc;
 
-	return $arr;
+	return $show_arr;
 }
 
 // Get photo's array to assign into template (light version)
@@ -249,6 +254,8 @@ function build_photo_show( $row )
 
 	list( $is_newphoto, $is_updatedphoto )
 		= $this->build_show_is_new_updated( $item_time_update, $item_status );
+
+	$arr3 = $this->build_media_player( $arr1 ) ;
 
 	$arr2 = array(
 		'cat_title_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_title', true ),
@@ -273,7 +280,7 @@ function build_photo_show( $row )
 		'window_y'         => $arr1['photo_height'] + $this->_WINDOW_MERGIN ,
 	) ;
 
-	return array_merge( $arr1, $arr2 );
+	return array_merge( $arr1, $arr2, $arr3 );
 }
 
 function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
@@ -488,6 +495,72 @@ function build_show_imgsrc( $row )
 	);
 	return $arr;
 
+}
+
+//---------------------------------------------------------
+// media player
+// http://code.google.com/p/swfobject/
+// http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
+//---------------------------------------------------------
+function build_media_player( $show_arr )
+{
+	$can  = false ;
+	$file = null ;
+
+	$ext       = $show_arr[ 'ext' ] ;
+	$title_s   = $show_arr[ 'title_s' ] ;
+	$image_s   = $show_arr[ 'imgsrc_middle' ] ;
+	$cont_url  = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_CONT ] ;
+	$flash_url = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
+
+	$is_mp3 = $this->is_mp3_ext( $ext );
+	$is_mp4 = $this->is_mp4_ext( $ext );
+
+	if ( $flash_url ) {
+		$can  = true ;
+		$file = $flash_url ;
+
+	} elseif ( $cont_url && ( $is_mp3 || $is_mp4 ) ) {
+		$can  = true ;
+		$file = $cont_url ;
+	}
+
+	$arr = array(
+		'mediaplayer_can'             => $can ,
+		'mediaplayer_title'           => $title_s ,
+		'mediaplayer_file'            => $this->sanitize( $file ) ,
+		'mediaplayer_image'           => $image_s ,
+		'mediaplayer_allowfullscreen' => 'true' ,
+		'mediaplayer_version'         => '8' ,
+		'mediaplayer_id'              => '0' ,	// not show playlist
+		'mediaplayer_width'           => '320' ,
+		'mediaplayer_height'          => '240' ,
+		'mediaplayer_displaywidth'    => '0' ,
+		'mediaplayer_displayheight'   => '0' ,
+		'mediaplayer_autostart'       => 'false' ,
+		'mediaplayer_shuffle'         => 'false' ,
+		'mediaplayer_overstretch'     => 'false' ,
+		'mediaplayer_showdownload'    => 'false' ,
+		'mediaplayer_callback'        => null ,
+	);
+
+	return $arr ;
+}
+
+function is_mp3_ext( $ext )
+{
+	if ( strtolower( $ext ) == 'mp3' ) {
+		return true ;
+	}
+	return false ;
+}
+
+function is_mp4_ext( $ext )
+{
+	if ( strtolower( $ext ) == 'mp4' ) {
+		return true ;
+	}
+	return false ;
 }
 
 //---------------------------------------------------------
