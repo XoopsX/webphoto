@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.3 2008/08/08 07:21:34 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.4 2008/09/15 08:51:22 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -14,8 +14,8 @@
     <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
   <{/if}>
 
-<{* NORMAL IMAGES & FLASH VODEO *}>
-<{elseif $photo.is_normal_image || $photo.is_flash_video }>
+<{* NORMAL IMAGES & MEDIA PLAYER *}>
+<{elseif $photo.is_normal_image || $photo.mediaplayer_can }>
   <{if $use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
