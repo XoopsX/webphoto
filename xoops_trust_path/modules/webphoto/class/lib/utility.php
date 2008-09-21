@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.5 2008/08/26 16:36:47 ohwada Exp $
+// $Id: utility.php,v 1.6 2008/09/21 00:13:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-09-20 K.OHWADA
+// BUG: 12:00:52 -> 12:52
 // 2008-08-24 K.OHWADA
 // changed write_file()
 // 2008-08-01 K.OHWADA
@@ -456,11 +458,15 @@ function mysql_datetime_to_str( $date )
 	$date = str_replace(     '-00-00 00:00:00', '', $date );
 	$date = str_replace(        '-00 00:00:00', '', $date );
 	$date = str_replace(           ' 00:00:00', '', $date );
-	$date = str_replace(              ':00:00', '', $date );
-	$date = str_replace(                 ':00', '', $date );
 	$date = str_replace( '0000-00-00',          '', $date );
 	$date = str_replace(     '-00-00',          '', $date );
 	$date = str_replace(        '-00',          '', $date );
+
+// BUG: 12:00:52 -> 12:52
+// 01:02:00 -> 01:02 
+// 01:00:00 -> 01:00
+	$date = preg_replace( '/(.*\d+:\d+):00/', '$1', $date );
+
 	if ( $date == ' ' ) {
 		$date = '';
 	}
