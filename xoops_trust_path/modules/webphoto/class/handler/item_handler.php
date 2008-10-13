@@ -1,10 +1,17 @@
 <?php
-// $Id: item_handler.php,v 1.2 2008/08/27 06:45:16 ohwada Exp $
+// $Id: item_handler.php,v 1.3 2008/10/13 10:21:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-10-01 K.OHWADA
+// BUG: Incorrect integer value: 'item_file_id_1'
+// error in mysql 5 if datetime is null
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +20,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_item_handler extends webphoto_lib_handler
 {
+	var $_DATETIME_DEFAULT  = '0000-00-00 00:00:00';
+
 	var $_AREA_NS = 1.0;
 	var $_AREA_EW = 1.0;
 
@@ -63,7 +72,7 @@ function create( $flag_new=false )
 		'item_uid'            => 0,
 		'item_kind'           => 0,
 		'item_ext'            => '',
-		'item_datetime'       => '0000-00-00 00:00:00',
+		'item_datetime'       => $this->_DATETIME_DEFAULT ,
 		'item_title'          => '',
 		'item_place'          => '',
 		'item_equipment'      => '',
@@ -83,7 +92,7 @@ function create( $flag_new=false )
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$arr[ 'item_file_id_'.$i ] = '';
+		$arr[ 'item_file_id_'.$i ] = 0 ;
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
@@ -99,6 +108,10 @@ function create( $flag_new=false )
 function insert( $row, $force=false )
 {
 	extract( $row ) ;
+
+	if ( empty($item_datetime) ) {
+		$item_datetime = $this->_DATETIME_DEFAULT ;
+	}
 
 	$sql  = 'INSERT INTO '.$this->_table.' (';
 
@@ -171,7 +184,7 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_description).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$sql .= $this->quote( $row[ 'item_file_id_'.$i ] ).', ';
+		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
@@ -194,6 +207,10 @@ function insert( $row, $force=false )
 function update( $row, $force=false )
 {
 	extract( $row ) ;
+
+	if ( empty($item_datetime) ) {
+		$item_datetime = $this->_DATETIME_DEFAULT ;
+	}
 
 	$sql  = 'UPDATE '.$this->_table.' SET ';
 	$sql .= 'item_time_create='.intval($item_time_create).', ';
@@ -223,7 +240,7 @@ function update( $row, $force=false )
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
 		$name = 'item_file_id_'.$i;
-		$sql .= $name .'='. $this->quote( $row[ $name ] ).', ';
+		$sql .= $name .'='. intval( $row[ $name ] ).', ';
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
