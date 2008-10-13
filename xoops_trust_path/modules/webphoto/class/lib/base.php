@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.7 2008/09/04 00:46:47 ohwada Exp $
+// $Id: base.php,v 1.8 2008/10/13 10:22:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// BUG : not set xoops_group
 // 2008-09-01 K.OHWADA
 // added build_set_msg()
 // 2008-08-01 K.OHWADA
@@ -468,7 +470,7 @@ function _init_xoops_param()
 
 	$this->_xoops_uid         = $this->_xoops_class->get_my_user_uid();
 	$this->_xoops_uname       = $this->_xoops_class->get_my_user_uname( 'n' );
-	$this->_xoops_user_groups = $this->_xoops_class->get_my_user_groups();
+	$this->_xoops_groups      = $this->_xoops_class->get_my_user_groups();
 	$this->_is_login_user     = $this->_xoops_class->get_my_user_is_login();
 	$this->_is_module_admin   = $this->_xoops_class->get_my_user_is_module_admin();
 }
