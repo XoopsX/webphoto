@@ -1,11 +1,44 @@
-$Id: readme_en.txt,v 1.11 2008/09/12 22:51:28 ohwada Exp $
+$Id: readme_en.txt,v 1.12 2008/10/13 19:02:11 ohwada Exp $
+
+=================================================
+Version: 0.42
+Date:   2008-10-13
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. play MP3 in Flash player
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=422&forum=11
+
+2. add Portugues of Brazil lang pack
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=429&forum=11
+
+1. Bug fix
+(1) not show orignal file in tempalate manager of altsys module
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=858&forum=13
+
+(2) save 12:52 at photo datetime when 12:00:52
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=860&forum=13
+
+(3) error in mysql 5
+
+(4) fatal error when apporve the post
+
+(5) not set xoops_group
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 0.41
 Date:   2008-09-13
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

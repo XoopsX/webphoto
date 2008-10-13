@@ -1,11 +1,45 @@
-$Id: readme_jp.txt,v 1.11 2008/09/12 22:51:28 ohwada Exp $
+$Id: readme_jp.txt,v 1.12 2008/10/13 19:02:11 ohwada Exp $
+
+=================================================
+Version: 0.42
+Date:   2008-10-13
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. MP3 を Flash プレーヤーで再生する
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=422&forum=11
+
+2. ブラジル語 追加
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=429&forum=11
+
+1. バグ対策
+(1) 「テンプレート管理」でオリジナルファイルが表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=858&forum=13
+
+(2) 撮影時刻が 12:00:52 のとき 12:52 と記録される
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=860&forum=13
+
+(3) mysql 5 でエラーになる
+
+(4) 承認にて Fatal error
+
+(5) xoops_group が設定されない
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 0.41
 Date:   2008-09-13
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
