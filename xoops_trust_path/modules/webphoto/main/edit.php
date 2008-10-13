@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.4 2008/08/27 03:58:02 ohwada Exp $
+// $Id: edit.php,v 1.5 2008/10/13 10:24:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// notification_event.php
 // 2008-08-24 K.OHWADA
 // added maillog_handler.php
 // 2008-08-01 K.OHWADA
@@ -28,6 +30,7 @@ include_once XOOPS_ROOT_PATH."/class/xoopsformloader.php";
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'main/header.php' );
+webphoto_include_once( 'class/d3/notification_event.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
@@ -50,6 +53,7 @@ webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/webphoto/photo_edit.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
+webphoto_include_once( 'class/webphoto/notification_event.php' );
 webphoto_include_once( 'class/main/edit.php' );
 
 //=========================================================

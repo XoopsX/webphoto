@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.12 2008/08/27 05:11:54 ohwada Exp $
+// $Id: edit.php,v 1.13 2008/10/13 10:24:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// Fatal error: Call to undefined method xoops_notify_for_edit()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // used webphoto_photo_delete
@@ -29,6 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_photo_edit
 {
+	var $_notification_class;
 	var $_delete_class;
 
 	var $_form_action   = null;
@@ -47,6 +50,7 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
 
+	$this->_notification_class =& webphoto_notification_event::getInstance( $dirname , $trust_dirname );
 	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
 
 	$this->_has_editable  = $this->_perm_class->has_editable();
@@ -657,7 +661,7 @@ function _xoops_notify_if_apporve( $item_row )
 {
 // when approve
 	if ( $item_row['item_status'] == 1 ) {
-		$this->xoops_notify_for_edit( 
+		$this->_notification_class->notify_new_photo( 
 			$this->_post_photo_id, $item_row['item_cat_id'], $item_row['item_title'] );
 	}
 }
