@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_table.html,v 1.6 2008/09/15 08:51:22 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_table.html,v 1.7 2008/10/30 13:09:40 ohwada Exp $ *}>
 
 <{* IMAGE PART *}>
 <div class="webphoto_table_image">
@@ -39,7 +39,7 @@
   <{if $photo.thumb_width && $photo.thumb_height }>
     <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
   <{else}>
-    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
   <{/if}>
   </a>
 

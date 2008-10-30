@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.4 2008/09/15 08:51:22 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.5 2008/10/30 13:09:40 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -6,30 +6,16 @@
 <td class="webphoto_list_td_image">
 <div class="webphoto_list_image">
 
-<{* NORMAL IMAGES with popbox  *}>
-<{if $photo.is_normal_image && $use_popbox_js }>
+<{* POPUP IMAGE  *}>
+<{if ( $photo.onclick == 2 ) && $use_popbox_js }>
   <{if $photo.thumb_width && $photo.thumb_height }>
     <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
   <{else}>
     <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
   <{/if}>
 
-<{* NORMAL IMAGES & MEDIA PLAYER *}>
-<{elseif $photo.is_normal_image || $photo.mediaplayer_can }>
-  <{if $use_pathinfo }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
-  <{else}>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
-  <{/if}>
-  <{if $photo.thumb_width && $photo.thumb_height }>
-    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
-  <{else}>
-    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
-  <{/if}>
-  </a>
-
-<{* FILES OTHER THAN IMAGES *}>
-<{else}>
+<{* DIRECT LINK *}>
+<{elseif $photo.onclick == 1 }>
   <{if $photo.ahref_file }>
     <a href="<{$photo.ahref_file}>" target="_blank">
   <{elseif $use_pathinfo }>
@@ -41,7 +27,21 @@
   <{if $photo.thumb_width && $photo.thumb_height }>
     <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
   <{else}>
-    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
+  <{/if}>
+  </a>
+
+<{* PHOTO PAGE *}>
+<{else}>
+  <{if $use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <{/if}>
+  <{if $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" />
   <{/if}>
   </a>
 <{/if}>
