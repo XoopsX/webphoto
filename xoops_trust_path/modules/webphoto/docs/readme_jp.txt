@@ -1,11 +1,187 @@
-$Id: readme_jp.txt,v 1.12 2008/10/13 19:02:11 ohwada Exp $
+$Id: readme_jp.txt,v 1.13 2008/10/30 13:12:16 ohwada Exp $
+
+=================================================
+Version: 0.50
+Date:   2008-10-30
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+
+1. 外部メディア
+従来はメディア・ファイルをアップロードする必要があった。
+今回から、外部メディアの URL を指定することもできる。
+
+2. 動画投稿サイト
+(1) プラグインにより動画投稿サイトに対応した
+(2) 下記の動画投稿サイトが用意されている
+- www.youtube.com
+- uncutvideo.aol.com
+- www.dailymotion.com
+- video.google.com
+- www.livevideo.com
+- www.metacafe.com
+- vids.myspace.com
+- video.msn.com
+- www.veoh.com
+- www.vimeo.com
+
+3. 表現形式
+従来は メディア形式 (拡張子) に対して固定的な表現をしていた。
+今回から、管理者はメディア・ファイル毎に表現方法を選択することができる。
+
+3.1 サムネイルをクリックしたときの動作
+(1) 詳細ページを開く
+(2) メディア・ファイルを開く
+(3) 大きな画像をポップアップする (画像のとき)
+
+3.2 詳細ページでの表現
+(1) サムネイルを表示し、サムネイルをクリックすると、メディア・ファイルを開く
+(2) サムネイルを表示し、サムネイルをクリックすると、大きな画像を表示する (画像のとき)
+(3) 動画サイトのプラグインを表示する (動画サイトのとき)
+(4) swfobject.swf で再生する
+(5) mediaplayer.swf で再生する
+(6) imagerotator.swf で再生する
+
+3.3 フラッシュ・プレイヤーの変数
+後述
+
+4. popbox.js
+http://www.c6software.com/Products/PopBox/Default.aspx
+
+jpg,gif,png 形式の画像は、サムネイルをクリックしたときに、大きな写真がポップアップする。
+デフォルトの設定 (v0.10 から)
+
+5. swfobject.swf
+http://blog.deconcept.com/swfobject/
+
+swf 形式はこのプレイヤーにて再生する (新規)
+デフォルトの設定 
+
+6. mediaplayer.swf
+http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
+
+下記の形式のファイルをこのプレイヤーにて再生する
+(1) flv 形式 あるいは 投稿した動画から flv 形式に変換したもの (v0.2 から)
+    デフォルトの設定
+(2) mp3 形式 (v0.42 から) デフォルトの設定
+(3) jpg,gif,png 形式 (新規)  管理者による設定
+
+7. imagerotator.swf の追加
+http://www.jeroenwijering.com/?item=JW_Image_Rotator
+
+プレイリストの再生に使用する
+
+8. プレイリスト
+http://code.jeroenwijering.com/trac/wiki/Playlists3
+
+8.1 mediaplayer.swf と imagerotator.swf にて、プレイリストの再生ができる
+
+8.2 プレイリストの設定は２つの方法がある
+(1) プレイリストのURLを指定する
+(2) メディア・ファイルのある自サイト内のディレクトリを指定して、
+      メディア・ファイルからプレイリストを生成する
+
+8.3 サンプルとして、下記のメディア・ファイルを用意した
+(1) 写真 (jpg) medias/sample_photo/
+(2) 音楽 (mp3) medias/sample_music/
+
+9. フラッシュ・プレイヤーの変数
+http://code.jeroenwijering.com/trac/wiki/Flashvars3
+
+(1) swfobject.swf, mediaplayer.swf, imagerotator.swf に対して、
+投稿したメディア・ファイル毎に変数の設定ができる。
+(2) swfobject.swf に対しては、大きさと色のみ有効。
+(3) プレイヤー管理にて、フラッシュ・プレイヤーの大きさと色について、複数のパターンが設定できる。
+メディア・ファイル毎に設定したパターンの中から選択する。
+(4) その他の変数は、メディア・ファイル毎に設定する。
+(5) 変数を設定しないときは、デフォルトの設定値が使用される。
+
+10. color_picker.js の追加
+http://www.softcomplex.com/products/tigra_color_picker/
+
+フラッシュ・プレイヤーの色の設定に使用する
+
+11. フラッシュ・プレイヤーのコールバック
+mediaplayer.swf にて再生したときのログが収集できる
+管理者設定
+
+12. バグ対策
+(1) 「ユーザー情報」にて、notice
+(2) 「投票」にて、SQL syntax error
+(3) 「myalbum からのインポート」にて、サムネイルがコピーされない
+(4) 「サムネイルの再構築」にて、タイトルだけのアイテムにて notice
+
+13. データベース構造
+13.1 テーブルの追加
+(1) player   テーブル: フラッシュ・プレイヤーの一部の変数を格納する
+(2) flashvar テーブル: フラッシュ・プレイヤーの全ての変数を格納する
+
+13.2 テーブルの項目追加
+(1) item テーブル: item_player_id など 23項目を追加した
+
+13.3 一般設定 (config テーブル) の項目変更
+「使用上の注意」参照
+
+
+● アップデート
+(1) アップデートする前に、データベースのバックアップをとることを推奨します。
+(2) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(3) 管理者画面にてモジュール・アップデートを実行する
+(4) モジュール・アップデート後は、Webphoto の管理者画面にて「アップデート」を実行してください。
+  item テーブルに追加した displaytype, onclick, duration を設定します。
+
+
+● 使用上の注意
+1. アップロード先のディレクトリ
+一般設定から photospath, thumbspath, giconspath を削除し、
+代わりに uploadspath を追加した。
+
+従来は、アップロード先のディレクトリは、photos, thumbs, gicons 毎に変更可能であった。
+今回から ルートとなるディレクトリ (uploadspath) のみを変更可能にして、
+その下のディレクトリを固定にした。
+
+従来と同じもの
+- photos (画像や動画)
+- thumbs (サムネイル)
+- gicons (GoogleMapsのアイコン)
+
+従来は photos に置いていたファイルを分離したもの
+photos にある従来のファイルはそのまま使用される
+新規に作成するファイルから適用される。
+- middles (中間サイズのサムネイル)
+- flashs  (自動生成したフラッシュ動画)
+- qrs     (QRコード)
+
+今回 追加したもの
+- playlists (プレイリストのキャッシュ)
+- logos     (プレイヤーのロゴ画像)
+
+[注意]
+photos, thumbs, gicons をデフォルト値から変更している場合は、
+上記に対応するように、手動でファイルを移動してください。
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
+
+● 謝辞
+動画投稿サイトやフラッシュ・プレイヤーの変数に関して、webshow を参考にしました。
+- http://wikiwebshow.com/
+作者の方に、感謝します。
+
 
 =================================================
 Version: 0.42
 Date:   2008-10-13
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

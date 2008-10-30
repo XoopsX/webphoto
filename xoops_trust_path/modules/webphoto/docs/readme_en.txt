@@ -1,11 +1,187 @@
-$Id: readme_en.txt,v 1.12 2008/10/13 19:02:11 ohwada Exp $
+$Id: readme_en.txt,v 1.13 2008/10/30 13:12:16 ohwada Exp $
+
+=================================================
+Version: 0.50
+Date:   2008-10-30
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+
+1. External Media
+In old version, the media file must be uploaded.
+In this version, the user can set URL of the media file.
+
+2. Video sites
+(1) support video sites with the plug-in.
+(2) The following sites are prepared.
+- www.youtube.com
+- uncutvideo.aol.com
+- www.dailymotion.com
+- video.google.com
+- www.livevideo.com
+- www.metacafe.com
+- vids.myspace.com
+- video.msn.com
+- www.veoh.com
+- www.vimeo.com
+
+3. Display Type
+In old version, the display type of media file extension is fixed
+In this version, the admin can select the display type for media file.
+
+3.1 action when click thumbnail
+(1) jump the detail Page
+(2) open the media file
+(3) popup the large image
+
+3.2 display in detail page
+(1) show thumbnail, open the media file when click thumb
+(1) show thumbnail, show the large image when click thumb
+(3) show plugin for video site
+(4) play in swfobject.swf
+(5) play in mediaplayer.swf
+(6) play in imagerotator.swf
+
+3.3 flash player variables
+look 9
+
+4. popbox.js
+http://www.c6software.com/Products/PopBox/Default.aspx
+
+in image type (jpg,gif,png), show the large image when click thumb
+default (since v0.10):
+
+5. swfobject.swf
+http://blog.deconcept.com/swfobject/
+
+in swf type, play in this player.
+default (in this version)
+
+6. mediaplayer.swf
+http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
+
+in following type, play in this player.
+(1) in flv type, or converted from posted video
+    default (since v0.2)
+(2) in mp3 type, default (since v0.42)
+(3) in image type (jpg,gif,png), the admin can set
+
+7. add imagerotator.swf 
+http://www.jeroenwijering.com/?item=JW_Image_Rotator
+
+use for playlist
+
+8. Playlist
+http://code.jeroenwijering.com/trac/wiki/Playlists3
+
+8.1 in mediaplayer.swf and imagerotator.swf, the admin can play the playlist 
+
+8.2 There are two ways in the setting of the playlist.
+(1) specify the URL of the playlist.
+(2) specify the directory of media files in own site.
+    and webphoto generates the playlist from the media files automaticllay.
+
+(3) As the sample, prepare the following media files.
+(3-1) photo (jpg) medias/sample_photo/
+(3-2) music (mp3) medias/sample_music/
+
+9. Flash player variables 
+http://code.jeroenwijering.com/trac/wiki/Flashvars3
+
+(1) the admin can set variables for every media file 
+in swfobject.swf, mediaplayer.swf, imagerotator.swf
+(2) Only the size and the color are valid in swfobject.swf
+(3) the admin can set more than one pattern about the size and the color of the flash player in "player management".
+the admin can select one of the patterns for every media file.
+(4) the admin can set other variables for for every media file.
+(5) the default values are used, when not set variables.
+
+10. Added color_picker.js
+http://www.softcomplex.com/products/tigra_color_picker/
+
+use to set color in flash player.
+
+11. Callback of flash player
+logging when play in mediaplayer.swf
+the admin can enable in preferrence
+
+12. Bug fix
+(1) notice in "user info"
+(2) SQL syntax error in "rate"
+(3) not copy thumbnail in "import from myalbum"
+(4) notice when item has only title in "Rebuild Thumbnails"
+
+13. Database structure
+13.1 add tables
+(1) player   table: store part of flash player variables
+(2) flashvar table: store all of flash player variables
+
+13.2 add field of table
+(3) item table: add 23 fields, item_player_id etc
+
+13.3 change item of config table (preferrence)
+look "Notice for usage"
+
+
+* Update *
+(1) Recommend to backup the database before update.
+(2) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(3) Execute the module update in the admin cp
+(4) Please execute "Update" in webphoto's admin cp.
+  It set values in displaytype, onclick, duration which added in item table.
+
+
+* Notice for usage *
+1. The directoris for upload
+Webphoto remove photospath, thumbspath, giconspath in "preferrence",
+add uploadspath instead.
+
+In old version, the admin can change the directory for upload in photos, thumbs, gicons.
+In this version, the admin can change the root directory (uploadspath) only,
+Webphoto fix the directories belong the root directory.
+
+Dirctory same as old version
+- photos (photos and vidos)
+- thumbs (thumbnails)
+- gicons (GoogleMaps icons)
+
+Dirctory for files which have separated form photos.
+Webphoto use the old files in photos just as it is.
+and create the new files in following dirctories.
+- middles (middle size thumbnails)
+- flashs  (flash videos created automaticaly)
+- qrs     (QR codes)
+
+Dirctory added in this version
+- playlists (playlist cache)
+- logos     (player logo images)
+
+[Caution]
+If you changed the value of photos, thumbs, gicons from the default value,
+please move files manually to match with new dirctory.
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Referred webshow about Youtube plugin and Flash player variables.
+- http://wikiwebshow.com/
+Special thanks to authors.
+
 
 =================================================
 Version: 0.42
 Date:   2008-10-13
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
