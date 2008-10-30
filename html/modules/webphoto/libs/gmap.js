@@ -1,19 +1,22 @@
 /* ========================================================
- * $Id: gmap.js,v 1.1 2008/06/21 12:29:25 ohwada Exp $
+ * $Id: gmap.js,v 1.2 2008/10/30 00:55:39 ohwada Exp $
  * http://code.google.com/apis/maps/index.html
  * ========================================================
  */
 
 /* --------------------------------------------------------
  * change log
+ * 2008-10-01
+ *   add webphoto_gmap_on_load_marks()
  * 2008-02-12
  *   add webphoto_gmap_setMapType()
  *   change webphoto_gmap_use_type_control to webphoto_gmap_type_control
  * --------------------------------------------------------
  */
 
-/* georss */
+var webphoto_gmap_init_flag = false;
 
+/* georss */
 var webphoto_gmap_map_obj = null;
 var webphoto_gmap_client_geocoder  = null;
 var webphoto_gmap_location_marker  = null;
@@ -139,6 +142,27 @@ function webphoto_gmap_setCenter( lat, lng, zoom )
 {
 	webphoto_gmap_map_obj.setCenter( new GLatLng( parseFloat( lat ) , parseFloat( lng ) ) );
 	webphoto_gmap_map_obj.setZoom( Math.floor( zoom ) );
+}
+
+function webphoto_gmap_on_load_marks() 
+{
+	if ( webphoto_gmap_init_flag == false ) {
+		webphoto_gmap_load_marks();
+		webphoto_gmap_init_flag = true;
+	}
+}
+
+function webphoto_gmap_on_get_location_marks() 
+{
+	if ( webphoto_gmap_init_flag == false ) {
+		webphoto_gmap_load_get_location_marks();
+		webphoto_gmap_init_flag = true;
+	}
+}
+
+function webphoto_gmap_init_flag_true() 
+{
+	webphoto_gmap_init_flag = true;
 }
 
 /* --------------------------------------------------------

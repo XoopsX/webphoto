@@ -1,3 +1,8 @@
+/* ========================================================
+ * $Id: box.js,v 1.2 2008/10/30 00:55:39 ohwada Exp $
+ * ========================================================
+ */
+
 var webphoto_box_gmap_init_flag = false;
 
 function webphoto_box_gmap_init() 
@@ -58,15 +63,11 @@ function webphoto_box_visible_load (boxids)
 function webphoto_box_gmap_on() 
 {
 	webphoto_box_visible_flip('webphoto_box_gmap', 1);
-
-	if ( webphoto_box_gmap_init_flag == false ) {
-		webphoto_gmap_load_marks();
-		webphoto_box_gmap_init_flag = true;
-	}
+	webphoto_gmap_on_load_marks();
 }
 
 function webphoto_box_gmap_off() 
 {
 	webphoto_box_visible_flip('webphoto_box_gmap', 0);
-	webphoto_box_gmap_init_flag = true;
+	webphoto_gmap_init_flag_true();
 }
