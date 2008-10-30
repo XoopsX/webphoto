@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: submit_file.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,6 +24,7 @@ class webphoto_main_submit_file extends webphoto_base_this
 	var $_photo_class;
 	var $_notification_class;
 	var $_xoops_user_class;
+	var $_redirect_class;
 
 	var $_post_item_cat_id;
 	var $_post_file;
@@ -50,8 +51,8 @@ function webphoto_main_submit_file( $dirname , $trust_dirname )
 
 	$this->_photo_class        =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
 	$this->_xoops_user_class   =& webphoto_xoops_user::getInstance();
-	$this->_notification_class =& webphoto_notification_event::getInstance(
-		$dirname , $trust_dirname );
+	$this->_redirect_class     =& webphoto_photo_redirect::getInstance( $dirname, $trust_dirname );
+	$this->_notification_class =& webphoto_notification_event::getInstance( $dirname , $trust_dirname );
 
 	$this->_cfg_file_size = intval( $this->get_config_by_name( 'file_size' ) );
 	$this->_has_file      = $this->_perm_class->has_file();
@@ -359,6 +360,39 @@ function _video()
 
 	redirect_header( $url, $time, $msg );
 	exit();
+}
+
+//---------------------------------------------------------
+// build_redirect
+//---------------------------------------------------------
+function build_failed_msg( $ret )
+{
+	$this->_redirect_class->set_error( $this->get_errors() );
+	$ret = $this->_redirect_class->build_failed_msg( $ret );
+	$this->clear_errors();
+	$this->set_error( $this->_redirect_class->get_errors() );
+	return $ret;
+}
+
+function build_redirect( $param )
+{
+	$this->_redirect_class->set_error( $this->get_errors() );
+	return $this->_redirect_class->build_redirect( $param );
+}
+
+function get_redirect_url()
+{
+	return $this->_redirect_class->get_redirect_url();
+}
+
+function get_redirect_time()
+{
+	return $this->_redirect_class->get_redirect_time();
+}
+
+function get_redirect_msg()
+{
+	return $this->_redirect_class->get_redirect_msg();
 }
 
 //---------------------------------------------------------

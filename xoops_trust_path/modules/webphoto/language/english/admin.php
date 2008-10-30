@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.6 2008/09/15 02:31:13 ohwada Exp $
+// $Id: admin.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -395,6 +395,59 @@ define("_AM_WEBPHOTO_ERR_GET_IMAGE_SIZE", "cannot get image size" ) ;
 
 // checktables
 define("_AM_WEBPHOTO_FMT_NOT_READABLE" , "%s (%s) is not readable." ) ;
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+// config check
+define("_AM_WEBPHOTO_DIRECTORYFOR_UPLOADS" , "Directory for Upload Files" ) ;
+define("_AM_WEBPHOTO_DIRECTORYFOR_MEDIAS" , "Directory for Media Files" ) ;
+
+// item manager
+define("_AM_WEBPHOTO_ITEM_SELECT","Select Item");
+define("_AM_WEBPHOTO_ITEM_ADD","Add Item");
+define("_AM_WEBPHOTO_ITEM_LISTING","View Item");
+define("_AM_WEBPHOTO_VOTE_DELETED","Vote data deleted.");
+define("_AM_WEBPHOTO_VOTE_STATS","Vote Statistics");
+define("_AM_WEBPHOTO_VOTE_ENTRY","Entry Votes");
+define("_AM_WEBPHOTO_VOTE_USER","Registered User Votes");
+define("_AM_WEBPHOTO_VOTE_GUEST","Anonymous User Votes");
+define("_AM_WEBPHOTO_VOTE_TOTAL","total votes");
+define("_AM_WEBPHOTO_VOTE_USERAVG","User Average Rating");
+define("_AM_WEBPHOTO_VOTE_USERVOTES","User Total Votes");
+define("_AM_WEBPHOTO_LOG_VIEW","View Log File");
+define("_AM_WEBPHOTO_LOG_EMPT","Empty Log File");
+define("_AM_WEBPHOTO_PLAYLIST_PATH","Playlist Path");
+define("_AM_WEBPHOTO_PLAYLIST_REFRESH","Refresh Playlist Cache");
+define("_AM_WEBPHOTO_STATUS_CHANGE","Status Change");
+define("_AM_WEBPHOTO_STATUS_OFFLINE","Off Line");
+define("_AM_WEBPHOTO_STATUS_ONLINE","On Line");
+define("_AM_WEBPHOTO_STATUS_AUTO","Auto Publish");
+
+// item form
+define("_AM_WEBPHOTO_TIME_NOW","Current Time");
+
+// playlist form
+define("_AM_WEBPHOTO_PLAYLIST_ADD", "Add Playlist" ) ;
+define("_AM_WEBPHOTO_PLAYLIST_TYPE", "Playlist Type" ) ;
+define("_AM_WEBPHOTO_PLAYLIST_FEED_DSC","Enter the web feed URL.");
+define("_AM_WEBPHOTO_PLAYLIST_DIR_DSC","Select the directory name");
+
+// player manager
+define("_AM_WEBPHOTO_PLAYER_MANAGER","Player Manager");
+define("_AM_WEBPHOTO_PLAYER_ADD","Add New Player");
+define("_AM_WEBPHOTO_PLAYER_MOD","Modify Player");
+define("_AM_WEBPHOTO_PLAYER_CLONE","Clone Player");
+define("_AM_WEBPHOTO_PLAYER_ADDED","New Player Added");
+define("_AM_WEBPHOTO_PLAYER_DELETED","Player deleted");
+define("_AM_WEBPHOTO_PLAYER_MODIFIED","Player Modified");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW","Preview");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW_DSC","Save your changes first!");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW_LINK","Preview Source");
+define("_AM_WEBPHOTO_PLAYER_NO_ITEM","Thers are no item to play");
+define("_AM_WEBPHOTO_PLAYER_WARNING","WARNING: Are you sure you want to delete this Player? <br />Manually edit all entries using this player before deleting it.");
+define("_AM_WEBPHOTO_PLAYER_ERR_EXIST","ERROR: The same title player you provided is already in the database!");
+define("_AM_WEBPHOTO_BUTTON_CLONE","Clone");
 
 // === define end ===
 }

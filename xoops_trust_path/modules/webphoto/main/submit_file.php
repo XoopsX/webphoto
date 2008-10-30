@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.1 2008/08/08 04:38:27 ohwada Exp $
+// $Id: submit_file.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -35,6 +35,7 @@ webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
+webphoto_include_once( 'class/webphoto/photo_redirect.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );
 webphoto_include_once( 'class/main/submit_file.php' );

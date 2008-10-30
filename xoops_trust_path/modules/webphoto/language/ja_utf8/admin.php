@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.6 2008/09/15 02:31:13 ohwada Exp $
+// $Id: admin.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -396,6 +396,59 @@ define("_AM_WEBPHOTO_ERR_GET_IMAGE_SIZE", "image size が取得できない" ) ;
 
 // checktables
 define("_AM_WEBPHOTO_FMT_NOT_READABLE" , "%s (%s) が読めません." ) ;
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+// config check
+define("_AM_WEBPHOTO_DIRECTORYFOR_UPLOADS" , "アップロード・ディレクトリ" ) ;
+define("_AM_WEBPHOTO_DIRECTORYFOR_MEDIAS" , "メディア・ディレクトリ" ) ;
+
+// item manager
+define("_AM_WEBPHOTO_ITEM_SELECT","アイテムの選択");
+define("_AM_WEBPHOTO_ITEM_ADD","アイテムの追加");
+define("_AM_WEBPHOTO_ITEM_LISTING","アイテムの閲覧");
+define("_AM_WEBPHOTO_VOTE_DELETED","投票データは削除された");
+define("_AM_WEBPHOTO_VOTE_STATS","投票の統計");
+define("_AM_WEBPHOTO_VOTE_ENTRY","全体の投票");
+define("_AM_WEBPHOTO_VOTE_USER","登録ユーザの投票");
+define("_AM_WEBPHOTO_VOTE_GUEST","ゲストの投票");
+define("_AM_WEBPHOTO_VOTE_TOTAL","投票数");
+define("_AM_WEBPHOTO_VOTE_USERAVG","ユーザの平均評価");
+define("_AM_WEBPHOTO_VOTE_USERVOTES","ユーザの全投票数");
+define("_AM_WEBPHOTO_LOG_VIEW","ログファイルの閲覧");
+define("_AM_WEBPHOTO_LOG_EMPT","ログファイルを空にする");
+define("_AM_WEBPHOTO_PLAYLIST_PATH","プレイリストのパス");
+define("_AM_WEBPHOTO_PLAYLIST_REFRESH","プレイリストのキャッシュの再生成");
+define("_AM_WEBPHOTO_STATUS_CHANGE","ステータスの変更");
+define("_AM_WEBPHOTO_STATUS_OFFLINE","オンライン");
+define("_AM_WEBPHOTO_STATUS_ONLINE","オフライン");
+define("_AM_WEBPHOTO_STATUS_AUTO","自動発行");
+
+// item form
+define("_AM_WEBPHOTO_TIME_NOW","現在日時");
+
+// playlist form
+define("_AM_WEBPHOTO_PLAYLIST_ADD", "プレイリストを追加する" ) ;
+define("_AM_WEBPHOTO_PLAYLIST_TYPE", "プレイリストのタイプ" ) ;
+define("_AM_WEBPHOTO_PLAYLIST_FEED_DSC","WEB Feed URL を入力する");
+define("_AM_WEBPHOTO_PLAYLIST_DIR_DSC","ディレクトリ名を選択する ");
+
+// player manager
+define("_AM_WEBPHOTO_PLAYER_MANAGER","プレイヤー管理");
+define("_AM_WEBPHOTO_PLAYER_ADD","プレイヤーの追加");
+define("_AM_WEBPHOTO_PLAYER_MOD","プレイヤーの変更");
+define("_AM_WEBPHOTO_PLAYER_CLONE","プレイヤーの複製");
+define("_AM_WEBPHOTO_PLAYER_ADDED","プレイヤーを追加した");
+define("_AM_WEBPHOTO_PLAYER_DELETED","プレイヤーを削除した");
+define("_AM_WEBPHOTO_PLAYER_MODIFIED","プレイヤーを変更した");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW","プレビュー");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW_DSC","最初に変更を保存してください！");
+define("_AM_WEBPHOTO_PLAYER_PREVIEW_LINK","プレビューのソース");
+define("_AM_WEBPHOTO_PLAYER_NO_ITEM","再生するアイテムがありません");
+define("_AM_WEBPHOTO_PLAYER_WARNING","[警告] プレイヤーを削除してもいいですか？ <br />削除する前に、このプイヤーを使用している全てのアイテムを手動で変更してください。");
+define("_AM_WEBPHOTO_PLAYER_ERR_EXIST","[エラー] 同じ名前のプレイヤーが存在しています！");
+define("_AM_WEBPHOTO_BUTTON_CLONE","複製");
 
 // === define end ===
 }

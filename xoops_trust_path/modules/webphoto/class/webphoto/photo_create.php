@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo_create.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -135,17 +135,31 @@ function create_thumb_from_upload( $photo_id, $tmp_name )
 //---------------------------------------------------------
 function create_from_file( $param )
 {
+	$this->_item_newid = 0 ;
+	$this->_item_row   = null ;
+
 	$title = isset($param['title']) ? $param['title'] : $this->_TITLE_DEFAULT ;
 
-// --- insert item ---
-	$ret1 = $this->create_insert_item( $param );
-	if ( !$ret1 < 0 ) {
-		return $ret1 ;
+	$ret = $this->check_item( $param );
+	if ( $ret < 0 ) {
+		return $ret;
 	}
 
-	$item_id   = $this->_item_row['item_id'] ;
-	$item_ext  = $this->_item_row['item_ext'] ;
-	$item_kind = $this->_item_row['item_kind'] ;
+	$item_row  = $this->create_item_row( $param );
+	$item_ext  = $item_row['item_ext'] ;
+	$item_kind = $item_row['item_kind'] ;
+
+// --- insert item ---
+	$item_id = $this->_item_handler->insert( $item_row, $this->_flag_force_db );
+	if ( !$item_id ) {
+		$this->print_msg_level_admin( ' DB Error, ', true );
+		$this->set_error( $this->_item_handler->get_errors() );
+		return _C_WEBPHOTO_ERR_DB ;
+	}
+
+	$item_row['item_id'] = $item_id ; 
+	$this->_item_newid   = $item_id ;
+	$this->_item_row     = $item_row ;
 
 	$param['src_ext']     = $item_ext ;
 	$param['src_kind']    = $item_kind ;
@@ -227,33 +241,6 @@ function build_msg_photo_title( $item_id, $title )
 //---------------------------------------------------------
 // create item
 //---------------------------------------------------------
-function create_insert_item( $param )
-{
-	$this->_item_newid   = 0 ;
-	$this->_item_row     = null ;
-
-	$ret = $this->check_item( $param );
-	if ( $ret < 0 ) {
-		return $ret;
-	}
-
-	$row = $this->create_item_row( $param );
-
-// --- insert item ---
-	$newid = $this->_item_handler->insert( $row, $this->_flag_force_db );
-	if ( !$newid ) {
-		$this->print_msg_level_admin( ' DB Error, ', true );
-		$this->set_error( $this->_item_handler->get_errors() );
-		return _C_WEBPHOTO_ERR_DB ;
-	}
-
-	$row['item_id']    = $newid ;
-	$this->_item_newid = $newid ;
-	$this->_item_row   = $row ;
-
-	return $newid ;
-}
-
 function check_item( $param )
 {
 	if ( !isset( $param['src_file'] ) ) {

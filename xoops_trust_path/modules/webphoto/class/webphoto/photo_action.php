@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: photo_action.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1255,31 +1255,36 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 }
 
 //---------------------------------------------------------
-// preview
+// build_redirect
 //---------------------------------------------------------
 function build_failed_msg( $ret )
 {
-	$this->_redirecct_class->build_failed_msg( $ret );
+	$this->_redirect_class->set_error( $this->get_errors() );
+	$ret = $this->_redirect_class->build_failed_msg( $ret );
+	$this->clear_errors();
+	$this->set_error( $this->_redirect_class->get_errors() );
+	return $ret;
 }
 
 function build_redirect( $param )
 {
-	$this->_redirecct_class->build_redirect( $param );
+	$this->_redirect_class->set_error( $this->get_errors() );
+	return $this->_redirect_class->build_redirect( $param );
 }
 
 function get_redirect_url()
 {
-	$this->_redirecct_class->get_redirect_url();
+	return $this->_redirect_class->get_redirect_url();
 }
 
 function get_redirect_time()
 {
-	$this->_redirecct_class->get_redirect_time();
+	return $this->_redirect_class->get_redirect_time();
 }
 
 function get_redirect_msg()
 {
-	$this->_redirecct_class->get_redirect_msg();
+	return $this->_redirect_class->get_redirect_msg();
 }
 
 //---------------------------------------------------------

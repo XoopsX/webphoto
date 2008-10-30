@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.5 2008/09/04 00:46:47 ohwada Exp $
+// $Id: modinfo.php,v 1.6 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,10 +7,28 @@
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-$constpref = strtoupper( '_MI_' . $GLOBALS['MY_DIRNAME']. '_' ) ;
+// test
+if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
+	$MY_DIRNAME = 'webphoto' ;
+
+// normal
+} elseif (  isset($GLOBALS['MY_DIRNAME']) ) {
+	$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
+
+// call by altsys/mytplsadmin.php
+} elseif ( $mydirname ) {
+	$MY_DIRNAME = $mydirname;
+
+// probably error
+} else {
+	echo "not set dirname in ". __FILE__ ." <br />\n";
+	$MY_DIRNAME = 'webphoto' ;
+}
+
+$constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
 
 // === define begin ===
-if( !defined($constpref."LANG_LOADED") ) 
+if( defined( 'FOR_XOOPS_LANG_CHECKER' ) || !defined($constpref."LANG_LOADED") ) 
 {
 
 define($constpref."LANG_LOADED" , 1 ) ;
@@ -257,6 +275,23 @@ define($constpref."CFG_COM_VIEW",     "コメント統合の表示方法");
 define($constpref."ADMENU_UPDATE", "アップデート");
 define($constpref."ADMENU_ITEM_TABLE_MANAGE", "アイテム・テーブル管理");
 define($constpref."ADMENU_FILE_TABLE_MANAGE", "ファイル・テーブル管理");
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+define( $constpref."CFG_UPLOADSPATH" , "アップロード・ファイルの保存先ディレクトリ" ) ;
+define( $constpref."CFG_UPLOADSPATH_DSC" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
+define( $constpref."CFG_MEDIASPATH" , "メディア・ファイルのディレクトリ" ) ;
+define( $constpref."CFG_MEDIASPATH_DSC" , "プレイリストの元になるメディア・ファイルのあるディレクトリ <br />XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）" ) ;
+define($constpref."CFG_LOGO_WIDTH" ,  "プレイヤー・ロゴ画像の幅と高さ" ) ;
+define($constpref."CFG_USE_CALLBACK", "コールバック・ログを使用する");
+define($constpref."CFG_USE_CALLBACK_DSC", "コールバックを使用して Flash Player のイベントを記録する");
+
+define($constpref."ADMENU_ITEM_MANAGER", "アイテム管理");
+define($constpref."ADMENU_PLAYER_MANAGER", "プレイヤー管理");
+define($constpref."ADMENU_FLASHVAR_MANAGER", "フラッシュ変数管理");
+define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "プレイヤー・テーブル管理");
+define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "フラッシュ変数・テーブル管理");
 
 }
 // === define begin ===

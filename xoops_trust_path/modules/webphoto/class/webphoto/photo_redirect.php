@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_redirect.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: photo_redirect.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,7 +11,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_photo_redirect
 //=========================================================
-class webphoto_photo_redirect extends webphoto_lib_base
+class webphoto_photo_redirect extends webphoto_base_this
 {
 	var $_redirect_time = 0 ;
 	var $_redirect_url  = null ;
@@ -23,16 +23,19 @@ class webphoto_photo_redirect extends webphoto_lib_base
 	var $_URL_SUCCESS  = null ;
 	var $_URL_PENDING  = null ;
 	var $_URL_FAILED   = null ;
-	var $_MSG_SUCCESS  = null ;
-	var $_MSG_PENDING  = null ;
-	var $_MSG_FAILED   = null ;
+	var $_MSG_SUCCESS  = 'success' ;
+	var $_MSG_PENDING  = 'pending' ;
+	var $_MSG_FAILED   = 'failed' ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_photo_redirect( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_base_this( $dirname, $trust_dirname );
+
+	$this->preload_init();
+	$this->preload_constant();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -160,6 +163,10 @@ function build_redirect( $param )
 
 	$msg_failed  = isset($param['msg_failed']) ? 
 		$param['msg_failed'] : $this->get_format_error() ;
+
+	if ( empty($msg_failed) ) {
+		$msg_failed = $this->_MSG_FAILED ;
+	}
 
 	$msg_extra = isset($param['msg_extra']) ? 
 		$param['msg_extra'] : $this->get_format_msg_array().'<br />'.$msg_success ;

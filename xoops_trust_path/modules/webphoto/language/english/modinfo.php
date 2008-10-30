@@ -1,15 +1,33 @@
 <?php
-// $Id: modinfo.php,v 1.6 2008/09/04 00:46:47 ohwada Exp $
+// $Id: modinfo.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-$constpref = strtoupper( '_MI_' . $GLOBALS['MY_DIRNAME']. '_' ) ;
+// test
+if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
+	$MY_DIRNAME = 'webphoto' ;
+
+// normal
+} elseif (  isset($GLOBALS['MY_DIRNAME']) ) {
+	$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
+
+// call by altsys/mytplsadmin.php
+} elseif ( $mydirname ) {
+	$MY_DIRNAME = $mydirname;
+
+// probably error
+} else {
+	echo "not set dirname in ". __FILE__ ." <br />\n";
+	$MY_DIRNAME = 'webphoto' ;
+}
+
+$constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
 
 // === define begin ===
-if( !defined($constpref."LANG_LOADED") ) 
+if( defined( 'FOR_XOOPS_LANG_CHECKER' ) || !defined($constpref."LANG_LOADED") ) 
 {
 
 define($constpref."LANG_LOADED" , 1 ) ;
@@ -32,12 +50,13 @@ define($constpref."BNAME_RECENT_P","Recent Photos with thumbnails");
 define($constpref."BNAME_HITS_P","Top Photos with thumbnails");
 
 // Config Items
-define($constpref."CFG_PHOTOSPATH" , "Path to photos" ) ;
-define($constpref."CFG_DESCPHOTOSPATH" , "Path from the directory installed XOOPS.<br />(The first character must be '/'. The last character should not be '/'.)<br />This directory's permission is 777 or 707 in unix." ) ;
-define($constpref."CFG_THUMBSPATH" , "Path to thumbnails" ) ;
-define($constpref."CFG_DESCTHUMBSPATH" , "Same as 'Path to photos'." ) ;
+//define($constpref."CFG_PHOTOSPATH" , "Path to photos" ) ;
+//define($constpref."CFG_DESCPHOTOSPATH" , "Path from the directory installed XOOPS.<br />(The first character must be '/'. The last character should not be '/'.)<br />This directory's permission is 777 or 707 in unix." ) ;
+//define($constpref."CFG_THUMBSPATH" , "Path to thumbnails" ) ;
+//define($constpref."CFG_DESCTHUMBSPATH" , "Same as 'Path to photos'." ) ;
 //define($constpref."CFG_USEIMAGICK" , "Use ImageMagick for treating images" ) ;
 //define($constpref."CFG_DESCIMAGICK" , "Not use ImageMagick cause Not work resize or rotate the main photo, and make thumbnails by GD.<br />You'd better use ImageMagick if you can." ) ;
+
 define($constpref."CFG_IMAGINGPIPE" , "Package treating images" ) ;
 define($constpref."CFG_DESCIMAGINGPIPE" , "Almost all PHP environments can use GD. But GD is functionally inferior than 2 other packages.<br />It is best to use ImageMagick or NetPBM if you can." ) ;
 define($constpref."CFG_FORCEGD2" , "Force GD2 conversion" ) ;
@@ -160,8 +179,7 @@ define($constpref."OPT_SORT_RATINGA","Rating (Lowest Score to Highest Score)");
 define($constpref."OPT_SORT_RATINGD","Rating (Highest Score to Lowest Score)");
 define($constpref."OPT_SORT_RANDOM","Random");
 
-define($constpref."CFG_GICONSPATH" , "Path to Google Icons" ) ;
-
+//define($constpref."CFG_GICONSPATH" , "Path to Google Icons" ) ;
 //define($constpref."CFG_TMPPATH" ,   "Path to temporary" ) ;
 
 define($constpref."CFG_MIDDLE_WIDTH" ,  "Image Width in single view" ) ;
@@ -256,6 +274,23 @@ define($constpref."CFG_COM_VIEW",     "View of Comment-integration");
 define($constpref."ADMENU_UPDATE", "Update");
 define($constpref."ADMENU_ITEM_TABLE_MANAGE", "Item Table Management");
 define($constpref."ADMENU_FILE_TABLE_MANAGE", "File Table Management");
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+define($constpref."CFG_UPLOADSPATH" , "Path to upload files" ) ;
+define($constpref."CFG_UPLOADSPATH_DSC" , "Path from the directory installed XOOPS.<br />(The first character must be '/'. The last character should not be '/'.)<br />This directory's permission is 777 or 707 in unix." ) ;
+define($constpref."CFG_MEDIASPATH" , "Path to medias" ) ;
+define($constpref."CFG_MEDIASPATH_DSC" , "The directory where there are media files which are created the playlist. <br />Path from the directory installed XOOPS.<br />(The first character must be '/'. The last character should not be '/'.)" ) ;
+define($constpref."CFG_LOGO_WIDTH" ,  "Player Logo Width and Height" ) ;
+define($constpref."CFG_USE_CALLBACK", "Use callback log");
+define($constpref."CFG_USE_CALLBACK_DSC", "loggin Flash Player events by callback.");
+
+define($constpref."ADMENU_ITEM_MANAGER", "Item Managemnet");
+define($constpref."ADMENU_PLAYER_MANAGER", "Player Managemnet");
+define($constpref."ADMENU_FLASHVAR_MANAGER", "Flashvar Managemnet");
+define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "Player Table Managemnet");
+define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "Flashvar Table Managemnet");
 
 }
 // === define begin ===

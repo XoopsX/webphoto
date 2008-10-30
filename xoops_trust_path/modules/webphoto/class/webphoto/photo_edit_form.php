@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.10 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.11 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -225,7 +225,7 @@ function print_form_common( $row, $param )
 
 	if ( $this->_is_upload_type() ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), 
-			$this->_build_ele_photo_file( $cont_row ) );
+			$this->_build_ele_photo_file_external( $cont_row ) );
 
 		if ( $has_rotate ) {
 			echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), 
@@ -280,7 +280,7 @@ function print_form_common( $row, $param )
 	}
 
 	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
-		$this->_build_ele_thumb_file( $thumb_row ) );
+		$this->_build_ele_thumb_file_external( $thumb_row ) );
 
 	if ( $this->_cfg_gmap_apikey ) {
 		echo $this->build_row_text_id( $this->get_constant('ITEM_GMAP_LATITUDE'),
@@ -479,15 +479,21 @@ function _build_ele_photo_file( $cont_row )
 		$url = $cont_row['file_url'] ;
 	}
 
-	$name2  = 'item_external_url' ;
-	$value2 = $this->get_row_by_key( $name2 );
-
 	$ele  = $this->build_form_file( $this->_PHOTO_FIELD_NAME );
 	$ele .= "<br />\n";
 
 	if ( $url ) {
 		$ele .= $this->_build_link( $url );
-	} else {
+	}
+
+	return $ele;
+}
+
+function _build_ele_photo_file_external( $cont_row )
+{
+	$ele = $this->_build_ele_photo_file( $cont_row );
+
+	if ( !isset($cont_row['file_url']) || empty($cont_row['file_url']) ) {
 		$ele .= "<br />\n";
 		$ele .= $this->get_constant('OR')." ";
 		$ele .= $this->get_constant('ITEM_EXTERNAL_URL')."<br />\n";
@@ -499,7 +505,7 @@ function _build_ele_photo_file( $cont_row )
 	return $ele;
 }
 
-function _build_ele_thumb_file( $thumb_row )
+function _build_ele_thumb_file_external( $thumb_row )
 {
 	$url = '' ;
 	if ( isset($thumb_row['file_url']) ) {

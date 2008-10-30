@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -36,7 +36,7 @@ function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_action( $dirname , $trust_dirname );
 
-	$this->_THIS_CLOSE_URL  = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
+	$this->_THIS_CLOSE_URL = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -86,7 +86,7 @@ function _submit()
 	$is_failed = false;
 
 // exit if error
-	$this->check_token_and_redirect( $url, $this->_TIME_FAILED );
+	$this->check_token_and_redirect( $this->_THIS_CLOSE_URL, $this->_TIME_FAILED );
 
 	$this->set_flag_fetch_allow_all( false );
 	$this->set_flag_fetch_thumb( false );

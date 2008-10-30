@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: item_form.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -251,7 +251,7 @@ function print_form_admin( $row, $param )
 
 	if ( $this->_is_admin_upload_type() ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_PHOTO_SELECT'), 
-			$this->_build_ele_photo_file( $cont_row ) );
+			$this->_build_ele_photo_file_external( $cont_row ) );
 
 		if ( $has_rotate ) {
 			echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), 
@@ -260,7 +260,7 @@ function print_form_admin( $row, $param )
 	}
 
 	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
-		$this->_build_ele_thumb_file( $thumb_row ) );
+		$this->_build_ele_thumb_file_external( $thumb_row ) );
 
 	if ( $is_edit && $this->_is_valid() ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 

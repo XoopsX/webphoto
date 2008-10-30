@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.11 2008/09/15 02:31:13 ohwada Exp $
+// $Id: main.php,v 1.12 2008/10/30 13:02:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -924,6 +924,276 @@ define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "あなたが送信したメール�
 define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
 メールを送信すると、 %s 秒後に自動的に登録されます。<br />
 登録されない場合は、<a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />' );
+
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TIME_PUBLISH" , "発行日時" ) ;
+define("_WEBPHOTO_ITEM_TIME_EXPIRE"   , "終了日時" ) ;
+define("_WEBPHOTO_ITEM_PLAYER_ID" ,    "プレイヤー番号" ) ;
+define("_WEBPHOTO_ITEM_FLASHVAR_ID" ,  "フラッシュ変数番号" ) ;
+define("_WEBPHOTO_ITEM_DURATION" , "ビデオ再生時間" ) ;
+define("_WEBPHOTO_ITEM_DISPLAYTYPE", "表示形式");
+define("_WEBPHOTO_ITEM_ONCLICK","サムネイルをクリックしたときの動作");
+define("_WEBPHOTO_ITEM_SITEURL", "サイトURL");
+define("_WEBPHOTO_ITEM_ARTIST", "アーティスト");
+define("_WEBPHOTO_ITEM_ALBUM", "アルバム");
+define("_WEBPHOTO_ITEM_LABEL", "レーベル");
+define("_WEBPHOTO_ITEM_VIEWS", "閲覧数");
+define("_WEBPHOTO_ITEM_PERM_DOWN" , "ダウンロード権限" ) ;
+define("_WEBPHOTO_ITEM_EMBED_TYPE" ,  "プラグインのタイプ" ) ;
+define("_WEBPHOTO_ITEM_EMBED_SRC" ,   "プラグインのURLパラメータ" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_URL" , "外部リンクのURL" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_THUMB" , "外部リンクのサムネイルURL" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE",  "プレイリストのタイプ" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_FEED",  "プレイリストのFeed URL" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_DIR",   "プレイリストのディレクトリ" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_CACHE", "プレイリストのキャッシュ名" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME",  "プレイリストのキャッシュ時間" ) ;
+define("_WEBPHOTO_ITEM_CHAIN", "チェーン");
+define("_WEBPHOTO_ITEM_SHOWINFO", "表示項目");
+
+// player table
+define("_WEBPHOTO_PLAYER_TABLE","プレイヤー・テーブル");
+define("_WEBPHOTO_PLAYER_ID","プレイヤー ID");
+define("_WEBPHOTO_PLAYER_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_PLAYER_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_PLAYER_TITLE","プレイヤー名称 ");
+define("_WEBPHOTO_PLAYER_STYLE","スタイル・オプション");
+define("_WEBPHOTO_PLAYER_WIDTH","プレイヤー幅");
+define("_WEBPHOTO_PLAYER_HEIGHT","プレイヤー高さ");
+define("_WEBPHOTO_PLAYER_DISPLAYWIDTH","スクリーン幅");
+define("_WEBPHOTO_PLAYER_DISPLAYHEIGHT","スクリーン高さ");
+define("_WEBPHOTO_PLAYER_SCREENCOLOR","プレイヤー背景色");
+define("_WEBPHOTO_PLAYER_BACKCOLOR","背景色");
+define("_WEBPHOTO_PLAYER_FRONTCOLOR","テキスト色");
+define("_WEBPHOTO_PLAYER_LIGHTCOLOR","ハイライト色");
+
+// FlashVar table
+define("_WEBPHOTO_FLASHVAR_TABLE","Flash変数テーブル");
+define("_WEBPHOTO_FLASHVAR_ID","Flash変数 ID");
+define("_WEBPHOTO_FLASHVAR_TIME_CREATE" , "作成日時" ) ;
+define("_WEBPHOTO_FLASHVAR_TIME_UPDATE" , "更新日時" ) ;
+define("_WEBPHOTO_FLASHVAR_ITEM_ID","アイテム ID");
+define("_WEBPHOTO_FLASHVAR_WIDTH","プレイヤー幅");
+define("_WEBPHOTO_FLASHVAR_HEIGHT","プレイヤー高さ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH","スクリーン幅");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT","スクリーン高さ");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW","画像の表示");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR","検索バー");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ","イコライザー表示");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS","プレイボタン表示");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION","コントロール・バー表示");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP","ストップ表示");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS","経過時間表示");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD","ダウンロード表示");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN","フルスクリーン表示");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL","スクロールバー");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST","サムネイル");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART","オートスタート");
+define("_WEBPHOTO_FLASHVAR_REPEAT","繰り返し");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE","シャフル");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING","動画スムーズ");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS","JavaScript 有効");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY","ディスプレイからのリンク");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE","リンク・タイプ");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH","バッファ・サイズ");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME","ローテイト時間");
+define("_WEBPHOTO_FLASHVAR_VOLUME","音量");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET","リンク・ターゲット");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH","画像/動画の伸張");
+define("_WEBPHOTO_FLASHVAR_TRANSITION","画像の切替え効果");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR","スクリーン背景色");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR","背景色");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR","テキスト色");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR","ハイライト色");
+define("_WEBPHOTO_FLASHVAR_TYPE","拡張子");
+define("_WEBPHOTO_FLASHVAR_FILE","メディア・ファイル");
+define("_WEBPHOTO_FLASHVAR_IMAGE","プレビュー画像");
+define("_WEBPHOTO_FLASHVAR_LOGO","ログ画像");
+define("_WEBPHOTO_FLASHVAR_LINK","リンク");
+define("_WEBPHOTO_FLASHVAR_AUDIO","オーディオ");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS","見出し URL");
+define("_WEBPHOTO_FLASHVAR_FALLBACK","フォールバック URL");
+define("_WEBPHOTO_FLASHVAR_CALLBACK","コールバック URL");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID","JavaScript ID");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS","推奨");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT","ストリーミング URL");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK","検索リンク");
+
+// log file
+define("_WEBPHOTO_LOGFILE_LINE","行");
+define("_WEBPHOTO_LOGFILE_DATE","日時");
+define("_WEBPHOTO_LOGFILE_REFERER","Referer");
+define("_WEBPHOTO_LOGFILE_IP","IP アドレス");
+define("_WEBPHOTO_LOGFILE_STATE","状態");
+define("_WEBPHOTO_LOGFILE_ID","ID");
+define("_WEBPHOTO_LOGFILE_TITLE","タイトル");
+define("_WEBPHOTO_LOGFILE_FILE","ファイル");
+define("_WEBPHOTO_LOGFILE_DURATION","再生時間");
+
+// item option
+define("_WEBPHOTO_ITEM_KIND_NONE","メディアなし");
+define("_WEBPHOTO_ITEM_KIND_GENERAL","一般");
+define("_WEBPHOTO_ITEM_KIND_IMAGE","画像 (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_KIND_VIDEO","動画 (wmv,mov,flv...");
+define("_WEBPHOTO_ITEM_KIND_AUDIO","オーディオ (mp3...)");
+define("_WEBPHOTO_ITEM_KIND_EMBED","プラグイン");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL","外部リンク 一般");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE","外部リンク 画像");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED","プレイリスト Web Feed");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR", "プレイリスト メディア・ディレクトリ");
+
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_GENERAL","一般");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGE","画像 (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_EMBED","プラグイン");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_SWFOBJECT","FlashPlayer (swf)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_MEDIAPLAYER","MediaPlayer (jpg,gif,png,flv,mp3)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGEROTATOR","ImageRotator (jpg,gif,png)");
+
+define("_WEBPHOTO_ITEM_ONCLICK_PAGE","詳細ページ");
+define("_WEBPHOTO_ITEM_ONCLICK_DIRECT","ダイレクトリンク");
+define("_WEBPHOTO_ITEM_ONCLICK_POPUP","画像ポップアップ");
+
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_DSC","What is the media file type?");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_NONE","なし");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_IMAGE","画像 (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_AUDIO","オーディオ (mp3)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_VIDEO","動画 (flv)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_FLASH","フラッシュ (swf)");
+
+define("_WEBPHOTO_ITEM_SHOWINFO_DESCRIPTION","説明");
+define("_WEBPHOTO_ITEM_SHOWINFO_LOGOIMAGE","サムネイル");
+define("_WEBPHOTO_ITEM_SHOWINFO_CREDITS","クレジット");
+define("_WEBPHOTO_ITEM_SHOWINFO_STATISTICS","統計");
+define("_WEBPHOTO_ITEM_SHOWINFO_SUBMITTER","投稿者");
+define("_WEBPHOTO_ITEM_SHOWINFO_POPUP","ポップアップ");
+define("_WEBPHOTO_ITEM_SHOWINFO_TAGS","タグ");
+define("_WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD","ダウンロード");
+define("_WEBPHOTO_ITEM_SHOWINFO_WEBSITE","WEB サイト");
+define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","WEB Feed");
+
+define("_WEBPHOTO_ITEM_STATUS_WAITING","承認待ち");
+define("_WEBPHOTO_ITEM_STATUS_APPROVED","承認済み");
+define("_WEBPHOTO_ITEM_STATUS_UPDATED","更新");
+define("_WEBPHOTO_ITEM_STATUS_OFFLINE","オフライン");
+define("_WEBPHOTO_ITEM_STATUS_EXPIRED","期限切れ");
+
+// player option
+define("_WEBPHOTO_PLAYER_STYLE_MONO","モノクロ");
+define("_WEBPHOTO_PLAYER_STYLE_THEME","テーマからの色");
+define("_WEBPHOTO_PLAYER_STYLE_PLAYER","カスタム・プレイヤー");
+define("_WEBPHOTO_PLAYER_STYLE_PAGE","カスタム・プレイヤー/ページ");
+
+// flashvar desc
+define("_WEBPHOTO_FLASHVAR_ID_DSC","[Basics] <br />mediaplayer のとき、RTMP ストリーム ID を設定する<br />ID は 統計コールバックに送信される<br />プレイリストのときは、エントリ毎に設定できる");
+define("_WEBPHOTO_FLASHVAR_HEIGHT_DSC","[Basics] ");
+define("_WEBPHOTO_FLASHVAR_WIDTH_DSC","[Basics] ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT_DSC","[Playlist] [mediaplayer] ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH_DSC","[Playlist] [mediaplayer] <br />プレイリストを下に表示:<br /> スクリーン幅 = プレイヤー幅<br />プレイリストを横に表示<br />スクリーン幅 &gt; プレイヤー幅 ");
+define("_WEBPHOTO_FLASHVAR_DISPLAY_DEFAULT","0 のときは、プレイヤーの設定が使用される");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR_DSC","[Colors] <br />imagerotator のときは <br />異なる大きさの画像が混在しても、あなたのHTMLページに合うように変更する");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR_DSC","[Colors] <br />コントロールの背景色");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR_DSC","[Colors] <br />コントロールのテキストとボタンの色");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR_DSC","[Colors] <br />コントロールのマウスオーバしたときの色");
+define("_WEBPHOTO_FLASHVAR_COLOR_DEFAULT","空のときは、プレイヤーの設定が使用される");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW_DSC","[Basics] <br />プレビュー画像を表示する");
+define("_WEBPHOTO_FLASHVAR_IMAGE_DSC","[Basics] <br />もし音楽や動画を再生するならば、プレビュー画像の URL を設定する <br />プレイリストのときは、エントリ毎に設定できる");
+define("_WEBPHOTO_FLASHVAR_FILE_DSC","[Basics] <br />ファイルかプレイリストの URL を設定する<br />imagerorate のときは、プレイリストのみ設定できる");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR_DSC","[Basics] <br />スクリーンの下に検索バーを表示する <br />「検索リンク」により検索先を設定できる");
+define("_WEBPHOTO_FLASHVAR_LOGO_DSC","[Display] <br />スクリーンの右上に表示するロゴ画像を設定する<br />透過 PNG が最適");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_DSC","[Display] <br />画像/動画をスクリーンの大きさに拡張する方法を設定する<br />false (デフォルト) = スクリーンに一致する<br />true = 均一に拡張する<br />fit = 不均一に拡張する<br />none = 元の大きさを保持する");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ_DSC","[Display] <br />スクリーンの下に擬似的なイコライザーを表示する <br />MP3 に最適 ");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS_DSC","[Display] <br />スクリーンの中央にプレイボタンを表示する");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_DSC","[Display] [imagerotator] <br />画像の切替え効果を設定する ");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION_DSC","[Controlbar] <br />コントロール・バーを表示する");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP_DSC","[Controlbar] [mediaplayer] <br />コントロール・バーにストップ・ボタンを表示する");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS_DSC","[Controlbar] [mediaplayer] <br />コントロール・バーに経過時間/残り時間を表示する ");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD_DSC","[Controlbar] [mediaplayer] <br />コントロール・バーにリンク・ボタンを表示する<br />「リンク」によりリンク先を設定する");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN_DSC","[Controlbar] <br />フルスクリーン・ボタンを表示する");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL_DSC","[Playlist] [mediaplayer] <br />プレイリストのスクロール・バーを表示する代わりに、マウスオーバーしたときに自動的にスクロールする");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST_DSC","[Playlist] [mediaplayer] <br />スクリーンにサムネイル画像を表示する");
+define("_WEBPHOTO_FLASHVAR_AUDIO_DSC","[Playback] <br />同期した MP3 を割り当てる<br />mediaplayer の音声説明またはディレクターのコメント、あるいは imagerotator の背景音楽として、使用する<br />mediaplayer とプレイリストのときは、エントリ毎にオーディオを設定できる ");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","[Playback] <br />mediaplayer にて true のときは、ページをロードしたときに自動的にスタートする<br />imagerotator にて false のときは 自動的な画像切り替えを行わない");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","[Playback]  [mediaplayer] <br />再生する前に、動画をバッファする秒数を設定する<br />高速な通信環境や短い動画のときは小さい値を設定する<br />低速な通信環境のときは大きい値を設定する ");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","[Playback] [mediaplayer] <br />「見出し」は TimedText 形式であること <br />プレイリストのときは、エントリ毎に見出しを設定できる ");
+define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","[Playback] [mediaplayer] <br />もし MP4 を再生するならば、フォールバックする FLV の URL を設定すること <br />古いバージョンのフラッシュ・プレイヤーでは自動的に選択される ");
+define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />true のとき、全てのファイルを繰返し再生する <br />プレイリストのときは 一度だけ再生する ");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","[Playback] <br />画像を切替るときの秒数を設定する ");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","[Playback] <br />「はい」のとき、プレイリストをランダムに再生する ");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","[Playback] [mediaplayer] <br />「いいえ」のとき、画像のスムージングを行わない <br />画質は落ちるが、性能は向上する <br />HD ファイルや遅い PC に最適 ");
+define("_WEBPHOTO_FLASHVAR_VOLUME_DSC","[Playback] <br />音楽や動画の音量を設定する");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS_DSC","[External] <br />「はい」のとき、JavaScript による対話制御を有効にする <br />オンラインのとき動作する<br />JavaScript による対話制御には、コントロールバーや、メディアファイルのローデングの同期や、トラック情報の返信などを含む ");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID_DSC","[External] <br />もしも、複数の mediaplayers/imagerotators と JavaScript による対話制御を行うときは、この項目にそれぞれに対するユニークな ID を設定する ");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_DSC","[External] <br />スクリーンやロゴやリンク・ボタンに割当されるリンクの種別を設定する<br /> 「なし」のときは、何もしない <br />それ以外は、そのリンクを割当てる");
+//define("_WEBPHOTO_FLASHVAR_LINK_DSC","[External] <br />外部 URL やダウンロード可能なファイルを設定する<br />このリンクはスクリーンやロゴやリンク・ボタンに割当される<br />プレイリストのときは、XML 形式にてエントリ毎に設定できる");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY_DSC","[External] <br />「はい」のときは、スクリーンをクリックすると、「リンク」に設定された WEB ページのジャンプする ");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET_DSC","[External] <br />リンクしたウィンドウ画面の種類");
+define("_WEBPHOTO_FLASHVAR_CALLBACK_DSC","[External] <br />Set this to a serverside script that can process statistics. <br />The player will send it a POST every time an item starts/stops. <br />To send callbacks automatically to Google Analytics, set this to urchin or analytics. ");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS_DSC","[External] [mediaplayer] <br />推奨する項目を XML 形式で設定する <br />動画が停止しているときは、Youtube と同じようにサムネイルが表示される ");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK_DSC","[External] [mediaplayer] <br />検索バーの検索先を設定する <br />デフォルトは「search.longtail.tv」である <br />検索バーを隠すには「検索バー」を使用する ");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT_DSC","[External] [mediaplayer] <br />ストリーミング配信に使用するスクリプトの URL を設定する <br />パラメータ・ファイルはスクリプトへ送信される <br />もし LigHTTPD ストリーミング を使用するならば、'lighttpd' と設定する . ");
+define("_WEBPHOTO_FLASHVAR_TYPE_DSC","[External] [mediaplayer] <br />mediaplayer は「file」の最後の３文字を拡張子を見なしている <br />データベースの ID や mod_rewrite などでうまく動作しない場合には、正しい拡張子を設定すること <br />もしも、確かでないときは、プレイリストがロードされたと見なす。");
+
+// flashvar option
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_NONE","なし");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE","Webサイト URL");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE","詳細ページ");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE","メディア・ファイル");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_SELF","同じ画面 self ");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_BLANK","新しい画面 blank ");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FALSE","False");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FIT","Fit");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_TRUE","True");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_NONE","None");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_OFF","なし");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FADE","フェード Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_SLOWFADE","遅いフェード Slow Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BGFADE","背景フェード Background Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_CIRCLES","丸 Circles");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BLOCKS","四角 Blokcs");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BUBBLES","泡 Bubbles");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FLASH","光 Flash");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FLUIDS","流体 Fluids");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_LINES","線 Lines");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_RANDOM","ランダム Random");
+
+// edit form
+define("_WEBPHOTO_CAP_DETAIL","詳細設定");
+define("_WEBPHOTO_CAP_DETAIL_ONOFF","表示/非表示");
+define("_WEBPHOTO_PLAYER","プレイヤー");
+define("_WEBPHOTO_EMBED_ADD", "プラグインを追加する" ) ;
+define("_WEBPHOTO_EMBED_THUMB","このプラグインはサムネイルを提供する");
+
+// sort
+define("_WEBPHOTO_SORT_VOTESA","投票数 (低→高)");
+define("_WEBPHOTO_SORT_VOTESD","投票数 (高→低)");
+define("_WEBPHOTO_SORT_VIEWSA","閲覧数 (低→高)");
+define("_WEBPHOTO_SORT_VIEWSD","閲覧数 (高→低)");
+
+// flashvar form
+define("_WEBPHOTO_FLASHVARS_FORM","Flash変数の編集");
+define("_WEBPHOTO_FLASHVARS_LIST","Flash変数の一覧(英語)");
+define("_WEBPHOTO_FLASHVARS_LOGO_SELECT","ロゴ画像の選択");
+define("_WEBPHOTO_FLASHVARS_LOGO_UPLOAD","ロゴ画像のアップロード");
+define("_WEBPHOTO_FLASHVARS_LOGO_DSC","[Display] <br />ロゴ画像のディレクトリ ");
+define("_WEBPHOTO_BUTTON_COLOR_PICKUP","色選択");
+define("_WEBPHOTO_BUTTON_RESTORE","デフォルト値に戻す");
+
+// Playlist Cache 
+define("_WEBPHOTO_PLAYLIST_STATUS_REPORT","状態報告");
+define("_WEBPHOTO_PLAYLIST_STATUS_FETCHED","WEB Feed は取得された");
+define("_WEBPHOTO_PLAYLIST_STATUS_CREATED","プレイリストを生成した");
+define("_WEBPHOTO_PLAYLIST_ERR_CACHE","[ERROR] キャッシュ・ファイルの生成に失敗した");
+define("_WEBPHOTO_PLAYLIST_ERR_FETCH","WEB Feed の取得に失敗した<br />WEB Feed を確認して、キャッシュの再生成をしてください");
+define("_WEBPHOTO_PLAYLIST_ERR_NODIR","メディア・ディレクトリは存在しない");
+define("_WEBPHOTO_PLAYLIST_ERR_EMPTYDIR","メディア・ディレクトリは空です");
+define("_WEBPHOTO_PLAYLIST_ERR_WRITE","キャッシュ・ファイルに書込みできない");
+
+define("_WEBPHOTO_USER",  "ユーザ" ) ;
+define("_WEBPHOTO_OR",  "あるいは" ) ;
 
 // === define end ===
 }
