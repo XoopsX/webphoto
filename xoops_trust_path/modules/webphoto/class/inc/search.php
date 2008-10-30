@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
+// $Id: search.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// BUG : implode() : Bad arguments
 // 2008-08-24 K.OHWADA
 // table_photo -> table_item
 // 2008-07-01 K.OHWADA
@@ -68,7 +70,11 @@ function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
 		return array(); 
 	}
 
-	$keywords = urlencode( implode(' ', $query_array) );
+// no query_array called by userinfo
+	$keywords = null ;
+	if ( is_array($query_array) ) {
+		$keywords = urlencode( implode(' ', $query_array) );
+	}
 
 	$i   = 0;
 	$ret = array();

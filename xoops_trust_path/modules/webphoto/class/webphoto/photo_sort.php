@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_sort.php,v 1.2 2008/08/25 19:28:06 ohwada Exp $
+// $Id: photo_sort.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// photo_sort_array_admin()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -92,7 +94,7 @@ function mode_to_sort( $mode )
 //---------------------------------------------------------
 // photo sort
 //---------------------------------------------------------
-function photo_sort_array_default()
+function photo_sort_array_basic()
 {
 	$arr = array(
 		'ida'     => array( 'item_id ASC' ,           $this->get_constant('SORT_IDA') ) ,
@@ -105,8 +107,28 @@ function photo_sort_array_default()
 		'hitsd'   => array( 'item_hits DESC' ,        $this->get_constant('SORT_HITSD') ) ,
 		'ratinga' => array( 'item_rating ASC' ,       $this->get_constant('SORT_RATINGA') ) ,
 		'ratingd' => array( 'item_rating DESC' ,      $this->get_constant('SORT_RATINGD') ) ,
-		'random'  => array( $this->_ORDERBY_RANDOM ,  $this->get_constant('SORT_RANDOM') ) ,
 	) ;
+	return $arr;
+}
+
+function photo_sort_array_default()
+{
+	$arr = $this->photo_sort_array_basic() ;
+
+	$arr['random'] = array( $this->_ORDERBY_RANDOM , $this->get_constant('SORT_RANDOM') ) ;
+
+	return $arr;
+}
+
+function photo_sort_array_admin()
+{
+	$arr = $this->photo_sort_array_basic() ;
+
+	$arr['votesa']   = array( 'item_votes ASC' ,   $this->get_constant('SORT_VOTESA') ) ;
+	$arr['votesd']   = array( 'item_votes DESC' ,  $this->get_constant('SORT_VOTESD') ) ;
+	$arr['viewsa']   = array( 'item_views ASC' ,   $this->get_constant('SORT_VIEWSA') ) ;
+	$arr['viewsd']   = array( 'item_views DESC' ,  $this->get_constant('SORT_VIEWSD') ) ;
+
 	return $arr;
 }
 
@@ -127,9 +149,16 @@ function sort_to_orderby( $sort )
 	return $orderby;
 }
 
+function sort_to_lang( $sort )
+{
+	return $this->get_photo_sort( $sort, 1 );
+}
+
 function get_lang_sortby( $name )
 {
-	return sprintf( $this->get_constant('SORT_S_CURSORTEDBY') , $this->get_photo_sort( $name, 1 ) );
+	return sprintf( 
+		$this->get_constant('SORT_S_CURSORTEDBY') , 
+		$this->sort_to_lang( $name ) );
 }
 
 function get_photo_sort_name( $name )

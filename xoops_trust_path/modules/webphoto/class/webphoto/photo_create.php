@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.3 2008/08/26 16:36:48 ohwada Exp $
+// $Id: photo_create.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// video_thumb()
+// get_displaytype()
+// update_video_thumb_by_item_row()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // supported exif gps
@@ -87,6 +91,35 @@ function &getInstance( $dirname , $trust_dirname )
 }
 
 //---------------------------------------------------------
+// video thumb
+//---------------------------------------------------------
+function video_thumb( $item_row , $name=null )
+{
+	if ( empty($name) ) {
+		$name = $this->_post_class->get_post_text('name') ;
+	}
+
+	$ret = $this->video_thumb_exec( $item_row, $name );
+	return $this->build_failed_msg( $ret );
+}
+
+function video_thumb_exec( $item_row, $name )
+{
+	$this->clear_msg_array();
+
+	$ret = $this->update_video_thumb_by_item_row( $item_row, $name ) ;
+	if ( $ret < 0 ) {
+		return $ret;
+	}
+
+	if ( $this->get_video_thumb_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
+	}
+
+	return 0;
+}
+
+//---------------------------------------------------------
 // create thumb from upload ( original size )
 //---------------------------------------------------------
 function create_thumb_from_upload( $photo_id, $tmp_name )
@@ -125,37 +158,35 @@ function create_from_file( $param )
 	}
 
 // --- insert cont ---
-	$ret2 = $this->create_insert_cont( $item_id, $param );
-	if ( $ret2 < 0 ) {
-		return $ret2 ;
-	}
-
-	$cont_id    = $ret2;
-	$cont_param = $this->_cont_param ;
-	$cont_path  = $cont_param['path'] ;
-
-// --- insert thumb middle ---
 	$param_thumb_middle                = $param ;
 	$param_thumb_middle['flag_thumb']  = true ;
 	$param_thumb_middle['flag_middle'] = true ;
 	$param_thumb_middle['flag_video']  = true ;
 
-	list( $thumb_id, $middle_id ) 
-		= $this->create_insert_thumb_middle( $item_id, $param_thumb_middle );
+	$cont_param   = null ;
+	$docomo_param = null ;
 
-// --- insert flash ---
-	$flash_id = $this->create_insert_video_flash( $item_id, $param );
+	$ret = $this->create_cont_param( $item_id, $param );
+	if ( $ret == 0 ) {
+		$cont_param   = $this->get_cont_param();
+		$docomo_param = $this->create_video_docomo_param( $item_id, $cont_param ) ;
+	}
 
-// --- docomo flash ---
-	$docomo_id = $this->create_insert_video_docomo( $item_id, $cont_param );
+	list( $thumb_param, $middle_param ) =
+		$this->create_thumb_middle_param( $item_id, $param_thumb_middle );
 
-// update date
-	$update_row                   = $this->_item_row ;
-	$update_row['item_file_id_1'] = $cont_id;
-	$update_row['item_file_id_2'] = $thumb_id;
-	$update_row['item_file_id_3'] = $middle_id;
-	$update_row['item_file_id_4'] = $flash_id;
-	$update_row['item_file_id_5'] = $docomo_id;
+	$flash_param  = $this->create_video_flash_param( $item_id, $param ) ;
+
+	$file_params = array(
+		'cont'   => $cont_param ,
+		'thumb'  => $thumb_param ,
+		'middle' => $middle_param ,
+		'flash'  => $flash_param ,
+		'docomo' => $docomo_param ,
+	);
+
+	$file_ids   = $this->insert_files_from_params( $item_id,  $file_params );
+	$update_row = $this->build_update_item_row(    $item_row, $file_ids );
 
 // --- update item ---
 	$ret2 = $this->_item_handler->update( $update_row, $this->_flag_force_db );
@@ -304,6 +335,7 @@ function get_item_param_extention( $src_file, $src_ext=null )
 			$longitude = $exif_info['longitude'] ;
 			$zoom      = $exif_info['gmap_zoom'] ;
 			$exif      = $exif_info['all_data'] ;
+
 			if ( $datetime ) {
 				$param['item_datetime'] = $datetime ;
 			}
@@ -324,12 +356,12 @@ function get_item_param_extention( $src_file, $src_ext=null )
 		}
 	}
 
-// get duration if video
-	if ( $this->is_video_kind( $src_kind ) ) {
+// get duration if video audio
+	if ( $this->is_video_audio_kind( $src_kind ) ) {
 		$video_param = $this->get_duration_size( $src_file );
 		if ( is_array($video_param) ) {
 			$this->_msg_item = ' get video info, ' ;
-			$this->_video_param   = $video_param ;
+			$this->_video_param     = $video_param ;
 			$param['item_duration'] = $video_param['duration'] ;
 
 		} else {
@@ -337,7 +369,38 @@ function get_item_param_extention( $src_file, $src_ext=null )
 		}
 	}
 
+	$param['item_displaytype'] = $this->get_displaytype( $src_ext ) ;
+	$param['item_onclick']     = $this->get_onclick( $src_ext ) ;
+
 	return $param;
+}
+
+function get_displaytype( $src_ext )
+{
+	$displaytype = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
+
+	if ( $this->is_image_ext( $src_ext ) ) {
+		$displaytype = _C_WEBPHOTO_DISPLAYTYPE_IMAGE ;
+
+	} elseif ( $this->is_swfobject_ext( $src_ext ) ) {
+		$displaytype = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+
+	} elseif ( $this->is_mediaplayer_ext( $src_ext ) ) {
+		$displaytype = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+	}
+
+	return $displaytype ;
+}
+
+function get_onclick( $src_ext )
+{
+	$onclick = _C_WEBPHOTO_ONCLICK_PAGE ;
+
+	if ( $this->is_image_ext( $src_ext ) ) {
+		$onclick = _C_WEBPHOTO_ONCLICK_POPUP ;
+	}
+
+	return $onclick ;
 }
 
 function get_exif_info( $file )
@@ -366,6 +429,56 @@ function get_duration_size( $file )
 function get_video_param()
 {
 	return $this->_video_param ;
+}
+
+//---------------------------------------------------------
+// updete item 
+//---------------------------------------------------------
+function build_update_item_row( $item_row, $file_param, $playlist_cache=null )
+{
+	$update_row = $item_row;
+
+	if ( isset($file_param['cont_id']) ) {
+		$cont_id = $file_param['cont_id'] ;
+		if ( $cont_id > 0 ) {
+			$update_row['item_file_id_1'] = $cont_id;
+		}
+	}
+
+	if ( isset($file_param['thumb_id']) ) {
+		$thumb_id = $file_param['thumb_id'] ;
+		if ( $thumb_id > 0 ) {
+			$update_row['item_file_id_2'] = $thumb_id;
+		}
+	}
+
+	if ( isset($file_param['middle_id']) ) {
+		$middle_id = $file_param['middle_id'] ;
+		if ( $middle_id > 0 ) {
+			$update_row['item_file_id_3'] = $middle_id;
+		}
+	}
+
+	if ( isset($file_param['flash_id']) ) {
+		$flash_id = $file_param['flash_id'] ;
+		if ( $flash_id > 0 ) {
+			$update_row['item_file_id_4']   = $flash_id;
+			$update_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+		}
+	}
+
+	if ( isset($file_param['docomo_id']) ) {
+		$docomo_id = $file_param['docomo_id'] ;
+		if ( $docomo_id > 0 ) {
+			$update_row['item_file_id_5'] = $docomo_id;
+		}
+	}
+
+	if ( $playlist_cache ) {
+		$update_row['item_playlist_cache'] = $playlist_cache ;
+	}
+
+	return $update_row ;
 }
 
 //---------------------------------------------------------
@@ -737,21 +850,31 @@ function create_video_docomo_param( $item_id, $cont_param )
 //---------------------------------------------------------
 // update video thumb
 //---------------------------------------------------------
-function update_video_thumb( $item_id, $name )
+function update_video_thumb_by_item_id( $item_id, $name )
 {
+	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	if ( !is_array($item_row) ) {
+		return _C_WEBPHOTO_ERR_NO_RECORD;
+	}
+
+	return $this->update_video_thumb_by_item_row( $item_row, $name ) ;
+}
+
+function update_video_thumb_by_item_row( $item_row, $name )
+{
+	if ( !is_array($item_row) ) {
+		return 0 ;	// no action
+	}
+
+	$item_id = $item_row['item_id'] ;
+	$cat_id  = $item_row['item_cat_id'] ;
+
 	$this->_item_row    = null;
 	$this->_item_cat_id = 0 ;
 	$this->_flag_video_thumb_created = false ;
 	$this->_flag_video_thumb_failed  = false ;
 
 	$src_file = $this->_TMP_DIR .'/'.  $name;
-
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
-	if ( !is_array($item_row) ) {
-		return _C_WEBPHOTO_ERR_NO_RECORD;
-	}
-
-	$cat_id = $item_row['item_cat_id'] ;
 
 // --- update thumb ---
 	$thumb_id = $this->create_update_video_thumb_common(
@@ -885,8 +1008,64 @@ function get_item_cat_id()
 }
 
 //---------------------------------------------------------
-// insert update file
+// file handler
 //---------------------------------------------------------
+function insert_files_from_params( $item_id, $params )
+{
+	if ( !is_array($params) ) {
+		return false;
+	}
+
+	$cont_id   = 0 ;
+	$thumb_id  = 0 ;
+	$middle_id = 0 ;
+	$flash_id  = 0 ;
+	$docomo_id = 0 ;
+
+	if ( isset($params['cont']) ) {
+		$cont_param   = $params['cont'] ;
+		if ( is_array($cont_param) ) {
+			$cont_id = $this->insert_file( $item_id, $cont_param );
+		}
+	}
+
+	if ( isset($params['thumb']) ) {
+		$thumb_param  = $params['thumb'] ;
+		if ( is_array($thumb_param) ) {
+			$thumb_id = $this->insert_file( $item_id, $thumb_param );
+		}
+	}
+
+	if ( isset($params['middle']) ) {
+		$middle_param = $params['middle'] ;
+		if ( is_array($middle_param) ) {
+			$middle_id = $this->insert_file( $item_id, $middle_param );
+		}
+	}
+
+	if ( isset($params['flash']) ) {
+		$flash_param  = $params['flash'] ;
+		if ( is_array($flash_param) ) {
+			$flash_id = $this->insert_file( $item_id, $flash_param );
+		}
+	}
+
+	if ( isset($params['docomo']) ) {
+		if ( is_array($docomo_param) ) {
+			$docomo_id = $this->insert_file( $item_id, $docomo_param );
+		}
+	}
+
+	$arr = array(
+		'cont_id'   => $cont_id ,
+		'thumb_id'  => $thumb_id ,
+		'middle_id' => $middle_id ,
+		'flash_id'  => $flash_id ,
+		'docomo_id' => $docomo_id ,
+	);
+	return $arr ;
+}
+
 function insert_file( $item_id, $param )
 {
 	$duration = isset($param['duration']) ? intval($param['duration']) : 0 ;

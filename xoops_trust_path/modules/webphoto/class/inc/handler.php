@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
+// $Id: handler.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// added update_xoops_config()
 // 2008-08-24 K.OHWADA
 // added is_image_kind() get_cat_cached_row_by_id()
 // 2008-07-01 K.OHWADA
@@ -60,6 +62,34 @@ function init_handler( $dirname )
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_INC_SQL' );
 	$this->set_debug_error_by_const_name( $constpref.'DEBUG_INC_ERROR' );
+}
+
+//---------------------------------------------------------
+// xoops config table
+//---------------------------------------------------------
+function update_xoops_config()
+{
+	// configs (Though I know it is not a recommended way...)
+	$table_config = $this->_db->prefix("config");
+
+	$check_sql = "SHOW COLUMNS FROM ". $table_config ." LIKE 'conf_title'" ;
+	$row = $this->get_row_by_sql( $check_sql );
+	if ( !is_array($row) ) { 
+		return false; 
+	}
+
+// default: varchar(30)
+	if ( preg_match( '/varchar\((\d+)\)/i', $row['Type'], $matches ) ) {
+		if ( $matches[1] > 30 ) {
+			return true; 
+		}
+	}
+
+	$sql  = "ALTER TABLE ". $table_config;
+	$sql .= " MODIFY `conf_title` varchar(255) NOT NULL default '', ";
+	$sql .= " MODIFY `conf_desc`  varchar(255) NOT NULL default '' ";
+
+	return $this->query( $sql );
 }
 
 //---------------------------------------------------------

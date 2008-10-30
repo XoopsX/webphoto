@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.11 2008/09/15 02:31:13 ohwada Exp $
+// $Id: main.php,v 1.12 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -347,7 +347,7 @@ define( "_WEBPHOTO_CAPTION_TOTAL" , "Total:" ) ;
 define( "_WEBPHOTO_CAPTION_GUESTNAME" , "¥²¥¹¥È" ) ;
 define( "_WEBPHOTO_CAPTION_REFRESH" , "¹¹¿·" ) ;
 define( "_WEBPHOTO_CAPTION_IMAGEXYT" , "¥µ¥¤¥º" ) ;
-define( "_WEBPHOTO_CAPTION_CATEGORY" , "¥«¥Æ¥´¥ê¡¼" ) ;
+define( "_WEBPHOTO_CAPTION_CATEGORY" , "¥«¥Æ¥´¥ê" ) ;
 
 
 //=========================================================
@@ -923,6 +923,276 @@ define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "¤¢¤Ê¤¿¤¬Á÷¿®¤·¤¿¥á¡¼¥ë¤ò¼è¤ê¹þ¤ó¤Ç¡
 define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
 ¥á¡¼¥ë¤òÁ÷¿®¤¹¤ë¤È¡¢ %s ÉÃ¸å¤Ë¼«Æ°Åª¤ËÅÐÏ¿¤µ¤ì¤Þ¤¹¡£<br />
 ÅÐÏ¿¤µ¤ì¤Ê¤¤¾ì¹ç¤Ï¡¢<a href="{MODULE_URL}/i.php?op=post" target="_blank">¡Ö¥á¡¼¥ë¤«¤éÅê¹Æ¤¹¤ë¡×</a> ¤ò¥¯¥ê¥Ã¥¯¤·¤Æ¤¯¤À¤µ¤¤¡£<br />' );
+
+
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TIME_PUBLISH" , "È¯¹ÔÆü»þ" ) ;
+define("_WEBPHOTO_ITEM_TIME_EXPIRE"   , "½ªÎ»Æü»þ" ) ;
+define("_WEBPHOTO_ITEM_PLAYER_ID" ,    "¥×¥ì¥¤¥ä¡¼ÈÖ¹æ" ) ;
+define("_WEBPHOTO_ITEM_FLASHVAR_ID" ,  "¥Õ¥é¥Ã¥·¥åÊÑ¿ôÈÖ¹æ" ) ;
+define("_WEBPHOTO_ITEM_DURATION" , "¥Ó¥Ç¥ªºÆÀ¸»þ´Ö" ) ;
+define("_WEBPHOTO_ITEM_DISPLAYTYPE", "É½¼¨·Á¼°");
+define("_WEBPHOTO_ITEM_ONCLICK","¥µ¥à¥Í¥¤¥ë¤ò¥¯¥ê¥Ã¥¯¤·¤¿¤È¤­¤ÎÆ°ºî");
+define("_WEBPHOTO_ITEM_SITEURL", "¥µ¥¤¥ÈURL");
+define("_WEBPHOTO_ITEM_ARTIST", "¥¢¡¼¥Æ¥£¥¹¥È");
+define("_WEBPHOTO_ITEM_ALBUM", "¥¢¥ë¥Ð¥à");
+define("_WEBPHOTO_ITEM_LABEL", "¥ì¡¼¥Ù¥ë");
+define("_WEBPHOTO_ITEM_VIEWS", "±ÜÍ÷¿ô");
+define("_WEBPHOTO_ITEM_PERM_DOWN" , "¥À¥¦¥ó¥í¡¼¥É¸¢¸Â" ) ;
+define("_WEBPHOTO_ITEM_EMBED_TYPE" ,  "¥×¥é¥°¥¤¥ó¤Î¥¿¥¤¥×" ) ;
+define("_WEBPHOTO_ITEM_EMBED_SRC" ,   "¥×¥é¥°¥¤¥ó¤ÎURL¥Ñ¥é¥á¡¼¥¿" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_URL" , "³°Éô¥ê¥ó¥¯¤ÎURL" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_THUMB" , "³°Éô¥ê¥ó¥¯¤Î¥µ¥à¥Í¥¤¥ëURL" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE",  "¥×¥ì¥¤¥ê¥¹¥È¤Î¥¿¥¤¥×" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_FEED",  "¥×¥ì¥¤¥ê¥¹¥È¤ÎFeed URL" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_DIR",   "¥×¥ì¥¤¥ê¥¹¥È¤Î¥Ç¥£¥ì¥¯¥È¥ê" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_CACHE", "¥×¥ì¥¤¥ê¥¹¥È¤Î¥­¥ã¥Ã¥·¥åÌ¾" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME",  "¥×¥ì¥¤¥ê¥¹¥È¤Î¥­¥ã¥Ã¥·¥å»þ´Ö" ) ;
+define("_WEBPHOTO_ITEM_CHAIN", "¥Á¥§¡¼¥ó");
+define("_WEBPHOTO_ITEM_SHOWINFO", "É½¼¨¹àÌÜ");
+
+// player table
+define("_WEBPHOTO_PLAYER_TABLE","¥×¥ì¥¤¥ä¡¼¡¦¥Æ¡¼¥Ö¥ë");
+define("_WEBPHOTO_PLAYER_ID","¥×¥ì¥¤¥ä¡¼ ID");
+define("_WEBPHOTO_PLAYER_TIME_CREATE" , "ºîÀ®Æü»þ" ) ;
+define("_WEBPHOTO_PLAYER_TIME_UPDATE" , "¹¹¿·Æü»þ" ) ;
+define("_WEBPHOTO_PLAYER_TITLE","¥×¥ì¥¤¥ä¡¼Ì¾¾Î ");
+define("_WEBPHOTO_PLAYER_STYLE","¥¹¥¿¥¤¥ë¡¦¥ª¥×¥·¥ç¥ó");
+define("_WEBPHOTO_PLAYER_WIDTH","¥×¥ì¥¤¥ä¡¼Éý");
+define("_WEBPHOTO_PLAYER_HEIGHT","¥×¥ì¥¤¥ä¡¼¹â¤µ");
+define("_WEBPHOTO_PLAYER_DISPLAYWIDTH","¥¹¥¯¥ê¡¼¥óÉý");
+define("_WEBPHOTO_PLAYER_DISPLAYHEIGHT","¥¹¥¯¥ê¡¼¥ó¹â¤µ");
+define("_WEBPHOTO_PLAYER_SCREENCOLOR","¥×¥ì¥¤¥ä¡¼ÇØ·Ê¿§");
+define("_WEBPHOTO_PLAYER_BACKCOLOR","ÇØ·Ê¿§");
+define("_WEBPHOTO_PLAYER_FRONTCOLOR","¥Æ¥­¥¹¥È¿§");
+define("_WEBPHOTO_PLAYER_LIGHTCOLOR","¥Ï¥¤¥é¥¤¥È¿§");
+
+// FlashVar table
+define("_WEBPHOTO_FLASHVAR_TABLE","FlashÊÑ¿ô¥Æ¡¼¥Ö¥ë");
+define("_WEBPHOTO_FLASHVAR_ID","FlashÊÑ¿ô ID");
+define("_WEBPHOTO_FLASHVAR_TIME_CREATE" , "ºîÀ®Æü»þ" ) ;
+define("_WEBPHOTO_FLASHVAR_TIME_UPDATE" , "¹¹¿·Æü»þ" ) ;
+define("_WEBPHOTO_FLASHVAR_ITEM_ID","¥¢¥¤¥Æ¥à ID");
+define("_WEBPHOTO_FLASHVAR_WIDTH","¥×¥ì¥¤¥ä¡¼Éý");
+define("_WEBPHOTO_FLASHVAR_HEIGHT","¥×¥ì¥¤¥ä¡¼¹â¤µ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH","¥¹¥¯¥ê¡¼¥óÉý");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT","¥¹¥¯¥ê¡¼¥ó¹â¤µ");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW","²èÁü¤ÎÉ½¼¨");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR","¸¡º÷¥Ð¡¼");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ","¥¤¥³¥é¥¤¥¶¡¼É½¼¨");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS","¥×¥ì¥¤¥Ü¥¿¥óÉ½¼¨");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION","¥³¥ó¥È¥í¡¼¥ë¡¦¥Ð¡¼É½¼¨");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP","¥¹¥È¥Ã¥×É½¼¨");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS","·Ð²á»þ´ÖÉ½¼¨");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD","¥À¥¦¥ó¥í¡¼¥ÉÉ½¼¨");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN","¥Õ¥ë¥¹¥¯¥ê¡¼¥óÉ½¼¨");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL","¥¹¥¯¥í¡¼¥ë¥Ð¡¼");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST","¥µ¥à¥Í¥¤¥ë");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART","¥ª¡¼¥È¥¹¥¿¡¼¥È");
+define("_WEBPHOTO_FLASHVAR_REPEAT","·«¤êÊÖ¤·");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE","¥·¥ã¥Õ¥ë");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING","Æ°²è¥¹¥à¡¼¥º");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS","JavaScript Í­¸ú");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY","¥Ç¥£¥¹¥×¥ì¥¤¤«¤é¤Î¥ê¥ó¥¯");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE","¥ê¥ó¥¯¡¦¥¿¥¤¥×");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH","¥Ð¥Ã¥Õ¥¡¡¦¥µ¥¤¥º");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME","¥í¡¼¥Æ¥¤¥È»þ´Ö");
+define("_WEBPHOTO_FLASHVAR_VOLUME","²»ÎÌ");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET","¥ê¥ó¥¯¡¦¥¿¡¼¥²¥Ã¥È");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH","²èÁü/Æ°²è¤Î¿­Ä¥");
+define("_WEBPHOTO_FLASHVAR_TRANSITION","²èÁü¤ÎÀÚÂØ¤¨¸ú²Ì");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR","¥¹¥¯¥ê¡¼¥óÇØ·Ê¿§");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR","ÇØ·Ê¿§");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR","¥Æ¥­¥¹¥È¿§");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR","¥Ï¥¤¥é¥¤¥È¿§");
+define("_WEBPHOTO_FLASHVAR_TYPE","³ÈÄ¥»Ò");
+define("_WEBPHOTO_FLASHVAR_FILE","¥á¥Ç¥£¥¢¡¦¥Õ¥¡¥¤¥ë");
+define("_WEBPHOTO_FLASHVAR_IMAGE","¥×¥ì¥Ó¥å¡¼²èÁü");
+define("_WEBPHOTO_FLASHVAR_LOGO","¥í¥°²èÁü");
+define("_WEBPHOTO_FLASHVAR_LINK","¥ê¥ó¥¯");
+define("_WEBPHOTO_FLASHVAR_AUDIO","¥ª¡¼¥Ç¥£¥ª");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS","¸«½Ð¤· URL");
+define("_WEBPHOTO_FLASHVAR_FALLBACK","¥Õ¥©¡¼¥ë¥Ð¥Ã¥¯ URL");
+define("_WEBPHOTO_FLASHVAR_CALLBACK","¥³¡¼¥ë¥Ð¥Ã¥¯ URL");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID","JavaScript ID");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS","¿ä¾©");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT","¥¹¥È¥ê¡¼¥ß¥ó¥° URL");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK","¸¡º÷¥ê¥ó¥¯");
+
+// log file
+define("_WEBPHOTO_LOGFILE_LINE","¹Ô");
+define("_WEBPHOTO_LOGFILE_DATE","Æü»þ");
+define("_WEBPHOTO_LOGFILE_REFERER","Referer");
+define("_WEBPHOTO_LOGFILE_IP","IP ¥¢¥É¥ì¥¹");
+define("_WEBPHOTO_LOGFILE_STATE","¾õÂÖ");
+define("_WEBPHOTO_LOGFILE_ID","ID");
+define("_WEBPHOTO_LOGFILE_TITLE","¥¿¥¤¥È¥ë");
+define("_WEBPHOTO_LOGFILE_FILE","¥Õ¥¡¥¤¥ë");
+define("_WEBPHOTO_LOGFILE_DURATION","ºÆÀ¸»þ´Ö");
+
+// item option
+define("_WEBPHOTO_ITEM_KIND_NONE","¥á¥Ç¥£¥¢¤Ê¤·");
+define("_WEBPHOTO_ITEM_KIND_GENERAL","°ìÈÌ");
+define("_WEBPHOTO_ITEM_KIND_IMAGE","²èÁü (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_KIND_VIDEO","Æ°²è (wmv,mov,flv...");
+define("_WEBPHOTO_ITEM_KIND_AUDIO","¥ª¡¼¥Ç¥£¥ª (mp3...)");
+define("_WEBPHOTO_ITEM_KIND_EMBED","¥×¥é¥°¥¤¥ó");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL","³°Éô¥ê¥ó¥¯ °ìÈÌ");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE","³°Éô¥ê¥ó¥¯ ²èÁü");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED","¥×¥ì¥¤¥ê¥¹¥È Web Feed");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR", "¥×¥ì¥¤¥ê¥¹¥È ¥á¥Ç¥£¥¢¡¦¥Ç¥£¥ì¥¯¥È¥ê");
+
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_GENERAL","°ìÈÌ");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGE","²èÁü (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_EMBED","¥×¥é¥°¥¤¥ó");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_SWFOBJECT","FlashPlayer (swf)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_MEDIAPLAYER","MediaPlayer (jpg,gif,png,flv,mp3)");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGEROTATOR","ImageRotator (jpg,gif,png)");
+
+define("_WEBPHOTO_ITEM_ONCLICK_PAGE","¾ÜºÙ¥Ú¡¼¥¸");
+define("_WEBPHOTO_ITEM_ONCLICK_DIRECT","¥À¥¤¥ì¥¯¥È¥ê¥ó¥¯");
+define("_WEBPHOTO_ITEM_ONCLICK_POPUP","²èÁü¥Ý¥Ã¥×¥¢¥Ã¥×");
+
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_DSC","What is the media file type?");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_NONE","¤Ê¤·");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_IMAGE","²èÁü (jpg,gif,png)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_AUDIO","¥ª¡¼¥Ç¥£¥ª (mp3)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_VIDEO","Æ°²è (flv)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_FLASH","¥Õ¥é¥Ã¥·¥å (swf)");
+
+define("_WEBPHOTO_ITEM_SHOWINFO_DESCRIPTION","ÀâÌÀ");
+define("_WEBPHOTO_ITEM_SHOWINFO_LOGOIMAGE","¥µ¥à¥Í¥¤¥ë");
+define("_WEBPHOTO_ITEM_SHOWINFO_CREDITS","¥¯¥ì¥¸¥Ã¥È");
+define("_WEBPHOTO_ITEM_SHOWINFO_STATISTICS","Åý·×");
+define("_WEBPHOTO_ITEM_SHOWINFO_SUBMITTER","Åê¹Æ¼Ô");
+define("_WEBPHOTO_ITEM_SHOWINFO_POPUP","¥Ý¥Ã¥×¥¢¥Ã¥×");
+define("_WEBPHOTO_ITEM_SHOWINFO_TAGS","¥¿¥°");
+define("_WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD","¥À¥¦¥ó¥í¡¼¥É");
+define("_WEBPHOTO_ITEM_SHOWINFO_WEBSITE","WEB ¥µ¥¤¥È");
+define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","WEB Feed");
+
+define("_WEBPHOTO_ITEM_STATUS_WAITING","¾µÇ§ÂÔ¤Á");
+define("_WEBPHOTO_ITEM_STATUS_APPROVED","¾µÇ§ºÑ¤ß");
+define("_WEBPHOTO_ITEM_STATUS_UPDATED","¹¹¿·");
+define("_WEBPHOTO_ITEM_STATUS_OFFLINE","¥ª¥Õ¥é¥¤¥ó");
+define("_WEBPHOTO_ITEM_STATUS_EXPIRED","´ü¸ÂÀÚ¤ì");
+
+// player option
+define("_WEBPHOTO_PLAYER_STYLE_MONO","¥â¥Î¥¯¥í");
+define("_WEBPHOTO_PLAYER_STYLE_THEME","¥Æ¡¼¥Þ¤«¤é¤Î¿§");
+define("_WEBPHOTO_PLAYER_STYLE_PLAYER","¥«¥¹¥¿¥à¡¦¥×¥ì¥¤¥ä¡¼");
+define("_WEBPHOTO_PLAYER_STYLE_PAGE","¥«¥¹¥¿¥à¡¦¥×¥ì¥¤¥ä¡¼/¥Ú¡¼¥¸");
+
+// flashvar desc
+define("_WEBPHOTO_FLASHVAR_ID_DSC","[Basics] <br />mediaplayer ¤Î¤È¤­¡¢RTMP ¥¹¥È¥ê¡¼¥à ID ¤òÀßÄê¤¹¤ë<br />ID ¤Ï Åý·×¥³¡¼¥ë¥Ð¥Ã¥¯¤ËÁ÷¿®¤µ¤ì¤ë<br />¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï¡¢¥¨¥ó¥È¥êËè¤ËÀßÄê¤Ç¤­¤ë");
+define("_WEBPHOTO_FLASHVAR_HEIGHT_DSC","[Basics] ");
+define("_WEBPHOTO_FLASHVAR_WIDTH_DSC","[Basics] ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT_DSC","[Playlist] [mediaplayer] ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH_DSC","[Playlist] [mediaplayer] <br />¥×¥ì¥¤¥ê¥¹¥È¤ò²¼¤ËÉ½¼¨:<br /> ¥¹¥¯¥ê¡¼¥óÉý = ¥×¥ì¥¤¥ä¡¼Éý<br />¥×¥ì¥¤¥ê¥¹¥È¤ò²£¤ËÉ½¼¨<br />¥¹¥¯¥ê¡¼¥óÉý &gt; ¥×¥ì¥¤¥ä¡¼Éý ");
+define("_WEBPHOTO_FLASHVAR_DISPLAY_DEFAULT","0 ¤Î¤È¤­¤Ï¡¢¥×¥ì¥¤¥ä¡¼¤ÎÀßÄê¤¬»ÈÍÑ¤µ¤ì¤ë");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR_DSC","[Colors] <br />imagerotator ¤Î¤È¤­¤Ï <br />°Û¤Ê¤ëÂç¤­¤µ¤Î²èÁü¤¬º®ºß¤·¤Æ¤â¡¢¤¢¤Ê¤¿¤ÎHTML¥Ú¡¼¥¸¤Ë¹ç¤¦¤è¤¦¤ËÊÑ¹¹¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR_DSC","[Colors] <br />¥³¥ó¥È¥í¡¼¥ë¤ÎÇØ·Ê¿§");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR_DSC","[Colors] <br />¥³¥ó¥È¥í¡¼¥ë¤Î¥Æ¥­¥¹¥È¤È¥Ü¥¿¥ó¤Î¿§");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR_DSC","[Colors] <br />¥³¥ó¥È¥í¡¼¥ë¤Î¥Þ¥¦¥¹¥ª¡¼¥Ð¤·¤¿¤È¤­¤Î¿§");
+define("_WEBPHOTO_FLASHVAR_COLOR_DEFAULT","¶õ¤Î¤È¤­¤Ï¡¢¥×¥ì¥¤¥ä¡¼¤ÎÀßÄê¤¬»ÈÍÑ¤µ¤ì¤ë");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW_DSC","[Basics] <br />¥×¥ì¥Ó¥å¡¼²èÁü¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_IMAGE_DSC","[Basics] <br />¤â¤·²»³Ú¤äÆ°²è¤òºÆÀ¸¤¹¤ë¤Ê¤é¤Ð¡¢¥×¥ì¥Ó¥å¡¼²èÁü¤Î URL ¤òÀßÄê¤¹¤ë <br />¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï¡¢¥¨¥ó¥È¥êËè¤ËÀßÄê¤Ç¤­¤ë");
+define("_WEBPHOTO_FLASHVAR_FILE_DSC","[Basics] <br />¥Õ¥¡¥¤¥ë¤«¥×¥ì¥¤¥ê¥¹¥È¤Î URL ¤òÀßÄê¤¹¤ë<br />imagerorate ¤Î¤È¤­¤Ï¡¢¥×¥ì¥¤¥ê¥¹¥È¤Î¤ßÀßÄê¤Ç¤­¤ë");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR_DSC","[Basics] <br />¥¹¥¯¥ê¡¼¥ó¤Î²¼¤Ë¸¡º÷¥Ð¡¼¤òÉ½¼¨¤¹¤ë <br />¡Ö¸¡º÷¥ê¥ó¥¯¡×¤Ë¤è¤ê¸¡º÷Àè¤òÀßÄê¤Ç¤­¤ë");
+define("_WEBPHOTO_FLASHVAR_LOGO_DSC","[Display] <br />¥¹¥¯¥ê¡¼¥ó¤Î±¦¾å¤ËÉ½¼¨¤¹¤ë¥í¥´²èÁü¤òÀßÄê¤¹¤ë<br />Æ©²á PNG ¤¬ºÇÅ¬");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_DSC","[Display] <br />²èÁü/Æ°²è¤ò¥¹¥¯¥ê¡¼¥ó¤ÎÂç¤­¤µ¤Ë³ÈÄ¥¤¹¤ëÊýË¡¤òÀßÄê¤¹¤ë<br />false (¥Ç¥Õ¥©¥ë¥È) = ¥¹¥¯¥ê¡¼¥ó¤Ë°ìÃ×¤¹¤ë<br />true = ¶Ñ°ì¤Ë³ÈÄ¥¤¹¤ë<br />fit = ÉÔ¶Ñ°ì¤Ë³ÈÄ¥¤¹¤ë<br />none = ¸µ¤ÎÂç¤­¤µ¤òÊÝ»ý¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ_DSC","[Display] <br />¥¹¥¯¥ê¡¼¥ó¤Î²¼¤Ëµ¼»÷Åª¤Ê¥¤¥³¥é¥¤¥¶¡¼¤òÉ½¼¨¤¹¤ë <br />MP3 ¤ËºÇÅ¬ ");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS_DSC","[Display] <br />¥¹¥¯¥ê¡¼¥ó¤ÎÃæ±û¤Ë¥×¥ì¥¤¥Ü¥¿¥ó¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_DSC","[Display] [imagerotator] <br />²èÁü¤ÎÀÚÂØ¤¨¸ú²Ì¤òÀßÄê¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION_DSC","[Controlbar] <br />¥³¥ó¥È¥í¡¼¥ë¡¦¥Ð¡¼¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP_DSC","[Controlbar] [mediaplayer] <br />¥³¥ó¥È¥í¡¼¥ë¡¦¥Ð¡¼¤Ë¥¹¥È¥Ã¥×¡¦¥Ü¥¿¥ó¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS_DSC","[Controlbar] [mediaplayer] <br />¥³¥ó¥È¥í¡¼¥ë¡¦¥Ð¡¼¤Ë·Ð²á»þ´Ö/»Ä¤ê»þ´Ö¤òÉ½¼¨¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD_DSC","[Controlbar] [mediaplayer] <br />¥³¥ó¥È¥í¡¼¥ë¡¦¥Ð¡¼¤Ë¥ê¥ó¥¯¡¦¥Ü¥¿¥ó¤òÉ½¼¨¤¹¤ë<br />¡Ö¥ê¥ó¥¯¡×¤Ë¤è¤ê¥ê¥ó¥¯Àè¤òÀßÄê¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN_DSC","[Controlbar] <br />¥Õ¥ë¥¹¥¯¥ê¡¼¥ó¡¦¥Ü¥¿¥ó¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL_DSC","[Playlist] [mediaplayer] <br />¥×¥ì¥¤¥ê¥¹¥È¤Î¥¹¥¯¥í¡¼¥ë¡¦¥Ð¡¼¤òÉ½¼¨¤¹¤ëÂå¤ï¤ê¤Ë¡¢¥Þ¥¦¥¹¥ª¡¼¥Ð¡¼¤·¤¿¤È¤­¤Ë¼«Æ°Åª¤Ë¥¹¥¯¥í¡¼¥ë¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST_DSC","[Playlist] [mediaplayer] <br />¥¹¥¯¥ê¡¼¥ó¤Ë¥µ¥à¥Í¥¤¥ë²èÁü¤òÉ½¼¨¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_AUDIO_DSC","[Playback] <br />Æ±´ü¤·¤¿ MP3 ¤ò³ä¤êÅö¤Æ¤ë<br />mediaplayer ¤Î²»À¼ÀâÌÀ¤Þ¤¿¤Ï¥Ç¥£¥ì¥¯¥¿¡¼¤Î¥³¥á¥ó¥È¡¢¤¢¤ë¤¤¤Ï imagerotator ¤ÎÇØ·Ê²»³Ú¤È¤·¤Æ¡¢»ÈÍÑ¤¹¤ë<br />mediaplayer ¤È¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï¡¢¥¨¥ó¥È¥êËè¤Ë¥ª¡¼¥Ç¥£¥ª¤òÀßÄê¤Ç¤­¤ë ");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","[Playback] <br />mediaplayer ¤Ë¤Æ true ¤Î¤È¤­¤Ï¡¢¥Ú¡¼¥¸¤ò¥í¡¼¥É¤·¤¿¤È¤­¤Ë¼«Æ°Åª¤Ë¥¹¥¿¡¼¥È¤¹¤ë<br />imagerotator ¤Ë¤Æ false ¤Î¤È¤­¤Ï ¼«Æ°Åª¤Ê²èÁüÀÚ¤êÂØ¤¨¤ò¹Ô¤ï¤Ê¤¤");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","[Playback]  [mediaplayer] <br />ºÆÀ¸¤¹¤ëÁ°¤Ë¡¢Æ°²è¤ò¥Ð¥Ã¥Õ¥¡¤¹¤ëÉÃ¿ô¤òÀßÄê¤¹¤ë<br />¹âÂ®¤ÊÄÌ¿®´Ä¶­¤äÃ»¤¤Æ°²è¤Î¤È¤­¤Ï¾®¤µ¤¤ÃÍ¤òÀßÄê¤¹¤ë<br />ÄãÂ®¤ÊÄÌ¿®´Ä¶­¤Î¤È¤­¤ÏÂç¤­¤¤ÃÍ¤òÀßÄê¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","[Playback] [mediaplayer] <br />¡Ö¸«½Ð¤·¡×¤Ï TimedText ·Á¼°¤Ç¤¢¤ë¤³¤È <br />¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï¡¢¥¨¥ó¥È¥êËè¤Ë¸«½Ð¤·¤òÀßÄê¤Ç¤­¤ë ");
+define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","[Playback] [mediaplayer] <br />¤â¤· MP4 ¤òºÆÀ¸¤¹¤ë¤Ê¤é¤Ð¡¢¥Õ¥©¡¼¥ë¥Ð¥Ã¥¯¤¹¤ë FLV ¤Î URL ¤òÀßÄê¤¹¤ë¤³¤È <br />¸Å¤¤¥Ð¡¼¥¸¥ç¥ó¤Î¥Õ¥é¥Ã¥·¥å¡¦¥×¥ì¥¤¥ä¡¼¤Ç¤Ï¼«Æ°Åª¤ËÁªÂò¤µ¤ì¤ë ");
+define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />true ¤Î¤È¤­¡¢Á´¤Æ¤Î¥Õ¥¡¥¤¥ë¤ò·«ÊÖ¤·ºÆÀ¸¤¹¤ë <br />¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï °ìÅÙ¤À¤±ºÆÀ¸¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","[Playback] <br />²èÁü¤òÀÚÂØ¤ë¤È¤­¤ÎÉÃ¿ô¤òÀßÄê¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","[Playback] <br />¡Ö¤Ï¤¤¡×¤Î¤È¤­¡¢¥×¥ì¥¤¥ê¥¹¥È¤ò¥é¥ó¥À¥à¤ËºÆÀ¸¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","[Playback] [mediaplayer] <br />¡Ö¤¤¤¤¤¨¡×¤Î¤È¤­¡¢²èÁü¤Î¥¹¥à¡¼¥¸¥ó¥°¤ò¹Ô¤ï¤Ê¤¤ <br />²è¼Á¤ÏÍî¤Á¤ë¤¬¡¢À­Ç½¤Ï¸þ¾å¤¹¤ë <br />HD ¥Õ¥¡¥¤¥ë¤äÃÙ¤¤ PC ¤ËºÇÅ¬ ");
+define("_WEBPHOTO_FLASHVAR_VOLUME_DSC","[Playback] <br />²»³Ú¤äÆ°²è¤Î²»ÎÌ¤òÀßÄê¤¹¤ë");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS_DSC","[External] <br />¡Ö¤Ï¤¤¡×¤Î¤È¤­¡¢JavaScript ¤Ë¤è¤ëÂÐÏÃÀ©¸æ¤òÍ­¸ú¤Ë¤¹¤ë <br />¥ª¥ó¥é¥¤¥ó¤Î¤È¤­Æ°ºî¤¹¤ë<br />JavaScript ¤Ë¤è¤ëÂÐÏÃÀ©¸æ¤Ë¤Ï¡¢¥³¥ó¥È¥í¡¼¥ë¥Ð¡¼¤ä¡¢¥á¥Ç¥£¥¢¥Õ¥¡¥¤¥ë¤Î¥í¡¼¥Ç¥ó¥°¤ÎÆ±´ü¤ä¡¢¥È¥é¥Ã¥¯¾ðÊó¤ÎÊÖ¿®¤Ê¤É¤ò´Þ¤à ");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID_DSC","[External] <br />¤â¤·¤â¡¢Ê£¿ô¤Î mediaplayers/imagerotators ¤È JavaScript ¤Ë¤è¤ëÂÐÏÃÀ©¸æ¤ò¹Ô¤¦¤È¤­¤Ï¡¢¤³¤Î¹àÌÜ¤Ë¤½¤ì¤¾¤ì¤ËÂÐ¤¹¤ë¥æ¥Ë¡¼¥¯¤Ê ID ¤òÀßÄê¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_DSC","[External] <br />¥¹¥¯¥ê¡¼¥ó¤ä¥í¥´¤ä¥ê¥ó¥¯¡¦¥Ü¥¿¥ó¤Ë³äÅö¤µ¤ì¤ë¥ê¥ó¥¯¤Î¼ïÊÌ¤òÀßÄê¤¹¤ë<br /> ¡Ö¤Ê¤·¡×¤Î¤È¤­¤Ï¡¢²¿¤â¤·¤Ê¤¤ <br />¤½¤ì°Ê³°¤Ï¡¢¤½¤Î¥ê¥ó¥¯¤ò³äÅö¤Æ¤ë");
+//define("_WEBPHOTO_FLASHVAR_LINK_DSC","[External] <br />³°Éô URL ¤ä¥À¥¦¥ó¥í¡¼¥É²ÄÇ½¤Ê¥Õ¥¡¥¤¥ë¤òÀßÄê¤¹¤ë<br />¤³¤Î¥ê¥ó¥¯¤Ï¥¹¥¯¥ê¡¼¥ó¤ä¥í¥´¤ä¥ê¥ó¥¯¡¦¥Ü¥¿¥ó¤Ë³äÅö¤µ¤ì¤ë<br />¥×¥ì¥¤¥ê¥¹¥È¤Î¤È¤­¤Ï¡¢XML ·Á¼°¤Ë¤Æ¥¨¥ó¥È¥êËè¤ËÀßÄê¤Ç¤­¤ë");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY_DSC","[External] <br />¡Ö¤Ï¤¤¡×¤Î¤È¤­¤Ï¡¢¥¹¥¯¥ê¡¼¥ó¤ò¥¯¥ê¥Ã¥¯¤¹¤ë¤È¡¢¡Ö¥ê¥ó¥¯¡×¤ËÀßÄê¤µ¤ì¤¿ WEB ¥Ú¡¼¥¸¤Î¥¸¥ã¥ó¥×¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET_DSC","[External] <br />¥ê¥ó¥¯¤·¤¿¥¦¥£¥ó¥É¥¦²èÌÌ¤Î¼ïÎà");
+define("_WEBPHOTO_FLASHVAR_CALLBACK_DSC","[External] <br />Set this to a serverside script that can process statistics. <br />The player will send it a POST every time an item starts/stops. <br />To send callbacks automatically to Google Analytics, set this to urchin or analytics. ");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS_DSC","[External] [mediaplayer] <br />¿ä¾©¤¹¤ë¹àÌÜ¤ò XML ·Á¼°¤ÇÀßÄê¤¹¤ë <br />Æ°²è¤¬Ää»ß¤·¤Æ¤¤¤ë¤È¤­¤Ï¡¢Youtube ¤ÈÆ±¤¸¤è¤¦¤Ë¥µ¥à¥Í¥¤¥ë¤¬É½¼¨¤µ¤ì¤ë ");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK_DSC","[External] [mediaplayer] <br />¸¡º÷¥Ð¡¼¤Î¸¡º÷Àè¤òÀßÄê¤¹¤ë <br />¥Ç¥Õ¥©¥ë¥È¤Ï¡Ösearch.longtail.tv¡×¤Ç¤¢¤ë <br />¸¡º÷¥Ð¡¼¤ò±£¤¹¤Ë¤Ï¡Ö¸¡º÷¥Ð¡¼¡×¤ò»ÈÍÑ¤¹¤ë ");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT_DSC","[External] [mediaplayer] <br />¥¹¥È¥ê¡¼¥ß¥ó¥°ÇÛ¿®¤Ë»ÈÍÑ¤¹¤ë¥¹¥¯¥ê¥×¥È¤Î URL ¤òÀßÄê¤¹¤ë <br />¥Ñ¥é¥á¡¼¥¿¡¦¥Õ¥¡¥¤¥ë¤Ï¥¹¥¯¥ê¥×¥È¤ØÁ÷¿®¤µ¤ì¤ë <br />¤â¤· LigHTTPD ¥¹¥È¥ê¡¼¥ß¥ó¥° ¤ò»ÈÍÑ¤¹¤ë¤Ê¤é¤Ð¡¢'lighttpd' ¤ÈÀßÄê¤¹¤ë . ");
+define("_WEBPHOTO_FLASHVAR_TYPE_DSC","[External] [mediaplayer] <br />mediaplayer ¤Ï¡Öfile¡×¤ÎºÇ¸å¤Î£³Ê¸»ú¤ò³ÈÄ¥»Ò¤ò¸«¤Ê¤·¤Æ¤¤¤ë <br />¥Ç¡¼¥¿¥Ù¡¼¥¹¤Î ID ¤ä mod_rewrite ¤Ê¤É¤Ç¤¦¤Þ¤¯Æ°ºî¤·¤Ê¤¤¾ì¹ç¤Ë¤Ï¡¢Àµ¤·¤¤³ÈÄ¥»Ò¤òÀßÄê¤¹¤ë¤³¤È <br />¤â¤·¤â¡¢³Î¤«¤Ç¤Ê¤¤¤È¤­¤Ï¡¢¥×¥ì¥¤¥ê¥¹¥È¤¬¥í¡¼¥É¤µ¤ì¤¿¤È¸«¤Ê¤¹¡£");
+
+// flashvar option
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_NONE","¤Ê¤·");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE","Web¥µ¥¤¥È URL");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE","¾ÜºÙ¥Ú¡¼¥¸");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE","¥á¥Ç¥£¥¢¡¦¥Õ¥¡¥¤¥ë");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_SELF","Æ±¤¸²èÌÌ self ");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_BLANK","¿·¤·¤¤²èÌÌ blank ");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FALSE","False");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FIT","Fit");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_TRUE","True");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_NONE","None");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_OFF","¤Ê¤·");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FADE","¥Õ¥§¡¼¥É Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_SLOWFADE","ÃÙ¤¤¥Õ¥§¡¼¥É Slow Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BGFADE","ÇØ·Ê¥Õ¥§¡¼¥É Background Fade");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_CIRCLES","´Ý Circles");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BLOCKS","»Í³Ñ Blokcs");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BUBBLES","Ë¢ Bubbles");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FLASH","¸÷ Flash");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FLUIDS","Î®ÂÎ Fluids");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_LINES","Àþ Lines");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_RANDOM","¥é¥ó¥À¥à Random");
+
+// edit form
+define("_WEBPHOTO_CAP_DETAIL","¾ÜºÙÀßÄê");
+define("_WEBPHOTO_CAP_DETAIL_ONOFF","É½¼¨/ÈóÉ½¼¨");
+define("_WEBPHOTO_PLAYER","¥×¥ì¥¤¥ä¡¼");
+define("_WEBPHOTO_EMBED_ADD", "¥×¥é¥°¥¤¥ó¤òÄÉ²Ã¤¹¤ë" ) ;
+define("_WEBPHOTO_EMBED_THUMB","¤³¤Î¥×¥é¥°¥¤¥ó¤Ï¥µ¥à¥Í¥¤¥ë¤òÄó¶¡¤¹¤ë");
+
+// sort
+define("_WEBPHOTO_SORT_VOTESA","ÅêÉ¼¿ô (Äã¢ª¹â)");
+define("_WEBPHOTO_SORT_VOTESD","ÅêÉ¼¿ô (¹â¢ªÄã)");
+define("_WEBPHOTO_SORT_VIEWSA","±ÜÍ÷¿ô (Äã¢ª¹â)");
+define("_WEBPHOTO_SORT_VIEWSD","±ÜÍ÷¿ô (¹â¢ªÄã)");
+
+// flashvar form
+define("_WEBPHOTO_FLASHVARS_FORM","FlashÊÑ¿ô¤ÎÊÔ½¸");
+define("_WEBPHOTO_FLASHVARS_LIST","FlashÊÑ¿ô¤Î°ìÍ÷(±Ñ¸ì)");
+define("_WEBPHOTO_FLASHVARS_LOGO_SELECT","¥í¥´²èÁü¤ÎÁªÂò");
+define("_WEBPHOTO_FLASHVARS_LOGO_UPLOAD","¥í¥´²èÁü¤Î¥¢¥Ã¥×¥í¡¼¥É");
+define("_WEBPHOTO_FLASHVARS_LOGO_DSC","[Display] <br />¥í¥´²èÁü¤Î¥Ç¥£¥ì¥¯¥È¥ê ");
+define("_WEBPHOTO_BUTTON_COLOR_PICKUP","¿§ÁªÂò");
+define("_WEBPHOTO_BUTTON_RESTORE","¥Ç¥Õ¥©¥ë¥ÈÃÍ¤ËÌá¤¹");
+
+// Playlist Cache 
+define("_WEBPHOTO_PLAYLIST_STATUS_REPORT","¾õÂÖÊó¹ð");
+define("_WEBPHOTO_PLAYLIST_STATUS_FETCHED","WEB Feed ¤Ï¼èÆÀ¤µ¤ì¤¿");
+define("_WEBPHOTO_PLAYLIST_STATUS_CREATED","¥×¥ì¥¤¥ê¥¹¥È¤òÀ¸À®¤·¤¿");
+define("_WEBPHOTO_PLAYLIST_ERR_CACHE","[ERROR] ¥­¥ã¥Ã¥·¥å¡¦¥Õ¥¡¥¤¥ë¤ÎÀ¸À®¤Ë¼ºÇÔ¤·¤¿");
+define("_WEBPHOTO_PLAYLIST_ERR_FETCH","WEB Feed ¤Î¼èÆÀ¤Ë¼ºÇÔ¤·¤¿<br />WEB Feed ¤ò³ÎÇ§¤·¤Æ¡¢¥­¥ã¥Ã¥·¥å¤ÎºÆÀ¸À®¤ò¤·¤Æ¤¯¤À¤µ¤¤");
+define("_WEBPHOTO_PLAYLIST_ERR_NODIR","¥á¥Ç¥£¥¢¡¦¥Ç¥£¥ì¥¯¥È¥ê¤ÏÂ¸ºß¤·¤Ê¤¤");
+define("_WEBPHOTO_PLAYLIST_ERR_EMPTYDIR","¥á¥Ç¥£¥¢¡¦¥Ç¥£¥ì¥¯¥È¥ê¤Ï¶õ¤Ç¤¹");
+define("_WEBPHOTO_PLAYLIST_ERR_WRITE","¥­¥ã¥Ã¥·¥å¡¦¥Õ¥¡¥¤¥ë¤Ë½ñ¹þ¤ß¤Ç¤­¤Ê¤¤");
+
+define("_WEBPHOTO_USER",  "¥æ¡¼¥¶" ) ;
+define("_WEBPHOTO_OR",  "¤¢¤ë¤¤¤Ï" ) ;
 
 // === define end ===
 }

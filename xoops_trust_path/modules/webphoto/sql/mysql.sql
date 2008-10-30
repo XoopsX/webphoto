@@ -1,9 +1,13 @@
-# $Id: mysql.sql,v 1.8 2008/09/09 13:37:07 ohwada Exp $
+# $Id: mysql.sql,v 1.9 2008/10/30 00:22:49 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
+
+#  item_external_type  VARCHAR(255) NOT NULL DEFAULT '',
+#    item_duration  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+#  item_player_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
 
 # =========================================================
 # change log
@@ -25,8 +29,8 @@ CREATE TABLE item (
   item_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   item_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
   item_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  item_cat_id   INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  item_gicon_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_cat_id    INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_gicon_id  INT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_uid      INT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_kind     TINYINT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_ext       VARCHAR(255) NOT NULL DEFAULT '',
@@ -67,10 +71,36 @@ CREATE TABLE item (
   item_description TEXT NOT NULL,
   item_exif   TEXT NOT NULL,
   item_search TEXT NOT NULL,
+  item_time_publish INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  item_time_expire  INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  item_player_id   INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_flashvar_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_duration    INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_displaytype INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_onclick     INT(11) UNSIGNED NOT NULL DEFAULT '0',  
+  item_views INT(11) NOT NULL DEFAULT '0',
+  item_chain INT(11) NOT NULL DEFAULT '0',
+  item_siteurl VARCHAR(255) NOT NULL DEFAULT '',
+  item_artist  VARCHAR(255) NOT NULL DEFAULT '',
+  item_album   VARCHAR(255) NOT NULL DEFAULT '',
+  item_label   VARCHAR(255) NOT NULL DEFAULT '',
+  item_perm_down VARCHAR(255) NOT NULL DEFAULT '',
+  item_external_url   VARCHAR(255) NOT NULL DEFAULT '',
+  item_external_thumb VARCHAR(255) NOT NULL DEFAULT '',
+  item_embed_type     VARCHAR(255) NOT NULL DEFAULT '',
+  item_embed_src      VARCHAR(255) NOT NULL DEFAULT '',
+  item_playlist_feed  VARCHAR(255) NOT NULL DEFAULT '',
+  item_playlist_dir   VARCHAR(255) NOT NULL DEFAULT '',
+  item_playlist_cache VARCHAR(255) NOT NULL DEFAULT '',
+  item_playlist_type  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_playlist_time  INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  item_showinfo  VARCHAR(255) NOT NULL DEFAULT '',  
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),
   KEY (item_gicon_id),
+  KEY (item_player_id),
+  KEY (item_flashvar_id), 
   KEY (item_uid),
   KEY (item_file_id_1),
   KEY (item_file_id_2),
@@ -84,7 +114,9 @@ CREATE TABLE item (
   KEY (item_file_id_10),
   KEY (item_status),
   KEY (item_hits),
+  KEY (item_views),
   KEY (item_rating),
+  KEY (item_votes),
   KEY (item_datetime),
   KEY (item_title(40)),
   KEY (item_place(40)),
@@ -276,21 +308,21 @@ CREATE TABLE gicon (
   gicon_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   gicon_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
   gicon_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  gicon_title VARCHAR(255) NOT NULL default '',
-  gicon_image_path  VARCHAR(255) NOT NULL default '',
-  gicon_image_name  VARCHAR(255) NOT NULL default '',
-  gicon_image_ext   VARCHAR(10)  NOT NULL default '',
-  gicon_shadow_path VARCHAR(255) NOT NULL default '',
-  gicon_shadow_name VARCHAR(255) NOT NULL default '',
-  gicon_shadow_ext  VARCHAR(10)  NOT NULL default '',
-  gicon_image_width   INT(4) NOT NULL default '0',
-  gicon_image_height  INT(4) NOT NULL default '0',
-  gicon_shadow_width  INT(4) NOT NULL default '0',
-  gicon_shadow_height INT(4) NOT NULL default '0',
-  gicon_anchor_x INT(4) NOT NULL default '0',
-  gicon_anchor_y INT(4) NOT NULL default '0',
-  gicon_info_x   INT(4) NOT NULL default '0',
-  gicon_info_y   INT(4) NOT NULL default '0',
+  gicon_title VARCHAR(255) NOT NULL DEFAULT '',
+  gicon_image_path  VARCHAR(255) NOT NULL DEFAULT '',
+  gicon_image_name  VARCHAR(255) NOT NULL DEFAULT '',
+  gicon_image_ext   VARCHAR(10)  NOT NULL DEFAULT '',
+  gicon_shadow_path VARCHAR(255) NOT NULL DEFAULT '',
+  gicon_shadow_name VARCHAR(255) NOT NULL DEFAULT '',
+  gicon_shadow_ext  VARCHAR(10)  NOT NULL DEFAULT '',
+  gicon_image_width   INT(4) NOT NULL DEFAULT '0',
+  gicon_image_height  INT(4) NOT NULL DEFAULT '0',
+  gicon_shadow_width  INT(4) NOT NULL DEFAULT '0',
+  gicon_shadow_height INT(4) NOT NULL DEFAULT '0',
+  gicon_anchor_x INT(4) NOT NULL DEFAULT '0',
+  gicon_anchor_y INT(4) NOT NULL DEFAULT '0',
+  gicon_info_x   INT(4) NOT NULL DEFAULT '0',
+  gicon_info_y   INT(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (gicon_id)
 ) TYPE=MyISAM;
 
@@ -299,15 +331,15 @@ CREATE TABLE gicon (
 #
 
 CREATE TABLE mime (
-  mime_id int(11) NOT NULL auto_increment,
+  mime_id INT(11) NOT NULL AUTO_INCREMENT,
   mime_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
   mime_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  mime_ext    VARCHAR(10) NOT NULL default '',
-  mime_medium VARCHAR(255) NOT NULL default '',
-  mime_type   VARCHAR(255) NOT NULL default '',
-  mime_name   VARCHAR(255) NOT NULL default '',
-  mime_perms  VARCHAR(255) NOT NULL default '',
-  mime_ffmpeg VARCHAR(255) NOT NULL default '',
+  mime_ext    VARCHAR(10) NOT NULL DEFAULT '',
+  mime_medium VARCHAR(255) NOT NULL DEFAULT '',
+  mime_type   VARCHAR(255) NOT NULL DEFAULT '',
+  mime_name   VARCHAR(255) NOT NULL DEFAULT '',
+  mime_perms  VARCHAR(255) NOT NULL DEFAULT '',
+  mime_ffmpeg VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY mime_id (mime_id),
   KEY (mime_ext)
 ) TYPE=MyISAM;
@@ -351,8 +383,8 @@ CREATE TABLE syno (
  syno_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
  syno_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
  syno_weight INT(5) UNSIGNED NOT NULL DEFAULT 0,
- syno_key   VARCHAR(255) NOT NULL default '',
- syno_value VARCHAR(255) NOT NULL default '',
+ syno_key   VARCHAR(255) NOT NULL DEFAULT '',
+ syno_value VARCHAR(255) NOT NULL DEFAULT '',
  PRIMARY KEY (syno_id)
 ) TYPE=MyISAM;
 
@@ -366,7 +398,7 @@ CREATE TABLE user (
  user_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
  user_uid INT(5) UNSIGNED NOT NULL DEFAULT 0,
  user_cat_id INT(5) UNSIGNED NOT NULL DEFAULT 0,
- user_email VARCHAR(255) NOT NULL default '',
+ user_email VARCHAR(255) NOT NULL DEFAULT '',
  user_text1 VARCHAR(255) NOT NULL DEFAULT '',
  user_text2 VARCHAR(255) NOT NULL DEFAULT '',
  user_text3 VARCHAR(255) NOT NULL DEFAULT '',
@@ -386,17 +418,97 @@ CREATE TABLE maillog (
  maillog_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
  maillog_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
  maillog_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
- maillog_photo_ids   VARCHAR(255) NOT NULL default '',
+ maillog_photo_ids   VARCHAR(255) NOT NULL DEFAULT '',
  maillog_status  TINYINT(2) NOT NULL DEFAULT '0',
- maillog_from    VARCHAR(255) NOT NULL default '',
- maillog_subject VARCHAR(255) NOT NULL default '',
- maillog_body    VARCHAR(255) NOT NULL default '',
- maillog_file    VARCHAR(255) NOT NULL default '',
+ maillog_from    VARCHAR(255) NOT NULL DEFAULT '',
+ maillog_subject VARCHAR(255) NOT NULL DEFAULT '',
+ maillog_body    VARCHAR(255) NOT NULL DEFAULT '',
+ maillog_file    VARCHAR(255) NOT NULL DEFAULT '',
  maillog_attach  TEXT NOT NULL,
  maillog_comment TEXT NOT NULL,
  PRIMARY KEY (maillog_id),
  KEY (maillog_status),
  KEY (maillog_from(40))
+) TYPE=MyISAM;
+
+#
+## Table structure for table `player`
+#
+
+CREATE TABLE player (
+  player_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  player_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  player_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  player_title VARCHAR(24) NOT NULL DEFAULT '',
+  player_style  TINYINT(2) NOT NULL DEFAULT '0', 
+  player_width  INT(4) NOT NULL DEFAULT '0',
+  player_height INT(4) NOT NULL DEFAULT '0',
+  player_displaywidth  INT(4) NOT NULL DEFAULT '0',
+  player_displayheight INT(4) NOT NULL DEFAULT '0',
+  player_screencolor VARCHAR(7) NOT NULL DEFAULT '',
+  player_backcolor   VARCHAR(7) NOT NULL DEFAULT '',
+  player_frontcolor  VARCHAR(7) NOT NULL DEFAULT '',
+  player_lightcolor  VARCHAR(7) NOT NULL DEFAULT '',
+  PRIMARY KEY  (player_id),
+  KEY (player_title(24))
+) TYPE=MyISAM;
+
+#
+## Table structure for table `flashvar`
+#
+
+CREATE TABLE flashvar (
+  flashvar_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  flashvar_time_create INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  flashvar_time_update INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  flashvar_item_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  flashvar_width  INT(4) NOT NULL DEFAULT '0',
+  flashvar_height INT(4) NOT NULL DEFAULT '0',
+  flashvar_displaywidth  INT(4) NOT NULL DEFAULT '0',
+  flashvar_displayheight INT(4) NOT NULL DEFAULT '0',
+  flashvar_image_show TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_searchbar  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_showeq     TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_showicons  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_shownavigation TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_showstop   TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_showdigits TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_showdownload  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_usefullscreen TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_autoscroll    TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_thumbsinplaylist TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_autostart  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_repeat  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_shuffle TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_smoothing  TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_enablejs   TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_linkfromdisplay TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_link_type       TINYINT(2) NOT NULL DEFAULT '0',
+  flashvar_bufferlength INT(3)  NOT NULL DEFAULT '0',
+  flashvar_rotatetime   INT(3)  NOT NULL DEFAULT '0',
+  flashvar_volume       INT(3)  NOT NULL DEFAULT '0',
+  flashvar_screencolor VARCHAR(7) NOT NULL DEFAULT '',
+  flashvar_backcolor   VARCHAR(7) NOT NULL DEFAULT '',
+  flashvar_frontcolor  VARCHAR(7) NOT NULL DEFAULT '',
+  flashvar_lightcolor  VARCHAR(7) NOT NULL DEFAULT '',
+  flashvar_linktarget  VARCHAR(24) NOT NULL DEFAULT '',
+  flashvar_overstretch VARCHAR(6)  NOT NULL DEFAULT '',
+  flashvar_transition  VARCHAR(24) NOT NULL DEFAULT '',
+  flashvar_type        VARCHAR(5)  NOT NULL DEFAULT '',
+  flashvar_file      VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_image     VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_logo      VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_link      VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_audio     VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_captions  VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_fallback  VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_callback  VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_javascriptid     VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_recommendations  VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_streamscript     VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_searchlink  VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY  (flashvar_id),
+  KEY (flashvar_item_id)
 ) TYPE=MyISAM;
 
 #
@@ -448,3 +560,9 @@ INSERT INTO mime VALUES (24, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Me
 INSERT INTO mime VALUES (25, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel','&1&', '');
 INSERT INTO mime VALUES (26, 0, 0, 'zip', '', 'application/zip', 'Compressed Archive File', '&1&', '');
 
+#
+# player table
+#
+
+INSERT INTO player VALUES (1, 0, 0, 'default', 0, 260, 320, 0, 0, '', '', '', '');
+INSERT INTO player VALUES (2, 0, 0, 'playlist default', 0, 260, 320, 260, 220, '', '', '', '');

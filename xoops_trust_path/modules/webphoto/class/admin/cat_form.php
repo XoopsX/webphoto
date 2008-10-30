@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: cat_form.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// submit -> item_manager
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -241,7 +243,7 @@ function _print_line( $row )
 	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=photomanager&amp;cat_id='. $cat_id .'">';
 	echo $photos_num;
 	echo '</a> &nbsp; ';
-	echo '<a href="'. $this->_MODULE_URL .'/index.php?fct=submit&amp;cat_id='. $cat_id. '">';
+	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=item_manager&amp;op=submit_form&amp;cat_id='. $cat_id. '">';
 	echo $this->build_img_pictadd();
 	echo '</a>';
 	echo "</td>\n";

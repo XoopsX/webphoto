@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: rss.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// used webphoto_lib_xml 
 // 2008-08-01 K.OHWADA
 // used webphoto_lib_multibyte
 //---------------------------------------------------------
@@ -43,7 +45,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_lib_rss
 //=========================================================
-class webphoto_lib_rss
+class webphoto_lib_rss extends webphoto_lib_xml
 {
 	var $_DIRNAME;
 	var $_MODULE_PATH;
@@ -75,6 +77,8 @@ class webphoto_lib_rss
 //---------------------------------------------------------
 function webphoto_lib_rss( $dirname )
 {
+	$this->webphoto_lib_xml();
+
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
 	$this->_DIRNAME     = $dirname;
@@ -194,116 +198,6 @@ function build_channel_array()
 function build_items()
 {
 	// dummy
-}
-
-// --------------------------------------------------------
-// htmlspecialchars
-// http://www.w3.org/TR/REC-xml/#dt-markup
-// http://www.fxis.co.jp/xmlcafe/tmp/rec-xml.html#dt-markup
-//   &  -> &amp;	// without html entity
-//   <  -> &lt;
-//   >  -> &gt;
-//   "  -> &quot;
-//   '  -> &apos;
-// --------------------------------------------------------
-function xml_text($str)
-{
-	return $this->xml_htmlspecialchars_strict($str);
-}
-
-function xml_url($str)
-{
-	return $this->xml_htmlspecialchars_url($str);
-}
-
-function xml_htmlspecialchars($str)
-{
-	$str = $this->replace_control_code( $str, '' );
-	$str = $this->replace_return_code(  $str );
-	$str = htmlspecialchars($str);
-	$str = preg_replace("/'/", '&apos;', $str);
-	return $str;
-}
-
-function xml_htmlspecialchars_strict($str)
-{
-	$str = $this->xml_strip_html_entity_char($str);
-	$str = $this->xml_htmlspecialchars($str);
-	$str = str_replace('?', '&#063;', $str);
-	return $str;
-}
-
-function xml_htmlspecialchars_url($str)
-{
-	$str = preg_replace("/&amp;/sU", '&', $str);
-	$str = $this->xml_strip_html_entity_char($str);
-	$str = $this->xml_htmlspecialchars($str);
-	return $str;
-}
-
-function xml_cdata($str, $flag_control=true, $flag_undo=true)
-{
-	$str = $this->replace_control_code( $str, '');
-	$str = $this->xml_undo_html_special_chars($str);
-
-// not sanitize
-	$str = $this->xml_convert_cdata($str);
-
-	return $str;
-}
-
-function xml_convert_cdata($str)
-{
-	return preg_replace("/]]>/", ']]&gt;', $str);
-}
-
-// --------------------------------------------------------
-// strip html entities
-//   &abc; -> ' '
-// --------------------------------------------------------
-function xml_strip_html_entity_char($str)
-{
-	return preg_replace("/&[0-9a-zA-z]+;/sU", ' ', $str);
-}
-
-// --------------------------------------------------------
-// undo XOOPS HtmlSpecialChars
-//   &lt;   -> <
-//   &gt;   -> >
-//   &quot; -> "
-//   &#039; -> '
-//   &amp;  -> &
-//   &amp;nbsp; -> &nbsp;
-// --------------------------------------------------------
-function xml_undo_html_special_chars($str)
-{
-	$str = preg_replace("/&gt;/i",   '>', $str);
-	$str = preg_replace("/&lt;/i",   '<', $str);
-	$str = preg_replace("/&quot;/i", '"', $str);
-	$str = preg_replace("/&#039;/i", "'", $str);	
-	$str = preg_replace("/&amp;nbsp;/i", '&nbsp;', $str);
-	return $str;
-}
-
-//---------------------------------------------------------
-// TAB \x09 \t
-// LF  \xOA \n
-// CR  \xOD \r
-//---------------------------------------------------------
-function replace_control_code( $str, $replace=' ' )
-{
-	$str = preg_replace('/[\x00-\x08]/', $replace, $str);
-	$str = preg_replace('/[\x0B-\x0C]/', $replace, $str);
-	$str = preg_replace('/[\x0E-\x1F]/', $replace, $str);
-	$str = preg_replace('/[\x7F]/',      $replace, $str);
-	return $str;
-}
-
-function replace_return_code( $str, $replace=' ' )
-{
-	$str = preg_replace("/\n/", $replace, $str);
-	$str = preg_replace("/\r/", $replace, $str);
-	return $str;
 }
 
 //---------------------------------------------------------

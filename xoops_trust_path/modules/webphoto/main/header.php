@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.3 2008/08/25 19:28:06 ohwada Exp $
+// $Id: header.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// player_handler.php  flashvar_handler.php
 // 2008-08-24 K.OHWADA
 // added item_handler.php qrcode_img.php
 // 2008-07-01 K.OHWADA
@@ -20,6 +22,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // xoops system files
 //---------------------------------------------------------
 include_once XOOPS_ROOT_PATH.'/class/template.php';
+include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 
 //---------------------------------------------------------
 // webphoto files
@@ -44,9 +47,11 @@ webphoto_include_once( 'class/lib/pathinfo.php' );
 webphoto_include_once( 'class/lib/highlight.php' );
 webphoto_include_once( 'class/lib/pagenavi.php' );
 webphoto_include_once( 'class/lib/utility.php' );
+webphoto_include_once( 'class/lib/remote_file.php' );
 webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/cloud.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
+webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
@@ -55,15 +60,22 @@ webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
+webphoto_include_once( 'class/handler/player_handler.php' );
+webphoto_include_once( 'class/handler/flashvar_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
+webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
+webphoto_include_once( 'class/webphoto/playlist.php' );
+webphoto_include_once( 'class/webphoto/flash_player.php' );
+webphoto_include_once( 'class/webphoto/embed_base.php' );
+webphoto_include_once( 'class/webphoto/embed.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/show_main.php' );
 webphoto_include_once( 'class/webphoto/show_list.php' );

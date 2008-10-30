@@ -1,5 +1,5 @@
 <?php
-// $Id: error.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: error.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,12 +8,20 @@
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
+//---------------------------------------------------------
+// change log
+// 2008-10-01 K.OHWADA
+// set_error_code()
+// set_error_in_head()
+//---------------------------------------------------------
+
 //=========================================================
 // class webphoto_lib_error
 //=========================================================
 class webphoto_lib_error
 {
-	var $_errors = array();
+	var $_error_code = 0 ;
+	var $_errors     = array();
 
 //---------------------------------------------------------
 // constructor
@@ -30,6 +38,24 @@ function &getInstance()
 		$instance = new webphoto_lib_error();
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// error code
+//---------------------------------------------------------
+function clear_error_code()
+{
+	$this->_error_code = 0;
+}
+
+function set_error_code($code)
+{
+	$this->_error_code = intval($code);
+}
+
+function get_error_code()
+{
+	return $this->_error_code;
 }
 
 //---------------------------------------------------------
@@ -93,6 +119,11 @@ function set_error( $msg )
 			$this->_errors[] = $m;
 		}
 	}
+}
+
+function set_error_in_head( $msg )
+{
+	array_unshift( $this->_errors , $msg );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: handler.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// build_form_select_list()
 // 2008-08-01 K.OHWADA
 // added force in query()
 //---------------------------------------------------------
@@ -25,11 +27,18 @@ class webphoto_lib_handler extends webphoto_lib_error
 	var $_table;
 	var $_id_name;
 	var $_pid_name;
+	var $_title_name;
 
 	var $_id          = 0;
 	var $_xoops_uid   = 0;
 	var $_cached      = array();
 	var $_flag_cached = false;
+
+	var $_use_prefix  = false;
+	var $_NONE_VALUE  = '---' ;
+	var $_PREFIX_NAME = 'prefix' ;
+	var $_PREFIX_MARK = '.' ;
+	var $_PREFIX_BAR  = '--' ;
 
 	var $_DEBUG_SQL   = false;
 	var $_DEBUG_ERROR = false;
@@ -85,6 +94,16 @@ function get_pid_name()
 	return $this->_pid_name;
 }
 
+function set_title_name( $val )
+{
+	$this->_title_name = $val;
+}
+
+function get_title_name()
+{
+	return $this->_title_name;
+}
+
 function get_id()
 {
 	return $this->_id;
@@ -98,6 +117,11 @@ function prefix_dirname( $name )
 function db_prefix( $name )
 {
 	return $this->_db->prefix( $name );
+}
+
+function set_use_prefix( $val )
+{
+	$this->_use_prefix = (bool)$val;
 }
 
 function set_debug_sql_by_const_name( $name )
@@ -423,6 +447,69 @@ function queryF( $sql, $limit=0, $offset=0 )
 function quote( $str )
 {
 	$str = "'". addslashes($str) ."'";
+	return $str;
+}
+
+//---------------------------------------------------------
+// selbox
+//---------------------------------------------------------
+function build_form_selbox( $name='', $value=0, $none=0, $onchange='' )
+{
+	return $this->build_form_select_list(
+		$this->get_rows_by_orderby( $this->_title_name ), 
+		$this->_title_name, $value, $none, $name, $onchange );
+}
+
+function build_form_select_list( $rows, $title_name='', $preset_id=0, $none=0, $sel_name='', $onchange='' )
+{
+	if ( empty($title_name) ) {
+		$title_name = $this->_title_name;
+	}
+
+	if ( empty($sel_name) ) {
+		$sel_name = $this->_id_name;
+	}
+
+	$str = '<select name="'. $sel_name .'" ';
+	if ( $onchange != "" ) {
+		$str .= ' onchange="'. $onchange .'" ';
+	}
+	$str .= ">\n";
+
+	if ( $none ) {
+		$str .= '<option value="0">';
+		$str .= $this->_NONE_VALUE ;
+		$str .= "</option>\n";
+	}
+
+// Warning : Invalid argument supplied for foreach() 
+	if ( is_array($rows) && count($rows) ) {
+		foreach ( $rows as $row )
+		{
+			$id     = $row[ $this->_id_name ];
+			$title  = $row[ $title_name ];
+			$prefix = '' ;
+
+			if ( $this->_use_prefix ) {
+				$prefix = $row[ $this->_PREFIX_NAME ] ;
+
+				if ( $prefix ) {
+					$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';
+				}
+			}
+
+			$sel = '';
+			if ( $id == $preset_id ) {
+				$sel = ' selected="selected" ';
+			}
+
+			$str .= '<option value="'. $id .'" '. $sel .'>';
+			$str .= $prefix . $this->sanitize($title);
+			$str .= "</option>\n";
+		}
+	}
+
+	$str .=  "</select>\n";
 	return $str;
 }
 

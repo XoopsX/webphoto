@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// webphoto_photo_action
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -19,20 +21,22 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_submit_imagemanager
 //=========================================================
-class webphoto_main_submit_imagemanager extends webphoto_main_submit
+class webphoto_main_submit_imagemanager extends webphoto_photo_action
 {
+	var $_THIS_CLOSE_FCT  = 'close';
+	var $_THIS_CLOSE_URL ;
+
+	var $_TIME_SUCCESS = 3;
+	var $_TIME_FAILED  = 5;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 {
-	$this->webphoto_main_submit( $dirname , $trust_dirname );
+	$this->webphoto_photo_action( $dirname , $trust_dirname );
 
-// 1 -> 3 sec
-	$this->_TIME_SUCCESS = 3;
-
-	$this->_REDIRECT_URL = $this->_MODULE_URL .'/index.php?fct=close';
+	$this->_THIS_CLOSE_URL  = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -49,7 +53,25 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function main()
 {
-	$this->check_submit();
+	$this->get_post_param();
+
+	$ret = $this->submit_check();
+	if ( !$ret ) {
+		redirect_header( 
+			$this->get_redirect_url() , 
+			$this->get_redirect_time() ,
+			$this->get_redirect_msg()
+		) ;
+		exit();
+	}
+
+	$op = $this->_post_class->get_post_text( 'op' );
+	switch ( $op ) 
+	{
+		case 'submit':
+			$this->_submit();
+			break;
+	}
 
 	$this->_print_header();
 	$this->_print_form_imagemanager();
@@ -59,36 +81,49 @@ function main()
 //---------------------------------------------------------
 // submit
 //---------------------------------------------------------
-function _exec_submit()
+function _submit()
 {
-	$ret = $this->_check_submit();
-	if ( $ret < 0 ) {
-		return $ret;
+	$is_failed = false;
+
+// exit if error
+	$this->check_token_and_redirect( $url, $this->_TIME_FAILED );
+
+	$this->set_flag_fetch_allow_all( false );
+	$this->set_flag_fetch_thumb( false );
+	$this->set_flag_allow_none( false );
+	$this->set_flag_post_count( false );
+	$this->set_flag_notify( false );
+
+	$ret = $this->submit();
+	switch ( $ret )
+	{
+
+// success
+		case _C_WEBPHOTO_RET_SUCCESS :
+			break;
+
+// error
+		case _C_WEBPHOTO_RET_ERROR :
+			$is_failed = true;
+			break;
 	}
 
-	$ret11 = $this->upload_fetch_photo( false );
-	if ( $ret11 < 0 ) { 
-		return $ret11;	// failed
-	}
+	list( $url, $time, $msg ) = $this->build_redirect( 
+		$this->_build_redirect_param( $is_failed ) );
 
-	if ( empty( $this->_photo_tmp_name ) ) {
-		return _C_WEBPHOTO_ERR_NO_IMAGE;
-	}
-
-	return $this->_add_to_handler( $this->_photo_tmp_name, null );
+	redirect_header( $url, $time, $msg );
+	exit();
 }
 
-//---------------------------------------------------------
-// overwrite by submit_imagemanager
-//---------------------------------------------------------
-function submit_success()
+function _build_redirect_param( $is_failed )
 {
-	redirect_header( $this->_REDIRECT_URL, $this->_TIME_SUCCESS , $this->get_constant('SUBMIT_RECEIVED') ) ;
-}
-
-function check_xoops_upload_file_submit()
-{
-	return $this->check_xoops_upload_file( false );
+	$param = array(
+		'is_failed'   => $is_failed ,
+		'url_success' => $this->_THIS_CLOSE_URL ,
+		'url_failed'  => $this->_THIS_CLOSE_URL , 
+		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
+	);
+	return $param ;
 }
 
 //---------------------------------------------------------
@@ -123,14 +158,15 @@ function _print_footer()
 //---------------------------------------------------------
 function _print_form_imagemanager()
 {
-	$row = $this->_get_item_default();
+	$row = $this->build_submit_default_row() ;
 
 	$param = array(
-		'has_resize'    => $this->_has_resize,
+		'has_resize'    => $this->_has_image_resize,
 		'allowed_exts'  => $this->get_normal_exts() ,
 	);
 
-	$form_class =& webphoto_photo_edit_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form_class =& webphoto_photo_edit_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_imagemanager( $row, $param );
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.3 2008/08/26 06:49:55 ohwada Exp $
+// $Id: photo_form.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// submit -> item_manager
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // used preload_init()
@@ -80,7 +82,7 @@ function print_form( $photo_count, $photo_rows, $perpage, $photonavinfo )
 	$onclick_on = ' onclick="with(document.MainForm){ for(i=0;i<length;i++){ if(elements[i].type==\'checkbox\'){ elements[i].checked=true; }}}" ';
 	$onclick_delete = ' onclick="if(confirm(\''. _AM_WEBPHOTO_JS_REMOVECONFIRM .'\')){ document.MainForm.action.value=\'delete\'; submit(); }" ';
 
-	$url_pictadd = $this->_MODULE_URL .'/index.php?fct=submit&amp;?cat_id='. $this->_get_catid;
+	$url_pictadd = $this->_MODULE_URL .'/admin/index.php?fct=item_manager&amp;op=submit_form&amp;cat_id='. $this->_get_catid;
 
 // --- print ---
 	echo '<div style="border: 2px solid #2F5376; padding:8px; width:100%;" class="bg4">'."\n" ;
@@ -298,7 +300,7 @@ function _print_photo( $row )
 
 function _build_edit_button( $id )
 {
-	$url_edit = $this->_MODULE_URL .'/index.php?fct=edit&amp;photo_id='. $id;
+	$url_edit = $this->_MODULE_URL .'/admin/index.php?fct=item_manager&amp;op=modify_form&amp;item_id='. $id;
 
 	$button  = '<a href="'. $url_edit .'" target="_blank">';
 	$button .= $this->build_img_edit();

@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.6 2008/08/25 21:18:53 ohwada Exp $
+// $Id: import.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use build_update_item_row()
+// BUG : thum_param -> thumb_param
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
@@ -250,41 +253,11 @@ function add_photo_from_myalbum( $myalbum_id, $new_cid, $myalbum_row )
 		return false ;
 	}
 
-	$cont_param   = $file_params['cont'] ;
-	$thumb_param  = $file_params['thumb'] ;
-	$middle_param = $file_params['middle'] ;
-	$flash_param  = $file_params['flash'] ;
-	$docomo_param = $file_params['docomo'] ;
+	$file_ids = $this->_photo_class->insert_files_from_params(
+		$item_id,  $file_params );
 
-	$cont_id   = 0 ;
-	$thumb_id  = 0 ;
-	$middle_id = 0 ;
-	$flash_id  = 0 ;
-	$docomo_id = 0 ;
-
-	if ( is_array($cont_param) ) {
-		$cont_id = $this->_photo_class->insert_file( $item_id, $cont_param );
-	}
-	if ( is_array($thumb_param) ) {
-		$thumb_id = $this->_photo_class->insert_file( $item_id, $thumb_param );
-	}
-	if ( is_array($middle_param) ) {
-		$middle_id = $this->_photo_class->insert_file( $item_id, $middle_param );
-	}
-	if ( is_array($flash_param) ) {
-		$flash_id = $this->_photo_class->insert_file( $item_id, $flash_param );
-	}
-	if ( is_array($docomo_param) ) {
-		$docomo_id = $this->_photo_class->insert_file( $item_id, $docomo_param );
-	}
-
-// update
-	$update_row                   = $item_row ;
-	$update_row['item_file_id_1'] = $cont_id;
-	$update_row['item_file_id_2'] = $thumb_id;
-	$update_row['item_file_id_3'] = $middle_id;
-	$update_row['item_file_id_4'] = $flash_id;
-	$update_row['item_file_id_5'] = $docomo_id;
+	$update_row = $this->_photo_class->build_update_item_row(
+		$item_row, $file_ids );
 
 	$ret = $this->_item_handler->update( $update_row );
 	if ( !$ret ) {
@@ -443,13 +416,13 @@ function copy_photo_from_myalbum( $item_row, $myalbum_row )
 // if exists thumb file
 	if ( file_exists( $src_thumb_file_ext ) && !$flag_video_thumb ) {
 		$this->copy_file_rel( $src_thumb_file_ext , $thumb_path_ext ) ;
-		$thum_param = $this->_photo_class->build_file_param(
+		$thumb_param = $this->_photo_class->build_file_param(
 			$thumb_path_ext, $thumb_name_ext, $src_ext, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 // if exists thumb icon 
 	} elseif ( file_exists( $src_thumb_file_gif ) && !$flag_video_thumb ) {
 		$this->copy_file_rel( $src_thumb_file_gif , $thumb_path_gif ) ;
-		$thum_param = $this->_photo_class->build_file_param(
+		$thumb_param = $this->_photo_class->build_file_param(
 			$thumb_path_gif, $thumb_name_gif, $this->_EXT_GIF, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 // if image file

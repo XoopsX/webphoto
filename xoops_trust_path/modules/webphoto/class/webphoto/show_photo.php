@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.9 2008/09/15 08:48:44 ohwada Exp $
+// $Id: show_photo.php,v 1.10 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,9 +8,11 @@
 
 //---------------------------------------------------------
 // change log
-
-// build_media_player()
-
+// 2008-10-01 K.OHWADA
+// build_media_player() -> build_flash_player()
+// build_external_link()
+// 2008-09-15 K.OHWADA
+// added build_media_player()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
@@ -35,6 +37,8 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_cfg_newdays;
 	var $_cfg_popular;
 	var $_cfg_nameoruname;
+	var $_cfg_thumb_width;
+	var $_cfg_middle_width;
 
 	var $_time_newdays;
 	var $_usereal;
@@ -52,10 +56,7 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_WINDOW_MERGIN = 16;
 	var $_MAX_SUMMARY   = 100;
 	var $_SUMMARY_TAIL  = ' ...';
-
-	var $_MEDIUM_VIDEO    = 'video';
-	var $_EXT_FLASH_VIDEO = 'flv';
-	var $_EXT_MOBILE_VIDEO_ARRAY = array( '3gp', '3g2' );
+	var $_RATING_DECIMALS = 2;
 
 //---------------------------------------------------------
 // constructor
@@ -64,7 +65,7 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_image_class =& webphoto_image_info::getInstance( $dirname, $trust_dirname );
+	$this->_image_class  =& webphoto_image_info::getInstance( $dirname, $trust_dirname );
 
 	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
@@ -79,9 +80,11 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_multibyte_class->set_ja_period(  _WEBPHOTO_JA_PERIOD );
 	$this->_multibyte_class->set_ja_comma(   _WEBPHOTO_JA_COMMA );
 
-	$this->_cfg_newdays     = $this->get_config_by_name('newdays');
-	$this->_cfg_popular     = $this->get_config_by_name('popular');
-	$this->_cfg_nameoruname = $this->get_config_by_name('nameoruname');
+	$this->_cfg_newdays      = $this->get_config_by_name('newdays');
+	$this->_cfg_popular      = $this->get_config_by_name('popular');
+	$this->_cfg_nameoruname  = $this->get_config_by_name('nameoruname');
+	$this->_cfg_thumb_width  = $this->get_config_by_name('thumb_width' ) ;
+	$this->_cfg_middle_width = $this->get_config_by_name('middle_width' ) ;
 
 	$this->_time_newdays = time() - 86400 * $this->_cfg_newdays ;
 	$this->_usereal = ( $this->_cfg_nameoruname == 'name' ) ? 1 : 0 ;
@@ -119,9 +122,12 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 
 	$show_arr = array(
 		'photo_id'       => $item_id ,
+		'item_id'        => $item_id ,
 		'time_cretae'    => $item_time_create,
 		'time_update'    => $item_time_update,
 		'cat_id'         => $item_cat_id ,
+		'player_id'      => $item_player_id ,
+		'flashvar_id'    => $item_flashvar_id ,
 		'uid'            => $item_uid ,
 		'kind'           => $item_kind ,
 		'ext'            => $item_ext ,
@@ -129,21 +135,40 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'title'          => $item_title ,
 		'place'          => $item_place ,
 		'equipment'      => $item_equipment ,
+		'displaytype'    => $item_displaytype,
+		'onclick'        => $item_onclick,
+		'external_url'   => $item_external_url,
+		'external_thumb' => $item_external_thumb,
+		'embed_type'     => $item_embed_type,
+		'embed_src'      => $item_embed_src,
 		'gmap_latitude'  => $item_gmap_latitude,
 		'gmap_longitude' => $item_gmap_longitude,
 		'gmap_zoom'      => $item_gmap_zoom,
 		'status'         => $item_status ,
 		'hits'           => $item_hits ,
+		'views'          => $item_views ,
 		'rating'         => $item_rating ,
 		'votes'          => $item_votes ,
 		'comments'       => $item_comments ,
 		'description'    => $item_description,
 		'search'         => $item_search,
-
-		'title_s'        => $this->sanitize( $item_title ) ,
-		'place_s'        => $this->sanitize( $item_place ) ,
-		'equipment_s'    => $this->sanitize( $item_equipment ) ,
-		'uname_s'        => $this->build_show_uname( $item_uid ),
+		'playlist_feed'  => $item_playlist_feed,
+		'playlist_dir'   => $item_playlist_dir,
+		'playlist_cache' => $item_playlist_cache,
+		'playlist_type'  => $item_playlist_type,
+		'playlist_time'  => $item_playlist_time,
+	
+		'title_s'          => $this->sanitize( $item_title ) ,
+		'place_s'          => $this->sanitize( $item_place ) ,
+		'equipment_s'      => $this->sanitize( $item_equipment ) ,
+		'external_url_s'   => $this->sanitize( $item_external_url ) ,
+		'external_thumb_s' => $this->sanitize( $item_external_thumb ) ,
+		'embed_type_s'     => $this->sanitize( $item_embed_type ) ,
+		'embed_src_s'      => $this->sanitize( $item_embed_src ) ,
+		'playlist_feed_s'  => $this->sanitize( $item_playlist_feed ) ,
+		'playlist_dir_s'   => $this->sanitize( $item_playlist_dir ) ,
+		'playlist_cache_s' => $this->sanitize( $item_playlist_cache ) ,
+		'uname_s'          => $this->build_show_uname( $item_uid ) ,
 
 		'time_update_m'       => formatTimestamp( $item_time_update , 'm' ) ,
 		'datetime_disp'       => $datetime_disp ,
@@ -255,8 +280,6 @@ function build_photo_show( $row )
 	list( $is_newphoto, $is_updatedphoto )
 		= $this->build_show_is_new_updated( $item_time_update, $item_status );
 
-	$arr3 = $this->build_media_player( $arr1 ) ;
-
 	$arr2 = array(
 		'cat_title_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_title', true ),
 		'cat_text1_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text1', true ),
@@ -278,9 +301,11 @@ function build_photo_show( $row )
 
 		'window_x'         => $arr1['photo_width']  + $this->_WINDOW_MERGIN ,
 		'window_y'         => $arr1['photo_height'] + $this->_WINDOW_MERGIN ,
+		
 	) ;
 
-	return array_merge( $arr1, $arr2, $arr3 );
+	$arr = array_merge( $arr1, $arr2 );
+	return $arr;
 }
 
 function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
@@ -309,11 +334,19 @@ function build_show_info_vote( $rating, $votes )
 		} else {
 			$votestring = sprintf( $this->get_constant('S_NUMVOTES') , $votes ) ;
 		}
-		$info_votes = number_format( $rating , 2 ).' ('. $votestring .')';
+		$info_votes  = $this->build_show_rating( $rating );
+		$info_votes .= ' ('. $votestring .')';
 	} else {
-		$info_votes = '0.00 ('.sprintf( $this->get_constant('S_NUMVOTES') , 0 ) . ')' ;
+		$info_votes  = $this->build_show_rating( 0 );
+		$info_votes .= ' ('.sprintf( $this->get_constant('S_NUMVOTES') , 0 ) . ')' ;
 	}
 	return $info_votes;
+}
+
+
+function build_show_rating( $rating )
+{
+	return number_format( $rating , $this->_RATING_DECIMALS ) ;
 }
 
 function build_show_is_new_updated( $time_update, $status )
@@ -375,14 +408,6 @@ function build_show_taf_mailto( $photo_id )
 	return $str;
 }
 
-function build_show_is_mobile_video( $ext )
-{
-	if ( in_array( $ext, $this->_EXT_MOBILE_VIDEO_ARRAY ) ) {
-		return true ;
-	}
-	return false ;
-}
-
 function format_time( $time )
 {
 	return $this->_utility_class->format_time( $time, 
@@ -400,7 +425,9 @@ function build_show_imgsrc( $row )
 	$imgsrc_middle = '';
 	$is_normal_image = false ;
 
-	$is_image_kind = $this->is_image_kind( $row['item_kind'] );
+	$external_url_s   = $this->sanitize( $row['item_external_url'] );
+	$external_thumb_s = $this->sanitize( $row['item_external_thumb'] );
+	$is_image_kind    = $this->is_image_kind( $row['item_kind'] );
 
 	list( $cont_url, $cont_width, $cont_height )
 		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_CONT );
@@ -415,15 +442,29 @@ function build_show_imgsrc( $row )
 	$thumb_url_s  = $this->sanitize( $thumb_url );
 	$middle_url_s = $this->sanitize( $middle_url );
 
+// link file
+	if ( $cont_url_s  ) {
+		$ahref_file = $cont_url_s;
+
+	} elseif ( $external_url_s ) {
+		$ahref_file = $external_url_s;
+	}
+
 // photo image
 	if ( $cont_url_s && $is_image_kind ) {
 		$imgsrc_photo = $cont_url_s;
+
+	} elseif ( $external_url_s && $is_image_kind ) {
+		$imgsrc_photo = $external_url_s;
 
 	} elseif ( $middle_url_s ) {
 		$imgsrc_photo = $middle_url_s;
 
 	} elseif ( $thumb_url_s ) {
 		$imgsrc_photo = $thumb_url_s;
+
+	} elseif ( $external_thumb_s ) {
+		$imgsrc_photo = $external_thumb_s;
 
 	} else {
 		$imgsrc_photo = $this->_URL_DEFAULT_IMAGE;
@@ -433,10 +474,20 @@ function build_show_imgsrc( $row )
 	if ( $thumb_url_s ) {
 		$imgsrc_thumb = $thumb_url_s;
 
+	} elseif ( $external_thumb_s ) {
+		$imgsrc_thumb = $external_thumb_s ;
+		$thumb_width  = 0 ;
+		$thumb_height = 0 ;
+
 	} elseif ( $cont_url_s && $is_image_kind ) {
 		$imgsrc_thumb = $cont_url_s;
 		$thumb_width  = $cont_width;
 		$thumb_height = $cont_height;
+
+	} elseif ( $external_url_s && $is_image_kind ) {
+		$imgsrc_thumb = $external_url_s ;
+		$thumb_width  = 0 ;
+		$thumb_height = 0 ;
 
 	} else {
 		$imgsrc_thumb = $this->_URL_PIXEL_IMAGE;
@@ -456,10 +507,20 @@ function build_show_imgsrc( $row )
 		$middle_width  = $cont_width;
 		$middle_height = $cont_height;
 
+	} elseif ( $external_url_s && $is_image_kind ) {
+		$imgsrc_middle = $external_url_s ;
+		$middle_width  = 0 ;
+		$middle_height = 0 ;
+
 	} elseif ( $thumb_url_s ) {
 		$imgsrc_middle = $thumb_url_s;
 		$middle_width  = $thumb_width;
 		$middle_height = $thumb_height;
+
+	} elseif ( $external_thumb_s ) {
+		$imgsrc_middle = $external_thumb_s ;
+		$middle_width  = 0 ;
+		$middle_height = 0 ;
 
 	} else {
 		$imgsrc_middle = $this->_URL_DEFAULT_IMAGE;
@@ -481,7 +542,7 @@ function build_show_imgsrc( $row )
 		'cont_url_s'       => $cont_url_s ,
 		'thumb_url_s'      => $thumb_url_s ,
 		'middle_url_s'     => $middle_url_s ,
-		'ahref_file'       => $cont_url_s ,
+		'ahref_file'       => $ahref_file ,
 		'imgsrc_photo'     => $imgsrc_photo ,
 		'imgsrc_thumb'     => $imgsrc_thumb ,
 		'imgsrc_middle'    => $imgsrc_middle ,
@@ -493,74 +554,9 @@ function build_show_imgsrc( $row )
 		'thumb_height'     => $thumb_height ,
 		'is_normal_image'  => $is_normal_image ,
 	);
+
 	return $arr;
 
-}
-
-//---------------------------------------------------------
-// media player
-// http://code.google.com/p/swfobject/
-// http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
-//---------------------------------------------------------
-function build_media_player( $show_arr )
-{
-	$can  = false ;
-	$file = null ;
-
-	$ext       = $show_arr[ 'ext' ] ;
-	$title_s   = $show_arr[ 'title_s' ] ;
-	$image_s   = $show_arr[ 'imgsrc_middle' ] ;
-	$cont_url  = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_CONT ] ;
-	$flash_url = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
-
-	$is_mp3 = $this->is_mp3_ext( $ext );
-	$is_mp4 = $this->is_mp4_ext( $ext );
-
-	if ( $flash_url ) {
-		$can  = true ;
-		$file = $flash_url ;
-
-	} elseif ( $cont_url && ( $is_mp3 || $is_mp4 ) ) {
-		$can  = true ;
-		$file = $cont_url ;
-	}
-
-	$arr = array(
-		'mediaplayer_can'             => $can ,
-		'mediaplayer_title'           => $title_s ,
-		'mediaplayer_file'            => $this->sanitize( $file ) ,
-		'mediaplayer_image'           => $image_s ,
-		'mediaplayer_allowfullscreen' => 'true' ,
-		'mediaplayer_version'         => '8' ,
-		'mediaplayer_id'              => '0' ,	// not show playlist
-		'mediaplayer_width'           => '320' ,
-		'mediaplayer_height'          => '240' ,
-		'mediaplayer_displaywidth'    => '0' ,
-		'mediaplayer_displayheight'   => '0' ,
-		'mediaplayer_autostart'       => 'false' ,
-		'mediaplayer_shuffle'         => 'false' ,
-		'mediaplayer_overstretch'     => 'false' ,
-		'mediaplayer_showdownload'    => 'false' ,
-		'mediaplayer_callback'        => null ,
-	);
-
-	return $arr ;
-}
-
-function is_mp3_ext( $ext )
-{
-	if ( strtolower( $ext ) == 'mp3' ) {
-		return true ;
-	}
-	return false ;
-}
-
-function is_mp4_ext( $ext )
-{
-	if ( strtolower( $ext ) == 'mp4' ) {
-		return true ;
-	}
-	return false ;
 }
 
 //---------------------------------------------------------

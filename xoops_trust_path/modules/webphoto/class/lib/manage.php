@@ -1,5 +1,5 @@
 <?php
-// $Id: manage.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: manage.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// build_manage_list_menu()
 // 2008-08-01 K.OHWADA
 // added _manage_delete_all_each()
 // 2008-07-01 K.OHWADA
@@ -164,7 +166,7 @@ function manage_list()
 	$this->_pagenavi_class->set_sortid_by_get();
 
 	echo $this->build_manage_bread_crumb();
-	echo $this->build_admin_menu();
+	echo $this->build_manage_list_menu();
 	echo $this->build_show_title();
 	echo $this->build_show_desc();
 
@@ -295,6 +297,11 @@ function print_list( $rows )
 	echo $this->build_form_pagenavi_perpage();
 	echo $this->build_manage_pagenavi();
 
+}
+
+function build_manage_list_menu()
+{
+	return $this->build_admin_menu();
 }
 
 function build_manage_list_headers()

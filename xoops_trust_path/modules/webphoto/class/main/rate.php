@@ -1,5 +1,5 @@
 <?php
-// $Id: rate.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: rate.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use get_rating_by_photoid()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -179,19 +181,14 @@ function _exec_rate()
 
 function update_rating_by_photoid( $photo_id )
 {
-	$rows = $this->_vote_handler->get_rows_by_photoid( $photo_id );
-	if ( !is_array($rows) ) { return true; }	// no action
+	list( $votes, $total, $rating )
+		= $this->_vote_handler->calc_rating_by_photoid( $photo_id );
 
-	$votesDB = count( $rows ) ;
-
-	$totalrating = 0;
-	foreach( $rows as $row ) {
-		$totalrating += $row['vote_rating'] ;
+	if ( $votes == 0 ) {
+		return true; 	// no action
 	}
 
-	$finalrating = number_format( $totalrating / $votesDB , 4 ) ;
-
-	$ret = $this->_item_handler->update_rating_by_id( $photo_id, $finalrating, $votesDB );
+	$ret = $this->_item_handler->update_rating_by_id( $photo_id, $votes, $rating );
 	if ( !$ret ) {
 		$this->set_error( $this->_item_handler->get_errors() );
 		return false;

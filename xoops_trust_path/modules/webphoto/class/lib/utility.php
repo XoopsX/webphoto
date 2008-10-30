@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.6 2008/09/21 00:13:48 ohwada Exp $
+// $Id: utility.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// undo_htmlspecialchars()
 // 2008-09-20 K.OHWADA
 // BUG: 12:00:52 -> 12:52
 // 2008-08-24 K.OHWADA
@@ -85,6 +87,18 @@ function parse_ext( $file )
 function strip_ext( $file )
 {
 	return str_replace( strrchr( $file , '.' ), '', $file );
+}
+
+function parse_url_to_filename( $url )
+{
+	$parsed = parse_url( $url );
+	if ( isset($parsed['path']) ) {
+		$arr = explode( '/', $parsed['path'] );
+		if ( is_array($arr) && count($arr) ) {
+			return array_pop($arr) ;
+		}
+	}
+	return null;
 }
 
 function add_slash_to_head( $str )
@@ -281,8 +295,98 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 //---------------------------------------------------------
 function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false  )
 {
-	$arr   = array();
-	$false = false;
+	$arr = array();
+
+	$lists = $this->get_lists_in_dir( $path );
+	if ( !is_array($lists) ) {
+		return false;
+	}
+
+	$pattern = "/\.". preg_quote($ext) ."$/";
+
+	foreach ( $lists as $list ) 
+	{
+		$path_list = $path .'/'. $list;
+
+// check is file
+		if ( is_dir($path_list) || !is_file($path_list) ) {
+			continue;
+		}
+
+// check ext
+		if ( $ext && !preg_match($pattern, $list) ) {
+			continue;
+		}
+
+		$list_out = $list;
+		if ( $flag_dir ) {
+			$list_out = $path_list;
+		}
+		if ( $id_as_key ) {
+			$arr[ $list ] = $list_out;
+		} else {
+			$arr[] = $list_out;
+		}
+	}
+
+	if ( $flag_sort ) {
+		asort($arr);
+		reset($arr);
+	}
+
+	return $arr;
+}
+
+function get_dirs_in_dir( $path, $flag_dir=false, $flag_sort=false, $id_as_key=false  )
+{
+	$arr = array();
+
+	$lists = $this->get_lists_in_dir( $path );
+	if ( !is_array($lists) ) {
+		return false;
+	}
+
+	foreach ( $lists as $list ) 
+	{
+		$path_list = $path .'/'. $list;
+
+// check is dir
+		if ( !is_dir($path_list) ) {
+			continue;
+		}
+
+// myself
+		if ( $list == '.' ) {
+			continue;
+		}
+
+// parent
+		if ( $list == '..' ) {
+			continue;
+		}
+
+		$list_out = $list;
+		if ( $flag_dir ) {
+			$list_out = $path_list;
+		}
+		if ( $id_as_key ) {
+			$arr[ $list ] = $list_out;
+		} else {
+			$arr[] = $list_out;
+		}
+	}
+
+	if ( $flag_sort ) {
+		asort($arr);
+		reset($arr);
+	}
+
+	return $arr;
+}
+
+function get_lists_in_dir( $path )
+{
+	$arr = array();
 
 	$path = $this->strip_slash_from_tail( $path );
 
@@ -291,44 +395,20 @@ function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, 
 		return false;
 	}
 
+// open
 	$dh = opendir($path);
 	if ( !$dh ) {
 		return false;
 	}
 
-	$pattern = "/\.". preg_quote($ext) ."$/";
-
-	while ( false !== ($file = readdir( $dh )) ) 
+// read
+	while ( false !== ($list = readdir( $dh )) ) 
 	{
-		$path_file = $path .'/'. $file;
-
-// check is file
-		if ( is_dir($path_file) || !is_file($path_file) ) {
-			continue;
-		}
-
-// check ext
-		if ( $ext && !preg_match($pattern, $file) ) {
-			continue;
-		}
-
-		$file_out = $file;
-		if ( $flag_dir ) {
-			$file_out = $dirname .'/'. $file;
-		}
-		if ( $id_as_key ) {
-			$arr[ $file ] = $file_out;
-		} else {
-			$arr[] = $file_out;
-		}
+		$arr[] = $list;
 	}
 
+// close
 	closedir( $dh );
-
-	if ( $flag_sort ) {
-		asort($arr);
-		reset($arr);
-	}
 
 	return $arr;
 }
@@ -689,9 +769,36 @@ function build_error_msg( $msg, $title='', $flag_sanitize=true )
 	return $str;
 }
 
+//---------------------------------------------------------
+// sanitize
+//---------------------------------------------------------
 function sanitize( $str )
 {
 	return htmlspecialchars( $str, ENT_QUOTES );
+}
+
+// --------------------------------------------------------
+// Invert special characters from HTML entities
+//   &amp;   =>  &
+//   &lt;    =>  <
+//   &gt;    =>  >
+//   &quot;  =>  "
+//   &#39;   =>  '
+//   &#039;  =>  '
+//   &apos;  =>  ' (xml format)
+// --------------------------------------------------------
+function undo_htmlspecialchars( $str )
+{
+	$arr = array(
+		'&amp;'  =>  '&',
+		'&lt;'   =>  '<',
+		'&gt;'   =>  '>',
+		'&quot;' =>  '"',
+		'&#39;'  =>  "'",
+		'&#039;' =>  "'",
+		'&apos;' =>  "'",
+	);
+	return strtr( $str, $arr );
 }
 
 // --- class end ---

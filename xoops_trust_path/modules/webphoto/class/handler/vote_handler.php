@@ -1,10 +1,17 @@
 <?php
-// $Id: vote_handler.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: vote_handler.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-10-01 K.OHWADA
+// BUG : Undefined variable: yesterdaytname
+// calc_rating_by_photoid()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -154,9 +161,9 @@ function get_count_anonymous_by_photoid_hostname( $photo_id, $hostname )
 	$yesterday = ( time() - ($this->_ONE_DAY_SEC * $this->_WAIT_DAYS ) ) ;
 
 	$where  = 'vote_uid=0 ';
-	$where  = ' AND vote_photo_id='.intval($photo_id);
+	$where .= ' AND vote_photo_id='.intval($photo_id);
 	$where .= ' AND vote_hostname='.$this->quote($hostname);
-	$where .= ' AND vote_time_update > '.intval($yesterdaytname);
+	$where .= ' AND vote_time_update > '.intval($yesterday);
 	return $this->get_count_by_where( $where );
 }
 
@@ -167,6 +174,65 @@ function get_rows_by_photoid( $photo_id )
 {
 	$where = 'vote_photo_id='.intval($photo_id);
 	return $this->get_rows_by_where( $where );
+}
+
+function get_rows_by_uid( $uid )
+{
+	$where = 'vote_uid='.intval($uid);
+	return $this->get_rows_by_where( $where );
+}
+
+function get_rows_user( )
+{
+	$where = 'vote_uid>0';
+	return $this->get_rows_by_where( $where );
+}
+
+function get_rows_guest( )
+{
+	$where = 'vote_uid=0';
+	return $this->get_rows_by_where( $where );
+}
+
+//---------------------------------------------------------
+// calc
+//---------------------------------------------------------
+function calc_rating_by_photoid( $photo_id, $decimals=4 )
+{
+	return $this->calc_rating_by_rows( 
+		$this->get_rows_by_photoid( $photo_id ) );
+}
+
+function calc_rating_by_uid( $uid, $decimals=1 )
+{
+	return $this->calc_rating_by_rows( 
+		$this->get_rows_by_uid( $uid ) ) ;
+}
+
+function calc_rating_by_rows( $rows, $decimals=0 )
+{
+	$votes  = 0;
+	$total  = 0;
+	$rating = 0;
+
+	if ( is_array($rows) ) {
+		$votes = count($rows);
+		$total = 0;
+		foreach( $rows as $row ) {
+			$total += $row['vote_rating'] ;
+		}
+		$rating = $total / $votes;
+		if ( $decimals > 0 ) {
+			$rating = $this->format_rating( $rating, $decimals );
+		}
+	}
+
+	return array( $votes, $total, $rating ) ;
+}
+
+function format_rating( $rating, $decimals=1 )
+{
+	return number_format( $rating , $decimals ) ;
 }
 
 // --- class end ---

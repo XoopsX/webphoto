@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.1 2008/06/21 12:22:27 ohwada Exp $
+// $Id: admin_menu.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,6 +7,12 @@
 //=========================================================
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//---------------------------------------------------------
+// change log
+// 2008-10-01 K.OHWADA
+// build_sub_menu()
+//---------------------------------------------------------
 
 //=========================================================
 // class webphoto_lib_admin_menu
@@ -48,7 +54,20 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-function build_menu()
+function build_menu_with_sub( $flag_sub=true )
+{
+	$str = $this->build_menu( !$flag_sub, false );
+
+	if ( $flag_sub ) {
+		$str .= "<br />\n";
+		$str .= $this->build_sub_menu( true, false );
+	}
+
+	$str .= $this->build_hr( true );
+	return $str;
+}
+
+function build_menu( $flag_default=true, $flag_hr=true  )
 {
 //	if( defined( 'XOOPS_ORETEKI' ) ) { return null; }
 
@@ -68,9 +87,34 @@ function build_menu()
 	}
 
 	if ( is_array($menu_array) && count($menu_array) ) {
-		return $this->_build_highlight( $menu_array );
+		$str  = $this->_build_highlight( $menu_array, $flag_default );
+		$str .= $this->build_hr( $flag_hr ) ;
+		return $str ;
 	}
 
+	return null;
+}
+
+function build_sub_menu( $flag_default=true, $flag_hr=true )
+{
+	$admin_menu_class =& webphoto_inc_admin_menu::getInstance();
+	$menu_array = $admin_menu_class->build_sub_menu( $this->_DIRNAME );
+
+	if ( is_array($menu_array) && count($menu_array) ) {
+		$str  = $this->_build_highlight( $menu_array, $flag_default );
+		$str .= $this->build_hr( $flag_hr ) ;
+		return $str ;
+	}
+
+	return null;
+}
+
+function build_hr( $flag_hr=true )
+{
+	if ( $flag_hr ) {
+		$str = "<hr style='display:block;' />\n" ;
+		return $str ;
+	}
 	return null;
 }
 
@@ -138,7 +182,7 @@ function _build_additinal_menu()
 	return $menu_array;
 }
 
-function _build_highlight( $menu_array )
+function _build_highlight( $menu_array, $flag_default=true )
 {
 	$mymenu_uri  = $_SERVER['REQUEST_URI'];
 	$mymenu_link = substr( strstr( $mymenu_uri , '/admin/' ) , 1 ) ;
@@ -203,7 +247,7 @@ function _build_highlight( $menu_array )
 		}
 	}
 
-	if ( !$flag_highlight ) {
+	if ( !$flag_highlight && $flag_default ) {
 		foreach( array_keys( $menu_array ) as $i ) 
 		{
 			if ( stristr( $mymenu_uri , $menu_array[$i]['link'] ) ) {
@@ -222,7 +266,7 @@ function _build_highlight( $menu_array )
 	}
 
 	// display
-	$text = "<div style='text-align:left;width:98%;'>" ;
+	$text = "<div style='text-align:left;width:98%;'>\n" ;
 
 	foreach( $menu_array as $menuitem ) 
 	{
@@ -233,7 +277,7 @@ function _build_highlight( $menu_array )
 	}
 
 	$text .= "</div>\n";
-	$text .= "<hr style='clear:left;display:block;' />\n" ;
+	$text .= "<br style='clear:left;' />\n";
 
 	return $text;
 }

@@ -1,10 +1,16 @@
 <?php
-// $Id: base.php,v 1.1 2008/06/21 12:22:18 ohwada Exp $
+// $Id: base.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-10-01 K.OHWADA
+// use XOOPS_GROUP_ANONYMOUS in get_my_user_groups()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -118,7 +124,7 @@ function get_my_user_groups()
 	if ( is_object($xoopsUser) ) {
 		return $xoopsUser->getGroups() ;
 	}
-	return false;
+	return array( XOOPS_GROUP_ANONYMOUS );
 }
 
 function get_my_user_is_login()

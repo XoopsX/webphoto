@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.4 2008/09/03 02:44:54 ohwada Exp $
+// $Id: config.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// get_uploads_path()
 // 2008-09-01 K.OHWADA
 // added get_config_array()
 // 2008-08-01 K.OHWADA
@@ -85,19 +87,14 @@ function get_dir_by_name( $name )
 	return $this->add_separator_to_tail( $str );
 }
 
-function get_photos_path()
+function get_uploads_path()
 {
-	return $this->_get_path_by_name( 'photospath' );
+	return $this->_get_path_by_name( 'uploadspath' );
 }
 
-function get_thumbs_path()
+function get_medias_path()
 {
-	return $this->_get_path_by_name( 'thumbspath' );
-}
-
-function get_gicons_path()
-{
-	return $this->_get_path_by_name( 'giconspath' );
+	return $this->_get_path_by_name( 'mediaspath' );
 }
 
 function get_middle_wh()

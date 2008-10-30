@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.12 2008/09/09 13:37:07 ohwada Exp $
+// $Id: xoops_version.php,v 1.13 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// uploadspath etc
+// used update_xoops_config()
 // 2008-09-09 K.OHWADA
 // set default at use_ffmpeg
 // 2008-09-01 K.OHWADA
@@ -35,10 +38,12 @@ class webphoto_inc_xoops_version extends webphoto_inc_handler
 	var $_cfg_use_pathinfo = false;
 	var $_has_insertable   = false;
 	var $_has_rateview     = false;
+	var $_is_module_admin  = false;
 
 	var $_TRUST_DIRNAME = null ;
 	var $_MODULE_ID     = 0;
 	var $_PATH_UPLOADS_MOD      = null;
+	var $_PATH_MOD_MEDIAS       = null;
 	var $_DIR_TRUST_MOD_UPLOADS = null;
 
 //---------------------------------------------------------
@@ -65,6 +70,12 @@ function build_modversion( $dirname, $trust_dirname )
 {
 	$this->_init( $dirname, $trust_dirname );
 
+// probably install or update
+	if ( $this->_is_module_admin && 
+	   ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) ) {
+		$this->update_xoops_config();
+	}
+
 	$arr           = $this->_build_basic();
 	$arr['sub']    = $this->_build_sub();
 	$arr['blocks'] = $this->_build_blocks();
@@ -79,14 +90,16 @@ function _init( $dirname, $trust_dirname )
 
 	$this->init_handler( $dirname );
 	$this->_init_xoops_module( $dirname );
-	$this->_init_xoops_config( $dirname );
-	$this->_init_xoops_group_permission( $dirname );
+	$this->_init_config( $dirname );
+	$this->_init_group_permission( $dirname );
+	$this->_init_is_module_admin();
 
 	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
 
+	$this->_PATH_MOD_MEDIAS = '/modules/'. $dirname .'/medias';
+
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
-
 }
 
 //---------------------------------------------------------
@@ -375,34 +388,16 @@ function _build_config()
 //---------------------------------------------------------
 // same as myalbum
 //---------------------------------------------------------
-	$arr[] = array(
-		'name'			=> 'photospath' ,
-		'title'			=> $this->_constant_name( 'CFG_PHOTOSPATH' ) ,
-		'description'	=> $this->_constant_name( 'CFG_DESCPHOTOSPATH' ) ,
-		'formtype'		=> 'textbox' ,
-		'valuetype'		=> 'text' ,
-		'default'		=> $this->_PATH_UPLOADS_MOD.'/photos' ,
-		'options'		=> array()
-	) ;
-
-	$arr[] = array(
-		'name'			=> 'thumbspath' ,
-		'title'			=> $this->_constant_name( 'CFG_THUMBSPATH' ) ,
-		'description'	=> $this->_constant_name( 'CFG_DESCTHUMBSPATH' ) ,
-		'formtype'		=> 'textbox' ,
-		'valuetype'		=> 'text' ,
-		'default'		=> $this->_PATH_UPLOADS_MOD.'/thumbs' ,
-		'options'		=> array()
-	) ;
+// remove photospath thumbspath
 
 // add for webphoto
 	$arr[] = array(
-		'name'			=> 'giconspath' ,
-		'title'			=> $this->_constant_name( 'CFG_GICONSPATH' ) ,
-		'description'	=> $this->_constant_name( 'CFG_DESCTHUMBSPATH' ) ,
+		'name'			=> 'uploadspath' ,
+		'title'			=> $this->_constant_name( 'CFG_UPLOADSPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_UPLOADSPATH_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_PATH_UPLOADS_MOD.'/gicons' ,
+		'default'		=> $this->_PATH_UPLOADS_MOD ,
 		'options'		=> array()
 	) ;
 
@@ -414,6 +409,17 @@ function _build_config()
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> $this->_DIR_TRUST_MOD_UPLOADS.'/tmp' ,
+		'options'		=> array()
+	) ;
+
+// add for webphoto
+	$arr[] = array(
+		'name'			=> 'mediaspath' ,
+		'title'			=> $this->_constant_name( 'CFG_MEDIASPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_MEDIASPATH_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> $this->_PATH_MOD_MEDIAS ,
 		'options'		=> array()
 	) ;
 
@@ -587,6 +593,16 @@ function _build_config()
 			$this->_constant( 'OPT_CALCFROMHEIGHT'  ) => 'h' ,
 			$this->_constant( 'OPT_CALCWHINSIDEBOX' ) => 'b'
 		)
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'logo_width' ,
+		'title'			=> $this->_constant_name( 'CFG_LOGO_WIDTH' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '140' ,
+		'options'		=> array()
 	) ;
 
 	$arr[] = array(
@@ -783,6 +799,16 @@ function _build_config()
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '1' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'use_callback' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_CALLBACK' ) ,
+		'description'	=> $this->_constant_name( 'CFG_USE_CALLBACK_DSC' ) ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '0' ,
 		'options'		=> array()
 	) ;
 
@@ -1041,9 +1067,9 @@ function _get_cat_rows_by_pid( $pid, $limit=0, $offset=0 )
 }
 
 //---------------------------------------------------------
-// xoops_config
+// config
 //---------------------------------------------------------
-function _init_xoops_config( $dirname )
+function _init_config( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getInstance();
 	$config_handler->init( $dirname );
@@ -1053,9 +1079,9 @@ function _init_xoops_config( $dirname )
 }
 
 //---------------------------------------------------------
-// xoops_group_permission
+// group_permission
 //---------------------------------------------------------
-function _init_xoops_group_permission( $dirname )
+function _init_group_permission( $dirname )
 {
 	$permission_handler =& webphoto_inc_group_permission::getInstance();
 	$permission_handler->init( $dirname );
@@ -1073,6 +1099,19 @@ function _init_xoops_module( $dirname )
 	$module = $module_handler->getByDirname( $dirname );
 	if ( is_object($module) ) {
 		$this->_MODULE_ID = $module->getVar( 'mid' );
+	}
+}
+
+//---------------------------------------------------------
+// xoops param
+//---------------------------------------------------------
+function _init_is_module_admin()
+{
+	global $xoopsUser;
+	if ( is_object($xoopsUser) ) {
+		if ( $xoopsUser->isAdmin( $this->_MODULE_ID ) ) {
+			$this->_is_module_admin = true;
+		}
 	}
 }
 

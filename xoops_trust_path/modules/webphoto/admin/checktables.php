@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: checktables.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// player_handler.php
 // 2008-08-01 K.OHWADA
 // added user_handler.php maillog_handler.php
 //---------------------------------------------------------
@@ -27,6 +29,8 @@ webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/handler/maillog_handler.php' );
+webphoto_include_once( 'class/handler/player_handler.php' );
+webphoto_include_once( 'class/handler/flashvar_handler.php' );
 webphoto_include_once( 'class/handler/xoops_comments_handler.php' );
 webphoto_include_once( 'class/admin/checktables.php' );
 webphoto_include_once( 'class/admin/index.php' );

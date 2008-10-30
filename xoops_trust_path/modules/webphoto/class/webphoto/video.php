@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.6 2008/08/26 16:36:48 ohwada Exp $
+// $Id: video.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// PHOTOS_PATH -> FLASHS_PATH
 // 2008-08-24 K.OHWADA
 // get_flash_info -> get_flash_param
 // 2008-08-01 K.OHWADA
@@ -32,8 +34,7 @@ class webphoto_video extends webphoto_lib_error
 
 	var $_cached_extra_array = array();
 
-	var $_PHOTOS_PATH ;
-	var $_PHOTOS_DIR ;
+	var $_FLASHS_PATH ;
 	var $_TMP_DIR ;
 
 	var $_PLURAL_MAX    = 5;
@@ -65,9 +66,10 @@ function webphoto_video( $dirname )
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 
-	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
+	$uploads_path       = $this->_config_class->get_uploads_path();
 	$this->_TMP_DIR     = $this->_config_class->get_by_name( 'tmpdir' );
-	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
+
+	$this->_FLASHS_PATH = $uploads_path.'/flashs';
 
 	$cfg_ffmpegpath        = $this->_config_class->get_dir_by_name( 'ffmpegpath' );
 	$this->_cfg_use_ffmpeg = $this->_config_class->get_by_name( 'use_ffmpeg' );
@@ -212,7 +214,7 @@ function create_flash( $file_in, $name_out )
 		return _C_WEBPHOTO_VIDEO_SKIPPED ;
 	}
 
-	$path_out = $this->_PHOTOS_PATH .'/'. $name_out ;
+	$path_out = $this->_FLASHS_PATH .'/'. $name_out ;
 	$file_out = XOOPS_ROOT_PATH . $path_out ;
 	$url_out  = XOOPS_URL . $path_out ;
 	$extra    = $this->get_cached_extra_by_ext( $ext );

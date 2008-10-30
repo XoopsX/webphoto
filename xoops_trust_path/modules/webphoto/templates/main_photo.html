@@ -1,4 +1,4 @@
-<{* $Id: main_photo.html,v 1.7 2008/09/15 08:48:44 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.8 2008/10/30 00:22:49 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -81,14 +81,16 @@
 
 <div align="center">
 
-<{* NORMAL IMAGES *}>
-  <{if $photo.is_normal_image }>
-    <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
+<{* IMAGES *}>
+  <{if $photo.displaytype == 1 }>
 
     <{if $photo.middle_width && $photo.middle_height }>
+      <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
       <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
+
     <{else}>
-      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" />
+      <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', '' ); return(false);">
+      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
     <{/if}>
 
     <br />
@@ -96,39 +98,21 @@
     ( <{$photo.cont_size_disp}> )  <br />
     </a>
 
-<{* MEDIA PLAYER *}>
-<{* http://code.google.com/p/swfobject/ *}>
-<{* http://www.jeroenwijering.com/?item=JW_FLV_Media_Player *}>
+<{* ENBED *}>
+  <{elseif $photo.displaytype == 10 }>
+    <{$photo.embed_embed}> 
+    <br /><br />
+    <{if $photo.embed_link != '' }>
+      <a href="<{$photo.embed_link}>" target="_blank">
+      <{$photo.title_s}></a>
+    <{else}>
+      <{$photo.title_s}>
+    <{/if}>
+    <br />
 
-  <{elseif $photo.mediaplayer_can }>
-	<div id="webphoto_mediaplayer"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this player.</div>
-	<script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/swfobject.js"></script>
-	<script type="text/javascript">
-		var s1 = new SWFObject("<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/mediaplayer.swf","mediaplayer","<{$photo.mediaplayer_width}>","<{$photo.mediaplayer_height}>","<{$photo.mediaplayer_version}>");
-		s1.addParam("allowfullscreen","<{$photo.mediaplayer_allowfullscreen}>");
-		s1.addVariable("id","<{$photo.mediaplayer_id}>");
-		s1.addVariable("title","<{$photo.mediaplayer_title}>");
-		s1.addVariable("file","<{$photo.mediaplayer_file}>");
-		s1.addVariable("image","<{$photo.mediaplayer_image}>");
-		s1.addVariable("width", "<{$photo.mediaplayer_width}>");
-		s1.addVariable("height","<{$photo.mediaplayer_height}>");
-		s1.addVariable("autostart","<{$photo.mediaplayer_autostart}>");
-		s1.addVariable("shuffle","<{$photo.mediaplayer_shuffle}>");
-		s1.addVariable("overstretch","<{$photo.mediaplayer_overstretch}>");
-		s1.addVariable("showdownload","<{$photo.mediaplayer_showdownload}>");
-
-	<{if $photo.mediaplayer_displaywidth && $photo.mediaplayer_displayheight }>
-		s1.addVariable("displaywidth", "<{$photo.mediaplayer_displaywidth}>");
-		s1.addVariable("displayheight","<{$photo.mediaplayer_displayheight}>");
-	<{/if}>
-
-	<{if $photo.mediaplayer_callback }>
-		s1.addVariable("callback","<{$photo.mediaplayer_callback}>");
-	<{/if}>
-
-		s1.write("webphoto_mediaplayer");
-	</script>
-
+<{* FALSH PLAYER *}>
+  <{elseif $photo.displaytype_flash }>
+	<{$photo.flash_player}>
 	<br />
 	<a href="<{$photo.ahref_file}>" target="_blank">
 	<span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
@@ -139,11 +123,15 @@
 	<{$photo.cont_size_disp}> ) <br />
 	</a>
 
-<{* FILES OTHER THAN IMAGES *}>
+<{* GENERAL *}>
   <{elseif $photo.ahref_file }>
     <a href="<{$photo.ahref_file}>" target="_blank">
 
-    <{if $photo.thumb_width && $photo.thumb_height }>
+    <{if $photo.imgsrc_middle && $photo.middle_width && $photo.middle_height }>
+      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
+    <{elseif $photo.imgsrc_middle }>
+      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+    <{elseif $photo.thumb_width && $photo.thumb_height }>
       <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
     <{else}>
       <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
@@ -159,6 +147,7 @@
     ( <{$photo.cont_size_disp}> ) <br />
     </a>
 
+<{* NO FILE TYPE *}>
   <{else}>
     <span class="webphoto_photo_title"><{$photo.title_s}></span>
   <{/if}>
@@ -182,7 +171,7 @@
 <br />
 
 <div align="center">
-<img src="<{$photos_url}>/<{$mobile_qr_image}>" border="0" alt="qr_image" /><br />
+<img src="<{$qrs_url}>/<{$mobile_qr_image}>" border="0" alt="qr_image" /><br />
 <a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
 </div>
 <br />

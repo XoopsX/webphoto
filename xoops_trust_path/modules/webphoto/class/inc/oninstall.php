@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.8 2008/08/08 04:36:09 ohwada Exp $
+// $Id: oninstall.php,v 1.9 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// move config_update() to xoops_version.php
+// _item_update()
 // 2008-08-01 K.OHWADA
 // changed _table_update() _groupperm_install()
 // 2008-07-24 K.OHWADA
@@ -23,7 +26,9 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_oninstall extends webphoto_inc_handler
 {
+	var $_table_item ;
 	var $_table_mime ;
+	var $_table_player;
 
 	var $_IS_XOOPS_2018 = false;
 
@@ -129,7 +134,9 @@ function _init( $trust_dirname , &$module )
 
 	$this->init_handler( $dirname );
 
-	$this->_table_mime = $this->prefix_dirname( 'mime' );
+	$this->_table_item   = $this->prefix_dirname( 'item' );
+	$this->_table_mime   = $this->prefix_dirname( 'mime' );
+	$this->_table_player = $this->prefix_dirname( 'player' );
 
 // preload
 	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
@@ -168,9 +175,10 @@ function _exec_update()
 
 	$this->_set_msg( "\n Update module extention ..." );
 
-	$this->_config_update();
-	$this->_mime_update();
 	$this->_table_update();
+	$this->_item_update();
+	$this->_mime_update();
+	$this->_player_update();
 	$this->_template_update();
 
 	return true ;
@@ -513,34 +521,6 @@ function _parse_ext( $file )
 }
 
 //---------------------------------------------------------
-// config table
-//---------------------------------------------------------
-function _config_update()
-{
-	// configs (Though I know it is not a recommended way...)
-	$table_config = $this->_db->prefix("config");
-	
-	$check_sql = "SHOW COLUMNS FROM ". $table_config ." LIKE 'conf_title'" ;
-	$row = $this->get_row_by_sql( $check_sql );
-	if ( !is_array($row) ) { return false; }
-
-	if ( $row['Type'] != 'varchar(30)' ) { return true; }
-
-	$sql  = "ALTER TABLE ". $table_config;
-	$sql .= " MODIFY `conf_title` varchar(255) NOT NULL default '', ";
-	$sql .= " MODIFY `conf_desc`  varchar(255) NOT NULL default '' ";
-	$ret = $this->query( $sql );
-	if ( $ret ) {
-		$this->_set_msg( 'Modify char length in <b>'. $table_config .'</b>' );
-		return true;
-	} else {
-		$this->_set_msg( $this->highlight( 'ERROR: Could not modify <b>'. $table_config .'</b>.' ) );
-		return false;
-	}
-
-}
-
-//---------------------------------------------------------
 // groupperm handler
 //---------------------------------------------------------
 function _groupperm_install()
@@ -574,6 +554,62 @@ function _groupperm_install()
 	}
 
 	return true ;
+}
+
+//---------------------------------------------------------
+// item table
+//---------------------------------------------------------
+function _item_update()
+{
+	$this->_item_add_column_external();
+}
+
+function _item_add_column_external()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_external_url' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+
+	$sql  .= "item_time_publish  INT(10) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_time_expire   INT(10) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_player_id   INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_flashvar_id INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_duration    INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_displaytype INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_onclick     INT(11) UNSIGNED NOT NULL DEFAULT '0', " ; 
+	$sql  .= "item_views INT(11) NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_chain INT(11) NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_siteurl VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_artist  VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_album   VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_label   VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_perm_down VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_external_url   VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_external_thumb VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_embed_type  VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_embed_src   VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_playlist_feed  VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_playlist_dir   VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_playlist_cache VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_playlist_type INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_playlist_time INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_showinfo  VARCHAR(255) NOT NULL DEFAULT '' " ;
+
+	$sql .= " )";
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_external_type in <b>'. $this->_table_item .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
 }
 
 //---------------------------------------------------------
@@ -784,6 +820,66 @@ function _mime_get_row_by_ext( $ext )
 {
 	$sql  = 'SELECT * FROM '. $this->_table_mime ;
 	$sql .= ' WHERE mime_ext='.$this->quote( $ext );
+	return $this->get_row_by_sql( $sql );
+}
+
+//---------------------------------------------------------
+// player table
+//---------------------------------------------------------
+function _player_update()
+{
+	$this->_player_add_default_record();
+}
+
+function _player_add_default_record()
+{
+	if ( $this->_player_exists_default() ) {
+		return true;
+	}
+
+	$ret = $this->_player_insert_default_record();
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add default record in <b>'. $this->_table_player .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not add record <b>'. $this->_table_player .'</b>.' ) );
+		return false;
+	}
+}
+
+function _player_insert_default_record()
+{
+	$sql  = "INSERT INTO ".$this->_table_player;
+	$sql .= " VALUES (1, 0, 0, 'default', 0, 320, 240, 0, 0, '', '', '', '')";
+	$ret = $this->query( $sql );
+	if ( !$ret ) {
+		return false;
+	}
+
+	$sql  = "INSERT INTO ".$this->_table_player;
+	$sql .= " VALUES (2, 0, 0, 'playlist default', 0, 320, 340, 320, 240, '', '', '', '')";
+	$ret = $this->query( $sql );
+	if ( !$ret ) {
+		return false;
+	}
+	
+	return true;
+}
+
+function _player_exists_default()
+{
+	$row = $this->_player_get_row_by_id( 1 );
+	if ( is_array($row) ) {
+		return true;
+	}
+	return false;
+}
+
+function _player_get_row_by_id( $id )
+{
+	$sql  = 'SELECT * FROM '.$this->_table_player;
+	$sql .= ' WHERE player_id='.intval( $id );
 	return $this->get_row_by_sql( $sql );
 }
 

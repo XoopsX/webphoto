@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: upload.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// init_media_uploader_full()
 // 2008-07-01 K.OHWADA
 // init_media_uploader( $has_resize )
 //   -> init_media_uploader( $has_resize, $allowed_mimes, $allowed_exts )
@@ -30,7 +32,7 @@ class webphoto_upload extends webphoto_base_this
 	var $_PHP_UPLOAD_ERRORS = array();
 	var $_UPLOADER_ERRORS   = array();
 
-	var $_NORMAL_EXTS = null;
+	var $_IMAGE_EXTS = null;
 
 //---------------------------------------------------------
 // constructor
@@ -40,7 +42,7 @@ function webphoto_upload( $dirname , $trust_dirname )
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
 	$this->_init_errors();
-	$this->_NORMAL_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
+	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -95,7 +97,7 @@ function fetch_for_gicon( $field_name, $allow_noimage=false )
 
 	$ext = $this->_parse_ext( $tmp_name );
 
-	if ( $ext && !$this->_is_normal_ext($ext) ) {
+	if ( $ext && !$this->_is_image_ext($ext) ) {
 		if ( $tmp_name ) {
 			$this->unlink_file( $this->_TMP_DIR .'/'. $tmp_name ) ;
 		}
@@ -121,17 +123,22 @@ function init_media_uploader( $has_resize, $allowed_mimes, $allowed_exts )
 	$cfg_height   = $this->get_config_by_name( 'height' );
 
 	if ( $has_resize ) {
-		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , null , null , $allowed_exts ) ;
+		$this->init_media_uploader_full( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , null , null , $allowed_exts ) ;
 	} else {
-		$this->_uploader_class = new webphoto_lib_uploader( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , $cfg_width , $cfg_height , $allowed_exts ) ;
+		$this->init_media_uploader_full( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , $cfg_width , $cfg_height , $allowed_exts ) ;
 	}
 
+}
+
+function init_media_uploader_full( $dir, $mimes, $size, $width, $height, $exts )
+{
+	$this->_uploader_class = new webphoto_lib_uploader( $dir, $mimes, $size, $width, $height, $exts ) ;
 	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;
 }
 
 function set_image_extensions()
 {
-	$this->_uploader_class->setAllowedExtensions( $this->_get_normal_exts() ) ;
+	$this->_uploader_class->setAllowedExtensions( $this->_get_image_exts() ) ;
 }
 
 function set_allowed_extensions( $extensions )
@@ -335,14 +342,14 @@ function get_uploader_error_msg( $num )
 //---------------------------------------------------------
 // normal exts
 //---------------------------------------------------------
-function _get_normal_exts()
+function _get_image_exts()
 {
-	return $this->_NORMAL_EXTS ;
+	return $this->_IMAGE_EXTS ;
 }
 
-function _is_normal_ext( $ext )
+function _is_image_ext( $ext )
 {
-	if ( in_array( strtolower( $ext ) , $this->_NORMAL_EXTS ) ) {
+	if ( in_array( strtolower( $ext ) , $this->_IMAGE_EXTS ) ) {
 		return true;
 	}
 	return false;

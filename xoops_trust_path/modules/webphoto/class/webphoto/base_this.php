@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.7 2008/09/03 02:44:54 ohwada Exp $
+// $Id: base_this.php,v 1.8 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// webphoto_kind
+// build_redirect()
+// use get_uploads_path()
 // 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 // added preload_init()
@@ -39,21 +43,48 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_perm_class;
 	var $_uri_class;
 	var $_preload_class;
+	var $_kind_class;
 
 	var $_is_japanese = false;
 
+	var $_UPLOADS_DIR;
 	var $_PHOTOS_PATH;
 	var $_PHOTOS_DIR ;
 	var $_PHOTOS_URL ;
 	var $_THUMBS_PATH;
 	var $_THUMBS_DIR;
 	var $_THUMBS_URL;
+	var $_MIDDLES_PATH;
+	var $_MIDDLES_DIR;
+	var $_MIDDLESS_URL;
+	var $_GICONS_PATH;
+	var $_GICONS_DIR;
+	var $_GICONS_URL;
+	var $_FLASHS_PATH;
+	var $_FLASHS_DIR;
+	var $_FLASHS_URL;
+	var $_QRS_DIR;
+	var $_QRS_URL;
+	var $_PLAYLISTS_DIR;
+	var $_LOGOS_DIR;
+	var $_MEDIAS_DIR;
 	var $_TMP_DIR;
 	var $_FILE_DIR;
 
-	var $_NORMAL_EXTS ;
+	var $_redirect_time = 0 ;
+	var $_redirect_url  = null ;
+	var $_redirect_msg  = null ;
 
-	var $_VIDEO_DOCOMO_EXT = '3gp';
+	var $_REDIRECT_TIME_SUCCESS = 100;
+	var $_REDIRECT_TIME_PENDING = 300;
+	var $_REDIRECT_TIME_FAILED  = 500;
+
+	var $_REDIRECT_URL_SUCCESS  = null ;
+	var $_REDIRECT_URL_PENDING  = null ;
+	var $_REDIRECT_URL_FAILED   = null ;
+	var $_REDIRECT_MSG_SUCCESS  = null ;
+	var $_REDIRECT_MSG_PENDING  = null ;
+	var $_REDIRECT_MSG_FAILED   = null ;
 
 //---------------------------------------------------------
 // constructor
@@ -70,20 +101,41 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
+	$this->_kind_class   =& webphoto_kind::getInstance();
 
-	$this->_PHOTOS_PATH = $this->_config_class->get_photos_path();
-	$this->_THUMBS_PATH = $this->_config_class->get_thumbs_path();
-	$this->_TMP_DIR     = $this->_config_class->get_by_name( 'tmpdir' );
-	$this->_FILE_DIR    = $this->_config_class->get_by_name( 'file_dir' );
+	$uploads_path    = $this->_config_class->get_uploads_path();
+	$medias_path     = $this->_config_class->get_medias_path();
+	$this->_TMP_DIR  = $this->_config_class->get_by_name( 'tmpdir' );
+	$this->_FILE_DIR = $this->_config_class->get_by_name( 'file_dir' );
 
-	$this->_PHOTOS_DIR  = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
-	$this->_THUMBS_DIR  = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
-	$this->_PHOTOS_URL  = XOOPS_URL       . $this->_PHOTOS_PATH ;
-	$this->_THUMBS_URL  = XOOPS_URL       . $this->_THUMBS_PATH ;
+	$this->_PHOTOS_PATH  = $uploads_path.'/photos' ;
+	$this->_THUMBS_PATH  = $uploads_path.'/thumbs' ;
+	$this->_MIDDLES_PATH = $uploads_path.'/middles' ;
+	$this->_GICONS_PATH  = $uploads_path.'/gicons' ;
+	$this->_FLASHS_PATH  = $uploads_path.'/flashs' ;
+	$qrs_path            = $uploads_path.'/qrs' ;
+	$playlists_path      = $uploads_path.'/playlists' ;
+	$logos_path          = $uploads_path.'/logos' ;
+
+	$this->_UPLOADS_DIR   = XOOPS_ROOT_PATH . $uploads_path ;
+	$this->_PHOTOS_DIR    = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_DIR    = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
+	$this->_MIDDLES_DIR   = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
+	$this->_GICONS_DIR    = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
+	$this->_FLASHS_DIR    = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
+	$this->_QRS_DIR       = XOOPS_ROOT_PATH . $qrs_path ;
+	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $playlists_path ;
+	$this->_LOGOS_DIR     = XOOPS_ROOT_PATH . $logos_path ;
+	$this->_MEDIAS_DIR    = XOOPS_ROOT_PATH . $medias_path ;
+
+	$this->_PHOTOS_URL  = XOOPS_URL . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_URL  = XOOPS_URL . $this->_THUMBS_PATH ;
+	$this->_MIDDLES_URL = XOOPS_URL . $this->_MIDDLES_PATH ;
+	$this->_GICONS_URL  = XOOPS_URL . $this->_GICONS_PATH ;
+	$this->_FLASHS_URL  = XOOPS_URL . $this->_FLASHS_PATH ;
+	$this->_QRS_URL     = XOOPS_URL . $qrs_path ;
 
 	$this->_ICONS_URL = $this->_MODULE_URL .'/images/icons';
-
-	$this->_NORMAL_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 
 	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 }
@@ -104,8 +156,10 @@ function get_photo_globals()
 
 	$arr = array(
 		'mydirname'            => $this->_DIRNAME ,
-		'photos_url'           => XOOPS_URL . $this->_PHOTOS_PATH ,
-		'thumbs_url'           => XOOPS_URL . $this->_THUMBS_PATH ,
+		'photos_url'           => $this->_PHOTOS_URL ,
+		'thumbs_url'           => $this->_THUMBS_URL ,
+		'middles_url'          => $this->_MIDDLES_URL ,
+		'qrs_url'              => $this->_QRS_URL ,
 		'use_pathinfo'         => $this->get_config_by_name('use_pathinfo') ,
 		'cfg_is_set_mail'      => $cfg_is_set_mail ,
 		'width_of_tableview'   => intval( 100 / $cfg_colsoftableview ),
@@ -146,7 +200,7 @@ function get_config_by_name( $name )
 }
 
 //---------------------------------------------------------
-// check
+// check dir
 //---------------------------------------------------------
 // BUG : wrong judgment in check_dir
 function check_dir( $dir )
@@ -159,43 +213,275 @@ function check_dir( $dir )
 }
 
 //---------------------------------------------------------
-// normal exts
+// check waiting
+//---------------------------------------------------------
+function build_check_waiting()
+{
+	$url = $this->_MODULE_URL.'/admin/index.php?fct=item_manager&amp;op=list_waiting' ;
+	$str = '';
+
+	$waiting = $this->_item_handler->get_count_waiting();
+	if ( $waiting > 0 ) {
+		$str  = '<a href="'. $url .'" style="color:red;">';
+		$str .= sprintf( _AM_WEBPHOTO_CAT_FMT_NEEDADMISSION , $waiting ) ;
+		$str .= "</a><br />\n";
+	}
+	return $str;
+}
+
+//---------------------------------------------------------
+// build failed msg
+//---------------------------------------------------------
+function XXXbuild_failed_msg( $ret )
+{
+	switch ( $ret )
+	{
+		case _C_WEBPHOTO_ERR_DB:
+			$this->set_error_in_head_with_admin_info( 'DB Error' );
+			return false;
+
+		case _C_WEBPHOTO_ERR_UPLOAD;
+			$this->set_error_in_head( 'File Upload Error' );
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_SPECIFIED:
+			$this->set_error( 'UPLOAD error: file name not specified' );
+			return false;
+
+		case _C_WEBPHOTO_ERR_EXT:
+			$this->set_error_by_const_name('UPLOADER_ERR_NOT_ALLOWED_EXT') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_FILE_SIZE:
+			$this->set_error_by_const_name('UPLOADER_ERR_LARGE_FILE_SIZE') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_PERM:
+			$this->set_error( _NOPERM ) ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_RECORD:
+			$this->set_error_by_const_name('NOMATCH_PHOTO') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_EMPTY_CAT:
+			$this->set_error_by_const_name('ERR_EMPTY_CAT') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_INVALID_CAT:
+			$this->set_error_by_const_name('ERR_INVALID_CAT') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_EMPTY_FILE:
+			$this->set_error_by_const_name('ERR_EMPTY_FILE') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_FILE:
+			$this->set_error_by_const_name('ERR_FILE') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_IMAGE;
+			$this->set_error_by_const_name('ERR_NOIMAGESPECIFIED') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_FILEREAD:
+			$this->set_error_by_const_name('ERR_FILEREAD') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_TITLE:
+			$this->set_error_by_const_name('ERR_TITLE') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_NO_SRC:
+			$this->set_error_by_const_name('ERR_SRC') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_CREATE_PHOTO:
+			$this->set_error_by_const_name('ERR_CREATE_PHOTO') ;
+			return false;
+
+		case 0:
+		default:
+			break;
+	}
+
+	return true ;
+}
+
+//---------------------------------------------------------
+// redirect
+//---------------------------------------------------------
+function XXXbuild_redirect( $param )
+{
+	$is_failed  = isset($param['is_failed'])  ? (bool)$param['is_failed']  : false ;
+	$is_pending = isset($param['is_pending']) ? (bool)$param['is_pending'] : false ;
+
+	$has_extra_msg = isset($param['has_extra_msg']) ?
+		(bool)$param['has_extra_msg'] : $this->has_msg_array() ;
+
+	$url_success = isset($param['url_success']) ? 
+		$param['url_success'] : $this->_REDIRECT_URL_SUCCESS ;
+
+	$url_pending = isset($param['url_pending']) ? 
+		$param['url_pending'] : $this->_REDIRECT_URL_PENDING ;
+
+	$url_failed = isset($param['url_failed']) ? 
+		$param['url_failed'] : $this->_REDIRECT_URL_FAILED ;
+
+	$time_success = isset($param['time_success']) ? 
+		intval($param['time_success']) : $this->_REDIRECT_TIME_SUCCESS ;
+
+	$time_pending = isset($param['time_pending']) ? 
+		intval($param['time_pending']) : $this->_REDIRECT_TIME_PENDING ;
+
+	$time_failed = isset($param['time_failed']) ? 
+		intval($param['time_failed']) : $this->_REDIRECT_TIME_FAILED ;
+
+	$msg_success  = isset($param['msg_success']) ? 
+		$param['msg_success'] : $this->_REDIRECT_MSG_SUCCESS ;
+
+	$msg_pending  = isset($param['msg_pending']) ? 
+		$param['msg_pending'] : $this->_REDIRECT_MSG_PENDING ;
+
+	$msg_failed  = isset($param['msg_failed']) ? 
+		$param['msg_failed'] : $this->get_format_error() ;
+
+	$msg_extra = isset($param['msg_extra']) ? 
+		$param['msg_extra'] : $this->get_format_msg_array().'<br />'.$msg_success ;
+
+// pending
+	if ( $is_failed ) {
+		$url  = $url_failed ;
+		$time = $time_failed ;
+		$msg  = $msg_failed ;
+
+// pending
+	} elseif ( $is_pending ) {
+		$url  = $url_pending ;
+		$time = $time_pending ;
+		$msg  = $msg_pending ;
+
+// has msg
+	} elseif ( $has_extra_msg ) {
+		$url  = $url_success ;
+		$time = $time_pending ;
+		$msg  = $msg_extra ;
+
+// success
+	} else {
+		$url  = $url_success ;
+		$time = $time_success ;
+		$msg  = $msg_success ;
+	}
+
+	$this->_redirect_url  = $url ;
+	$this->_redirect_time = $time ;
+	$this->_redirect_msg  = $msg ;
+
+	return array( $url, $time, $msg );
+}
+
+function set_redirect_url_faild( $val )
+{
+	$this->_REDIRECT_URL_FAILED = $val ;
+}
+
+function set_redirect_msg_success( $val )
+{
+	$this->_REDIRECT_MSG_SUCCESS = $val ;
+}
+
+function get_redirect_url()
+{
+	return $this->_redirect_url ;
+}
+
+function get_redirect_time()
+{
+	return $this->_redirect_time ;
+}
+
+function get_redirect_msg()
+{
+	return $this->_redirect_msg ;
+}
+
+function set_error_by_const_name( $name )
+{
+	$this->set_error( $this->get_constant( $name ) ) ;
+}
+
+//---------------------------------------------------------
+// kind class
 //---------------------------------------------------------
 function get_normal_exts()
 {
-	return $this->_NORMAL_EXTS ;
+	return $this->_kind_class->get_image_exts() ;
 }
 
 function is_normal_ext( $ext )
 {
-	if ( in_array( strtolower( $ext ) , $this->_NORMAL_EXTS ) ) {
-		return true;
-	}
-	return false;
+	return $this->_kind_class->is_image_ext( $ext ) ;
+}
+
+function is_image_ext( $ext )
+{
+	return $this->_kind_class->is_image_ext( $ext ) ;
+}
+
+function is_swfobject_ext( $ext )
+{
+	return $this->_kind_class->is_swfobject_ext( $ext ) ;
+}
+
+function is_mediaplayer_ext( $ext )
+{
+	return $this->_kind_class->is_mediaplayer_ext( $ext ) ;
 }
 
 function is_video_docomo_ext( $ext )
 {
-	if ( strtolower( $ext ) == $this->_VIDEO_DOCOMO_EXT ) {
-		return true ;
-	}
-	return false ;
+	return $this->_kind_class->is_video_docomo_ext( $ext ) ;
 }
 
 function is_image_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
-		return true;
-	}
-	return false;
+	return $this->_kind_class->is_image_kind( $kind ) ;
+}
+
+function is_video_audio_kind( $kind )
+{
+	return $this->_kind_class->is_video_audio_kind( $kind ) ;
 }
 
 function is_video_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_VIDEO ) {
-		return true;
-	}
-	return false;
+	return $this->_kind_class->is_video_kind( $kind ) ;
+}
+
+function is_audio_kind( $kind )
+{
+	return $this->_kind_class->is_audio_kind( $kind ) ;
+}
+
+function is_playlist_kind( $kind )
+{
+	return $this->_kind_class->is_playlist_kind( $kind ) ;
+}
+
+function is_playlist_feed_kind( $kind )
+{
+	return $this->_kind_class->is_playlist_feed_kind( $kind ) ;
+}
+
+function is_playlist_dir_kind( $kind )
+{
+	return $this->_kind_class->is_playlist_dir_kind( $kind ) ;
+}
+
+function is_external_type_general( $type )
+{
+	return $this->_kind_class->is_external_type_general( $type ) ;
 }
 
 //---------------------------------------------------------

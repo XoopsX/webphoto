@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_delete.php,v 1.3 2008/08/27 03:58:02 ohwada Exp $
+// $Id: photo_delete.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// delete_photo_by_item_row()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // added delete_maillogs();
@@ -58,35 +60,40 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // delete
 //---------------------------------------------------------
-function delete_photo( $photo_id )
+function delete_photo_by_item_id( $item_id )
 {
-	$photo_id = intval($photo_id);
+	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	return $this->delete_photo_by_item_row( $item_row ) ;
+}
 
-	$item_row = $this->_item_handler->get_row_by_id( $photo_id );
+function delete_photo_by_item_row( $item_row )
+{
 	if ( !is_array($item_row) ) {
 		return true;	// no action
 	}
 
-	$this->delete_files_with_file( $item_row );
-	$this->delete_maillogs( $photo_id );
+	$item_id = $item_row['item_id'] ;
 
-	$ret = $this->_item_handler->delete_by_id( $photo_id );
+	$this->delete_files_with_file( $item_row );
+	$this->delete_maillogs( $item_id );
+
+	$ret = $this->_item_handler->delete_by_id( $item_id );
 	if ( !$ret ) {
 		$this->set_error( $this->_item_handler->get_errors() );
 	}
 
-	$ret = $this->_p2t_handler->delete_by_photoid( $photo_id );
+	$ret = $this->_p2t_handler->delete_by_photoid( $item_id );
 	if ( !$ret ) {
 		$this->set_error( $this->_p2t_handler->get_errors() );
 	}
 
-	$ret = $this->_vote_handler->delete_by_photoid( $photo_id );
+	$ret = $this->_vote_handler->delete_by_photoid( $item_id );
 	if ( !$ret ) {
 		$this->set_error( $this->_vote_handler->get_errors() );
 	}
 
-	xoops_comment_delete( $this->_MODULE_ID , $photo_id ) ;
-	xoops_notification_deletebyitem( $this->_MODULE_ID , 'photo' , $photo_id ) ;
+	xoops_comment_delete( $this->_MODULE_ID , $item_id ) ;
+	xoops_notification_deletebyitem( $this->_MODULE_ID , 'photo' , $item_id ) ;
 
 	return $this->return_code();
 }

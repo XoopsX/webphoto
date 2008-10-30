@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: submit_file.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use video_thumb()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -33,11 +35,11 @@ class webphoto_main_submit_file extends webphoto_base_this
 	var $_created_row = null ;
 	var $_is_video_thumb_form = false;
 
-	var $_REDIRECT_URL = null;
+	var $_THIS_FCT = 'submit_file';
+	var $_THIS_URL = null;
 
-	var $_TIME_SUCCESS  = 100;
-	var $_TIME_PENDING  = 300;
-	var $_TIME_FAIL     = 500;
+	var $_TIME_SUCCESS = 1;
+	var $_TIME_FAILED  = 5;
 
 //---------------------------------------------------------
 // constructor
@@ -55,7 +57,7 @@ function webphoto_main_submit_file( $dirname , $trust_dirname )
 	$this->_has_file      = $this->_perm_class->has_file();
 	$this->_has_resize    = $this->_photo_class->has_resize();
 
-	$this->_REDIRECT_URL  = $this->_MODULE_URL .'/index.php?fct=submit_file';
+	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -79,15 +81,10 @@ function check_action()
 	switch ( $op ) 
 	{
 		case 'submit':
-			$this->_check_token_and_redirect();
 			$this->_submit();
-			if ( $this->_is_video_thumb_form ) {
-				break;
-			}
-			exit();
+			break;
 
 		case 'video':
-			$this->_check_token_and_redirect();
 			$this->_video();
 			exit();
 	}
@@ -96,7 +93,7 @@ function check_action()
 function print_form()
 {
 	echo $this->build_bread_crumb( 
-		$this->get_constant('TITLE_SUBMIT_FILE'), $this->_REDIRECT_URL );
+		$this->get_constant('TITLE_SUBMIT_FILE'), $this->_THIS_URL );
 
 	if ( $this->_is_video_thumb_form ) {
 		$this->_print_form_video_thumb();
@@ -117,7 +114,7 @@ function _check()
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_NO_PERM:
-			redirect_header( XOOPS_URL.'/user.php' , $this->_TIME_FAIL , 
+			redirect_header( XOOPS_URL.'/user.php' , $this->_TIME_FAILED , 
 				$this->get_constant('ERR_MUSTREGFIRST') ) ;
 			exit();
 
@@ -126,11 +123,11 @@ function _check()
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_format_error();
 			}
-			redirect_header( $this->_INDEX_PHP, $this->_TIME_FAIL, $msg );
+			redirect_header( $this->_INDEX_PHP, $this->_TIME_FAILED, $msg );
 			exit();
 
 		case _C_WEBPHOTO_ERR_NO_CAT_RECORD :
-			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , 
+			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , 
 				$this->get_constant('ERR_MUSTADDCATFIRST') ) ;
 			exit ;
 
@@ -174,7 +171,8 @@ function _exec_check()
 
 function _check_token_and_redirect()
 {
-	$this->check_token_and_redirect( $this->_REDIRECT_URL, $this->_TIME_FAIL );
+	$this->check_token_and_redirect( 
+		$this->_THIS_URL, $this->_TIME_FAILED );
 }
 
 //---------------------------------------------------------
@@ -182,95 +180,26 @@ function _check_token_and_redirect()
 //---------------------------------------------------------
 function _submit()
 {
-	$ret = $this->_exec_submit();
+	$this->_check_token_and_redirect();
+	$ret1 = $this->_exec_submit();
 
 	if ( $this->_is_video_thumb_form ) {
 		return;
 	}
 
-	$msg = null;
-	switch ( $ret )
-	{
-		case _C_WEBPHOTO_ERR_EMPTY_CAT:
-			$msg = $this->get_constant('ERR_EMPTY_CAT') ;
-			break;
+	$ret2 = $this->build_failed_msg( $ret1 );
 
-		case _C_WEBPHOTO_ERR_INVALID_CAT:
-			$msg = $this->get_constant('ERR_INVALID_CAT') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_EMPTY_FILE:
-			$msg = $this->get_constant('ERR_EMPTY_FILE') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_FILEREAD:
-			$msg = $this->get_constant('ERR_FILEREAD') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_EXT:
-			$msg = $this->get_constant('UPLOADER_ERR_NOT_ALLOWED_EXT') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_FILE_SIZE:
-			$msg = $this->get_constant('UPLOADER_ERR_LARGE_FILE_SIZE') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_DB:
-			$msg = 'DB Error';
-			if ( $this->_is_module_admin ) {
-				$msg .= '<br />'.$this->get_format_error();
-			}
-			break;
-
-		case _C_WEBPHOTO_ERR_FILE:
-			$msg = $this->get_constant('ERR_FILE') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_NO_IMAGE;
-			$msg = $this->get_constant('ERR_NOIMAGESPECIFIED') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_NO_TITLE:
-			$msg = $this->get_constant('ERR_TITLE') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_CREATE_PHOTO:
-			$msg = $this->get_constant('ERR_CREATE_PHOTO') ;
-			break;
-
-		case 0:
-		default:
-			break;
-	}
-
-	if ( $msg ) {
-		redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg );
-		exit();
-	}
-
-	$this->_submit_success();
-}
-
-function _submit_success()
-{
-	$param = array(
-		'orderby' => 'dated'
+	$redirect_param = array(
+		'url_success' => $this->_build_url_success( $this->_created_row ) ,
+		'url_faild'   => $this->_THIS_URL ,
+		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
 	);
-	$url  = $this->build_uri_category( $this->_post_item_cat_id, $param );
-	$time = $this->_TIME_SUCCESS ;
-	$msg  = '';
 
-	if ( $this->has_msg_array() ) {
-		$msg .= $this->get_format_msg_array() ;
-		$msg .= "<br />\n";
-		$time = $this->_TIME_PENDING ;
-	}
+	list( $url, $time, $msg ) =
+		$this->build_redirect( $redirect_param );
 
-	$msg .= $this->get_constant('SUBMIT_RECEIVED') ;
-
-	redirect_header( $url, $time , $msg ) ;
+	redirect_header( $url, $time, $msg );
 	exit();
-
 }
 
 function _check_submit()
@@ -394,60 +323,42 @@ function _move_file( $old )
 	rename( $old, $new );
 }
 
+function _build_url_success( $item_row )
+{
+	$cat_id = $item_row['item_cat_id'];
+
+	$url_param = array(
+		'orderby' => 'dated'
+	);
+
+	return $this->build_uri_category( $cat_id, $url_param );
+}
+
 //---------------------------------------------------------
 // video
 //---------------------------------------------------------
 function _video()
 {
-	$msg = null;
-	$ret = $this->_exec_video();
+	$this->_check_token_and_redirect();
 
-	switch ( $ret )
-	{
-		case _C_WEBPHOTO_ERR_NO_RECORD:
-			$msg = $this->get_constant('NOMATCH_PHOTO') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_CREATE_THUMB:
-			$msg = $this->get_constant('ERR_CREATE_THUMB') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_DB:
-			$msg = 'DB Error';
-			if ( $this->_is_module_admin ) {
-				$msg .= '<br />'.$this->get_format_error();
-			}
-			break;
+	$item_id  = $this->_post_class->get_post_int('item_id') ;
+	$item_row = $this->_item_handler->get_row_by_id( $item_id ) ;
+	if ( !is_array($item_row) ) {
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAILED, 
+			$this->get_constant('NOMATCH_PHOTO') );
 	}
 
-	if ( $msg ) {
-		redirect_header( $this->_REDIRECT_URL, $this->_TIME_FAIL, $msg );
-		exit();
-	}
+	$redirect_param = array(
+		'url_success' => $this->_build_url_success( $item_row ) ,
+		'url_faild'   => $this->_THIS_URL ,
+		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
+	);
 
-	$this->_submit_success();
-}
+	list( $url, $time, $msg ) =
+		$this->_photo_class->video_thumb( $item_row , $redirect_param );
 
-function _exec_video()
-{
-	$this->clear_msg_array();
-
-	$photo_id = $this->_post_class->get_post('photo_id') ;
-	$name     = $this->_post_class->get_post('name') ;
-
-	$ret = $this->_photo_class->update_video_thumb( $photo_id, $name );
-	if ( $ret < 0 ) {
-		return $ret;
-	}
-
-	if ( $this->_photo_class->get_video_thumb_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
-	}
-
-// set for redirect
-	$this->_post_item_cat_id = $this->_photo_class->get_item_cat_id() ;
-
-	return 0;
+	redirect_header( $url, $time, $msg );
+	exit();
 }
 
 //---------------------------------------------------------
@@ -470,23 +381,16 @@ function _print_form_submit()
 
 function _print_form_video_thumb()
 {
-	$this->print_form_video_thumb_common( 'submit_file', $this->_created_row );
-}
-
-function print_form_video_thumb_common( $mode, $row )
-{
 	if ( $this->has_msg_array() ) {
 		echo $this->get_format_msg_array() ;
 		echo "<br />\n";
 	}
 
-	$param = array(
-		'mode' => $mode ,
-	);
-
 	$form_class =& webphoto_photo_edit_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_video_thumb( $row, $param );
+
+	$form_class->print_form_video_thumb( 
+		'submit_file', $this->_created_row );
 }
 
 // --- class end ---

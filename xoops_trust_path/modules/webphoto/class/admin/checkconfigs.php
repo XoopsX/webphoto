@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: checkconfigs.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use cfg_uploadspath
 // 2008-08-01 K.OHWADA
 // show Multibyte Extention
 // tmppath -> tmpdir
@@ -52,10 +54,8 @@ function check()
 {
 	$cfg_makethumb   = $this->get_config_by_name('makethumb');
 	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
-	$cfg_photospath  = $this->get_config_by_name('photospath');
-	$cfg_thumbspath  = $this->get_config_by_name('thumbspath');
-	$cfg_giconspath  = $this->get_config_by_name('giconspath');
-	$cfg_tmppath     = $this->get_config_by_name('tmppath');
+	$cfg_uploadspath = $this->get_config_by_name('uploadspath');
+	$cfg_mediaspath  = $this->get_config_by_name('mediaspath');
 	$cfg_tmpdir      = $this->get_config_by_name('tmpdir');
 	$cfg_file_dir    = $this->get_config_by_name('file_dir');
 	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
@@ -259,17 +259,13 @@ function check()
 // directory
 	echo "<b>Directory : </b><br /><br />\n" ;
 
-// photos
-	echo _AM_WEBPHOTO_DIRECTORYFOR_PHOTOS.': '.XOOPS_ROOT_PATH.$cfg_photospath.' &nbsp; ';
-	$this->_check_path( $cfg_photospath );
+// uploads
+	echo _AM_WEBPHOTO_DIRECTORYFOR_UPLOADS.': '.XOOPS_ROOT_PATH.$cfg_uploadspath.' &nbsp; ';
+	$this->_check_path( $cfg_uploadspath );
 
-// thumbs
-	echo _AM_WEBPHOTO_DIRECTORYFOR_THUMBS.': '.XOOPS_ROOT_PATH.$cfg_thumbspath.' &nbsp; ' ;
-	$this->_check_path( $cfg_photospath );
-
-// gicons
-	echo _AM_WEBPHOTO_DIRECTORYFOR_GICONS.': '.XOOPS_ROOT_PATH.$cfg_giconspath.' &nbsp; ' ;
-	$this->_check_path( $cfg_giconspath );
+// medias
+	echo _AM_WEBPHOTO_DIRECTORYFOR_MEDIAS.': '.XOOPS_ROOT_PATH.$cfg_mediaspath.' &nbsp; ';
+	$this->_check_path( $cfg_mediaspath );
 
 // tmp
 	echo _AM_WEBPHOTO_DIRECTORYFOR_TMP.': '. $cfg_tmpdir .' &nbsp; ' ;

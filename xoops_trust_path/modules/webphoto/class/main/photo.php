@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photo.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// update_hits() -> countup_hits()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // QR code
@@ -22,6 +24,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_photo extends webphoto_show_main
 {
+	var $_flash_class;
+	var $_embed_class;
 	var $_d3_comment_view_class;
 
 	var $_get_photo_id;
@@ -41,6 +45,9 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_main( $dirname , $trust_dirname );
 	$this->set_flag_highlight( true );
+
+	$this->_flash_class  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_embed_class  =& webphoto_embed::getInstance( $dirname, $trust_dirname );
 
 	$this->_comment_view_class =& webphoto_d3_comment_view::getInstance();
 	$this->_comment_view_class->init( $dirname );
@@ -178,10 +185,12 @@ function main()
 	$this->set_keyword_array_by_get();
 
 // countup hits
-	$this->_item_handler->update_hits( $photo_id );
+	if ( $this->check_not_owner( $row['item_uid'] ) ) {
+		$this->_item_handler->countup_hits( $photo_id, true );
+	}
 
 	$total_all  = $this->_item_handler->get_count_public();
-	$photo      = $this->build_photo_show( $row );
+	$photo      = $this->_build_photo_show_main( $row );
 
 	$gmap_param = $this->_build_gmap_param( $row );
 	$show_gmap  = $gmap_param['show_gmap'];
@@ -213,6 +222,74 @@ function main()
 
 	$ret = array_merge( $arr, $gmap_param, $tags_param, $noti_param );
 	return $this->add_box_list( $ret );
+}
+
+
+//---------------------------------------------------------
+// show main
+//---------------------------------------------------------
+function _build_photo_show_main( $row )
+{
+	$arr1 = $this->build_photo_show( $row );
+	$arr2 = $this->_build_flash_player( $arr1 ) ;
+	$arr3 = $this->_build_embed_link( $arr1 );
+
+	$arr = array_merge( $arr1, $arr2, $arr3 );
+	return $arr;
+}
+
+//---------------------------------------------------------
+// flash player
+//---------------------------------------------------------
+function _build_flash_player( $show_arr )
+{
+	$item_id     = $show_arr[ 'item_id' ] ;
+	$player_id   = $show_arr[ 'player_id' ] ;
+	$displaytype = $show_arr[ 'displaytype' ] ;
+
+	$flag  = false ;
+	$flash = null ;
+
+	if ( $displaytype >= _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) {
+		$flag  = true;
+		list( $flash, $mplay ) = $this->_flash_class->load_movie( $item_id, $player_id, null );
+	}
+
+	$arr = array(
+		'displaytype_flash' => $flag ,
+		'flash_player'      => $flash ,
+	);
+	return $arr;
+}
+
+//---------------------------------------------------------
+// embed
+//---------------------------------------------------------
+function _build_embed_link( $show_arr )
+{
+	$kind  = $show_arr[ 'kind' ];
+	$type  = $show_arr[ 'embed_type' ];
+	$src   = $show_arr[ 'embed_src' ];
+
+	$param = $show_arr;
+	$param[ 'cfg_thumb_width' ]  = $this->_cfg_thumb_width ;
+	$param[ 'cfg_middle_width' ] = $this->_cfg_middle_width ;
+
+	$can = false ;
+
+	$this->_embed_class->set_param( $param );
+	list( $embed, $link ) 
+		= $this->_embed_class->build_embed_link( $type, $src );
+	if ( $embed ) {
+		$can = true ;
+	}
+
+	$arr = array(
+		'embed_can'   => $can ,
+		'embed_embed' => $embed ,
+		'embed_link'  => $link ,
+	);
+	return $arr;
 }
 
 //---------------------------------------------------------

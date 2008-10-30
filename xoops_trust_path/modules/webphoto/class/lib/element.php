@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: element.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// build_form_text_color_pickup() etc
 // 2008-08-01 K.OHWADA
 // added build_row_label_time()
 // typo substite_empty() -> substitute_empty()
@@ -25,6 +27,7 @@ class webphoto_lib_element extends webphoto_lib_error
 	var $_alternate_class = '';
 	var $_line_count      = 0;
 	var $_row             = array();
+	var $_hidden_buffers  = array();
 
 	var $_cached_token = null;
 	var $_token_errors = null;
@@ -34,15 +37,23 @@ class webphoto_lib_element extends webphoto_lib_error
 	var $_FORM_NAME    = 'form';
 	var $_TITLE_HEADER = 'title';
 	var $_KEYWORD_MIN = 5;
+	var $_path_color_pickup = null;
 
 // local constant
 	var $_TABLE_SELECT_WIDTH = '200px';
 	var $_TD_SELECT_WIDTH    = '100px';
 
+	var $_TD_LEFT_CLASS   = 'head';
+	var $_TD_RIGHT_CLASS  = 'odd';
+	var $_TD_BOTTOM_CLASS = 'head';
+	var $_TD_LEFT_WIDTH   = '';
+
 	var $_DIV_STYLE = 'background-color: #dde1de; border: 1px solid #808080; margin: 5px; padding: 10px 10px 5px 10px; width: 95%; text-align: center; ';
 	var $_DIV_ERROR_STYLE = 'background-color: #ffffe0; color: #ff0000; border: #808080 1px dotted; margin:  3px; padding: 3px;';
 	var $_SPAN_STYLE       = 'font-size: 120%; font-weight: bold; color: #000000; ';
 	var $_SPAN_TITLE_STYLE = 'font-size: 120%; font-weight: bold; color: #000000; ';
+
+	var $_CAPTION_DESC_STYLE = 'font-size: 90%; font-weight: 500;';
 
 	var $_SELECTED = 'selected="selected"';
 	var $_CHECKED  = 'checked="checked"';
@@ -187,8 +198,6 @@ function build_form_style( $title, $desc, $value, $style_div='', $style_span='' 
 	return $text;
 }
 
-
-
 //---------------------------------------------------------
 // form
 //---------------------------------------------------------
@@ -242,13 +251,13 @@ function build_form_dhtml( $name, $value, $rows=5, $cols=50, $hiddentext='xoopsH
 	return $text;
 }
 
-function build_form_select( $name, $value, $options, $size=5 )
+function build_form_select( $name, $value, $options, $size=5, $extra=null )
 {
 	if ( !is_array($options) || !count($options) ) {
 		return null;
 	}
 
-	$text = '<select id="'. $name.'" name="'. $name.'" size="'. $size .'">'."\n";
+	$text = '<select id="'. $name.'" name="'. $name.'" size="'. $size .'" '. $extra .' >'."\n";
 	foreach ( $options as $k => $v )
 	{
 		$selected = $this->build_form_selected( $k, $value );
@@ -346,6 +355,46 @@ function build_form_name_rand()
 }
 
 //---------------------------------------------------------
+// color_pickup
+//---------------------------------------------------------
+function set_path_color_pickup( $path )
+{
+	$this->_path_color_pickup = $path;
+}
+
+function build_script_color_pickup()
+{
+	$str = '<script type="text/javascript" src="'. $this->_path_color_pickup .'/color-picker.js"></script>'."\n";
+	return $str;
+}
+
+function build_form_color_pickup( $name, $value, $select_value='...', $size=50 )
+{
+	$select_name  = $name.'_select';
+	$text  = $this->build_form_color_pickup_input( $name, $value, $size );
+	$text .= $this->build_form_color_pickup_select( $select_name, $select_value, $name );
+	return $text;
+}
+
+function build_form_color_pickup_input( $name, $value, $size=50 )
+{
+	$extra = 'style="background-color:'. $value .';"' ;
+	$text  = $this->build_input_text( $name, $value, $size, $extra );
+	return $text;
+}
+
+function build_form_color_pickup_select( $name, $value, $popup_name )
+{
+	$popup_path  = $this->_path_color_pickup.'/';
+	$popup_value = "document.getElementById('". $popup_name ."')";
+	$onclick     = "return TCP.popup('". $popup_path ."', ". $popup_value ." )";
+	$extra       = 'onClick="'. $onclick .'"';
+
+	$text = $this->build_input_reset( $name, $value, $extra );
+	return $text;
+}
+
+//---------------------------------------------------------
 // table form
 //---------------------------------------------------------
 function build_table_begin()
@@ -368,21 +417,35 @@ function build_line_title( $title )
 	return $text;
 }
 
+function build_line_cap_ele( $cap, $desc, $ele, $flag_sanitaize=false )
+{
+	$title = $this->build_caption( $cap, $desc );
+	return $this->build_line_ele( $title, $ele, $flag_sanitaize );
+}
+
 function build_line_ele( $title, $ele, $flag_sanitaize=false )
 {
+	$extra = null ;
+	if ( $this->_TD_LEFT_WIDTH ) {
+		$extra = 'width="'. $this->_TD_LEFT_WIDTH .'"';
+	}
+
 	if ( $flag_sanitaize ) {
 		$ele = $this->sanitize( $ele );
 	}
 
-	$text  = '<tr><td class="head">'. $title .'</td>';
-	$text .= '<td class="odd">'. $ele .'</td></tr>'."\n";
-	return $text;
+	$str  = '<tr><td class="'. $this->_TD_LEFT_CLASS .'" '. $extra .' >';
+	$str .= $title;
+	$str .= '</td><td class="'. $this->_TD_RIGHT_CLASS .'">';
+	$str .= $ele;
+	$str .= "</td></tr>\n";
+	return $str ;
 }
 
 function build_line_buttom( $val )
 {
-	$text  = '<tr><td class="head"></td>';
-	$text .= '<td class="head">';
+	$text  = '<tr><td class="'. $this->_TD_BOTTOM_CLASS .'"></td>';
+	$text .= '<td class="'. $this->_TD_BOTTOM_CLASS .'">';
 	$text .= $val ;
 	$text .= "</td></tr>\n";
 	return $text;
@@ -412,35 +475,37 @@ function get_row_by_key( $name, $default=null, $flag_sanitaize=true )
 	return $default;
 }
 
+function set_row_hidden_buffer( $name )
+{
+	$value = $this->get_row_by_key( $name );
+	$this->set_hidden_buffer( $name, $value );
+}
+
 function build_row_hidden( $name )
 {
 	$value = $this->get_row_by_key( $name );
-	$text  = $this->build_input_hidden( $name, $value );
-	return $text;
+	return $this->build_input_hidden( $name, $value );
 }
 
 function build_row_label( $title, $name, $flag_sanitaize=true )
 {
 	$value = $this->get_row_by_key( $name, $flag_sanitaize );
 	$value = $this->substitute_empty( $value );
-	$text  = $this->build_line_ele( $title, $value );
-	return $text;
+	return $this->build_line_ele( $title, $value );
 }
 
 function build_row_label_time( $title, $name )
 {
 	$value = $this->get_row_by_key( $name );
 	$value = date( $this->_TIME_FORMAT, $value );
-	$text  = $this->build_line_ele( $title, $value );
-	return $text;
+	return $this->build_line_ele( $title, $value );
 }
 
 function build_row_text( $title, $name, $size=50 )
 {
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_input_text( $name, $value, $size );
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_row_url( $title, $name, $size=50, $flag_link=false )
@@ -460,40 +525,35 @@ function build_row_url( $title, $name, $size=50, $flag_link=false )
 		$ele  .= $this->build_a_link( $value, $value, '_blank' );
 	}
 
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_row_text_id( $title, $name, $id, $size=50 )
 {
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_input_text_id( $id, $name, $value, $size );
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_row_textarea( $title, $name, $rows=5, $cols=50 )
 {
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_textarea( $name, $value, $rows, $cols );
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_row_dhtml( $title, $name, $rows=5, $cols=50 )
 {
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_form_dhtml( $name, $value, $rows, $cols );
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_row_radio_yesno( $title, $name )
 {
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_form_radio_yesno( $name, $value );
-	$text  = $this->build_line_ele( $title, $ele );
-	return $text;
+	return $this->build_line_ele( $title, $ele );
 }
 
 function build_line_add()
@@ -552,14 +612,14 @@ function build_input_hidden( $name, $value, $flag_sanitaize=false )
 	return $text;
 }
 
-function build_input_text( $name, $value, $size=50 )
+function build_input_text( $name, $value, $size=50, $extra=null )
 {
-	return $this->build_input_text_id( $name, $name, $value, $size );
+	return $this->build_input_text_id( $name, $name, $value, $size, $extra );
 }
 
-function build_input_text_id( $id, $name, $value, $size=50 )
+function build_input_text_id( $id, $name, $value, $size=50, $extra=null )
 {
-	$text = '<input tyep="text" id="'. $id .'"  name="'. $name .'" value="'. $value .'" size="'. $size .'" />';
+	$text = '<input tyep="text" id="'. $id .'"  name="'. $name .'" value="'. $value .'" size="'. $size .'" '. $extra .' />'."\n";
 	return $text;
 }
 
@@ -569,9 +629,9 @@ function build_input_submit( $name, $value, $extra=null )
 	return $text;
 }
 
-function build_input_reset( $name, $value )
+function build_input_reset( $name, $value, $extra=null )
 {
-	$text = '<input type="reset" id="'. $name .'" name="'. $name .'" value="'. $value .'" />'."\n";
+	$text = '<input type="reset" id="'. $name .'" name="'. $name .'" value="'. $value .'" '. $extra .' />'."\n";
 	return $text;
 }
 
@@ -689,6 +749,50 @@ function build_a_end()
 }
 
 //---------------------------------------------------------
+// caption
+//---------------------------------------------------------
+function build_caption( $cap, $desc=null )
+{
+	$str = $cap;
+	if ( $desc ) {
+		$str .= "<br />\n";
+		$str .= $this->build_caption_desc( $desc );
+	}
+	return $str;
+}
+
+function build_caption_desc( $desc )
+{
+	$str  = '<span style="'. $this->_CAPTION_DESC_STYLE .'">';
+	$str .= $desc;
+	$str .= '</span>'."\n";
+	return $str;
+}
+
+//---------------------------------------------------------
+// hidden buffer
+//---------------------------------------------------------
+function clear_hidden_buffers()
+{
+	$this->_hidden_buffers = array();
+}
+
+function get_hidden_buffers()
+{
+	return $this->_hidden_buffers;
+}
+
+function render_hidden_buffers()
+{
+	return implode( '', $this->_hidden_buffers );
+}
+
+function set_hidden_buffer($name, $value)
+{
+	$this->_hidden_buffers[] = $this->build_input_hidden($name, $value);
+}
+
+//---------------------------------------------------------
 // keyword
 //---------------------------------------------------------
 function parse_keywords( $keywords, $andor='AND' )
@@ -795,6 +899,11 @@ function set_title_header( $val )
 function set_keyword_min( $val )
 {
 	$this->_KEYWORD_MIN = intval($val);
+}
+
+function set_td_left_width( $val )
+{
+	$this->_TD_LEFT_WIDTH = $val ;
 }
 
 //---------------------------------------------------------

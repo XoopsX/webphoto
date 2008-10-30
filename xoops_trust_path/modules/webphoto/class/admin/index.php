@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: index.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use PLAYLISTS_DIR
 // 2008-08-24 K.OHWADA
 // added _print_check_update()
 // 2008-08-01 K.OHWADA
@@ -26,11 +28,6 @@ class webphoto_admin_index extends webphoto_base_this
 	var $_photo_handler;
 	var $_check_class;
 
-	var $_GICONS_PATH;
-	var $_GICONS_URL;
-	var $_GICONS_DIR;
-
-	var $_DIR_UPLOADS_MOD;
 	var $_DIR_TRUST_MOD_UPLOADS;
 
 	var $_MKDIR_MODE = 0777;
@@ -45,15 +42,8 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
 	$this->_check_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
 
-	$this->_GICONS_PATH = $this->_config_class->get_gicons_path();
-	$this->_GICONS_URL  = XOOPS_URL       . $this->_GICONS_PATH;
-	$this->_GICONS_DIR  = XOOPS_ROOT_PATH . $this->_GICONS_PATH;
-
-	$this->_DIR_UPLOADS_MOD = XOOPS_ROOT_PATH .'/uploads/'. $dirname .'/';
-
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';
-
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -98,17 +88,20 @@ function main()
 //---------------------------------------------------------
 function _print_check()
 {
-	if ( strpos( $this->_PHOTOS_DIR, $this->_DIR_UPLOADS_MOD ) !== false ) {
-		 echo $this->_make_dir( $this->_DIR_UPLOADS_MOD );
-	}
-
 	if ( strpos( $this->_TMP_DIR, $this->_DIR_TRUST_MOD_UPLOADS ) !== false ) {
 		 echo $this->_make_dir( $this->_DIR_TRUST_MOD_UPLOADS );
 	}
 
+	echo $this->_make_dir( $this->_UPLOADS_DIR );
 	echo $this->_make_dir( $this->_PHOTOS_DIR );
 	echo $this->_make_dir( $this->_THUMBS_DIR );
+	echo $this->_make_dir( $this->_MIDDLES_DIR );
 	echo $this->_make_dir( $this->_GICONS_DIR );
+	echo $this->_make_dir( $this->_FLASHS_DIR );
+	echo $this->_make_dir( $this->_QRS_DIR );
+	echo $this->_make_dir( $this->_PLAYLISTS_DIR );
+	echo $this->_make_dir( $this->_LOGOS_DIR );
+	echo $this->_make_dir( $this->_MEDIAS_DIR );
 	echo $this->_make_dir( $this->_TMP_DIR );
 
 	if ( $this->_cat_handler->get_count_all() == 0 ) {
@@ -119,12 +112,7 @@ function _print_check()
 	}
 
 // Waiting Admission
-	$waiting = $this->_item_handler->get_count_waiting();
-	if ( $waiting > 0 ) {
-		echo '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=admission" style="color:red;">';
-		echo sprintf( _AM_WEBPHOTO_CAT_FMT_NEEDADMISSION , $waiting ) ;
-		echo "</a><br />\n";
-	}
+	echo $this->build_check_waiting();
 
 	echo "<br />\n";
 }
@@ -133,7 +121,7 @@ function _print_check_update()
 {
 	if (( $this->_photo_handler->get_count_all() > 0 )&&
 	    ( $this->_item_handler->get_count_all() == 0 )) {
-		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=update">';
+		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=update_040">';
 		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
 		$msg .= '</a>';
 		echo $this->build_error_msg( $msg, '', false );

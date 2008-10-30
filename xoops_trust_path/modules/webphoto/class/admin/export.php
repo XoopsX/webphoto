@@ -1,5 +1,5 @@
 <?php
-// $Id: export.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: export.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// remove an unnecessary title
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -61,8 +63,6 @@ function &getInstance( $dirname , $trust_dirname )
 function main()
 {
 	xoops_cp_header();
-	$const_name = strtoupper( '_MI_'. $this->_DIRNAME .'_ADMENU_EXPORT' ) ;
-	echo "<h3>". constant($const_name) ."</h3>\n";
 
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'EXPORT' );

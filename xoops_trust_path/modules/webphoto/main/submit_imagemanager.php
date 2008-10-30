@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.5 2008/08/27 05:11:54 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// photo_action.php
 // 2008-08-24 K.OHWADA
 // added class/xoops/user.php photo_create.php
 // removed photo_delete.php
@@ -48,9 +50,10 @@ webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_edit.php' );
+webphoto_include_once( 'class/webphoto/photo_redirect.php' );
+webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );
-webphoto_include_once( 'class/main/submit.php' );
 webphoto_include_once( 'class/main/submit_imagemanager.php' );
 
 //=========================================================

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.4 2008/08/25 19:28:06 ohwada Exp $
+// $Id: show_main.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
  
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use QRS_DIR
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // added build_qr_code()
@@ -774,7 +776,7 @@ function is_in_array( $needle, $haystack )
 //---------------------------------------------------------
 function create_mobile_qr( $id )
 {
-	$file = $this->_PHOTOS_DIR.'/'.$this->build_mobile_filename( $id );
+	$file = $this->_QRS_DIR.'/'.$this->build_mobile_filename( $id );
 	if ( !is_file( $file) ) {
 		$qrimage=new Qrcode_image;
 		$qrimage->set_module_size( $this->_QR_MODULE_SIZE ); 

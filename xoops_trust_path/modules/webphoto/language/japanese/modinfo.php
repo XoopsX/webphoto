@@ -1,15 +1,33 @@
 <?php
-// $Id: modinfo.php,v 1.6 2008/09/04 00:46:47 ohwada Exp $
+// $Id: modinfo.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-$constpref = strtoupper( '_MI_' . $GLOBALS['MY_DIRNAME']. '_' ) ;
+// test
+if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
+	$MY_DIRNAME = 'webphoto' ;
+
+// normal
+} elseif (  isset($GLOBALS['MY_DIRNAME']) ) {
+	$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
+
+// call by altsys/mytplsadmin.php
+} elseif ( $mydirname ) {
+	$MY_DIRNAME = $mydirname;
+
+// probably error
+} else {
+	echo "not set dirname in ". __FILE__ ." <br />\n";
+	$MY_DIRNAME = 'webphoto' ;
+}
+
+$constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
 
 // === define begin ===
-if( !defined($constpref."LANG_LOADED") ) 
+if( defined( 'FOR_XOOPS_LANG_CHECKER' ) || !defined($constpref."LANG_LOADED") ) 
 {
 
 define($constpref."LANG_LOADED" , 1 ) ;
@@ -32,12 +50,13 @@ define($constpref."BNAME_RECENT_P","最近の画像(画像付)");
 define($constpref."BNAME_HITS_P","人気画像(画像付)");
 
 // Config Items
-define( $constpref."CFG_PHOTOSPATH" , "画像ファイルの保存先ディレクトリ" ) ;
-define( $constpref."CFG_DESCPHOTOSPATH" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
-define( $constpref."CFG_THUMBSPATH" , "サムネイルファイルの保存先ディレクトリ" ) ;
-define( $constpref."CFG_DESCTHUMBSPATH" , "「画像ファイルの保存先ディレクトリ」と同じです" ) ;
+//define( $constpref."CFG_PHOTOSPATH" , "画像ファイルの保存先ディレクトリ" ) ;
+//define( $constpref."CFG_DESCPHOTOSPATH" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
+//define( $constpref."CFG_THUMBSPATH" , "サムネイルファイルの保存先ディレクトリ" ) ;
+//define( $constpref."CFG_DESCTHUMBSPATH" , "「画像ファイルの保存先ディレクトリ」と同じです" ) ;
 // define( $constpref."CFG_USEIMAGICK" , "画像処理にImageMagickを使う" ) ;
 // define( $constpref."CFG_DESCIMAGICK" , "使わない場合は、メイン画像の調整は機能せず、サムネイルの生成にGDを使います。<br />可能であればImageMagickの使用が最善です" ) ;
+
 define( $constpref."CFG_IMAGINGPIPE" , "画像処理を行わせるパッケージ選択" ) ;
 define( $constpref."CFG_DESCIMAGINGPIPE" , "ほとんどのPHP環境で標準的に利用可能なのはGDですが機能的に劣ります<br />可能であればImageMagickかNetPBMの使用をお勧めします" ) ;
 define( $constpref."CFG_FORCEGD2" , "強制GD2モード" ) ;
@@ -160,8 +179,7 @@ define($constpref."OPT_SORT_RATINGA","評価 (低→高)");
 define($constpref."OPT_SORT_RATINGD","評価 (高→低)");
 define($constpref."OPT_SORT_RANDOM","ランダム");
 
-define($constpref."CFG_GICONSPATH" , "Google アイコンファイルの保存先ディレクトリ" ) ;
-
+//define($constpref."CFG_GICONSPATH" , "Google アイコンファイルの保存先ディレクトリ" ) ;
 //define($constpref."CFG_TMPPATH" ,   "一時ファイルの保存先ディレクトリ" ) ;
 
 define($constpref."CFG_MIDDLE_WIDTH" ,  "シングルビューでの画像の幅" ) ;
@@ -257,6 +275,22 @@ define($constpref."ADMENU_UPDATE", "アップデート");
 define($constpref."ADMENU_ITEM_TABLE_MANAGE", "アイテム・テーブル管理");
 define($constpref."ADMENU_FILE_TABLE_MANAGE", "ファイル・テーブル管理");
 
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+define( $constpref."CFG_UPLOADSPATH" , "アップロード・ファイルの保存先ディレクトリ" ) ;
+define( $constpref."CFG_UPLOADSPATH_DSC" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
+define( $constpref."CFG_MEDIASPATH" , "メディア・ファイルのディレクトリ" ) ;
+define( $constpref."CFG_MEDIASPATH_DSC" , "プレイリストの元になるメディア・ファイルのあるディレクトリ <br />XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）" ) ;
+define($constpref."CFG_LOGO_WIDTH" ,  "プレイヤー・ロゴ画像の幅と高さ" ) ;
+define($constpref."CFG_USE_CALLBACK", "コールバック・ログを使用する");
+define($constpref."CFG_USE_CALLBACK_DSC", "コールバックを使用して Flash Player のイベントを記録する");
+
+define($constpref."ADMENU_ITEM_MANAGER", "アイテム管理");
+define($constpref."ADMENU_PLAYER_MANAGER", "プレイヤー管理");
+define($constpref."ADMENU_FLASHVAR_MANAGER", "フラッシュ変数管理");
+define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "プレイヤー・テーブル管理");
+define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "フラッシュ変数・テーブル管理");
 
 }
 // === define begin ===

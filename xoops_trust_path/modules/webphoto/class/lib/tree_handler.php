@@ -1,5 +1,5 @@
 <?php
-// $Id: tree_handler.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: tree_handler.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// used build_form_select_list()
+// 2008-09-20 K.OHWADA
+// Warning : Invalid argument supplied for foreach() 
 // 2008-07-01 K.OHWADA
 // change get_nice_path_from_id()
 //---------------------------------------------------------
@@ -23,8 +27,9 @@ class webphoto_lib_tree_handler extends webphoto_lib_handler
 {
 	var $_xoops_tree_handler;
 
-	var $_PREFIX_MARK   = '.';
 	var $_ORDER_DEFAULT = null;
+
+	var $_PATH_SEPARATOR = ' : ' ;
 
 //---------------------------------------------------------
 // constructor
@@ -32,6 +37,7 @@ class webphoto_lib_tree_handler extends webphoto_lib_handler
 function webphoto_lib_tree_handler( $dirname )
 {
 	$this->webphoto_lib_handler( $dirname );
+	$this->set_use_prefix( true );
 }
 
 function init_xoops_tree()
@@ -73,7 +79,8 @@ function get_nice_path_from_id( $sel_id, $title_name, $func_url, $flag_short=fal
 
 		$path .= '<a href="'. $url .'">';
 		$path .= $this->sanitize($title);
-		$path .= '</a> : ';
+		$path .= '</a>';
+		$path .= $this->_PATH_SEPARATOR ;
 	}
 
 	return $path;
@@ -100,6 +107,11 @@ function get_parent_path_array( $sel_id, $path_array=array() )
 	return $path_array;
 }
 
+function set_path_separator( $val )
+{
+	$this->_PATH_SEPARATOR = $val;
+}
+
 //---------------------------------------------------------
 // base on XoopsTree::makeMySelBox 
 //---------------------------------------------------------
@@ -112,42 +124,7 @@ function make_my_sel_box( $title_name, $order='', $preset_id=0, $none=0, $sel_na
 
 function build_sel_box( $tree, $title_name, $preset_id=0, $none=0, $sel_name='', $onchange='' )
 {
-	if ( empty($sel_name) ) {
-		$sel_name = $this->_id_name;
-	}
-
-	$text = '<select name="'. $sel_name .'" ';
-	if ( $onchange != "" ) {
-		$text .= ' onchange="'. $onchange .'" ';
-	}
-	$text .= ">\n";
-
-	if ( $none ) {
-		$text .= '<option value="0">----</option>'."\n";
-	}
-
-	foreach ( $tree as $row )
-	{
-		$catid  = $row[ $this->_id_name ];
-		$title  = $row[ $title_name ];
-		$prefix = $row['prefix'];
-
-		if ( $prefix ) {
-			$prefix = str_replace($this->_PREFIX_MARK, '--', $prefix ).' ';
-		}
-
-		$sel = '';
-		if ( $catid == $preset_id ) {
-			$sel = ' selected="selected" ';
-		}
-
-		$text .= '<option value="'. $catid .'" '. $sel .'>';
-		$text .= $prefix . $this->sanitize($title);
-		$text .= "</option>\n";
-	}
-
-	$text .=  "</select>\n";
-	return $text;
+	return $this->build_form_select_list( $tree, $title_name, $preset_id, $none, $sel_name, $onchange );
 }
 
 function get_all_tree_array( $order='', $flag_perm=false )

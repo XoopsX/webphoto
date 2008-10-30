@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.4 2008/08/27 23:05:57 ohwada Exp $
+// $Id: mime_handler.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// get_rows_by_exts()
 // 2008-08-24 K.OHWADA
 // build_perms_array_to_str()
 // 2008-07-01 K.OHWADA
@@ -196,6 +198,16 @@ function get_rows_by_mygroups( $groups, $limit=0, $offset=0 )
 	foreach ( $groups as $group ) {
 		$like  = '%'. $this->_SEPARATOR . intval($group) . $this->_SEPARATOR . '%';
 		$arr[] = 'mime_perms LIKE '. $this->quote($like) ;
+	}
+	$where = implode( ' OR ', $arr );
+	return $this->get_rows_by_where( $where, $limit, $offset );
+}
+
+function get_rows_by_exts( $exts, $limit=0, $offset=0 )
+{
+	$arr = array();
+	foreach ( $exts as $ext ) {
+		$arr[] = 'mime_ext='. $this->quote($ext) ;
 	}
 	$where = implode( ' OR ', $arr );
 	return $this->get_rows_by_where( $where, $limit, $offset );

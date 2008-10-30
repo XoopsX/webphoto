@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.3 2008/10/13 10:21:29 ohwada Exp $
+// $Id: item_handler.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-10 K.OHWADA
+// item_embed_type item_playlist_srctype etc
 // 2008-10-01 K.OHWADA
 // BUG: Incorrect integer value: 'item_file_id_1'
 // error in mysql 5 if datetime is null
@@ -20,10 +22,16 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_item_handler extends webphoto_lib_handler
 {
-	var $_DATETIME_DEFAULT  = '0000-00-00 00:00:00';
+	var $_DATETIME_DEFAULT      = _C_WEBPHOTO_DATETIME_DEFAULT ;
+	var $_SHOWINFO_DEFAULT      = _C_WEBPHOTO_SHOWINFO_DEFAULT ;
+	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
 
 	var $_AREA_NS = 1.0;
 	var $_AREA_EW = 1.0;
+
+	var $_BUILD_SEARCH_ARRAY = array(
+		'item_datetime', 'item_title', 'item_place', 'item_equipment', 'item_ext',
+		'item_description', 'item_artist', 'item_album', 'item_label' );
 
 //---------------------------------------------------------
 // constructor
@@ -32,7 +40,8 @@ function webphoto_item_handler( $dirname )
 {
 	$this->webphoto_lib_handler( $dirname );
 	$this->set_table_prefix_dirname( 'item' );
-	$this->set_id_name( 'item_id' );
+	$this->set_id_name(    'item_id' );
+	$this->set_title_name( 'item_title' );
 
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
@@ -67,8 +76,12 @@ function create( $flag_new=false )
 		'item_id'             => 0,
 		'item_time_create'    => $time_create,
 		'item_time_update'    => $time_update,
+		'item_time_publish'  => 0 ,
+		'item_time_expire'    => 0 ,
 		'item_cat_id'         => 0,
 		'item_gicon_id'       => 0,
+		'item_player_id'      => 0,
+		'item_flashvar_id'    => 0,
 		'item_uid'            => 0,
 		'item_kind'           => 0,
 		'item_ext'            => '',
@@ -81,6 +94,7 @@ function create( $flag_new=false )
 		'item_gmap_zoom'      => 0,
 		'item_gmap_type'      => 0,
 		'item_perm_read'      => '*',
+		'item_perm_down'      => '*',
 		'item_status'         => 0,
 		'item_hits'           => 0,
 		'item_rating'         => 0,
@@ -89,10 +103,29 @@ function create( $flag_new=false )
 		'item_exif'           => '',
 		'item_description'    => '',
 		'item_search'         => '',
+		'item_duration'       => 0,
+		'item_siteurl'        => '',
+		'item_artist'         => '',
+		'item_album'          => '',
+		'item_label'          => '',
+		'item_displaytype'    => 0,
+		'item_onclick'        => 0,
+		'item_views'          => 0,
+		'item_chain'          => 0,
+		'item_external_url'   => '',
+		'item_external_thumb' => '',
+		'item_embed_type'     => '',
+		'item_embed_src'      => '',
+		'item_playlist_feed'  => '',
+		'item_playlist_dir'   => '',
+		'item_playlist_cache' => '',
+		'item_playlist_type'  => 0,
+		'item_playlist_time'  => $this->_PLAYLIST_TIME_DEFUALT,
+		'item_showinfo'       => $this->_SHOWINFO_DEFAULT ,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$arr[ 'item_file_id_'.$i ] = 0 ;
+		$arr[ 'item_file_id_'.$i ] = 0;
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
@@ -121,8 +154,12 @@ function insert( $row, $force=false )
 
 	$sql .= 'item_time_create, ';
 	$sql .= 'item_time_update, ';
+	$sql .= 'item_time_publish, ';
+	$sql .= 'item_time_expire, ';
 	$sql .= 'item_cat_id, ';
 	$sql .= 'item_gicon_id, ';
+	$sql .= 'item_player_id, ';
+	$sql .= 'item_flashvar_id, ';
 	$sql .= 'item_uid, ';
 	$sql .= 'item_kind, ';
 	$sql .= 'item_ext, ';
@@ -135,6 +172,7 @@ function insert( $row, $force=false )
 	$sql .= 'item_gmap_zoom, ';
 	$sql .= 'item_gmap_type, ';
 	$sql .= 'item_perm_read, ';
+	$sql .= 'item_perm_down, ';
 	$sql .= 'item_status, ';
 	$sql .= 'item_hits, ';
 	$sql .= 'item_rating, ';
@@ -142,6 +180,25 @@ function insert( $row, $force=false )
 	$sql .= 'item_comments, ';
 	$sql .= 'item_exif, ';
 	$sql .= 'item_description, ';
+	$sql .= 'item_duration, ';
+	$sql .= 'item_displaytype, ';
+	$sql .= 'item_onclick, ';
+	$sql .= 'item_views, ';
+	$sql .= 'item_chain, ';
+	$sql .= 'item_siteurl, ';
+	$sql .= 'item_artist, ';
+	$sql .= 'item_album, ';
+	$sql .= 'item_label, ';
+	$sql .= 'item_external_url, ';
+	$sql .= 'item_external_thumb, ';
+	$sql .= 'item_embed_type, ';
+	$sql .= 'item_embed_src, ';
+	$sql .= 'item_playlist_type, ';
+	$sql .= 'item_playlist_time, ';
+	$sql .= 'item_playlist_feed, ';
+	$sql .= 'item_playlist_dir, ';
+	$sql .= 'item_playlist_cache, ';
+	$sql .= 'item_showinfo, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -161,8 +218,12 @@ function insert( $row, $force=false )
 
 	$sql .= intval($item_time_create).', ';
 	$sql .= intval($item_time_update).', ';
+	$sql .= intval($item_time_publish).', ';
+	$sql .= intval($item_time_expire).', ';
 	$sql .= intval($item_cat_id).', ';
 	$sql .= intval($item_gicon_id).', ';
+	$sql .= intval($item_player_id).', ';
+	$sql .= intval($item_flashvar_id).', ';
 	$sql .= intval($item_uid).', ';
 	$sql .= intval($item_kind).', ';
 	$sql .= $this->quote($item_ext).', ';
@@ -175,6 +236,7 @@ function insert( $row, $force=false )
 	$sql .= intval($item_gmap_zoom).', ';
 	$sql .= intval($item_gmap_type).', ';
 	$sql .= $this->quote($item_perm_read).', ';
+	$sql .= $this->quote($item_perm_down).', ';
 	$sql .= intval($item_status).', ';
 	$sql .= intval($item_hits).', ';
 	$sql .= floatval($item_rating).', ';
@@ -182,6 +244,25 @@ function insert( $row, $force=false )
 	$sql .= intval($item_comments).', ';
 	$sql .= $this->quote($item_exif).', ';
 	$sql .= $this->quote($item_description).', ';
+	$sql .= intval($item_duration).', ';
+	$sql .= intval($item_displaytype).', ';
+	$sql .= intval($item_onclick).', ';
+	$sql .= intval($item_views).', ';
+	$sql .= intval($item_chain).', ';
+	$sql .= $this->quote($item_siteurl).', ';
+	$sql .= $this->quote($item_artist).', ';
+	$sql .= $this->quote($item_album).', ';
+	$sql .= $this->quote($item_label).', ';
+	$sql .= $this->quote($item_external_url).', ';
+	$sql .= $this->quote($item_external_thumb).', ';
+	$sql .= $this->quote($item_embed_type).', ';
+	$sql .= $this->quote($item_embed_src).', ';
+	$sql .= intval($item_playlist_type).', ';
+	$sql .= intval($item_playlist_time).', ';
+	$sql .= $this->quote($item_playlist_feed).', ';
+	$sql .= $this->quote($item_playlist_dir).', ';
+	$sql .= $this->quote($item_playlist_cache).', ';
+	$sql .= $this->quote($item_showinfo).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -215,8 +296,12 @@ function update( $row, $force=false )
 	$sql  = 'UPDATE '.$this->_table.' SET ';
 	$sql .= 'item_time_create='.intval($item_time_create).', ';
 	$sql .= 'item_time_update='.intval($item_time_update).', ';
+	$sql .= 'item_time_publish='.intval($item_time_publish).', ';
+	$sql .= 'item_time_expire='.intval($item_time_expire).', ';
 	$sql .= 'item_cat_id='.intval($item_cat_id).', ';
 	$sql .= 'item_gicon_id='.intval($item_gicon_id).', ';
+	$sql .= 'item_player_id='.intval($item_player_id).', ';
+	$sql .= 'item_flashvar_id='.intval($item_flashvar_id).', ';
 	$sql .= 'item_uid='.intval($item_uid).', ';
 	$sql .= 'item_kind='.$this->quote($item_kind).', ';
 	$sql .= 'item_ext='.$this->quote($item_ext).', ';
@@ -229,6 +314,7 @@ function update( $row, $force=false )
 	$sql .= 'item_gmap_zoom='.intval($item_gmap_zoom).', ';
 	$sql .= 'item_gmap_type='.intval($item_gmap_type).', ';
 	$sql .= 'item_perm_read='.$this->quote($item_perm_read).', ';
+	$sql .= 'item_perm_down='.$this->quote($item_perm_down).', ';
 	$sql .= 'item_status='.intval($item_status).', ';
 	$sql .= 'item_hits='.intval($item_hits).', ';
 	$sql .= 'item_rating='.floatval($item_rating).', ';
@@ -236,6 +322,25 @@ function update( $row, $force=false )
 	$sql .= 'item_comments='.intval($item_comments).', ';
 	$sql .= 'item_exif='.$this->quote($item_exif).', ';
 	$sql .= 'item_description='.$this->quote($item_description).', ';
+	$sql .= 'item_duration='.intval($item_duration).', ';
+	$sql .= 'item_displaytype='.intval($item_displaytype).', ';
+	$sql .= 'item_onclick='.intval($item_onclick).', ';
+	$sql .= 'item_views='.intval($item_views).', ';
+	$sql .= 'item_chain='.intval($item_chain).', ';
+	$sql .= 'item_siteurl='.$this->quote($item_siteurl).', ';
+	$sql .= 'item_artist='.$this->quote($item_artist).', ';
+	$sql .= 'item_album='.$this->quote($item_album).', ';
+	$sql .= 'item_label='.$this->quote($item_label).', ';
+	$sql .= 'item_external_url='.$this->quote($item_external_url).', ';
+	$sql .= 'item_external_thumb='.$this->quote($item_external_thumb).', ';
+	$sql .= 'item_embed_type='.$this->quote($item_embed_type).', ';
+	$sql .= 'item_embed_src='.$this->quote($item_embed_src).', ';
+	$sql .= 'item_playlist_type='.intval($item_playlist_type).', ';
+	$sql .= 'item_playlist_time='.intval($item_playlist_time).', ';
+	$sql .= 'item_playlist_feed='.$this->quote($item_playlist_feed).', ';
+	$sql .= 'item_playlist_dir='.$this->quote($item_playlist_dir).', ';
+	$sql .= 'item_playlist_cache='.$this->quote($item_playlist_cache).', ';
+	$sql .= 'item_showinfo='.$this->quote($item_showinfo).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -264,7 +369,7 @@ function update_status_by_id_array( $id_array )
 	return $this->query( $sql );
 }
 
-function update_rating_by_id( $item_id, $rating, $votes )
+function update_rating_by_id( $item_id, $votes, $rating )
 {
 	$sql  = 'UPDATE '.$this->_table.' SET ';
 	$sql .= 'item_rating='. floatval($rating) .', ';
@@ -284,14 +389,43 @@ function clear_gicon_id( $gicon_id )
 }
 
 // when GET request
-function update_hits( $item_id )
+function countup_hits( $item_id, $force=false )
 {
 	$sql  = 'UPDATE '.$this->_table.' SET ';
 	$sql .= 'item_hits = item_hits+1 ';
 	$sql .= 'WHERE '. $this->build_where_public();
 	$sql .= 'AND item_id='.intval($item_id);
 
-	return $this->queryF( $sql );
+	return $this->query( $sql, 0, 0, $force );
+}
+
+function countup_views( $item_id, $force=false )
+{
+	$sql  = 'UPDATE '.$this->_table.' SET ';
+	$sql .= 'item_views = item_views+1 ';
+	$sql .= 'WHERE '. $this->build_where_public();
+	$sql .= 'AND item_id='.intval($item_id);
+
+	return $this->query( $sql, 0, 0, $force );
+}
+
+function update_status( $item_id, $status, $force=false )
+{
+	$sql  = 'UPDATE '.$this->_table.' SET ';
+	$sql .= 'item_status = '. intval($status) ;
+	$sql .= 'WHERE '. $this->build_where_public();
+	$sql .= 'AND item_id='.intval($item_id);
+
+	return $this->query( $sql, 0, 0, $force );
+}
+
+function update_playlist_cache( $item_id, $cache, $force=false )
+{
+	$sql  = 'UPDATE '.$this->_table.' SET ';
+	$sql .= 'item_playlist_cache ='. $this->quote( $cache );
+	$sql .= 'WHERE item_id='.intval($item_id);
+
+	return $this->query( $sql, 0, 0, $force );
 }
 
 //---------------------------------------------------------
@@ -472,6 +606,23 @@ function get_rows_public_gmap_area( $item_id, $lat, $lon, $limit=0, $offset=0 )
 	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
 }
 
+function get_rows_flashplayer( $limit=0, $offset=0 )
+{
+	$sql  = 'SELECT * FROM '. $this->_table;
+	$sql .= ' WHERE item_displaytype >= '. _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+	$sql .= ' ORDER BY item_title ASC';
+	return $this->get_rows_by_sql( $sql, $limit, $offset );
+}
+
+function get_rows_public_by_kind( $kind, $limit=0, $offset=0 )
+{
+	$sql  = 'SELECT * FROM '. $this->_table;
+	$sql .= ' WHERE '. $this->build_where_public();
+	$sql .= ' AND item_kind = '. intval($kind) ;
+	$sql .= ' ORDER BY item_id ASC';
+	return $this->get_rows_by_sql( $sql, $limit, $offset );
+}
+
 function get_rows_public_catlist( $limit=0, $offset=0 )
 {
 	$sql  = 'SELECT *, COUNT(item_id) AS cat_sum ';
@@ -504,16 +655,20 @@ function get_id_array_public_by_catid_orderby( $cat_id, $orderby, $limit=0, $off
 //---------------------------------------------------------
 // build
 //---------------------------------------------------------
+function format_rating( $rating, $decimals=2 )
+{
+	return number_format( $rating , $decimals ) ;
+}
+
 function build_search( $row )
 {
 	$text  = '';
-	$text .= $row['item_datetime'].' ';
-	$text .= $row['item_title'].' ';
-	$text .= $row['item_place'].' ';
-	$text .= $row['item_equipment'].' ';
 
-	$text .= $row['item_description'].' ';
-	$text .= $row['item_ext'].' ';
+	foreach ( $row as $k => $v ) {
+		if ( in_array( $k, $this->_BUILD_SEARCH_ARRAY ) ) {
+			$text .= $v.' ';
+		}
+	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
 		$text .= $row[ 'item_text_'.$i ].' ';
@@ -853,6 +1008,102 @@ function get_replytitle()
 		return $this->get_title_by_id( $com_itemid );
 	}
 	return null;
+}
+
+//---------------------------------------------------------
+// option
+//---------------------------------------------------------
+function get_kind_options( $kind='default' )
+{
+	switch ( $kind )
+	{
+		case 'playlist' :
+			$arr = $this->get_kind_playlist_options();
+			break;
+
+		case 'default' :
+		default:
+			$arr = $this->get_kind_default_options();
+			break;
+	}
+	return $arr;
+}
+
+function get_kind_default_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_ITEM_KIND_NONE             => _WEBPHOTO_ITEM_KIND_NONE ,
+		_C_WEBPHOTO_ITEM_KIND_GENERAL          => _WEBPHOTO_ITEM_KIND_GENERAL ,
+		_C_WEBPHOTO_ITEM_KIND_IMAGE            => _WEBPHOTO_ITEM_KIND_IMAGE ,
+		_C_WEBPHOTO_ITEM_KIND_VIDEO            => _WEBPHOTO_ITEM_KIND_VIDEO ,
+		_C_WEBPHOTO_ITEM_KIND_AUDIO            => _WEBPHOTO_ITEM_KIND_AUDIO ,
+		_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL => _WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL ,
+		_C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE   => _WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ,
+		_C_WEBPHOTO_ITEM_KIND_EMBED            => _WEBPHOTO_ITEM_KIND_EMBED ,
+		_C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED    => _WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ,
+		_C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR     => _WEBPHOTO_ITEM_KIND_PLAYLIST_DIR ,
+	);
+	return $arr;
+}
+
+function get_kind_playlist_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED    => _WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ,
+		_C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR     => _WEBPHOTO_ITEM_KIND_PLAYLIST_DIR ,
+	);
+	return $arr;
+}
+
+function get_displaytype_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_DISPLAYTYPE_GENERAL      => _WEBPHOTO_ITEM_DISPLAYTYPE_GENERAL ,
+		_C_WEBPHOTO_DISPLAYTYPE_IMAGE        => _WEBPHOTO_ITEM_DISPLAYTYPE_IMAGE ,
+		_C_WEBPHOTO_DISPLAYTYPE_EMBED        => _WEBPHOTO_ITEM_DISPLAYTYPE_EMBED ,
+		_C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT    => _WEBPHOTO_ITEM_DISPLAYTYPE_SWFOBJECT ,
+		_C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER  => _WEBPHOTO_ITEM_DISPLAYTYPE_MEDIAPLAYER ,
+		_C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR => _WEBPHOTO_ITEM_DISPLAYTYPE_IMAGEROTATOR ,
+	);
+	return $arr;
+}
+
+function get_onclick_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_ONCLICK_PAGE    => _WEBPHOTO_ITEM_ONCLICK_PAGE ,
+		_C_WEBPHOTO_ONCLICK_DIRECT  => _WEBPHOTO_ITEM_ONCLICK_DIRECT ,
+		_C_WEBPHOTO_ONCLICK_POPUP   => _WEBPHOTO_ITEM_ONCLICK_POPUP ,
+	);
+	return $arr;
+}
+
+function get_playlist_type_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_PLAYLIST_TYPE_NONE   => _WEBPHOTO_ITEM_PLAYLIST_TYPE_NONE ,
+		_C_WEBPHOTO_PLAYLIST_TYPE_IMAGE  => _WEBPHOTO_ITEM_PLAYLIST_TYPE_IMAGE ,
+		_C_WEBPHOTO_PLAYLIST_TYPE_AUDIO  => _WEBPHOTO_ITEM_PLAYLIST_TYPE_AUDIO ,
+		_C_WEBPHOTO_PLAYLIST_TYPE_VIDEO  => _WEBPHOTO_ITEM_PLAYLIST_TYPE_VIDEO ,
+//		_C_WEBPHOTO_PLAYLIST_TYPE_FLASH  => _WEBPHOTO_ITEM_PLAYLIST_TYPE_FLASH ,
+	);
+	return $arr;
+}
+
+function get_showinfo_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_SHOWINFO_DESCRIPTION => _WEBPHOTO_ITEM_SHOWINFO_DESCRIPTION ,
+		_C_WEBPHOTO_SHOWINFO_LOGOIMAGE   => _WEBPHOTO_ITEM_SHOWINFO_LOGOIMAGE ,
+		_C_WEBPHOTO_SHOWINFO_CREDITS     => _WEBPHOTO_ITEM_SHOWINFO_CREDITS ,
+		_C_WEBPHOTO_SHOWINFO_STATISTICS  => _WEBPHOTO_ITEM_SHOWINFO_STATISTICS ,
+		_C_WEBPHOTO_SHOWINFO_SUBMITTER   => _WEBPHOTO_ITEM_SHOWINFO_SUBMITTER ,
+		_C_WEBPHOTO_SHOWINFO_POPUP       => _WEBPHOTO_ITEM_SHOWINFO_POPUP ,
+		_C_WEBPHOTO_SHOWINFO_DOWNLOAD    => _WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD ,
+		_C_WEBPHOTO_SHOWINFO_WEBSITE     => _WEBPHOTO_ITEM_SHOWINFO_WEBSITE ,
+		_C_WEBPHOTO_SHOWINFO_WEBFEED     => _WEBPHOTO_ITEM_SHOWINFO_WEBFEED ,
+	);
+	return $arr;
 }
 
 // --- class end ---

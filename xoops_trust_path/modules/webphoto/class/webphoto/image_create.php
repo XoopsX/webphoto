@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.7 2008/08/26 16:36:48 ohwada Exp $
+// $Id: image_create.php,v 1.8 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// use _MIDDLES_PATH
 // 2008-08-24 K.OHWADA
 // added create_middle_from_image_file()
 // 2008-08-01 K.OHWADA
@@ -402,7 +404,7 @@ function create_middle_icon( $photo_id, $photo_ext )
 	$node = $this->build_photo_node( $photo_id );
 
 	list( $thumb_path, $thumb_name, $thumb_ext )
-		= $this->copy_thumb_icon( $this->_THUMBS_PATH, $node, $photo_ext );
+		= $this->copy_thumb_icon( $this->_MIDDLES_PATH, $node, $photo_ext );
 
 	$this->_middle_param = $this->build_file_param( 
 		$thumb_path, $thumb_name, $thumb_ext, _C_WEBPHOTO_FILE_KIND_MIDDLE );
@@ -561,6 +563,7 @@ function cmd_create_thumb( $src_file , $node , $ext )
 {
 	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_thumb_width );
 	$this->_image_cmd_class->set_thumb_height( $this->_cfg_thumb_height );
+	$this->_image_cmd_class->set_thumbs_path(  $this->_THUMBS_PATH );
 	return $this->_image_cmd_class->create_thumb( $src_file , $node , $ext );
 }
 
@@ -568,6 +571,7 @@ function cmd_create_middle( $src_file , $node , $ext )
 {
 	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_middle_width );
 	$this->_image_cmd_class->set_thumb_height( $this->_cfg_middle_height );
+	$this->_image_cmd_class->set_thumbs_path(  $this->_MIDDLES_PATH );
 	return $this->_image_cmd_class->create_thumb( $src_file , $node , $ext );
 }
 

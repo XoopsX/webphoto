@@ -1,5 +1,5 @@
 <?php
-// $Id: photomanager.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photomanager.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// delete_photo -> delete_photo_by_item_id
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -112,7 +114,7 @@ function _delete()
 	}
 
 	foreach( $_POST['ids'] as $id ) {
-		$this->_delete_class->delete_photo( $id );
+		$this->_delete_class->delete_photo_by_item_id( $id );
 	}
 
 	$url = 'index.php?fct=photomanager&amp;cat_id='. $this->_get_catid ;

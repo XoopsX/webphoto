@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.4 2008/08/25 20:20:52 ohwada Exp $
+// $Id: giconmanager.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// move $_GICONS_PATH to webphoto_base_this
+// BUG: not delete gicon
 // 2008-07-01 K.OHWADA
 // used get_my_allowed_mimes()
 //---------------------------------------------------------
@@ -29,9 +32,8 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 	var $_tmp_name;
 	var $_media_name;
 
-	var $_GICONS_PATH;
-
-	var $_ADMIN_GICON_PHP;
+	var $_THIS_FCT = 'giconmanager';
+	var $_THIS_URL;
 
 	var $_INFO_Y_DEFAULT = 3;
 	var $_ERR_ALLOW_EXTS = null;
@@ -55,11 +57,9 @@ function webphoto_admin_giconmanager( $dirname , $trust_dirname )
 	$this->_image_class   =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
 
-	$this->_GICONS_PATH = $this->_config_class->get_gicons_path();
-
 	$this->_ERR_ALLOW_EXTS = 'allowed file type is '. implode( ',' , $this->get_normal_exts() ) ;
 
-	$this->_ADMIN_GICON_PHP = $this->_MODULE_URL .'/admin/index.php?fct=giconmanager';
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -174,7 +174,7 @@ function _exec_check()
 	$ret1 = $this->check_dir( $this->_TMP_DIR );
 	if ( $ret1 < 0 ) { return $ret1; }
 
-	$ret2 = $this->check_dir( XOOPS_ROOT_PATH . $this->_GICONS_PATH );
+	$ret2 = $this->check_dir( $this->_GICONS_DIR );
 	if ( $ret2 < 0 ) { return $ret2; }
 
 	return 0;
@@ -186,7 +186,7 @@ function _exec_check()
 function _insert()
 {
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_GICON_PHP, 3, $this->get_token_errors() );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
 		exit();
 	}
 
@@ -196,32 +196,32 @@ function _insert()
 		case _C_WEBPHOTO_ERR_DB:
 			$msg  = 'DB error <br />';
 			$msg .= $this->get_format_error();
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $msg );
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $msg );
 			exit();
 
 		case _C_WEBPHOTO_ERR_UPLOAD;
 			$msg  = 'File Upload Error';
 			$msg .= '<br />'.$this->get_format_error( false );
-			redirect_header( $this->_ADMIN_GICON_PHP , $this->_TIME_FAIL , $msg ) ;
+			redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_FILEREAD:
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, _WEBPHOTO_ERR_FILEREAD ) ;
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, _WEBPHOTO_ERR_FILEREAD ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_NO_IMAGE;
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, _WEBPHOTO_ERR_NOIMAGESPECIFIED ) ;
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, _WEBPHOTO_ERR_NOIMAGESPECIFIED ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_NOT_ALLOWED_EXT:
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $this->_ERR_ALLOW_EXTS );
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->_ERR_ALLOW_EXTS );
 			exit();
 
 		default:
 			break;
 	}
 
-	redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
+	redirect_header( $this->_THIS_URL, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
 	exit();
 
 }
@@ -398,7 +398,7 @@ function _rename_image( $gicon_id , $tmp_name, $extra=null )
 function _update()
 {
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
 		exit();
 	}
 
@@ -406,34 +406,34 @@ function _update()
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_NO_RECORD:
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, _AM_WEBPHOTO_ERR_NO_RECORD );
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, _AM_WEBPHOTO_ERR_NO_RECORD );
 			exit();
 
 		case _C_WEBPHOTO_ERR_DB:
 			$msg  = 'DB error <br />';
 			$msg .= $this->get_format_error();
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $msg );
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $msg );
 			exit();
 
 		case _C_WEBPHOTO_ERR_UPLOAD;
 			$msg  = 'File Upload Error';
 			$msg .= '<br />'.$this->get_format_error( false );
-			redirect_header( $this->_ADMIN_GICON_PHP , $this->_TIME_FAIL , $msg ) ;
+			redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_FILEREAD:
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, _WEBPHOTO_ERR_FILEREAD ) ;
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, _WEBPHOTO_ERR_FILEREAD ) ;
 			exit();
 
 		case _C_WEBPHOTO_ERR_NOT_ALLOWED_EXT:
-			redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $this->_ERR_ALLOW_EXTS );
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->_ERR_ALLOW_EXTS );
 			exit();
 
 		default:
 			break;
 	}
 
-	redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
+	redirect_header( $this->_THIS_URL, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
 	exit();
 
 }
@@ -498,13 +498,13 @@ function _delete()
 	$gicon_id = $this->_post_delgicon;
 
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
 		exit();
 	}
 
 	$row = $this->_gicon_handler->get_row_by_id( $gicon_id );
 	if ( !is_array($row) ) {
-		redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, _AM_WEBPHOTO_ERR_NO_RECORD );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, _AM_WEBPHOTO_ERR_NO_RECORD );
 		exit();
 	}
 
@@ -522,12 +522,12 @@ function _delete()
 		$this->set_error( $this->_cat_handler->get_errors() );
 	}
 
-	$ret2 = $this->_photo_handler->clear_gicon_id( $gicon_id );
+	$ret2 = $this->_item_handler->clear_gicon_id( $gicon_id );
 	if ( !$ret2 ) {
-		$this->set_error( $this->_photo_handler->get_errors() );
+		$this->set_error( $this->_item_handler->get_errors() );
 	}
 
-	$ret3 = $this->_gicon_handler->delete_by_id(    $gicon_id );
+	$ret3 = $this->_gicon_handler->delete_by_id( $gicon_id );
 	if ( !$ret3 ) {
 		$this->set_error( $this->_gicon_handler->get_errors() );
 	}
@@ -535,11 +535,11 @@ function _delete()
 	if ( ! $this->return_code() ) {
 		$msg  = 'DB error <br />';
 		$msg .= $this->get_format_error();
-		redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_FAIL, $msg );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $msg );
 		exit();
 	}
 
-	redirect_header( $this->_ADMIN_GICON_PHP, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
+	redirect_header( $this->_THIS_URL, $this->_TIME_SUCCESS, _WEBPHOTO_DBUPDATED );
 	exit();
 }
 
@@ -550,7 +550,7 @@ function _print_edit_form()
 {
 	$row = $this->_gicon_handler->get_row_by_id( $this->_post_gicon_id );
 	if ( !is_array($row) ) {
-		redirect_header( $this->_ADMIN_GICON_PHP , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
 	}
 
 	$this->_print_gicon_form( 'edit' , $row );
@@ -568,7 +568,7 @@ function _print_new_form()
 //---------------------------------------------------------
 function _print_list()
 {
-	echo '<p><a href="'. $this->_ADMIN_GICON_PHP .'&amp;disp=new">';
+	echo '<p><a href="'. $this->_THIS_URL .'&amp;disp=new">';
 	echo _AM_WEBPHOTO_GICON_ADD;
 	echo '</a></p>'."\n" ;
 

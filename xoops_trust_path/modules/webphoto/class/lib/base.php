@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.8 2008/10/13 10:22:40 ohwada Exp $
+// $Id: base.php,v 1.9 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-10 K.OHWADA
+// set_error_in_head_with_admin_info()
 // 2008-10-01 K.OHWADA
 // BUG : not set xoops_group
 // 2008-09-01 K.OHWADA
@@ -60,6 +62,8 @@ class webphoto_lib_base extends webphoto_lib_error
 	var $_MODULE_ID   = 0;
 	var $_MODULE_HAS_CONFIG = false;
 
+	var $_FLAG_ADMIN_SUB_MENU = true;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -81,6 +85,23 @@ function webphoto_lib_base( $dirname, $trust_dirname )
 	$this->_init_d3_language( $dirname, $trust_dirname );
 	$this->_init_xoops_param();
 
+}
+
+//---------------------------------------------------------
+// check
+//---------------------------------------------------------
+function check_not_owner( $uid )
+{
+	if ( $this->_is_module_admin ) {
+		return false ;
+	} elseif ( $this->_is_login_user ) { 
+		if ( $this->_xoops_uid != $uid ) { 
+			return true;
+		} 
+	} else { 
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------
@@ -119,7 +140,8 @@ function build_admin_menu()
 {
 	$menu_class =& webphoto_lib_admin_menu::getInstance(
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	return $menu_class->build_menu();
+
+	return $menu_class->build_menu_with_sub( $this->_FLAG_ADMIN_SUB_MENU );
 }
 
 function build_admin_title( $name, $format=true )
@@ -366,6 +388,16 @@ function build_msg( $msg, $flag_highlight=false, $flag_br=false )
 		$msg .= "<br />\n";
 	}
 	return $msg ;
+}
+
+function set_error_in_head_with_admin_info( $msg )
+{
+	$arr = $this->get_errors();
+	$this->clear_errors();
+	$this->set_error( $msg );
+	if ( $this->_is_module_admin ) {
+		$this->set_error( $arr );
+	}
 }
 
 //---------------------------------------------------------

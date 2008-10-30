@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.5 2008/10/13 10:24:07 ohwada Exp $
+// $Id: edit.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-10 K.OHWADA
+// photo_action.php
 // 2008-10-01 K.OHWADA
 // notification_event.php
 // 2008-08-24 K.OHWADA
@@ -52,6 +54,8 @@ webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/webphoto/photo_edit.php' );
+webphoto_include_once( 'class/webphoto/photo_redirect.php' );
+webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );
 webphoto_include_once( 'class/main/edit.php' );

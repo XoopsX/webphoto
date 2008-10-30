@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: redothumbs.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// check if set cont file
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-08-15 K.OHWADA
@@ -40,14 +42,16 @@ class webphoto_admin_redothumbs extends webphoto_base_this
 
 	var $_item_row ;
 
-//	var $_msg_array = array();
-
-	var $_ADMIN_REDO_PHP;
-
 	var $_DEFAULT_SIZE = 10;
 	var $_MAX_SIZE     = 1000;
 	var $_GMAP_ZOOM    = _C_WEBPHOTO_GMAP_ZOOM ;
 	var $_IMAGE_MEDIUM = 'image';
+
+	var $_THIS_FCT = 'redothumbs';
+	var $_THIS_URL = null;
+
+	var $_TIME_SUCCESS = 1;
+	var $_TIME_FAIL    = 5;
 
 //---------------------------------------------------------
 // constructor
@@ -65,7 +69,7 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 	$this->_cfg_width        = $this->get_config_by_name('width');
 	$this->_cfg_height       = $this->get_config_by_name('height');
 
-	$this->_ADMIN_REDO_PHP = $this->_MODULE_URL .'/admin/index.php?fct=redothumbs';
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -112,7 +116,7 @@ function main()
 		$counter = $this->_submit( $param );
 		if ( $counter === false ) {
 			$msg = 'DB Error <br />'.$this->get_format_error();
-			redirect_header( $this->_ADMIN_REDO_PHP, 5, $msg ) ;
+			redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $msg ) ;
 			exit();
 		}
 
@@ -154,14 +158,14 @@ function _check()
 	if( $this->_cfg_makethumb && ! is_dir( $this->_THUMBS_DIR ) ) {
 		if( $safe_mode_flag ) {
 			$msg = 'At first create & chmod 777 "'. $this->_THUMBS_DIR .'" by ftp or shell.' ;
-			redirect_header( $this->_ADMIN_INDEX_PHP, 5, $msg);
+			redirect_header( $this->_ADMIN_INDEX_PHP, $this->_TIME_FAIL, $msg);
 			exit() ;
 		}
 
 		$ret = mkdir( $this->_THUMBS_DIR , 0777 ) ;
 		if( ! $ret ) {
 			$msg = $this->_THUMBS_DIR.' is not a directory' ;
-			redirect_header( $this->_ADMIN_INDEX_PHP, 5, $msg );
+			redirect_header( $this->_ADMIN_INDEX_PHP, $this->_TIME_FAIL, $msg );
 			exit() ;
 		} else {
 			@chmod( $this->_THUMBS_DIR , 0777 ) ;
@@ -195,84 +199,161 @@ function _submit( $param )
 
 	foreach ( $item_rows as $item_row )
 	{
-		$this->_item_row = $item_row ;
-
-		$item_id   = $item_row['item_id'] ;
-		$item_ext  = $item_row['item_ext'] ;
-		$item_kind = $item_row['item_kind'] ;
-		$item_exif = $item_row['item_exif'] ;
-
-		$cont_row  = $this->_get_cont_row(  false ) ;
-		$thumb_row = $this->_get_thumb_row( false ) ;
+		$item_id = $item_row['item_id'] ;
 
 		$counter ++ ;
 		$this->set_msg_array( ( $counter + $post_start - 1 ) . ') ' ) ;
 		$this->set_msg_array( sprintf( _AM_WEBPHOTO_FMT_CHECKING , $item_id ) ) ;
 
+		$this->_item_exec( $item_row );
+		$this->set_msg_array( "<br />\n" ) ;
+	}
+
+	return $counter ;
+}
+
+function _item_exec( $item_row )
+{
+	$this->_item_row = $item_row ;
+
+	$item_id   = $item_row['item_id'] ;
+	$item_ext  = $item_row['item_ext'] ;
+	$item_kind = $item_row['item_kind'] ;
+	$item_exif = $item_row['item_exif'] ;
+
+	$cont_row  = $this->_get_cont_row(  false ) ;
+	$thumb_row = $this->_get_thumb_row( false ) ;
+
+	$is_none  = false;
+	$is_image = false;
+	$is_cont  = false;
+
+	switch ( $item_kind )
+	{
+		case _C_WEBPHOTO_ITEM_KIND_NONE :
+			$is_none = true;
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_IMAGE :
+			$is_cont  = true;
+			$is_image = true;
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_NONE :
+		case _C_WEBPHOTO_ITEM_KIND_EMBED :
+		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL :
+		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE :
+		case _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED :
+		case _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR :
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_GENERAL :
+		case _C_WEBPHOTO_ITEM_KIND_VIDEO :
+		case _C_WEBPHOTO_ITEM_KIND_AUDIO :
+		default:
+			$is_cont = true;
+			break;
+	}
+
+	if ( $is_none ) {
+		$this->set_msg_array( 'non-media type ' ) ;
+		$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
+		return;
+	}
+
+	if ( $is_cont ) {
+
+	// check if set cont file
+		if ( !is_array($cont_row) ) {
+			$this->set_msg_array( 'no cont file ' ) ;
+			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
+			return;
+		}
+
 	// Check if the main image exists
 		if ( $this->_check_remove_all_files( $cont_row ) ) {
 			$this->_remove_all_files( $item_id );
-			$this->set_msg_array( "<br />\n" ) ;
-			continue ;
+			return;
 		}
 
 	// Check file info
 		if ( $this->_check_cont_filesize( $cont_row ) ) {
 			$cont_row = $this->_update_cont_filesize( $cont_row ) ;
 			if ( ! is_array($cont_row) ) {
-				$this->set_msg_array( "<br />\n" ) ;
-				continue ;
+				return;
 			}
 		}
+	}
 
 	// Check if the file is not image
-		if ( ! $this->is_image_kind( $item_kind ) ) {
-			$this->_update_non_image_type( $item_id, $thumb_row, $item_ext );
-			$this->set_msg_array( "<br />\n" ) ;
-			continue ;
-		}
+	if ( ! $is_image ) {
+		$this->_update_non_image_type( $item_id, $thumb_row, $item_ext );
+		return;
+	}
 
 	// --- nomal image ---
 
 	// get exif
-		if ( $this->_check_update_exif( $item_exif ) ) {
-			$ret = $this->_update_exif( $item_id );
-			if ( !$ret ) {
-				$this->set_msg_array( "<br />\n" ) ;
-				continue ;
-			}
+	if ( $this->_check_update_exif( $item_exif ) ) {
+		$ret = $this->_update_exif( $item_id );
+		if ( !$ret ) {
+			return;
 		}
-
-	// Size of main photo
-		$image_param = $this->_get_cont_imagesize( $cont_row ) ;
-		if ( ! is_array($image_param) ) {
-			$this->set_msg_array( "<br />\n" ) ;
-			continue ;
-		}
-
-		if ( $this->_check_cont_resize( $image_param ) ) {
-			$cont_row = $this->_update_cont_resize() ;
-			if ( ! is_array($cont_row) ) {
-				$this->set_msg_array( "<br />\n" ) ;
-				continue ;
-			}
-		}
-
-	// Check and repair record of the photo if necessary
-		if ( $this->_check_cont_image_size( $cont_row ) ) {
-			$cont_row = $this->_update_cont_image_size();
-			if ( ! is_array($cont_row) ) {
-				$this->set_msg_array( "<br />\n" ) ;
-				continue ;
-			}
-		}
-
-	// --- thumb ---
-		$this->_update_thumb( $item_id );
-		$this->set_msg_array( "<br />\n" ) ;
 	}
 
-	return $counter ;
+	// Size of main photo
+	$image_param = $this->_get_cont_imagesize( $cont_row ) ;
+	if ( ! is_array($image_param) ) {
+		return;
+	}
+
+	if ( $this->_check_cont_resize( $image_param ) ) {
+		$cont_row = $this->_update_cont_resize() ;
+		if ( ! is_array($cont_row) ) {
+			return;
+		}
+	}
+
+	// Check and repair record of the photo if necessary
+	if ( $this->_check_cont_image_size( $cont_row ) ) {
+		$cont_row = $this->_update_cont_image_size();
+		if ( ! is_array($cont_row) ) {
+			return;
+		}
+	}
+
+// --- thumb ---
+	$retcode = $this->_exec_update_thumb( $item_id );
+	switch( $retcode ) 
+	{
+		case _C_WEBPHOTO_ERR_DB : 
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_READFAULT : 
+			$this->set_msg_array( _AM_WEBPHOTO_FAILEDREADING ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_CREATED : 
+			$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_COPIED : 
+			$this->set_msg_array( _AM_WEBPHOTO_BIGTHUMBS ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_SKIPPED : 
+			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
+			break ;
+
+		case _C_WEBPHOTO_ERR_GET_IMAGE_SIZE : 
+			break ;
+
+		default : 
+			$this->set_msg_array( 'unexpect return code '. $retocde ) ;
+			break ;
+	}
+
+	return ;
 }
 
 function _check_remove_all_files( $cont_row )
@@ -561,42 +642,6 @@ function _update_cont_image_size()
 
 	$this->set_msg_array( _AM_WEBPHOTO_SIZEREPAIRED.' ' );
 	return $cont_row ;
-}
-
-function _update_thumb( $item_id )
-{
-	$retcode = $this->_exec_update_thumb( $item_id );
-	switch( $retcode ) 
-	{
-		case _C_WEBPHOTO_ERR_DB : 
-			return false;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_READFAULT : 
-			$this->set_msg_array( _AM_WEBPHOTO_FAILEDREADING ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_CREATED : 
-			$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_COPIED : 
-			$this->set_msg_array( _AM_WEBPHOTO_BIGTHUMBS ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_SKIPPED : 
-			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
-			break ;
-
-		case _C_WEBPHOTO_ERR_GET_IMAGE_SIZE : 
-			break ;
-
-		default : 
-			$this->set_msg_array( 'unexpect return code '. $retocde ) ;
-			break ;
-	}
-
-	return true;
 }
 
 function _exec_update_thumb( $item_id )
