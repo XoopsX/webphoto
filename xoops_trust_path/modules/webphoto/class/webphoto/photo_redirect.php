@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_redirect.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
+// $Id: photo_redirect.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -110,8 +110,12 @@ function build_failed_msg( $ret )
 			$this->set_error_by_const_name('ERR_TITLE') ;
 			return false;
 
-		case _C_WEBPHOTO_ERR_NO_SRC:
-			$this->set_error_by_const_name('ERR_SRC') ;
+		case _C_WEBPHOTO_ERR_EMBED:
+			$this->set_error_by_const_name('ERR_EMBED') ;
+			return false;
+
+		case _C_WEBPHOTO_ERR_PLAYLIST:
+			$this->set_error_by_const_name('ERR_PLAYLIST') ;
 			return false;
 
 		case _C_WEBPHOTO_ERR_CREATE_PHOTO:

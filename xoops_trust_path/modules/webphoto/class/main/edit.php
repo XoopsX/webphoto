@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.14 2008/10/30 00:22:49 ohwada Exp $
+// $Id: edit.php,v 1.15 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -410,8 +410,11 @@ function _build_bread_crumb_edit( $item_id )
 //---------------------------------------------------------
 function _print_form_confirm()
 {
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'];
+
 	echo $this->_build_bread_crumb_edit();
-	$this->print_form_delete_confirm( 'edit', $this->_row_current ) ;
+	$this->print_form_delete_confirm( 'edit', $item_row ) ;
 }
 
 // --- class end ---

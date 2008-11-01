@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.9 2008/10/30 13:02:36 ohwada Exp $
+// $Id: base_this.php,v 1.10 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -245,6 +245,11 @@ function is_mediaplayer_ext( $ext )
 function is_video_docomo_ext( $ext )
 {
 	return $this->_kind_class->is_video_docomo_ext( $ext ) ;
+}
+
+function is_undefined_kind( $kind )
+{
+	return $this->_kind_class->is_undefined_kind( $kind ) ;
 }
 
 function is_image_kind( $kind )

@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.9 2008/10/30 00:22:49 ohwada Exp $
+// $Id: oninstall.php,v 1.10 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -178,7 +178,6 @@ function _exec_update()
 	$this->_table_update();
 	$this->_item_update();
 	$this->_mime_update();
-	$this->_player_update();
 	$this->_template_update();
 
 	return true ;
@@ -820,66 +819,6 @@ function _mime_get_row_by_ext( $ext )
 {
 	$sql  = 'SELECT * FROM '. $this->_table_mime ;
 	$sql .= ' WHERE mime_ext='.$this->quote( $ext );
-	return $this->get_row_by_sql( $sql );
-}
-
-//---------------------------------------------------------
-// player table
-//---------------------------------------------------------
-function _player_update()
-{
-	$this->_player_add_default_record();
-}
-
-function _player_add_default_record()
-{
-	if ( $this->_player_exists_default() ) {
-		return true;
-	}
-
-	$ret = $this->_player_insert_default_record();
-
-	if ( $ret ) {
-		$this->_set_msg( 'Add default record in <b>'. $this->_table_player .'</b>' );
-		return true;
-	} else {
-		$this->_set_msg( $this->highlight( 'ERROR: Could not add record <b>'. $this->_table_player .'</b>.' ) );
-		return false;
-	}
-}
-
-function _player_insert_default_record()
-{
-	$sql  = "INSERT INTO ".$this->_table_player;
-	$sql .= " VALUES (1, 0, 0, 'default', 0, 320, 240, 0, 0, '', '', '', '')";
-	$ret = $this->query( $sql );
-	if ( !$ret ) {
-		return false;
-	}
-
-	$sql  = "INSERT INTO ".$this->_table_player;
-	$sql .= " VALUES (2, 0, 0, 'playlist default', 0, 320, 340, 320, 240, '', '', '', '')";
-	$ret = $this->query( $sql );
-	if ( !$ret ) {
-		return false;
-	}
-	
-	return true;
-}
-
-function _player_exists_default()
-{
-	$row = $this->_player_get_row_by_id( 1 );
-	if ( is_array($row) ) {
-		return true;
-	}
-	return false;
-}
-
-function _player_get_row_by_id( $id )
-{
-	$sql  = 'SELECT * FROM '.$this->_table_player;
-	$sql .= ' WHERE player_id='.intval( $id );
 	return $this->get_row_by_sql( $sql );
 }
 

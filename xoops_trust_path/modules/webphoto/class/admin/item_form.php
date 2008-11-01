@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
+// $Id: item_form.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -239,7 +239,7 @@ function print_form_admin( $row, $param )
 			$this->set_row_hidden_buffer( 'item_playlist_dir' ) ;
 		}
 
-		echo $this->build_row_text( $this->get_constant('ITEM_PLAYLIST_CACHETIME'),
+		echo $this->build_row_text( $this->get_constant('ITEM_PLAYLIST_TIME'),
 			'item_playlist_time' );
 
 	} else {
@@ -433,7 +433,6 @@ function print_form_playlist( $mode, $row )
 	echo $this->build_input_hidden( 'fct',   $fct );
 	echo $this->build_input_hidden( 'op',   'submit_form' );
 	echo $this->build_input_hidden( 'type', 'playlist' );
-	echo $this->build_input_hidden( 'item_displaytype', _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER );
 
 	echo $this->build_table_begin();
 	echo $this->build_line_title( _AM_WEBPHOTO_PLAYLIST_ADD );

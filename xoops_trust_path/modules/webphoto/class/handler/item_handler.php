@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: item_handler.php,v 1.5 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,9 +22,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_item_handler extends webphoto_lib_handler
 {
+	var $_KIND_FEFAULT          = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 	var $_DATETIME_DEFAULT      = _C_WEBPHOTO_DATETIME_DEFAULT ;
 	var $_SHOWINFO_DEFAULT      = _C_WEBPHOTO_SHOWINFO_DEFAULT ;
 	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
+	var $_PERM_READ             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
+	var $_PERM_DOWN             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
 
 	var $_AREA_NS = 1.0;
 	var $_AREA_EW = 1.0;
@@ -76,16 +79,14 @@ function create( $flag_new=false )
 		'item_id'             => 0,
 		'item_time_create'    => $time_create,
 		'item_time_update'    => $time_update,
-		'item_time_publish'  => 0 ,
+		'item_time_publish'   => 0 ,
 		'item_time_expire'    => 0 ,
 		'item_cat_id'         => 0,
 		'item_gicon_id'       => 0,
 		'item_player_id'      => 0,
 		'item_flashvar_id'    => 0,
 		'item_uid'            => 0,
-		'item_kind'           => 0,
 		'item_ext'            => '',
-		'item_datetime'       => $this->_DATETIME_DEFAULT ,
 		'item_title'          => '',
 		'item_place'          => '',
 		'item_equipment'      => '',
@@ -93,8 +94,6 @@ function create( $flag_new=false )
 		'item_gmap_longitude' => 0,
 		'item_gmap_zoom'      => 0,
 		'item_gmap_type'      => 0,
-		'item_perm_read'      => '*',
-		'item_perm_down'      => '*',
 		'item_status'         => 0,
 		'item_hits'           => 0,
 		'item_rating'         => 0,
@@ -120,8 +119,12 @@ function create( $flag_new=false )
 		'item_playlist_dir'   => '',
 		'item_playlist_cache' => '',
 		'item_playlist_type'  => 0,
+		'item_kind'           => $this->_KIND_FEFAULT ,
+		'item_datetime'       => $this->_DATETIME_DEFAULT ,
 		'item_playlist_time'  => $this->_PLAYLIST_TIME_DEFUALT,
 		'item_showinfo'       => $this->_SHOWINFO_DEFAULT ,
+		'item_perm_read'      => $this->_PERM_READ,
+		'item_perm_down'      => $this->_PERM_DOWN,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
@@ -1032,6 +1035,7 @@ function get_kind_options( $kind='default' )
 function get_kind_default_options()
 {
 	$arr = array(
+		_C_WEBPHOTO_ITEM_KIND_UNDEFINED        => _WEBPHOTO_ITEM_KIND_UNDEFINED ,
 		_C_WEBPHOTO_ITEM_KIND_NONE             => _WEBPHOTO_ITEM_KIND_NONE ,
 		_C_WEBPHOTO_ITEM_KIND_GENERAL          => _WEBPHOTO_ITEM_KIND_GENERAL ,
 		_C_WEBPHOTO_ITEM_KIND_IMAGE            => _WEBPHOTO_ITEM_KIND_IMAGE ,

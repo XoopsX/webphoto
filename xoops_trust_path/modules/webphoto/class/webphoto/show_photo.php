@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.10 2008/10/30 00:22:49 ohwada Exp $
+// $Id: show_photo.php,v 1.11 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -57,6 +57,9 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_MAX_SUMMARY   = 100;
 	var $_SUMMARY_TAIL  = ' ...';
 	var $_RATING_DECIMALS = 2;
+
+	var $_SHOW_DESC_ARRAY = array(
+		'description_disp', 'siteurl', 'artist', 'album', 'label' );
 
 //---------------------------------------------------------
 // constructor
@@ -125,6 +128,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'item_id'        => $item_id ,
 		'time_cretae'    => $item_time_create,
 		'time_update'    => $item_time_update,
+		'time_publish'   => $item_time_publish,
+		'time_expire'    => $item_time_expire,
 		'cat_id'         => $item_cat_id ,
 		'player_id'      => $item_player_id ,
 		'flashvar_id'    => $item_flashvar_id ,
@@ -135,8 +140,15 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'title'          => $item_title ,
 		'place'          => $item_place ,
 		'equipment'      => $item_equipment ,
+		'duration'       => $item_duration ,
+		'siteurl'        => $item_siteurl ,
+		'artist'         => $item_artist ,
+		'album'          => $item_album ,
+		'label'          => $item_label ,
 		'displaytype'    => $item_displaytype,
 		'onclick'        => $item_onclick,
+		'perm_read'      => $item_perm_read,
+		'perm_down'      => $item_perm_down,
 		'external_url'   => $item_external_url,
 		'external_thumb' => $item_external_thumb,
 		'embed_type'     => $item_embed_type,
@@ -152,15 +164,20 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'comments'       => $item_comments ,
 		'description'    => $item_description,
 		'search'         => $item_search,
+		'chain'          => $item_chain,
 		'playlist_feed'  => $item_playlist_feed,
 		'playlist_dir'   => $item_playlist_dir,
 		'playlist_cache' => $item_playlist_cache,
 		'playlist_type'  => $item_playlist_type,
 		'playlist_time'  => $item_playlist_time,
-	
+
 		'title_s'          => $this->sanitize( $item_title ) ,
 		'place_s'          => $this->sanitize( $item_place ) ,
 		'equipment_s'      => $this->sanitize( $item_equipment ) ,
+		'siteurl_s'        => $this->sanitize( $item_siteurl ) ,
+		'artist_s'         => $this->sanitize( $item_artist ) ,
+		'album_s'          => $this->sanitize( $item_album ) ,
+		'label_s'          => $this->sanitize( $item_label ) ,
 		'external_url_s'   => $this->sanitize( $item_external_url ) ,
 		'external_thumb_s' => $this->sanitize( $item_external_thumb ) ,
 		'embed_type_s'     => $this->sanitize( $item_embed_type ) ,
@@ -191,8 +208,11 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 
 	$show_desc = false;
 
-	if ( $desc_disp ) {
-		$show_desc = true;
+	foreach ( $this->_SHOW_DESC_ARRAY as $key ) 
+	{
+		if ( $show_arr[ $key ] ) {
+			$show_desc = true;
+		}
 	}
 
 	$arr2 = array();

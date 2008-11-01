@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: checkconfigs.php,v 1.6 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -262,10 +262,6 @@ function check()
 // uploads
 	echo _AM_WEBPHOTO_DIRECTORYFOR_UPLOADS.': '.XOOPS_ROOT_PATH.$cfg_uploadspath.' &nbsp; ';
 	$this->_check_path( $cfg_uploadspath );
-
-// medias
-	echo _AM_WEBPHOTO_DIRECTORYFOR_MEDIAS.': '.XOOPS_ROOT_PATH.$cfg_mediaspath.' &nbsp; ';
-	$this->_check_path( $cfg_mediaspath );
 
 // tmp
 	echo _AM_WEBPHOTO_DIRECTORYFOR_TMP.': '. $cfg_tmpdir .' &nbsp; ' ;

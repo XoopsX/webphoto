@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.13 2008/10/30 13:02:36 ohwada Exp $
+// $Id: main.php,v 1.14 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1034,6 +1034,7 @@ define("_WEBPHOTO_LOGFILE_FILE","File");
 define("_WEBPHOTO_LOGFILE_DURATION","Duration");
 
 // item option
+define("_WEBPHOTO_ITEM_KIND_UNDEFINED","Undefined");
 define("_WEBPHOTO_ITEM_KIND_NONE","No Media");
 define("_WEBPHOTO_ITEM_KIND_GENERAL","General");
 define("_WEBPHOTO_ITEM_KIND_IMAGE","Image (jpg,gif,png)");
@@ -1165,6 +1166,8 @@ define("_WEBPHOTO_CAP_DETAIL_ONOFF","On/Off");
 define("_WEBPHOTO_PLAYER","Player");
 define("_WEBPHOTO_EMBED_ADD", "Add Embed Plugin" ) ;
 define("_WEBPHOTO_EMBED_THUMB","The external source will provide a thumbnail.");
+define("_WEBPHOTO_ERR_EMBED","You MUST set plugin");
+define("_WEBPHOTO_ERR_PLAYLIST","You MUST set playlist");
 
 // sort
 define("_WEBPHOTO_SORT_VOTESA","Votes (Least)");
@@ -1178,6 +1181,7 @@ define("_WEBPHOTO_FLASHVARS_LIST","List of Flash Variables");
 define("_WEBPHOTO_FLASHVARS_LOGO_SELECT","Select a player logo");
 define("_WEBPHOTO_FLASHVARS_LOGO_UPLOAD","Upload a player logo ");
 define("_WEBPHOTO_FLASHVARS_LOGO_DSC","[Display] <br />Player Logos are in ");
+define("_WEBPHOTO_BUTTON_COLOR_PICKUP","Color");
 define("_WEBPHOTO_BUTTON_RESTORE","Restore Default");
 
 // Playlist Cache 

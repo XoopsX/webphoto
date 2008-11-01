@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
+// $Id: update.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,9 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
+webphoto_include_once( 'class/handler/player_handler.php' );
+webphoto_include_once( 'class/handler/photo_handler.php' );
+webphoto_include_once( 'class/admin/update_check.php' );
 webphoto_include_once( 'class/admin/update.php' );
 
 //=========================================================

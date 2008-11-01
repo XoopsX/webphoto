@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: playlist.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,6 +22,7 @@ class webphoto_playlist extends webphoto_lib_base
 	var $_utility_class;
 	var $_xml_class;
 	var $_remote_class;
+	var $_multibyte_class;
 
 	var $_report = null;
 
@@ -49,11 +50,12 @@ function webphoto_playlist( $dirname, $trust_dirname )
 {
 	$this->webphoto_lib_base( $dirname, $trust_dirname );
 
-	$this->_config_class   =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler   =& webphoto_item_handler::getInstance( $dirname );
-	$this->_utility_class  =& webphoto_lib_utility::getInstance();
-	$this->_xml_class      =& webphoto_lib_xml::getInstance();
-	$this->_remote_class   =& webphoto_lib_remote_file::getInstance();
+	$this->_config_class    =& webphoto_config::getInstance( $dirname );
+	$this->_item_handler    =& webphoto_item_handler::getInstance( $dirname );
+	$this->_utility_class   =& webphoto_lib_utility::getInstance();
+	$this->_xml_class       =& webphoto_lib_xml::getInstance();
+	$this->_remote_class    =& webphoto_lib_remote_file::getInstance();
+	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
 	$uploads_path = $this->_config_class->get_uploads_path();
 	$medias_path  = $this->_config_class->get_medias_path();
@@ -332,11 +334,11 @@ function _type_to_exts( $type )
 function _build_playlist_xml( $media_url, $row, $params )
 {
 	$item_id   = $row['item_id'];
-	$title     = $row['item_title'];
 	$siteurl   = $row['item_siteurl'];
 	$artist    = $row['item_artist'];
 	$album     = $row['item_album'];
 	$label     = $row['item_label'];
+	$top_title = $row['item_title'];
 
 	if ( $siteurl ) {
 		$trackinfo = $siteurl;
@@ -344,13 +346,14 @@ function _build_playlist_xml( $media_url, $row, $params )
 		$trackinfo = $this->_MODULE_URL.'/index.php?fct=photo&photo_id='.$item_id;
 	}
 
-	$trackinfo_xml = $this->_xml($trackinfo);
-	$artist_xml    = $this->_xml($artist);
-	$album_xml     = $this->_xml($album);
-	$label_xml     = $this->_xml($label);
+	$trackinfo_xml = $this->_xml( $trackinfo );
+	$top_title_xml = $this->_xml( $this->_utf8($top_title) );
+	$artist_xml    = $this->_xml( $this->_utf8($artist) );
+	$album_xml     = $this->_xml( $this->_utf8($album) );
+	$label_xml     = $this->_xml( $this->_utf8($label) );
 
 	$data  = '<playlist version="1" xmlns="http://xspf.org/ns/0/">'."\n";
-	$data .= '<title>'. $this->_xml($title) .'</title>'."\n";
+	$data .= '<title>'. $top_title_xml .'</title>'."\n";
 	$data .= '<info>'. $trackinfo_xml .'</info>'."\n";
 	$data .= '<trackList>'."\n";
 
@@ -359,8 +362,10 @@ function _build_playlist_xml( $media_url, $row, $params )
 	{
 		$item  = null ;
 		$image = null ;
-		if ( isset( $param['item'] ) ) {
-			$item = $param['item'] ;
+		$title = null;
+		if ( isset(  $param['item'] ) ) {
+			$item  = $param['item'] ;
+			$title = $this->_utf8( $this->_utility_class->strip_ext( $item ) );
 		}
 		if ( isset(  $param['image'] ) ) {
 			$image = $param['image'] ;
@@ -371,7 +376,7 @@ function _build_playlist_xml( $media_url, $row, $params )
 		}
 
 		$data .= '<track>'."\n";
-		$data .= '<title>'. $this->_xml($item).'</title>'."\n";
+		$data .= '<title>'. $this->_xml($title).'</title>'."\n";
 		$data .= '<location>'. $this->_xml_url( $media_url.'/'.$item ).  '</location>'."\n";
 		$data .= '<info>'. $trackinfo_xml .'</info>'."\n";
 		if ( $artist ) {
@@ -404,6 +409,11 @@ function _xml($str)
 function _xml_url($str)
 {
 	return $this->_xml_class->xml_url($str);
+}
+
+function _utf8($str)
+{
+	return $this->_multibyte_class->convert_to_utf8($str);
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.14 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo_edit.php,v 1.15 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -65,7 +65,6 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_item_duration         = 0 ;
 	var $_item_exif             = null;
 	var $_item_ext              = null;
-	var $_item_kind             = 0 ;
 	var $_item_displaytype      = 0 ;
 	var $_item_onclick          = 0 ;
 	var $_item_embed_type       = null;
@@ -79,6 +78,7 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_item_gmap_longitude   = 0 ;
 	var $_item_gmap_zoom        = 0 ;
 	var $_item_player_id        = 0 ;
+	var $_item_kind             = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 
 	var $_preview_name          = null;
 	var $_tag_name_array        = null;
@@ -279,7 +279,7 @@ function build_row_by_post( $row, $is_submit=false )
 		$row['item_ext'] = $this->get_item_ext();
 	}
 
-	if ( $this->is_fill_item_kind() ) {
+	if ( ! $this->is_item_undefined_kind() ) {
 		$row['item_kind'] = $this->get_item_kind();
 	}
 
@@ -395,12 +395,12 @@ function is_external_type()
 	return false;
 }
 
-function is_playlist_type()
+function is_post_playlist_type()
 {
 	if ( $this->_post_type == 'playlist' ) {
 		return true;
 	}
-	if ( $this->is_playlist_kind( $this->_item_kind ) ) {
+	if ( $this->_item_playlist_type > 0 ) {
 		return true;
 	}
 	return false;
@@ -408,7 +408,7 @@ function is_playlist_type()
 
 function is_admin_playlist_type()
 {
-	if ( $this->_FLAG_ADMIN && $this->is_playlist_type() ) {
+	if ( $this->_FLAG_ADMIN && $this->is_post_playlist_type() ) {
 		return true;
 	}
 	return false;
@@ -621,12 +621,9 @@ function get_item_kind()
 	return $this->_item_kind;
 }
 
-function is_fill_item_kind()
+function is_item_undefined_kind()
 {
-	if ( $this->_item_kind ) {
-		return true;
-	}
-	return false;
+	return $this->is_undefined_kind( $this->_item_kind );
 }
 
 //---------------------------------------------------------
@@ -696,7 +693,26 @@ function is_fill_item_external_thumb()
 //---------------------------------------------------------
 function is_fill_item_embed_src()
 {
-	if ( $this->_item_embed_type && $this->_item_embed_src ) {
+	if ( $this->_item_embed_src ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
+// playlist
+//---------------------------------------------------------
+function is_fill_item_playlist_feed()
+{
+	if ( $this->_item_playlist_feed ) {
+		return true;
+	}
+	return false;
+}
+
+function is_fill_item_playlist_dir()
+{
+	if ( $this->_item_playlist_dir ) {
 		return true;
 	}
 	return false;

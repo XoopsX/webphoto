@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: update_040.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -30,8 +30,10 @@ class webphoto_admin_update_040 extends webphoto_base_this
 	var $_next;
 
 	var $_LIMIT = 50;
-	var $_THIS_FCT = 'update_040'; 
 	var $_FLAG_FDIVING = false ;
+
+	var $_THIS_FCT = 'update_040'; 
+	var $_THIS_URL = null;
 
 //---------------------------------------------------------
 // constructor
@@ -50,11 +52,13 @@ function webphoto_admin_update_040( $dirname , $trust_dirname )
 	$this->_cfg_middle_width  = $this->get_config_by_name( 'middle_width' ) ;
 	$this->_cfg_middle_height = $this->get_config_by_name( 'middle_height' ) ;
 
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
+
 	$this->_init_image_cmd();
 
 	$this->preload_init();
 	$this->preload_constant();
-	
+
 	echo "flag: ".$this->_FLAG_FDIVING ;
 }
 
@@ -102,13 +106,13 @@ function main()
 {
 	xoops_cp_header();
 
-	echo $this->build_admin_menu();
-	echo $this->build_admin_title( 'UPDATE' );
-
 	$op = $this->_post_class->get_post_text('op');
 
 // when form
 	if ( empty($op) ) {
+		echo $this->build_admin_menu();
+		echo $this->build_admin_title( 'UPDATE' );
+
 		if ( $this->_item_handler->get_count_all() > 0 ) {
 			$msg = 'You dont need update.<br />already exists item records';
 		} elseif ( $this->_photo_handler->get_count_all() > 0 ) {
@@ -116,6 +120,10 @@ function main()
 		}
 		echo $this->build_error_msg( $msg, '', false );
 		echo "<br />\n";
+
+	} else {
+		echo $this->build_admin_bread_crumb( 
+			$this->get_admin_title( 'UPDATE' ), $this->_THIS_URL );
 	}
 
 	echo "Update v0.30 to v0.40 <br /><br />\n";

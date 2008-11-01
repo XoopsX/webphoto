@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: update.php,v 1.6 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -13,6 +13,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_update extends webphoto_base_this
 {
+	var $_update_check_class;
 
 //---------------------------------------------------------
 // constructor
@@ -20,6 +21,9 @@ class webphoto_admin_update extends webphoto_base_this
 function webphoto_admin_update( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
+
+	$this->_update_check_class  =& webphoto_admin_update_check::getInstance( $dirname , $trust_dirname );
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -43,8 +47,11 @@ function main()
 
 	$op = $this->_post_class->get_post_text('op');
 
-	$url_040 = $this->_MODULE_URL .'/admin/index.php?fct=update_040' ;
-	$url_050 = $this->_MODULE_URL .'/admin/index.php?fct=update_050' ;
+	$url_040 = $this->_update_check_class->get_url_040();
+	$url_050 = $this->_update_check_class->get_url_050();
+
+	echo $this->_update_check_class->build_msg();
+	echo "<br />\n";
 
 	echo ' - <a href="'. $url_040 .'">';
 	echo "Update v0.30 to v0.40";

@@ -1,5 +1,5 @@
 <?php
-// $Id: kind.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: kind.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -118,6 +118,14 @@ function is_video_audio_kind( $kind )
 		return true;
 	}
 	if ( $this->is_audio_kind( $kind ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_undefined_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_UNDEFINED ) {
 		return true;
 	}
 	return false;

@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
+// $Id: mime.php,v 1.7 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -182,13 +182,15 @@ function get_cached_mime_type_by_ext( $ext )
 //---------------------------------------------------------
 function ext_to_kind( $ext )
 {
-	$kind = 0 ;
+	$kind = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 	if ( $this->is_image_ext( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_IMAGE ;
 	} elseif ( $this->is_video_ext( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_VIDEO ;
 	} elseif ( $this->is_audio_ext( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_AUDIO ;
+	} elseif ( $ext != '' ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
 	}
 	return $kind ;
 }

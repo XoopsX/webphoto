@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.12 2008/10/30 00:22:49 ohwada Exp $
+// $Id: main.php,v 1.13 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1034,6 +1034,7 @@ define("_WEBPHOTO_LOGFILE_FILE","ファイル");
 define("_WEBPHOTO_LOGFILE_DURATION","再生時間");
 
 // item option
+define("_WEBPHOTO_ITEM_KIND_UNDEFINED","未定義");
 define("_WEBPHOTO_ITEM_KIND_NONE","メディアなし");
 define("_WEBPHOTO_ITEM_KIND_GENERAL","一般");
 define("_WEBPHOTO_ITEM_KIND_IMAGE","画像 (jpg,gif,png)");
@@ -1165,6 +1166,8 @@ define("_WEBPHOTO_CAP_DETAIL_ONOFF","表示/非表示");
 define("_WEBPHOTO_PLAYER","プレイヤー");
 define("_WEBPHOTO_EMBED_ADD", "プラグインを追加する" ) ;
 define("_WEBPHOTO_EMBED_THUMB","このプラグインはサムネイルを提供する");
+define("_WEBPHOTO_ERR_EMBED","プラグインの設定が必要です");
+define("_WEBPHOTO_ERR_PLAYLIST","プレイリストの設定が必要です");
 
 // sort
 define("_WEBPHOTO_SORT_VOTESA","投票数 (低→高)");

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
+// $Id: constants.php,v 1.7 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -74,12 +74,13 @@ define("_C_WEBPHOTO_MAX_USER_TEXT" ,  5 ) ;
 define("_C_WEBPHOTO_MAX_ITEM_FILE_ID" , 10 ) ;
 define("_C_WEBPHOTO_MAX_ITEM_TEXT"    , 10 ) ;
 
-define("_C_WEBPHOTO_ITEM_KIND_GENERAL", 0 ) ;
-define("_C_WEBPHOTO_ITEM_KIND_IMAGE"  , 1 ) ;
-define("_C_WEBPHOTO_ITEM_KIND_VIDEO"  , 2 ) ;
-define("_C_WEBPHOTO_ITEM_KIND_AUDIO"  , 3 ) ;
-define("_C_WEBPHOTO_ITEM_KIND_NONE"   , 90 ) ;
-define("_C_WEBPHOTO_ITEM_KIND_EMBED",  100 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_UNDEFINED", 0 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_NONE",      1 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GENERAL",  10 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_IMAGE",    11 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_VIDEO",    12 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_AUDIO",    13 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_EMBED",   100 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL", 101 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE"  , 102 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED" , 200 ) ;
@@ -196,8 +197,12 @@ define("_C_WEBPHOTO_PLAYER_ID_NONE",     "0");
 define("_C_WEBPHOTO_PLAYER_ID_DEFAULT",  "1");
 define("_C_WEBPHOTO_PLAYER_ID_PLAYLIST", "2");
 
-define("_C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT", "240");
-define("_C_WEBPHOTO_PLAYER_WIDTH_DEFAULT",  "320");
+define("_C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT",  "240");
+define("_C_WEBPHOTO_PLAYER_WIDTH_DEFAULT",   "320");
+define("_C_WEBPHOTO_PLAYER_HEIGHT_PLAYLIST", "340");
+define("_C_WEBPHOTO_PLAYER_WIDTH_PLAYLIST",  "320");
+define("_C_WEBPHOTO_PLAYER_DISPLAYHEIGHT_PLAYLIST", "240");
+define("_C_WEBPHOTO_PLAYER_DISPLAYWIDTH_PLAYLIST",  "320");
 
 define("_C_WEBPHOTO_EMBED_HEIGHT_DEFAULT", "240");
 define("_C_WEBPHOTO_EMBED_WIDTH_DEFAULT",  "320");
@@ -260,8 +265,9 @@ define("_C_WEBPHOTO_ERR_CREATE_THUMB",    -120 ) ;
 define("_C_WEBPHOTO_ERR_GET_IMAGE_SIZE",  -121 ) ;
 
 // v0.50
-define("_C_WEBPHOTO_ERR_NO_SRC",      -122 ) ;
-define("_C_WEBPHOTO_ERR_NO_FALSHVAR", -123 ) ;
+define("_C_WEBPHOTO_ERR_EMBED",       -122 ) ;
+define("_C_WEBPHOTO_ERR_PLAYLIST",    -123 ) ;
+define("_C_WEBPHOTO_ERR_NO_FALSHVAR", -124 ) ;
 
 // for Japanese
 define("_C_WEBPHOTO_JPAPANESE" , "japanese|japaneseutf|ja_utf8" ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
+// $Id: photo_action.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -310,7 +310,7 @@ function print_form_delete_confirm( $mode, $item_row )
 
 	echo "<br />\n";
 
-	$form_class =& webphoto_admin_item_form::getInstance(
+	$form_class =& webphoto_photo_edit_form::getInstance(
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_delete_confirm( 'admin', $item_row['item_id'] );
@@ -419,11 +419,10 @@ function submit_exec_fetch()
 	$this->upload_init( true ) ;
 
 	if ( $this->is_external_type() ) {
-		$this->set_kind_when_external() ;
+		$this->set_ext_when_external() ;
 		$this->set_title_when_external() ;
 
 	} elseif ( $this->is_embed_type() ) {
-		$this->set_kind_when_embed() ;
 		$this->set_title_when_embed() ;
 		$this->set_thumb_when_embed() ;
 
@@ -445,6 +444,10 @@ function submit_exec_fetch()
 		if ( $ret12 < 0 ) { 
 			return $ret12;	// failed
 		}
+	}
+
+	if ( $this->is_item_undefined_kind() ) {
+		$this->set_item_kind( $this->get_new_kind() );
 	}
 
 	$this->set_item_displaytype( $this->get_new_displaytype() );
@@ -472,7 +475,18 @@ function submit_exec_fetch_check()
 		if ( $this->is_fill_item_embed_src() ) {
 			return 0;
 		} else {
-			return _C_WEBPHOTO_ERR_NO_SRC;
+			return _C_WEBPHOTO_ERR_EMBED;
+		}
+	}
+
+// playlist type
+	if ( $this->is_admin_playlist_type() ) {
+		if ( $this->is_fill_item_playlist_feed() ) {
+			return 0;
+		} elseif ( $this->is_fill_item_playlist_dir() ) {
+			return 0;
+		} else {
+			return _C_WEBPHOTO_ERR_PLAYLIST;
 		}
 	}
 
@@ -587,6 +601,39 @@ function build_update_item_row( $item_row, $file_params )
 	return $update_row;
 }
 
+function get_new_kind()
+{
+	$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
+
+// external
+	if ( $this->is_external_type() ) {
+		if ( $this->is_image_ext( $this->_item_ext ) ) {
+			$kind = _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ;
+		} else {
+			$kind = _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL ;
+		}
+
+// upload
+	} elseif ( $this->_item_ext ) {
+		$kind = $this->_mime_class->ext_to_kind( $this->_item_ext );
+
+// embed
+	} elseif ( $this->is_embed_type() ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_EMBED ;
+
+// playlist
+	} elseif ( $this->is_admin_playlist_type() ) {
+		if ( $this->_item_playlist_feed ) {
+			$kind = _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ;
+
+		} elseif( $this->_item_playlist_dir ) {
+			$kind = _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR ;
+		}
+	}
+
+	return $kind ;
+}
+
 function get_new_displaytype()
 {
 	$str = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
@@ -625,16 +672,11 @@ function get_new_status()
 	return intval( $this->_has_superinsert );
 }
 
-function set_kind_when_external()
+function set_ext_when_external()
 {
 	$ext = $this->parse_ext( $this->_item_external_url ) ;
 	if ( $ext ) {
 		$this->set_item_ext( $ext );
-	}
-
-	$kind = $this->external_ext_to_kind( $ext );
-	if ( $kind ) {
-		$this->set_item_kind( $kind );
 	}
 }
 
@@ -657,11 +699,6 @@ function external_url_to_title()
 {
 	return $this->strip_ext( 
 		$this->_utility_class->parse_url_to_filename( $this->_item_external_url ) );
-}
-
-function set_kind_when_embed()
-{
-	$this->set_item_kind( _C_WEBPHOTO_ITEM_KIND_EMBED );
 }
 
 function set_title_when_embed()
@@ -707,12 +744,19 @@ function set_title_when_playlist()
 		$this->playlist_to_title() );
 }
 
+function set_player_when_playlist()
+{
+	if ( $this->is_item_playlist_type_general() ) {
+		$this->set_item_player_id( _C_WEBPHOTO_PLAYER_ID_PLAYLIST ) ;
+	}
+}
+
 function playlist_to_title()
 {
-	if ( $this->is_playlist_dir_kind( $this->_item_kind ) ) {
+	if ( $this->_item_playlist_dir ) {
 		$title = $this->_item_playlist_dir ;
 
-	} elseif ( $this->is_playlist_feed_kind( $this->_item_kind ) ) {
+	} elseif ( $this->_item_playlist_feed ) {
 		$param = parse_url( $this->_item_playlist_feed );
 		if ( isset($param['host']) ) {
 			$title = $param['host'] ;
@@ -726,13 +770,6 @@ function playlist_to_title()
 	}
 
 	return $title ;
-}
-
-function set_player_when_playlist()
-{
-	if ( $this->is_item_playlist_type_general() ) {
-		$this->set_item_player_id( _C_WEBPHOTO_PLAYER_ID_PLAYLIST ) ;
-	}
 }
 
 function create_thumb_for_submit( $newid, $photo_tmp_name, $thumb_tmp_name )
@@ -951,7 +988,7 @@ function modify_exec( $item_row )
 	}
 
 	if ( $cont_id == 0 ) {
-		$this->_update_all_file_duration( $item_row );
+		$this->update_all_file_duration( $item_row );
 	}
 
 	$row_update = $this->build_update_row_by_post( $item_row );

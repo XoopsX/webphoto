@@ -1,4 +1,4 @@
-<{* $Id: inc_photo_info.html,v 1.3 2008/07/05 12:54:16 ohwada Exp $ *}>
+<{* $Id: inc_photo_info.html,v 1.4 2008/11/01 23:53:08 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -203,6 +203,22 @@
 
 <{* DESCRIPTION *}>
   <{$photo.description_disp}> <br />
+
+  <{if $photo.siteurl_s != '' }>
+    <{$lang_item_siteurl}>: <a href="<{$photo.siteurl_s}>" target="_blank"><{$photo.siteurl_s}></a> <br /> 
+  <{/if}>
+
+  <{if $photo.artist_s != '' }>
+    <{$lang_item_artist}>: <{$photo.artist_s}> <br /> 
+  <{/if}>
+
+  <{if $photo.album_s != '' }>
+    <{$lang_item_album}>: <{$photo.album_s}> <br /> 
+  <{/if}>
+
+  <{if $photo.label_s != '' }>
+    <{$lang_item_label}>: <{$photo.label_s}> <br /> 
+  <{/if}>
 
 <{* TEXT 1 - 10 *}>
   <{foreach item=photo_text from=$photo.texts}>

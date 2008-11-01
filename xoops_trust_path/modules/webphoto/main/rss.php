@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.3 2008/08/25 19:28:06 ohwada Exp $
+// $Id: rss.php,v 1.4 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// added xml.php
 // 2008-08-24 K.OHWADA
 // added item_handler.php
 // 2008-07-01 K.OHWADA
@@ -40,6 +42,7 @@ webphoto_include_once( 'class/lib/tree_handler.php' );
 webphoto_include_once( 'class/lib/pathinfo.php' );
 webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/search.php' );
+webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/rss.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: update_050.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: update_050.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -13,13 +13,17 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_update_050 extends webphoto_base_this
 {
+	var $_player_handler;
 	var $_form_class;
+	var $_mime_class;
 
 	var $_post_offset;
 	var $_next;
 
 	var $_LIMIT = 100;
+
 	var $_THIS_FCT = 'update_050'; 
+	var $_THIS_URL = null;
 
 //---------------------------------------------------------
 // constructor
@@ -28,9 +32,14 @@ function webphoto_admin_update_050( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_form_class    =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
+	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
+	$this->_form_class     =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
+	$this->_mime_class     =& webphoto_mime::getInstance(   $dirname , $trust_dirname );
 
 	$this->_item_handler->set_debug_error( true );
+	$this->_player_handler->set_debug_error( true );
+
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -59,17 +68,40 @@ function main()
 {
 	xoops_cp_header();
 
-	echo $this->build_admin_menu();
-	echo $this->build_admin_title( 'UPDATE' );
+	$op = $this->_post_class->get_post_text('op');
+
+// when form
+	if ( empty($op) ) {
+		echo $this->build_admin_menu();
+		echo $this->build_admin_title( 'UPDATE' );
+
+		if ( $this->_player_handler->get_count_all() > 0 ) {
+			$msg = 'You dont need update.<br />already exists player records';
+		} else {
+			$msg = _AM_WEBPHOTO_MUST_UPDATE ;
+		}
+		echo $this->build_error_msg( $msg, '', false );
+		echo "<br />\n";
+
+	} else {
+		echo $this->build_admin_bread_crumb( 
+			$this->get_admin_title( 'UPDATE' ), $this->_THIS_URL );
+	}
+
 	echo "Update v0.40 to v0.50 <br />\n";
 	echo "set displaytype, onclick, duration <br /><br />\n";
 
-	$op = $this->_post_class->get_post_text('op');
 	switch ( $op ) 
 	{
 		case 'update_item':
 			if ( $this->check_token() ) {
 				$this->_update_item();
+			}
+			break;
+
+		case 'update_player':
+			if ( $this->check_token() ) {
+				$this->_update_player();
 			}
 			break;
 
@@ -109,18 +141,10 @@ function _update_item()
 
 		echo $item_id.' : '.$this->sanitize($title).' : ';
 
-		$displaytype = $this->get_displaytype( $item_row );
-		$onclick     = $this->get_onclick( $item_row );
-		$duration    = $this->get_duration( $item_row );
-
-		if (( $displaytype == 0 )&&( $onclick == 0 )&&( $duration == 0 )) {
-			echo "skip <br />\n";
-			continue;
-		}
-
-		$item_row['item_displaytype'] = $displaytype;
-		$item_row['item_onclick']     = $onclick;
-		$item_row['item_duration']    = $duration;
+		$item_row['item_kind']        = $this->get_kind( $item_row );
+		$item_row['item_displaytype'] = $this->get_displaytype( $item_row ) ;
+		$item_row['item_onclick']     = $this->get_onclick( $item_row );
+		$item_row['item_duration']    = $this->get_duration( $item_row );
 
 		$this->_item_handler->update( $item_row );
 
@@ -130,8 +154,15 @@ function _update_item()
 	if ( $total > $next ) {
 		$this->_form_next_item( $next );
 	} else {
-		$this->_print_finish();
+		$this->_form_player();
 	}
+}
+
+function get_kind( $item_row )
+{
+	$ext  = $item_row['item_ext'];
+	$kind = $this->_mime_class->ext_to_kind( $ext );
+	return $kind;
 }
 
 function get_displaytype( $item_row )
@@ -175,11 +206,36 @@ function get_duration( $item_row )
 	}
 
 	$cont_row = $this->_file_handler->get_row_by_id( $cont_id );
-	if ( isset( $cont_row['file_duration'] ) )
+	if ( isset( $cont_row['file_duration'] ) ) {
 		return  $cont_row['file_duration'] ;
 	}
 
 	return $duration ;
+}
+
+//---------------------------------------------------------
+// update_player
+//---------------------------------------------------------
+function _update_player()
+{
+	echo "<h4>player table</h4>\n";
+
+// default
+	$row = $this->_player_handler->create( true );
+	$row['player_title'] = 'default' ;
+
+	$this->_player_handler->insert( $row );
+
+// playlist default
+	$row['player_title'] = 'playlist default' ;
+	$row['player_width']         = _C_WEBPHOTO_PLAYER_WIDTH_PLAYLIST ;
+	$row['player_height']        = _C_WEBPHOTO_PLAYER_HEIGHT_PLAYLIST ;
+	$row['player_displaywidth']  = _C_WEBPHOTO_PLAYER_DISPLAYWIDTH_PLAYLIST ;
+	$row['player_displayheight'] = _C_WEBPHOTO_PLAYER_DISPLAYHEIGHT_PLAYLIST ;
+
+	$this->_player_handler->insert( $row );
+
+	$this->_print_finish();
 }
 
 //---------------------------------------------------------
@@ -195,8 +251,8 @@ function _print_finish()
 function _form_item()
 {
 	$title  = 'Set display type in item table';
-	$op     = 'update_item';
 	$submit = 'Update';
+	$op     = 'update_item';
 
 	echo "<h4>".$title."</h4>\n";
 	$this->_print_form_next($title, $op, $submit);
@@ -210,6 +266,16 @@ function _form_next_item($offset)
 
 	echo "<br /><hr />\n";
 	$this->_print_form_next($title, $op, $submit, $offset);
+}
+
+function _form_player()
+{
+	$title  = 'insert player';
+	$submit = 'Update';
+	$op     = 'update_player';
+
+	echo "<h4>".$title."</h4>\n";
+	$this->_print_form_next($title, $op, $submit);
 }
 
 function _print_form_next( $title, $op, $submit_value, $offset=0 )

@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: index.php,v 1.6 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,8 +25,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_index extends webphoto_base_this
 {
-	var $_photo_handler;
-	var $_check_class;
+	var $_checkconfig_class;
+	var $_update_check_class;
 
 	var $_DIR_TRUST_MOD_UPLOADS;
 
@@ -39,8 +39,8 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
-	$this->_check_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
+	$this->_update_check_class  =& webphoto_admin_update_check::getInstance( $dirname , $trust_dirname );
+	$this->_checkconfig_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';
@@ -76,8 +76,8 @@ function main()
 	echo $this->build_admin_title( 'CHECKCONFIGS' );
 
 	$this->_print_check();
-	$this->_print_check_update();
-	$this->_check_class->check();
+	echo $this->_update_check_class->build_msg();
+	$this->_checkconfig_class->check();
 	$this->_print_command_url();
 
 	xoops_cp_footer();
@@ -115,17 +115,6 @@ function _print_check()
 	echo $this->build_check_waiting();
 
 	echo "<br />\n";
-}
-
-function _print_check_update()
-{
-	if (( $this->_photo_handler->get_count_all() > 0 )&&
-	    ( $this->_item_handler->get_count_all() == 0 )) {
-		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=update_040">';
-		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
-		$msg .= '</a>';
-		echo $this->build_error_msg( $msg, '', false );
-	}
 }
 
 function _make_dir( $dir )

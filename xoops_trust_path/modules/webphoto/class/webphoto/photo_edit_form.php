@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.11 2008/10/30 13:02:36 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.12 2008/11/01 23:53:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -492,6 +492,9 @@ function _build_ele_photo_file( $cont_row )
 function _build_ele_photo_file_external( $cont_row )
 {
 	$ele = $this->_build_ele_photo_file( $cont_row );
+
+	$name2  = 'item_external_url' ;
+	$value2 = $this->get_row_by_key( $name2 );
 
 	if ( !isset($cont_row['file_url']) || empty($cont_row['file_url']) ) {
 		$ele .= "<br />\n";
