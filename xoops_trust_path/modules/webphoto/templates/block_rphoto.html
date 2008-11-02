@@ -1,4 +1,4 @@
-<{* $Id: block_rphoto.html,v 1.6 2008/08/25 19:28:06 ohwada Exp $ *}>
+<{* $Id: block_rphoto.html,v 1.7 2008/11/02 05:11:12 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -30,16 +30,15 @@
       <{$photo.title_short_s}></a> <br />
     <{/if}>
 
-<{* NORMAL IMAGES with popbox  *}>
-    <{if $photo.is_normal_image && $block.show_popbox }>
+<{* POPUP IMAGE  *}>
+    <{if ( $photo.onclick == 2 ) && $block.show_popbox }>
       <{if $photo.thumb_width && $photo.thumb_height }>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
       <{else}>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.imgsrc_photo}>" />
       <{/if}>
 
-<{* NORMAL IMAGES *}>
-<{* FILES OTHER THAN IMAGES *}>
+<{* PHOTO PAGE *}>
     <{else}>
       <{if $block.use_pathinfo }>
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
@@ -47,10 +46,10 @@
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
       <{/if}>
 
-      <{if $photo.thumb_width && $photo.thumb_height }>
+      <{if $photo.imgsrc_thumb && $photo.thumb_width && $photo.thumb_height }>
         <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
-      <{else}>
-        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>"  />
+      <{elseif $photo.imgsrc_thumb }>
+        <img src="<{$photo.imgsrc_thumb}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>" />
       <{/if}>
       </a>
 

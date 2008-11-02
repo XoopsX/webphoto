@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.7 2008/08/25 19:28:05 ohwada Exp $
+// $Id: blocks.php,v 1.8 2008/11/02 05:11:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-01 K.OHWADA
+// item_external_thumb
 // 2008-08-24 K.OHWADA
 // table_photo -> table_item
 // 2008-08-06 K.OHWADA
@@ -33,7 +35,7 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 	var $_cfg_thumb_width  = 0 ;
 
 	var $_URL_DEFUALT_ICON;
-	var $_URL_PIXEL_GIF;
+	var $_URL_PIXEL_IMAGE;
 
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
@@ -156,8 +158,8 @@ function _init( $options )
 	$this->_init_xoops_config( $dirname );
 
 	$ICONS_URL               = XOOPS_URL  .'/modules/' .$dirname .'/images/icons';
-	$this->_URL_DEFUALT_ICON = $ICONS_URL .'/default.gif';
-	$this->_URL_PIXEL_GIF    = $ICONS_URL .'/pixel_trans.gif';
+	$this->_URL_DEFUALT_ICON = $ICONS_URL .'/default.png';
+	$this->_URL_PIXEL_IMAGE  = $ICONS_URL .'/pixel_trans.png';
 }
 
 function _top_show_common( $mode , $options )
@@ -228,6 +230,7 @@ function _build_block( $mode , $options )
 		$arr = array_merge( $item_row, $this->_build_imgsrc( $item_row ) );
 
 		$arr['photo_id']      = $item_row['item_id'] ;
+		$arr['onclick']       = $item_row['item_onclick'] ;
 		$arr['title_s']       = $this->sanitize( $item_row['item_title'] ) ;
 		$arr['title_short_s'] = $this->_build_short_title( $item_row['item_title'], $title_max_length ) ;
 		$arr['hits_suffix']   = $this->_build_hits_suffix( $item_row['item_hits'] ) ;
@@ -353,10 +356,8 @@ function _get_option_cols( $options, $num )
 
 function _build_imgsrc( $item_row )
 {
-	$ahref_file   = '';
 	$imgsrc_photo = '';
 	$imgsrc_thumb = '';
-	$is_normal_image = false ;
 
 	$cont_url     = null;
 	$cont_width   = 0;
@@ -365,7 +366,7 @@ function _build_imgsrc( $item_row )
 	$thumb_width  = 0;
 	$thumb_height = 0;
 
-	$item_kind = $item_row['item_kind'];
+	$external_thumb = $item_row['item_external_thumb'];
 
 	$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
@@ -382,42 +383,45 @@ function _build_imgsrc( $item_row )
 		$thumb_height = $thumb_row['file_height'];
 	}
 
-	$cont_url_s  = $this->sanitize( $cont_url );
-	$thumb_url_s = $this->sanitize( $thumb_url );
+	$cont_url_s       = $this->sanitize( $cont_url );
+	$thumb_url_s      = $this->sanitize( $thumb_url );
+	$external_thumb_s = $this->sanitize( $external_thumb );
 
 // normal exts
 	if ( $cont_url_s && $thumb_url_s ) {
-		$ahref_file   = $cont_url_s;
 		$imgsrc_photo = $cont_url_s;
 		$imgsrc_thumb = $thumb_url_s;
 
 // no thumbnail
 	} elseif ( $cont_url_s ) {
-		$ahref_file   = $cont_url_s;
 		$imgsrc_photo = $cont_url_s;
 		$imgsrc_thumb = $cont_url_s;
 
-	} else {
-		$ahref_file   = $cont_url_s;
+// no main
+	} elseif ( $thumb_url_s ) {
 		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
-		$imgsrc_thumb = $this->_URL_PIXEL_GIF;
+		$imgsrc_thumb = $thumb_url_s;
+
+// external thumb
+	} elseif ( $external_thumb_s ) {
+		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
+		$imgsrc_thumb = $external_thumb_s;
+
+// other
+	} else {
+		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
+		$imgsrc_thumb = $this->_URL_PIXEL_IMAGE;
 		$thumb_width  = 1;
 		$thumb_height = 1;
 	}
 
-	if ( $cont_url_s && $this->is_image_kind( $item_kind ) ) {
-		$is_normal_image = true ;
-	}
-
 	$arr = array(
-		'ahref_file'       => $ahref_file ,
 		'imgsrc_thumb'     => $imgsrc_thumb ,
 		'imgsrc_photo'     => $imgsrc_photo ,
 		'photo_width'      => $cont_width ,
 		'photo_height'     => $cont_height ,
 		'thumb_width'      => $thumb_width ,
 		'thumb_height'     => $thumb_height ,
-		'is_normal_image'  => $is_normal_image ,
 	);
 	return $arr;
 
