@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.11 2008/11/01 23:53:08 ohwada Exp $
+// $Id: show_photo.php,v 1.12 2008/11/02 01:03:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -199,6 +199,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
 		'is_owner'  => $this->is_photo_owner( $item_uid ),
 		'is_video'  => $this->is_video_kind( $row['item_kind'] ) ,
+		'can_download' => $this->can_download( $row ) ,
 
 		'cont_size'           => $cont_size ,
 		'cont_duration'       => $cont_duration ,
@@ -432,6 +433,33 @@ function format_time( $time )
 {
 	return $this->_utility_class->format_time( $time, 
 		$this->get_constant('HOUR'), $this->get_constant('MINUTE'), $this->get_constant('SECOND') ) ;
+}
+
+function can_download( $row )
+{
+	$kind = $row['item_kind'];
+
+	switch ($kind)
+	{
+		case _C_WEBPHOTO_ITEM_KIND_GENERAL :
+		case _C_WEBPHOTO_ITEM_KIND_IMAGE :
+		case _C_WEBPHOTO_ITEM_KIND_VIDEO :
+		case _C_WEBPHOTO_ITEM_KIND_AUDIO :
+			return true;
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_UNDEFINED :
+		case _C_WEBPHOTO_ITEM_KIND_NONE :
+		case _C_WEBPHOTO_ITEM_KIND_EMBED :
+		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL :
+		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE :
+		case _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED :
+		case _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR :
+		default :
+			break;
+	}
+
+	return false;
 }
 
 //---------------------------------------------------------
