@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.8 2008/11/02 05:11:12 ohwada Exp $
+// $Id: blocks.php,v 1.9 2008/11/02 05:33:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -33,6 +33,7 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 	var $_cfg_use_popbox   = false;
 	var $_cfg_use_pathinfo = false;
 	var $_cfg_thumb_width  = 0 ;
+	var $_cfg_thumb_height = 0 ;
 
 	var $_URL_DEFUALT_ICON;
 	var $_URL_PIXEL_IMAGE;
@@ -415,6 +416,9 @@ function _build_imgsrc( $item_row )
 		$thumb_height = 1;
 	}
 
+	list( $thumb_width, $thumb_height )
+		= $this->_adjust_image_thumb( $thumb_width, $thumb_height );
+
 	$arr = array(
 		'imgsrc_thumb'     => $imgsrc_thumb ,
 		'imgsrc_photo'     => $imgsrc_photo ,
@@ -441,6 +445,29 @@ function _build_hits_suffix( $hits )
 {
 	$val = $hits > 1 ? 'hits' : 'hit' ;
 	return $val;
+}
+
+function _adjust_image_thumb( $width, $height )
+{
+	return $this->_adjust_image_size( 
+		$width, $height, $this->_cfg_thumb_width, $this->_cfg_thumb_height );
+}
+
+function _adjust_image_size( $width, $height, $max_width, $max_height )
+{
+	if ( $width > $max_width ) {
+		$mag    = $max_width / $width;
+		$width  = $max_width;
+		$height = $height * $mag;
+	}
+
+	if ( $height > $max_height ) {
+		$mag    = $max_height / $height;
+		$height = $max_height;
+		$width  = $width * $mag;
+	}
+
+	return array( intval($width), intval($height) );
 }
 
 //---------------------------------------------------------
@@ -584,6 +611,7 @@ function _init_xoops_config( $dirname )
 	$this->_cfg_use_popbox   = $config_handler->get_by_name('use_popbox');
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 	$this->_cfg_thumb_width  = $config_handler->get_by_name('thumb_width');
+	$this->_cfg_thumb_height = $config_handler->get_by_name('thumb_height');
 }
 
 // --- class end ---
