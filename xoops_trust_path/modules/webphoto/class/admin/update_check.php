@@ -1,5 +1,5 @@
 <?php
-// $Id: update_check.php,v 1.1 2008/11/01 23:53:35 ohwada Exp $
+// $Id: update_check.php,v 1.2 2008/11/02 05:57:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,7 +24,7 @@ function webphoto_admin_update_check ( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_base( $dirname , $trust_dirname );
 
-	$this->_item_handler   =& webphoto_player_handler::getInstance( $dirname );
+	$this->_item_handler   =& webphoto_item_handler::getInstance(   $dirname );
 	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
 	$this->_photo_handler  =& webphoto_photo_handler::getInstance(  $dirname );
 }
