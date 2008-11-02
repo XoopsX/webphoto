@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.9 2008/10/30 13:09:40 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.10 2008/11/02 01:01:31 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -112,16 +112,20 @@
 
 <{* FALSH PLAYER *}>
   <{elseif $photo.displaytype_flash }>
-	<{$photo.flash_player}>
-	<br />
-	<a href="<{$photo.ahref_file}>" target="_blank">
-	<span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
-	<{$lang_dsc_download_play}> ( 
-	<{if $photo.cont_duration_disp }>
-		<{$photo.cont_duration_disp}> , 
-	<{/if}>
-	<{$photo.cont_size_disp}> ) <br />
-	</a>
+    <{$photo.flash_player}>
+    <br />
+    <{if $photo.can_download }>
+      <a href="<{$photo.ahref_file}>" target="_blank">
+      <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+      <{$lang_dsc_download_play}> ( 
+      <{if $photo.cont_duration_disp }>
+        <{$photo.cont_duration_disp}> , 
+      <{/if}>
+      <{$photo.cont_size_disp}> ) <br />
+      </a>
+    <{else}>
+      <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+    <{/if}>
 
 <{* GENERAL *}>
   <{elseif $photo.ahref_file }>
