@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.15 2008/11/01 23:53:08 ohwada Exp $
+// $Id: edit.php,v 1.16 2008/11/02 00:15:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -168,6 +168,10 @@ function _exec_check()
 		return _C_WEBPHOTO_ERR_NO_PERM; 
 	}
 
+	if ( $this->_check_playlist( $item_row ) ) {
+		return _C_WEBPHOTO_ERR_NO_PERM; 
+	}
+
 // save
 	$this->_row_current = $item_row;
 	return 0;
@@ -179,8 +183,20 @@ function _check_perm( $item_row )
 		return true;
 	}
 
+	$uid    = $item_row['item_uid'];
+	$status = $item_row['item_status'];
+
 // user can touch photos status > 0
-	if ( ( $item_row['item_uid'] == $this->_xoops_uid ) && ( $item_row['item_status'] > 0 ) ) {
+	if ( ( $uid == $this->_xoops_uid ) && ( $status > 0 ) ) {
+		return true;
+	}
+	return false;
+}
+
+function _check_playlist( $item_row )
+{
+	$kind = $item_row['item_kind'];
+	if ( $this->is_playlist_kind( $kind ) ) {
 		return true;
 	}
 	return false;
