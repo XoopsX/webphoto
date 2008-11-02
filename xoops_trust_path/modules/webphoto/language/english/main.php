@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.14 2008/11/01 23:53:08 ohwada Exp $
+// $Id: main.php,v 1.15 2008/11/02 04:23:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -982,7 +982,7 @@ define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH","Display Width");
 define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT","Display Height");
 define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW","Show Image");
 define("_WEBPHOTO_FLASHVAR_SEARCHBAR","Searchbar");
-define("_WEBPHOTO_FLASHVAR_SHOWEQ","Show Animation");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ","Show Equalizer");
 define("_WEBPHOTO_FLASHVAR_SHOWICONS","Activity Icons");
 define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION","Show Navigation");
 define("_WEBPHOTO_FLASHVAR_SHOWSTOP","Show Stop");
