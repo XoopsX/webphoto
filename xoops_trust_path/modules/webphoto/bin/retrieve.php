@@ -1,10 +1,16 @@
 <?php
-// $Id: retrieve.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
+// $Id: retrieve.php,v 1.3 2008/11/03 06:58:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-03 K.OHWADA
+// kind.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -56,6 +62,7 @@ webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
+webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
