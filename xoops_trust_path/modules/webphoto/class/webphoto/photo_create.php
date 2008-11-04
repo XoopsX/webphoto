@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
+// $Id: photo_create.php,v 1.6 2008/11/04 14:08:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-04 K.OHWADA
+// Fatal error: Call to undefined method build_failed_msg()
 // 2008-10-01 K.OHWADA
 // video_thumb()
 // get_displaytype()
@@ -100,6 +102,8 @@ function video_thumb( $item_row , $name=null )
 	}
 
 	$ret = $this->video_thumb_exec( $item_row, $name );
+
+// Fatal error: Call to undefined method build_failed_msg()
 	return $this->build_failed_msg( $ret );
 }
 
@@ -117,6 +121,17 @@ function video_thumb_exec( $item_row, $name )
 	}
 
 	return 0;
+}
+
+function build_failed_msg( $ret )
+{
+	switch ( $ret )
+	{
+		case _C_WEBPHOTO_ERR_DB:
+			$this->set_error_in_head_with_admin_info( 'DB Error' );
+			return false;
+	}
+	return true;
 }
 
 //---------------------------------------------------------

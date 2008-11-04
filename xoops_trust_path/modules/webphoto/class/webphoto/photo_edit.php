@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.15 2008/11/01 23:53:08 ohwada Exp $
+// $Id: photo_edit.php,v 1.16 2008/11/04 14:08:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-04 K.OHWADA
+// set_values_for_fetch_photo()
 // 2008-10-01 K.OHWADA
 // create_thumb_from_embed() etc
 // photo_duration -> item_duration
@@ -87,6 +89,8 @@ class webphoto_photo_edit extends webphoto_base_this
 
 	var $_photo_tmp_name   = null;
 	var $_photo_media_type = null;
+	var $_photo_media_name = null;
+
 	var $_thumb_tmp_name   = null;
 	var $_thumb_media_type = null;
 
@@ -245,11 +249,13 @@ function get_post_cat_id()
 	$this->_post_item_cat_id = intval( $str ) ;
 }
 
-function build_row_by_post( $row, $is_submit=false )
+function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 {
 
 // overwrite if title is blank
-	$this->overwrite_item_title_if_empty( $this->_NO_TITLE );
+	if ( $flag_title ) {
+		$this->overwrite_item_title_if_empty( $this->_NO_TITLE );
+	}
 
 	$row['item_title']            = $this->get_item_title();
 	$row['item_equipment']        = $this->get_item_equipment();
@@ -761,9 +767,19 @@ function upload_fetch_photo( $flag_allow_all=false )
 
 	$this->_photo_tmp_name   = $this->_upload_class->get_tmp_name();
 	$this->_photo_media_type = $this->_upload_class->get_uploader_media_type();
-	$this->overwrite_item_title_by_media_name_if_empty();
+	$this->_photo_media_name = $this->_upload_class->get_uploader_media_name();
 
-	$src_file = $this->_TMP_DIR.'/'.$this->_photo_tmp_name ;
+	$this->overwrite_item_title_if_empty(
+		$this->strip_ext( $this->_photo_media_name ) );
+
+	$this->set_values_for_fetch_photo( $this->_photo_tmp_name );
+
+	return $ret;
+}
+
+function set_values_for_fetch_photo( $photo_tmp_name )
+{
+	$src_file = $this->_TMP_DIR.'/'.$photo_tmp_name ;
 
 	$item_param  = $this->_photo_class->get_item_param_extention( $src_file );
 	$video_param = $this->_photo_class->get_video_param();
@@ -800,8 +816,6 @@ function upload_fetch_photo( $flag_allow_all=false )
 	if ( is_array( $video_param ) ) {
 		$this->_video_param = $video_param ;
 	}
-
-	return $ret;
 
 }
 

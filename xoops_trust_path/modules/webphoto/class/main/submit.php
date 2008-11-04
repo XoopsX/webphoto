@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
+// $Id: submit.php,v 1.8 2008/11/04 14:08:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-04 K.OHWADA
+// BUG: Fatal error in upload.php
 // 2008-10-01 K.OHWADA
 // webphoto_photo_action
 // 2008-08-24 K.OHWADA
@@ -89,7 +91,9 @@ function print_form()
 
 	} elseif ( $this->_is_preview ) {
 		$item_row = $this->build_submit_preview_row() ;
-		$this->_print_preview_submit(     $item_row );
+		list( $item_row, $image_info ) =
+			$this->_build_preview_info( $item_row );
+		$this->_print_preview_submit( $item_row, $image_info );
 		$this->_print_form_submit( $item_row );
 
 	} elseif ( $this->is_upload_type() ) {
@@ -231,11 +235,8 @@ function _get_item_row_or_redirect()
 //---------------------------------------------------------
 // preview
 //---------------------------------------------------------
-function _print_preview_submit( $item_row )
+function _build_preview_info( $item_row )
 {
-	$show_class =& webphoto_show_photo::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
 	if ( $this->is_readable_new_photo() ) {
 		$image_info = $this->_preview_new();
 
@@ -248,6 +249,18 @@ function _print_preview_submit( $item_row )
 		$image_info = $this->_preview_no_image();
 	}
 
+	if ( empty( $item_row['item_title'] ) && $this->_photo_media_name ) {
+		$item_row['item_title'] = $this->strip_ext( $this->_photo_media_name );
+	}
+
+	return array( $item_row, $image_info );
+}
+
+function _print_preview_submit( $item_row, $image_info )
+{
+	$show_class =& webphoto_show_photo::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
 	$show1 = $show_class->build_photo_show_basic( $item_row, $this->get_tag_name_array() );
 	$show2 = array_merge( $show1, $image_info );
 
@@ -256,6 +269,9 @@ function _print_preview_submit( $item_row )
 
 function _preview_new()
 {
+// BUG: Fatal error in upload.php
+	$this->upload_init( true ) ;
+
 	$ret = $this->upload_fetch_photo( true );
 	if ( $ret < 0 ) {
 		return $this->_preview_no_image();

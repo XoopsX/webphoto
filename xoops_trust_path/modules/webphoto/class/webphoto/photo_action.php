@@ -1,10 +1,17 @@
 <?php
-// $Id: photo_action.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
+// $Id: photo_action.php,v 1.4 2008/11/04 14:08:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-04 K.OHWADA
+// BUG: undefined property _REDIRECT_TIME_FAILED
+// set values in preview
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -125,7 +132,9 @@ function submit_check_redirect( $ret )
 
 	$this->_redirect_url  = $url ;
 	$this->_redirect_msg  = $msg ;
-	$this->_redirect_time = $this->_REDIRECT_TIME_FAILED ;
+
+// BUG: undefined property _REDIRECT_TIME_FAILED
+	$this->_redirect_time = $this->_TIME_FAILED ;
 }
 
 function submit_check_exec()
@@ -188,7 +197,7 @@ function build_submit_default_row()
 function build_submit_preview_row()
 {
 	$item_row = $this->_item_handler->create( true );
-	$item_row = $this->build_row_by_post( $item_row );
+	$item_row = $this->build_row_by_post( $item_row, false, false );
 
 	$item_row['item_cat_id'] = $this->_post_item_cat_id;
 	$item_row['item_uid']    = $this->_xoops_uid;
@@ -438,6 +447,12 @@ function submit_exec_fetch()
 		}
 	}
 
+// set values in preview
+	if ( empty($this->_photo_tmp_name) && $this->is_readable_preview() ) {
+		$this->_photo_tmp_name = $this->get_preview_name() ;
+		$this->set_values_for_fetch_photo( $this->_photo_tmp_name );
+	}
+
 // fetch thumb
 	if ( $this->_FLAG_FETCH_THUMB ) {
 		$ret12 = $this->upload_fetch_thumb();
@@ -462,12 +477,6 @@ function submit_exec_fetch_check()
 
 	if ( $this->_photo_tmp_name ) {
 		return 0 ;
-	}
-
-// preview
-	if ( $this->is_readable_preview() ) {
-		$this->_photo_tmp_name = $this->get_preview_name() ;
-		return 0; 
 	}
 
 // embed type
