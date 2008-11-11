@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.9 2008/11/11 14:20:45 ohwada Exp $
+// $Id: index.php,v 1.10 2008/11/11 16:26:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -135,7 +135,7 @@ function _make_dir( $dir )
 		return $this->highlight( 'At first create & chmod 777 "'. $dir .'" by ftp or shell.' )."<br />\n";
 	}
 
-	$ret = mkdir( $dir ) ;
+	$ret = mkdir( $dir, $this->_MKDIR_MODE ) ;
 	if ( !$ret ) {
 		return $this->highlight( 'can not create directory : <b>'. $dir .'</b>' )."<br />\n";
 	}
