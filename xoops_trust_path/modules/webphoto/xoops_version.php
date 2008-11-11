@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: xoops_version.php,v 1.4 2008/11/11 07:09:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// workdir.php
 // 2008-08-01 K.OHWADA
 // use WEBPHOTO_TRUST_DIRNAME
 // 2008-07-01 K.OHWADA
@@ -29,6 +31,7 @@ webphoto_include_once( 'include/version.php',            $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/workdir.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/xoops_version.php',    $MY_DIRNAME );
 webphoto_include_language( 'modinfo.php',                $MY_DIRNAME );
 
