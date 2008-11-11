@@ -1,5 +1,5 @@
 <?php
-// $Id: workdir.php,v 1.2 2008/11/11 12:51:46 ohwada Exp $
+// $Id: workdir.php,v 1.3 2008/11/11 14:20:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -110,7 +110,7 @@ function write_workdir( $workdir )
 	$data .= $this->_DIRNAME ;
 	$data .= "\n";
 
-	$this->write_file( $this->_FILE_WORKDIR, $data, 'a', true ) ;
+	return $this->write_file( $this->_FILE_WORKDIR, $data, 'a', true ) ;
 }
 
 function read_file_cvs( $file, $mode='r' )
@@ -142,6 +142,11 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 	}
 
 	return $byte;
+}
+
+function get_filename()
+{
+	return $this->_FILE_WORKDIR ;
 }
 
 // --- class end ---

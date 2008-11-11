@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.8 2008/11/11 12:50:34 ohwada Exp $
+// $Id: index.php,v 1.9 2008/11/11 14:20:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -170,8 +170,13 @@ function _workdir_file()
 			break;
 	}
 
-	$this->_workdir_class->write_workdir( $this->_WORK_DIR );
-	echo "add tmp dir in workdir.txt <br />\n";
+	$byte = $this->_workdir_class->write_workdir( $this->_WORK_DIR );
+	$file = $this->_workdir_class->get_filename();
+	if ( $byte > 0 ) {
+		echo "add work dir in workdir.txt <br />\n";
+	} else {
+		echo $this->highlight( 'can not write : <b>'. $file.'</b>' )."<br />\n";
+	}
 
 	return true;
 }
