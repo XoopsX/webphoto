@@ -1,11 +1,106 @@
-$Id: readme_jp.txt,v 1.13 2008/10/30 13:12:16 ohwada Exp $
+$Id: readme_jp.txt,v 1.14 2008/11/11 07:04:08 ohwada Exp $
+
+=================================================
+Version: 0.60
+Date:   2008-11-10
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+
+1. 画像のアップロード処理
+1.1 サムネイル画像
+(1) アップロード時の画像縮小を追加
+(2) 削除を追加
+
+1.2 ミドル画像
+(1) アップロードを追加
+(2) アップロード時の画像縮小を追加
+(3) 削除を追加
+(4) 外部URLの指定を追加
+
+1.3 カテゴリ画像
+(1) アップロードを追加
+(2) アップロード時の画像縮小を追加
+(3) アップロード済みファイルからの選択を追加
+
+1.4 Google アイコン画像
+(1) アップロード時の画像縮小を追加
+
+1.5 Player ロゴ画像
+(1) アップロード時の画像縮小を追加
+
+1.6 JPEG 品質の追加
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=869&forum=13
+
+2. JPEx 対応
+管理画面のメニューの重複を対策
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+3. バグ対策
+(1) プレビューにて Fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+(2) 「メール受信」にて Fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+(3) Exif から Google Map 登録ができない
+
+(4) 「ファイルからの画像追加」にて 動画のサムネイル生成ができない
+
+(5) 「サムネイル再構築」の削除にて Fatal error
+
+(6) 「アイテム・テーブル管理」の削除にて、Fatal error
+
+4. データベース構造
+4.1 テーブルの項目追加
+(1) item テーブル: item_external_middle
+(2) cat  テーブル: cat_img_name
+
+4.2 一般設定 (config テーブル) の項目変更
+「使用上の注意」参照
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
+
+● 使用上の注意
+1. 作業用ディレクトリ
+一般設定から tmpdir を削除し、
+代わりに workdir を追加した。
+
+従来は、一時ディレクトリ (tmpdir) を設定していた。
+今回から ルートとなる作業用ディレクトリ (workdir) を設定し、
+その下のディレクトリを固定にした。
+
+従来と同じもの
+- tmp (一時的なファイル)
+
+従来は tmp に置いていたファイルを分離したもの
+- mail (受信メールの保存)
+- log  (ログの保存)
+
+[注意]
+tmpdir をデフォルト値から変更している場合は、
+上記に対応するように、手動でファイルを移動してください。
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
 
 =================================================
 Version: 0.50
 Date:   2008-10-30
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

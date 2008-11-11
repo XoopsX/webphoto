@@ -1,11 +1,106 @@
-$Id: readme_en.txt,v 1.13 2008/10/30 13:12:16 ohwada Exp $
+$Id: readme_en.txt,v 1.14 2008/11/11 07:04:08 ohwada Exp $
+
+=================================================
+Version: 0.60
+Date:   2008-11-10
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+
+1. Image Upload
+1.1 Tumbnamil Image
+(1) added to shrink image when upload
+(2) added to delete image
+
+1.2 Middle Image
+(1) addeed to upload image
+(2) added to shrink image when upload
+(3) added to delete image
+(4) added to exteranal URL
+
+1.3 Category Image
+(1) addeed to upload image
+(2) added to shrink image when upload
+(3) added to select image from uploaded
+
+1.4 GoogleMap Icon Image
+(1) added to shrink image when upload
+
+1.5 Player Logo Image
+(1) added to shrink image when upload
+
+1.6 added JPEG Quality
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=869&forum=13
+
+2. Support JPEx
+show the top menu twice in admin's page.
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+3. Bug fix
+(1) Fatal error in preview
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+(2) Fatal error in "Mail Retrieve"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=872&forum=13
+
+(3) not set Google Map form Exif data
+
+(4) not create video thumb in "Add Photo from File"
+
+(5) Fatal error to remove image in "Rebuild Thumbnails"
+
+(6) Fatal error to remove image in "Item Table Management"
+
+4. Database structure
+4.1 add field of table
+(1) item table: item_external_middle
+(2) cat  table: cat_img_name
+
+4.2 change item of config table (preferrence)
+look "Notice for usage"
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
+
+* Notice for usage *
+1. The directoris for work
+Webphoto remove tmpdir in "preferrence",
+add workdir instead.
+
+In old version, the admin can set the directory for tmploraly (tmpdir)
+In this version, the admin can set the root directory (workdir) ,
+Webphoto fix the directories belong the root directory.
+
+Dirctory same as old version
+- tmp (tmploaly files)
+
+Dirctory for files which have separated form tmp.
+- mail (mails)
+- log  (logs)
+
+[Caution]
+If you changed the value of tmpdir from the default value,
+please move files manually to match with new dirctory.
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 0.50
 Date:   2008-10-30
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
