@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.5 2008/11/11 06:53:16 ohwada Exp $
+// $Id: photo_action.php,v 1.6 2008/11/11 12:53:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-11-08 K.OHWADA
 // upload_fetch_middle()
+// BUG: endless loop in submit check
 // 2008-11-04 K.OHWADA
 // BUG: undefined property _REDIRECT_TIME_FAILED
 // set values in preview
@@ -30,6 +31,12 @@ class webphoto_photo_action extends webphoto_photo_edit
 	var $_row_update  = null ;
 
 	var $_is_none_type = false;
+
+	var $_redirect_time = 0 ;
+	var $_redirect_url  = null ;
+	var $_redirect_msg  = null ;
+
+	var $_REDIRECT_MSG_ERROR = 'ERROR not set message';
 
 // for submit_imagemanager
 	var $_FLAG_FETCH_ALLOW_ALL = true ;
@@ -116,7 +123,7 @@ function submit_check_redirect( $ret )
 			break;
 
 		case _C_WEBPHOTO_ERR_CHECK_DIR:
-			$url = $this->_INDEX_PHP ;
+			$url = $this->_MODULE_URL ;
 			$msg = 'Directory Error';
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_format_error();
@@ -124,7 +131,7 @@ function submit_check_redirect( $ret )
 			break;
 
 		case _C_WEBPHOTO_ERR_NO_CAT_RECORD :
-			$url = $this->_INDEX_PHP ;
+			$url = $this->_MODULE_URL ;
 			$msg = $this->get_constant('ERR_MUSTADDCATFIRST') ;
 			break;
 
@@ -789,7 +796,11 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 {
 	$item_id = $item_row['item_id'] ;
 
-	$photo_param  = $this->build_photo_param( $item_row, $photo_name, $thumb_name );
+	$post_rotate = $this->_post_class->get_post( 'rotate' ) ;
+	$rotate      = $this->conv_rotate( $post_rotate );
+
+	$photo_param  = $this->build_photo_param( $item_row, $photo_name, $thumb_name, $rotate );
+	$cont_param   = null;
 	$thumb_param  = null;
 	$middle_param = null;
 
@@ -797,6 +808,13 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 		$ret = $this->create_photo_param_by_param( $photo_param );
 		if ( $ret < 0 ) {
 			return $ret;
+		}
+
+		$cont_param = $photo_param ;
+
+// use rotated file if rotate
+		if ( ( $rotate > 0 ) && isset( $this->_file_params['cont']['path'] ) ) {
+			$cont_param['src_file'] = XOOPS_ROOT_PATH .'/'. $this->_file_params['cont']['path'] ;
 		}
 	}
 
@@ -812,15 +830,15 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 	} elseif ( $is_submit && $this->is_admin_playlist_type() ) {
 		$this->create_thumb_for_playlist( $item_id );
 
-	} elseif ( is_array($photo_param) ) {
-		$thumb_param = $this->create_thumb_param_by_param( $photo_param );
+	} elseif ( is_array($cont_param) ) {
+		$thumb_param = $this->create_thumb_param_by_param( $cont_param );
 	}
 
 	if ( $middle_name ) {
 		$middle_param = $this->create_middle_param_by_tmp( $item_id, $middle_name );
 
-	} elseif ( is_array($photo_param) ) {
-		$middle_param = $this->create_middle_param_by_param( $photo_param );
+	} elseif ( is_array($cont_param) ) {
+		$middle_param = $this->create_middle_param_by_param( $cont_param );
 	}
 
 // unlink tmp file
@@ -840,7 +858,7 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 	return 0;
 }
 
-function build_photo_param( $item_row, $photo_name, $thumb_name )
+function build_photo_param( $item_row, $photo_name, $thumb_name, $rotate )
 {
 	if ( empty($photo_name) ) {
 		return null; 
@@ -854,6 +872,7 @@ function build_photo_param( $item_row, $photo_name, $thumb_name )
 	$photo_param['mime']             = $this->_photo_media_type ;
 	$photo_param['video_param']      = $this->_video_param ;
 	$photo_param['flag_video_thumb'] = $thumb_name ? false : true ;
+	$photo_param['rotate']           = $rotate ;
 
 	return $photo_param;
 }
@@ -1439,22 +1458,38 @@ function build_failed_msg( $ret )
 function build_redirect( $param )
 {
 	$this->_redirect_class->set_error( $this->get_errors() );
-	return $this->_redirect_class->build_redirect( $param );
+	$ret = $this->_redirect_class->build_redirect( $param );
+
+// BUG: endless loop in submit check
+	$this->_redirect_url  = $this->_redirect_class->get_redirect_url();
+	$this->_redirect_time = $this->_redirect_class->get_redirect_time();
+	$this->_redirect_msg  = $this->_redirect_class->get_redirect_msg();
+
+	return $ret ;
 }
 
 function get_redirect_url()
 {
-	return $this->_redirect_class->get_redirect_url();
+	if ( $this->_redirect_url ) {
+		return $this->_redirect_url ;
+	}
+	return $this->_MODULE_URL ;
 }
 
 function get_redirect_time()
 {
-	return $this->_redirect_class->get_redirect_time();
+	if ( $this->_redirect_time > 0 ) {
+		return $this->_redirect_time ;
+	}
+	return $this->_TIME_FAILED ;
 }
 
 function get_redirect_msg()
 {
-	return $this->_redirect_class->get_redirect_msg();
+	if ( $this->_redirect_msg ) {
+		return $this->_redirect_msg ;
+	}
+	return $this->_REDIRECT_MSG_ERROR ;
 }
 
 //---------------------------------------------------------

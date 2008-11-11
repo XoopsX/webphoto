@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.17 2008/11/11 06:53:16 ohwada Exp $
+// $Id: photo_edit.php,v 1.18 2008/11/11 12:53:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -905,9 +905,6 @@ function create_photo_param_by_param( $photo_param )
 	$src_kind         = $photo_param['src_kind'] ;
 	$flag_video_thumb = $photo_param['flag_video_thumb'] ;
 	$param            = $photo_param ;
-
-	$post_rotate     = $this->_post_class->get_post( 'rotate' ) ;
-	$param['rotate'] = $this->conv_rotate( $post_rotate );
 
 	$ret = $this->_photo_class->create_cont_param( $item_id, $param );
 	if ( $ret < 0 ) {

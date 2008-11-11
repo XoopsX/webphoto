@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemagick.php,v 1.1 2008/11/11 06:54:17 ohwada Exp $
+// $Id: imagemagick.php,v 1.2 2008/11/11 12:52:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -14,7 +14,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_imagemagick
 {
-	var $_cmd_path  = null;
+	var $_cmd_path = null;
+	var $_DEBUG    = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -41,6 +42,11 @@ function set_cmd_path( $val )
 	$this->_cmd_path = $val ;
 }
 
+function set_debug( $val )
+{
+	$this->_DEBUG = (bool)$val ;
+}
+
 function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rorate=0 )
 {
 	$option = '' ;
@@ -56,6 +62,9 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rorate=0 )
 	if ( $option ) {
 		$cmd = $this->_cmd_path .'convert '. $option .' '. $src .' '.$dst;
 		exec( $cmd ) ;
+		if ( $this->_DEBUG ) {
+			echo $cmd."<br />\n";
+		}
 		return true;
 	}
 

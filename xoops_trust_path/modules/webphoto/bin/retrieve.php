@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.3 2008/11/03 06:58:34 ohwada Exp $
+// $Id: retrieve.php,v 1.4 2008/11/11 12:49:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// imagemagick.php
 // 2008-11-03 K.OHWADA
 // kind.php
 //---------------------------------------------------------
@@ -42,6 +44,9 @@ webphoto_include_once( 'class/lib/post.php' );
 webphoto_include_once( 'class/lib/pathinfo.php' );
 webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/base.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );

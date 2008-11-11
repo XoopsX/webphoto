@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
+// $Id: catmanager.php,v 1.5 2008/11/11 12:50:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -121,6 +121,7 @@ function main()
 	}
 
 	xoops_cp_footer();
+	exit();
 }
 
 function _get_action()
@@ -179,6 +180,7 @@ function _insert()
 
 	if ( $error ) {
 		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $error );
+		exit() ;
 	}
 
 	$row = $this->_cat_handler->create( true );
@@ -202,10 +204,11 @@ function _insert()
 		$msg .= "<br />\n";
 		$msg .= _AM_WEBPHOTO_CAT_INSERTED ;
 		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
+		exit() ;
 	}
 
 	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_INSERTED ) ;
-	exit ;
+	exit() ;
 }
 
 function _build_row( $row )
@@ -283,7 +286,7 @@ function _build_img_name( $row )
 		$row['cat_img_name'] = $fetch_img_name ;
 		$row['cat_img_path'] = '' ;
 
-	if ( $post_img_name ) {
+	} elseif ( $post_img_name ) {
 		$row['cat_img_name'] = $post_img_name ;
 		$row['cat_img_path'] = '' ;
 
@@ -373,6 +376,7 @@ function _update()
 {
 	if ( ! $this->check_token() ) {
 		redirect_header( $this->_ADMIN_INDEX_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		exit() ;
 	}
 
 	$post_catid = $this->_post_class->get_post_int('cat_id');
@@ -388,6 +392,7 @@ function _update()
 			if( $child == $post_pid ) {
 				$msg = "category looping has occurred" ;
 				redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
+				exit() ;
 			}
 		}
 	}
@@ -410,6 +415,7 @@ function _update()
 		$msg .= "<br />\n";
 		$msg .= _AM_WEBPHOTO_CAT_UPDATED ;
 		redirect_header( $url, $this->_TIME_FAIL , $msg ) ;
+		exit();
 	}
 
 	redirect_header( $url , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_UPDATED ) ;
@@ -608,6 +614,7 @@ function _print_del_confirm()
 	$cat_form->print_del_confirm( $get_catid );
 
 	xoops_cp_footer();
+	exit();
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
+// $Id: update_040.php,v 1.3 2008/11/11 12:50:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// create_thumb() -> resize_rotate() 
 // 2008-10-01 K.OHWADA
 // webphoto_admin_update -> webphoto_admin_update_040
 //---------------------------------------------------------
@@ -21,6 +23,7 @@ class webphoto_admin_update_040 extends webphoto_base_this
 {
 	var $_photo_handler;
 	var $_image_class;
+	var $_image_cmd_class;
 	var $_form_class;
 
 	var $_cfg_middle_width  = 0 ;
@@ -82,14 +85,8 @@ function _init_image_cmd()
 	$this->_image_cmd_class->set_forcegd2(     $this->get_config_by_name( 'forcegd2' ) );
 	$this->_image_cmd_class->set_imagickpath(  $this->get_config_by_name( 'imagickpath' ) );
 	$this->_image_cmd_class->set_netpbmpath(   $this->get_config_by_name( 'netpbmpath' ) );
-	$this->_image_cmd_class->set_width(        $this->get_config_by_name( 'width' ) );
-	$this->_image_cmd_class->set_height(       $this->get_config_by_name( 'height' ) );
-	$this->_image_cmd_class->set_thumbrule(    $this->get_config_by_name( 'thumbrule' ) );
+	$this->_image_cmd_class->set_jpeg_quality( $this->get_config_by_name( 'jpeg_quality' ) );
 	$this->_image_cmd_class->set_normal_exts(  $this->get_normal_exts() );
-	$this->_image_cmd_class->set_thumbs_path(  $this->_THUMBS_PATH );
-
-	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_middle_width );
-	$this->_image_cmd_class->set_thumb_height( $this->_cfg_middle_height );
 }
 
 function get_post_offset()
@@ -472,20 +469,28 @@ function _build_image_middle( $photo_row )
 
 function _create_image_middle( $photo_row )
 {
-	$src_file   = XOOPS_ROOT_PATH . $photo_row['photo_cont_path'] ;
-	$src_ext    = $photo_row['photo_cont_ext'] ;
-	$photo_node = $this->_image_class->build_photo_node( $photo_row['photo_id'] );
+	$photo_id  = $photo_row['photo_id'] ;
+	$cont_path = $photo_row['photo_cont_path'] ;
+	$cont_ext  = $photo_row['photo_cont_ext'] ;
 
-	$ret = $this->_image_cmd_class->create_thumb( $src_file , $photo_node , $src_ext );
+	$src_file  = XOOPS_ROOT_PATH . $cont_path ;
+	$node      = $this->_image_class->build_photo_node( $photo_id );
+	$name      = $node .'.'. $cont_ext ;
+	$path      = $this->_MIDDLES_PATH .'/'. $name;
+	$dst_file  = XOOPS_ROOT_PATH . $path ;
+
+	$ret = $this->_image_cmd_class->resize_rotate( 
+		 $src_file, $dst_file, $this->_cfg_middle_width, $this->_cfg_middle_height );
+
 	if (( $ret == _C_WEBPHOTO_IMAGE_READFAULT )||
 	    ( $ret == _C_WEBPHOTO_IMAGE_SKIPPED )) {
 		return false;
 	}
 
 	$arr = array(
-		'path' => $this->_image_cmd_class->get_thumb_path() ,
-		'name' => $this->_image_cmd_class->get_thumb_name() ,
-		'ext'  => $this->_image_cmd_class->get_thumb_ext() ,
+		'path' => $path ,
+		'name' => $name ,
+		'ext'  => $cont_ext ,
 	);
 	return $arr;
 }

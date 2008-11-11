@@ -1,5 +1,5 @@
 <?php
-// $Id: workdir.php,v 1.1 2008/11/11 06:54:01 ohwada Exp $
+// $Id: workdir.php,v 1.2 2008/11/11 12:51:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -80,13 +80,13 @@ function read_workdir( $workdir )
 
 	foreach ( $lines as $line )
 	{
-		if ( $line[0] == $workdir ) {
+		if ( trim($line[0]) == $workdir ) {
 			$match = 1 ;
 
-			if (( $line[1] == XOOPS_DB_NAME ) &&
-			    ( $line[2] == XOOPS_DB_PREFIX ) &&
-			    ( $line[3] == XOOPS_URL ) &&
-			    ( $line[4] == $this->_DIRNAME )) {
+			if (( trim($line[1]) == XOOPS_DB_NAME ) &&
+			    ( trim($line[2]) == XOOPS_DB_PREFIX ) &&
+			    ( trim($line[3]) == XOOPS_URL ) &&
+			    ( trim($line[4]) == $this->_DIRNAME )) {
 				$match = 2 ;
 			}
 
