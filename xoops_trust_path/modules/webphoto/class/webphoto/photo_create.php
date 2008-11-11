@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.6 2008/11/04 14:08:00 ohwada Exp $
+// $Id: photo_create.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// insert_file_by_params()
 // 2008-11-04 K.OHWADA
 // Fatal error: Call to undefined method build_failed_msg()
 // 2008-10-01 K.OHWADA
@@ -102,8 +104,6 @@ function video_thumb( $item_row , $name=null )
 	}
 
 	$ret = $this->video_thumb_exec( $item_row, $name );
-
-// Fatal error: Call to undefined method build_failed_msg()
 	return $this->build_failed_msg( $ret );
 }
 
@@ -123,6 +123,7 @@ function video_thumb_exec( $item_row, $name )
 	return 0;
 }
 
+// Fatal error: Call to undefined method build_failed_msg()
 function build_failed_msg( $ret )
 {
 	switch ( $ret )
@@ -132,17 +133,6 @@ function build_failed_msg( $ret )
 			return false;
 	}
 	return true;
-}
-
-//---------------------------------------------------------
-// create thumb from upload ( original size )
-//---------------------------------------------------------
-function create_thumb_from_upload( $photo_id, $tmp_name )
-{
-	$ret = $this->_image_class->create_thumb_from_upload( $photo_id , $tmp_name );
-	if ( $ret < 0 ) {
-		return $ret;
-	}
 }
 
 //---------------------------------------------------------
@@ -436,44 +426,35 @@ function get_video_param()
 //---------------------------------------------------------
 // updete item 
 //---------------------------------------------------------
-function build_update_item_row( $item_row, $file_param, $playlist_cache=null )
+function build_update_item_row( $item_row, $file_id_array, $playlist_cache=null )
 {
 	$update_row = $item_row;
 
-	if ( isset($file_param['cont_id']) ) {
-		$cont_id = $file_param['cont_id'] ;
-		if ( $cont_id > 0 ) {
-			$update_row['item_file_id_1'] = $cont_id;
-		}
+	$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
+	$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
+	$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
+	$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
+	$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
+
+	if ( $cont_id > 0 ) {
+		$update_row[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
 	}
 
-	if ( isset($file_param['thumb_id']) ) {
-		$thumb_id = $file_param['thumb_id'] ;
-		if ( $thumb_id > 0 ) {
-			$update_row['item_file_id_2'] = $thumb_id;
-		}
+	if ( $thumb_id > 0 ) {
+		$update_row[ _C_WEBPHOTO_ITEM_FILE_THUMB ] = $thumb_id;
 	}
 
-	if ( isset($file_param['middle_id']) ) {
-		$middle_id = $file_param['middle_id'] ;
-		if ( $middle_id > 0 ) {
-			$update_row['item_file_id_3'] = $middle_id;
-		}
+	if ( $middle_id > 0 ) {
+		$update_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
 	}
 
-	if ( isset($file_param['flash_id']) ) {
-		$flash_id = $file_param['flash_id'] ;
-		if ( $flash_id > 0 ) {
-			$update_row['item_file_id_4']   = $flash_id;
-			$update_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-		}
+	if ( $flash_id > 0 ) {
+		$update_row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ]   = $flash_id;
+		$update_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
 	}
 
-	if ( isset($file_param['docomo_id']) ) {
-		$docomo_id = $file_param['docomo_id'] ;
-		if ( $docomo_id > 0 ) {
-			$update_row['item_file_id_5'] = $docomo_id;
-		}
+	if ( $docomo_id > 0 ) {
+		$update_row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO ] = $docomo_id;
 	}
 
 	if ( $playlist_cache ) {
@@ -481,6 +462,12 @@ function build_update_item_row( $item_row, $file_param, $playlist_cache=null )
 	}
 
 	return $update_row ;
+}
+
+function get_array_value_by_key( $array, $key )
+{
+	return intval( 
+		$this->_utility_class->get_array_value_by_key( $array, $key, 0 ) ) ;
 }
 
 //---------------------------------------------------------
@@ -512,21 +499,17 @@ function create_cont_param( $item_id, $param )
 {
 	$src_file = $param['src_file'];
 	$src_ext  = $param['src_ext'];
-	$rotate   = isset($param['rotate']) ? $param['rotate'] : null ;
+	$rotate   = isset($param['rotate']) ? intval($param['rotate']) : 0 ;
 
 	$this->_cont_param = null ;
 
-// create photo
-	if ( $rotate ) {
-		$this->_image_class->cmd_set_mode_rotate( $rotate );
-	}
+	$ret = $this->_image_class->create_photo( $src_file, $item_id, $rotate );
 
-	$ret1 = $this->_image_class->create_photo( $src_file , $item_id );
-	if ( $ret1 == _C_WEBPHOTO_IMAGE_READFAULT ) {
+	if ( $ret == _C_WEBPHOTO_IMAGE_READFAULT ) {
 		$this->print_msg_level_admin( ' Cannot read file, ', true );
 		return _C_WEBPHOTO_ERR_FILEREAD;
 	}
-	if ( $ret1 == _C_WEBPHOTO_IMAGE_RESIZE ) {
+	if ( $ret == _C_WEBPHOTO_IMAGE_RESIZE ) {
 		$this->_flag_resized = true;
 		$this->print_msg_level_admin( ' resize photo, ' );
 	}
@@ -635,8 +618,10 @@ function create_thumb_middle_param( $item_id, $param )
 	   ( $this->is_image_kind( $src_kind ) || $flag_video_thumb ) ) {
 
 		if ( $flag_thumb ) {
+
 			$this->create_thumb_from_image_file( 
 				$photo_file, $item_id, $photo_ext );
+
 			$thumb_param = $this->get_thumb_param();
 			if ( is_array($thumb_param) ) {
 				$this->print_msg_level_admin( ' create thumb, ' );
@@ -645,8 +630,10 @@ function create_thumb_middle_param( $item_id, $param )
 			}
 		}
 		if ( $flag_middle ) {
+
 			$this->create_middle_from_image_file( 
 				$photo_file, $item_id, $photo_ext );
+
 			$middle_param = $this->get_middle_param();
 			if ( is_array($middle_param) ) {
 				$this->print_msg_level_admin( ' create middle, ' );
@@ -890,9 +877,9 @@ function update_video_thumb_by_item_row( $item_row, $name )
 	$this->unlink_video_thumb_temp_files( $item_id );
 
 // update date
-	$update_row                   = $item_row ;
-	$update_row['item_file_id_2'] = $thumb_id;
-	$update_row['item_file_id_3'] = $middle_id;
+	$update_row = $item_row ;
+	$update_row[ _C_WEBPHOTO_ITEM_FILE_THUMB ]  = $thumb_id;
+	$update_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
 
 // --- update item ---
 	$ret = $this->_item_handler->update( $update_row, $this->_flag_force_db );
@@ -952,7 +939,9 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 
 // update
 	if ( $flag_update ) {
-		$ret = $this->update_file( $item_id, $file_row, $param );
+		$this->unlink_current_file( $file_row, $param );
+
+		$ret = $this->update_file( $file_row, $param );
 		if ( !$ret ) {
 			$file_id = 0;	// fail
 		}
@@ -968,9 +957,9 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 	return $file_id ;
 }
 
-function create_video_thumb_for_update( $item_id, $src_file )
+function create_video_thumb_for_update( $item_id, $src_file, $src_ext=null )
 {
-	$this->create_thumb_from_image_file( $src_file, $item_id );
+	$this->create_thumb_from_image_file( $src_file, $item_id, $src_ext );
 	$param = $this->get_thumb_param();
 
 	if ( is_array($param) ) {
@@ -988,6 +977,16 @@ function create_video_middle_for_update( $item_id, $src_file )
 	$this->create_middle_from_image_file( $src_file, $item_id );
 	$param = $this->get_middle_param();
 	return $param ;
+}
+
+function unlink_current_file( $file_row, $param )
+{
+	$file_path = $file_row['file_path'];
+	$path      = $param['path'];
+
+	if ( $file_path && ( $file_path != $path ) ) {
+		$this->unlink_path($file_path);
+	}
 }
 
 function unlink_video_thumb_temp_files( $item_id )
@@ -1018,73 +1017,29 @@ function insert_files_from_params( $item_id, $params )
 		return false;
 	}
 
-	$cont_id   = 0 ;
-	$thumb_id  = 0 ;
-	$middle_id = 0 ;
-	$flash_id  = 0 ;
-	$docomo_id = 0 ;
-
-	if ( isset($params['cont']) ) {
-		$cont_param   = $params['cont'] ;
-		if ( is_array($cont_param) ) {
-			$cont_id = $this->insert_file( $item_id, $cont_param );
-		}
-	}
-
-	if ( isset($params['thumb']) ) {
-		$thumb_param  = $params['thumb'] ;
-		if ( is_array($thumb_param) ) {
-			$thumb_id = $this->insert_file( $item_id, $thumb_param );
-		}
-	}
-
-	if ( isset($params['middle']) ) {
-		$middle_param = $params['middle'] ;
-		if ( is_array($middle_param) ) {
-			$middle_id = $this->insert_file( $item_id, $middle_param );
-		}
-	}
-
-	if ( isset($params['flash']) ) {
-		$flash_param  = $params['flash'] ;
-		if ( is_array($flash_param) ) {
-			$flash_id = $this->insert_file( $item_id, $flash_param );
-		}
-	}
-
-	if ( isset($params['docomo']) ) {
-		if ( is_array($docomo_param) ) {
-			$docomo_id = $this->insert_file( $item_id, $docomo_param );
-		}
-	}
-
 	$arr = array(
-		'cont_id'   => $cont_id ,
-		'thumb_id'  => $thumb_id ,
-		'middle_id' => $middle_id ,
-		'flash_id'  => $flash_id ,
-		'docomo_id' => $docomo_id ,
+		'cont_id'   => $this->insert_file_by_params( $item_id, $params, 'cont' ) ,
+		'thumb_id'  => $this->insert_file_by_params( $item_id, $params, 'thumb' ) ,
+		'middle_id' => $this->insert_file_by_params( $item_id, $params, 'middle' ) ,
+		'flash_id'  => $this->insert_file_by_params( $item_id, $params, 'flash' ) ,
+		'docomo_id' => $this->insert_file_by_params( $item_id, $params, 'docomo' ) ,
 	);
 	return $arr ;
 }
 
+function insert_file_by_params( $item_id, $params, $name )
+{
+	if ( isset( $params[ $name ] ) && is_array( $params[ $name ] ) ) {
+		return $this->insert_file( $item_id,  $params[ $name ] );
+	}
+	return 0;
+}
+
 function insert_file( $item_id, $param )
 {
-	$duration = isset($param['duration']) ? intval($param['duration']) : 0 ;
-
 	$row = $this->_file_handler->create();
+	$row = $this->build_file_row( $row, $param );
 	$row['file_item_id']   = $item_id ;
-	$row['file_url']       = $param['url'] ;
-	$row['file_path']      = $param['path'] ;
-	$row['file_name']      = $param['name'] ;
-	$row['file_ext']       = $param['ext'] ;
-	$row['file_mime']      = $param['mime'] ;
-	$row['file_medium']    = $param['medium'] ;
-	$row['file_size']      = $param['size'] ;
-	$row['file_width']     = $param['width'] ;
-	$row['file_height']    = $param['height'] ;
-	$row['file_kind']      = $param['kind'] ;
-	$row['file_duration']  = $duration ;
 
 	$newid = $this->_file_handler->insert( $row, $this->_flag_force_db );
 	if ( !$newid ) {
@@ -1096,32 +1051,41 @@ function insert_file( $item_id, $param )
 	return $newid;
 }
 
-function update_file( $item_id, $row, $param )
+function update_file( $row, $param )
 {
-	$duration = isset($param['duration']) ? intval($param['duration']) : 0 ;
-
-	$row['file_item_id']     = $item_id ;
+	$row = $this->build_file_row( $row, $param );
 	$row['file_time_update'] = time() ;
-	$row['file_url']         = $param['url'] ;
-	$row['file_path']        = $param['path'] ;
-	$row['file_name']        = $param['name'] ;
-	$row['file_ext']         = $param['ext'] ;
-	$row['file_mime']        = $param['mime'] ;
-	$row['file_medium']      = $param['medium'] ;
-	$row['file_size']        = $param['size'] ;
-	$row['file_width']       = $param['width'] ;
-	$row['file_height']      = $param['height'] ;
-	$row['file_kind']        = $param['kind'] ;
-	$row['file_duration']    = $duration ;
 
 // update
 	$ret = $this->_file_handler->update( $row );
 	if ( !$ret ) {
+		$this->print_msg_level_admin( ' DB Error, ', true );
 		$this->set_error( $this->_file_handler->get_errors() );
 		return false ;
 	}
 
 	return true ;
+}
+
+function build_file_row( $row, $param )
+{
+	$width    = isset($param['width'])    ? intval($param['width'])    : 0 ;
+	$height   = isset($param['height'])   ? intval($param['height'])   : 0 ;
+	$duration = isset($param['duration']) ? intval($param['duration']) : 0 ;
+
+	$row['file_url']       = $param['url'] ;
+	$row['file_path']      = $param['path'] ;
+	$row['file_name']      = $param['name'] ;
+	$row['file_ext']       = $param['ext'] ;
+	$row['file_mime']      = $param['mime'] ;
+	$row['file_medium']    = $param['medium'] ;
+	$row['file_size']      = $param['size'] ;
+	$row['file_kind']      = $param['kind'] ;
+	$row['file_width']     = $width ;
+	$row['file_height']    = $height ;
+	$row['file_duration']  = $duration ;
+
+	return $row ;
 }
 
 //---------------------------------------------------------
@@ -1151,7 +1115,7 @@ function build_photo_name( $id, $ext, $extra=null )
 	return $this->_image_class->build_photo_name( $id, $ext, $extra );
 }
 
-function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null )
+function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null  )
 {
 	return $this->_image_class->create_thumb_from_image_file( $src_file, $photo_id, $src_ext );
 }

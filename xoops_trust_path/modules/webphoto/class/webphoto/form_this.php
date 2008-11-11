@@ -1,5 +1,5 @@
 <?php
-// $Id: form_this.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: form_this.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// tmpdir -> workdir
 // 2008-10-01 K.OHWADA
 // use get_uploads_path()
 // 2008-08-24 K.OHWADA
@@ -38,8 +40,6 @@ class webphoto_form_this extends webphoto_lib_form
 
 	var $_FILED_COUNTER_1  = 1;
 	var $_FILED_COUNTER_2  = 2;
-	var $_PHOTO_FIELD_NAME = 'photo_file';
-	var $_THUMB_FIELD_NAME = 'thumb_file';
 
 	var $_PHOTOS_PATH;
 	var $_PHOTOS_DIR ;
@@ -47,11 +47,17 @@ class webphoto_form_this extends webphoto_lib_form
 	var $_THUMBS_PATH;
 	var $_THUMBS_DIR;
 	var $_THUMBS_URL;
+	var $_CATS_PATH;
+	var $_CATS_DIR;
+	var $_CATS_URL;
 	var $_MEDIAS_DIR;
 	var $_MEDIAS_URL;
 	var $_PLAYLISTS_DIR ;
 	var $_PLAYLISTS_URL ;
+	var $_WORK_DIR;
 	var $_TMP_DIR;
+	var $_MAIL_DIR;
+	var $_LOG_DIR;
 	var $_FILE_DIR;
 
 	var $_ICONS_URL;
@@ -74,22 +80,29 @@ function webphoto_form_this( $dirname , $trust_dirname )
 
 	$uploads_path    = $this->_config_class->get_uploads_path();
 	$medias_path     = $this->_config_class->get_medias_path();
-	$this->_TMP_DIR  = $this->_config_class->get_by_name( 'tmpdir' );
+	$this->_WORK_DIR = $this->_config_class->get_by_name( 'workdir' );
 	$this->_FILE_DIR = $this->_config_class->get_by_name( 'file_dir' );
 
 	$this->_PHOTOS_PATH = $uploads_path.'/photos' ;
 	$this->_THUMBS_PATH = $uploads_path.'/thumbs' ;
+	$this->_CATS_PATH   = $uploads_path.'/categories' ;
 	$playlists_path     = $uploads_path.'/playlists' ;
 
 	$this->_PHOTOS_DIR    = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR    = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
+	$this->_CATS_DIR      = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
 	$this->_MEDIAS_DIR    = XOOPS_ROOT_PATH . $medias_path ;
 	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $playlists_path ;
 
 	$this->_PHOTOS_URL    = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL    = XOOPS_URL . $this->_THUMBS_PATH ;
+	$this->_CATS_URL      = XOOPS_URL . $this->_CATS_PATH ;
 	$this->_MEDIAS_URL    = XOOPS_URL . $medias_path ;
 	$this->_PLAYLISTS_URL = XOOPS_URL . $playlists_path ;
+
+	$this->_TMP_DIR   = $this->_WORK_DIR .'/tmp' ;
+	$this->_MAIL_DIR  = $this->_WORK_DIR .'/mail' ;
+	$this->_LOG_DIR   = $this->_WORK_DIR .'/log' ;
 
 	$this->_ICONS_URL       = $this->_MODULE_URL .'/images/icons';
 	$this->_ICON_ROTATE_URL = $this->_MODULE_URL .'/images/uploader';

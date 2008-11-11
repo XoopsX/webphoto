@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.10 2008/11/01 23:53:08 ohwada Exp $
+// $Id: base_this.php,v 1.11 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// tmpdir -> workdir
 // 2008-10-01 K.OHWADA
 // webphoto_kind
 // build_redirect()
@@ -57,9 +59,15 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_MIDDLES_PATH;
 	var $_MIDDLES_DIR;
 	var $_MIDDLESS_URL;
+	var $_CATS_PATH;
+	var $_CATS_DIR;
+	var $_CATS_URL;
 	var $_GICONS_PATH;
 	var $_GICONS_DIR;
 	var $_GICONS_URL;
+	var $_GSHADOWS_PATH;
+	var $_GSHADOWS_DIR;
+	var $_GSHADOWS_URL;
 	var $_FLASHS_PATH;
 	var $_FLASHS_DIR;
 	var $_FLASHS_URL;
@@ -68,7 +76,10 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_PLAYLISTS_DIR;
 	var $_LOGOS_DIR;
 	var $_MEDIAS_DIR;
+	var $_WORK_DIR;
+	var $_MAIL_DIR;
 	var $_TMP_DIR;
+	var $_LOG_DIR;
 	var $_FILE_DIR;
 
 //---------------------------------------------------------
@@ -90,35 +101,44 @@ function webphoto_base_this( $dirname, $trust_dirname )
 
 	$uploads_path    = $this->_config_class->get_uploads_path();
 	$medias_path     = $this->_config_class->get_medias_path();
-	$this->_TMP_DIR  = $this->_config_class->get_by_name( 'tmpdir' );
+	$this->_WORK_DIR = $this->_config_class->get_by_name( 'workdir' );
 	$this->_FILE_DIR = $this->_config_class->get_by_name( 'file_dir' );
 
-	$this->_PHOTOS_PATH  = $uploads_path.'/photos' ;
-	$this->_THUMBS_PATH  = $uploads_path.'/thumbs' ;
-	$this->_MIDDLES_PATH = $uploads_path.'/middles' ;
-	$this->_GICONS_PATH  = $uploads_path.'/gicons' ;
-	$this->_FLASHS_PATH  = $uploads_path.'/flashs' ;
-	$qrs_path            = $uploads_path.'/qrs' ;
-	$playlists_path      = $uploads_path.'/playlists' ;
-	$logos_path          = $uploads_path.'/logos' ;
+	$this->_PHOTOS_PATH     = $uploads_path.'/photos' ;
+	$this->_THUMBS_PATH     = $uploads_path.'/thumbs' ;
+	$this->_MIDDLES_PATH    = $uploads_path.'/middles' ;
+	$this->_CATS_PATH       = $uploads_path.'/categories' ;
+	$this->_GICONS_PATH     = $uploads_path.'/gicons' ;
+	$this->_GSHADOWS_PATH   = $uploads_path.'/gshadows' ;
+	$this->_FLASHS_PATH     = $uploads_path.'/flashs' ;
+	$qrs_path               = $uploads_path.'/qrs' ;
+	$playlists_path         = $uploads_path.'/playlists' ;
+	$logos_path             = $uploads_path.'/logos' ;
 
-	$this->_UPLOADS_DIR   = XOOPS_ROOT_PATH . $uploads_path ;
-	$this->_PHOTOS_DIR    = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
-	$this->_THUMBS_DIR    = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
-	$this->_MIDDLES_DIR   = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
-	$this->_GICONS_DIR    = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
-	$this->_FLASHS_DIR    = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
-	$this->_QRS_DIR       = XOOPS_ROOT_PATH . $qrs_path ;
-	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $playlists_path ;
-	$this->_LOGOS_DIR     = XOOPS_ROOT_PATH . $logos_path ;
-	$this->_MEDIAS_DIR    = XOOPS_ROOT_PATH . $medias_path ;
+	$this->_UPLOADS_DIR    = XOOPS_ROOT_PATH . $uploads_path ;
+	$this->_PHOTOS_DIR     = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_DIR     = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
+	$this->_MIDDLES_DIR    = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
+	$this->_CATS_DIR       = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
+	$this->_GICONS_DIR     = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
+	$this->_GSHADOWS_DIR   = XOOPS_ROOT_PATH . $this->_GSHADOWS_PATH ;
+	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
+	$this->_QRS_DIR        = XOOPS_ROOT_PATH . $qrs_path ;
+	$this->_PLAYLISTS_DIR  = XOOPS_ROOT_PATH . $playlists_path ;
+	$this->_LOGOS_DIR      = XOOPS_ROOT_PATH . $logos_path ;
+	$this->_MEDIAS_DIR     = XOOPS_ROOT_PATH . $medias_path ;
+	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
+	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
+	$this->_MIDDLES_URL    = XOOPS_URL . $this->_MIDDLES_PATH ;
+	$this->_CATS_URL       = XOOPS_URL . $this->_CATS_PATH ;
+	$this->_GICONS_URL     = XOOPS_URL . $this->_GICONS_PATH ;
+	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;
+	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
+	$this->_QRS_URL        = XOOPS_URL . $qrs_path ;
 
-	$this->_PHOTOS_URL  = XOOPS_URL . $this->_PHOTOS_PATH ;
-	$this->_THUMBS_URL  = XOOPS_URL . $this->_THUMBS_PATH ;
-	$this->_MIDDLES_URL = XOOPS_URL . $this->_MIDDLES_PATH ;
-	$this->_GICONS_URL  = XOOPS_URL . $this->_GICONS_PATH ;
-	$this->_FLASHS_URL  = XOOPS_URL . $this->_FLASHS_PATH ;
-	$this->_QRS_URL     = XOOPS_URL . $qrs_path ;
+	$this->_TMP_DIR   = $this->_WORK_DIR .'/tmp' ;
+	$this->_MAIL_DIR  = $this->_WORK_DIR .'/mail' ;
+	$this->_LOG_DIR   = $this->_WORK_DIR .'/log' ;
 
 	$this->_ICONS_URL = $this->_MODULE_URL .'/images/icons';
 
@@ -131,6 +151,9 @@ function webphoto_base_this( $dirname, $trust_dirname )
 function get_photo_globals()
 {
 	$cfg_colsoftableview = $this->get_config_by_name('colsoftableview');
+	$cfg_cat_width       = $this->get_config_by_name('cat_width');
+	$cfg_csub_width      = $this->get_config_by_name('csub_width');
+
 	$cfg_is_set_mail     = $this->_config_class->is_set_mail() ;
 	$cfg_file_dir        = $this->get_config_by_name('file_dir') ;
 	$has_mail            = $this->_perm_class->has_mail() ;
@@ -154,10 +177,10 @@ function get_photo_globals()
 		'has_insertable'       => $this->_perm_class->has_insertable(),
 		'show_menu_mail'       => $show_menu_mail ,
 		'show_menu_file'       => $show_menu_file ,
-		'cat_main_width'       => _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT ,
-		'cat_main_height'      => _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT ,
-		'cat_sub_width'        => _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT ,
-		'cat_sub_height'       => _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT ,
+		'cat_main_width'       => $cfg_cat_width ,
+		'cat_main_height'      => $cfg_cat_width ,
+		'cat_sub_width'        => $cfg_csub_width ,
+		'cat_sub_height'       => $cfg_csub_width ,
 
 // for XOOPS 2.0.18
 		'xoops_dirname'        => $this->_DIRNAME ,

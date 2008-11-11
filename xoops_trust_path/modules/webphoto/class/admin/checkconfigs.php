@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.6 2008/11/01 23:53:08 ohwada Exp $
+// $Id: checkconfigs.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// tmpdir -> workdir
+// BUG: ths -> this
 // 2008-10-01 K.OHWADA
 // use cfg_uploadspath
 // 2008-08-01 K.OHWADA
@@ -56,14 +59,15 @@ function check()
 	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
 	$cfg_uploadspath = $this->get_config_by_name('uploadspath');
 	$cfg_mediaspath  = $this->get_config_by_name('mediaspath');
-	$cfg_tmpdir      = $this->get_config_by_name('tmpdir');
+	$cfg_workdir     = $this->get_config_by_name('workdir');
 	$cfg_file_dir    = $this->get_config_by_name('file_dir');
 	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
 	$cfg_imagickpath = $this->_config_class->get_dir_by_name('imagickpath');
 	$cfg_netpbmpath  = $this->_config_class->get_dir_by_name('netpbmpath');
 	$cfg_ffmpegpath  = $this->_config_class->get_dir_by_name('ffmpegpath');
 
-	$ths->_ini_safe_mode = ini_get( "safe_mode" );
+// BUG: ths -> this
+	$this->_ini_safe_mode = ini_get( "safe_mode" );
 
 // Initialize
 	$netpbm_pipes = array( "jpegtopnm" , "giftopnm" , "pngtopnm" , 
@@ -233,9 +237,9 @@ function check()
 		$flag_ffmpeg = false;
 		echo "<b>FFmpeg</b><br />\n";
 		echo " &nbsp; Path: $cfg_ffmpegpath<br />\n" ;
+
 		$ret_array = array() ;
 		exec( "{$cfg_ffmpegpath}ffmpeg -version 2>&1" , $ret_array ) ;
-
 		if ( is_array($ret_array) && count($ret_array) ) {
 			foreach ( $ret_array as $line ) {
 				if ( preg_match('/version/i', $line ) ) {
@@ -264,8 +268,8 @@ function check()
 	$this->_check_path( $cfg_uploadspath );
 
 // tmp
-	echo _AM_WEBPHOTO_DIRECTORYFOR_TMP.': '. $cfg_tmpdir .' &nbsp; ' ;
-	$this->_check_full_path( $cfg_tmpdir, true );
+	echo _AM_WEBPHOTO_DIRECTORYFOR_TMP.': '. $cfg_workdir .' &nbsp; ' ;
+	$this->_check_full_path( $cfg_workdir, true );
 
 // file
 	echo _AM_WEBPHOTO_DIRECTORYFOR_FILE.': '. $cfg_file_dir .' &nbsp; ' ;

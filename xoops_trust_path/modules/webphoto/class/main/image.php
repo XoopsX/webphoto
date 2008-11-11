@@ -1,10 +1,16 @@
 <?php
-// $Id: image.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: image.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// tmpdir -> workdir
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -31,7 +37,8 @@ function webphoto_main_image( $dirname, $trust_dirname )
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 
-	$this->_TMP_DIR = $this->_config_class->get_by_name( 'tmpdir' );
+	$work_dir        = $this->_config_class->get_by_name( 'workdir' );
+	$this->_TMP_DIR  = $work_dir.'/tmp' ;
 }
 
 function &getInstance( $dirname, $trust_dirname )

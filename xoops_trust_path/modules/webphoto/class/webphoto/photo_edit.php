@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.16 2008/11/04 14:08:00 ohwada Exp $
+// $Id: photo_edit.php,v 1.17 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// upload_fetch_middle()
+// BUG: Undefined variable: exif
 // 2008-11-04 K.OHWADA
 // set_values_for_fetch_photo()
 // 2008-10-01 K.OHWADA
@@ -48,6 +51,9 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_cfg_makethumb    = false;
 	var $_cfg_allownoimage = false ;
 	var $_cfg_addposts     = 0 ;
+	var $_cfg_fsize        = 0 ;
+	var $_cfg_width        = 0 ;
+	var $_cfg_height       = 0 ;
 	var $_has_insertable   = false;
 	var $_has_superinsert  = false;
 	var $_has_editable     = false;
@@ -73,6 +79,7 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_item_embed_src        = null;
 	var $_item_external_url     = null;
 	var $_item_external_thumb   = null;
+	var $_item_external_middle  = null;
 	var $_item_playlist_type    = 0;
 	var $_item_playlist_feed    = null;
 	var $_item_playlist_dir     = null;
@@ -87,19 +94,21 @@ class webphoto_photo_edit extends webphoto_base_this
 
 	var $_checkbox_array      = array();
 
-	var $_photo_tmp_name   = null;
-	var $_photo_media_type = null;
-	var $_photo_media_name = null;
-
-	var $_thumb_tmp_name   = null;
-	var $_thumb_media_type = null;
+	var $_photo_tmp_name    = null;
+	var $_photo_media_type  = null;
+	var $_photo_media_name  = null;
+	var $_thumb_tmp_name    = null;
+	var $_thumb_media_type  = null;
+	var $_middle_tmp_name   = null;
+	var $_middle_media_type = null;
 
 	var $_image_thumb_url  = null;
 	var $_image_thumb_path = null;
 	var $_image_info       = null;
 
-	var $_video_param      = null ;
-	var $_file_params      = null;
+	var $_photo_param = null ;
+	var $_video_param = null ;
+	var $_file_params = null;
 
 	var $_is_video_thumb_form = false;
 	var $_form_action         = null;
@@ -111,8 +120,10 @@ class webphoto_photo_edit extends webphoto_base_this
 
 //	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
 
-	var $_PHOTO_FIELD_NAME = 'photo_file';
-	var $_THUMB_FIELD_NAME = 'thumb_file';
+	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
+	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
+	var $_MIDDLE_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
+
 	var $_ORDERBY_DEFAULT = 'idA' ;
 	var $_NO_TITLE  = 'no title' ;
 
@@ -130,7 +141,6 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_upload_class   =& webphoto_upload::getInstance( $dirname , $trust_dirname );
 	$this->_photo_class    =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
 	$this->_embed_class    =& webphoto_embed::getInstance( $dirname, $trust_dirname );
 	$this->_build_class    =& webphoto_photo_build::getInstance( $dirname );
@@ -143,14 +153,19 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 	$this->_has_image_resize  = $this->_image_class->has_resize();
 	$this->_has_image_rotate  = $this->_image_class->has_rotate();
 
+	$this->_upload_class =& webphoto_upload::getInstance( $dirname , $trust_dirname );
+	$this->_upload_class->set_flag_size_limit( !$this->_has_image_resize );
+
 	$this->_has_insertable  = $this->_perm_class->has_insertable();
 	$this->_has_superinsert = $this->_perm_class->has_superinsert();
 	$this->_has_editable    = $this->_perm_class->has_editable();
 	$this->_has_deletable   = $this->_perm_class->has_deletable();
 
-	$this->_cfg_makethumb    = $this->_config_class->get_by_name( 'makethumb' );
-	$this->_cfg_allownoimage = $this->_config_class->get_by_name( 'allownoimage' );
-	$this->_cfg_addposts     = $this->_config_class->get_by_name( 'addposts' );
+	$this->_cfg_makethumb    = $this->get_config_by_name( 'makethumb' );
+	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
+	$this->_cfg_addposts     = $this->get_config_by_name( 'addposts' );
+	$this->_cfg_width        = $this->get_config_by_name( 'width' );
+	$this->_cfg_height       = $this->get_config_by_name( 'height' );
 
 }
 
@@ -200,6 +215,7 @@ function get_post_param()
 	$this->_item_embed_src        = $this->_post_class->get_post_text(  'item_embed_src' );
 	$this->_item_external_url     = $this->_post_class->get_post_text(  'item_external_url' );
 	$this->_item_external_thumb   = $this->_post_class->get_post_text(  'item_external_thumb' );
+	$this->_item_external_middle  = $this->_post_class->get_post_text(  'item_external_middle' );
 	$this->_item_playlist_type    = $this->_post_class->get_post_int(   'item_playlist_type' );
 	$this->_item_playlist_feed    = $this->_post_class->get_post_text(  'item_playlist_feed' );
 	$this->_item_playlist_dir     = $this->_post_class->get_post_text(  'item_playlist_dir' );
@@ -265,6 +281,7 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$row['item_embed_src']        = $this->_item_embed_src ;
 	$row['item_external_url']     = $this->_item_external_url ;
 	$row['item_external_thumb']   = $this->_item_external_thumb ;
+	$row['item_external_middle']  = $this->_item_external_middle ;
 	$row['item_gmap_latitude']    = $this->_item_gmap_latitude ;
 	$row['item_gmap_longitude']   = $this->_item_gmap_longitude ;
 	$row['item_gmap_zoom']        = $this->_item_gmap_zoom ;
@@ -555,15 +572,13 @@ function overwrite_item_exif( $val )
 //---------------------------------------------------------
 // photo gmap
 //---------------------------------------------------------
+// BUG: Undefined variable: exif
 function overwrite_item_gmap( $latitude, $longitude, $zoom )
 {
 	if ( ( $this->_item_gmap_latitude  > 0 ) &&
 	     ( $this->_item_gmap_longitude > 0 ) ) {
 		return;
 	}
-
-	$latitude  = $exif['latitude'] ;
-	$longitude = $exif['longitude'] ;
 
 	if ( ( $latitude > 0 )&&( $longitude > 0 ) ) {
 		$this->_item_gmap_latitude  = $latitude ;
@@ -695,6 +710,29 @@ function is_fill_item_external_thumb()
 }
 
 //---------------------------------------------------------
+// external middle
+//---------------------------------------------------------
+function overwrite_item_external_middle_if_empty( $val )
+{
+	if ( !$this->is_fill_item_external_middle() && $val ) {
+		$this->_item_external_middle = $val;
+	}
+}
+
+function get_item_external_middle()
+{
+	return $this->_item_external_middle;
+}
+
+function is_fill_item_external_middle()
+{
+	if ( $this->_item_external_middle ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
 // embed
 //---------------------------------------------------------
 function is_fill_item_embed_src()
@@ -727,7 +765,7 @@ function is_fill_item_playlist_dir()
 //---------------------------------------------------------
 // upload
 //---------------------------------------------------------
-function upload_init( $flag_allow_all=false )
+function XXXupload_init( $flag_allow_all=false )
 {
 	list ( $allowed_mimes, $my_allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
 
@@ -747,15 +785,9 @@ function upload_fetch_photo( $flag_allow_all=false )
 	$this->_photo_media_type = null ;
 	$this->_video_param      = null ;
 
-	list ( $allowed_mimes, $my_allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
+	$ret = $this->_upload_class->fetch_media( 
+		$this->_PHOTO_FIELD_NAME, $flag_allow_all );
 
-	if ( $flag_allow_all ) {
-		$allowed_exts = $my_allowed_exts ;
-	} else {
-		$allowed_exts = $this->get_normal_exts() ;
-	}
-
-	$ret = $this->_upload_class->fetch_for_edit( $this->_PHOTO_FIELD_NAME );
 	if ( $ret < 0 ) {
 		$this->set_error( $this->_upload_class->get_errors() );
 	}
@@ -771,8 +803,6 @@ function upload_fetch_photo( $flag_allow_all=false )
 
 	$this->overwrite_item_title_if_empty(
 		$this->strip_ext( $this->_photo_media_name ) );
-
-	$this->set_values_for_fetch_photo( $this->_photo_tmp_name );
 
 	return $ret;
 }
@@ -825,9 +855,8 @@ function upload_fetch_thumb()
 	$this->_thumb_media_type = null;
 
 // if thumb file uploaded
-	$this->_upload_class->set_image_extensions();
+	$ret = $this->_upload_class->fetch_image( $this->_THUMB_FIELD_NAME );
 
-	$ret = $this->_upload_class->fetch_for_edit( $this->_THUMB_FIELD_NAME );
 	if ( $ret < 0 ) {
 		$this->set_error( $this->_upload_class->get_errors() );
 	}
@@ -837,106 +866,87 @@ function upload_fetch_thumb()
 	}
 }
 
+function upload_fetch_middle()
+{
+	$this->_middle_tmp_name   = null;
+	$this->_middle_media_type = null;
+
+	$ret = $this->_upload_class->fetch_image( $this->_MIDDLE_FIELD_NAME );
+	if ( $ret < 0 ) {
+		$this->set_error( $this->_upload_class->get_errors() );
+	}
+	if ( $ret == 1 ) {
+		$this->_middle_tmp_name   = $this->_upload_class->get_tmp_name();
+		$this->_middle_media_type = $this->_upload_class->get_uploader_media_type();
+	}
+}
+
 //---------------------------------------------------------
 // create photo
 //---------------------------------------------------------
-function create_photo_thumb( $photo_id, $photo_tmp_name, $thumb_tmp_name )
+function create_photo_param_by_param( $photo_param )
 {
 	$this->_photo_class->set_msg_level( $this->_MSG_LEVEL );
 	$this->_photo_class->set_flag_print_first_msg( $this->_MSG_FIRST );
 
-	$this->_is_video_thumb_form = false;
+	$this->_is_video_thumb_form = false ;
 	$this->_file_params         = null ;
+	$this->_photo_param         = null ;
 
 	$cont_param   = null ;
-	$thumb_param  = null ;
-	$middle_param = null ;
 	$flash_param  = null ;
 	$docomo_param = null ;
 
-// if upload main 
-	if ( $photo_tmp_name ) {
+	if ( ! is_array($photo_param) ) {
+		return 0;	// no action
+	}
 
-// create photo
-		$photo_tmp_file = $this->_TMP_DIR .'/'. $photo_tmp_name;
-		$photo_kind     = $this->get_item_kind() ;
+	$item_id          = $photo_param['item_id'] ;
+	$src_kind         = $photo_param['src_kind'] ;
+	$flag_video_thumb = $photo_param['flag_video_thumb'] ;
+	$param            = $photo_param ;
 
-		$photo_param                = array();
-		$photo_param['src_file']    = $photo_tmp_file ;
-		$photo_param['src_ext']     = $this->get_item_ext() ;
-		$photo_param['src_kind']    = $photo_kind ;
-		$photo_param['mime']        = $this->_photo_media_type ;
-		$photo_param['video_param'] = $this->_video_param ;
+	$post_rotate     = $this->_post_class->get_post( 'rotate' ) ;
+	$param['rotate'] = $this->conv_rotate( $post_rotate );
 
-		$param           = $photo_param ;
-		$param['rotate'] = $this->_post_class->get_post( 'rotate' ) ;
-		$ret1 = $this->_photo_class->create_cont_param( $photo_id, $param );
-		if ( $ret1 < 0 ) {
-			$this->unlink_file( $photo_tmp_file );
-			return $ret1;
-		}
+	$ret = $this->_photo_class->create_cont_param( $item_id, $param );
+	if ( $ret < 0 ) {
+		return $ret;
+	}
 
-		$cont_param = $this->_photo_class->get_cont_param();
-		if ( $this->_photo_class->get_resized() ) {
-			$this->set_msg_array( $this->get_constant('SUBMIT_RESIZED') ) ;
-		}
+	$cont_param = $this->_photo_class->get_cont_param();
+	if ( $this->_photo_class->get_resized() ) {
+		$this->set_msg_array( $this->get_constant('SUBMIT_RESIZED') ) ;
+	}
 
-		if ( $this->is_video_kind( $photo_kind ) && is_array( $cont_param ) ) {
+	if ( $this->is_video_kind( $src_kind ) && is_array( $cont_param ) ) {
 
 // video flash
-			$flash_param = $this->_photo_class->create_video_flash_param( $photo_id, $param );
+		$flash_param = $this->_photo_class->create_video_flash_param( $item_id, $param );
 
-			if ( $this->_photo_class->get_video_flash_failed() ) {
-				$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
-			}
-
-// video thumb
-			if ( empty($thumb_tmp_name) ) {
-				$param['mode_video_thumb'] = _C_WEBPHOTO_VIDEO_THUMB_PLURAL ;
-				$this->_photo_class->create_video_thumb( $photo_id, $param );
-
-				if ( $this->_photo_class->get_video_thumb_created() ) {
-					$this->_is_video_thumb_form = true;
-				}
-				if ( $this->_photo_class->get_video_thumb_failed() ) {
-					$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
-				}
-			}
-
-// video docomo
-			$docomo_param = $this->_photo_class->create_video_docomo_param( $photo_id, $cont_param );
+		if ( $this->_photo_class->get_video_flash_failed() ) {
+			$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
 		}
 
-	}
+// video thumb
+		if ( $flag_video_thumb ) {
+			$param['mode_video_thumb'] = _C_WEBPHOTO_VIDEO_THUMB_PLURAL ;
+			$this->_photo_class->create_video_thumb( $item_id, $param );
 
-// if upload thumb
-	if ( $thumb_tmp_name ) {
-		$this->_photo_class->create_thumb_from_upload( $photo_id , $thumb_tmp_name );
-		$thumb_param = $this->_photo_class->get_thumb_param();
-		$this->unlink_file( $this->_TMP_DIR .'/'. $thumb_tmp_name );
+			if ( $this->_photo_class->get_video_thumb_created() ) {
+				$this->_is_video_thumb_form = true;
+			}
+			if ( $this->_photo_class->get_video_thumb_failed() ) {
+				$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
+			}
+		}
 
-// if main file uploaded
-	} elseif ( $photo_tmp_name && is_array( $cont_param ) ) {
-
-		$param                = $photo_param ;
-		$param['flag_thumb']  = true ;
-		$param['flag_middle'] = true ;
-		list( $thumb_param, $middle_param ) =
-			$this->_photo_class->create_thumb_middle_param( $photo_id, $param );
-
-	}
-
-	if ( $photo_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $photo_tmp_name );
-	}
-	if ( $thumb_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $thumb_tmp_name );
+// video docomo
+		$docomo_param = $this->_photo_class->create_video_docomo_param( $item_id, $cont_param );
 	}
 
 	$this->_file_params = array(
 		'cont'   => $cont_param ,
-		'thumb'  => $thumb_param ,
-		'middle' => $middle_param ,
 		'flash'  => $flash_param ,
 		'docomo' => $docomo_param ,
 	);
@@ -944,9 +954,99 @@ function create_photo_thumb( $photo_id, $photo_tmp_name, $thumb_tmp_name )
 	return 0;
 }
 
+//---------------------------------------------------------
+// create thumb
+//---------------------------------------------------------
+function create_thumb_param_by_tmp( $item_id, $thumb_name )
+{
+	if ( empty($thumb_name) ) {
+		return null;
+	}
+
+	$thumb_file = $this->_TMP_DIR .'/'. $thumb_name;
+	$this->_photo_class->create_thumb_from_image_file( $thumb_file, $item_id );
+	$thumb_param = $this->_photo_class->get_thumb_param();
+	$this->unlink_file( $thumb_file );
+
+	return $thumb_param ;
+}
+
+function create_thumb_param_by_param( $param )
+{
+	if ( ! is_array( $param ) ) {
+		return null;
+	}
+
+	$item_id = $param['item_id'] ;
+
+	$param['flag_thumb']  = true  ;
+	$param['flag_middle'] = false ;
+	list( $thumb_param, $middle_param_dummy ) =
+		$this->_photo_class->create_thumb_middle_param( $item_id, $param );
+
+	return $thumb_param ;
+}
+
+//---------------------------------------------------------
+// create middle
+//---------------------------------------------------------
+function create_middle_param_by_tmp( $item_id, $middle_name )
+{
+	if ( empty($middle_name) ) {
+		return null;
+	}
+
+	$middle_file = $this->_TMP_DIR .'/'. $middle_name;
+	$this->_photo_class->create_middle_from_image_file( $middle_file, $item_id );
+	$middle_param = $this->_photo_class->get_middle_param();
+	$this->unlink_file( $middle_file );
+
+	return $middle_param ;
+}
+
+function create_middle_param_by_param( $param )
+{
+	if ( ! is_array( $param ) ) {
+		return null;
+	}
+
+	$item_id = $param['item_id'] ;
+
+	$param['flag_thumb']  = false ;
+	$param['flag_middle'] = true ;
+	list( $thumb_param_dummy, $middle_param ) =
+		$this->_photo_class->create_thumb_middle_param( $item_id, $param );
+
+	return $middle_param ;
+}
+
 function get_file_params()
 {
 	return $this->_file_params ;
+}
+
+function conv_rotate( $rotate )
+{
+	$rot = 0 ;
+	switch( $rotate ) 
+	{
+		case 'rot270' :
+			$rot = 270 ;
+			break ;
+
+		case 'rot180' :
+			$rot = 180 ;
+			break ;
+
+		case 'rot90' :
+			$rot = 90 ;
+			break ;
+
+		case 'rot0' :
+		default :
+			break ;
+	}
+	return $rot;
 }
 
 //---------------------------------------------------------
@@ -1094,14 +1194,14 @@ function get_file_cont_duration( $item_row )
 //---------------------------------------------------------
 // tag class
 //---------------------------------------------------------
-function tag_handler_update_tags( $photo_id, $tag_name_array )
+function tag_handler_update_tags( $item_id, $tag_name_array )
 {
-	return $this->_tag_class->update_tags( $photo_id, $this->_xoops_uid, $tag_name_array );
+	return $this->_tag_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
 }
 
-function tag_handler_tag_name_array( $photo_id )
+function tag_handler_tag_name_array( $item_id )
 {
-	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $photo_id, $this->_xoops_uid );
+	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
 }
 
 //---------------------------------------------------------

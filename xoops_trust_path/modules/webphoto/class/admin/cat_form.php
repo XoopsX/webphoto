@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: cat_form.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// _build_line_category_file()
 // 2008-10-01 K.OHWADA
 // submit -> item_manager
 // 2008-08-24 K.OHWADA
@@ -23,12 +25,18 @@ class webphoto_admin_cat_form extends webphoto_form_this
 {
 	var $_gicon_handler;
 
-	var $_ADMIN_CAT_PHP;
+	var $_cfg_fsize     = 0 ;
+	var $_cfg_cat_width = 0 ;
+
+	var $_THIS_FCT = 'catmanager';
+	var $_THIS_URL;
 
 	var $_IMG_HEIGHT_LIST = 20;
 	var $_IMG_HEIGHT_FORM = 50;
 	var $_SIZE_IMGPATH    = 80;
 	var $_SIZE_WEIGHT     = 5;
+
+	var $_CAT_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
 
 //---------------------------------------------------------
 // constructor
@@ -39,7 +47,10 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 
 	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
 
-	$this->_ADMIN_CAT_PHP = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
+	$this->_cfg_fsize     = $this->_config_class->get_by_name( 'fsize' );
+	$this->_cfg_cat_width = $this->_config_class->get_by_name( 'cat_width' );
+
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -76,21 +87,27 @@ function print_form( $mode, $row )
 
 	$this->set_row( $row );
 
-	echo $this->build_form_begin();
+	echo $this->build_form_upload( 'catmanager' );
+	echo $this->build_html_token();
 
 	echo $this->build_input_hidden( 'fct' ,   'catmanager' );
 	echo $this->build_input_hidden( 'action' , $action );
 	echo $this->build_row_hidden(   'cat_id' );
 
+	echo $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
+	echo $this->build_input_hidden( 'fieldCounter',  $this->_FILED_COUNTER_1 );
+
 	echo $this->build_table_begin();
 	echo $this->build_line_title( $title );
 
 	echo $this->build_row_text(  _WEBPHOTO_CAT_TITLE,  'cat_title' );
-	echo $this->build_line_ele(  _WEBPHOTO_CAT_IMG_PATH, $this->_build_ele_img_path() );
+	echo $this->build_line_ele(  _AM_WEBPHOTO_CAT_TH_PARENT,  $this->_build_ele_selbox_pid() );
 	echo $this->build_row_dhtml( _WEBPHOTO_CAT_DESCRIPTION,  'cat_description' );
+
+	echo $this->_build_line_category_file();
+
 	echo $this->build_row_text(  _WEBPHOTO_CAT_WEIGHT,  'cat_weight', $this->_SIZE_WEIGHT );
 	echo $this->build_line_ele(  _WEBPHOTO_CAT_PERM_POST,  $this->_build_ele_perm_post() );
-	echo $this->build_line_ele(  _AM_WEBPHOTO_CAT_TH_PARENT,  $this->_build_ele_selbox_pid() );
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->build_line_ele(  _WEBPHOTO_GMAP_ICON,  $this->_build_ele_gicon() );
@@ -102,15 +119,81 @@ function print_form( $mode, $row )
 	echo $this->build_form_end();
 }
 
-function _build_ele_img_path()
+function _build_line_category_file()
+{
+	return $this->build_line_cap_ele( 
+		_AM_WEBPHOTO_CAP_CAT_SELECT, 
+		_AM_WEBPHOTO_DSC_CAT_FOLDER, 
+		$this->_build_ele_img() );
+}
+
+function _build_ele_img()
+{
+	$ele  = $this->_build_img_file();
+	$ele .= "<br />\n";
+	$ele .= $this->get_constant('OR') ;
+	$ele .= "<br />\n";
+	$ele .= $this->_build_img_select();
+	$ele .= "<br />\n";
+	$ele .= $this->get_constant('OR') ;
+	$ele .= "<br />\n";
+	$ele .= $this->_build_img_path() ;
+	$ele .= "<br />\n";
+	$ele .= $this->_build_img_show();
+	return $ele;
+}
+
+function _build_img_file()
+{
+	$ele  = $this->get_constant( 'CAP_MAXPIXEL' ) .' ';
+	$ele .= $this->_cfg_cat_width .' x ';
+	$ele .= $this->_cfg_cat_width .' px';
+	$ele .= "<br />\n";
+	$ele .= $this->get_constant( 'DSC_PIXCEL_RESIZE' ) ;
+	$ele .= "<br />\n";
+	$ele .= $this->build_form_file( $this->_CAT_FIELD_NAME );
+	$ele .= "<br />\n";
+	return $ele;
+}
+
+function _build_img_select()
+{
+// xoops.js showImgSelected(imgId, selectId, imgDir, extra, xoopsUrl)
+	$onchange = "showImgSelected('clogo', 'cat_img_name', '". $this->_CATS_PATH ."', '', '". XOOPS_URL ."')" ;
+	$extra    = 'onchange="'. $onchange .'"';
+
+	$name  = 'cat_img_name';
+	$value = $this->get_row_by_key( $name );
+
+	$options = XoopsLists::getImgListAsArray( $this->_CATS_DIR );
+	array_unshift( $options, _NONE );
+
+	$ele  = $this->get_constant( 'CAT_IMG_NAME' ) ;
+	$ele .= "<br />\n";
+	$ele .= $this->build_form_select( $name, $value, $options, 1, $extra );
+	$ele .= "<br />\n";
+
+	return $ele ;
+}
+
+function _build_img_path()
 {
 	$name  = 'cat_img_path';
 	$value = $this->get_row_by_key( $name );
-	$ele   = $this->build_input_text( $name, $value, $this->_SIZE_IMGPATH );
-	$ele  .= "<br />\n";
-	$ele  .= _AM_WEBPHOTO_DSC_CAT_IMGPATH;
-	$ele  .= "<br />\n";
-	$ele  .= $this->_build_img( $this->get_row(), $this->_IMG_HEIGHT_FORM  );
+
+	$ele  = $this->get_constant( 'CAT_IMG_PATH' ) ;
+	$ele .= "<br />\n";
+	$ele .= _AM_WEBPHOTO_DSC_CAT_PATH ;
+	$ele .= "<br />\n";
+	$ele .= $this->build_input_text( $name, $value, $this->_SIZE_IMGPATH );
+	$ele .= "<br />\n";
+
+	return $ele ;
+}
+
+function _build_img_show()
+{
+	$ele = $this->_build_img( $this->get_row(), $this->_IMG_HEIGHT_FORM  );
 	return $ele;
 }
 
@@ -249,10 +332,10 @@ function _print_line( $row )
 	echo "</td>\n";
 
 	echo '<td class="'. $oddeven .'" nowrap="nowrap" align="center">';
-	echo '<a href="'. $this->_ADMIN_CAT_PHP .'&amp;disp=edit&amp;cat_id='. $cat_id .'">';
+	echo '<a href="'. $this->_THIS_URL .'&amp;disp=edit&amp;cat_id='. $cat_id .'">';
 	echo $this->build_img_catedit();
 	echo '</a> &nbsp; ';
-	echo '<a href="'. $this->_ADMIN_CAT_PHP .'&amp;disp=new&amp;cat_id='. $cat_id .'">';
+	echo '<a href="'. $this->_THIS_URL .'&amp;disp=new&amp;cat_id='. $cat_id .'">';
 	echo $this->build_img_catadd();
 	echo '</a> &nbsp; ';
 	echo "</td>\n";
@@ -273,7 +356,7 @@ function _print_line( $row )
 function _build_img( $row, $max_height )
 {
 	$ret    = '';
-	$imgsrc = $this->_cat_handler->build_show_imgurl( $row );
+	$imgsrc = $this->build_show_imgurl( $row );
 	if ( $imgsrc ) {
 		$imgsrc_s = $this->sanitize($imgsrc);
 		$height = $row['cat_orig_height'];
@@ -287,6 +370,17 @@ function _build_img( $row, $max_height )
 		$ret .= '</a>';
 	}
 	return $ret;
+}
+
+function build_show_imgurl( $row )
+{
+	$img_name = $row['cat_img_name'] ;
+	if ( $img_name ) {
+		$url = $this->_CATS_URL .'/'. $img_name ;
+	} else {
+		$url = $this->_cat_handler->build_show_img_path( $row );
+	}
+	return $url;
 }
 
 //---------------------------------------------------------

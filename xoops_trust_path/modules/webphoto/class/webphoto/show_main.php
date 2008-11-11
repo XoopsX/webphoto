@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: show_main.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
  
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// build_show_imgurl()
 // 2008-10-01 K.OHWADA
 // use QRS_DIR
 // 2008-08-24 K.OHWADA
@@ -291,7 +293,7 @@ function build_catlist( $cat_id, $catlist_cols, $catlist_delmita )
 
 function build_show_cat( $row )
 {
-	$imgurl = $this->_cat_handler->build_show_imgurl( $row );
+	$imgurl = $this->build_show_imgurl( $row );
 
 	$show = $row;
 	$show['cat_title_s'] = $this->sanitize( $row['cat_title'] ) ;
@@ -299,6 +301,17 @@ function build_show_cat( $row )
 	$show['imgurl_s']    = $this->sanitize( $imgurl ) ;
 
 	return $show;
+}
+
+function build_show_imgurl( $row )
+{
+	$img_name = $row['cat_img_name'] ;
+	if ( $img_name ) {
+		$url = $this->_CATS_URL .'/'. $img_name ;
+	} else {
+		$url = $this->_cat_handler->build_show_img_path( $row );
+	}
+	return $url;
 }
 
 // get list of categories in header space
@@ -336,7 +349,7 @@ function get_categories_by_pid( $parent_id )
 		array_push( $catid_arr , $cat_id ) ;
 		$photo_total_sum = $this->_item_handler->get_count_public_by_catid_array( $catid_arr ) ;
 
-		$imgurl = $this->_cat_handler->build_show_imgurl( $row );
+		$imgurl = $this->build_show_imgurl( $row );
 
 		$main_arr = $this->build_show_cat( $row );
 		$main_arr['photo_small_sum'] 

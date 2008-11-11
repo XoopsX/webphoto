@@ -1,10 +1,17 @@
 <?php
-// $Id: item_manager.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: item_manager.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// webphoto_flash_log
+// _thumb_delete()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,6 +23,7 @@ class webphoto_admin_item_manager extends webphoto_photo_action
 	var $_vote_handler;
 	var $_flashvar_handler;
 	var $_playlist_class;
+	var $_log_class ;
 	var $_sort_class ;
 
 	var $_sort_array      = null;
@@ -23,7 +31,6 @@ class webphoto_admin_item_manager extends webphoto_photo_action
 	var $_player_title    = null;
 	var $_alternate_class = 'even';
 
-	var $_LOG_FILE = null;
 	var $_PERPAGE_DEFAULT = 20;
 
 	var $_THIS_FCT = 'item_manager';
@@ -44,12 +51,11 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
 	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
 	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
-
-	$this->_LOG_FILE = $this->_TMP_DIR.'/log.txt' ;
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 
@@ -118,6 +124,18 @@ function main()
 		$this->_redo();
 		break;
 
+	case 'thumb_delete':
+		$this->_thumb_delete();
+		exit();
+
+	case 'middle_delete':
+		$this->_middle_delete();
+		exit();
+
+	case 'flash_delete':
+		$this->_flash_delete();
+		exit();
+
 	case 'flashvar_form': 
 		$this->_flashvar_form();
 		break;
@@ -165,12 +183,21 @@ function main()
 
 function _get_action()
 {
-	$post_op          = $this->_post_class->get_post_get_text('op' );
-	$post_conf_delete = $this->_post_class->get_post_text('conf_delete' );
-	$post_restore     = $this->_post_class->get_post_text('restore' );
+	$post_op            = $this->_post_class->get_post_get_text('op' );
+	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
+	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
+	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
+	$post_flash_delete  = $this->_post_class->get_post_text('flash_delete' );
+	$post_restore       = $this->_post_class->get_post_text('restore' );
 
 	if ( $post_conf_delete ) {
 		return 'confirm_form';
+	} elseif ( $post_thumb_delete ) {
+		return 'thumb_delete';
+	} elseif ( $post_middle_delete ) {
+		return 'middle_delete';
+	} elseif ( $post_flash_delete ) {
+		return 'flash_delete';
 	} elseif ( $post_restore ) {
 		return 'flashvar_restore';
 	} elseif ( $post_op ) {
@@ -920,6 +947,46 @@ function _redo()
 	exit();
 }
 
+
+//---------------------------------------------------------
+// thumb delete
+//---------------------------------------------------------
+function _thumb_delete()
+{
+	$this->_check_token_and_redirect();
+
+	$item_row = $this->_get_item_row_or_redirect();
+	$item_id  = $item_row['item_id'] ;
+
+	$url_redirect = $this->_build_modify_form_url( $item_id );
+
+	$this->thumb_delete( $item_row, $url_redirect );
+}
+
+function _middle_delete()
+{
+	$this->_check_token_and_redirect();
+
+	$item_row = $this->_get_item_row_or_redirect();
+	$item_id  = $item_row['item_id'] ;
+
+	$url_redirect = $this->_build_modify_form_url( $item_id );
+
+	$this->middle_delete( $item_row, $url_redirect );
+}
+
+function _flash_delete()
+{
+	$this->_check_token_and_redirect();
+
+	$item_row = $this->_get_item_row_or_redirect();
+	$item_id  = $item_row['item_id'] ;
+
+	$url_redirect = $this->_build_modify_form_url( $item_id );
+
+	$this->video_flash_delete( $item_row, $url_redirect );
+}
+
 //---------------------------------------------------------
 // flashvar form
 //---------------------------------------------------------
@@ -1279,22 +1346,16 @@ function _view_log()
 	echo $this->_build_button( 'empty_log',   _AM_WEBPHOTO_LOG_EMPT );
 	echo "<br /><br />\n";
 
-	if ( !file_exists($this->_LOG_FILE) ) {
-		echo 'not exist file : '. $this->_LOG_FILE. "<br />\n";
+	$lines = $this->_log_class->read_log() ;
+	if ( ! is_array($lines) ) {
+		echo 'cannot open file : '. $this->_log_class->get_filename(). "<br />\n";
 		return ;	// no action;
 	}
 
-	$lines = array();
-	$fp = fopen($this->_LOG_FILE, "r");
-	if ( !$fp ) {
-		echo 'cannot open file : '. $this->_LOG_FILE. "<br />\n";
+	if ( count($lines) == 0 ) {
+		echo "No log data <br />\n";
 		return ;	// no action;
 	}
-
-	while (!feof($fp) ) {        
-		$lines[] = fgetcsv($fp, 1024);   
-	}
-	fclose($fp);
 
 	echo '<table border="1" cellspacing="0" cellpadding="1" style="font-size: 90%;">'."\n";
 
@@ -1310,11 +1371,12 @@ function _view_log()
 	echo '<th>'. $this->get_constant( 'LOGFILE_DURATION' ) .'</th>';
 	echo "</tr>\n";
 
-	$linenumber = 1;
+	$number = 1;
+
 	foreach ( $lines as $line )
 	{
 		echo '<tr class="odd">';
-		echo '<td>' . $linenumber. '</td>';
+		echo '<td>' . $number. '</td>';
 		echo '<td>' . $line[0] .'</td>';
 		echo '<td>' . $line[1] .'</td>';
 		echo '<td>' . $line[2] .'</td>';
@@ -1324,10 +1386,25 @@ function _view_log()
 		echo '<td>' . $line[6] .'</td>';
 		echo '<td>' . $line[7] .'</td>';
 		echo "</tr>\n";
-		$linenumber ++ ;
+	
+		$number ++ ;
 	}
 
 	echo "</table>\n";
+}
+
+function check_empty_log( $lines )
+{
+	$count = count($lines);
+
+	if ( $count == 0 ) {
+		return true ;
+	}
+
+	if (( $count == 1 ) && empty($lines[0]) ) {
+		return true ;
+	}
+
 }
 
 //---------------------------------------------------------
@@ -1335,7 +1412,7 @@ function _view_log()
 //---------------------------------------------------------
 function _empty_log()
 {
-	file_put_contents( $this->_LOG_FILE , '' );
+	$this->_log_class->empty_log() ;
 
 	$url = $this->_THIS_URL .'&amp;op=view_log';
 	redirect_header( $url, $this->_TIME_SUCCESS , _AM_WEBPHOTO_LOG_EMPT );

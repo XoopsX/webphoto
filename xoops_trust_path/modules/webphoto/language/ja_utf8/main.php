@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.13 2008/11/01 23:53:08 ohwada Exp $
+// $Id: main.php,v 1.14 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1197,6 +1197,19 @@ define("_WEBPHOTO_PLAYLIST_ERR_WRITE","キャッシュ・ファイルに書込�
 
 define("_WEBPHOTO_USER",  "ユーザ" ) ;
 define("_WEBPHOTO_OR",  "あるいは" ) ;
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_ICON" , "アイコン名" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "外部リンクのミドルURL" ) ;
+
+// cat table
+define("_WEBPHOTO_CAT_IMG_NAME" , "カテゴリ画像名" ) ;
+
+// edit form
+define("_WEBPHOTO_CAP_MIDDLE_SELECT", "ミドル画像の選択");
 
 // === define end ===
 }

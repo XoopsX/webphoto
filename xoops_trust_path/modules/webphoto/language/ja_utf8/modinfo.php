@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.6 2008/10/30 13:02:36 ohwada Exp $
+// $Id: modinfo.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -80,8 +80,8 @@ define( $constpref."CFG_DESCMAKETHUMB" , "「生成しない」から「生成�
 //define( $constpref."CFG_THUMBWIDTH" , "サムネイル画像の幅" ) ;
 //define( $constpref."CFG_DESCTHUMBWIDTH" , "生成されるサムネイル画像の高さは、幅から自動計算されます" ) ;
 //define( $constpref."CFG_THUMBSIZE" , "サムネイル画像サイズ(pixel)" ) ;
+//define( $constpref."CFG_THUMBRULE" , "サムネイル生成法則" ) ;
 
-define( $constpref."CFG_THUMBRULE" , "サムネイル生成法則" ) ;
 define( $constpref."CFG_WIDTH" , "最大画像幅" ) ;
 define( $constpref."CFG_DESCWIDTH" , "画像アップロード時に自動調整されるメイン画像の最大幅。<br />GDモードでTrueColorを扱えない時には単なるサイズ制限" ) ;
 define( $constpref."CFG_HEIGHT" , "最大画像高" ) ;
@@ -115,9 +115,9 @@ define( $constpref."CFG_DESCUSESITEIMG" , "イメージマネージャ統合で�
 define( $constpref."OPT_USENAME" , "ハンドル名" ) ;
 define( $constpref."OPT_USEUNAME" , "ログイン名" ) ;
 
-define( $constpref."OPT_CALCFROMWIDTH" , "指定数値を幅として、高さを自動計算" ) ;
-define( $constpref."OPT_CALCFROMHEIGHT" , "指定数値を高さとして、幅を自動計算" ) ;
-define( $constpref."OPT_CALCWHINSIDEBOX" , "幅か高さの大きい方が指定数値になるよう自動計算" ) ;
+//define( $constpref."OPT_CALCFROMWIDTH" , "指定数値を幅として、高さを自動計算" ) ;
+//define( $constpref."OPT_CALCFROMHEIGHT" , "指定数値を高さとして、幅を自動計算" ) ;
+//define( $constpref."OPT_CALCWHINSIDEBOX" , "幅か高さの大きい方が指定数値になるよう自動計算" ) ;
 
 define( $constpref."OPT_VIEWLIST" , "説明文付リスト表示" ) ;
 define( $constpref."OPT_VIEWTABLE" , "テーブル表示" ) ;
@@ -240,8 +240,9 @@ define($constpref."CFG_USE_PATHINFO","pathinfo を使用する");
 //---------------------------------------------------------
 // v0.30
 //---------------------------------------------------------
-define($constpref."CFG_TMPDIR" ,   "一時ファイルの保存先ディレクトリ" ) ;
-define($constpref."CFG_TMPDIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします");
+//define($constpref."CFG_TMPDIR" ,   "一時ファイルの保存先ディレクトリ" ) ;
+//define($constpref."CFG_TMPDIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします");
+
 define($constpref."CFG_MAIL_HOST"  , "メール サーバー ホスト名" ) ;
 define($constpref."CFG_MAIL_USER"  , "メール ユーザーID" ) ;
 define($constpref."CFG_MAIL_PASS"  , "メール パスワード" ) ;
@@ -292,6 +293,17 @@ define($constpref."ADMENU_PLAYER_MANAGER", "プレイヤー管理");
 define($constpref."ADMENU_FLASHVAR_MANAGER", "フラッシュ変数管理");
 define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "プレイヤー・テーブル管理");
 define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "フラッシュ変数・テーブル管理");
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+define($constpref."CFG_WORKDIR" ,   "作業用のディレクトリ" ) ;
+define($constpref."CFG_WORKDIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします");
+define($constpref."CFG_CAT_WIDTH" ,   "カテゴリ画像の幅と高さ" ) ;
+define($constpref."CFG_CSUB_WIDTH" ,  "サブカテゴリに表示する画像の幅と高さ" ) ;
+define($constpref."CFG_GICON_WIDTH" ,  "GoogleMap アイコン画像の幅と高さ" ) ;
+define($constpref."CFG_JPEG_QUALITY" ,  "JPEG 品質" ) ;
+define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />画像処理パッケージとしてGDを選択した時のみ意味を持ちます" ) ;
 
 }
 // === define begin ===

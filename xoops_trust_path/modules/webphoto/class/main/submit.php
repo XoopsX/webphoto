@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.8 2008/11/04 14:08:00 ohwada Exp $
+// $Id: submit.php,v 1.9 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// remove update_init()
 // 2008-11-04 K.OHWADA
 // BUG: Fatal error in upload.php
 // 2008-10-01 K.OHWADA
@@ -270,14 +272,14 @@ function _print_preview_submit( $item_row, $image_info )
 function _preview_new()
 {
 // BUG: Fatal error in upload.php
-	$this->upload_init( true ) ;
-
 	$ret = $this->upload_fetch_photo( true );
+
 	if ( $ret < 0 ) {
 		return $this->_preview_no_image();
 	}
 
 	$photo_tmp_name = $this->_photo_tmp_name;
+	$this->set_values_for_fetch_photo( $photo_tmp_name );
 
 // overwrite preview name
 	$this->set_preview_name( str_replace( 

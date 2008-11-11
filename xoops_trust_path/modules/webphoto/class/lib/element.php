@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: element.php,v 1.5 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// build_caption()
 // 2008-10-01 K.OHWADA
 // build_form_text_color_pickup() etc
 // 2008-08-01 K.OHWADA
@@ -755,7 +757,7 @@ function build_caption( $cap, $desc=null )
 {
 	$str = $cap;
 	if ( $desc ) {
-		$str .= "<br />\n";
+		$str .= "<br /><br />\n";
 		$str .= $this->build_caption_desc( $desc );
 	}
 	return $str;

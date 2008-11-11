@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.5 2008/08/27 03:58:02 ohwada Exp $
+// $Id: mail_photo.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// TMP_DIR -> MAIL_DIR
 // 2008-08-24 K.OHWADA
 // supported gps
 //---------------------------------------------------------
@@ -103,14 +105,15 @@ function parse_single_mail( $maillog_id, $filename, $specified_array=null )
 		return false;
 	}
 
-	$file = $this->_TMP_DIR.'/'.$filename ;
-	if ( ! file_exists($file) ) {
-		$msg = 'not exists : '.$file;
+	$file_path = $this->_MAIL_DIR.'/'.$filename ;
+
+	if ( ! file_exists($file_path) ) {
+		$msg = 'not exists : '.$file_path;
 		$this->print_msg_level_admin( $msg, false, true );
 		return false;
 	}
 
-	$mail = file_get_contents( $file );
+	$mail = file_get_contents( $file_path );
 
 	$this->_parse_class->parse_mail( $mail );
 	$result = $this->_parse_class->get_result();
@@ -193,8 +196,10 @@ function parse_attaches( $mail_filename, $attaches_in, $specified_array=null )
 		    ( empty($specified_array) && empty($reject) )) { 
 
 			$file_save = $this->_utility_class->strip_ext( $mail_filename ).'-'.$filename ;
+			$file_path = $this->_MAIL_DIR.'/'.$file_save ;
+			
 			$this->_utility_class->write_file(
-				$this->_TMP_DIR.'/'.$file_save, $content, 'wb', $this->_flag_mail_chmod );
+				$file_path, $content, 'wb', $this->_flag_mail_chmod );
 			$reject = null;	// clear reject
 
 // with reject
@@ -390,7 +395,7 @@ function add_photo_from_attaches( $param_in )
 			continue;
 		}
 
-		$src_file = $this->_TMP_DIR .'/'. $file_save ;
+		$src_file = $this->_MAIL_DIR .'/'. $file_save ;
 
 		if ( $i > 0 ) {
 			$title = $subject .' - '. $i;

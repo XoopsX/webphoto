@@ -1,5 +1,5 @@
 <?php
-// $Id: uploader.php,v 1.2 2008/06/22 05:26:00 ohwada Exp $
+// $Id: uploader.php,v 1.3 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,6 +15,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08
+//   getInstance() setUploadDir() etc
 // 2008-04-02
 // add function
 //   setAllowedMimeTypes()
@@ -101,6 +103,9 @@ class webphoto_lib_uploader
 		14 => 'Failed uploading file: ', // mediaName
 	);
 
+//---------------------------------------------------------
+// constructor
+//---------------------------------------------------------
 	/**
 	 * Constructor
 	 * 
@@ -112,22 +117,64 @@ class webphoto_lib_uploader
 	 * @param   int	 $cmodvalue
 	 * @param   array   $allowedExtensions
 	 **/
-	function webphoto_lib_uploader($uploadDir, $allowedMimeTypes, $maxFileSize, $maxWidth=null, $maxHeight=null, $allowedExtensions=null )
+ 	function webphoto_lib_uploader()
 	{
-		if (is_array($allowedMimeTypes)) {
-			$this->allowedMimeTypes =& $allowedMimeTypes;
+		// dummy
+	}
+
+// added for webphoto
+	function &getInstance()
+	{
+		static $instance;
+		if (!isset($instance)) {
+			$instance = new webphoto_lib_uploader();
 		}
+		return $instance;
+	}
+
+//	function MyXoopsMediaUploader($uploadDir, $allowedMimeTypes, $maxFileSize, $maxWidth=null, $maxHeight=null, $allowedExtensions=null )
+//	{
+//		if (is_array($allowedMimeTypes)) {
+//			$this->allowedMimeTypes =& $allowedMimeTypes;
+//		}
+//		$this->uploadDir = $uploadDir;
+//		$this->maxFileSize = intval($maxFileSize);
+//		if(isset($maxWidth)) {
+//			$this->maxWidth = intval($maxWidth);
+//		}
+//		if(isset($maxHeight)) {
+//			$this->maxHeight = intval($maxHeight);
+//		}
+//		if( isset( $allowedExtensions ) && is_array( $allowedExtensions ) ) {
+//			$this->allowedExtensions =& $allowedExtensions ;
+//		}
+//	}
+
+//---------------------------------------------------------
+// functions
+//---------------------------------------------------------
+// added for webphoto
+	function setUploadDir( $uploadDir )
+	{
 		$this->uploadDir = $uploadDir;
+	}
+
+// added for webphoto
+	function setMaxFileSize( $maxFileSize )
+	{
 		$this->maxFileSize = intval($maxFileSize);
-		if(isset($maxWidth)) {
-			$this->maxWidth = intval($maxWidth);
-		}
-		if(isset($maxHeight)) {
-			$this->maxHeight = intval($maxHeight);
-		}
-		if( isset( $allowedExtensions ) && is_array( $allowedExtensions ) ) {
-			$this->allowedExtensions =& $allowedExtensions ;
-		}
+	}
+
+// added for webphoto
+	function setMaxWidth( $maxWidth )
+	{
+		$this->maxWidth = intval($maxWidth);
+	}
+
+// added for webphoto
+	function setMaxHeight( $maxHeight )
+	{
+		$this->maxHeight = intval($maxHeight);
 	}
 
 // added for webphoto

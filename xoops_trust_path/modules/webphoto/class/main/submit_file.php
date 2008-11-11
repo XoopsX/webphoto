@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
+// $Id: submit_file.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// BUG: not create video thumb
 // 2008-10-01 K.OHWADA
 // use video_thumb()
 // 2008-08-24 K.OHWADA
@@ -191,6 +193,7 @@ function _submit()
 	$ret2 = $this->build_failed_msg( $ret1 );
 
 	$redirect_param = array(
+		'is_failed'   => ! $ret2 ,
 		'url_success' => $this->_build_url_success( $this->_created_row ) ,
 		'url_faild'   => $this->_THIS_URL ,
 		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
@@ -349,14 +352,18 @@ function _video()
 			$this->get_constant('NOMATCH_PHOTO') );
 	}
 
+// BUG: not create video thumb
+	$ret = $this->_photo_class->video_thumb( $item_row );
+
 	$redirect_param = array(
+		'is_failed'   => ! $ret ,
 		'url_success' => $this->_build_url_success( $item_row ) ,
 		'url_faild'   => $this->_THIS_URL ,
 		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
 	);
 
 	list( $url, $time, $msg ) =
-		$this->_photo_class->video_thumb( $item_row , $redirect_param );
+		$this->build_redirect( $redirect_param );
 
 	redirect_header( $url, $time, $msg );
 	exit();

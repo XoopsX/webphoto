@@ -1,10 +1,16 @@
 <?php
-// $Id: callback.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: callback.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// flash_log.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -24,7 +30,9 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
+webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/post.php' );
+webphoto_include_once( 'class/webphoto/flash_log.php' );
 webphoto_include_once( 'class/main/callback.php' );
 
 //=========================================================

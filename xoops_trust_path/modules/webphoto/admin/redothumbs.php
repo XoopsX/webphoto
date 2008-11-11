@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.3 2008/08/27 04:51:49 ohwada Exp $
+// $Id: redothumbs.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// imagemagick.php
 // 2008-08-24 K.OHWADA
 // added maillog_handler.php
 // 2008-07-01 K.OHWADA
@@ -25,6 +27,9 @@ include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php' ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );

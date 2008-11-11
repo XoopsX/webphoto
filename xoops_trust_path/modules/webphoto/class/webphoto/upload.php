@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: upload.php,v 1.5 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// webphoto_lib_uploader::getInstance()
 // 2008-10-01 K.OHWADA
 // init_media_uploader_full()
 // 2008-07-01 K.OHWADA
@@ -22,7 +24,14 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_upload extends webphoto_base_this
 {
+	var $_mime_class;
 	var $_uploader_class;
+
+	var $_max_filesize = 0 ;
+	var $_max_width    = 0 ;
+	var $_max_height   = 0 ;
+
+	var $_flag_size_limit = true ;
 
 	var $_uploader_media_name = null;
 	var $_uploader_media_type = null;
@@ -32,8 +41,6 @@ class webphoto_upload extends webphoto_base_this
 	var $_PHP_UPLOAD_ERRORS = array();
 	var $_UPLOADER_ERRORS   = array();
 
-	var $_IMAGE_EXTS = null;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -41,8 +48,17 @@ function webphoto_upload( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
+	$this->_mime_class     =& webphoto_mime::getInstance( $dirname );
+
+	$this->_uploader_class =& webphoto_lib_uploader::getInstance() ;
+	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;
+	$this->_uploader_class->setUploadDir( $this->_TMP_DIR );
+
+	$this->set_max_filesize( $this->get_config_by_name( 'fsize' )  ) ;
+	$this->set_max_width(    $this->get_config_by_name( 'width' )  ) ;
+	$this->set_max_height(   $this->get_config_by_name( 'height' ) ) ;
+
 	$this->_init_errors();
-	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -57,9 +73,27 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function fetch_for_edit( $field )
+function fetch_media( $field, $flag_allow_all )
 {
 	$this->_tmp_name = null;
+
+	if ( $flag_allow_all ) {
+		list ( $allowed_mimes, $allowed_exts ) = 
+			$this->_mime_class->get_my_allowed_mimes();
+
+	} else {
+		$allowed_mimes = $this->_mime_class->get_image_mimes();
+		$allowed_exts  = $this->_mime_class->get_image_exts();
+	}
+
+	$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
+	$this->_uploader_class->setAllowedExtensions( $allowed_exts );
+	$this->_uploader_class->setMaxFileSize( $this->_max_filesize );
+
+	if ( $this->_flag_size_limit ) {
+		$this->_uploader_class->setMaxWidth(  $this->_max_width );
+		$this->_uploader_class->setMaxHeight( $this->_max_height );
+	}
 
 	$ret = $this->uploader_fetch( $field );
 	if ( $ret <= 0 ) { 
@@ -74,38 +108,33 @@ function fetch_for_edit( $field )
 	return 1 ;	// success
 }
 
-function fetch_for_gicon( $field_name, $allow_noimage=false )
+function fetch_image( $field )
 {
-	$tmp_name        = null;
 	$this->_tmp_name = null;
 
-// if image file uploaded
-	$ret1 = $this->uploader_fetch( $field_name );
-	if ( $ret1 <= 0 ) { 
-		return $ret1;	// failed or no file
+	$allowed_mimes = $this->_mime_class->get_image_mimes();
+	$allowed_exts  = $this->_mime_class->get_image_exts();
+
+	$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
+	$this->_uploader_class->setAllowedExtensions( $allowed_exts );
+	$this->_uploader_class->setMaxFileSize( $this->_max_filesize );
+
+	if ( $this->_flag_size_limit ) {
+		$this->_uploader_class->setMaxWidth(  $this->_max_width );
+		$this->_uploader_class->setMaxHeight( $this->_max_height );
 	}
 
-	$tmp_name = $this->get_uploader_file_name();
-
-	if ( empty($tmp_name) && !$allow_noimage ) {
-		return 0;	// no image
+	$ret = $this->uploader_fetch( $field );
+	if ( $ret <= 0 ) { 
+		return $ret;	// failed or no file
 	}
 
-	if ( ! $this->is_readable_in_tmp_dir( $tmp_name ) ) {
+	if ( ! $this->is_readable_in_tmp_dir( $this->_uploader_file_name ) ) {
 		return _C_WEBPHOTO_ERR_FILEREAD;
 	}
 
-	$ext = $this->_parse_ext( $tmp_name );
-
-	if ( $ext && !$this->_is_image_ext($ext) ) {
-		if ( $tmp_name ) {
-			$this->unlink_file( $this->_TMP_DIR .'/'. $tmp_name ) ;
-		}
-		return _C_WEBPHOTO_ERR_NOT_ALLOWED_EXT;
-	}
-
-	$this->_tmp_name = $tmp_name;
-	return 1;	// with image
+	$this->_tmp_name = $this->_uploader_file_name;
+	return 1 ;	// success
 }
 
 function get_tmp_name()
@@ -114,38 +143,31 @@ function get_tmp_name()
 }
 
 //---------------------------------------------------------
+// set param
+//---------------------------------------------------------
+function set_flag_size_limit( $val )
+{
+	$this->_flag_size_limit = (bool)$val;
+}
+
+function set_max_filesize( $val )
+{
+	$this->_max_filesize = intval($val);
+}
+
+function set_max_width( $val )
+{
+	$this->_max_width = intval($val);
+}
+
+function set_max_height( $val )
+{
+	$this->_max_height = intval($val);
+}
+
+//---------------------------------------------------------
 // uploader class
 //---------------------------------------------------------
-function init_media_uploader( $has_resize, $allowed_mimes, $allowed_exts )
-{
-	$cfg_fsize    = $this->get_config_by_name( 'fsize' );
-	$cfg_width    = $this->get_config_by_name( 'width' );
-	$cfg_height   = $this->get_config_by_name( 'height' );
-
-	if ( $has_resize ) {
-		$this->init_media_uploader_full( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , null , null , $allowed_exts ) ;
-	} else {
-		$this->init_media_uploader_full( $this->_TMP_DIR , $allowed_mimes , $cfg_fsize , $cfg_width , $cfg_height , $allowed_exts ) ;
-	}
-
-}
-
-function init_media_uploader_full( $dir, $mimes, $size, $width, $height, $exts )
-{
-	$this->_uploader_class = new webphoto_lib_uploader( $dir, $mimes, $size, $width, $height, $exts ) ;
-	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;
-}
-
-function set_image_extensions()
-{
-	$this->_uploader_class->setAllowedExtensions( $this->_get_image_exts() ) ;
-}
-
-function set_allowed_extensions( $extensions )
-{
-	$this->_uploader_class->setAllowedExtensions( $extensions ) ;
-}
-
 function uploader_fetch( $media_name, $index=null )
 {
 // http://www.php.net/manual/en/features.file-upload.errors.php
@@ -226,10 +248,6 @@ function build_uploader_errors()
 
 function build_uploader_error_single( $code )
 {
-	$cfg_fsize    = $this->get_config_by_name( 'fsize' );
-	$cfg_width    = $this->get_config_by_name( 'width' );
-	$cfg_height   = $this->get_config_by_name( 'height' );
-
 	$err1 = $this->get_uploader_error_msg( $code );
 	$err2 = '';
 
@@ -250,17 +268,17 @@ function build_uploader_error_single( $code )
 
 		case 11:
 			$err1 .= ' : '.$this->_uploader_class->getMediaSize();
-			$err1 .= ' > '.$cfg_size;
+			$err1 .= ' > '. $this->_max_filesize ;
 			break;
 
 		case 12:
 			$err1 .= ' : '.$this->_uploader_class->getMediaWidth();
-			$err1 .= ' > '.$cfg_width;
+			$err1 .= ' > '. $this->_max_width ;
 			break;
 
 		case 13:
 			$err1 .= ' : '.$this->_uploader_class->getMediaHeight();
-			$err1 .= ' > '.$cfg_height;
+			$err1 .= ' > '. $this->_max_height ;
 			break;
 
 		case 14:
@@ -288,10 +306,8 @@ function build_uploader_error_single( $code )
 //---------------------------------------------------------
 function _init_errors()
 {
-	$cfg_fsize = $this->get_config_by_name( 'fsize' );
-
 	$err_2 = sprintf( $this->get_constant('PHP_UPLOAD_ERR_FORM_SIZE'), 
-		$this->_utility_class->format_filesize( $cfg_fsize ) );
+		$this->_utility_class->format_filesize( $this->_max_filesize ) );
 
 // http://www.php.net/manual/en/features.file-upload.errors.php
 	$this->_PHP_UPLOAD_ERRORS = array(
@@ -337,30 +353,6 @@ function get_uploader_error_msg( $num )
 		return  $this->_UPLOADER_ERRORS[ $num ];
 	}
 	return 'Other Error';
-}
-
-//---------------------------------------------------------
-// normal exts
-//---------------------------------------------------------
-function _get_image_exts()
-{
-	return $this->_IMAGE_EXTS ;
-}
-
-function _is_image_ext( $ext )
-{
-	if ( in_array( strtolower( $ext ) , $this->_IMAGE_EXTS ) ) {
-		return true;
-	}
-	return false;
-}
-
-//---------------------------------------------------------
-// utility class
-//---------------------------------------------------------
-function _parse_ext( $file )
-{
-	return $this->_utility_class->parse_ext( $file );
 }
 
 // --- class end ---

@@ -1,10 +1,16 @@
 <?php
-// $Id: item_form.php,v 1.3 2008/11/01 23:53:08 ohwada Exp $
+// $Id: item_form.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// _build_ele_middle_file_external()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -35,8 +41,9 @@ function webphoto_admin_item_form( $dirname, $trust_dirname )
 	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
 	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
 
-	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
+	$this->_show_delete_button = true;
 
+	$this->_THIS_URL        = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 	$this->_URL_ADMIN_INDEX = $this->_MODULE_URL .'/admin/index.php';
 
 	$this->init_preload();
@@ -67,10 +74,11 @@ function print_form_admin( $row, $param )
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
-	$is_submit = false ;
-	$is_edit   = false ;
-	$cont_row  = null ;
-	$thumb_row = null ;
+	$is_submit  = false ;
+	$is_edit    = false ;
+	$cont_row   = null ;
+	$thumb_row  = null ;
+	$middle_row = null ;
 
 	switch ($mode)
 	{
@@ -112,8 +120,9 @@ function print_form_admin( $row, $param )
 	}
 
 	if ( $is_edit ) {
-		$cont_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
-		$thumb_row = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
+		$cont_row   = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
+		$thumb_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
+		$middle_row = $this->_file_handler->get_row_by_id( $row['item_file_id_3'] );
 	}
 
 	echo $this->build_table_begin();
@@ -261,6 +270,9 @@ function print_form_admin( $row, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
 		$this->_build_ele_thumb_file_external( $thumb_row ) );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
+		$this->_build_ele_middle_file_external( $middle_row ) );
 
 	if ( $is_edit && $this->_is_valid() ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 

@@ -1,10 +1,16 @@
 <?php
-// $Id: cat_handler.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: cat_handler.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// cat_img_name
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -70,6 +76,7 @@ function create( $flag_new=false )
 		'cat_pid'            => 0,
 		'cat_title'          => '',
 		'cat_img_path'       => '',
+		'cat_img_name'       => '',
 		'cat_weight'         => $this->_WEIGHT_DEFAULT ,
 		'cat_depth'          => 0,
 		'cat_allowed_ext'    => $this->_ALLOWED_EXT_DEFAULT ,
@@ -118,6 +125,7 @@ function insert( $row )
 	$sql .= 'cat_pid, ';
 	$sql .= 'cat_title, ';
 	$sql .= 'cat_img_path, ';
+	$sql .= 'cat_img_name, ';
 	$sql .= 'cat_weight, ';
 	$sql .= 'cat_depth, ';
 	$sql .= 'cat_allowed_ext, ';
@@ -156,6 +164,7 @@ function insert( $row )
 	$sql .= intval($cat_pid).', ';
 	$sql .= $this->quote($cat_title).', ';
 	$sql .= $this->quote($cat_img_path).', ';
+	$sql .= $this->quote($cat_img_name).', ';
 	$sql .= intval($cat_weight).', ';
 	$sql .= intval($cat_depth).', ';
 	$sql .= $this->quote($cat_allowed_ext).', ';
@@ -204,6 +213,7 @@ function update( $row )
 	$sql .= 'cat_pid='.intval($cat_pid).', ';
 	$sql .= 'cat_title='.$this->quote($cat_title).', ';
 	$sql .= 'cat_img_path='.$this->quote($cat_img_path).', ';
+	$sql .= 'cat_img_name='.$this->quote($cat_img_name).', ';
 	$sql .= 'cat_weight='.intval($cat_weight).', ';
 	$sql .= 'cat_depth='.intval($cat_depth).', ';
 	$sql .= 'cat_allowed_ext='.$this->quote($cat_allowed_ext).', ';
@@ -307,18 +317,16 @@ function build_show_desc_disp( $row )
 	return $myts->displayTarea( $row['cat_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
 }
 
-function build_show_imgurl( $row )
+function build_show_img_path( $row )
 {
 	$img_path = $row['cat_img_path'] ;
-
-	if ( $this->check_http_null( $img_path) ) {
+	if ( $this->check_http_null( $img_path ) ) {
 		$url = '' ;
 	} elseif ( $this->check_http_start( $img_path ) ) {
 		$url = $img_path;
 	} else {
 		$url = XOOPS_URL . $this->add_slash_to_head( $img_path );
 	}
-
 	return $url;
 }
 

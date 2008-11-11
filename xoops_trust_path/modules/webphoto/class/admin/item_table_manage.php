@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: item_table_manage.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
 // 2008-10-01 K.OHWADA
 // item_embed_type item_playlist_type etc
 //---------------------------------------------------------
@@ -256,7 +258,8 @@ function _build_row_file_id( $i )
 //---------------------------------------------------------
 function manage_delete()
 {
-	$this->_delete_class->delete_photo( $this->get_post_id() );
+// Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
+	$this->_delete_class->delete_photo_by_item_id( $this->get_post_id() );
 
 	redirect_header( $this->_THIS_FCT_URL, $this->_MANAGE_TIME_SUCCESS, 'Deleted' );
 	exit();

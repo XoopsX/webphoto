@@ -1,10 +1,16 @@
 <?php
-// $Id: submit_file.php,v 1.2 2008/10/30 13:02:36 ohwada Exp $
+// $Id: submit_file.php,v 1.3 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// imagemagick.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,6 +29,9 @@ webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );

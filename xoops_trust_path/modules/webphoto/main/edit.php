@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.6 2008/10/30 00:22:49 ohwada Exp $
+// $Id: edit.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// imagemagick.php
 // 2008-10-10 K.OHWADA
 // photo_action.php
 // 2008-10-01 K.OHWADA
@@ -37,6 +39,9 @@ webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/uploader.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );

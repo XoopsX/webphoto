@@ -1,10 +1,16 @@
 <?php
-// $Id: gicon_form.php,v 1.1 2008/06/21 12:22:21 ohwada Exp $
+// $Id: gicon_form.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// _C_WEBPHOTO_UPLOAD_FIELD_GICON
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,12 +21,16 @@ class webphoto_admin_gicon_form extends webphoto_form_this
 {
 	var $_gicon_handler;
 
-	var $_ADMIN_GICON_PHP;
+	var $_cfg_fsize       = 0 ;
+	var $_cfg_gicon_width = 0 ;
+
+	var $_THIS_FCT = 'giconmanager';
+	var $_THIS_URL;
 
 	var $_URL_SIZE = 80;
-	var $_FILED_COUNTER     = 2;
-	var $_IMAGE_FIELD_NAME  = 'image_file';
-	var $_SHADOW_FIELD_NAME = 'shadow_file';
+
+	var $_IMAGE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_GICON ;
+	var $_SHADOW_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_GSHADOW ;
 
 //---------------------------------------------------------
 // constructor
@@ -31,7 +41,10 @@ function webphoto_admin_gicon_form( $dirname , $trust_dirname )
 
 	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
 
-	$this->_ADMIN_GICON_PHP = $this->_MODULE_URL .'/admin/index.php?fct=giconmanager';
+	$this->_cfg_fsize       = $this->_config_class->get_by_name( 'fsize' );
+	$this->_cfg_gicon_width = $this->_config_class->get_by_name( 'gicon_width' );
+
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct=giconmanager';
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -71,16 +84,16 @@ function print_form( $mode, $row )
 	echo $this->build_input_hidden( 'action' , $action );
 	echo $this->build_row_hidden(   'gicon_id' );
 
-	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER );
-	echo $this->_build_input_hidden_max_file_size();
+	echo $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
+	echo $this->build_input_hidden( 'fieldCounter',  $this->_FILED_COUNTER_2 );
 
 	echo $this->build_table_begin();
 	echo $this->build_line_title( $title );
 
 	echo $this->build_row_text( _WEBPHOTO_GICON_TITLE, 'gicon_title' );
 
-	echo $this->build_line_ele( _AM_WEBPHOTO_GICON_IMAGE_SEL,  $this->_build_ele_image_file() );
-	echo $this->build_line_ele( _AM_WEBPHOTO_GICON_SHADOW_SEL, $this->_build_ele_shadow_file() );
+	echo $this->_build_line_image_file();
+	echo $this->_build_line_shadow_file();
 
 	echo $this->build_row_text( _WEBPHOTO_GICON_ANCHOR_X, 'gicon_anchor_x' );
 	echo $this->build_row_text( _WEBPHOTO_GICON_ANCHOR_Y, 'gicon_anchor_y' );
@@ -93,10 +106,18 @@ function print_form( $mode, $row )
 	echo $this->build_form_end();
 }
 
-function _build_input_hidden_max_file_size()
+function _build_line_image_file()
 {
-	$cfg_fsize = $this->_config_class->get_by_name( 'fsize' );
-	return $this->build_input_hidden( 'max_file_size', $cfg_fsize );
+	$desc  = $this->get_constant( 'CAP_MAXPIXEL' ) .' ';
+	$desc .= $this->_cfg_gicon_width .' x ';
+	$desc .= $this->_cfg_gicon_width .' px';
+	$desc .= "<br />\n";
+	$desc .= $this->get_constant( 'DSC_PIXCEL_RESIZE' ) .' ';
+
+	$ele = $this->_build_ele_image_file() ;
+
+	return $this->build_line_cap_ele( 
+		_AM_WEBPHOTO_GICON_IMAGE_SEL, $desc, $ele );
 }
 
 function _build_ele_image_file()
@@ -107,10 +128,15 @@ function _build_ele_image_file()
 	$text .= "<br />\n";
 
 	if ( $path ) {
-		$text .= '<img src="'. XOOPS_URL.$path .'" border="0" /> ';
-		$text .= $src;
+		$text .= $this->_build_image_link( $path ) ;
 	}
 	return $text;
+}
+
+function _build_line_shadow_file()
+{
+	return $this->build_line_ele( 
+		_AM_WEBPHOTO_GICON_SHADOW_SEL, $this->_build_ele_shadow_file() );
 }
 
 function _build_ele_shadow_file()
@@ -127,11 +153,21 @@ function _build_ele_shadow_file()
 
 		$text .= $this->build_form_checkbox( $del_name, $del_value, $del_opts );
 		$text .= "<br />\n";
-		$text .= '<img src="'. XOOPS_URL.$path .'" border="0" /> ';
-		$text .= $src;
+		$text .= $this->_build_image_link( $path ) ;
 	}
 	return $text;
 
+}
+
+function _build_image_link( $path )
+{
+	$url_s = $this->sanitize( XOOPS_URL . $path );
+	$text  = '<a href="'. $url_s .'" target="_blank">';
+	$text .= $url_s ;
+	$text .= "<br />\n";
+	$text .= '<img src="'. $url_s .'" border="0" />';
+	$text .= "</a><br />\n";
+	return $text;
 }
 
 function _build_ele_button()
@@ -218,7 +254,7 @@ function _print_line( $row )
 	echo " </td>\n";
 
 	echo '<td class="'. $oddeven .'" nowrap="nowrap" align="center">';
-	echo '[<a href="'. $this->_ADMIN_GICON_PHP .'&amp;disp=edit&amp;gicon_id='. $gicon_id .'">';
+	echo '[<a href="'. $this->_THIS_URL .'&amp;disp=edit&amp;gicon_id='. $gicon_id .'">';
 	echo _EDIT;
 	echo '</a>] &nbsp; ';
 	echo $button_delete."\n";

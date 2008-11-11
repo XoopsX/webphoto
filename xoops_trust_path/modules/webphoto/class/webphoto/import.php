@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
+// $Id: import.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT -> cfg_cat_width
 // 2008-10-01 K.OHWADA
 // use build_update_item_row()
 // BUG : thum_param -> thumb_param
@@ -39,7 +41,9 @@ class webphoto_import extends webphoto_base_this
 
 	var $_cfg_makethumb;
 	var $_cfg_use_ffmpeg;
-
+	var $_cfg_cat_width ;
+	var $_cfg_csub_width ;
+	
 	var $_myalbum_dirname;
 	var $_myalbum_mid;
 	var $_myalbum_photos_dir;
@@ -52,11 +56,6 @@ class webphoto_import extends webphoto_base_this
 	var $_LIMIT = 100;
 
 	var $_CONST_DEBUG_SQL;
-
-	var $_CAT_MAIN_WIDTH  = _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT;
-	var $_CAT_MAIN_HEIGHT = _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT;
-	var $_CAT_SUB_WIDTH   = _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT;
-	var $_CAT_SUB_HEIGHT  = _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT;
 
 	var $_EXT_GIF = 'gif';
 
@@ -98,6 +97,9 @@ function webphoto_import( $dirname , $trust_dirname )
 
 	$this->_cfg_makethumb  = $this->get_config_by_name( 'makethumb' );
 	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
+	$this->_cfg_cat_width  = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_csub_width = $this->_config_class->get_by_name( 'csub_width' );
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -195,11 +197,11 @@ function build_category_img_path( $imgurl )
 
 				list( $main_width, $main_height ) 
 					= $this->adjust_image_size(
-						$orig_width, $orig_height, $this->_CAT_MAIN_WIDTH, $this->_CAT_MAIN_HEIGHT );
+						$orig_width, $orig_height, $this->_cfg_cat_width, $this->_cfg_cat_width );
 
 				list( $sub_width, $sub_height ) 
 					= $this->adjust_image_size(
-						$orig_width, $orig_height, $this->_CAT_SUB_WIDTH, $this->_CAT_SUB_HEIGHT );
+						$orig_width, $orig_height, $this->_cfg_csub_width, $this->_cfg_csub_width );
 			}
 
 // in other site

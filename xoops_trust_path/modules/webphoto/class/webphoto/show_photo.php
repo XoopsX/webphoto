@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.12 2008/11/02 01:03:27 ohwada Exp $
+// $Id: show_photo.php,v 1.13 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// item_external_middle
 // 2008-10-01 K.OHWADA
 // build_media_player() -> build_flash_player()
 // build_external_link()
@@ -124,68 +126,72 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$datetime_disp = $this->mysql_datetime_to_str( $item_datetime );
 
 	$show_arr = array(
-		'photo_id'       => $item_id ,
-		'item_id'        => $item_id ,
-		'time_cretae'    => $item_time_create,
-		'time_update'    => $item_time_update,
-		'time_publish'   => $item_time_publish,
-		'time_expire'    => $item_time_expire,
-		'cat_id'         => $item_cat_id ,
-		'player_id'      => $item_player_id ,
-		'flashvar_id'    => $item_flashvar_id ,
-		'uid'            => $item_uid ,
-		'kind'           => $item_kind ,
-		'ext'            => $item_ext ,
-		'datetime'       => $item_datetime,
-		'title'          => $item_title ,
-		'place'          => $item_place ,
-		'equipment'      => $item_equipment ,
-		'duration'       => $item_duration ,
-		'siteurl'        => $item_siteurl ,
-		'artist'         => $item_artist ,
-		'album'          => $item_album ,
-		'label'          => $item_label ,
-		'displaytype'    => $item_displaytype,
-		'onclick'        => $item_onclick,
-		'perm_read'      => $item_perm_read,
-		'perm_down'      => $item_perm_down,
-		'external_url'   => $item_external_url,
-		'external_thumb' => $item_external_thumb,
-		'embed_type'     => $item_embed_type,
-		'embed_src'      => $item_embed_src,
-		'gmap_latitude'  => $item_gmap_latitude,
-		'gmap_longitude' => $item_gmap_longitude,
-		'gmap_zoom'      => $item_gmap_zoom,
-		'status'         => $item_status ,
-		'hits'           => $item_hits ,
-		'views'          => $item_views ,
-		'rating'         => $item_rating ,
-		'votes'          => $item_votes ,
-		'comments'       => $item_comments ,
-		'description'    => $item_description,
-		'search'         => $item_search,
-		'chain'          => $item_chain,
-		'playlist_feed'  => $item_playlist_feed,
-		'playlist_dir'   => $item_playlist_dir,
-		'playlist_cache' => $item_playlist_cache,
-		'playlist_type'  => $item_playlist_type,
-		'playlist_time'  => $item_playlist_time,
+		'photo_id'        => $item_id ,
+		'item_id'         => $item_id ,
+		'time_cretae'     => $item_time_create,
+		'time_update'     => $item_time_update,
+		'time_publish'    => $item_time_publish,
+		'time_expire'     => $item_time_expire,
+		'cat_id'          => $item_cat_id ,
+		'player_id'       => $item_player_id ,
+		'flashvar_id'     => $item_flashvar_id ,
+		'uid'             => $item_uid ,
+		'kind'            => $item_kind ,
+		'ext'             => $item_ext ,
+		'datetime'        => $item_datetime,
+		'title'           => $item_title ,
+		'place'           => $item_place ,
+		'equipment'       => $item_equipment ,
+		'duration'        => $item_duration ,
+		'siteurl'         => $item_siteurl ,
+		'artist'          => $item_artist ,
+		'album'           => $item_album ,
+		'label'           => $item_label ,
+		'displaytype'     => $item_displaytype,
+		'onclick'         => $item_onclick,
+		'icon'            => $item_icon,
+		'perm_read'       => $item_perm_read,
+		'perm_down'       => $item_perm_down,
+		'external_url'    => $item_external_url,
+		'external_thumb'  => $item_external_thumb,
+		'external_middle' => $item_external_middle,
+		'embed_type'      => $item_embed_type,
+		'embed_src'       => $item_embed_src,
+		'gmap_latitude'   => $item_gmap_latitude,
+		'gmap_longitude'  => $item_gmap_longitude,
+		'gmap_zoom'       => $item_gmap_zoom,
+		'status'          => $item_status ,
+		'hits'            => $item_hits ,
+		'views'           => $item_views ,
+		'rating'          => $item_rating ,
+		'votes'           => $item_votes ,
+		'comments'        => $item_comments ,
+		'description'     => $item_description,
+		'search'          => $item_search,
+		'chain'           => $item_chain,
+		'playlist_feed'   => $item_playlist_feed,
+		'playlist_dir'    => $item_playlist_dir,
+		'playlist_cache'  => $item_playlist_cache,
+		'playlist_type'   => $item_playlist_type,
+		'playlist_time'   => $item_playlist_time,
 
-		'title_s'          => $this->sanitize( $item_title ) ,
-		'place_s'          => $this->sanitize( $item_place ) ,
-		'equipment_s'      => $this->sanitize( $item_equipment ) ,
-		'siteurl_s'        => $this->sanitize( $item_siteurl ) ,
-		'artist_s'         => $this->sanitize( $item_artist ) ,
-		'album_s'          => $this->sanitize( $item_album ) ,
-		'label_s'          => $this->sanitize( $item_label ) ,
-		'external_url_s'   => $this->sanitize( $item_external_url ) ,
-		'external_thumb_s' => $this->sanitize( $item_external_thumb ) ,
-		'embed_type_s'     => $this->sanitize( $item_embed_type ) ,
-		'embed_src_s'      => $this->sanitize( $item_embed_src ) ,
-		'playlist_feed_s'  => $this->sanitize( $item_playlist_feed ) ,
-		'playlist_dir_s'   => $this->sanitize( $item_playlist_dir ) ,
-		'playlist_cache_s' => $this->sanitize( $item_playlist_cache ) ,
-		'uname_s'          => $this->build_show_uname( $item_uid ) ,
+		'title_s'           => $this->sanitize( $item_title ) ,
+		'place_s'           => $this->sanitize( $item_place ) ,
+		'equipment_s'       => $this->sanitize( $item_equipment ) ,
+		'siteurl_s'         => $this->sanitize( $item_siteurl ) ,
+		'artist_s'          => $this->sanitize( $item_artist ) ,
+		'album_s'           => $this->sanitize( $item_album ) ,
+		'label_s'           => $this->sanitize( $item_label ) ,
+		'icon_s'            => $this->sanitize( $item_icon ) ,
+		'external_url_s'    => $this->sanitize( $item_external_url ) ,
+		'external_thumb_s'  => $this->sanitize( $item_external_thumb ) ,
+		'external_middle_s' => $this->sanitize( $item_external_middle ) ,
+		'embed_type_s'      => $this->sanitize( $item_embed_type ) ,
+		'embed_src_s'       => $this->sanitize( $item_embed_src ) ,
+		'playlist_feed_s'   => $this->sanitize( $item_playlist_feed ) ,
+		'playlist_dir_s'    => $this->sanitize( $item_playlist_dir ) ,
+		'playlist_cache_s'  => $this->sanitize( $item_playlist_cache ) ,
+		'uname_s'           => $this->build_show_uname( $item_uid ) ,
 
 		'time_update_m'       => formatTimestamp( $item_time_update , 'm' ) ,
 		'datetime_disp'       => $datetime_disp ,
@@ -473,9 +479,10 @@ function build_show_imgsrc( $row )
 	$imgsrc_middle = '';
 	$is_normal_image = false ;
 
-	$external_url_s   = $this->sanitize( $row['item_external_url'] );
-	$external_thumb_s = $this->sanitize( $row['item_external_thumb'] );
-	$is_image_kind    = $this->is_image_kind( $row['item_kind'] );
+	$external_url_s    = $this->sanitize( $row['item_external_url'] );
+	$external_thumb_s  = $this->sanitize( $row['item_external_thumb'] );
+	$external_middle_s = $this->sanitize( $row['item_external_middle'] );
+	$is_image_kind     = $this->is_image_kind( $row['item_kind'] );
 
 	list( $cont_url, $cont_width, $cont_height )
 		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_CONT );
@@ -549,6 +556,11 @@ function build_show_imgsrc( $row )
 // middle image
 	if ( $middle_url_s ) {
 		$imgsrc_middle = $middle_url_s;
+
+	} elseif ( $external_middle_s ) {
+		$imgsrc_middle = $external_middle_s ;
+		$middle_width  = 0 ;
+		$middle_height = 0 ;
 
 	} elseif ( $cont_url_s && $is_image_kind ) {
 		$imgsrc_middle = $cont_url_s;

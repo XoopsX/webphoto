@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.6 2008/08/27 03:58:02 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// TMP_DIR -> MAIL_DIR
 // 2008-08-24 K.OHWADA
 // added set_flag_chmod()
 //---------------------------------------------------------
@@ -59,7 +61,7 @@ function webphoto_mail_retrieve( $dirname , $trust_dirname )
 	$this->_is_set_mail = $this->_config_class->is_set_mail();
 	$this->_has_mail    = $this->_perm_class->has_mail();
 
-	$this->_FILE_ACCESS = $this->_TMP_DIR .'/mail_access';
+	$this->_FILE_ACCESS = $this->_MAIL_DIR .'/mail_access';
 
 }
 
@@ -217,12 +219,14 @@ function mail_pop()
 
 	foreach ($mail_arr as $mail )
 	{
-		$file = uniqid('mail_').'.txt';
-		$this->print_msg_level_admin(  $file, false, true );
+		$file_name = uniqid('mail_').'.txt';
+		$file_path = $this->_MAIL_DIR.'/'.$file_name ;
+
+		$this->print_msg_level_admin(  $file_name, false, true );
 
 		$this->_utility_class->write_file( 
-			$this->_TMP_DIR.'/'.$file, $mail, 'w', $this->_flag_retrive_chmod );
-		$file_arr[] = $this->build_mail_file( $file );
+			$file_path, $mail, 'w', $this->_flag_retrive_chmod );
+		$file_arr[] = $this->build_mail_file( $file_name );
 	}
 
 	$this->_mail_count = $count;

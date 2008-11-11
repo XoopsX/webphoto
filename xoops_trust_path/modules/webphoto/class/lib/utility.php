@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
+// $Id: utility.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// read_file_cvs() get_array_value_by_key()
 // 2008-10-01 K.OHWADA
 // undo_htmlspecialchars()
 // 2008-09-20 K.OHWADA
@@ -174,6 +176,14 @@ function check_http_fill( $str )
 	return $ret;
 }
 
+function get_array_value_by_key( $array, $key, $default=null )
+{
+	if ( isset( $array[ $key ] ) ) {
+		return  $array[ $key ] ;
+	}
+	return $default ;
+}
+
 //---------------------------------------------------------
 // format
 //---------------------------------------------------------
@@ -272,6 +282,21 @@ function read_file( $file, $mode='r' )
 	$date = fread( $fp , filesize( $file ) );
 	fclose( $fp ) ;
 	return $date;
+}
+
+function read_file_cvs( $file, $mode='r' )
+{
+	$lines = array();
+
+	$fp = fopen( $file , $mode ) ;
+	if ( !$fp ) { return false ; }
+
+	while (!feof($fp) ) {        
+		$lines[] = fgetcsv($fp, 1024);   
+	}
+
+	fclose($fp);
+	return $lines;
 }
 
 function write_file( $file, $data, $mode='w', $flag_chmod=false )

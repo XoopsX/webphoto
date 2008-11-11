@@ -1,10 +1,16 @@
 <?php
-// $Id: flashvar_form.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: flashvar_form.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// _C_WEBPHOTO_UPLOAD_FIELD_PLOGO
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,6 +22,10 @@ class webphoto_flashvar_form extends webphoto_form_this
 {
 	var $_flashvar_handler;
 
+	var $_cfg_fsize      = 0 ;
+	var $_cfg_logo_width = 0 ;
+	var $_cfg_captcha    = null;
+
 	var $_LOGOS_PATH ;
 	var $_LOGOS_DIR ;
 	var $_LOGOS_URL ;
@@ -23,13 +33,12 @@ class webphoto_flashvar_form extends webphoto_form_this
 	var $_THIS_FCT = null;
 	var $_THIS_URL = null;
 
-	var $_PLAYERLOGO_SIZE   = _C_WEBPHOTO_PLAYERLOGO_SIZE ;	// 30 KB
-	var $_PLAYERLOGO_FIELD_NAME = 'playerlogo';
-	var $_CAPTCHA_API_FILE   = null;
+	var $_PLAYERLOGO_SIZE       = _C_WEBPHOTO_PLAYERLOGO_SIZE ;	// 30 KB
+	var $_PLAYERLOGO_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_PLOGO ;
+
+	var $_CAPTCHA_API_FILE = null;
 	var $_SIZE_COLOR   = 10;
 	var $_SIZE_DISPLAY =  4;
-
-	var $_cfg_captcha = null;
 
 //---------------------------------------------------------
 // constructor
@@ -42,6 +51,7 @@ function webphoto_flashvar_form( $dirname , $trust_dirname )
 	$this->_flashvar_handler  =& webphoto_flashvar_handler::getInstance( $dirname );
 
 	$uploads_path          = $this->_config_class->get_uploads_path();
+	$this->_cfg_fsize      = $this->_config_class->get_by_name( 'fsize' );
 	$this->_cfg_logo_width = $this->_config_class->get_by_name( 'logo_width' );
 
 	$this->_LOGOS_PATH = $uploads_path . '/logos' ;
@@ -105,7 +115,9 @@ function print_form( $mode, $row )
 	echo $this->build_input_hidden( 'op',        $op );
 	echo $this->build_input_hidden( 'photo_id',  $item_id );
 	echo $this->build_input_hidden( 'item_id',   $item_id );
-	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_1 );
+
+	echo $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
+	echo $this->build_input_hidden( 'fieldCounter',  $this->_FILED_COUNTER_1 );
 
 	echo $this->build_row_hidden( 'flashvar_id' );
 	echo $this->build_row_hidden( 'flashvar_item_id' );
@@ -281,11 +293,11 @@ function _build_line_color( $name )
 
 function _build_line_logo_file()
 {
-	$desc  = $this->get_constant( 'CAP_MAXSIZE' ). ' ' ;
-	$desc .= $this->_PLAYERLOGO_SIZE .' bytes'."<br />\n";
-	$desc .= $this->get_constant( 'CAP_MAXPIXEL' ) .' ';
+	$desc  = $this->get_constant( 'CAP_MAXPIXEL' ) .' ';
 	$desc .= $this->_cfg_logo_width .' x ';
 	$desc .= $this->_cfg_logo_width .' px';
+	$desc .= "<br />\n";
+	$desc .= $this->get_constant( 'DSC_PIXCEL_RESIZE' ) .' ';
 
 	$ele = $this->build_form_file( $this->_PLAYERLOGO_FIELD_NAME );
 	return $this->build_line_cap_ele( 

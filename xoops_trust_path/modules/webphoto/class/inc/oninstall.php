@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.10 2008/11/01 23:53:08 ohwada Exp $
+// $Id: oninstall.php,v 1.11 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// item_add_column_051();
 // 2008-10-01 K.OHWADA
 // move config_update() to xoops_version.php
 // _item_update()
@@ -134,6 +136,7 @@ function _init( $trust_dirname , &$module )
 
 	$this->init_handler( $dirname );
 
+	$this->_table_cat    = $this->prefix_dirname( 'cat' );
 	$this->_table_item   = $this->prefix_dirname( 'item' );
 	$this->_table_mime   = $this->prefix_dirname( 'mime' );
 	$this->_table_player = $this->prefix_dirname( 'player' );
@@ -176,6 +179,7 @@ function _exec_update()
 	$this->_set_msg( "\n Update module extention ..." );
 
 	$this->_table_update();
+	$this->_cat_update();
 	$this->_item_update();
 	$this->_mime_update();
 	$this->_template_update();
@@ -560,10 +564,11 @@ function _groupperm_install()
 //---------------------------------------------------------
 function _item_update()
 {
-	$this->_item_add_column_external();
+	$this->_item_add_column_050();
+	$this->_item_add_column_051();
 }
 
-function _item_add_column_external()
+function _item_add_column_050()
 {
 
 // return if already exists
@@ -602,10 +607,69 @@ function _item_add_column_external()
 	$ret = $this->query( $sql );
 
 	if ( $ret ) {
-		$this->_set_msg( 'Add item_external_type in <b>'. $this->_table_item .'</b>' );
+		$this->_set_msg( 'Add item_external_url in <b>'. $this->_table_item .'</b>' );
 		return true;
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_051()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_external_middle' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+
+	$sql  .= "item_external_middle VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_icon VARCHAR(255) NOT NULL DEFAULT '' " ;
+
+	$sql .= " )";
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_external_middle in <b>'. $this->_table_item .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+//---------------------------------------------------------
+// cat table
+//---------------------------------------------------------
+function _cat_update()
+{
+	$this->_cat_add_column_051();
+}
+
+function _cat_add_column_051()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_cat, 'cat_img_name' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_cat ." ADD ( " ;
+
+	$sql  .= "cat_img_name VARCHAR(255) NOT NULL DEFAULT '' " ;
+
+	$sql .= " )";
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add cat_img_name in <b>'. $this->_table_cat .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_cat .'</b>.' ) );
 		return false;
 	}
 

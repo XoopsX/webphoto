@@ -1,10 +1,18 @@
 <?php
-// $Id: flashvar_edit.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: flashvar_edit.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// uploader_fetch() -> fetch_image()
+// rename() -> resize_rotate() 
+// _C_WEBPHOTO_UPLOAD_FIELD_PLOGO
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,16 +24,15 @@ class webphoto_flashvar_edit extends webphoto_base_this
 	var $_config_class;
 	var $_flashvar_handler;
 	var $_upload_class;
-	var $_mime_class;
-	var $_post_class;
+	var $_image_cmd_class;
 
 	var $_cfg_logo_width ;
 
 	var $_newid = 0 ;
 	var $_error_upload = false;
 
-	var $_PLAYERLOGO_SIZE = _C_WEBPHOTO_PLAYERLOGO_SIZE ;	// 30 KB
-	var $_PLAYERLOGO_FIELD_NAME = 'playerlogo';
+	var $_PLAYERLOGO_SIZE       = _C_WEBPHOTO_PLAYERLOGO_SIZE ;	// 30 KB
+	var $_PLAYERLOGO_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_PLOGO ;
 
 	var $_NORMAL_EXTS = null;
 
@@ -38,7 +45,7 @@ function webphoto_flashvar_edit( $dirname , $trust_dirname )
 
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
 	$this->_upload_class     =& webphoto_upload::getInstance( $dirname , $trust_dirname );
-	$this->_mime_class       =& webphoto_mime::getInstance( $dirname );
+	$this->_image_cmd_class  =& webphoto_lib_image_cmd::getInstance();
 
 	$this->_cfg_logo_width = $this->_config_class->get_by_name( 'logo_width' );
 
@@ -135,15 +142,7 @@ function fetch_logo()
 {
 	$this->_error_upload = false;
 
-	$mimes = $this->_mime_class->get_image_mimes();
-	$exts  = $this->_mime_class->get_image_exts();
-
-	$this->_upload_class->init_media_uploader_full( 
-		$this->_TMP_DIR, $mimes, 
-		$this->_PLAYERLOGO_SIZE, $this->_cfg_logo_width, $this->_cfg_logo_width, 
-		$exts );
-
-	$ret = $this->_upload_class->uploader_fetch( $this->_PLAYERLOGO_FIELD_NAME );
+	$ret = $this->_upload_class->fetch_image( $this->_PLAYERLOGO_FIELD_NAME );
 	if ( $ret < 0 ) { 
 		$this->_error_upload = true;
 		$this->set_error( 'ERROR failed to update player logo' );
@@ -153,10 +152,14 @@ function fetch_logo()
 
 	$tmp_name   = $this->_upload_class->get_uploader_file_name() ;
 	$media_name = $this->_upload_class->get_uploader_media_name() ;
+
 	if ( $tmp_name && $media_name ) {
 		$tmp_file  = $this->_TMP_DIR   .'/'. $tmp_name;
 		$logo_file = $this->_LOGOS_DIR .'/'. $media_name ;
-		rename( $tmp_file , $logo_file ) ;
+
+		$this->_image_cmd_class->resize_rotate( 
+			$tmp_file, $logo_file, $this->_cfg_logo_width, $this->_cfg_logo_width );
+
 		return $media_name ;
 	}
 

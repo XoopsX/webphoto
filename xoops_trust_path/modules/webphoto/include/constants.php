@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.7 2008/11/01 23:53:08 ohwada Exp $
+// $Id: constants.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-10-08 K.OHWADA
+// _C_WEBPHOTO_UPLOAD_FIELD_PHOTO
 // 2008-10-01 K.OHWADA
 // added _C_WEBPHOTO_SWFOBJECT_EXTS
 // 2008-08-24 K.OHWADA
@@ -63,10 +65,10 @@ define("_C_WEBPHOTO_VIDEO_DOCOMO_EXT" , "3gp" ) ;
 
 define("_C_WEBPHOTO_CFG_OPT_PERPAGE" , "10|20|50|100" ) ;
 
-define("_C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT" ,  120 ) ;
-define("_C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT" , 120 ) ;
-define("_C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT" ,   50 ) ;
-define("_C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT" ,  50 ) ;
+//define("_C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT" ,  120 ) ;
+//define("_C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT" , 120 ) ;
+//define("_C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT" ,   50 ) ;
+//define("_C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT" ,  50 ) ;
 
 define("_C_WEBPHOTO_MAX_PHOTO_TEXT" , 10 ) ;
 define("_C_WEBPHOTO_MAX_CAT_TEXT" ,   5 ) ;
@@ -91,6 +93,12 @@ define("_C_WEBPHOTO_FILE_KIND_THUMB"         , 2 ) ;
 define("_C_WEBPHOTO_FILE_KIND_MIDDLE"        , 3 ) ;
 define("_C_WEBPHOTO_FILE_KIND_VIDEO_FLASH"   , 4 ) ;
 define("_C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO"  , 5 ) ;
+
+define("_C_WEBPHOTO_ITEM_FILE_CONT"          , 'item_file_id_1' ) ;
+define("_C_WEBPHOTO_ITEM_FILE_THUMB"         , 'item_file_id_2' ) ;
+define("_C_WEBPHOTO_ITEM_FILE_MIDDLE"        , 'item_file_id_3' ) ;
+define("_C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH"   , 'item_file_id_4' ) ;
+define("_C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO"  , 'item_file_id_5' ) ;
 
 define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
@@ -236,6 +244,15 @@ define("_C_WEBPHOTO_PLAYERLOGO_SIZE" , "30000" ) ;	// 30 KB
 define("_C_WEBPHOTO_RET_ERROR",      -1 ) ;
 define("_C_WEBPHOTO_RET_SUCCESS",     1 ) ;
 define("_C_WEBPHOTO_RET_VIDEO_FORM",  2 ) ;
+
+// v0.60
+define("_C_WEBPHOTO_UPLOAD_FIELD_PHOTO",    "file_photo");
+define("_C_WEBPHOTO_UPLOAD_FIELD_THUMB",    "file_thumb");
+define("_C_WEBPHOTO_UPLOAD_FIELD_MIDDLE",   "file_middle");
+define("_C_WEBPHOTO_UPLOAD_FIELD_CATEGORY", "file_category");
+define("_C_WEBPHOTO_UPLOAD_FIELD_GICON",    "file_gicon");
+define("_C_WEBPHOTO_UPLOAD_FIELD_GSHADOW",  "file_gshadow");
+define("_C_WEBPHOTO_UPLOAD_FIELD_PLOGO",    "file_plogo");
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

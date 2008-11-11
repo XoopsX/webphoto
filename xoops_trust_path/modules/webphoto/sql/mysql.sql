@@ -1,16 +1,17 @@
-# $Id: mysql.sql,v 1.9 2008/10/30 00:22:49 ohwada Exp $
+# $Id: mysql.sql,v 1.10 2008/11/11 06:53:16 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
 
-#  item_external_type  VARCHAR(255) NOT NULL DEFAULT '',
-#    item_duration  INT(11) UNSIGNED NOT NULL DEFAULT '0',
-#  item_player_id INT(11) UNSIGNED NOT NULL DEFAULT '0',
-
 # =========================================================
 # change log
+# 2008-11-08 K.OHWADA
+# item_external_middle
+# cat_img_name
+# 2008-10-01 K.OHWADA
+# item_external_type etc
 # 2008-09-09 K.OHWADA
 # BUG: redeclare photo table
 # 2008-08-24 K.OHWADA
@@ -95,6 +96,8 @@ CREATE TABLE item (
   item_playlist_type  INT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_playlist_time  INT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_showinfo  VARCHAR(255) NOT NULL DEFAULT '',  
+  item_external_middle VARCHAR(255) NOT NULL DEFAULT '',
+  item_icon VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),
@@ -270,6 +273,7 @@ CREATE TABLE cat (
   cat_text4  VARCHAR(255) NOT NULL DEFAULT '',
   cat_text5  VARCHAR(255) NOT NULL DEFAULT '', 
   cat_description TEXT,
+  cat_img_name VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (cat_id),
   KEY (cat_pid),
   KEY (cat_gicon_id),

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
+// $Id: admin.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -341,7 +341,8 @@ define("_AM_WEBPHOTO_ERR_NO_RECORD", "データが存在しない");
 //---------------------------------------------------------
 // cat manager
 //---------------------------------------------------------
-define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "画像ファイルをアップロードしてください<br />XOOPSインストール先からのパスを指定します（最初の'/'は必要）<br />設定しないときは、フォルダーアイコンが表示されます" ) ;
+//define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "画像ファイルをアップロードしてください<br />XOOPSインストール先からのパスを指定します（最初の'/'は必要）<br />設定しないときは、フォルダーアイコンが表示されます" ) ;
+
 define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "全てのグループ" ) ;
 
 //---------------------------------------------------------
@@ -449,6 +450,14 @@ define("_AM_WEBPHOTO_PLAYER_NO_ITEM","再生するアイテムがありません
 define("_AM_WEBPHOTO_PLAYER_WARNING","[警告] プレイヤーを削除してもいいですか？ <br />削除する前に、このプイヤーを使用している全てのアイテムを手動で変更してください。");
 define("_AM_WEBPHOTO_PLAYER_ERR_EXIST","[エラー] 同じ名前のプレイヤーが存在しています！");
 define("_AM_WEBPHOTO_BUTTON_CLONE","複製");
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+// cat form
+define("_AM_WEBPHOTO_CAP_CAT_SELECT","カテゴリ画像の選択");
+define("_AM_WEBPHOTO_DSC_CAT_PATH" , "XOOPSインストール先からのパスを指定します（最初の'/'は必要）" ) ;
+define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "設定しないときは、フォルダーアイコンが表示されます" ) ;
 
 // === define end ===
 }

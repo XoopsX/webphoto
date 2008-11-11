@@ -1,10 +1,16 @@
 <?php
-// $Id: item_manager.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: item_manager.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// imagemagick.php flash_log.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -25,6 +31,9 @@ webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/highlight.php' );
 webphoto_include_once( 'class/lib/pagenavi.php' );
 webphoto_include_once( 'class/lib/uploader.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
@@ -57,6 +66,7 @@ webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
+webphoto_include_once( 'class/webphoto/flash_log.php' );
 webphoto_include_once( 'class/webphoto/flash_player.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );

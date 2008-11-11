@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: redothumbs.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// cmd_modify_photo() -> resize_photo()
+// BUG: Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
+// BUG: Undefined variable: retocde
 // 2008-10-01 K.OHWADA
 // check if set cont file
 // 2008-08-24 K.OHWADA
@@ -272,7 +276,7 @@ function _item_exec( $item_row )
 
 	// Check if the main image exists
 		if ( $this->_check_remove_all_files( $cont_row ) ) {
-			$this->_remove_all_files( $item_id );
+			$this->_remove_all_files( $item_row );
 			return;
 		}
 
@@ -323,8 +327,8 @@ function _item_exec( $item_row )
 	}
 
 // --- thumb ---
-	$retcode = $this->_exec_update_thumb( $item_id );
-	switch( $retcode ) 
+	$ret = $this->_exec_update_thumb( $item_id );
+	switch( $ret ) 
 	{
 		case _C_WEBPHOTO_ERR_DB : 
 			break ;
@@ -334,6 +338,7 @@ function _item_exec( $item_row )
 			break ;
 
 		case _C_WEBPHOTO_IMAGE_CREATED : 
+		case _C_WEBPHOTO_IMAGE_RESIZE :
 			$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
 			break ;
 
@@ -349,7 +354,10 @@ function _item_exec( $item_row )
 			break ;
 
 		default : 
-			$this->set_msg_array( 'unexpect return code '. $retocde ) ;
+
+// BUG: Undefined variable: retocde
+			$this->set_msg_array( 'unexpect return code '. $ret ) ;
+
 			break ;
 	}
 
@@ -378,11 +386,14 @@ function _check_remove_all_files( $cont_row )
 	return false ;
 }
 
-function _remove_all_files( $item_id )
+function _remove_all_files( $item_row )
 {
 	$this->set_msg_array( _AM_WEBPHOTO_PHOTONOTEXISTS." &nbsp; " ) ;
 	if ( $this->_post_removerec ) {
-		$this->_delete_class->delete_photo( $item_id );
+
+// Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
+		$this->_delete_class->delete_photo_by_item_row( $item_row );
+
 		$this->set_msg_array( _AM_WEBPHOTO_RECREMOVED ) ;
 	} else {
 		$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
@@ -590,7 +601,7 @@ function _update_cont_resize()
 	$this->unlink_file( $tmp_file ) ;
 
 	$this->rename_file( $cont_file , $tmp_file ) ;
-	$this->_image_class->cmd_modify_photo( $tmp_file , $cont_file );
+	$this->_image_class->resize_photo( $tmp_file , $cont_file );
 
 	$this->unlink_file( $tmp_file ) ;
 
@@ -650,7 +661,7 @@ function _exec_update_thumb( $item_id )
 
 	$cont_row = $this->_get_cont_row();
 	if ( !is_array($cont_row) ) {
-		return false ;
+		return _C_WEBPHOTO_IMAGE_SKIPPED ;
 	}
 
 	$cont_path = $cont_row['file_path'];
@@ -731,6 +742,10 @@ function check_file( $file )
 //---------------------------------------------------------
 function _get_image_param( $file, $flag_msg=true )
 {
+	if ( ! file_exists($file) ) {
+		return false ;
+	}
+
 	$image_size = GetImageSize( $file ) ;
 	if ( !is_array($image_size) ) {
 		if ( $flag_msg ) {

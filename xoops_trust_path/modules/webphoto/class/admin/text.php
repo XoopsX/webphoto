@@ -1,10 +1,16 @@
 <?php
-// $Id: text.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: text.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// TMP_DIR -> MAIL_DIR
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -36,7 +42,7 @@ function &getInstance( $dirname , $trust_dirname )
 function main()
 {
 	$name = $this->_post_class->get_get_text('name');
-	$file = $this->_TMP_DIR .'/'. $name ;
+	$file = $this->_MAIL_DIR .'/'. $name ;
 
 	if ( empty($name) || !is_file($file) ) {
 		exit();

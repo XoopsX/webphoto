@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.3 2008/09/12 22:51:27 ohwada Exp $
+// $Id: catmanager.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// _fetch_image()
+// _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT -> cfg_cat_width
 // 2008-09-13 K.OHWADA
 // BUG: fatal error
 // photo_handler -> item_handler
@@ -23,15 +26,20 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_catmanager extends webphoto_base_this
 {
 	var $_delete_class;
+	var $_upload_class;
+	var $_image_cmd_class;
+
+	var $_cfg_cat_width  = 0 ;
+	var $_cfg_csub_width = 0 ;
 
 	var $_get_catid;
 
-	var $_ADMIN_CAT_PHP;
+	var $_error_upload = false;
 
-	var $_CAT_MAIN_WIDTH  = _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT;
-	var $_CAT_MAIN_HEIGHT = _C_WEBPHOTO_CAT_MAIN_HEIGHT_DEFAULT;
-	var $_CAT_SUB_WIDTH   = _C_WEBPHOTO_CAT_SUB_WIDTH_DEFAULT;
-	var $_CAT_SUB_HEIGHT  = _C_WEBPHOTO_CAT_SUB_HEIGHT_DEFAULT;
+	var $_THIS_FCT = 'catmanager';
+	var $_THIS_URL;
+
+	var $_CAT_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -43,9 +51,14 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
+	$this->_delete_class    =& webphoto_photo_delete::getInstance( $dirname );
+	$this->_upload_class    =& webphoto_upload::getInstance( $dirname , $trust_dirname );
+	$this->_image_cmd_class =& webphoto_lib_image_cmd::getInstance();
 
-	$this->_ADMIN_CAT_PHP = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
+	$this->_cfg_cat_width  = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_csub_width = $this->_config_class->get_by_name( 'csub_width' );
+
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -151,21 +164,31 @@ function _get_disp()
 //---------------------------------------------------------
 function _insert()
 {
+	$post_pid   = $this->_post_class->get_post_int('cat_pid');
+	$post_title = $this->_post_class->get_post_text('cat_title');
+
+	$error = null;
+
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_INDEX_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		$error = $this->get_token_errors() ;
 	}
 
-	$post_pid = $this->_post_class->get_post_int('cat_pid');
+	if ( empty($post_title) ) {
+		$error = $this->get_constant( 'ERR_TITLE' ) ;
+	}
+
+	if ( $error ) {
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $error );
+	}
 
 	$row = $this->_cat_handler->create( true );
-	$row_insert = $this->_build_row_by_post( $row );
-	$row_insert = $this->_build_img_size( $row_insert );
+	$row_insert = $this->_build_row( $row );
 
 	$newid = $this->_cat_handler->insert( $row_insert );
 	if ( !$newid ) {
 		$msg  = "DB Error: insert category";
 		$msg .= '<br />'.$this->get_format_error();
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , $msg ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 		exit();
 	}
 
@@ -174,8 +197,23 @@ function _insert()
 		$this->_cat_handler->update_pid( $newid, 0 );
 	}
 
-	redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_INSERTED ) ;
+	if ( $this->_error_upload ) {
+		$msg  = $this->get_format_error();
+		$msg .= "<br />\n";
+		$msg .= _AM_WEBPHOTO_CAT_INSERTED ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
+	}
+
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_INSERTED ) ;
 	exit ;
+}
+
+function _build_row( $row )
+{
+	$row = $this->_build_row_by_post( $row );
+	$row = $this->_build_img_name( $row );
+	$row = $this->_build_img_size( $row );
+	return $row ;
 }
 
 function _build_row_by_post( $row )
@@ -185,7 +223,6 @@ function _build_row_by_post( $row )
 	$row['cat_weight']      = $this->_post_class->get_post_int('cat_weight');
 	$row['cat_title']       = $this->_post_class->get_post_text('cat_title');
 	$row['cat_description'] = $this->_post_class->get_post_text('cat_description');
-	$row['cat_img_path']    = $this->_build_img_path_by_post();
 	$row['cat_perm_post']   = $this->_build_perm_post_by_post();
 
 	return $row;
@@ -235,14 +272,44 @@ function _build_perm_post_by_post()
 	return $ret;
 }
 
+function _build_img_name( $row )
+{
+// set img
+	$fetch_img_name = $this->_fetch_image();
+	$post_img_name  = $this->_post_class->get_post_text('cat_img_name');
+	$post_img_path  = $this->_build_img_path_by_post();
+
+	if ( $fetch_img_name ) {
+		$row['cat_img_name'] = $fetch_img_name ;
+		$row['cat_img_path'] = '' ;
+
+	if ( $post_img_name ) {
+		$row['cat_img_name'] = $post_img_name ;
+		$row['cat_img_path'] = '' ;
+
+	} elseif( $post_img_path ) {
+		$row['cat_img_name'] = '' ;
+		$row['cat_img_path'] = $post_img_path ;
+	}
+
+	return $row;
+}
+
 function _build_img_size( $row )
 {
+	$img_name = $row['cat_img_name'];
 	$img_path = $row['cat_img_path'];
-	if ( empty($img_path) ) { 
+
+	if ( $img_name ) { 
+		$full_path = $this->_CATS_DIR .'/'. $img_name ;
+
+	} elseif ( $img_path ) { 
+		$full_path = XOOPS_ROOT_PATH . $img_path ;
+
+	} else {
 		return $row;
 	}
 
-	$full_path = XOOPS_ROOT_PATH . $img_path ;
 	if ( !file_exists($full_path) ) {
 		return $row;
 	}
@@ -257,11 +324,11 @@ function _build_img_size( $row )
 
 	list( $main_width, $main_height ) 
 		= $this->adjust_image_size(
-			$width, $height, $this->_CAT_MAIN_WIDTH, $this->_CAT_MAIN_HEIGHT );
+			$width, $height, $this->_cfg_cat_width, $this->_cfg_cat_width );
 
 	list( $sub_width, $sub_height ) 
 		= $this->adjust_image_size(
-			$width, $height, $this->_CAT_SUB_WIDTH, $this->_CAT_SUB_HEIGHT );
+			$width, $height, $this->_cfg_csub_width, $this->_cfg_csub_width );
 
 	$row['cat_orig_width']  = $width;
 	$row['cat_orig_height'] = $height;
@@ -271,6 +338,32 @@ function _build_img_size( $row )
 	$row['cat_sub_height']  = $sub_height;
 
 	return $row;
+}
+
+function _fetch_image()
+{
+	$this->_error_upload = false;
+
+	$ret = $this->_upload_class->fetch_image( $this->_CAT_FIELD_NAME );
+	if ( $ret < 0 ) { 
+		$this->_error_upload = true;
+		$this->set_error( 'WARNING failed to upload category image' );
+		$this->set_error( $this->_upload_class->get_errors() );
+		return null ;	// failed
+	}
+
+	$tmp_name   = $this->_upload_class->get_uploader_file_name() ;
+	$media_name = $this->_upload_class->get_uploader_media_name() ;
+
+	if ( $tmp_name && $media_name ) {
+		$tmp_file = $this->_TMP_DIR   .'/'. $tmp_name;
+		$cat_file = $this->_CATS_DIR  .'/'. $media_name ;
+		$this->_image_cmd_class->resize_rotate( 
+			$tmp_file, $cat_file, $this->_cfg_cat_width, $this->_cfg_cat_width );
+		return $media_name ;	// success
+	}
+
+	return null ;
 }
 
 //---------------------------------------------------------
@@ -294,24 +387,31 @@ function _update()
 		{
 			if( $child == $post_pid ) {
 				$msg = "category looping has occurred" ;
-				redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , $msg ) ;
+				redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 			}
 		}
 	}
 
 	$row = $this->_cat_handler->get_row_by_id( $post_catid );
-	$row_update = $this->_build_row_by_post( $row );
-	$row_update = $this->_build_img_size( $row_update );
+	$row_update = $this->_build_row( $row );
 
 	$ret = $this->_cat_handler->update( $row_update );
 	if ( !$ret ) {
 		$msg  = "DB Error: update category <br />";
 		$msg .= $this->get_format_error();
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , $msg ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 		exit();
 	}
 
-	$url = $this->_ADMIN_CAT_PHP.'&amp;disp=edit&amp;cat_id='.$post_catid;
+	$url = $this->_THIS_URL.'&amp;disp=edit&amp;cat_id='.$post_catid;
+
+	if ( $this->_error_upload ) {
+		$msg  = $this->get_format_error();
+		$msg .= "<br />\n";
+		$msg .= _AM_WEBPHOTO_CAT_UPDATED ;
+		redirect_header( $url, $this->_TIME_FAIL , $msg ) ;
+	}
+
 	redirect_header( $url , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_UPDATED ) ;
 	exit() ;
 }
@@ -322,7 +422,7 @@ function _update()
 function _delete()
 {
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_CAT_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
 		exit();
 	}
 
@@ -354,11 +454,11 @@ function _delete()
 	if ( $this->has_error() ) {
 		$msg  = "DB Error: delete category <br />";
 		$msg .= $this->get_format_error();
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , $msg ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 		exit();
 	}
 
-	redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CATDELETED ) ;
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CATDELETED ) ;
 	exit() ;
 }
 
@@ -382,7 +482,7 @@ function _delete_photos_by_catid( $cat_id )
 function _weight()
 {
 	if ( ! $this->check_token() ) {
-		redirect_header( $this->_ADMIN_CAT_PHP, $this->_TIME_FAIL, $this->get_token_errors() );
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
 		exit();
 	}
 
@@ -404,11 +504,11 @@ function _weight()
 	if ( $this->has_error() ) {
 		$msg  = "DB Error: delete category <br />";
 		$msg .= $this->get_format_error();
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , $msg ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
 		exit();
 	}
 
-	redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_SUCCESS , _WEBPHOTO_DBUPDATED ) ;
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _WEBPHOTO_DBUPDATED ) ;
 	exit() ;
 }
 
@@ -429,7 +529,7 @@ function _print_edit_form()
 	// Editing
 	$row = $this->_cat_handler->get_row_by_id( $this->_get_catid );
 	if ( !is_array($row ) ) {
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
 		exit();
 	}
 
@@ -460,7 +560,7 @@ function _print_list( )
 	$img_catadd = '<img src="'. $this->_ICONS_URL.'/cat_add.png" width="18" height="15" alt="'. _AM_WEBPHOTO_CAT_LINK_MAKETOPCAT .'" title="'. _AM_WEBPHOTO_CAT_LINK_MAKETOPCAT .'" />'."\n";
 
 	// Top links
-	echo '<p><a href="'. $this->_ADMIN_CAT_PHP .'&amp;disp=new">';
+	echo '<p><a href="'. $this->_THIS_URL .'&amp;disp=new">';
 	echo _AM_WEBPHOTO_CAT_LINK_MAKETOPCAT;
 	echo ' ';
 	echo $img_catadd;
@@ -490,14 +590,14 @@ function _print_cat_list( $cat_tree_array )
 function _print_del_confirm()
 {
 	xoops_cp_header();
-	echo $this->build_bread_crumb( $this->get_admin_title( 'CATMANAGER' ), $this->_ADMIN_CAT_PHP );
+	echo $this->build_bread_crumb( $this->get_admin_title( 'CATMANAGER' ), $this->_THIS_URL );
 	echo $this->build_admin_title( 'CATMANAGER' );
 
 	$get_catid = $this->_post_class->get_post_int('cat_id');
 
 	$row = $this->_cat_handler->get_row_by_id( $get_catid );
 	if ( !is_array($row ) ) {
-		redirect_header( $this->_ADMIN_CAT_PHP , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
 		exit();
 	}
 

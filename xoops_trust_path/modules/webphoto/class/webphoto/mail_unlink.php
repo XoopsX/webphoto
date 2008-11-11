@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_unlink.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
+// $Id: mail_unlink.php,v 1.3 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// TMP_DIR -> MAIL_DIR
 // 2008-08-24 K.OHWADA
 // added unlink_attaches()
 //---------------------------------------------------------
@@ -22,7 +24,8 @@ class webphoto_mail_unlink
 	var $_config_class;
 	var $_utility_class;
 
-	var $_TMP_DIR;
+	var $_WORK_DIR;
+	var $_MAIL_DIR;
 	var $_SEPARATOR = '|';
 
 //---------------------------------------------------------
@@ -33,7 +36,8 @@ function webphoto_mail_unlink( $dirname )
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 
-	$this->_TMP_DIR  = $this->_config_class->get_by_name( 'tmpdir' );
+	$this->_WORK_DIR  = $this->_config_class->get_by_name( 'workdir' );
+	$this->_MAIL_DIR  = $this->_WORK_DIR .'/mail' ;
 
 }
 
@@ -74,7 +78,7 @@ function unlink_attaches( $row )
 function unlink_by_filename( $file )
 {
 	if ( $file ) {
-		$this->_utility_class->unlink_file( $this->_TMP_DIR.'/'.$file );
+		$this->_utility_class->unlink_file( $this->_MAIL_DIR.'/'.$file );
 	}
 }
 

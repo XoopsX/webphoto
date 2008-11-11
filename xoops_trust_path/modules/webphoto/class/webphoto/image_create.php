@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.8 2008/10/30 00:22:49 ohwada Exp $
+// $Id: image_create.php,v 1.9 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// cmd_modify_photo() -> cmd_resize_rotate()
 // 2008-10-01 K.OHWADA
 // use _MIDDLES_PATH
 // 2008-08-24 K.OHWADA
@@ -29,6 +31,8 @@ class webphoto_image_create extends webphoto_image_info
 	var $_image_cmd_class;
 
 	var $_cfg_makethumb     = false ;
+	var $_cfg_width         = 0 ;
+	var $_cfg_height        = 0 ;
 	var $_cfg_thumb_width   = 0 ;
 	var $_cfg_thumb_height  = 0 ;
 	var $_cfg_middle_width  = 0 ;
@@ -68,6 +72,8 @@ function webphoto_image_create( $dirname , $trust_dirname )
 	$this->_ICON_EXT_DEFAULT = $this->_ICON_EXT_DIR .'/default.png';
 
 	$this->_cfg_makethumb     = $this->get_config_by_name( 'makethumb' ) ;
+	$this->_cfg_width         = $this->get_config_by_name( 'width' ) ;
+	$this->_cfg_height        = $this->get_config_by_name( 'height' ) ;
 	$this->_cfg_thumb_width   = $this->get_config_by_name( 'thumb_width' ) ;
 	$this->_cfg_thumb_height  = $this->get_config_by_name( 'thumb_height' ) ;
 	$this->_cfg_middle_width  = $this->get_config_by_name( 'middle_width' ) ;
@@ -98,14 +104,10 @@ function _init_image_cmd()
 	$this->_image_cmd_class->set_forcegd2(     $this->get_config_by_name( 'forcegd2' ) );
 	$this->_image_cmd_class->set_imagickpath(  $this->get_config_by_name( 'imagickpath' ) );
 	$this->_image_cmd_class->set_netpbmpath(   $this->get_config_by_name( 'netpbmpath' ) );
-	$this->_image_cmd_class->set_width(        $this->get_config_by_name( 'width' ) );
-	$this->_image_cmd_class->set_height(       $this->get_config_by_name( 'height' ) );
-	$this->_image_cmd_class->set_thumbrule(    $this->get_config_by_name( 'thumbrule' ) );
+	$this->_image_cmd_class->set_jpeg_quality( $this->get_config_by_name( 'jpeg_quality' ) );
+
 	$this->_image_cmd_class->set_normal_exts(  $this->get_normal_exts() );
-	$this->_image_cmd_class->set_thumbs_path(  $this->_THUMBS_PATH );
 	$this->_image_cmd_class->set_watermark(    $WATERMARK );
-	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_thumb_width );
-	$this->_image_cmd_class->set_thumb_height( $this->_cfg_thumb_height );
 
 	$this->_has_resize = $this->_image_cmd_class->has_resize();
 	$this->_has_rotate = $this->_image_cmd_class->has_rotate();
@@ -130,7 +132,7 @@ function set_flag_chmod( $val )
 //---------------------------------------------------------
 // create photo
 //---------------------------------------------------------
-function create_photo( $src_file, $photo_id )
+function create_photo( $src_file, $photo_id, $rotate )
 {
 	$this->_cont_param = null;
 
@@ -141,7 +143,7 @@ function create_photo( $src_file, $photo_id )
 
 // modify photo
 	if ( $this->is_normal_ext( $photo_ext ) ) {
-		$ret = $this->cmd_modify_photo( $src_file , $photo_file );
+		$ret = $this->resize_photo( $src_file, $photo_file, $rotate );
 		if ( $ret < 0 ) {
 			return $ret; 
 		}
@@ -158,44 +160,19 @@ function create_photo( $src_file, $photo_id )
 	return $ret;
 }
 
+function resize_photo( $src_file, $photo_file, $rotate=0 )
+{
+	$ret = $this->cmd_resize_rotate( 
+		$src_file, $photo_file, $this->_cfg_width, $this->_cfg_height, $rotate );
+}
+
 function get_cont_param()
 {
 	return $this->_cont_param;
 }
 
 //---------------------------------------------------------
-// create thumb from upload ( original size )
-//---------------------------------------------------------
-function create_thumb_from_upload( $photo_id, $tmp_name )
-{
-	$this->_thumb_param = null;
-
-// check upload
-	if ( empty($tmp_name) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED;	// no action
-	}
-
-// create thumb image in upload
-	$this->reset_mode_rotate();
-
-	$ret = $this->create_image( $this->_THUMBS_PATH, $photo_id, $tmp_name );
-	if ( $ret < 0 ) {
-		return $ret; 
-	}
-
-	$image_info = $this->get_image_info();
-	if ( !is_array($image_info) ) {
-		return _C_WEBPHOTO_ERR_FILEREAD;
-	}
-
-	$this->_thumb_param = $this->build_file_param(
-		$image_info['path'], $image_info['name'], $image_info['ext'], _C_WEBPHOTO_FILE_KIND_THUMB );
-
-	return $ret;
-}
-
-//---------------------------------------------------------
-// create thumb ( shrink size from orignal )
+// create thumb, middle ( shrink size from orignal )
 //---------------------------------------------------------
 function create_thumb_from_photo_path( $photo_id, $src_path, $src_ext )
 {
@@ -205,7 +182,49 @@ function create_thumb_from_photo_path( $photo_id, $src_path, $src_ext )
 
 function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null )
 {
-	$this->_thumb_param = null;
+	$param = array(
+		'photo_id'   => $photo_id ,
+		'src_file'   => $src_file ,
+		'src_ext'    => $src_ext ,
+		'base_path'  => $this->_THUMBS_PATH ,
+		'max_width'  => $this->_cfg_thumb_width ,
+		'max_height' => $this->_cfg_thumb_height ,
+		'file_kind'  => _C_WEBPHOTO_FILE_KIND_THUMB ,
+	);
+
+	$ret = $this->create_thumb_common( $param );
+	$this->_thumb_param = $this->_thumb_common_param ;
+	return $ret;
+}
+
+function create_middle_from_image_file( $src_file, $photo_id, $src_ext=null )
+{
+	$param = array(
+		'photo_id'   => $photo_id ,
+		'src_file'   => $src_file ,
+		'src_ext'    => $src_ext ,
+		'base_path'  => $this->_MIDDLES_PATH ,
+		'max_width'  => $this->_cfg_middle_width ,
+		'max_height' => $this->_cfg_middle_height ,
+		'file_kind'  => _C_WEBPHOTO_FILE_KIND_MIDDLE ,
+	);
+
+	$ret = $this->create_thumb_common( $param );
+	$this->_middle_param = $this->_thumb_common_param ;
+	return $ret;
+}
+
+function create_thumb_common( $param )
+{
+	$this->_thumb_common_param = null;
+
+	$photo_id   = $param['photo_id'];
+	$src_file   = $param['src_file'];
+	$src_ext    = $param['src_ext'];
+	$base_path  = $param['base_path'] ;
+	$max_width  = $param['max_width'] ;
+	$max_height = $param['max_height'] ;
+	$file_kind  = $param['file_kind'] ;
 
 	if ( empty($src_ext) ) {
 		$src_ext = $this->parse_ext( $src_file );
@@ -233,71 +252,57 @@ function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null )
 		return _C_WEBPHOTO_IMAGE_READFAULT ;
 	}
 
-	$ret = $this->cmd_create_thumb( $src_file , $photo_node , $src_ext );
+	$thumb_name = $photo_node .'.'. $src_ext ;
+	$thumb_path = $base_path .'/'. $thumb_name;
+	$thumb_file = XOOPS_ROOT_PATH . $thumb_path ;
+
+	$ret = $this->cmd_resize_rotate( 
+		$src_file, $thumb_file, $max_width, $max_height );
+
 	if (( $ret == _C_WEBPHOTO_IMAGE_READFAULT )||
 	    ( $ret == _C_WEBPHOTO_IMAGE_SKIPPED )) {
 		return $ret;
 	}
 
-	$this->_thumb_param = $this->build_file_param(
-		$this->_image_cmd_class->get_thumb_path() ,
-		$this->_image_cmd_class->get_thumb_name() ,
-		$this->_image_cmd_class->get_thumb_ext() ,
-		_C_WEBPHOTO_FILE_KIND_THUMB
-	);
+	$this->_thumb_common_param = $this->build_file_param(
+		$thumb_path, $thumb_name, $src_ext, $file_kind );
 
 	return $ret;
 }
 
-
-// substitute with photo image
-function create_thumb_substitute( $photo_path, $photo_ext )
-{
-	$this->_thumb_param = null;
-
-// check main photo
-	if ( empty($photo_path) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED;
-	}
-
-// return error if not read file
-	if ( !is_readable( XOOPS_ROOT_PATH . $photo_path ) ) {
-		return _C_WEBPHOTO_ERR_FILEREAD;
-	}
-
-	$param = $this->build_file_param( 
-		$photo_path, '', $photo_ext, _C_WEBPHOTO_FILE_KIND_THUMB );
-	$param['path'] = '' ;
-
-	$this->_thumb_param = $param;
-
-	return 0;
-}
-
-// Copy Thumbnail from directory of icons
+//---------------------------------------------------------
+// create thumb, middle ( copy icon )
+//---------------------------------------------------------
 function create_thumb_icon( $photo_id, $photo_ext )
 {
-	$this->_thumb_param = null;
+	$ret = $this->create_thumb_icon_common( 
+		$photo_id, $photo_ext, $this->_THUMBS_PATH, _C_WEBPHOTO_FILE_KIND_THUMB );
 
-	$node = $this->build_photo_node( $photo_id );
-
-	list( $thumb_path, $thumb_name, $thumb_ext )
-		= $this->copy_thumb_icon( $this->_THUMBS_PATH, $node, $photo_ext );
-
-	$this->_thumb_param = $this->build_file_param( 
-		$thumb_path, $thumb_name, $thumb_ext, _C_WEBPHOTO_FILE_KIND_THUMB );
-
-	return _C_WEBPHOTO_IMAGE_ICON ;	// icon (not normal exts)
+	$this->_thumb_param = $this->_thumb_param_common ;
+	return $ret;
 }
 
-function copy_thumb_icon( $base_path, $node, $ext )
+function create_middle_icon( $photo_id, $photo_ext )
 {
-	$dir = XOOPS_ROOT_PATH . $base_path ;
-	$name_png = $this->copy_thumb_icon_in_dir( $dir, $node, $ext );
+	$ret = $this->create_thumb_icon_common( 
+		$photo_id, $photo_ext, $this->_MIDDLES_PATH, _C_WEBPHOTO_FILE_KIND_MIDDLE );
 
-	$thumb_path_png = $base_path .'/'. $name_png;
+	$this->_middle_param = $this->_thumb_param_common ;
+	return $ret;
+}
 
-	return array( $thumb_path_png, $name_png, $this->_EXT_PNG );
+function create_thumb_icon_common( $photo_id, $photo_ext, $base_path, $file_kind )
+{
+	$dir  = XOOPS_ROOT_PATH . $base_path ;
+	$node = $this->build_photo_node( $photo_id );
+
+	$thumb_name = $this->copy_thumb_icon_in_dir( $dir, $node, $photo_ext );
+	$thumb_path = $base_path .'/'. $thumb_name ;
+
+	$this->_thumb_param_common = $this->build_file_param( 
+		$thumb_path, $thumb_name, $this->_EXT_PNG, $file_kind );
+
+	return _C_WEBPHOTO_IMAGE_ICON ;	// icon (not normal exts)
 }
 
 function copy_thumb_icon_in_dir( $dir, $node, $ext )
@@ -324,140 +329,9 @@ function get_thumb_param()
 	return $this->_thumb_param;
 }
 
-//---------------------------------------------------------
-// create middle
-//---------------------------------------------------------
-function create_middle_from_image_file( $src_file, $photo_id, $src_ext=null )
-{
-	$this->_middle_param = null;
-
-	if ( empty($src_ext) ) {
-		$src_ext = $this->parse_ext( $src_file );
-	}
-
-// check config
-	if ( ! $this->_cfg_makethumb ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED;
-	}
-
-	if ( ! $this->is_normal_ext( $src_ext ) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED ;
-	}
-
-	$photo_node = $this->build_photo_node( $photo_id );
-	$photo_name = $photo_node .'.'. $src_ext ;
-
-// check main photo
-	if ( empty($src_file) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED;
-	}
-
-// return error if not read file
-	if ( !is_readable( $src_file ) ) {
-		return _C_WEBPHOTO_IMAGE_READFAULT ;
-	}
-
-	$ret = $this->cmd_create_middle( $src_file , $photo_node , $src_ext );
-	if (( $ret == _C_WEBPHOTO_IMAGE_READFAULT )||
-	    ( $ret == _C_WEBPHOTO_IMAGE_SKIPPED )) {
-		return $ret;
-	}
-
-	$this->_middle_param = $this->build_file_param(
-		$this->_image_cmd_class->get_thumb_path() ,
-		$this->_image_cmd_class->get_thumb_name() ,
-		$this->_image_cmd_class->get_thumb_ext() ,
-		_C_WEBPHOTO_FILE_KIND_MIDDLE
-	);
-
-	return $ret;
-}
-
-// substitute with photo image
-function create_middle_substitute( $photo_path, $photo_ext )
-{
-	$this->_middle_param = null;
-
-// check main photo
-	if ( empty($photo_path) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED;
-	}
-
-// return error if not read file
-	if ( !is_readable( XOOPS_ROOT_PATH . $photo_path ) ) {
-		return _C_WEBPHOTO_ERR_FILEREAD;
-	}
-
-	$param = $this->build_file_param( 
-		$photo_path, '', $photo_ext, _C_WEBPHOTO_FILE_KIND_MIDDLE );
-	$param['path'] = '' ;
-
-	$this->_middle_param = $param;
-
-	return 0;
-}
-
-function create_middle_icon( $photo_id, $photo_ext )
-{
-	$this->_middle_param = null;
-
-	$node = $this->build_photo_node( $photo_id );
-
-	list( $thumb_path, $thumb_name, $thumb_ext )
-		= $this->copy_thumb_icon( $this->_MIDDLES_PATH, $node, $photo_ext );
-
-	$this->_middle_param = $this->build_file_param( 
-		$thumb_path, $thumb_name, $thumb_ext, _C_WEBPHOTO_FILE_KIND_MIDDLE );
-
-	return _C_WEBPHOTO_IMAGE_ICON ;	// icon (not normal exts)
-}
-
 function get_middle_param()
 {
 	return $this->_middle_param;
-}
-
-//---------------------------------------------------------
-// create image
-//---------------------------------------------------------
-function create_image( $base_path, $id, $tmp_name )
-{
-	$this->_image_info = null;
-
-	$tmp_file = $this->_TMP_DIR .'/'. $tmp_name;
-
-// skip if not set tmp_name
-	if ( empty($tmp_name) ) {
-		return 0;	// no action
-	}
-
-// return error if not read tmp_file
-	if( ! is_readable( $tmp_file ) ) {
-		return _C_WEBPHOTO_ERR_FILEREAD;
-	}
-
-	$ext  = $this->parse_ext( $tmp_name );
-	$name = $this->build_photo_name( $id, $ext );
-	$path = $base_path .'/'. $name;
-	$file = XOOPS_ROOT_PATH . $path;
-
-	$ret = $this->cmd_modify_photo( $tmp_file , $file );
-	if ( $ret == _C_WEBPHOTO_IMAGE_READFAULT ) {
-		return _C_WEBPHOTO_ERR_FILEREAD;
-	}
-
-	$this->_image_info = array(
-		'name' => $name ,
-		'path' => $path , 
-		'ext'  => $ext ,
-	);
-
-	return $ret;	// 1,2,5
-}
-
-function get_image_info()
-{
-	return $this->_image_info;
 }
 
 //---------------------------------------------------------
@@ -554,35 +428,10 @@ function build_no_image_preview()
 //---------------------------------------------------------
 // image cmd class
 //---------------------------------------------------------
-function cmd_modify_photo( $src_file , $dst_file )
+function cmd_resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rotate=0 )
 {
-	return $this->_image_cmd_class->modify_photo( $src_file , $dst_file );
-}
-
-function cmd_create_thumb( $src_file , $node , $ext )
-{
-	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_thumb_width );
-	$this->_image_cmd_class->set_thumb_height( $this->_cfg_thumb_height );
-	$this->_image_cmd_class->set_thumbs_path(  $this->_THUMBS_PATH );
-	return $this->_image_cmd_class->create_thumb( $src_file , $node , $ext );
-}
-
-function cmd_create_middle( $src_file , $node , $ext )
-{
-	$this->_image_cmd_class->set_thumb_width(  $this->_cfg_middle_width );
-	$this->_image_cmd_class->set_thumb_height( $this->_cfg_middle_height );
-	$this->_image_cmd_class->set_thumbs_path(  $this->_MIDDLES_PATH );
-	return $this->_image_cmd_class->create_thumb( $src_file , $node , $ext );
-}
-
-function cmd_set_mode_rotate( $val )
-{
-	$this->_image_cmd_class->set_mode_rotate( $val );
-}
-
-function reset_mode_rotate()
-{
-	$this->cmd_set_mode_rotate( null );
+	return $this->_image_cmd_class->resize_rotate( 
+		 $src_file, $dst_file, $max_width, $max_height, $rotate );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.13 2008/10/30 00:22:49 ohwada Exp $
+// $Id: xoops_version.php,v 1.14 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// webphoto_inc_workdir
+// tmpdir -> workdir
+// gicon_width cat_main_width etc
 // 2008-10-01 K.OHWADA
 // uploadspath etc
 // used update_xoops_config()
@@ -34,6 +38,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_xoops_version extends webphoto_inc_handler
 {
+	var $_workdir_class ;
+
 	var $_cfg_catonsubmenu = false;
 	var $_cfg_use_pathinfo = false;
 	var $_has_insertable   = false;
@@ -45,6 +51,7 @@ class webphoto_inc_xoops_version extends webphoto_inc_handler
 	var $_PATH_UPLOADS_MOD      = null;
 	var $_PATH_MOD_MEDIAS       = null;
 	var $_DIR_TRUST_MOD_UPLOADS = null;
+	var $_DIR_TRUST_UPLOADS     = null;
 
 //---------------------------------------------------------
 // constructor
@@ -69,6 +76,8 @@ function &getInstance()
 function build_modversion( $dirname, $trust_dirname )
 {
 	$this->_init( $dirname, $trust_dirname );
+
+	$this->_workdir_class =& webphoto_inc_workdir::getInstance( $dirname, $trust_dirname );
 
 // probably install or update
 	if ( $this->_is_module_admin && 
@@ -97,6 +106,9 @@ function _init( $dirname, $trust_dirname )
 	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
 
 	$this->_PATH_MOD_MEDIAS = '/modules/'. $dirname .'/medias';
+
+	$this->_DIR_TRUST_UPLOADS 
+		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
@@ -403,12 +415,12 @@ function _build_config()
 
 // add for webphoto
 	$arr[] = array(
-		'name'			=> 'tmpdir' ,
-		'title'			=> $this->_constant_name( 'CFG_TMPDIR' ) ,
-		'description'	=> $this->_constant_name( 'CFG_TMPDIR_DSC' ) ,
+		'name'			=> 'workdir' ,
+		'title'			=> $this->_constant_name( 'CFG_WORKDIR' ) ,
+		'description'	=> $this->_constant_name( 'CFG_WORKDIR_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_DIR_TRUST_MOD_UPLOADS.'/tmp' ,
+		'default'		=> $this->_build_config_workdir() ,
 		'options'		=> array()
 	) ;
 
@@ -444,6 +456,17 @@ function _build_config()
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '1' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'jpeg_quality' ,
+		'title'			=> $this->_constant_name( 'CFG_JPEG_QUALITY' ) ,
+		'description'	=> $this->_constant_name( 'CFG_JPEG_QUALITY_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '75' ,
 		'options'		=> array()
 	) ;
 
@@ -581,27 +604,49 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
+// remove thumbrule
+
+// for webphoto
 	$arr[] = array(
-		'name'			=> 'thumbrule' ,
-		'title'			=> $this->_constant_name( 'CFG_THUMBRULE' ) ,
+		'name'			=> 'cat_width' ,
+		'title'			=> $this->_constant_name( 'CFG_CAT_WIDTH' ) ,
 		'description'	=> '' ,
-		'formtype'		=> 'select' ,
-		'valuetype'		=> 'text' ,
-		'default'		=> 'w' ,
-		'options'		=> array(
-			$this->_constant( 'OPT_CALCFROMWIDTH'   ) => 'w' ,
-			$this->_constant( 'OPT_CALCFROMHEIGHT'  ) => 'h' ,
-			$this->_constant( 'OPT_CALCWHINSIDEBOX' ) => 'b'
-		)
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '120' ,
+		'options'		=> array()
 	) ;
 
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'csub_width' ,
+		'title'			=> $this->_constant_name( 'CFG_CSUB_WIDTH' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '50' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'gicon_width' ,
+		'title'			=> $this->_constant_name( 'CFG_GICON_WIDTH' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '120' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
 	$arr[] = array(
 		'name'			=> 'logo_width' ,
 		'title'			=> $this->_constant_name( 'CFG_LOGO_WIDTH' ) ,
 		'description'	=> '' ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '140' ,
+		'default'		=> '120' ,
 		'options'		=> array()
 	) ;
 
@@ -956,6 +1001,11 @@ function _build_config_index_desc()
 	$str .= $this->_constant( 'CFG_INDEX_DESC_DEFAULT' );
 	$str .= '</span>';
 	return $str;
+}
+
+function _build_config_workdir()
+{
+	return $this->_workdir_class->get_config_workdir() ;
 }
 
 //---------------------------------------------------------

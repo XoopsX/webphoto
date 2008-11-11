@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.16 2008/11/02 00:15:09 ohwada Exp $
+// $Id: edit.php,v 1.17 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// _thumb_delete()
 // 2008-10-10 K.OHWADA
 // webphoto_photo_action
 // 2008-10-01 K.OHWADA
@@ -35,8 +37,8 @@ class webphoto_main_edit extends webphoto_photo_action
 {
 	var $_form_action = null;
 
-	var $_THIS_FCT = 'edit';
-	var $_THIS_URL = null;
+	var $_THIS_FCT  = 'edit' ;
+	var $_THIS_URL  = null ;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
@@ -49,7 +51,7 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_action( $dirname , $trust_dirname );
 
-	$this->_THIS_URL = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
+	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 
 	$this->init_preload();
 }
@@ -94,6 +96,18 @@ function check_action()
 		case 'confirm':
 			$this->_check_delete_perm_or_redirect();
 			break;
+
+		case 'thumb_delete':
+			$this->_thumb_delete();
+			exit();
+
+		case 'middle_delete':
+			$this->_middle_delete();
+			exit();
+
+		case 'flash_delete':
+			$this->_flash_delete();
+			exit();
 
 		default:
 			break;
@@ -204,11 +218,20 @@ function _check_playlist( $item_row )
 
 function _get_action()
 {
-	$post_op          = $this->_post_class->get_post_get_text('op' );
-	$post_conf_delete = $this->_post_class->get_post_text('conf_delete' );
+	$post_op            = $this->_post_class->get_post_get_text('op' );
+	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
+	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
+	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
+	$post_flash_delete  = $this->_post_class->get_post_text('flash_delete' );
 
 	if ( $post_conf_delete ) {
 		return 'confirm';
+	} elseif ( $post_thumb_delete ) {
+		return 'thumb_delete';
+	} elseif ( $post_middle_delete ) {
+		return 'middle_delete';
+	} elseif ( $post_flash_delete ) {
+		return 'flash_delete';
 	} elseif ( $post_op ) {
 		return $post_op;
 	} 
@@ -222,11 +245,11 @@ function _modify()
 {
 	$is_failed = false ;
 
-	$this->_check_token_and_redirect();
-
 // load
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
 
 	$ret = $this->modify( $item_row );
 	switch ( $ret )
@@ -253,14 +276,15 @@ function _modify()
 	exit() ;
 }
 
-function _check_token_and_redirect()
+function _check_token_and_redirect( $item_id )
 {
-	$this->check_token_and_redirect( $this->_THIS_URL, $this->_TIME_FAILED );
+	$this->check_token_and_redirect( 
+		$this->_build_edit_url( $item_id ), $this->_TIME_FAILED );
 }
 
 function _build_redirect_param( $is_failed, $item_id )
 {
-	$url = $this->_THIS_URL .'&amp;photo_id='. $item_id ;
+	$url = $this->_build_edit_url( $item_id ) ;
 	$param = array(
 		'is_failed'   => $is_failed ,
 		'url_success' => $url ,
@@ -270,6 +294,12 @@ function _build_redirect_param( $is_failed, $item_id )
 	return $param ;
 }
 
+function _build_edit_url( $item_id )
+{
+	$str = $this->_THIS_URL .'&amp;photo_id='. $item_id ;
+	return $str ;
+}
+
 //---------------------------------------------------------
 // redo
 //---------------------------------------------------------
@@ -277,11 +307,11 @@ function _redo()
 {
 	$is_failed = false ;
 
-	$this->_check_token_and_redirect();
-
 // load
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
 
 	$ret = $this->video_redo( $item_row );
 	switch ( $ret )
@@ -313,11 +343,11 @@ function _redo()
 //---------------------------------------------------------
 function _video()
 {
-	$this->_check_token_and_redirect();
-
 // load
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
 
 	$ret = $this->_photo_class->video_thumb( $item_row );
 
@@ -333,18 +363,18 @@ function _video()
 //---------------------------------------------------------
 function _delete()
 {
-	$this->_check_token_and_redirect();
-
 // load
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
 
 	$ret = $this->delete( $item_row );
 
 	$redirect_param = array(
 		'is_failed'   => !$ret ,
-		'url_success' => $this->_MODULE_URL .'/index.php' ,
-		'url_failed'  => $this->_THIS_URL .'&amp;photo_id='. $item_id , 
+		'url_success' => $this->_INDEX_PHP ,
+		'url_failed'  => $this->_build_edit_url( $item_id ) ,
 		'msg_success' => $this->get_constant('DELETED') ,
 	);
 
@@ -364,6 +394,45 @@ function _check_delete_perm_or_redirect()
 		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , _NOPERM ) ;
 		exit();
 	}
+}
+
+//---------------------------------------------------------
+// thumb delete
+//---------------------------------------------------------
+function _thumb_delete()
+{
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
+
+	$url_redirect = $this->_build_edit_url( $item_id );
+
+	$this->thumb_delete( $item_row, $url_redirect );
+}
+
+function _middle_delete()
+{
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
+
+	$url_redirect = $this->_build_edit_url( $item_id );
+
+	$this->middle_delete( $item_row, $url_redirect );
+}
+
+function _flash_delete()
+{
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+
+	$this->_check_token_and_redirect( $item_id );
+
+	$url_redirect = $this->_build_edit_url( $item_id );
+
+	$this->video_flash_delete( $item_row, $url_redirect );
 }
 
 //---------------------------------------------------------
@@ -417,8 +486,9 @@ function _print_preview_modify( $item_row )
 
 function _build_bread_crumb_edit( $item_id )
 {
-	$url = $this->_THIS_URL.'&amp;photo_id='.$item_id;
-	return $this->build_bread_crumb( $this->get_constant('TITLE_EDIT'), $url );
+	return $this->build_bread_crumb( 
+		$this->get_constant('TITLE_EDIT'), 
+		$this->_build_edit_url( $item_id ) );
 }
 
 //---------------------------------------------------------

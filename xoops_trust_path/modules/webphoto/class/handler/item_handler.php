@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.5 2008/11/01 23:53:08 ohwada Exp $
+// $Id: item_handler.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// item_external_middle
 // 2008-10-10 K.OHWADA
 // item_embed_type item_playlist_srctype etc
 // 2008-10-01 K.OHWADA
@@ -76,55 +78,57 @@ function create( $flag_new=false )
 	}
 
 	$arr = array(
-		'item_id'             => 0,
-		'item_time_create'    => $time_create,
-		'item_time_update'    => $time_update,
-		'item_time_publish'   => 0 ,
-		'item_time_expire'    => 0 ,
-		'item_cat_id'         => 0,
-		'item_gicon_id'       => 0,
-		'item_player_id'      => 0,
-		'item_flashvar_id'    => 0,
-		'item_uid'            => 0,
-		'item_ext'            => '',
-		'item_title'          => '',
-		'item_place'          => '',
-		'item_equipment'      => '',
-		'item_gmap_latitude'  => 0,
-		'item_gmap_longitude' => 0,
-		'item_gmap_zoom'      => 0,
-		'item_gmap_type'      => 0,
-		'item_status'         => 0,
-		'item_hits'           => 0,
-		'item_rating'         => 0,
-		'item_votes'          => 0,
-		'item_comments'       => 0,
-		'item_exif'           => '',
-		'item_description'    => '',
-		'item_search'         => '',
-		'item_duration'       => 0,
-		'item_siteurl'        => '',
-		'item_artist'         => '',
-		'item_album'          => '',
-		'item_label'          => '',
-		'item_displaytype'    => 0,
-		'item_onclick'        => 0,
-		'item_views'          => 0,
-		'item_chain'          => 0,
-		'item_external_url'   => '',
-		'item_external_thumb' => '',
-		'item_embed_type'     => '',
-		'item_embed_src'      => '',
-		'item_playlist_feed'  => '',
-		'item_playlist_dir'   => '',
-		'item_playlist_cache' => '',
-		'item_playlist_type'  => 0,
-		'item_kind'           => $this->_KIND_FEFAULT ,
-		'item_datetime'       => $this->_DATETIME_DEFAULT ,
-		'item_playlist_time'  => $this->_PLAYLIST_TIME_DEFUALT,
-		'item_showinfo'       => $this->_SHOWINFO_DEFAULT ,
-		'item_perm_read'      => $this->_PERM_READ,
-		'item_perm_down'      => $this->_PERM_DOWN,
+		'item_id'              => 0,
+		'item_time_create'     => $time_create,
+		'item_time_update'     => $time_update,
+		'item_time_publish'    => 0 ,
+		'item_time_expire'     => 0 ,
+		'item_cat_id'          => 0,
+		'item_gicon_id'        => 0,
+		'item_player_id'       => 0,
+		'item_flashvar_id'     => 0,
+		'item_uid'             => 0,
+		'item_ext'             => '',
+		'item_title'           => '',
+		'item_place'           => '',
+		'item_equipment'       => '',
+		'item_gmap_latitude'   => 0,
+		'item_gmap_longitude'  => 0,
+		'item_gmap_zoom'       => 0,
+		'item_gmap_type'       => 0,
+		'item_status'          => 0,
+		'item_hits'            => 0,
+		'item_rating'          => 0,
+		'item_votes'           => 0,
+		'item_comments'        => 0,
+		'item_exif'            => '',
+		'item_description'     => '',
+		'item_search'          => '',
+		'item_duration'        => 0,
+		'item_siteurl'         => '',
+		'item_artist'          => '',
+		'item_album'           => '',
+		'item_label'           => '',
+		'item_displaytype'     => 0,
+		'item_onclick'         => 0,
+		'item_views'           => 0,
+		'item_chain'           => 0,
+		'item_icon'            => '',
+		'item_external_url'    => '',
+		'item_external_thumb'  => '',
+		'item_external_middle' => '',
+		'item_embed_type'      => '',
+		'item_embed_src'       => '',
+		'item_playlist_feed'   => '',
+		'item_playlist_dir'    => '',
+		'item_playlist_cache'  => '',
+		'item_playlist_type'   => 0,
+		'item_kind'            => $this->_KIND_FEFAULT ,
+		'item_datetime'        => $this->_DATETIME_DEFAULT ,
+		'item_playlist_time'   => $this->_PLAYLIST_TIME_DEFUALT,
+		'item_showinfo'        => $this->_SHOWINFO_DEFAULT ,
+		'item_perm_read'       => $this->_PERM_READ,
+		'item_perm_down'       => $this->_PERM_DOWN,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
@@ -192,8 +196,10 @@ function insert( $row, $force=false )
 	$sql .= 'item_artist, ';
 	$sql .= 'item_album, ';
 	$sql .= 'item_label, ';
+	$sql .= 'item_icon, ';
 	$sql .= 'item_external_url, ';
 	$sql .= 'item_external_thumb, ';
+	$sql .= 'item_external_middle, ';
 	$sql .= 'item_embed_type, ';
 	$sql .= 'item_embed_src, ';
 	$sql .= 'item_playlist_type, ';
@@ -256,8 +262,10 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_artist).', ';
 	$sql .= $this->quote($item_album).', ';
 	$sql .= $this->quote($item_label).', ';
+	$sql .= $this->quote($item_icon).', ';
 	$sql .= $this->quote($item_external_url).', ';
 	$sql .= $this->quote($item_external_thumb).', ';
+	$sql .= $this->quote($item_external_middle).', ';
 	$sql .= $this->quote($item_embed_type).', ';
 	$sql .= $this->quote($item_embed_src).', ';
 	$sql .= intval($item_playlist_type).', ';
@@ -334,8 +342,10 @@ function update( $row, $force=false )
 	$sql .= 'item_artist='.$this->quote($item_artist).', ';
 	$sql .= 'item_album='.$this->quote($item_album).', ';
 	$sql .= 'item_label='.$this->quote($item_label).', ';
+	$sql .= 'item_icon='.$this->quote($item_icon).', ';
 	$sql .= 'item_external_url='.$this->quote($item_external_url).', ';
 	$sql .= 'item_external_thumb='.$this->quote($item_external_thumb).', ';
+	$sql .= 'item_external_middle='.$this->quote($item_external_middle).', ';
 	$sql .= 'item_embed_type='.$this->quote($item_embed_type).', ';
 	$sql .= 'item_embed_src='.$this->quote($item_embed_src).', ';
 	$sql .= 'item_playlist_type='.intval($item_playlist_type).', ';

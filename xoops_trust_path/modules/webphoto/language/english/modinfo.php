@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
+// $Id: modinfo.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -80,8 +80,8 @@ define($constpref."CFG_DESCMAKETHUMB" , "When you change 'No' to 'Yes', You'd be
 //define($constpref."CFG_THUMBWIDTH" , "Thumb Image Width" ) ;
 //define($constpref."CFG_DESCTHUMBWIDTH" , "The height of thumbs will be decided from the width automatically." ) ;
 //define($constpref."CFG_THUMBSIZE" , "Size of thumbnails (pixel)" ) ;
+//define($constpref."CFG_THUMBRULE" , "Calculation rule for building thumbnails" ) ;
 
-define($constpref."CFG_THUMBRULE" , "Calculation rule for building thumbnails" ) ;
 define($constpref."CFG_WIDTH" , "Max photo width" ) ;
 define($constpref."CFG_DESCWIDTH" , "This means the photo's width to be resized.<br />If you use GD without truecolor, this means the limitation of width." ) ;
 define($constpref."CFG_HEIGHT" , "Max photo height" ) ;
@@ -115,9 +115,9 @@ define($constpref."CFG_DESCUSESITEIMG" , "The Integrated Image Manager input [si
 define($constpref."OPT_USENAME" , "Real Name" ) ;
 define($constpref."OPT_USEUNAME" , "Login Name" ) ;
 
-define($constpref."OPT_CALCFROMWIDTH" , "width:specified  height:auto" ) ;
-define($constpref."OPT_CALCFROMHEIGHT" , "width:auto  width:specified" ) ;
-define($constpref."OPT_CALCWHINSIDEBOX" , "put in specified size squre" ) ;
+//define($constpref."OPT_CALCFROMWIDTH" , "width:specified  height:auto" ) ;
+//define($constpref."OPT_CALCFROMHEIGHT" , "width:auto  width:specified" ) ;
+//define($constpref."OPT_CALCWHINSIDEBOX" , "put in specified size squre" ) ;
 
 define($constpref."OPT_VIEWLIST" , "List View" ) ;
 define($constpref."OPT_VIEWTABLE" , "Table View" ) ;
@@ -239,8 +239,9 @@ define($constpref."CFG_USE_PATHINFO","Use pathinfo");
 //---------------------------------------------------------
 // v0.30
 //---------------------------------------------------------
-define($constpref."CFG_TMPDIR" ,   "Path to temporary" ) ;
-define($constpref."CFG_TMPDIR_DSC" , "Fill the fullpath (The first character must be '/'. The last character should not be '/'.)<br />Recommend to set to this out of the document route.");
+//define($constpref."CFG_TMPDIR" ,   "Path to temporary" ) ;
+//define($constpref."CFG_TMPDIR_DSC" , "Fill the fullpath (The first character must be '/'. The last character should not be '/'.)<br />Recommend to set to this out of the document route.");
+
 define($constpref."CFG_MAIL_HOST"  , "Mail Server Hostname" ) ;
 define($constpref."CFG_MAIL_USER"  , "Mail User ID" ) ;
 define($constpref."CFG_MAIL_PASS"  , "Mail Password" ) ;
@@ -291,6 +292,17 @@ define($constpref."ADMENU_PLAYER_MANAGER", "Player Managemnet");
 define($constpref."ADMENU_FLASHVAR_MANAGER", "Flashvar Managemnet");
 define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "Player Table Managemnet");
 define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "Flashvar Table Managemnet");
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+define($constpref."CFG_WORKDIR" ,   "Work Directory Path" ) ;
+define($constpref."CFG_WORKDIR_DSC" , "Fill the fullpath (The first character must be '/'. The last character should not be '/'.)<br />Recommend to set to this out of the document route.");
+define($constpref."CFG_CAT_WIDTH" ,   "Category Image Width and Height" ) ;
+define($constpref."CFG_CSUB_WIDTH" ,  "Image Width and Height in Sub Category" ) ;
+define($constpref."CFG_GICON_WIDTH" ,  "GoogleMap Icon Width and Height" ) ;
+define($constpref."CFG_JPEG_QUALITY" ,  "JPEG Quality" ) ;
+define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />This configuration is significant only when using GD" ) ;
 
 }
 // === define begin ===

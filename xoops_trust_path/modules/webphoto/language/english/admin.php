@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.7 2008/10/30 13:02:36 ohwada Exp $
+// $Id: admin.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -340,7 +340,8 @@ define("_AM_WEBPHOTO_ERR_NO_RECORD", "There are no record");
 //---------------------------------------------------------
 // cat manager
 //---------------------------------------------------------
-define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "Please upload the desired category image file<br />and set Path from the directory installed XOOPS.<br />(The first character must be '/'.)<br />Show folder icon if not set" ) ;
+//define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "Please upload the desired category image file<br />and set Path from the directory installed XOOPS.<br />(The first character must be '/'.)<br />Show folder icon if not set" ) ;
+
 define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "All Groups" ) ;
 
 //---------------------------------------------------------
@@ -448,6 +449,14 @@ define("_AM_WEBPHOTO_PLAYER_NO_ITEM","Thers are no item to play");
 define("_AM_WEBPHOTO_PLAYER_WARNING","WARNING: Are you sure you want to delete this Player? <br />Manually edit all entries using this player before deleting it.");
 define("_AM_WEBPHOTO_PLAYER_ERR_EXIST","ERROR: The same title player you provided is already in the database!");
 define("_AM_WEBPHOTO_BUTTON_CLONE","Clone");
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+// cat form
+define("_AM_WEBPHOTO_CAP_CAT_SELECT","Select the category image");
+define("_AM_WEBPHOTO_DSC_CAT_PATH" , "Set Path from the directory installed XOOPS.<br />(The first character must be '/'.)" ) ;
+define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "Show folder icon if not set" ) ;
 
 // === define end ===
 }

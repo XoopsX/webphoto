@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.12 2008/11/01 23:53:08 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.13 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-08 K.OHWADA
+// _build_ele_middle_file_external()
 // 2008-10-01 K.OHWADA
 // build_ele_embed_type() etc
 // 2008-08-24 K.OHWADA
@@ -40,8 +42,10 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_cfg_makethumb ;
 	var $_cfg_file_size ;
 
-	var $_param_type = null;
-	var $_checkbox_array   = array();
+	var $_has_deletable ;
+
+	var $_param_type         = null;
+	var $_checkbox_array     = array();
 
 	var $_URL_SIZE          = 80;
 	var $_TAGS_SIZE         = 80;
@@ -60,6 +64,10 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_VIDEO_THUMB_WIDTH = 120;
 	var $_VIDEO_ICON_WIDTH  = 64;
 	var $_FLASH_EXT         = _C_WEBPHOTO_VIDEO_FLASH_EXT ;
+
+	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
+	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
+	var $_MIDDLE_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
 
 	var $_DETAIL_DIV_NAME = 'webphoto_detail';
 	var $_GMAP_DIV_NAME   = 'webphoto_gmap_iframe';
@@ -95,6 +103,8 @@ function webphoto_photo_edit_form( $dirname, $trust_dirname )
 	$this->_cfg_fsize       = $this->_config_class->get_by_name( 'fsize' );
 	$this->_cfg_makethumb   = $this->_config_class->get_by_name( 'makethumb' );
 	$this->_cfg_file_size   = $this->_config_class->get_by_name( 'file_size' );
+
+	$this->_has_deletable   = $this->_perm_class->has_deletable();
 
 	$this->_ICON_ROTATE_URL = $this->_MODULE_URL .'/images/uploader';
 
@@ -138,10 +148,11 @@ function print_form_common( $row, $param )
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
-	$is_submit = false ;
-	$is_edit   = false ;
-	$cont_row  = null ;
-	$thumb_row = null ;
+	$is_submit  = false ;
+	$is_edit    = false ;
+	$cont_row   = null ;
+	$thumb_row  = null ;
+	$middle_row = null ;
 
 	switch ($mode)
 	{
@@ -162,8 +173,9 @@ function print_form_common( $row, $param )
 	$this->set_row( $row );
 
 	if ( $is_edit ) {
-		$cont_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
-		$thumb_row = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
+		$cont_row   = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
+		$thumb_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
+		$middle_row = $this->_file_handler->get_row_by_id( $row['item_file_id_3'] );
 	}
 
 	$this->set_td_left_width( $this->_TD_LEFT_WIDTH );
@@ -281,6 +293,9 @@ function print_form_common( $row, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
 		$this->_build_ele_thumb_file_external( $thumb_row ) );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
+		$this->_build_ele_middle_file_external( $middle_row ) );
 
 	if ( $this->_cfg_gmap_apikey ) {
 		echo $this->build_row_text_id( $this->get_constant('ITEM_GMAP_LATITUDE'),
@@ -491,49 +506,22 @@ function _build_ele_photo_file( $cont_row )
 
 function _build_ele_photo_file_external( $cont_row )
 {
-	$ele = $this->_build_ele_photo_file( $cont_row );
+	$name = 'item_external_url';
 
-	$name2  = 'item_external_url' ;
-	$value2 = $this->get_row_by_key( $name2 );
+	$ele  = $this->_build_file_external( 
+		$name, $this->_PHOTO_FIELD_NAME, $cont_row );
 
-	if ( !isset($cont_row['file_url']) || empty($cont_row['file_url']) ) {
-		$ele .= "<br />\n";
-		$ele .= $this->get_constant('OR')." ";
-		$ele .= $this->get_constant('ITEM_EXTERNAL_URL')."<br />\n";
-		$ele .= $this->build_input_text( $name2, $value2, $this->_URL_SIZE );
-		$ele .= "<br />\n";
-		$ele .= $this->_build_link( $value2 );
-	}
+	$ele .= $this->_build_file_link( $name, null, $cont_row );
 
 	return $ele;
 }
 
 function _build_ele_thumb_file_external( $thumb_row )
 {
-	$url = '' ;
-	if ( isset($thumb_row['file_url']) ) {
-		$url = $thumb_row['file_url'] ;
-	}
+	$name = 'item_external_thumb';
 
-	$name2  = 'item_external_thumb' ;
-	$value2 = $this->get_row_by_key( $name2 );
-
-	$ele  = '';
-	$ele .= $this->build_form_file( $this->_THUMB_FIELD_NAME );
-	$ele .= "<br />\n";
-
-	if ( $url ) {
-		$ele .= $this->_build_link( $url );
-	} else {
-		$ele .= "<br />\n";
-		$ele .= $this->get_constant('OR')." ";
-		$ele .= $this->get_constant('ITEM_EXTERNAL_THUMB')."<br />\n";
-		$ele .= $this->build_input_text( $name2, $value2, $this->_URL_SIZE );
-		$ele .= "<br />\n";
-		$ele .= $this->_build_link( $value2 );
-	}
-
-	$ele .= "<br />\n";
+	$ele = $this->_build_file_external( 
+		$name, $this->_THUMB_FIELD_NAME, $thumb_row );
 
 	$desc = null;
 	$value_type = $this->_get_embed_type( false );
@@ -548,6 +536,71 @@ function _build_ele_thumb_file_external( $thumb_row )
 		$ele .= $desc ;
 	} elseif ( empty($desc) && $this->_cfg_makethumb ) {
 		$ele .= $this->get_constant('DSC_THUMB_SELECT') ."<br />\n";
+	}
+
+	$ele .= $this->_build_file_link( $name, $this->_THUMB_FIELD_NAME, $thumb_row );
+
+	return $ele;
+}
+
+function _build_ele_middle_file_external( $middle_row )
+{
+	$name = 'item_external_middle';
+
+	$ele = $this->_build_file_external( 
+		$name, $this->_MIDDLE_FIELD_NAME, $middle_row );
+
+	if ( $this->_cfg_makethumb ) {
+		$ele .= $this->get_constant('DSC_THUMB_SELECT') ."<br />\n";
+	}
+
+	$ele .= $this->_build_file_link( $name, $this->_MIDDLE_FIELD_NAME, $middle_row );
+
+	return $ele;
+}
+
+function _build_file_external( $name, $field, $row )
+{
+	$url = '' ;
+	if ( isset($row['file_url']) ) {
+		$url = $row['file_url'] ;
+	}
+
+	$value = $this->get_row_by_key( $name );
+
+	$ele  = '';
+	$ele .= $this->build_form_file( $field );
+	$ele .= "<br /><br />\n";
+
+	if ( empty($url) ) {
+		$ele .= $this->get_constant('OR')." ";
+		$ele .= $this->get_constant( $name )."<br />\n";
+		$ele .= $this->build_input_text( $name, $value, $this->_URL_SIZE );
+		$ele .= "<br /><br />\n";
+	}
+
+	return $ele;
+}
+
+function _build_file_link( $name, $field, $row )
+{
+	$url = '' ;
+	if ( isset($row['file_url']) ) {
+		$url = $row['file_url'] ;
+	}
+
+	$value = $this->get_row_by_key( $name );
+
+	$ele = '';
+
+	if ( $url ) {
+		$ele .= $this->_build_link( $url );
+		if ( $field ) {
+			$ele .= $this->_build_delete_button( $field.'_delete' );
+		}
+
+	} elseif ( $value ) {
+		$ele  = $this->_build_link( $value );
 	}
 
 	return $ele;
@@ -590,8 +643,6 @@ function _get_checkbox_by_name( $name )
 
 function _build_ele_button( $mode )
 {
-	$has_deletable = $this->_perm_class->has_deletable();
-
 	$is_submit = false;
 	$is_edit   = false;
 
@@ -622,11 +673,19 @@ function _build_ele_button( $mode )
 
 	$button .= $this->build_input_reset( 'reset', _CANCEL ).' ';
 
-	if ( $is_edit && $has_deletable ) {
-		$button .= $this->build_input_submit( 'conf_delete', _DELETE );
+	if ( $is_edit ) {
+		$button .= $this->_build_delete_button( 'conf_delete' );
 	}
 
 	return $button;
+}
+
+function _build_delete_button( $name )
+{
+	if ( $this->_has_deletable ) {
+		return $this->build_input_submit( $name, _DELETE );
+	}
+	return null;
 }
 
 function _build_ele_category()
@@ -1065,20 +1124,21 @@ function _build_ele_redo_thumb()
 
 function _build_ele_redo_flash( $flash_row )
 {
-	$url_s = '' ;
+	$url = '' ;
 	if ( is_array($flash_row) ) {
-		$url_s = $this->sanitize( $flash_row['file_url'] ) ;
+		$url = $flash_row['file_url'] ;
 	}
 
-	$text  = $this->build_input_checkbox_yes( 'redo_flash', 1 );
-	$text .= ' '.$this->get_constant('CAP_REDO_FLASH') ;
+	$ele  = $this->build_input_checkbox_yes( 'redo_flash', 1 );
+	$ele .= ' '.$this->get_constant('CAP_REDO_FLASH') ;
 
-	if ( $url_s ) {
-		$text .= "<br />\n";
-		$text .= '<a href="'. $url_s .'" target="_blank">'. $url_s .'</a>'."<br />\n";
+	if ( $url ) {
+		$ele .= "<br />\n";
+		$ele .= $this->_build_link( $url );
+		$ele .= $this->_build_delete_button( 'flash_delete' );
 	}
 
-	return $text;
+	return $ele ;
 }
 
 //---------------------------------------------------------

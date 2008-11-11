@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.15 2008/11/02 04:23:04 ohwada Exp $
+// $Id: main.php,v 1.16 2008/11/11 06:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -431,7 +431,7 @@ define("_WEBPHOTO_CAT_GICON_ID" ,  "Icon ID" ) ;
 define("_WEBPHOTO_CAT_FORUM_ID" ,  "Forum ID" ) ;
 define("_WEBPHOTO_CAT_PID" ,    "Parent ID" ) ;
 define("_WEBPHOTO_CAT_TITLE" ,  "Category Title" ) ;
-define("_WEBPHOTO_CAT_IMG_PATH" , "Category Image" ) ;
+define("_WEBPHOTO_CAT_IMG_PATH" , "Category Image Path" ) ;
 define("_WEBPHOTO_CAT_IMG_MODE" , "Image View Mode" ) ;
 define("_WEBPHOTO_CAT_ORIG_WIDTH" ,  "Image Original Width" ) ;
 define("_WEBPHOTO_CAT_ORIG_HEIGHT" , "Image Original Height" ) ;
@@ -777,7 +777,7 @@ define("_WEBPHOTO_GOTO_INDEX" ,  "Goto the module top page" ) ;
 define("_WEBPHOTO_TITLE_MAIL_POST" ,  "Post by Mail" ) ;
 
 // file
-define("_WEBPHOTO_TITLE_FILE" , "Add Photo from File" ) ;
+define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "Add Photo from File" ) ;
 define("_WEBPHOTO_CAP_FILE_SELECT", "Select File");
 define("_WEBPHOTO_ERR_EMPTY_FILE" , "You must select the file" ) ;
 define("_WEBPHOTO_ERR_EMPTY_CAT" , "You must select the category" ) ;
@@ -1196,6 +1196,19 @@ define("_WEBPHOTO_PLAYLIST_ERR_WRITE","can not write the cache file");
 
 define("_WEBPHOTO_USER",  "User" ) ;
 define("_WEBPHOTO_OR",  "OR" ) ;
+
+//---------------------------------------------------------
+// v0.60
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_ICON" , "Icon Name" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "External Middle URL" ) ;
+
+// cat table
+define("_WEBPHOTO_CAT_IMG_NAME" , "Category Image Name" ) ;
+
+// edit form
+define("_WEBPHOTO_CAP_MIDDLE_SELECT", "Select the middle image");
 
 // === define end ===
 }
