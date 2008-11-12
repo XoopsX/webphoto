@@ -1,10 +1,16 @@
 <?php
-// $Id: embed_base.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: embed_base.php,v 1.2 2008/11/12 11:18:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-08 K.OHWADA
+// BUG: forget to close height
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -90,7 +96,8 @@ function set_sample( $sample )
 //---------------------------------------------------------
 function build_object_begin( $width, $height, $extra=null )
 {
-	$str  = '<object width="'.$width.'" height="'.$height.' '.$extra.' ">'."\n";
+// BUG: forget to close height
+	$str  = '<object width="'.$width.'" height="'.$height.'" '.$extra.' >'."\n";
 	return $str;
 }
 
