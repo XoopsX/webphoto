@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.13 2008/11/11 06:53:16 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.14 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// _build_ele_codeinfo()
+// image -> image_tmp
+// BUG: sanitize twice
 // 2008-11-08 K.OHWADA
 // _build_ele_middle_file_external()
 // 2008-10-01 K.OHWADA
@@ -46,10 +50,14 @@ class webphoto_photo_edit_form extends webphoto_form_this
 
 	var $_param_type         = null;
 	var $_checkbox_array     = array();
+	var $_xoops_db_groups    = null;
 
 	var $_URL_SIZE          = 80;
 	var $_TAGS_SIZE         = 80;
 	var $_EMBED_SRC_SIZE    = 80;
+	var $_SELECT_PERM_SIZE  = 3;
+	var $_SELECT_INFO_SIZE  = 5;
+
 	var $_ICON_ROTATE_URL;
 
 	var $_ARRAY_PHOTO_ITEM = array(
@@ -134,7 +142,7 @@ function init_preload()
 //---------------------------------------------------------
 // submit edit form
 //---------------------------------------------------------
-function print_form_common( $row, $param )
+function print_form_common( $item_row, $param )
 {
 	$mode          = $param['mode'];
 	$preview_name  = $param['preview_name'];
@@ -145,14 +153,16 @@ function print_form_common( $row, $param )
 	$is_video      = isset($param['is_video']) ? (bool)$param['is_video'] : false ;
 
 	$this->_param_type = $type;
+	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
-	$is_submit  = false ;
-	$is_edit    = false ;
-	$cont_row   = null ;
-	$thumb_row  = null ;
-	$middle_row = null ;
+	$is_submit    = false ;
+	$is_edit      = false ;
+	$show_siteurl = true;
+	$cont_row     = null ;
+	$thumb_row    = null ;
+	$middle_row   = null ;
 
 	switch ($mode)
 	{
@@ -170,12 +180,12 @@ function print_form_common( $row, $param )
 			break;
 	}
 
-	$this->set_row( $row );
+	$this->set_row( $item_row );
 
 	if ( $is_edit ) {
-		$cont_row   = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
-		$thumb_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
-		$middle_row = $this->_file_handler->get_row_by_id( $row['item_file_id_3'] );
+		$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+		$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+		$middle_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE );
 	}
 
 	$this->set_td_left_width( $this->_TD_LEFT_WIDTH );
@@ -191,8 +201,8 @@ function print_form_common( $row, $param )
 	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_2 );
 	echo $this->_build_input_hidden_max_file_size();
 
-	echo $this->build_input_hidden( 'item_id',  $row['item_id'] );
-	echo $this->build_input_hidden( 'photo_id', $row['item_id'] );
+	echo $this->build_input_hidden( 'item_id',  $item_row['item_id'] );
+	echo $this->build_input_hidden( 'photo_id', $item_row['item_id'] );
 
 	if ( $is_submit ) {
 		echo $this->build_input_hidden( 'preview_name', $preview_name, true );
@@ -227,12 +237,23 @@ function print_form_common( $row, $param )
 		echo $this->build_line_ele( $this->get_constant('ITEM_EMBED_TYPE'), 
 			$this->_build_ele_embed_type() );
 
-		echo $this->build_line_ele( $this->get_constant('ITEM_EMBED_SRC'), 
-			$this->_build_ele_embed_src() );
+		if ( $this->_is_embed_general_type() ) {
+			$this->_print_row_text_is_in_array( 'item_siteurl' );
+			echo $this->build_row_textarea( 
+				$this->get_constant('ITEM_EMBED_TEXT'), 'item_embed_text' );
+			$this->set_row_hidden_buffer( 'item_embed_src' ) ;
+			$show_siteurl = false ;
+
+		} else {
+			echo $this->build_line_ele( $this->get_constant('ITEM_EMBED_SRC'), 
+				$this->_build_ele_embed_src() );
+			$this->set_row_hidden_buffer( 'item_embed_text' ) ;	
+		}
 
 	} else {
 		$this->set_row_hidden_buffer( 'item_embed_type' ) ;
 		$this->set_row_hidden_buffer( 'item_embed_src' ) ;
+		$this->set_row_hidden_buffer( 'item_embed_text' ) ;
 	}
 
 	if ( $this->_is_upload_type() ) {
@@ -267,10 +288,13 @@ function print_form_common( $row, $param )
 	$this->_print_row_text_is_in_array( 'item_place' );
 	$this->_print_row_text_is_in_array( 'item_equipment' );
 	$this->_print_row_text_is_in_array( 'item_duration' );
-	$this->_print_row_text_is_in_array( 'item_siteurl' );
 	$this->_print_row_text_is_in_array( 'item_artist' );
 	$this->_print_row_text_is_in_array( 'item_album' );
 	$this->_print_row_text_is_in_array( 'item_label' );
+
+	if ( $show_siteurl ) {
+		$this->_print_row_text_is_in_array( 'item_siteurl' );
+	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
 	{
@@ -279,6 +303,9 @@ function print_form_common( $row, $param )
 			echo $this->build_row_text( $this->get_constant( $name ), $name );
 		}
 	}
+
+	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_WIDTH'),  'item_page_width' );
+	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_HEIGHT'), 'item_page_height' );
 
 	echo $this->build_line_ele(  $this->get_constant('TAGS'), 
 		$this->_build_ele_tags( $param ) );
@@ -296,6 +323,18 @@ function print_form_common( $row, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
+
+// for future
+//	echo $this->build_line_ele(
+//		$this->get_constant('ITEM_PERM_READ'), $this->_build_ele_perm_read() );
+//	echo $this->build_line_ele(
+//		$this->get_constant('ITEM_SHOWINFO'), $this->_build_ele_showinfo() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('ITEM_PERM_DOWN'), $this->_build_ele_perm_down() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('ITEM_CODEINFO'), $this->_build_ele_codeinfo() );
 
 	if ( $this->_cfg_gmap_apikey ) {
 		echo $this->build_row_text_id( $this->get_constant('ITEM_GMAP_LATITUDE'),
@@ -362,10 +401,20 @@ function _is_upload_type()
 
 function _is_embed_type( )
 {
+	$type = $this->get_row_by_key( 'item_embed_type' );
 	if ( $this->_param_type == 'embed' ) {
 		return true;
 	}
-	if ( $this->get_row_by_key( 'item_embed_type' ) ) {
+	if ( $type ) {
+		return true;
+	}
+	return false;
+}
+
+function _is_embed_general_type( )
+{
+	$type = $this->get_row_by_key( 'item_embed_type' );
+	if ( $this->_is_embed_type() && ( $type == 'general' ) ) {
 		return true;
 	}
 	return false;
@@ -589,7 +638,8 @@ function _build_file_link( $name, $field, $row )
 		$url = $row['file_url'] ;
 	}
 
-	$value = $this->get_row_by_key( $name );
+// BUG: sanitize twice
+	$value = $this->get_row_by_key( $name, null, false );
 
 	$ele = '';
 
@@ -604,14 +654,6 @@ function _build_file_link( $name, $field, $row )
 	}
 
 	return $ele;
-}
-
-function _build_ele_gicon()
-{
-	$gicon_id = $this->get_row_by_key( 'item_gicon_id' );
-
-	return $this->build_form_select(
-		'item_gicon_id',  $gicon_id, $this->_gicon_handler->get_sel_options(), 1 );
 }
 
 function _build_ele_tags( $param )
@@ -691,7 +733,15 @@ function _build_delete_button( $name )
 function _build_ele_category()
 {
 	return $this->_cat_handler->build_selbox_with_perm_post(
-		$this->get_row_by_key( 'item_cat_id' ) , 'item_cat_id' );
+		$this->get_row_by_key( 'item_cat_id' ) , 'item_cat_id', $this->_xoops_groups );
+}
+
+function _build_ele_gicon()
+{
+	$name    = 'item_gicon_id' ;
+	$value   = $this->get_row_by_key( $name );
+	$options = $this->_gicon_handler->get_sel_options();
+	return $this->build_form_select( $name,  $value, $options, $this->_SELECT_SIZE );
 }
 
 function _build_ele_kind()
@@ -699,7 +749,7 @@ function _build_ele_kind()
 	$name    = 'item_kind' ;
 	$value   = $this->get_row_by_key( $name ) ; 
 	$options = $this->_item_handler->get_kind_options();
-	return $this->build_form_select( $name, $value, $options, 1 );
+	return $this->build_form_select( $name, $value, $options, $this->_SELECT_SIZE );
 }
 
 function _build_ele_displaytype()
@@ -707,7 +757,7 @@ function _build_ele_displaytype()
 	$name    = 'item_displaytype' ;
 	$value   = $this->get_row_by_key( $name ) ; 
 	$options = $this->_item_handler->get_displaytype_options();
-	return $this->build_form_select( $name, $value, $options, 1 );
+	return $this->build_form_select( $name, $value, $options, $this->_SELECT_SIZE );
 }
 
 function _build_ele_onclick()
@@ -715,14 +765,14 @@ function _build_ele_onclick()
 	$name    = 'item_onclick' ;
 	$value   = $this->get_row_by_key( $name ) ; 
 	$options = $this->_item_handler->get_onclick_options();
-	return $this->build_form_select( $name, $value, $options, 1 );
+	return $this->build_form_select( $name, $value, $options, $this->_SELECT_SIZE );
 }
 
 function _build_ele_player()
 {
 	$name  = 'item_player_id';
 	$value = $this->get_row_by_key( 'item_player_id' );
-	return $this->_player_handler->build_form_selbox( $name, $value, 1 );
+	return $this->_player_handler->build_form_selbox( $name, $value, $this->_SELECT_SIZE );
 }
 
 function _build_ele_embed_src()
@@ -738,6 +788,49 @@ function _build_ele_embed_src()
 	}
 
 	return $text;
+}
+
+function _build_ele_perm_read()
+{
+	$name    = 'item_perm_read' ;
+	$values  = $this->_build_perm( $name );
+	return $this->build_form_select_multiple(
+		$name, $values, $this->_xoops_db_groups, $this->_SELECT_PERM_SIZE );
+}
+
+function _build_ele_perm_down()
+{
+	$name    = 'item_perm_down' ;
+	$values  = $this->_build_perm( $name );
+	return $this->build_form_select_multiple(
+		$name, $values, $this->_xoops_db_groups, $this->_SELECT_PERM_SIZE );
+}
+
+function _build_perm( $name )
+{
+	$value = $this->get_row_by_key( $name, null, false );
+	if ( $value == _C_WEBPHOTO_PERM_ALLOW_ALL ) {
+		return array_keys( $this->_xoops_db_groups ) ;
+	}
+	return $this->_item_handler->get_perm_array( $value );
+}
+
+function _build_ele_showinfo()
+{
+	$name    = 'item_showinfo' ;
+	$values  = $this->_item_handler->get_showinfo_array( $this->get_row() );
+	$options = $this->_item_handler->get_showinfo_options();
+	return $this->build_form_select_multiple(
+		$name, $values, $options, $this->_SELECT_INFO_SIZE );
+}
+
+function _build_ele_codeinfo()
+{
+	$name    = 'item_codeinfo' ;
+	$values  = $this->_item_handler->get_codeinfo_array( $this->get_row() );
+	$options = $this->_item_handler->get_codeinfo_options();
+	return $this->build_form_select_multiple(
+		$name, $values, $options, $this->_SELECT_INFO_SIZE );
 }
 
 function _build_link( $url )
@@ -910,7 +1003,7 @@ function print_form_embed( $mode, $row )
 function _build_ele_embed_type()
 {
 	$value   = $this->_get_embed_type( true );
-	$options = $this->_embed_class->build_type_options();
+	$options = $this->_embed_class->build_type_options( $this->_is_module_admin );
 
 	return $this->build_form_select( 'item_embed_type', $value, $options, 1 );
 }
@@ -1050,7 +1143,7 @@ function print_form_video_thumb( $mode, $row )
 
 		if ( is_file($file) ) {
 			$name_encode = rawurlencode( $name );
-			$url = $this->_MODULE_URL.'/index.php?fct=image&amp;name='. $name_encode ;
+			$url = $this->_MODULE_URL.'/index.php?fct=image_tmp&amp;name='. $name_encode ;
 			echo '<td align="center" class="odd">';
 			echo '<img src="'. $url .'" width="'. $width .'"><br />';
 			echo '<input type="radio" name="name" value="'. $name_encode .'" />';
@@ -1071,9 +1164,9 @@ function print_form_video_thumb( $mode, $row )
 //---------------------------------------------------------
 // redo
 //---------------------------------------------------------
-function print_form_redo( $mode, $row )
+function print_form_redo( $mode, $item_row, $flash_row )
 {
-	$item_id = $row['item_id'];
+	$item_id = $item_row['item_id'];
 
 	switch ($mode)
 	{
@@ -1087,9 +1180,7 @@ function print_form_redo( $mode, $row )
 			break;
 	}
 
-	$flash_row = $this->_file_handler->get_row_by_id( $row['item_file_id_4'] );
-
-	$this->set_row( $row );
+	$this->set_row( $item_row );
 
 	echo $this->build_form_begin( 'webphoto_redo' );
 	echo $this->build_input_hidden( 'op',       'redo' );

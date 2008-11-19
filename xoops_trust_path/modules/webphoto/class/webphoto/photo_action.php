@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.6 2008/11/11 12:53:52 ohwada Exp $
+// $Id: photo_action.php,v 1.7 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// BUG: not set external type
 // 2008-11-08 K.OHWADA
 // upload_fetch_middle()
 // BUG: endless loop in submit check
@@ -433,9 +435,6 @@ function submit_exec_check()
 
 function submit_exec_fetch()
 {
-
-//	$this->upload_init( true ) ;
-
 	if ( $this->is_external_type() ) {
 		$this->set_ext_when_external() ;
 		$this->set_title_when_external() ;
@@ -487,9 +486,15 @@ function submit_exec_fetch_check()
 		return 0 ;
 	}
 
+// BUG: not set external type
+// external type
+	if ( $this->is_external_type() ) {
+		return 0;
+	}
+
 // embed type
 	if ( $this->is_embed_type() ) {
-		if ( $this->is_fill_item_embed_src() ) {
+		if ( $this->is_fill_item_embed_src() || $this->is_fill_item_embed_text() ) {
 			return 0;
 		} else {
 			return _C_WEBPHOTO_ERR_EMBED;
@@ -616,6 +621,11 @@ function build_update_item_row( $item_row, $file_params )
 	if ( $this->is_admin_playlist_type() ) {
 		$update_row['item_playlist_cache'] = 
 			$this->_playlist_class->build_name( $item_id ) ;
+	}
+
+// set by create_thumb_from_external
+	if ( empty( $update_row['item_external_thumb'] ) ) {
+		$update_row['item_external_thumb'] = $this->_item_external_thumb ;
 	}
 
 	return $update_row;
@@ -822,13 +832,13 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 		$thumb_param = $this->create_thumb_param_by_tmp( $item_id, $thumb_name );
 
 	} elseif ( $is_submit && $this->is_external_type() ) {
-			$this->create_thumb_from_external( $item_id );
+		$thumb_param = $this->create_thumb_from_external( $item_id );
 
 	} elseif ( $is_submit && $this->is_embed_type() ) {
-		$this->create_thumb_from_embed( $item_id );
+		$thumb_param = $this->create_thumb_from_embed( $item_id );
 
 	} elseif ( $is_submit && $this->is_admin_playlist_type() ) {
-		$this->create_thumb_for_playlist( $item_id );
+		$thumb_param = $this->create_thumb_for_playlist( $item_id );
 
 	} elseif ( is_array($cont_param) ) {
 		$thumb_param = $this->create_thumb_param_by_param( $cont_param );

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.13 2008/11/11 06:53:16 ohwada Exp $
+// $Id: show_photo.php,v 1.14 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// perm_download()
+// get_file_url_by_kind() -> get_show_file_url()
 // 2008-11-08 K.OHWADA
 // item_external_middle
 // 2008-10-01 K.OHWADA
@@ -58,7 +61,8 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_WINDOW_MERGIN = 16;
 	var $_MAX_SUMMARY   = 100;
 	var $_SUMMARY_TAIL  = ' ...';
-	var $_RATING_DECIMALS = 2;
+	var $_RATING_DECIMALS    = 2;
+	var $_FILESIZE_PRECISION = 1;
 
 	var $_SHOW_DESC_ARRAY = array(
 		'description_disp', 'siteurl', 'artist', 'album', 'label' );
@@ -117,9 +121,6 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 {
 	extract( $row ) ;
 
-	list( $cont_size , $cont_duration )
-		= $this->get_file_cont_size_duration( $row );
-
 	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
 
@@ -157,6 +158,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'external_middle' => $item_external_middle,
 		'embed_type'      => $item_embed_type,
 		'embed_src'       => $item_embed_src,
+		'embed_text'      => $item_embed_text,
 		'gmap_latitude'   => $item_gmap_latitude,
 		'gmap_longitude'  => $item_gmap_longitude,
 		'gmap_zoom'       => $item_gmap_zoom,
@@ -174,6 +176,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'playlist_cache'  => $item_playlist_cache,
 		'playlist_type'   => $item_playlist_type,
 		'playlist_time'   => $item_playlist_time,
+		'page_width'      => $item_page_width,
+		'page_height'     => $item_page_height,
 
 		'title_s'           => $this->sanitize( $item_title ) ,
 		'place_s'           => $this->sanitize( $item_place ) ,
@@ -205,12 +209,8 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
 		'is_owner'  => $this->is_photo_owner( $item_uid ),
 		'is_video'  => $this->is_video_kind( $row['item_kind'] ) ,
-		'can_download' => $this->can_download( $row ) ,
-
-		'cont_size'           => $cont_size ,
-		'cont_duration'       => $cont_duration ,
-		'cont_size_disp'      => $this->_utility_class->format_filesize( $cont_size, 1 ) ,
-		'cont_duration_disp'  => $this->format_time( $cont_duration ) ,
+		'perm_download' => $this->perm_download( $row ) ,
+		'can_download'  => $this->can_download( $row ) ,
 	);
 
 	$show_desc = false;
@@ -248,41 +248,21 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		$show_arr['texts'] = $arr2;
 	}
 
-	$arr3 = array();
+	$show_arr['show_desc'] = $show_desc;
+
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
-		$name_i      = 'file_url_'.$i;
-		$item_name_i = 'item_file_id_'.$i;
-		$cont_name_i = 'FILE_KIND_'.$i;
-
-		$url_i   = $this->get_file_url_by_kind( $row, $i );
-		$url_i_s = $this->sanitize( $url_i );
-
-		$show_arr[ $name_i ]      = $url_i ;
-		$show_arr[ $name_i.'_s' ] = $url_i_s ;
-
-		$arr3[ $i ] = array(
-			'lang'  => $this->get_constant( $cont_name_i ) ,
-			'url'   => $url_i,
-			'url_s' => $url_i_s,
-		);
+		$name_i = 'file_row_'.$i;
+		$show_arr[ $name_i ] = $this->get_cached_file_row_by_kind( $row, $i );
 	}
 
-	$flash_video_url   = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ] ;
-	$docomo_video_url  = $show_arr[ 'file_url_'. _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO ] ;
+	list( $cont_size , $cont_duration ) =
+		$this->get_show_file_size_duration( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 
-	$show_arr['flash_video_url']     = $flash_video_url ;
-	$show_arr['flash_video_url_s']   = $this->sanitize(     $flash_video_url ) ;
-	$show_arr['is_flash_video']      = $this->has_file_url( $flash_video_url ) ;
-	$show_arr['docomo_video_url']    = $docomo_video_url ;
-	$show_arr['docomo_video_url_s']  = $this->sanitize(     $docomo_video_url ) ;
-	$show_arr['is_mobile_video']     = $this->has_file_url( $docomo_video_url ) ;
-
-	if ( is_array($arr3) && count($arr3) ) {
-		$show_arr['urls'] = $arr3;
-	}
-
-	$show_arr['show_desc'] = $show_desc;
+	$show_arr['cont_size']           = $cont_size ;
+	$show_arr['cont_duration']       = $cont_duration ;
+	$show_arr['cont_size_disp']      = $this->build_show_filesize( $cont_size ) ;
+	$show_arr['cont_duration_disp']  = $this->format_time( $cont_duration ) ;
 
 	return $show_arr;
 }
@@ -291,7 +271,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 function build_photo_show_light( $row, $tag_name_array=null )
 {
 	$arr1 = $this->build_photo_show_basic( $row, $tag_name_array );
-	$arr2 = $this->build_show_imgsrc( $row );
+	$arr2 = $this->build_show_imgsrc( $row, $arr1 );
 
 	return array_merge( $arr1, $arr2 );
 }
@@ -333,6 +313,15 @@ function build_photo_show( $row )
 
 	$arr = array_merge( $arr1, $arr2 );
 	return $arr;
+}
+
+function build_show_filesize( $size )
+{
+	if ( $size > 0 ) {
+		return $this->_utility_class->format_filesize(
+			$size, $this->_FILESIZE_PRECISION ) ;
+	}
+	return null;
 }
 
 function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
@@ -441,6 +430,12 @@ function format_time( $time )
 		$this->get_constant('HOUR'), $this->get_constant('MINUTE'), $this->get_constant('SECOND') ) ;
 }
 
+function perm_download( $row )
+{
+	$perm = $row['item_perm_down'];
+	return $this->_item_handler->check_perm( $perm, $this->_xoops_groups );
+}
+
 function can_download( $row )
 {
 	$kind = $row['item_kind'];
@@ -471,7 +466,7 @@ function can_download( $row )
 //---------------------------------------------------------
 // image
 //---------------------------------------------------------
-function build_show_imgsrc( $row )
+function build_show_imgsrc( $row, $show_arr )
 {
 	$ahref_file    = '';
 	$imgsrc_photo  = '';
@@ -484,14 +479,12 @@ function build_show_imgsrc( $row )
 	$external_middle_s = $this->sanitize( $row['item_external_middle'] );
 	$is_image_kind     = $this->is_image_kind( $row['item_kind'] );
 
-	list( $cont_url, $cont_width, $cont_height )
-		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_CONT );
-
-	list( $thumb_url, $thumb_width, $thumb_height )
-		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_THUMB );
-
-	list( $middle_url, $middle_width, $middle_height )
-		= $this->get_file_u_w_h_by_kind( $row, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+	list( $cont_url, $cont_width, $cont_height ) =
+		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
+	list( $thumb_url, $thumb_width, $thumb_height ) =
+		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
+	list( $middle_url, $middle_width, $middle_height ) =
+		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
 
 	$cont_url_s   = $this->sanitize( $cont_url );
 	$thumb_url_s  = $this->sanitize( $thumb_url );
@@ -620,29 +613,46 @@ function build_show_imgsrc( $row )
 }
 
 //---------------------------------------------------------
-// file handler
+// file utility
 //---------------------------------------------------------
-function get_file_cont_size_duration( $item_row )
+function get_show_file_row( $show_arr, $kind )
+{
+	return $show_arr[ 'file_row_'. $kind ];
+}
+
+function get_show_file_size_duration( $show_arr, $kind )
 {
 	$size     = 0 ;
 	$duration = 0 ;
 
-	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( is_array($cont_row) ) {
-		$size     = $cont_row['file_size'] ;
-		$duration = $cont_row['file_duration'] ;
+	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
+	if ( is_array($file_row) ) {
+		$size     = $file_row['file_size'] ;
+		$duration = $file_row['file_duration'] ;
 	}
-	
+
 	return array( $size, $duration );
 }
 
-function get_file_u_w_h_by_kind( $item_row, $kind )
+function get_show_file_url( $show_arr, $kind )
+{
+	$url = null;
+
+	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
+	if ( is_array($file_row) ) {
+		$url = $file_row['file_url'] ;
+	}
+
+	return $url ;
+}
+
+function get_show_file_u_w_h( $show_arr, $kind )
 {
 	$url    = null ;
 	$width  = 0 ;
 	$height = 0 ;
 
-	$file_row = $this->get_cached_file_row_by_kind( $item_row, $kind );
+	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
 	if ( is_array($file_row) ) {
 		$url    = $file_row['file_url'] ;
 		$width  = $file_row['file_width'] ;
@@ -650,15 +660,6 @@ function get_file_u_w_h_by_kind( $item_row, $kind )
 	}
 
 	return array( $url, $width, $height );
-}
-
-function get_file_url_by_kind( $item_row, $kind )
-{
-	$file_row = $this->get_cached_file_row_by_kind( $item_row, $kind );
-	if ( is_array($file_row) ) {
-		return $file_row['file_url'] ;
-	}
-	return null ;
 }
 
 function has_file_url( $url )

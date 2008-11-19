@@ -1,5 +1,5 @@
 <?php
-// $Id: image.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: view_playlist.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,27 +9,35 @@
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
-// class webphoto_main_image
+// class webphoto_main_view_playlist
 //=========================================================
-class webphoto_main_image extends webphoto_file_read
+class webphoto_main_view_playlist extends webphoto_file_read
 {
+	var $_config_class ;
 	var $_kind_class ;
+
+	var $_PLAYLISTS_DIR ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_main_image( $dirname, $trust_dirname )
+function webphoto_main_view_playlist( $dirname, $trust_dirname )
 {
 	$this->webphoto_file_read( $dirname, $trust_dirname );
 
-	$this->_kind_class =& webphoto_kind::getInstance();
+	$this->_config_class =& webphoto_config::getInstance( $dirname );
+	$this->_kind_class   =& webphoto_kind::getInstance();
+
+	$uploads_path = $this->_config_class->get_uploads_path();
+	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $uploads_path .'/playlists' ;
+
 }
 
 function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_main_image( $dirname, $trust_dirname );
+		$instance = new webphoto_main_view_playlist( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -39,36 +47,26 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function main()
 {
-	$item_id   = $this->_post_class->get_post_get_int('item_id');
-	$file_kind = $this->_post_class->get_post_get_int('file_kind');
-
+	$item_id  = $this->_post_class->get_post_get_int('item_id');
 	$item_row = $this->get_item_row( $item_id );
 	if ( !is_array($item_row) ) {
 		exit();
 	}
 
-	$file_row = $this->get_file_row( $item_row, $file_kind );
-	if ( !is_array($file_row) ) {
+	$kind  = $item_row['item_kind'] ;
+	$cache = $item_row['item_playlist_cache'] ;
+	$file  = $this->_PLAYLISTS_DIR .'/'. $cache ;
+
+	if ( ! $this->_kind_class->is_playlist_kind( $kind ) ) {
 		exit();
 	}
 
-	$ext  = $file_row['file_ext'] ;
-	$mime = $file_row['file_mime'] ;
-	$size = $file_row['file_size'] ;
-	$file = $file_row['file_full'] ;
-
-	if ( ! $this->_kind_class->is_image_ext( $ext ) ) {
+	if ( empty($cache) || !file_exists($file) ) {
 		exit();
 	}
 
-	$this->zlib_off();
 	$this->http_output_pass();
-
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-Type: '. $mime );
-	header('Content-Length: '. $size );
+	$this->header_xml();
 
 	readfile( $file ) ;
 	exit();

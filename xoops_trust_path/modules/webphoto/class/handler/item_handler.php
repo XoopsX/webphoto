@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: item_handler.php,v 1.7 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// item_codeinfo
 // 2008-11-08 K.OHWADA
 // item_external_middle
 // 2008-10-10 K.OHWADA
@@ -27,9 +29,12 @@ class webphoto_item_handler extends webphoto_lib_handler
 	var $_KIND_FEFAULT          = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 	var $_DATETIME_DEFAULT      = _C_WEBPHOTO_DATETIME_DEFAULT ;
 	var $_SHOWINFO_DEFAULT      = _C_WEBPHOTO_SHOWINFO_DEFAULT ;
+	var $_CODEINFO_DEFAULT      = _C_WEBPHOTO_CODEINFO_DEFAULT ;
 	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
 	var $_PERM_READ             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
 	var $_PERM_DOWN             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
+	var $_PERM_SEPARATOR        = _C_WEBPHOTO_PERM_SEPARATOR;
+	var $_INFO_SEPARATOR        = _C_WEBPHOTO_INFO_SEPARATOR;
 
 	var $_AREA_NS = 1.0;
 	var $_AREA_EW = 1.0;
@@ -119,14 +124,18 @@ function create( $flag_new=false )
 		'item_external_middle' => '',
 		'item_embed_type'      => '',
 		'item_embed_src'       => '',
+		'item_embed_text'      => '',
 		'item_playlist_feed'   => '',
 		'item_playlist_dir'    => '',
 		'item_playlist_cache'  => '',
 		'item_playlist_type'   => 0,
+		'item_page_width'      => 0,
+		'item_page_height'     => 0,
 		'item_kind'            => $this->_KIND_FEFAULT ,
 		'item_datetime'        => $this->_DATETIME_DEFAULT ,
 		'item_playlist_time'   => $this->_PLAYLIST_TIME_DEFUALT,
 		'item_showinfo'        => $this->_SHOWINFO_DEFAULT ,
+		'item_codeinfo'        => $this->_CODEINFO_DEFAULT ,
 		'item_perm_read'       => $this->_PERM_READ,
 		'item_perm_down'       => $this->_PERM_DOWN,
 	);
@@ -202,12 +211,16 @@ function insert( $row, $force=false )
 	$sql .= 'item_external_middle, ';
 	$sql .= 'item_embed_type, ';
 	$sql .= 'item_embed_src, ';
+	$sql .= 'item_embed_text, ';
 	$sql .= 'item_playlist_type, ';
 	$sql .= 'item_playlist_time, ';
 	$sql .= 'item_playlist_feed, ';
 	$sql .= 'item_playlist_dir, ';
 	$sql .= 'item_playlist_cache, ';
 	$sql .= 'item_showinfo, ';
+	$sql .= 'item_codeinfo, ';
+	$sql .= 'item_page_width, ';
+	$sql .= 'item_page_height, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -268,12 +281,16 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_external_middle).', ';
 	$sql .= $this->quote($item_embed_type).', ';
 	$sql .= $this->quote($item_embed_src).', ';
+	$sql .= $this->quote($item_embed_text).', ';
 	$sql .= intval($item_playlist_type).', ';
 	$sql .= intval($item_playlist_time).', ';
 	$sql .= $this->quote($item_playlist_feed).', ';
 	$sql .= $this->quote($item_playlist_dir).', ';
 	$sql .= $this->quote($item_playlist_cache).', ';
 	$sql .= $this->quote($item_showinfo).', ';
+	$sql .= $this->quote($item_codeinfo).', ';
+	$sql .= intval($item_page_width).', ';
+	$sql .= intval($item_page_height).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -348,12 +365,16 @@ function update( $row, $force=false )
 	$sql .= 'item_external_middle='.$this->quote($item_external_middle).', ';
 	$sql .= 'item_embed_type='.$this->quote($item_embed_type).', ';
 	$sql .= 'item_embed_src='.$this->quote($item_embed_src).', ';
+	$sql .= 'item_embed_text='.$this->quote($item_embed_text).', ';
 	$sql .= 'item_playlist_type='.intval($item_playlist_type).', ';
 	$sql .= 'item_playlist_time='.intval($item_playlist_time).', ';
 	$sql .= 'item_playlist_feed='.$this->quote($item_playlist_feed).', ';
 	$sql .= 'item_playlist_dir='.$this->quote($item_playlist_dir).', ';
 	$sql .= 'item_playlist_cache='.$this->quote($item_playlist_cache).', ';
 	$sql .= 'item_showinfo='.$this->quote($item_showinfo).', ';
+	$sql .= 'item_codeinfo='.$this->quote($item_codeinfo).', ';
+	$sql .= 'item_page_width='.intval($item_page_width).', ';
+	$sql .= 'item_page_height='.intval($item_page_height).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -967,6 +988,18 @@ function build_datetime( $str )
 	return $utility_class->str_to_mysql_datetime( $str );
 }
 
+function build_perm( $arr )
+{
+	return $this->array_to_perm( 
+		$this->sanitize_array_int( $arr ), $this->_PERM_SEPARATOR );
+}
+
+function build_info( $arr )
+{
+	return $this->array_to_str( 
+		$this->sanitize_array_int( $arr ), $this->_INFO_SEPARATOR );
+}
+
 //---------------------------------------------------------
 // for show
 //---------------------------------------------------------
@@ -1008,6 +1041,50 @@ function build_show_exif_disp( $row )
 {
 	$myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['item_exif'] , 0 , 0 , 0 , 0 , 1 );
+}
+
+function get_perm_read_array( $row )
+{
+	return $this->get_perm_array( $row['item_perm_read'] );
+}
+
+function get_perm_down_array( $row )
+{
+	return $this->get_perm_array( $row['item_perm_down'] );
+}
+
+function get_perm_array( $val )
+{
+	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+}
+
+function get_showinfo_array( $row )
+{
+	return $this->str_to_array( $row['item_showinfo'], $this->_INFO_SEPARATOR );
+}
+
+function get_codeinfo_array( $row )
+{
+	return $this->str_to_array( $row['item_codeinfo'], $this->_INFO_SEPARATOR );
+}
+
+function check_perm_read( $row, $groups )
+{
+	return $this->check_perm( $row['item_perm_read'], $groups );
+}
+
+function check_perm_down( $row, $groups )
+{
+	return $this->check_perm( $row['item_perm_down'], $groups );
+}
+
+function check_perm( $val, $groups )
+{
+	if ( $val == _C_WEBPHOTO_PERM_ALLOW_ALL ) {
+		return true;
+	}
+	$perms = $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+	return $this->check_perms_in_groups( $perms, $groups );
 }
 
 //---------------------------------------------------------
@@ -1104,6 +1181,17 @@ function get_playlist_type_options()
 	return $arr;
 }
 
+function get_playlist_time_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_PLAYLIST_TIME_HOUR  => _WEBPHOTO_ITEM_PLAYLIST_TIME_HOUR ,
+		_C_WEBPHOTO_PLAYLIST_TIME_DAY   => _WEBPHOTO_ITEM_PLAYLIST_TIME_DAY ,
+		_C_WEBPHOTO_PLAYLIST_TIME_WEEK  => _WEBPHOTO_ITEM_PLAYLIST_TIME_WEEK ,
+		_C_WEBPHOTO_PLAYLIST_TIME_MONTH => _WEBPHOTO_ITEM_PLAYLIST_TIME_MONTH ,
+	);
+	return $arr;
+}
+
 function get_showinfo_options()
 {
 	$arr = array(
@@ -1116,6 +1204,23 @@ function get_showinfo_options()
 		_C_WEBPHOTO_SHOWINFO_DOWNLOAD    => _WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD ,
 		_C_WEBPHOTO_SHOWINFO_WEBSITE     => _WEBPHOTO_ITEM_SHOWINFO_WEBSITE ,
 		_C_WEBPHOTO_SHOWINFO_WEBFEED     => _WEBPHOTO_ITEM_SHOWINFO_WEBFEED ,
+	);
+	return $arr;
+}
+
+function get_codeinfo_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_CODEINFO_CONT   => _WEBPHOTO_ITEM_CODEINFO_CONT ,
+		_C_WEBPHOTO_CODEINFO_THUMB  => _WEBPHOTO_ITEM_CODEINFO_THUMB ,
+		_C_WEBPHOTO_CODEINFO_MIDDLE => _WEBPHOTO_ITEM_CODEINFO_MIDDLE ,
+		_C_WEBPHOTO_CODEINFO_FLASH  => _WEBPHOTO_ITEM_CODEINFO_FLASH ,
+//		_C_WEBPHOTO_CODEINFO_DOCOMO => _WEBPHOTO_ITEM_CODEINFO_DOCOMO ,
+		_C_WEBPHOTO_CODEINFO_PAGE   => _WEBPHOTO_ITEM_CODEINFO_PAGE ,
+		_C_WEBPHOTO_CODEINFO_SITE   => _WEBPHOTO_ITEM_CODEINFO_SITE ,
+		_C_WEBPHOTO_CODEINFO_PLAY   => _WEBPHOTO_ITEM_CODEINFO_PLAY ,
+		_C_WEBPHOTO_CODEINFO_EMBED  => _WEBPHOTO_ITEM_CODEINFO_EMBED ,
+		_C_WEBPHOTO_CODEINFO_JS     => _WEBPHOTO_ITEM_CODEINFO_JS ,
 	);
 	return $arr;
 }

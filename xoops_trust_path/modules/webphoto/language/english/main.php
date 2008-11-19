@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.16 2008/11/11 06:53:16 ohwada Exp $
+// $Id: main.php,v 1.17 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1209,6 +1209,38 @@ define("_WEBPHOTO_CAT_IMG_NAME" , "Category Image Name" ) ;
 
 // edit form
 define("_WEBPHOTO_CAP_MIDDLE_SELECT", "Select the middle image");
+
+//---------------------------------------------------------
+// v0.70
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_CODEINFO", "Code Info");
+define("_WEBPHOTO_ITEM_PAGE_WIDTH",  "Page Width");
+define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "Page Height");
+define("_WEBPHOTO_ITEM_EMBED_TEXT",  "Embed");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_CONT","Meida");
+define("_WEBPHOTO_ITEM_CODEINFO_THUMB","Thumbnail Image");
+define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","Middle Image");
+define("_WEBPHOTO_ITEM_CODEINFO_FLASH","Flash Video");
+define("_WEBPHOTO_ITEM_CODEINFO_DOCOMO","Docomo Video");
+define("_WEBPHOTO_ITEM_CODEINFO_PAGE","URL");
+define("_WEBPHOTO_ITEM_CODEINFO_SITE","Site");
+define("_WEBPHOTO_ITEM_CODEINFO_PLAY","Playlist");
+define("_WEBPHOTO_ITEM_CODEINFO_EMBED","Embed");
+define("_WEBPHOTO_ITEM_CODEINFO_JS","Script");
+
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_HOUR", "1 hour");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_DAY",  "1 day");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_WEEK", "1 week");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_MONTH","1 month");
+
+// photo
+define("_WEBPHOTO_DOWNLOAD","Download");
+
+// file_read
+define("_WEBPHOTO_NO_FILE", "Not exist file");
 
 // === define end ===
 }

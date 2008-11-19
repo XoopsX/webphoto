@@ -1,10 +1,16 @@
 <?php
-// $Id: playlist.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
+// $Id: playlist.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-16 K.OHWADA
+// refresh_cache_by_item_row()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -77,6 +83,25 @@ function &getInstance( $dirname, $trust_dirname )
 		$instance = new webphoto_playlist( $dirname, $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// refresh_cache
+//---------------------------------------------------------
+function refresh_cache_by_item_row( $item_row )
+{
+	$cache = $item_row['item_playlist_cache'] ;
+	$time  = $item_row['item_playlist_time'] ;
+
+// Check PLAYLIST CACHE
+	$check = $this->check_expired( $cache, $time );
+	if ( $check ) {
+		return $cache ;
+	}
+
+	$this->create_cache_by_item_row( $item_row );
+
+	return $cache ;
 }
 
 //---------------------------------------------------------

@@ -1,10 +1,16 @@
 <?php
-// $Id: youtube.php,v 1.1 2008/10/30 00:24:19 ohwada Exp $
+// $Id: youtube.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-16 K.OHWADA
+// width()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,9 +20,9 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // http://www.youtube.com/watch?v=xFnwzdKNtpI
 //
 // <object width="425" height="373">
-// <param name="movie" value="http://www.youtube.com/v/xFnwzdKNtpI&rel=0&color1=0xd6d6d6&color2=0xf0f0f0&border=1"></param>
+// <param name="movie" value="http://www.youtube.com/v/xFnwzdKNtpI&rel=0&border=1"></param>
 // <param name="wmode" value="transparent"></param>
-// <embed src="http://www.youtube.com/v/lGVwm326rnk&rel=0&color1=0xd6d6d6&color2=0xf0f0f0&border=1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="373"></embed>
+// <embed src="http://www.youtube.com/v/lGVwm326rnk&rel=0&border=1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="373"></embed>
 // </object>
 //=========================================================
 class webphoto_embed_youtube extends webphoto_embed_base
@@ -29,9 +35,9 @@ function webphoto_embed_youtube()
 	$this->set_sample( 'xFnwzdKNtpI' );
 }
 
-function embed( $src, $width, $height, $backcolor='d6d6d6', $frontcolor='f0f0f0', $border='0' )
+function embed( $src, $width, $height )
 {
-	$movie = 'http://www.youtube.com/v/'.$src.'&amp;rel=0&amp;color1=0x'.$backcolor.'&amp;color2=0x'.$frontcolor.'&amp;border='.$border;
+	$movie = 'http://www.youtube.com/v/'.$src.'&amp;rel=0&amp;border=0';
 	$wmode = 'transparent';
 	$extra = 'wmode="'.$wmode.'"';
 
@@ -52,6 +58,16 @@ function thumb( $src )
 {
 	$str = 'http://img.youtube.com/vi/'.$src.'/2.jpg'; 
 	return $str;
+}
+
+function width()
+{
+	return 425;
+}
+
+function height()
+{
+	return 344;
 }
 
 function desc()

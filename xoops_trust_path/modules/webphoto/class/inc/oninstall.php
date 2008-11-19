@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.11 2008/11/11 06:53:16 ohwada Exp $
+// $Id: oninstall.php,v 1.12 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,9 @@
 //---------------------------------------------------------
 // change log
 // 2008-11-08 K.OHWADA
-// item_add_column_051();
+// item_add_column_070()
+// 2008-11-08 K.OHWADA
+// item_add_column_060()
 // 2008-10-01 K.OHWADA
 // move config_update() to xoops_version.php
 // _item_update()
@@ -565,7 +567,8 @@ function _groupperm_install()
 function _item_update()
 {
 	$this->_item_add_column_050();
-	$this->_item_add_column_051();
+	$this->_item_add_column_060();
+	$this->_item_add_column_070();
 }
 
 function _item_add_column_050()
@@ -616,7 +619,7 @@ function _item_add_column_050()
 
 }
 
-function _item_add_column_051()
+function _item_add_column_060()
 {
 
 // return if already exists
@@ -642,15 +645,64 @@ function _item_add_column_051()
 
 }
 
+function _item_add_column_070()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_codeinfo' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+
+	$sql  .= "item_codeinfo VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql  .= "item_page_width  INT(11) NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_page_height INT(11) NOT NULL DEFAULT '0', " ;
+	$sql  .= "item_embed_text  TEXT NOT NULL " ;
+
+	$sql .= " )";
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_codeinfo in <b>'. $this->_table_item .'</b>' );
+		return $this->_item_update_070();
+
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_update_070()
+{
+	$sql  = "UPDATE ". $this->_table_item ." SET " ;
+	$sql .= "item_codeinfo=".  $this->quote( _C_WEBPHOTO_CODEINFO_DEFAULT ) .", " ;
+	$sql .= "item_showinfo=".  $this->quote( _C_WEBPHOTO_SHOWINFO_DEFAULT ) .", " ;
+	$sql .= "item_perm_read=". $this->quote( _C_WEBPHOTO_PERM_ALLOW_ALL )   .", " ;
+	$sql .= "item_perm_down=". $this->quote( _C_WEBPHOTO_PERM_ALLOW_ALL ) ;
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Update item_codeinfo in <b>'. $this->_table_item .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
 //---------------------------------------------------------
 // cat table
 //---------------------------------------------------------
 function _cat_update()
 {
-	$this->_cat_add_column_051();
+	$this->_cat_add_column_060();
 }
 
-function _cat_add_column_051()
+function _cat_add_column_060()
 {
 
 // return if already exists

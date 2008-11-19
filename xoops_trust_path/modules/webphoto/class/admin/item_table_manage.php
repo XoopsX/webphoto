@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
+// $Id: item_table_manage.php,v 1.5 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// item_codeinfo
 // 2008-11-08 K.OHWADA
 // Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
 // 2008-10-01 K.OHWADA
@@ -80,50 +82,56 @@ function _build_row_edit()
 function _build_row_by_post()
 {
 	$row = array(
-		'item_datetime'       => $this->_manage_handler->build_datetime_by_post( 'item_datetime' ) ,
+		'item_datetime' => $this->_manage_handler->build_datetime_by_post( 'item_datetime' ) ,
 
-		'item_id'             => $this->_post_class->get_post_get_int( 'item_id' ),
-		'item_time_create'    => $this->_post_class->get_post_int(   'item_time_create' ),
-		'item_time_update'    => $this->_post_class->get_post_int(   'item_time_update' ),
-		'item_time_publish'   => $this->_post_class->get_post_int(   'item_time_publish' ),
-		'item_time_expire'    => $this->_post_class->get_post_int(   'item_time_expire' ),
-		'item_cat_id'         => $this->_post_class->get_post_int(   'item_cat_id' ),
-		'item_gicon_id'       => $this->_post_class->get_post_int(   'item_gicon_id' ),
-		'item_player_id'      => $this->_post_class->get_post_int(   'item_player_id' ),
-		'item_flashvar_id'    => $this->_post_class->get_post_int(   'item_flashvar_id' ),
-		'item_uid'            => $this->_post_class->get_post_int(   'item_uid' ),
-		'item_kind'           => $this->_post_class->get_post_int(   'item_kind' ),
-		'item_displaytype'    => $this->_post_class->get_post_int(   'item_displaytype' ),
-		'item_onclick'        => $this->_post_class->get_post_int(   'item_onclick' ),
-		'item_ext'            => $this->_post_class->get_post_text(  'item_ext' ),
-		'item_title'          => $this->_post_class->get_post_text(  'item_title' ),
-		'item_place'          => $this->_post_class->get_post_text(  'item_place' ),
-		'item_equipment'      => $this->_post_class->get_post_text(  'item_equipment' ),
-		'item_siteurl'        => $this->_post_class->get_post_text(  'item_siteurl' ),
-		'item_artist'         => $this->_post_class->get_post_text(  'item_artist' ),
-		'item_album'          => $this->_post_class->get_post_text(  'item_album' ),
-		'item_label'          => $this->_post_class->get_post_text(  'item_label' ),
-		'item_status'         => $this->_post_class->get_post_int(   'item_status' ),
-		'item_hits'           => $this->_post_class->get_post_int(   'item_hits' ),
-		'item_chain'          => $this->_post_class->get_post_int(   'item_chain' ),
-		'item_exif'           => $this->_post_class->get_post_text(  'item_exif' ),
-		'item_description'    => $this->_post_class->get_post_text(  'item_description' ),
-		'item_showinfo'       => $this->_post_class->get_post_text(  'item_showinfo' ),
-		'item_perm_read'      => $this->_post_class->get_post_text(  'item_perm_read' ),
-		'item_perm_down'      => $this->_post_class->get_post_text(  'item_perm_down' ),
-		'item_gmap_latitude'  => $this->_post_class->get_post_float( 'item_gmap_latitude' ),
-		'item_gmap_longitude' => $this->_post_class->get_post_float( 'item_gmap_longitude' ),
-		'item_gmap_zoom'      => $this->_post_class->get_post_int(   'item_gmap_zoom' ),
-		'item_gmap_type'      => $this->_post_class->get_post_int(   'item_gmap_type' ),
-		'item_external_url'   => $this->_post_class->get_post_text(  'item_external_url' ),
-		'item_external_thumb' => $this->_post_class->get_post_text(  'item_external_thumb' ),
-		'item_embed_type'     => $this->_post_class->get_post_text(  'item_embed_type' ),
-		'item_embed_src'      => $this->_post_class->get_post_text(  'item_embed_src' ),
-		'item_playlist_type'  => $this->_post_class->get_post_int(   'item_playlist_type' ),
-		'item_playlist_feed'  => $this->_post_class->get_post_text(  'item_playlist_feed' ),
-		'item_playlist_dir'   => $this->_post_class->get_post_text(  'item_playlist_dir' ),
-		'item_playlist_cache' => $this->_post_class->get_post_text(  'item_playlist_cache' ),
-		'item_playlist_time'  => $this->_post_class->get_post_int(   'item_playlist_time' ),
+		'item_id'              => $this->_post_class->get_post_get_int( 'item_id' ),
+		'item_time_create'     => $this->_post_class->get_post_int(   'item_time_create' ),
+		'item_time_update'     => $this->_post_class->get_post_int(   'item_time_update' ),
+		'item_time_publish'    => $this->_post_class->get_post_int(   'item_time_publish' ),
+		'item_time_expire'     => $this->_post_class->get_post_int(   'item_time_expire' ),
+		'item_cat_id'          => $this->_post_class->get_post_int(   'item_cat_id' ),
+		'item_gicon_id'        => $this->_post_class->get_post_int(   'item_gicon_id' ),
+		'item_player_id'       => $this->_post_class->get_post_int(   'item_player_id' ),
+		'item_flashvar_id'     => $this->_post_class->get_post_int(   'item_flashvar_id' ),
+		'item_uid'             => $this->_post_class->get_post_int(   'item_uid' ),
+		'item_kind'            => $this->_post_class->get_post_int(   'item_kind' ),
+		'item_displaytype'     => $this->_post_class->get_post_int(   'item_displaytype' ),
+		'item_onclick'         => $this->_post_class->get_post_int(   'item_onclick' ),
+		'item_ext'             => $this->_post_class->get_post_text(  'item_ext' ),
+		'item_title'           => $this->_post_class->get_post_text(  'item_title' ),
+		'item_place'           => $this->_post_class->get_post_text(  'item_place' ),
+		'item_equipment'       => $this->_post_class->get_post_text(  'item_equipment' ),
+		'item_siteurl'         => $this->_post_class->get_post_text(  'item_siteurl' ),
+		'item_artist'          => $this->_post_class->get_post_text(  'item_artist' ),
+		'item_album'           => $this->_post_class->get_post_text(  'item_album' ),
+		'item_label'           => $this->_post_class->get_post_text(  'item_label' ),
+		'item_status'          => $this->_post_class->get_post_int(   'item_status' ),
+		'item_hits'            => $this->_post_class->get_post_int(   'item_hits' ),
+		'item_chain'           => $this->_post_class->get_post_int(   'item_chain' ),
+		'item_exif'            => $this->_post_class->get_post_text(  'item_exif' ),
+		'item_description'     => $this->_post_class->get_post_text(  'item_description' ),
+		'item_perm_read'       => $this->_post_class->get_post_text(  'item_perm_read' ),
+		'item_perm_down'       => $this->_post_class->get_post_text(  'item_perm_down' ),
+		'item_gmap_latitude'   => $this->_post_class->get_post_float( 'item_gmap_latitude' ),
+		'item_gmap_longitude'  => $this->_post_class->get_post_float( 'item_gmap_longitude' ),
+		'item_gmap_zoom'       => $this->_post_class->get_post_int(   'item_gmap_zoom' ),
+		'item_gmap_type'       => $this->_post_class->get_post_int(   'item_gmap_type' ),
+		'item_external_url'    => $this->_post_class->get_post_text(  'item_external_url' ),
+		'item_external_thumb'  => $this->_post_class->get_post_text(  'item_external_thumb' ),
+		'item_external_middle' => $this->_post_class->get_post_text(  'item_external_middule' ),
+		'item_icon'            => $this->_post_class->get_post_text(  'item_icon' ),
+		'item_embed_type'      => $this->_post_class->get_post_text(  'item_embed_type' ),
+		'item_embed_src'       => $this->_post_class->get_post_text(  'item_embed_src' ),
+		'item_embed_text'      => $this->_post_class->get_post_text(  'item_embed_text' ),
+		'item_playlist_type'   => $this->_post_class->get_post_int(   'item_playlist_type' ),
+		'item_playlist_feed'   => $this->_post_class->get_post_text(  'item_playlist_feed' ),
+		'item_playlist_dir'    => $this->_post_class->get_post_text(  'item_playlist_dir' ),
+		'item_playlist_cache'  => $this->_post_class->get_post_text(  'item_playlist_cache' ),
+		'item_playlist_time'   => $this->_post_class->get_post_int(   'item_playlist_time' ),
+		'item_showinfo'        => $this->_post_class->get_post_text(  'item_showinfo' ),
+		'item_codeinfo'        => $this->_post_class->get_post_text(  'item_codeinfo' ),
+		'item_page_width'      => $this->_post_class->get_post_int(   'item_page_width' ),
+		'item_page_height'     => $this->_post_class->get_post_int(   'item_page_height' ),
 
 //		'item_rating'         => $this->_post_class->get_post_float( 'item_rating' ),
 //		'item_votes'          => $this->_post_class->get_post_int(   'item_votes' ),
@@ -186,8 +194,13 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_label' );
 	echo $this->build_comp_text( 'item_external_url' );
 	echo $this->build_comp_text( 'item_external_thumb' );
+	echo $this->build_comp_text( 'item_external_middle' );
+	echo $this->build_comp_text( 'item_icon' );
 	echo $this->build_comp_text( 'item_embed_type' );
 	echo $this->build_comp_text( 'item_embed_src' );
+	echo $this->build_comp_text( 'item_embed_text' );
+	echo $this->build_comp_text( 'item_page_width' );
+	echo $this->build_comp_text( 'item_page_height' );
 	echo $this->build_comp_text( 'item_playlist_type' );
 	echo $this->build_comp_text( 'item_playlist_feed' );
 	echo $this->build_comp_text( 'item_playlist_dir' );
@@ -200,10 +213,11 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_gmap_type' );
 	echo $this->build_comp_text( 'item_perm_read' );
 	echo $this->build_comp_text( 'item_perm_down' );
-	echo $this->build_comp_text( 'item_showinfo' );
 	echo $this->build_comp_text( 'item_chain' );
 	echo $this->build_comp_text( 'item_status' );
 	echo $this->build_comp_text( 'item_hits' );
+	echo $this->build_comp_text( 'item_showinfo' );
+	echo $this->build_comp_text( 'item_codeinfo' );
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
 		echo $this->build_comp_text( 'item_text_'.$i );

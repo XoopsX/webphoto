@@ -1,5 +1,5 @@
 <?php
-// $Id: embed_base.php,v 1.2 2008/11/12 11:18:32 ohwada Exp $
+// $Id: embed_base.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// width()
 // 2008-11-08 K.OHWADA
 // BUG: forget to close height
 //---------------------------------------------------------
@@ -37,7 +39,7 @@ function webphoto_embed_base( $type )
 //---------------------------------------------------------
 // interface
 //---------------------------------------------------------
-function embed( $src, $width, $height, $backcolor='', $frontcolor='', $border='' )
+function embed( $src, $width, $height )
 {
 	return null;
 }
@@ -60,6 +62,16 @@ function desc()
 function lang_desc()
 {
 	return null;
+}
+
+function width()
+{
+	return 0;
+}
+
+function height()
+{
+	return 0;
 }
 
 //---------------------------------------------------------

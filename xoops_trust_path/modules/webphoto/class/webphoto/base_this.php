@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.11 2008/11/11 06:53:16 ohwada Exp $
+// $Id: base_this.php,v 1.12 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// _PLAYLISTS_URL;
 // 2008-11-08 K.OHWADA
 // tmpdir -> workdir
 // 2008-10-01 K.OHWADA
@@ -74,6 +76,7 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_QRS_DIR;
 	var $_QRS_URL;
 	var $_PLAYLISTS_DIR;
+	var $_PLAYLISTS_URL;
 	var $_LOGOS_DIR;
 	var $_MEDIAS_DIR;
 	var $_WORK_DIR;
@@ -127,6 +130,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PLAYLISTS_DIR  = XOOPS_ROOT_PATH . $playlists_path ;
 	$this->_LOGOS_DIR      = XOOPS_ROOT_PATH . $logos_path ;
 	$this->_MEDIAS_DIR     = XOOPS_ROOT_PATH . $medias_path ;
+
 	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_URL    = XOOPS_URL . $this->_MIDDLES_PATH ;
@@ -135,6 +139,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;
 	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
 	$this->_QRS_URL        = XOOPS_URL . $qrs_path ;
+	$this->_PLAYLISTS_URL  = XOOPS_URL . $playlists_path ;
 
 	$this->_TMP_DIR   = $this->_WORK_DIR .'/tmp' ;
 	$this->_MAIL_DIR  = $this->_WORK_DIR .'/mail' ;

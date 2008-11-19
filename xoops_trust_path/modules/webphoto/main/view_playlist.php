@@ -1,5 +1,5 @@
 <?php
-// $Id: image.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
+// $Id: view_playlist.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -23,6 +23,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
+webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/handler.php' );
@@ -32,16 +33,17 @@ webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
+webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/file_read.php' );
-webphoto_include_once( 'class/main/image.php' );
+webphoto_include_once( 'class/main/view_playlist.php' );
 
 webphoto_include_language( 'main.php' );
 
 //=========================================================
 // main
 //=========================================================
-$webphoto_manage =& webphoto_main_image::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
+$webphoto_manage =& webphoto_main_view_playlist::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
 $webphoto_manage->main();
 exit();
 

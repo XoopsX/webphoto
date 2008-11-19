@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.5 2008/11/11 06:53:16 ohwada Exp $
+// $Id: element.php,v 1.6 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// build_form_select_multiple()
 // 2008-11-08 K.OHWADA
 // build_caption()
 // 2008-10-01 K.OHWADA
@@ -259,16 +261,78 @@ function build_form_select( $name, $value, $options, $size=5, $extra=null )
 		return null;
 	}
 
-	$text = '<select id="'. $name.'" name="'. $name.'" size="'. $size .'" '. $extra .' >'."\n";
+	$text = $this->build_form_select_tag( $name, $name, $size, $extra );
+
 	foreach ( $options as $k => $v )
 	{
 		$selected = $this->build_form_selected( $k, $value );
-		$text .= '<option value="'. $k .'" '. $selected .' >';
-		$text .= $v;
-		$text .= '</option >'."\n";
+		$text .= $this->build_form_option( $k, $v, $selected );
 	}
-	$text .= '</select>'."\n";
+
+	$text .= $this->build_form_select_end() ;
 	return $text;
+}
+
+function build_form_select_multiple( $id, $values, $options, $size=5, $extra_in=null )
+{
+	if ( !is_array($values) ) {
+		return null;
+	}
+
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$name  = $id.'[]';
+	$extra = 'multiple '.$extra_in;
+
+	$text = $this->build_form_select_tag( $id, $name, $size, $extra );
+
+	foreach ( $options as $k => $v )
+	{
+		$selected = $this->build_form_selected_multi( $values, $k );
+		$text .= $this->build_form_option( $k, $v, $selected );
+	}
+
+	$text .= $this->build_form_select_end() ;
+	return $text;
+}
+
+function build_form_select_tag( $id, $name, $size=5, $extra=null )
+{
+	$str = '<select id="'. $id.'" name="'. $name.'" size="'. $size .'" '. $extra .' >'."\n";
+	return $str;
+}
+
+function build_form_select_end()
+{
+	$str = '</select>'."\n";
+	return $str;
+}
+
+function build_form_option( $value, $caption, $selected=null )
+{
+	$str  = '<option value="'. $value .'" '. $selected .' >';
+	$str .= $caption ;
+	$str .= '</option >'."\n";
+	return $str;
+}
+
+function build_form_selected_multi( $values, $val2 )
+{
+	$flag = false ;
+	foreach ( $values as $val1 ) 
+	{
+		if ( $val1 == $val2 ) {
+			$flag = true;
+			break;
+		}
+	}
+
+	if ( $flag ) {
+		return $this->_SELECTED;
+	}
+	return '';
 }
 
 function build_form_selected( $val1, $val2 )

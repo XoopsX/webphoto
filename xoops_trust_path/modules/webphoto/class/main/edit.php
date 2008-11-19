@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.17 2008/11/11 06:53:16 ohwada Exp $
+// $Id: edit.php,v 1.18 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// get_cached_file_row_by_kind()
 // 2008-11-08 K.OHWADA
 // _thumb_delete()
 // 2008-10-10 K.OHWADA
@@ -447,6 +449,8 @@ function _print_form_modify()
 	$item_id   = $item_row['item_id'];
 	$kind      = $item_row['item_kind'];
 
+	$flash_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
+
 	echo $this->_build_bread_crumb_edit( $item_id );
 
 	$this->_print_preview_modify( $item_row );
@@ -462,7 +466,7 @@ function _print_form_modify()
 		$item_row, $this->build_form_param( 'edit' ) );
 
 	if ( $this->is_video_kind( $kind ) ) {
-		$form_class->print_form_redo( 'edit',  $item_row );
+		$form_class->print_form_redo( 'edit', $item_row, $flash_row );
 	}
 
 	if ( $this->_is_module_admin ) {

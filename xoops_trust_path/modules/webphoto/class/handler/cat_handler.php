@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: cat_handler.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// check_perms_in_groups()
 // 2008-11-08 K.OHWADA
 // cat_img_name
 //---------------------------------------------------------
@@ -19,7 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_cat_handler extends webphoto_lib_tree_handler
 {
-	var $_xoops_user_groups = null;
+	var $_xoops_groups = null;
 
 	var $_ALLOWED_EXT_DEFAULT = _C_WEBPHOTO_IMAGE_EXTS;
 	var $_PREM_ALLOW_ALL      = _C_WEBPHOTO_PERM_ALLOW_ALL;
@@ -370,9 +372,9 @@ function build_selbox_pid( $pid )
 	return $this->make_my_sel_box( 'cat_title', '', $pid, 1, 'cat_pid' );
 }
 
-function build_selbox_with_perm_post( $cat_id, $sel_name )
+function build_selbox_with_perm_post( $cat_id, $sel_name, $xoops_groups )
 {
-	$this->set_xoops_user_groups( $this->get_xoops_user_groups_orig() );
+	$this->set_xoops_groups( $xoops_groups );
 
 	return $this->build_sel_box(
 		$this->get_all_tree_array( '', true ), 
@@ -403,61 +405,15 @@ function check_perm_post( $perm_post )
 		return false;
 	}
 
-	if ( is_array($this->_xoops_user_groups) && count($this->_xoops_user_groups) ) {
-
-		$perm_array = $this->str_to_array( $perm_post, $this->_PREM_SEPARATOR );
-		if ( is_array($perm_array) && count($perm_array) ) {
-
-			$arr = array_intersect( $this->_xoops_user_groups, $perm_array );
-			if ( is_array($arr) && count($arr) ) {
-				return true;
-			}
-		}
-	}
-
-	return false;
+	$perms = $this->str_to_array( $perm_post, $this->_PREM_SEPARATOR );
+	return $this->check_perms_in_groups( $perms, $this->_xoops_groups );
 }
 
-function str_to_array( $str, $pattern )
+function set_xoops_groups( $val )
 {
-	$arr1 = explode( $pattern, $str );
-	$arr2 = array();
-	foreach ( $arr1 as $v )
-	{
-		$v = trim($v);
-		if ($v == '') { continue; }
-		$arr2[] = $v;
-	}
-	return $arr2;
-}
-
-function set_xoops_user_groups( $val )
-{
-	if ( !is_array($val) ) {
-		$val = intval($val);
-		if ( $val > 0 ) {
-			$val = array( $val );
-		} else {
-			return false;	// no action;
-		}
-	}
-
 	if ( is_array($val) && count($val) ) {
-		$this->_xoops_user_groups = $val;
+		$this->_xoops_groups = $val;
 	}
-}
-
-//---------------------------------------------------------
-// xoops 
-//---------------------------------------------------------
-function get_xoops_user_groups_orig()
-{
-	global $xoopsUser;
-
-	if ( is_object($xoopsUser) ) {
-		return $xoopsUser->getGroups() ;
-	}
-	return false;
 }
 
 // --- class end ---

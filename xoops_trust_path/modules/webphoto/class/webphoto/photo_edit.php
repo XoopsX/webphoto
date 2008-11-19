@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.18 2008/11/11 12:53:52 ohwada Exp $
+// $Id: photo_edit.php,v 1.19 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// item_codeinfo
+// Fatal error: Call to undefined method set_item_external_thumb()
 // 2008-11-08 K.OHWADA
 // upload_fetch_middle()
 // BUG: Undefined variable: exif
@@ -77,6 +80,7 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_item_onclick          = 0 ;
 	var $_item_embed_type       = null;
 	var $_item_embed_src        = null;
+	var $_item_embed_text       = null;
 	var $_item_external_url     = null;
 	var $_item_external_thumb   = null;
 	var $_item_external_middle  = null;
@@ -87,6 +91,8 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_item_gmap_longitude   = 0 ;
 	var $_item_gmap_zoom        = 0 ;
 	var $_item_player_id        = 0 ;
+	var $_item_page_width       = 0 ;
+	var $_item_page_height      = 0 ;
 	var $_item_kind             = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 
 	var $_preview_name          = null;
@@ -117,8 +123,6 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_only_image_extentions = false;
 
 	var $_FLAG_ADMIN = false;
-
-//	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
 
 	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
@@ -213,6 +217,7 @@ function get_post_param()
 	$this->_item_exif             = $this->_post_class->get_post_text(  'item_exif' );
 	$this->_item_embed_type       = $this->_post_class->get_post_text(  'item_embed_type' );
 	$this->_item_embed_src        = $this->_post_class->get_post_text(  'item_embed_src' );
+	$this->_item_embed_text       = $this->_post_class->get_post_text(  'item_embed_text' );
 	$this->_item_external_url     = $this->_post_class->get_post_text(  'item_external_url' );
 	$this->_item_external_thumb   = $this->_post_class->get_post_text(  'item_external_thumb' );
 	$this->_item_external_middle  = $this->_post_class->get_post_text(  'item_external_middle' );
@@ -223,6 +228,8 @@ function get_post_param()
 	$this->_item_gmap_longitude   = $this->_post_class->get_post_float( 'item_gmap_longitude' );
 	$this->_item_gmap_zoom        = $this->_post_class->get_post_int(   'item_gmap_zoom' );
 	$this->_item_player_id        = $this->_post_class->get_post_int(   'item_player_id' );
+	$this->_item_page_width       = $this->_post_class->get_post_int(   'item_page_width' );
+	$this->_item_page_height      = $this->_post_class->get_post_int(   'item_page_height' );
 
 	$this->set_item_title(     $this->_post_class->get_post_text( 'item_title' ) );
 	$this->set_item_equipment( $this->_post_class->get_post_text( 'item_equipment' ) );
@@ -267,7 +274,6 @@ function get_post_cat_id()
 
 function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 {
-
 // overwrite if title is blank
 	if ( $flag_title ) {
 		$this->overwrite_item_title_if_empty( $this->_NO_TITLE );
@@ -279,6 +285,7 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$row['item_exif']             = $this->_item_exif ;
 	$row['item_embed_type']       = $this->_item_embed_type ;
 	$row['item_embed_src']        = $this->_item_embed_src ;
+	$row['item_embed_text']       = $this->_item_embed_text ;
 	$row['item_external_url']     = $this->_item_external_url ;
 	$row['item_external_thumb']   = $this->_item_external_thumb ;
 	$row['item_external_middle']  = $this->_item_external_middle ;
@@ -286,6 +293,9 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$row['item_gmap_longitude']   = $this->_item_gmap_longitude ;
 	$row['item_gmap_zoom']        = $this->_item_gmap_zoom ;
 	$row['item_player_id']        = $this->_item_player_id ;
+	$row['item_page_width']       = $this->_item_page_width ;
+	$row['item_page_height']      = $this->_item_page_height ;
+
 	$row['item_gicon_id']         = $this->_post_class->get_post_int(  'item_gicon_id' );
 	$row['item_place']            = $this->_post_class->get_post_text( 'item_place' );
 	$row['item_description']      = $this->_post_class->get_post_text( 'item_description' );
@@ -293,6 +303,12 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$row['item_artist']           = $this->_post_class->get_post_text( 'item_artist' );
 	$row['item_album']            = $this->_post_class->get_post_text( 'item_album' );
 	$row['item_label']            = $this->_post_class->get_post_text( 'item_label' );
+	$row['item_perm_down']        = $this->build_perm_by_post( 'item_perm_down' );
+	$row['item_codeinfo']         = $this->build_info_by_post( 'item_codeinfo' );
+
+// for future
+//	$row['item_perm_read']        = $this->build_perm_by_post( 'item_perm_read' );
+//	$row['item_showinfo']         = $this->build_info_by_post( 'item_showinfo' );
 
 	if ( $this->is_fill_item_datetime() ) {
 		$row['item_datetime'] = $this->get_item_datetime();
@@ -330,6 +346,18 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$this->set_tag_name_array( $this->_tag_class->str_to_tag_name_array( $post_tags ) );
 
 	return $row;
+}
+
+function build_perm_by_post( $name )
+{
+	return $this->_item_handler->build_perm( 
+		$this->_post_class->get_post( $name ) );
+}
+
+function build_info_by_post( $name )
+{
+	return $this->_item_handler->build_info( 
+		$this->_post_class->get_post( $name ) );
 }
 
 function set_checkbox_by_post( $name )
@@ -409,13 +437,7 @@ function is_embed_type()
 
 function is_external_type()
 {
-	if ( $this->_post_type == 'external' ) {
-		return true;
-	}
-	if ( $this->_item_external_url ) {
-		return true;
-	}
-	return false;
+	return $this->is_fill_item_external_url() ;
 }
 
 function is_post_playlist_type()
@@ -689,11 +711,28 @@ function get_item_player_id()
 //---------------------------------------------------------
 // external thumb
 //---------------------------------------------------------
+function is_fill_item_external_url()
+{
+	if ( $this->_item_external_url ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
+// external thumb
+//---------------------------------------------------------
 function overwrite_item_external_thumb_if_empty( $val )
 {
 	if ( !$this->is_fill_item_external_thumb() && $val ) {
 		$this->_item_external_thumb = $val;
 	}
+}
+
+// Fatal error: Call to undefined method set_item_external_thumb()
+function set_item_external_thumb( $val )
+{
+	$this->_item_external_thumb = $val;
 }
 
 function get_item_external_thumb()
@@ -738,6 +777,14 @@ function is_fill_item_external_middle()
 function is_fill_item_embed_src()
 {
 	if ( $this->_item_embed_src ) {
+		return true;
+	}
+	return false;
+}
+
+function is_fill_item_embed_text()
+{
+	if ( $this->_item_embed_text ) {
 		return true;
 	}
 	return false;
@@ -1051,12 +1098,8 @@ function conv_rotate( $rotate )
 //---------------------------------------------------------
 function create_thumb_from_external( $item_id )
 {
-	$url = null ;
-
-// general image
-	if ( $this->is_image_ext( $this->_item_ext ) ) {
-		$url = $this->_item_external_url ;
-	}
+	$url   = null ;
+	$param = null ;
 
 	if ( $this->_item_ext ) {
 		$ext = $this->_item_ext ;
@@ -1064,19 +1107,17 @@ function create_thumb_from_external( $item_id )
 		$ext = $this->_EXTERNAL_THUMB_EXT_DEFAULT ;
 	}
 
-	if ( $url ) {
-		$this->set_item_external_thumb( $url );
+// image type
+	if ( $this->is_image_ext( $ext ) && $this->_item_external_url ) {
+		$this->set_item_external_thumb( $this->_item_external_url );
 
+// icon if others
 	} else {
 		$this->_photo_class->create_thumb_icon( $item_id, $ext );
-		$this->_file_params = array(
-			'thumb'  => $this->_photo_class->get_thumb_param() ,
-			'cont'   => null ,
-			'middle' => null ,
-			'flash'  => null ,
-			'docomo' => null ,
-		);
+		$param = $this->_photo_class->get_thumb_param();
 	}
+
+	return $param;
 }
 
 //---------------------------------------------------------
@@ -1084,22 +1125,22 @@ function create_thumb_from_external( $item_id )
 //---------------------------------------------------------
 function create_thumb_from_embed( $item_id )
 {
+	$param = null;
+
 	$thumb = $this->_embed_class->build_thumb( 
 		$this->_item_embed_type, $this->_item_embed_src );
 
+// plugin thumb
 	if ( $thumb ) {
 		$this->set_item_external_thumb( $thumb );
 
+// icon if others
 	} else {
 		$this->_photo_class->create_thumb_icon( $item_id, $this->_EMBED_THUMB_EXT_DEFAULT );
-		$this->_file_params = array(
-			'thumb'  => $this->_photo_class->get_thumb_param() ,
-			'cont'   => null ,
-			'middle' => null ,
-			'flash'  => null ,
-			'docomo' => null ,
-		);
+		$param = $this->_photo_class->get_thumb_param() ;
 	}
+
+	return $param;
 }
 
 //---------------------------------------------------------
@@ -1109,15 +1150,8 @@ function create_thumb_for_playlist( $item_id )
 {
 	$this->_photo_class->create_thumb_icon( 
 		$item_id, $this->_PLAYLIST_THUMB_EXT_DEFAULT );
-	$thumb_param = $this->_photo_class->get_thumb_param() ;
-
-	$this->_file_params = array(
-		'cont'   => null ,
-		'thumb'  => $thumb_param ,
-		'middle' => null ,
-		'flash'  => null ,
-		'docomo' => null ,
-	);
+	$param = $this->_photo_class->get_thumb_param() ;
+	return $param;
 }
 
 //---------------------------------------------------------

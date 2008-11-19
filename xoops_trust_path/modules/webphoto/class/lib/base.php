@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.9 2008/10/30 00:22:49 ohwada Exp $
+// $Id: base.php,v 1.10 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// get_cached_xoops_db_groups()
 // 2008-10-10 K.OHWADA
 // set_error_in_head_with_admin_info()
 // 2008-10-01 K.OHWADA
@@ -525,6 +527,11 @@ function get_xoops_module_by_dirname( $dirname )
 function get_xoops_group_objs()
 {
 	return $this->_xoops_class->get_group_obj();
+}
+
+function get_cached_xoops_db_groups()
+{
+	return $this->_xoops_class->get_cached_groups();
 }
 
 function get_xoops_group_name( $id, $format='s' )

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: constants.php,v 1.9 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -253,6 +253,27 @@ define("_C_WEBPHOTO_UPLOAD_FIELD_CATEGORY", "file_category");
 define("_C_WEBPHOTO_UPLOAD_FIELD_GICON",    "file_gicon");
 define("_C_WEBPHOTO_UPLOAD_FIELD_GSHADOW",  "file_gshadow");
 define("_C_WEBPHOTO_UPLOAD_FIELD_PLOGO",    "file_plogo");
+
+// v0.70
+define("_C_WEBPHOTO_EMBED_NAME_GENERAL",  "general" ) ;
+define("_C_WEBPHOTO_INFO_SEPARATOR" , "|" ) ;
+
+define("_C_WEBPHOTO_CODEINFO_DEFAULT", "1|2|3|4|101|102|103|104|105");
+define("_C_WEBPHOTO_CODEINFO_CONT",   "1");
+define("_C_WEBPHOTO_CODEINFO_THUMB",  "2");
+define("_C_WEBPHOTO_CODEINFO_MIDDLE", "3");
+define("_C_WEBPHOTO_CODEINFO_FLASH",  "4");
+define("_C_WEBPHOTO_CODEINFO_DOCOMO", "5");
+define("_C_WEBPHOTO_CODEINFO_PAGE",   "101");
+define("_C_WEBPHOTO_CODEINFO_SITE",   "102");
+define("_C_WEBPHOTO_CODEINFO_PLAY",   "103");
+define("_C_WEBPHOTO_CODEINFO_EMBED",  "104");
+define("_C_WEBPHOTO_CODEINFO_JS",     "105");
+
+define("_C_WEBPHOTO_PLAYLIST_TIME_HOUR",  "3600");
+define("_C_WEBPHOTO_PLAYLIST_TIME_DAY",   "86400");
+define("_C_WEBPHOTO_PLAYLIST_TIME_WEEK",  "604800");
+define("_C_WEBPHOTO_PLAYLIST_TIME_MONTH", "2592000");
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

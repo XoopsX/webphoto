@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: item_manager.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// load_movie() -> build_movie()
 // 2008-11-08 K.OHWADA
 // webphoto_flash_log
 // _thumb_delete()
@@ -21,8 +23,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_item_manager extends webphoto_photo_action
 {
 	var $_vote_handler;
+	var $_player_handler;
 	var $_flashvar_handler;
 	var $_playlist_class;
+	var $_flash_class;
 	var $_log_class ;
 	var $_sort_class ;
 
@@ -49,8 +53,10 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->set_flag_admin( true );
 
 	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
 	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
 	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
@@ -575,7 +581,7 @@ function _submit_form()
 	}
 
 	$form_class->print_form_admin( 
-		$item_row, $this->build_form_param( 'admin_submit') );
+		$item_row, null, null, null, $this->build_form_param( 'admin_submit') );
 
 	xoops_cp_footer();
 	exit();
@@ -604,12 +610,14 @@ function _modify_form()
 	echo $this->_build_bread_crumb();
 
 	$item_row    = $this->build_modify_row_by_post( $item_row, true ) ;
-
 	$item_id     = $item_row['item_id'] ;
 	$flashvar_id = $item_row['item_flashvar_id'] ;
-	$player_id   = $item_row['item_player_id'] ;
 	$kind        = $item_row['item_kind'] ;
 
+	$cont_row     = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
+	$thumb_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
+	$middle_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
+	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$flashvar_row = $this->_flashvar_handler->get_row_by_id( $flashvar_id ) ;
 
 	$table_url = $this->_MODULE_URL .'/admin/index.php?fct=item_table_manage&amp;op=form&amp;id='. $item_id ;
@@ -623,7 +631,7 @@ function _modify_form()
 	echo "</a><br /><br />\n";
 
 	$form_class->print_form_admin( 
-		$item_row, $this->build_form_param( 'admin_modify' ) );
+		$item_row, $cont_row, $thumb_row, $middle_row, $this->build_form_param( 'admin_modify' ) );
 
 	if ( is_array($flashvar_row) ) {
 		$this->_print_form_flashvar( 'admin_item_modify', $flashvar_row );
@@ -637,11 +645,11 @@ function _modify_form()
 	}
 
 	if ( $this->is_video_kind( $kind ) ) {
-		$form_class->print_form_redo( 'admin', $item_row );
+		$form_class->print_form_redo( 'admin', $item_row, $flash_row );
 	}
 
 	if ( is_array($flashvar_row) ) {
-		$this->_show_flash_player( $item_id, $player_id );
+		$this->_show_flash_player( $item_row, $cont_row, $thumb_row, $middle_row, $flash_row, $flashvar_row );
 	}
 
 	xoops_cp_footer();
@@ -660,11 +668,24 @@ function _get_item_row_or_redirect()
 	return $item_row ;
 }
 
-function _show_flash_player( $item_id, $player_id )
+function _show_flash_player( $item_row, $cont_row, $thumb_row, $middle_row, $flash_row, $flashvar_row )
 {
-	$player_class =& webphoto_flash_player::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	list( $movie, $mplay ) = $player_class->load_movie( $item_id, $player_id, null ); 
+	$player_id      = $item_row['item_player_id'] ;
+	$playlist_cache = $item_row['item_playlist_cache'] ;
+
+	$param = array(
+		'item_row'       => $item_row , 
+		'cont_row'       => $cont_row , 
+		'thumb_row'      => $thumb_row , 
+		'middle_row'     => $middle_row , 
+		'flash_row'      => $flash_row ,
+		'player_row'     => $this->_player_handler->get_row_by_id_or_default( $player_id ) , 
+		'flashvar_row'   => $flashvar_row , 
+		'playlist_cache' => $playlist_cache ,
+	);
+
+	$movie = $this->_flash_class->build_movie( $param );
+
 	echo "<br />\n";
 	echo '<div align="center">'."\n";
 	echo $movie; 

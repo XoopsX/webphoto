@@ -1,10 +1,18 @@
 <?php
-// $Id: embed.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: embed.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-16 K.OHWADA
+// $class->width()
+//---------------------------------------------------------
+
+// build_embed_link( $type, $src, $width, $height )
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -51,7 +59,7 @@ function set_param( $val )
 	}
 }
 
-function build_embed_link( $type, $src )
+function build_embed_link( $type, $src, $width, $height )
 {
 	if ( empty($type) ) {
 		return false;
@@ -70,8 +78,24 @@ function build_embed_link( $type, $src )
 		$class->set_param( $this->_param );
 	}
 
-	$embed = $class->embed( $src, $this->_WIDTH_DEFAULT, $this->_HEIGHT_DEFAULT );
-	$link  = $class->link(  $src );
+// plugin if empty
+	if ( empty($width) ) {
+		$width  = $class->width();
+	}
+	if ( empty($height) ) {
+		$height = $class->height();
+	}
+
+// default if empty
+	if ( empty($width) ) {
+		$width = $this->_WIDTH_DEFAULT ;
+	}
+	if ( empty($height) ) {
+		$height = $this->_HEIGHT_DEFAULT ;
+	}
+
+	$embed  = $class->embed( $src, $width, $height );
+	$link   = $class->link(  $src );
 
 	return array( $embed, $link );
 }
@@ -94,13 +118,16 @@ function build_link( $type, $src )
 	return $class->link( $src );
 }
 
-function build_type_options()
+function build_type_options( $flag_general )
 {
 	$files = $this->_utility_class->get_files_in_dir( $this->_EMBEDS_DIR, 'php', false, true );
 
 	$options = array() ;
 	foreach ( $files as $file ) {
 		$opt_name = str_replace( '.php', '', $file );
+		if ( ( $opt_name == _C_WEBPHOTO_EMBED_NAME_GENERAL ) && !$flag_general ) {
+			continue;
+		}
 		$options[ $opt_name ] = $opt_name ;
 	}
 

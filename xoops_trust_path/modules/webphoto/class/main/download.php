@@ -1,41 +1,39 @@
 <?php
-// $Id: image.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: download.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
 
-if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
-// class webphoto_main_image
+// class webphoto_main_download
 //=========================================================
-class webphoto_main_image extends webphoto_file_read
+class webphoto_main_download extends webphoto_file_read
 {
-	var $_kind_class ;
+	var $_TIME_FAIL = 5;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_main_image( $dirname, $trust_dirname )
+function webphoto_main_download( $dirname , $trust_dirname )
 {
 	$this->webphoto_file_read( $dirname, $trust_dirname );
-
-	$this->_kind_class =& webphoto_kind::getInstance();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_main_image( $dirname, $trust_dirname );
+		$instance = new webphoto_main_download( $dirname , $trust_dirname );
 	}
 	return $instance;
 }
 
 //---------------------------------------------------------
-// public
+// main
 //---------------------------------------------------------
 function main()
 {
@@ -44,37 +42,37 @@ function main()
 
 	$item_row = $this->get_item_row( $item_id );
 	if ( !is_array($item_row) ) {
+		redirect_header( $this->_MODULE_URL, $this->_TIME_FAIL, $this->_error );
+		exit();
+	}
+
+// check perm down
+	if ( !$this->check_perm( $item_row['item_perm_down'] ) ) {
+		redirect_header( $this->_MODULE_URL, $this->_TIME_FAIL, _NOPERM );
 		exit();
 	}
 
 	$file_row = $this->get_file_row( $item_row, $file_kind );
 	if ( !is_array($file_row) ) {
+		redirect_header( $this->_MODULE_URL, $this->_TIME_FAIL, $this->_error );
 		exit();
 	}
 
-	$ext  = $file_row['file_ext'] ;
+	$name = $file_row['file_name'] ;
 	$mime = $file_row['file_mime'] ;
 	$size = $file_row['file_size'] ;
 	$file = $file_row['file_full'] ;
 
-	if ( ! $this->_kind_class->is_image_ext( $ext ) ) {
-		exit();
-	}
-
 	$this->zlib_off();
 	$this->http_output_pass();
+	session_cache_limiter('none');
+	session_start();
+	$this->header_down( $mime, $size, $name );
 
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-Type: '. $mime );
-	header('Content-Length: '. $size );
-
-	readfile( $file ) ;
+	readfile($file);
 	exit();
 }
 
 // --- class end ---
 }
-
 ?>

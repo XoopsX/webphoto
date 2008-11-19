@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo.php,v 1.6 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// _build_code()
+// refresh_cache_by_item_row()
 // 2008-10-01 K.OHWADA
 // update_hits() -> countup_hits()
 // 2008-08-24 K.OHWADA
@@ -24,6 +27,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_photo extends webphoto_show_main
 {
+	var $_player_handler;
+	var $_flashvar_handler;
+	var $_playlist_class;
 	var $_flash_class;
 	var $_embed_class;
 	var $_d3_comment_view_class;
@@ -33,7 +39,10 @@ class webphoto_main_photo extends webphoto_show_main
 	var $_get_order;
 
 	var $_row = null;
-	var $_has_tagedit = false;
+	var $_has_tagedit    = false;
+	var $_show_codebox   = false ;
+	var $_perm_download  = false;
+	var $_codeinfo_array = null;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -45,6 +54,10 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_main( $dirname , $trust_dirname );
 	$this->set_flag_highlight( true );
+
+	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
+	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
 
 	$this->_flash_class  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
 	$this->_embed_class  =& webphoto_embed::getInstance( $dirname, $trust_dirname );
@@ -231,33 +244,63 @@ function main()
 function _build_photo_show_main( $row )
 {
 	$arr1 = $this->build_photo_show( $row );
-	$arr2 = $this->_build_flash_player( $arr1 ) ;
-	$arr3 = $this->_build_embed_link( $arr1 );
 
-	$arr = array_merge( $arr1, $arr2, $arr3 );
+	$this->_perm_download = $arr1['perm_download'] ;
+
+	$arr2 = $this->_build_flash_player( $row, $arr1 ) ;
+	$arr3 = $this->_build_embed_link( $row );
+	$arr4 = $this->_build_code( $row, $arr1, $arr2, $arr3 );
+
+	$arr = array_merge( $arr1, $arr2, $arr3, $arr4 );
 	return $arr;
 }
 
 //---------------------------------------------------------
 // flash player
 //---------------------------------------------------------
-function _build_flash_player( $show_arr )
+function _build_flash_player( $item_row, $show_arr )
 {
-	$item_id     = $show_arr[ 'item_id' ] ;
-	$player_id   = $show_arr[ 'player_id' ] ;
-	$displaytype = $show_arr[ 'displaytype' ] ;
+	$item_id     = $item_row['item_id'] ;
+	$player_id   = $item_row['item_player_id'] ;
+	$flashvar_id = $item_row['item_flashvar_id'] ;
+	$displaytype = $item_row['item_displaytype'] ;
+	$uid         = $item_row['item_uid'] ;
 
 	$flag  = false ;
 	$flash = null ;
+	$embed = null ;
+	$js    = null ;
 
-	if ( $displaytype >= _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) {
-		$flag  = true;
-		list( $flash, $mplay ) = $this->_flash_class->load_movie( $item_id, $player_id, null );
+	if ( $displaytype < _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) {
+		return array( $flag, $flash, $embed, $js );
 	}
+
+	$flag  = true;
+
+// countup views if not submitter or admin.
+	if ( $this->check_not_owner( $uid ) ) {
+		$this->_item_handler->countup_views( $item_id, true );
+	}
+
+	$param = array(
+		'item_row'       => $item_row , 
+		'cont_row'       => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) , 
+		'thumb_row'      => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) , 
+		'middle_row'     => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) , 
+		'flash_row'      => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ,
+		'player_row'     => $this->_player_handler->get_row_by_id_or_default(   $player_id ) , 
+		'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
+		'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
+	);
+
+	$flash              = $this->_flash_class->build_movie( $param );
+	list( $embed, $js ) = $this->_flash_class->build_code_embed( $param );
 
 	$arr = array(
 		'displaytype_flash' => $flag ,
 		'flash_player'      => $flash ,
+		'code_embed'        => $embed  ,
+		'code_js'           => $js ,
 	);
 	return $arr;
 }
@@ -265,21 +308,32 @@ function _build_flash_player( $show_arr )
 //---------------------------------------------------------
 // embed
 //---------------------------------------------------------
-function _build_embed_link( $show_arr )
+function _build_embed_link( $item_row )
 {
-	$kind  = $show_arr[ 'kind' ];
-	$type  = $show_arr[ 'embed_type' ];
-	$src   = $show_arr[ 'embed_src' ];
-
-	$param = $show_arr;
-	$param[ 'cfg_thumb_width' ]  = $this->_cfg_thumb_width ;
-	$param[ 'cfg_middle_width' ] = $this->_cfg_middle_width ;
+	$kind    = $item_row['item_kind'];
+	$siteurl = $item_row['item_siteurl'];
+	$type    = $item_row['item_embed_type'];
+	$src     = $item_row['item_embed_src'];
+	$text    = $item_row['item_embed_text'];
+	$width   = $item_row['item_page_width'];
+	$height  = $item_row['item_page_height'];
 
 	$can = false ;
 
-	$this->_embed_class->set_param( $param );
-	list( $embed, $link ) 
-		= $this->_embed_class->build_embed_link( $type, $src );
+	if ( $text && $siteurl) {
+		$embed = $text;
+		$link  = $siteurl;
+
+	} elseif ( $text ) {
+		$embed = $text;
+		list( $dummy, $link ) 
+			= $this->_embed_class->build_embed_link( $type, $src, $width, $height );
+
+	} else {
+		list( $embed, $link ) 
+			= $this->_embed_class->build_embed_link( $type, $src, $width, $height, true, true );
+	}
+
 	if ( $embed ) {
 		$can = true ;
 	}
@@ -290,6 +344,285 @@ function _build_embed_link( $show_arr )
 		'embed_link'  => $link ,
 	);
 	return $arr;
+}
+
+//---------------------------------------------------------
+// code
+//---------------------------------------------------------
+function _build_code( $item_row, $show_arr, $flash_arr, $embed_arr )
+{
+	$item_id  = $item_row['item_id'] ;
+	$title    = $item_row['item_title'] ;
+	$siteurl  = $item_row['item_siteurl'] ;
+	$kind     = $item_row['item_kind'] ;
+	$feed     = $item_row['item_playlist_feed'] ;
+	$cache    = $item_row['item_playlist_cache'] ;
+
+	$this->_codeinfo_array = $this->_item_handler->get_codeinfo_array( $item_row );
+
+	list( $cont_url, $cont_link, $cont_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_CONT );
+
+	list( $thumb_url, $thumb_link, $thumb_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+	list( $middle_url, $middle_link, $middle_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+
+	list( $flash_url, $flash_link, $flash_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
+
+	list( $site_url, $site_link ) =
+		$this->_build_site_link( $item_id, $siteurl, $embed_arr );
+
+	list( $play_url, $play_link ) =
+		$this->_build_play_link( $item_id, $kind, $title, $feed, $cache );
+
+	list( $embed, $js ) =
+		$this->_build_code_embed_link( $item_row, $flash_arr, $embed_arr );
+
+	if ( $cont_url == $thumb_url ) {
+		$thumb_url  = null;
+		$thumb_link = null;
+	}
+
+	if ( $cont_url == $middle_url ) {
+		$middle_url  = null;
+		$middle_link = null;
+	}
+
+	$show_code_cont     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_CONT    , $cont_url ) ;
+	$show_code_thumb    = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_THUMB   , $thumb_url ) ;
+	$show_code_middle   = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_MIDDLE  , $middle_url ) ;
+	$show_code_flash    = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_FLASH   , $flash_url ) ;
+	$show_code_page     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_PAGE    , true ) ;
+	$show_code_site     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_SITE    , $site_link );
+	$show_code_play     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_PLAY    , $play_url );
+	$show_code_embed    = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_EMBED   , $embed );
+	$show_code_js       = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_JS      , $js ) ;
+
+	$arr = array(
+		'show_codebox'         => $this->_show_codebox ,
+		'show_code_cont'       => $show_code_cont ,
+		'show_code_thumb'      => $show_code_thumb ,
+		'show_code_middle'     => $show_code_middle ,
+		'show_code_flash'      => $show_code_flash ,
+		'show_code_page'       => $show_code_page ,
+		'show_code_site'       => $show_code_site ,
+		'show_code_play'       => $show_code_play ,
+		'show_code_embed'      => $show_code_embed ,
+		'show_code_js'         => $show_code_js ,
+		'code_cont_url_s'      => $this->sanitize( $cont_url ) ,
+		'code_cont_link'       => $cont_link ,
+		'code_cont_size'       => $cont_size ,
+		'code_thumb_url_s'     => $this->sanitize( $thumb_url ) ,
+		'code_thumb_link'      => $thumb_link ,
+		'code_thumb_size'      => $thumb_size ,
+		'code_middle_url_s'    => $this->sanitize( $middle_url ) ,
+		'code_middle_link'     => $middle_link ,
+		'code_middle_size'     => $middle_size ,
+		'code_flash_url_s'     => $this->sanitize( $flash_url ) ,
+		'code_flash_link'      => $flash_link ,
+		'code_flash_size'      => $flash_size ,
+		'code_page_url'        => $this->build_uri_photo( $item_id ) ,
+		'code_site_url_s'      => $this->sanitize( $site_url ) ,
+		'code_site_link'       => $site_link ,
+		'code_play_url_s'      => $this->sanitize( $play_url ) ,
+		'code_play_link'       => $play_link ,
+		'code_embed_s'         => $this->sanitize( $embed ) ,
+		'code_js_s'            => $this->sanitize( $js ) ,
+	);
+	return $arr;
+}
+
+function _build_file_link( $item_row, $show_arr, $file_kind )
+{
+	$url  = null;
+	$link = null;
+	$size = null;
+
+	if ( ! $this->_perm_download ) {
+		return array( $url, $link );
+	}
+
+	$img       = null;
+	$item_name = null ;
+
+	switch ( $file_kind )
+	{
+		case _C_WEBPHOTO_FILE_KIND_CONT :
+			$lang_const = 'ITEM_CODEINFO_CONT' ;
+			$item_name  = 'item_external_url' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_THUMB :
+			$lang_const = 'ITEM_CODEINFO_THUMB' ;
+			$item_name  = 'item_external_thumb' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_MIDDLE :
+			$lang_const = 'ITEM_CODEINFO_MIDDLE' ;
+			$item_name  = 'item_external_middle' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH :
+			$lang_const = 'ITEM_CODEINFO_FLASH' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO :
+			$lang_const = 'ITEM_CODEINFO_DOCOMO' ;
+			break;
+
+		default :
+			return array( $url, $link );
+			break;	
+	}
+
+	$item_id   = $item_row['item_id'] ;
+	$icon      = $this->_MODULE_URL.'/images/icons/download.png';
+	$lang      = $this->get_constant( $lang_const );
+	$lang_down = $this->get_constant( 'DOWNLOAD' );
+	$file_row = $this->get_show_file_row( $show_arr, $file_kind ) ; 
+
+// if file exists
+	if ( is_array($file_row) ) {
+		$url       = $file_row['file_url'] ;
+		$ext       = $file_row['file_ext'] ;
+		$file_size = $file_row['file_size'] ;
+		$file      = XOOPS_ROOT_PATH .'/'. $file_row['file_path'] ;
+
+		if ( $this->is_image_ext( $ext ) ) {
+			$base_url = $this->_MODULE_URL.'/index.php?fct=image';
+			$title    = $lang ;
+
+		} else {
+			$base_url = $this->_MODULE_URL.'/index.php?fct=download';
+			$title    = $lang_down .' '. $lang ;
+			$down_s   = $this->sanitize($lang_down);
+			$img      = ' <img src="'. $icon .'" border="0" alt="'. $down_s .'" title="'. $down_s .'" > ';
+		}
+
+		if ( file_exists($file) ) {
+			$url  = $base_url .'&item_id='. $item_id .'&file_kind='. $file_kind;
+
+			if ( $file_size > 0 ) {
+				$size = $img .' ( '. $this->build_show_filesize( $file_size ) .' ) ';
+			}
+		}
+
+// if external
+	} elseif ( $item_name ) {
+		$item_url = $item_row[ $item_name ] ;
+		if ( $item_url ) {
+			$url   = $item_url ;
+			$title = $lang ;
+		}
+	}
+
+	if ( $url ) {
+		$url_s    = $this->sanitize( $url ) ;
+		$title_s  = $this->sanitize( $title ) ;
+		$link     = '<a href="'.$url_s.'" target="_blank" title="'.$title_s.'">';
+		$link    .= $lang . '</a>' ;
+	}
+
+	return array( $url, $link, $size );
+}
+
+function _build_site_link( $item_id, $item_siteurl, $embed_arr )
+{
+	$url  = null;
+	$link = null;
+
+	$lang_site = $this->get_constant( 'ITEM_CODEINFO_SITE' );
+	$title     = $lang_site .' : '. $item_siteurl ;
+
+// external site
+	if ( $item_siteurl ) {
+		$url  = $item_siteurl;
+		$href = $this->_MODULE_URL.'/index.php?fct=visit&item_id='.$item_id;
+
+// embed link
+	} elseif ( isset( $embed_arr['embed_link'] ) && $embed_arr['embed_link'] ) {
+		$url  = $embed_arr['embed_link'] ;
+		$href = $url ;
+	}
+
+	if ( $url ) {
+		$title_s  = $this->sanitize( $title ) ;
+		$href_s   = $this->sanitize( $href );
+		$link     = '<a href="'. $href_s .'" target="_blank" title="'. $title_s .'">';
+		$link    .= $lang_site .'</a>';
+	}
+
+	return array( $url, $link );
+}
+
+function _build_play_link( $item_id, $kind, $item_title, $feed, $cache )
+{
+	$url  = null;
+	$link = null;
+
+	if ( ! $this->_perm_download ) {
+		return array( $url, $link );
+	}
+
+	$lang_play = $this->get_constant( 'ITEM_CODEINFO_PLAY' );
+	$icon      = $this->_MODULE_URL.'/images/icons/webfeed.png';
+
+// external playlist
+	if ( $this->is_playlist_feed_kind( $kind ) ) {
+		$url = $feed;
+
+// playlist cache
+	} elseif( $this->_perm_download && $this->is_playlist_dir_kind( $kind ) ) {
+		$file = $this->_PLAYLISTS_DIR .'/'. $cache ;
+		if ( empty($cache) || !file_exists($file) ) {
+			return array( $url, $link );
+		}
+
+		$url  = $this->_MODULE_URL.'/index.php?fct=view_playlist&item_id='.$item_id;
+
+// other
+	} else {
+		return array( $url, $link );
+	}
+
+	if ( $url ) {
+		$url_s    = $this->sanitize($url);
+		$title_s  = $this->sanitize( $item_title .' '. $lang_play ) ;
+		$atag     = '<a href="'. $url_s .'" target="_blank" title="'.$title_s.'">';
+		$link    .= $lang_play .'</a>'; 
+	}
+
+	return array( $url, $link );
+}
+
+function _build_code_embed_link( $item_row, $flash_arr, $embed_arr )
+{
+	$embed = null;
+	$js    = null;
+
+// embed
+	if ( isset( $flash_arr['code_embed'] ) && $flash_arr['code_embed'] ) {
+		$embed  = $flash_arr['code_embed'] ;
+		$js     = $flash_arr['code_js'] ;
+
+// flash player
+	} elseif ( isset( $embed_arr['embed_embed'] ) && $embed_arr['embed_embed'] ) {
+		$embed = $embed_arr['embed_embed'] ;
+	}
+
+	return array( $embed, $js );
+}
+
+function _has_code_parm( $const, $value )
+{
+	if ( in_array( $const, $this->_codeinfo_array ) && $value ) {
+		$this->_show_codebox = true ;
+		return true ;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

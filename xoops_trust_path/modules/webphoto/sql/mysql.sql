@@ -1,9 +1,11 @@
-# $Id: mysql.sql,v 1.10 2008/11/11 06:53:16 ohwada Exp $
+# $Id: mysql.sql,v 1.11 2008/11/19 10:26:00 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
+
+# item_codeinfo VARCHAR(255) NOT NULL DEFAULT '',
 
 # =========================================================
 # change log
@@ -98,6 +100,10 @@ CREATE TABLE item (
   item_showinfo  VARCHAR(255) NOT NULL DEFAULT '',  
   item_external_middle VARCHAR(255) NOT NULL DEFAULT '',
   item_icon VARCHAR(255) NOT NULL DEFAULT '',
+  item_codeinfo VARCHAR(255) NOT NULL DEFAULT '',
+  item_page_width  INT(11) NOT NULL DEFAULT '0',
+  item_page_height INT(11) NOT NULL DEFAULT '0',
+  item_embed_text  TEXT NOT NULL,
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),

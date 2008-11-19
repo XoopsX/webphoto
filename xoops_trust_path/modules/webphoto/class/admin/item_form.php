@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
+// $Id: item_form.php,v 1.5 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// BUG: Warning [PHP]: Missing argument 1
+// build_ele_codeinfo()
 // 2008-11-08 K.OHWADA
 // _build_ele_middle_file_external()
 //---------------------------------------------------------
@@ -61,7 +64,7 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // submit edit form
 //---------------------------------------------------------
-function print_form_admin( $row, $param )
+function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param )
 {
 	$mode          = $param['mode'];
 	$preview_name  = $param['preview_name'];
@@ -71,14 +74,12 @@ function print_form_admin( $row, $param )
 	$type          = isset($param['type']) ? $param['type'] : null ;
 
 	$this->_param_type = $type;
+	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
 
 	$this->_set_checkbox( $param['checkbox_array'] );
 
 	$is_submit  = false ;
 	$is_edit    = false ;
-	$cont_row   = null ;
-	$thumb_row  = null ;
-	$middle_row = null ;
 
 	switch ($mode)
 	{
@@ -96,7 +97,7 @@ function print_form_admin( $row, $param )
 
 	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
 
-	$this->set_row( $row );
+	$this->set_row( $item_row );
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->_build_gmap_iframe();
@@ -113,16 +114,10 @@ function print_form_admin( $row, $param )
 
 	echo $this->build_row_hidden( 'item_id' );
 	echo $this->build_row_hidden( 'item_flashvar_id' );
-	echo $this->build_input_hidden( 'photo_id', $row['item_id'] );
+	echo $this->build_input_hidden( 'photo_id', $item_row['item_id'] );
 
 	if ( $is_submit ) {
 		echo $this->build_input_hidden( 'preview_name', $preview_name, true );
-	}
-
-	if ( $is_edit ) {
-		$cont_row   = $this->_file_handler->get_row_by_id( $row['item_file_id_1'] );
-		$thumb_row  = $this->_file_handler->get_row_by_id( $row['item_file_id_2'] );
-		$middle_row = $this->_file_handler->get_row_by_id( $row['item_file_id_3'] );
 	}
 
 	echo $this->build_table_begin();
@@ -167,6 +162,8 @@ function print_form_admin( $row, $param )
 		}
 	}
 
+	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_WIDTH'),  'item_page_width' );
+	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_HEIGHT'), 'item_page_height' );
 	echo $this->build_row_dhtml( $this->get_constant('ITEM_DESCRIPTION'), 'item_description' );
 
 	if ( $is_edit ) {
@@ -225,9 +222,13 @@ function print_form_admin( $row, $param )
 		echo $this->build_line_ele( $this->get_constant('ITEM_EMBED_SRC'), 
 			$this->_build_ele_embed_src() );
 
+		echo $this->build_row_textarea( 
+			$this->get_constant('ITEM_EMBED_TEXT'), 'item_embed_text' );
+
 	} else {
 		$this->set_row_hidden_buffer( 'item_embed_type' ) ;
 		$this->set_row_hidden_buffer( 'item_embed_src' ) ;
+		$this->set_row_hidden_buffer( 'item_embed_text' ) ;
 	}
 
 	if ( $this->_is_playlist_type() ) {
@@ -248,8 +249,8 @@ function print_form_admin( $row, $param )
 			$this->set_row_hidden_buffer( 'item_playlist_dir' ) ;
 		}
 
-		echo $this->build_row_text( $this->get_constant('ITEM_PLAYLIST_TIME'),
-			'item_playlist_time' );
+		echo $this->build_line_ele( $this->get_constant('ITEM_PLAYLIST_TIME'), 
+			$this->_build_ele_playlist_time() );
 
 	} else {
 		$this->set_row_hidden_buffer( 'item_playlist_type' ) ;
@@ -273,6 +274,12 @@ function print_form_admin( $row, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
+
+	echo $this->build_line_ele(
+		$this->get_constant('ITEM_PERM_DOWN'), $this->_build_ele_perm_down() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('ITEM_CODEINFO'), $this->_build_ele_codeinfo() );
 
 	if ( $is_edit && $this->_is_valid() ) {
 		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
@@ -343,6 +350,14 @@ function _is_playlist_dir_kind()
 	return false ;
 }
 
+function _build_ele_playlist_time()
+{
+	$name    = 'item_playlist_time' ;
+	$value   = $this->get_row_by_key( $name ) ; 
+	$options = $this->_item_handler->get_playlist_time_options();
+	return $this->build_form_select( $name, $value, $options, $this->_SELECT_SIZE );
+}
+
 function _is_valid()
 {
 	$status = $this->get_row_by_key( 'item_status' );
@@ -383,7 +398,8 @@ function _build_ele_time_update( $size=50 )
 	return $text;
 }
 
-function _build_ele_playlist_feed( $src )
+// BUG: Warning [PHP]: Missing argument 1
+function _build_ele_playlist_feed()
 {
 	$name  = 'item_playlist_feed';
 	$value = $this->get_row_by_key( $name );
@@ -426,7 +442,7 @@ function _build_ele_playlist_chain()
 //---------------------------------------------------------
 // playlist
 //---------------------------------------------------------
-function print_form_playlist( $mode, $row )
+function print_form_playlist( $mode, $item_row )
 {
 	switch ($mode)
 	{
@@ -437,7 +453,7 @@ function print_form_playlist( $mode, $row )
 			break;
 	}
 
-	$this->set_row( $row );
+	$this->set_row( $item_row );
 
 	echo $this->build_form_tag( 'playlist', $url );
 	echo $this->build_html_token();

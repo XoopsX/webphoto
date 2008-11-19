@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.14 2008/11/11 06:53:16 ohwada Exp $
+// $Id: main.php,v 1.15 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1210,6 +1210,38 @@ define("_WEBPHOTO_CAT_IMG_NAME" , "カテゴリ画像名" ) ;
 
 // edit form
 define("_WEBPHOTO_CAP_MIDDLE_SELECT", "ミドル画像の選択");
+
+//---------------------------------------------------------
+// v0.70
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_CODEINFO", "コード表示項目");
+define("_WEBPHOTO_ITEM_PAGE_WIDTH",  "ページ横幅");
+define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "ページ高さ");
+define("_WEBPHOTO_ITEM_EMBED_TEXT",  "埋込み");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_CONT","メディア");
+define("_WEBPHOTO_ITEM_CODEINFO_THUMB","サムネイル画像");
+define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","ミドル画像");
+define("_WEBPHOTO_ITEM_CODEINFO_FLASH","フラッシュ動画");
+define("_WEBPHOTO_ITEM_CODEINFO_DOCOMO","ドコモ動画");
+define("_WEBPHOTO_ITEM_CODEINFO_PAGE","URL");
+define("_WEBPHOTO_ITEM_CODEINFO_SITE","サイト");
+define("_WEBPHOTO_ITEM_CODEINFO_PLAY","プイリスト");
+define("_WEBPHOTO_ITEM_CODEINFO_EMBED","埋込み");
+define("_WEBPHOTO_ITEM_CODEINFO_JS","スクリプト");
+
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_HOUR", "1時間");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_DAY",  "1日");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_WEEK", "1週間");
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME_MONTH","1ヶ月");
+
+// photo
+define("_WEBPHOTO_DOWNLOAD","ダウンロード");
+
+// file_read
+define("_WEBPHOTO_NO_FILE", "ファイルが存在しない");
 
 // === define end ===
 }

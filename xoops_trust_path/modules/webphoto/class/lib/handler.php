@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: handler.php,v 1.4 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// check_perms_in_groups()
 // 2008-10-01 K.OHWADA
 // build_form_select_list()
 // 2008-08-01 K.OHWADA
@@ -242,6 +244,20 @@ function get_row_by_id( $id )
 	return $this->get_row_by_sql( $sql );
 }
 
+function get_row_by_id_or_default( $id )
+{
+	$row = $this->get_row_by_id( $id );
+	if ( ! is_array($row) ) {
+		$row = $this->create();
+	}
+	return $row;
+}
+
+function create()
+{
+	// dummy
+}
+
 //---------------------------------------------------------
 // rows
 //---------------------------------------------------------
@@ -451,6 +467,25 @@ function quote( $str )
 }
 
 //---------------------------------------------------------
+// check perm
+//---------------------------------------------------------
+function check_perms_in_groups( $perms, $groups )
+{
+	if ( !is_array($perms) || !count($perms) ) {
+		return false;
+	}
+	if ( !is_array($groups) || !count($groups) ) {
+		return false;
+	}
+
+	$arr = array_intersect( $groups, $perms );
+	if ( is_array($arr) && count($arr) ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
 // selbox
 //---------------------------------------------------------
 function build_form_selbox( $name='', $value=0, $none=0, $onchange='' )
@@ -511,6 +546,53 @@ function build_form_select_list( $rows, $title_name='', $preset_id=0, $none=0, $
 
 	$str .=  "</select>\n";
 	return $str;
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function str_to_array( $str, $pattern )
+{
+	$arr1 = explode( $pattern, $str );
+	$arr2 = array();
+	foreach ( $arr1 as $v )
+	{
+		$v = trim($v);
+		if ($v == '') { continue; }
+		$arr2[] = $v;
+	}
+	return $arr2;
+}
+
+function array_to_str( $arr, $glue )
+{
+	$val = false;
+	if ( is_array($arr) && count($arr) ) {
+		$val = implode($glue, $arr);
+	}
+	return $val;
+}
+
+function array_to_perm( $arr, $glue )
+{
+	$val = $this->array_to_str( $arr, $glue );
+	if ( $val ) {
+		$val = $glue . $val . $glue ;
+	}
+	return $val;
+}
+
+function sanitize_array_int( $arr_in )
+{
+	if ( !is_array($arr_in) || !count($arr_in) ) {
+		return null;
+	}
+
+	$arr_out = array();
+	foreach ( $arr_in as $in ) {
+		$arr_out[] = intval($in);
+	}
+	return $arr_out;
 }
 
 //----- class end -----

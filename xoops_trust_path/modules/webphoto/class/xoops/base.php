@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
+// $Id: base.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// get_cached_groups()
 // 2008-10-01 K.OHWADA
 // use XOOPS_GROUP_ANONYMOUS in get_my_user_groups()
 //---------------------------------------------------------
@@ -240,17 +242,37 @@ function get_group_obj()
 {
 	$group_handler = xoops_gethandler("group");
 	$objs = $group_handler->getObjects( null, true );
-	$this->_cached_group_objs = $objs;
 	return $objs;
 }
 
-function get_group_by_id_name( $id, $name, $format='s' )
+function get_cached_group_obj()
 {
 	if ( !is_array( $this->_cached_group_objs ) ) {
 		$this->_cached_group_objs = $this->get_group_obj();
 	}
-	if ( isset( $this->_cached_group_objs[ $id ] ) ) {
-		return  $this->_cached_group_objs[ $id ]->getVar( $name, $format );
+	return $this->_cached_group_objs ;
+}
+
+function get_cached_groups( $format='s' )
+{
+	$objs = $this->get_cached_group_obj() ;
+
+	$arr = array();
+	foreach ( $objs as $obj )
+	{
+		$groupid = $obj->getVar( 'groupid', $format );
+		$name    = $obj->getVar( 'name',    $format );
+		$arr[ $groupid ] = $name ;
+	}
+	return $arr ;
+}
+
+function get_cached_group_by_id_name( $id, $name, $format='s' )
+{
+	$objs = $this->get_cached_group_obj() ;
+
+	if ( isset( $objs[ $id ] ) ) {
+		return  $objs[ $id ]->getVar( $name, $format );
 	}
 	return false;
 }

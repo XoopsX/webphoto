@@ -1,10 +1,16 @@
 <?php
-// $Id: player_manager.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: player_manager.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-16 K.OHWADA
+// load_movie() -> build_movie()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,6 +20,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_player_manager extends webphoto_base_this
 {
 	var $_player_handler;
+	var $_flashvar_handler;
+	var $_playlist_class;
 	var $_player_class;
 
 	var $_player_id    = 0 ;
@@ -32,8 +40,10 @@ function webphoto_admin_player_manager( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_player_handler  =& webphoto_player_handler::getInstance( $dirname );
-	$this->_player_class    =& webphoto_flash_player::getInstance( $dirname , $trust_dirname  );
+	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
+	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_player_class     =& webphoto_flash_player::getInstance( $dirname , $trust_dirname  );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
@@ -185,28 +195,46 @@ function _print_form_common( $mode, $row )
 	xoops_cp_footer();
 }
 
-function _print_player_table( $mode, $row )
+function _print_player_table( $mode, $player_row )
 {
 	$form =& webphoto_admin_player_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$style = $this->_post_class->get_get_text('style');
-	if ( empty($style) ) {
-		$style = $row['player_style'];
-	}
 
-	$item_id   = $this->_get_itemid_default();
-	$player_id = $row['player_id'] ;
+	$player_id = $player_row['player_id'] ;
+
+	$item_id  = 0 ;
+	$item_row = $this->_get_item_row();
+
+	$movie = null;
+
+	if ( is_array($item_row) ) {
+		$item_id     = $item_row['item_id'];
+		$flashvar_id = $item_row['item_flashvar_id'] ;
+
+		$param_movie = array(
+			'item_row'       => $item_row , 
+			'cont_row'       => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) , 
+			'thumb_row'      => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) , 
+			'middle_row'     => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) , 
+			'flash_row'      => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ,
+			'player_row'     => $player_row , 
+			'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
+			'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
+			'player_style'   => $style ,
+		);
+
+		$movie = $this->_player_class->build_movie( $param_movie );
+	}
 
 	$op = $mode.'_form';
 
-	$param = array(
+	$param_form = array(
 		'mode'     => $mode ,
 		'style'    => $style ,
 		'item_id'  => $item_id ,
 	);
-
-	list( $movie, $mplay ) = $this->_player_class->load_movie( $item_id, $player_id, $style ); 
 
 // PLAYER TABLE
 	echo $form->build_script_color_pickup();
@@ -215,7 +243,7 @@ function _print_player_table( $mode, $row )
 // PLAYER FORM	
 	echo '<tr><td width="40%">';
 
-	$form->print_form( $row, $param );
+	$form->print_form( $player_row, $param_form );
 
 	echo '</td>';
 
@@ -254,19 +282,21 @@ function _print_movie( $op, $item_id, $player_id, $style, $movie )
 	echo '</div>'."\n";
 }
 
-function _get_itemid_default()
+function _get_item_row()
 {
 	$item_id = $this->_post_class->get_get_int('item_id');
-	if ( $item_id > 0 ) {
-		return $item_id;
+
+	$row = $this->_item_handler->get_row_by_id( $item_id );
+	if ( is_array($row) ) {
+		return $row ;
 	}
 
 	$rows = $this->_item_handler->get_rows_flashplayer( 1 );
-	if ( isset( $rows[0]['item_id'] ) ) {
-		return  $rows[0]['item_id'];
+	if ( isset( $rows[0] ) && is_array( $rows[0] )) {
+		return  $rows[0] ;
 	}
 
-	return 0 ;
+	return null ;
 }
 
 function _build_item_selbox( $op, $item_id, $player_id, $style )

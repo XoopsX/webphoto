@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: form.php,v 1.4 2008/11/19 10:26:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// get_cached_xoops_db_groups()
+// _xoops_user_groups -> _xoops_groups
 // 2008-10-01 K.OHWADA
 // use build_menu_with_sub()
 // 2008-08-01 K.OHWADA
@@ -32,9 +35,9 @@ class webphoto_lib_form extends webphoto_lib_element
 	var $_is_module_admin  = false;
 	var $_xoops_language;
 	var $_xoops_sitename;
-	var $_xoops_uid   = 0;
-	var $_xoops_uname = null;
-	var $_xoops_user_groups = null ;
+	var $_xoops_uid    = 0;
+	var $_xoops_uname  = null;
+	var $_xoops_groups = null ;
 
 	var $_DIRNAME       = null;
 	var $_TRUST_DIRNAME = null;
@@ -228,7 +231,7 @@ function _init_xoops_param()
 
 	$this->_xoops_uid         = $this->_xoops_class->get_my_user_uid();
 	$this->_xoops_uname       = $this->_xoops_class->get_my_user_uname( 'n' );
-	$this->_xoops_user_groups = $this->_xoops_class->get_my_user_groups();
+	$this->_xoops_groups      = $this->_xoops_class->get_my_user_groups();
 	$this->_is_login_user     = $this->_xoops_class->get_my_user_is_login();
 	$this->_is_module_admin   = $this->_xoops_class->get_my_user_is_module_admin();
 }
@@ -236,6 +239,11 @@ function _init_xoops_param()
 function get_xoops_group_objs()
 {
 	return $this->_xoops_class->get_group_obj();
+}
+
+function get_cached_xoops_db_groups()
+{
+	return $this->_xoops_class->get_cached_groups();
 }
 
 function get_xoops_user_name( $uid, $usereal=0 )

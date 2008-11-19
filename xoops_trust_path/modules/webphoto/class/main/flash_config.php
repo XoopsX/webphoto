@@ -1,0 +1,101 @@
+<?php
+// $Id: flash_config.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+
+//=========================================================
+// webphoto module
+// 2008-11-16 K.OHWADA
+//=========================================================
+
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//=========================================================
+// class webphoto_main_flash_config
+//=========================================================
+class webphoto_main_flash_config extends webphoto_lib_base
+{
+	var $_item_handler;
+	var $_flash_class;
+	var $_post_class;
+	var $_xml_class;
+	var $_multibyte_class;
+
+//---------------------------------------------------------
+// constructor
+//---------------------------------------------------------
+function webphoto_main_flash_config( $dirname , $trust_dirname )
+{
+	$this->webphoto_lib_base( $dirname, $trust_dirname );
+
+	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
+	$this->_flash_class  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_post_class   =& webphoto_lib_post::getInstance();
+	$this->_xml_class    =& webphoto_lib_xml::getInstance();
+	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+
+}
+
+function &getInstance( $dirname , $trust_dirname )
+{
+	static $instance;
+	if (!isset($instance)) {
+		$instance = new webphoto_main_flash_config( $dirname , $trust_dirname );
+	}
+	return $instance;
+}
+
+//---------------------------------------------------------
+// main
+//---------------------------------------------------------
+function main()
+{
+	$item_id  = $this->_post_class->get_get_int('item_id') ;
+	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	if ( ! is_array($item_row ) ) {
+		exit();
+	}
+
+	$param = $this->_flash_class->get_param( $item_row );
+	$this->_flash_class->set_variables_in_buffer( $item_row, $param );
+
+	$buffers = $this->_flash_class->get_variable_buffers();
+	if ( ! is_array($buffers) ) {
+		exit();
+	}
+
+// VIEW HIT  Adds 1 if not submitter or admin.
+	if ( $this->check_not_owner( $item_row['item_uid'] ) ) {
+		$this->_item_handler->countup_views( $item_id, true );
+	}
+
+	$var  = '<?xml version="1.0" ?>'."\n";
+	$var .= '<config>'."\n";
+
+	foreach ( $buffers as $k => $v )
+	{
+		$var .= '<'. $k .'>';
+		$var .= $this->_xml_utf8( $v[0] );
+		$var .= '</'. $k .'>'."\n";
+	}
+
+	$var .= '</config>'."\n";
+
+	$this->_http_output('pass');
+	header("Content-Type:text/xml; charset=utf-8");
+	echo $var;
+
+}
+
+function _http_output( $encoding )
+{
+	return $this->_multibyte_class->m_mb_http_output( $encoding );
+}
+
+function _xml_utf8( $str )
+{
+	return $this->_xml_class->xml_text( 
+		$this->_multibyte_class->convert_to_utf8( $str ) );
+}
+
+// --- class end ---
+}
+?>
