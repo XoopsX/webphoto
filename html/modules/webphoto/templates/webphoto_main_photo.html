@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.11 2008/11/19 10:52:23 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.12 2008/11/20 11:31:36 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -165,91 +165,92 @@
 
 </div><br />
 
-<{if $photo.show_codebox }>  
-  <div align="right">
-  <form name="webphoto_codebox_form" id="webphoto_codebox_form" class="webphoto_form_codebox"> 
-  <table border="0">
+<{if $photo.show_codebox }>
+  <div align="center">
+  <div class="webphoto_div_codebox">
+  <form name="webphoto_codebox_form" id="webphoto_codebox_form"> 
+  <table class="webphoto_table_code">
   <{if $photo.show_code_page }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <a href="<{$photo.code_page_url}>" target="_self" title="<{$lang_page_view}>">
       <{$lang_item_codeinfo_page}>
       </a>
-    </td><td>
-    </td><td>
+    </td><td class="webphoto_td_code_middle">
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_page_link" type="text" value="<{$photo.code_page_url}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_cont }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_cont_link}>
-    </td><td align="right">
+    </td><td class="webphoto_td_code_middle">
       <{$photo.code_cont_size}>
-    </td><td>
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_cont_link" type="text" value="<{$photo.code_cont_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_flash }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_flash_link}>
-    </td><td align="right">
+    </td><td class="webphoto_td_code_middle">
       <{$photo.code_flash_size}>
-    </td><td>
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_flash_link" type="text" value="<{$photo.code_flash_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_thumb }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_thumb_link}>
-    </td><td align="right">
+    </td><td class="webphoto_td_code_middle">
       <{$photo.code_thumb_size}>
-    </td><td>
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_thumb" type="text" value="<{$photo.code_thumb_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_middle }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_middle_link}>
-    </td><td align="right">
+    </td><td class="webphoto_td_code_middle">
       <{$photo.code_middle_size}>
-    </td><td>
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_middle" type="text" value="<{$photo.code_middle_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_site}>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_site_link}>
-    </td><td>
-    </td><td>
+    </td><td class="webphoto_td_code_middle">
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_site" type="text" value="<{$photo.code_site_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_play }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$photo.code_play_link}>
-    </td><td>
-    </td><td>
+    </td><td class="webphoto_td_code_middle">
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_play" type="text" value="<{$photo.code_play_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_embed }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$lang_item_codeinfo_embed}>
-    </td><td>
-    </td><td>
+    </td><td class="webphoto_td_code_middle">
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_embed" type="text" value="<{$photo.code_embed_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_js }>
-    <tr><td>
+    <tr><td class="webphoto_td_code_left">
       <{$lang_item_codeinfo_js}>
-    </td><td>
-    </td><td>
+    </td><td class="webphoto_td_code_middle">
+    </td><td class="webphoto_td_code_right">
       <input name="webphoto_code_js" type="text" value="<{$photo.code_js_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   </table>
   </form>
-  </div><br />
+  </div></div><br />
 <{/if}>
 
 <div align="left">
