@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: mail_photo.php,v 1.7 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// set now to time_update
 // 2008-11-08 K.OHWADA
 // TMP_DIR -> MAIL_DIR
 // 2008-08-24 K.OHWADA
@@ -329,16 +331,12 @@ function add_photo_from_attaches( $param_in )
 	$datetime   = $param_in['datetime'];
 	$gps        = $param_in['gps'];
 
+	$time = time();
+
 	if ( $subject_in ) {
 		$subject = $subject_in ;
 	} else {
 		$subject = $this->_SUBJECT_DEFAULT ;
-	}
-
-	if ( $datetime > 0 ) {
-		$time_update = $datetime ;
-	} else {
-		$time_update = time() ;
 	}
 
 	if ( isset($gps['flag']) && $gps['flag'] ) {
@@ -348,8 +346,8 @@ function add_photo_from_attaches( $param_in )
 	}
 
 	$param_photo = array(
-		'time_create'      => $time_update ,
-		'time_update'      => $time_update ,
+		'time_create'      => $time ,
+		'time_update'      => $time ,
 		'title'            => $subject ,
 		'cat_id'           => $param_in['cat_id'] ,
 		'uid'              => $param_in['uid'] ,

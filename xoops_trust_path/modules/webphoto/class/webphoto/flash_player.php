@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
+// $Id: flash_player.php,v 1.3 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -614,7 +614,7 @@ function build_embed( $item_id, $flashplayer, $width, $height, $config )
 	return $str;
 }
 
-function build_embedjs( $item_id, $flashplayer, $width, $height, $config_url )
+function build_embedjs( $item_id, $flashplayer, $width, $height, $config )
 {
 	$this->_item_id = $item_id;
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.12 2008/11/19 10:26:00 ohwada Exp $
+// $Id: base_this.php,v 1.13 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,8 @@
 //---------------------------------------------------------
 // change log
 // 2008-11-16 K.OHWADA
-// _PLAYLISTS_URL;
+// set_xoops_groups()
+// _PLAYLISTS_URL
 // 2008-11-08 K.OHWADA
 // tmpdir -> workdir
 // 2008-10-01 K.OHWADA
@@ -92,15 +93,16 @@ function webphoto_base_this( $dirname, $trust_dirname )
 {
 	$this->webphoto_lib_base( $dirname, $trust_dirname );
 
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler  =& webphoto_file_handler::getInstance( $dirname );
-	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
-
+	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
+	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
 	$this->_perm_class   =& webphoto_permission::getInstance( $dirname );
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
+
+	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
+	$this->_cat_handler->set_xoops_groups( $this->_xoops_groups );
 
 	$uploads_path    = $this->_config_class->get_uploads_path();
 	$medias_path     = $this->_config_class->get_medias_path();

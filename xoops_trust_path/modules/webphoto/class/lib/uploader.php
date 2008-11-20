@@ -1,5 +1,5 @@
 <?php
-// $Id: uploader.php,v 1.3 2008/11/11 06:53:16 ohwada Exp $
+// $Id: uploader.php,v 1.4 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,6 +15,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16
+//   clear error
 // 2008-11-08
 //   getInstance() setUploadDir() etc
 // 2008-04-02
@@ -202,6 +204,10 @@ class webphoto_lib_uploader
 	 **/
 	function fetchMedia($media_name, $index = null)
 	{
+// clear error
+		$this->errors     = array();
+		$this->errorCodes = array();
+
 		if (!isset($_FILES[$media_name])) {
 
 // 2008-04-02
@@ -227,7 +233,6 @@ class webphoto_lib_uploader
 			$this->mediaError = !empty($media_name['error']) ? $media_name['error'] : 0;
 		}
 
-		$this->errors = array();
 		if (intval($this->mediaSize) < 0) {
 
 // 2008-04-02

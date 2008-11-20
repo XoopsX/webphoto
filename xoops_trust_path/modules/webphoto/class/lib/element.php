@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.6 2008/11/19 10:26:00 ohwada Exp $
+// $Id: element.php,v 1.7 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -475,11 +475,12 @@ function build_table_end()
 	return $text;
 }
 
-function build_line_title( $title )
+function build_line_title( $title, $colspan='2' )
 {
 	$text  = '<tr align="center">';
-	$text .= '<th colspan="2">'. $title .'</th>';
-	$text .= '</tr>'."\n";
+	$text .= '<th colspan="'. $colspan .'">';
+	$text .= $title ;
+	$text .= '</th></tr>'."\n";
 	return $text;
 }
 

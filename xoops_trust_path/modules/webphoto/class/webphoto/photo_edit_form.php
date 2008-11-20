@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.14 2008/11/19 10:26:00 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.15 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -733,7 +733,7 @@ function _build_delete_button( $name )
 function _build_ele_category()
 {
 	return $this->_cat_handler->build_selbox_with_perm_post(
-		$this->get_row_by_key( 'item_cat_id' ) , 'item_cat_id', $this->_xoops_groups );
+		$this->get_row_by_key( 'item_cat_id' ) , 'item_cat_id' );
 }
 
 function _build_ele_gicon()
@@ -1128,7 +1128,7 @@ function print_form_video_thumb( $mode, $row )
 	echo $this->build_input_hidden( 'photo_id', $item_id );
 
 	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), $max );
+	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), ( $max + 1 ) );
 	echo "<tr>\n";
 
 	for ( $i=0; $i<=$max; $i++ ) 

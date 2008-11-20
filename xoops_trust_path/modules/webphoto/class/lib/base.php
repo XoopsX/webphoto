@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.10 2008/11/19 10:26:00 ohwada Exp $
+// $Id: base.php,v 1.11 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -486,6 +486,14 @@ function check_token_and_redirect( $url, $time=5 )
 		exit();
 	}
 	return true;
+}
+
+function set_token_error()
+{
+	$this->set_error( 'Token Error' );
+	if ( $this->_is_module_admin ) {
+		$this->set_error( $this->get_token_errors() );
+	}
 }
 
 //---------------------------------------------------------

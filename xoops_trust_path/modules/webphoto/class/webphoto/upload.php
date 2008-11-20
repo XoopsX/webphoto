@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.5 2008/11/11 06:53:16 ohwada Exp $
+// $Id: upload.php,v 1.6 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// clear_errors()
 // 2008-11-08 K.OHWADA
 // webphoto_lib_uploader::getInstance()
 // 2008-10-01 K.OHWADA
@@ -76,6 +78,7 @@ function &getInstance( $dirname , $trust_dirname )
 function fetch_media( $field, $flag_allow_all )
 {
 	$this->_tmp_name = null;
+	$this->clear_errors() ;
 
 	if ( $flag_allow_all ) {
 		list ( $allowed_mimes, $allowed_exts ) = 
@@ -111,6 +114,7 @@ function fetch_media( $field, $flag_allow_all )
 function fetch_image( $field )
 {
 	$this->_tmp_name = null;
+	$this->clear_errors() ;
 
 	$allowed_mimes = $this->_mime_class->get_image_mimes();
 	$allowed_exts  = $this->_mime_class->get_image_exts();
@@ -240,7 +244,7 @@ function exist_file_param( $field )
 
 function build_uploader_errors()
 {
-	$codes = $this->_uploader_class->getErrorCodes();
+	$codes = array_unique( $this->_uploader_class->getErrorCodes() );
 	foreach ( $codes as $code ) {
 		$this->build_uploader_error_single( $code );
 	}

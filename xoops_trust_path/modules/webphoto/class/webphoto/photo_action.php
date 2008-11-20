@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.7 2008/11/19 10:26:00 ohwada Exp $
+// $Id: photo_action.php,v 1.8 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2008-11-16 K.OHWADA
 // BUG: not set external type
+// BUG: error twice
 // 2008-11-08 K.OHWADA
 // upload_fetch_middle()
 // BUG: endless loop in submit check
@@ -28,10 +29,10 @@ class webphoto_photo_action extends webphoto_photo_edit
 	var $_redirect_class;
 	var $_embed_class ;
 
-	var $_row_create  = null ;
-	var $_row_current = null;
-	var $_row_update  = null ;
-
+	var $_row_create   = null ;
+	var $_row_current  = null;
+	var $_row_update   = null ;
+	var $_form_action  = null;
 	var $_is_none_type = false;
 
 	var $_redirect_time = 0 ;
@@ -1460,6 +1461,7 @@ function build_failed_msg( $ret )
 {
 	$this->_redirect_class->set_error( $this->get_errors() );
 	$ret = $this->_redirect_class->build_failed_msg( $ret );
+
 	$this->clear_errors();
 	$this->set_error( $this->_redirect_class->get_errors() );
 	return $ret;
@@ -1467,6 +1469,9 @@ function build_failed_msg( $ret )
 
 function build_redirect( $param )
 {
+// BUG: error twice
+	$this->_redirect_class->clear_errors();
+
 	$this->_redirect_class->set_error( $this->get_errors() );
 	$ret = $this->_redirect_class->build_redirect( $param );
 

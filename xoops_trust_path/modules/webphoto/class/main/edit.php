@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.18 2008/11/19 10:26:00 ohwada Exp $
+// $Id: edit.php,v 1.19 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-11-16 K.OHWADA
+// _print_form_error()
 // get_cached_file_row_by_kind()
 // 2008-11-08 K.OHWADA
 // _thumb_delete()
@@ -37,8 +38,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_photo_action
 {
-	var $_form_action = null;
-
 	var $_THIS_FCT  = 'edit' ;
 	var $_THIS_URL  = null ;
 
@@ -73,7 +72,6 @@ function &getInstance( $dirname , $trust_dirname )
 function check_action()
 {
 	$ret = 0;
-
 	$this->_check();
 
 	$action = $this->_get_action();
@@ -117,6 +115,10 @@ function check_action()
 
 	if ( $ret == _C_WEBPHOTO_RET_VIDEO_FORM ) {
 		$this->_form_action = 'form_video_thumb';
+
+	} elseif ( $ret == _C_WEBPHOTO_RET_ERROR ) {
+		$this->_form_action = 'form_error';
+
 	} else {
 		$this->_form_action = $action;
 	}
@@ -126,10 +128,16 @@ function check_action()
 
 function print_form()
 {
+	echo $this->_build_bread_crumb_edit();
+
 	switch ( $this->_form_action ) 
 	{
 		case 'form_video_thumb':
-			$this->print_form_video_thumb( 'edit', $this->get_updated_row() );
+			$this->_print_form_video() ;
+			break;
+
+		case 'form_error':
+			$this->_print_form_error() ;
 			break;
 
 		case 'confirm':
@@ -245,34 +253,31 @@ function _get_action()
 //---------------------------------------------------------
 function _modify()
 {
-	$is_failed = false ;
-
 // load
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
 
-	$this->_check_token_and_redirect( $item_id );
+	if ( ! $this->check_token() ) {
+		$this->set_token_error() ;
+		return _C_WEBPHOTO_RET_ERROR ;
+	}
 
 	$ret = $this->modify( $item_row );
 	switch ( $ret )
 	{
 
-// video form
+// video form, error
 		case _C_WEBPHOTO_RET_VIDEO_FORM :
+		case _C_WEBPHOTO_RET_ERROR :
 			return $ret;
 
 // success
 		case _C_WEBPHOTO_RET_SUCCESS :
 			break;
-
-// error
-		case _C_WEBPHOTO_RET_ERROR :
-			$is_failed = true;
-			break;
 	}
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
-		$this->_build_redirect_param( $is_failed, $item_id ) );
+		$this->_build_redirect_param( false, $item_id ) );
 
 	redirect_header( $url , $time , $msg ) ;
 	exit() ;
@@ -440,18 +445,27 @@ function _flash_delete()
 //---------------------------------------------------------
 // print form modify
 //---------------------------------------------------------
+function _print_form_video()
+{
+	$this->print_form_video_thumb( 'edit', $this->get_updated_row() );
+}
+
+function _print_form_error()
+{
+	echo $this->error_in_box( $this->get_format_error() );
+	$this->_print_form_modify();
+}
+
 function _print_form_modify()
 {
 	$form_class =& webphoto_photo_edit_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$item_row  = $this->build_modify_row_by_post( $this->_row_current, true );
-	$item_id   = $item_row['item_id'];
-	$kind      = $item_row['item_kind'];
-
 	$flash_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 
-	echo $this->_build_bread_crumb_edit( $item_id );
+	$item_id   = $item_row['item_id'] ;
+	$kind      = $item_row['item_kind'] ;
 
 	$this->_print_preview_modify( $item_row );
 
@@ -488,8 +502,10 @@ function _print_preview_modify( $item_row )
 		$show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) );
 }
 
-function _build_bread_crumb_edit( $item_id )
+function _build_bread_crumb_edit()
 {
+	$item_id = $this->_row_current['item_id'] ;
+
 	return $this->build_bread_crumb( 
 		$this->get_constant('TITLE_EDIT'), 
 		$this->_build_edit_url( $item_id ) );
@@ -500,11 +516,7 @@ function _build_bread_crumb_edit( $item_id )
 //---------------------------------------------------------
 function _print_form_confirm()
 {
-	$item_row = $this->_row_current;
-	$item_id  = $item_row['item_id'];
-
-	echo $this->_build_bread_crumb_edit();
-	$this->print_form_delete_confirm( 'edit', $item_row ) ;
+	$this->print_form_delete_confirm( 'edit', $this->_row_current ) ;
 }
 
 // --- class end ---

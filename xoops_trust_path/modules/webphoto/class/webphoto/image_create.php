@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.9 2008/11/11 06:53:16 ohwada Exp $
+// $Id: image_create.php,v 1.10 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// image -> image_tmp
 // 2008-11-08 K.OHWADA
 // cmd_modify_photo() -> cmd_resize_rotate()
 // 2008-10-01 K.OHWADA
@@ -381,7 +383,7 @@ function build_preview( $preview_name )
 	$ext = $this->parse_ext( $preview_name );
 
 	$path_photo   = $this->_TMP_DIR .'/'. $preview_name;
-	$ahref_file   = $this->_MODULE_URL.'/index.php?fct=image&amp;name='. rawurlencode( $preview_name ) ;
+	$ahref_file   = $this->_MODULE_URL.'/index.php?fct=image_tmp&amp;name='. rawurlencode( $preview_name ) ;
 	$imgsrc_thumb = $ahref_file;
 
 // image type

@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: cat_handler.php,v 1.4 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -53,6 +53,16 @@ function &getInstance( $dirname )
 		$instance = new webphoto_cat_handler( $dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// set param
+//---------------------------------------------------------
+function set_xoops_groups( $val )
+{
+	if ( is_array($val) && count($val) ) {
+		$this->_xoops_groups = $val;
+	}
 }
 
 //---------------------------------------------------------
@@ -372,10 +382,8 @@ function build_selbox_pid( $pid )
 	return $this->make_my_sel_box( 'cat_title', '', $pid, 1, 'cat_pid' );
 }
 
-function build_selbox_with_perm_post( $cat_id, $sel_name, $xoops_groups )
+function build_selbox_with_perm_post( $cat_id, $sel_name )
 {
-	$this->set_xoops_groups( $xoops_groups );
-
 	return $this->build_sel_box(
 		$this->get_all_tree_array( '', true ), 
 		'cat_title', $cat_id, 0, $sel_name ) ;
@@ -409,12 +417,7 @@ function check_perm_post( $perm_post )
 	return $this->check_perms_in_groups( $perms, $this->_xoops_groups );
 }
 
-function set_xoops_groups( $val )
-{
-	if ( is_array($val) && count($val) ) {
-		$this->_xoops_groups = $val;
-	}
-}
+
 
 // --- class end ---
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: error.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
+// $Id: error.php,v 1.3 2008/11/20 11:15:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// error_in_box()
 // 2008-10-01 K.OHWADA
 // set_error_code()
 // set_error_in_head()
@@ -22,6 +24,12 @@ class webphoto_lib_error
 {
 	var $_error_code = 0 ;
 	var $_errors     = array();
+
+// color: red;
+	var $_SPAN_STYLE_ERROR = 'color: #ff0000;';
+
+// color: red;  background-color: lightyellow;  border: gray;
+	var $_DIV_STYLE_ERROR = 'color: #ff0000; background-color: #ffffe0; border: #808080 1px dotted; padding: 3px 3px 3px 3px;';
 
 //---------------------------------------------------------
 // constructor
@@ -134,12 +142,6 @@ function sanitize( $str )
 	return htmlspecialchars( $str, ENT_QUOTES );
 }
 
-function highlight( $str )
-{
-	$val = '<span style="color:#ff0000;">'. $str .'</span>';
-	return $val;
-}
-
 function shorten_strings( $str, $length )
 {
 	if ( strlen($str) > $length ) {
@@ -151,6 +153,22 @@ function shorten_strings( $str, $length )
 function shorten_strings_with_nl2br( $str, $length )
 {
 	return nl2br( $this->sanitize( $this->shorten_strings( $str, $length ) ) );
+}
+
+function highlight( $msg )
+{
+	$str  = '<span style="'. $this->_SPAN_STYLE_ERROR .'">';
+	$str .= $msg;
+	$str .= "</span>\n";
+	return $str;
+}
+
+function error_in_box( $msg )
+{
+	$str  = '<div style="'. $this->_DIV_STYLE_ERROR .'">';
+	$str .= $msg;
+	$str .= "</div>\n";
+	return $str;
 }
 
 //----- class end -----
