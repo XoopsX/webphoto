@@ -1,5 +1,5 @@
 <?php
-// $Id: file_read.php,v 1.1 2008/11/19 10:27:21 ohwada Exp $
+// $Id: file_read.php,v 1.2 2008/11/21 13:09:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -84,7 +84,7 @@ function get_file_row( $item_row, $file_kind )
 	$path = $file_row['file_path'] ;
 	$file = XOOPS_ROOT_PATH .'/'. $path ;
 
-	if ( ! file_exists($file) ) {
+	if ( empty($path) || !file_exists($file) ) {
 		$this->_error = $this->get_constant( 'NO_FILE' ) ;
 		return false;
 	}

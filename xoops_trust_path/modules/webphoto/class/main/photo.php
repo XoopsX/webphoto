@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.7 2008/11/21 07:56:57 ohwada Exp $
+// $Id: photo.php,v 1.8 2008/11/21 13:09:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -493,7 +493,8 @@ function _build_file_link( $item_row, $show_arr, $file_kind )
 		$url       = $file_row['file_url'] ;
 		$ext       = $file_row['file_ext'] ;
 		$file_size = $file_row['file_size'] ;
-		$file      = XOOPS_ROOT_PATH .'/'. $file_row['file_path'] ;
+		$path      = $file_row['file_path'] ;
+		$file      = XOOPS_ROOT_PATH .'/'. $path ;
 
 		if ( $this->is_image_ext( $ext ) ) {
 			$base_url = $this->_MODULE_URL.'/index.php?fct=image';
@@ -506,7 +507,7 @@ function _build_file_link( $item_row, $show_arr, $file_kind )
 			$img      = ' <img src="'. $icon .'" border="0" alt="'. $down_s .'" title="'. $down_s .'" > ';
 		}
 
-		if ( file_exists($file) ) {
+		if ( $path && file_exists($file) ) {
 			$url  = $base_url .'&item_id='. $item_id .'&file_kind='. $file_kind;
 
 			if ( $file_size > 0 ) {
