@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo_form.php,v 1.5 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// ahref_file -> media_url_s 
 // 2008-10-01 K.OHWADA
 // submit -> item_manager
 // 2008-08-24 K.OHWADA
@@ -232,10 +234,10 @@ function _print_photo( $row )
 	$photo_id       = $show['photo_id'];
 	$photo_title    = $show['title'];
 	$photo_status   = $show['status'];
-	$ahref_file     = $show['ahref_file'];
-	$imgsrc_thumb   = $show['imgsrc_thumb'];
-	$thumb_width    = $show['thumb_width'];
-	$thumb_height   = $show['thumb_height'];
+	$media_url_s    = $show['media_url_s'];
+	$thumb_src_s    = $show['img_thumb_src_s'];
+	$thumb_width    = $show['img_thumb_width'];
+	$thumb_height   = $show['img_thumb_height'];
 
 	if ( strlen($photo_title) > $this->_TITLE_LENGTH ) {
 		$photo_title = $this->_multibyte_class->sub_str( 
@@ -244,9 +246,17 @@ function _print_photo( $row )
 
 	$photo_title_s = $this->sanitize($photo_title);
 
-	if ( empty($thumb_width) || empty($thumb_height) ) {
-		$thumb_width  = $cfg_thumb_width;
-		$thumb_height = $cfg_thumb_height;
+	if ( $thumb_width && $thumb_height ) {
+		$img = '<img src="'. $thumb_src_s. '" border="0" alt="'. $photo_title_s .'" title="'. $photo_title_s .'" width="'. $thumb_width .'" height="'. $thumb_height .'" />'."\n";
+	} else {
+		$img = '<img src="'. $thumb_src_s. '" border="0" alt="'. $photo_title_s .'" title="'. $photo_title_s .'" width="'. $cfg_thumb_width .'" />'."\n";
+	}
+
+	if ( $media_url_s ) {
+		$link  = '<a href="'. $media_url_s .'" target="_blank">'."\n";
+		$link .= $img . "</a>\n" ;
+	} else {
+		$link = $img ;
 	}
 
 // pink for wating addmission
@@ -272,9 +282,7 @@ function _print_photo( $row )
 	echo '<tr>';
 	echo '<td>'. $pixel_gif_h .'</td>';
 	echo '<td align="center">';
-	echo '<a href="'. $ahref_file .'" target="_blank">'."\n";
-	echo '<img src="'. $imgsrc_thumb. '" border="0" alt="'. $photo_title_s .'" title="'. $photo_title_s .'" width="'. $thumb_width .'" height="'. $thumb_height .'" />'."\n";
-	echo '</a>';
+	echo $link ;
 	echo '</td>';
 	echo '<td>'. $pixel_gif_h .'</td>';
 	echo "</tr>\n";

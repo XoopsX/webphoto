@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
+// $Id: checkconfigs.php,v 1.8 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// webphoto_lib_server_info
 // 2008-11-08 K.OHWADA
 // tmpdir -> workdir
 // BUG: ths -> this
@@ -27,6 +29,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_checkconfigs extends webphoto_base_this
 {
+	var $_server_class ;
+
 	var $_ini_safe_mode = 0;
 
 	var $_MKDIR_MODE = 0777;
@@ -39,6 +43,8 @@ class webphoto_admin_checkconfigs extends webphoto_base_this
 function webphoto_admin_checkconfigs( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
+
+	$this->_server_class  =& webphoto_lib_server_info::getInstance();
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -55,111 +61,40 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function check()
 {
-	$cfg_makethumb   = $this->get_config_by_name('makethumb');
-	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
-	$cfg_uploadspath = $this->get_config_by_name('uploadspath');
-	$cfg_mediaspath  = $this->get_config_by_name('mediaspath');
-	$cfg_workdir     = $this->get_config_by_name('workdir');
-	$cfg_file_dir    = $this->get_config_by_name('file_dir');
-	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
-	$cfg_imagickpath = $this->_config_class->get_dir_by_name('imagickpath');
-	$cfg_netpbmpath  = $this->_config_class->get_dir_by_name('netpbmpath');
-	$cfg_ffmpegpath  = $this->_config_class->get_dir_by_name('ffmpegpath');
-
-// BUG: ths -> this
-	$this->_ini_safe_mode = ini_get( "safe_mode" );
-
-// Initialize
-	$netpbm_pipes = array( "jpegtopnm" , "giftopnm" , "pngtopnm" , 
-		 "pnmtojpeg" , "pnmtopng" , "ppmquant" , "ppmtogif" ,
-		 "pnmscale" , "pnmflip" ) ;
-
-//
-// ENVIRONTMENT CHECK
-//
-	echo "<h4>"._AM_WEBPHOTO_H4_ENVIRONMENT."</h4>\n" ;
-	echo "<b>"._AM_WEBPHOTO_PHPDIRECTIVE." : </b><br />\n";
-
-	echo " &nbsp; 'safe_mode' ("._AM_WEBPHOTO_BOTHOK."): &nbsp; " ;
-	$this->_print_on_off( $this->_ini_safe_mode );
-
-	echo " &nbsp; 'file_uploads' ("._AM_WEBPHOTO_NEEDON."): &nbsp; " ;
-	$this->_print_on_off( ini_get( "file_uploads" ), true );
-
-	echo " &nbsp; 'register_globals' ("._AM_WEBPHOTO_BOTHOK."): &nbsp; " ;
-	$this->_print_on_off( ini_get( "register_globals" ) );
-
-	echo " &nbsp; 'upload_max_filesize': &nbsp; " ;
-	$str = ini_get( "upload_max_filesize" ).' byte' ;
-	$this->_print_green( $str );
-
-	echo " &nbsp; 'post_max_size': &nbsp; " ;
-	$str = ini_get( "post_max_size" ).' byte' ;
-	$this->_print_green( $str );
-
-	echo " &nbsp; 'open_basedir': &nbsp; " ;
-	$rs = ini_get( "open_basedir" ) ;
-	if ( $rs ) {
-		$this->_print_green( $rs );
-	} else {
-		$this->_print_green( 'noting' );
-	}
-
-	echo " &nbsp; 'upload_tmp_dir': &nbsp; " ;
-	$ini_upload_tmp_dir = ini_get("upload_tmp_dir");
-	$tmp_dirs = explode( PATH_SEPARATOR , $ini_upload_tmp_dir ) ;
-
-	foreach( $tmp_dirs as $dir ) 
-	{
-		if( $dir != "" && ( ! is_writable( $dir ) || ! is_readable( $dir ) ) ) {
-			$msg = "Error: upload_tmp_dir ($dir) is not writable nor readable ." ;
-			$this->_print_red( $msg );
-			$error_upload_tmp_dir = true ;
-		}
-	}
-
-	if ( empty( $error_upload_tmp_dir ) ) {
-		$msg = 'ok '. $ini_upload_tmp_dir;
-		$this->_print_green( $msg );
-	}
-
+	$this->_check_server();
 	echo "<br />\n";
-	echo ' &nbsp; iconv extention : ' ;
-	if ( function_exists( 'iconv' ) ) {
-		$this->_print_green('loaded' );
-	} else {
-		$this->_print_red('not loaded' );
-	}
-
-	echo ' &nbsp; exif extention : ' ;
-	if ( function_exists( 'exif_read_data' ) ) {
-		$this->_print_green('loaded' );
-	} else {
-		$this->_print_red('not loaded' );
-	}
-
+	$this->_check_mulitibyte_link();
 	echo "<br />\n";
-	echo ' &nbsp; multibyte extention : ' ;
-	if ( function_exists( 'mb_internal_encoding' ) ) {
-		$this->_print_green('loaded' );
-	} else {
-		$this->_print_red('not loaded' );
-	}
-	if ( function_exists('mb_internal_encoding') )
-	{
-		echo " &nbsp; mbstring.language: ". mb_language() ."<br />\n";
-		echo " &nbsp; mbstring.detect_order: ". implode (' ', mb_detect_order() ) ."<br />\n";
-		echo " &nbsp; mbstring.http_input: ". ini_get('mbstring.http_input') ."<br />\n";
-		echo " &nbsp; mbstring.http_output: ". mb_http_output() ."<br />\n";
-		echo " &nbsp; mbstring.internal_encoding: ". mb_internal_encoding() ."<br />\n";
-		echo " &nbsp; mbstring.script_encoding: ". ini_get('mbstring.script_encoding') ."<br />\n";
-		echo " &nbsp; mbstring.substitute_character: ". ini_get('mbstring.substitute_character') ."<br />\n";
-		echo " &nbsp; mbstring.func_overload: ". ini_get('mbstring.func_overload') ."<br />\n";
-		echo " &nbsp; mbstring.encoding_translation: ". intval( ini_get('mbstring.encoding_translation') ) ."<br />\n";
-		echo " &nbsp; mbstring.strict_encoding: ". intval( ini_get('mbstring.strict_encoding') ) ."<br />\n";
-	}
-
+	$this->_check_pathinfo_link();
 	echo "<br />\n";
+	$this->_check_program();
+	echo "<br />\n";
+	$this->_check_directory();
+	echo "<br />\n";
+}
+
+function _check_server()
+{
+	$on  = ' ( '. _AM_WEBPHOTO_NEEDON .' ) ' ;
+	$off = ' ( '. _AM_WEBPHOTO_RECOMMEND_OFF .' ) ' ;
+
+	echo "<h4>". _AM_WEBPHOTO_H4_ENVIRONMENT ."</h4>\n" ;
+
+	echo $this->_server_class->build_server();
+
+	echo "<h4>". _AM_WEBPHOTO_PHPDIRECTIVE ."</h4>\n";
+
+	echo $this->_server_class->build_php_secure( $off );
+	echo $this->_server_class->build_php_upload( $on );
+	echo $this->_server_class->build_php_etc();
+	echo $this->_server_class->build_php_exif();
+	echo $this->_server_class->build_php_iconv();
+	echo "<br />\n";
+	echo $this->_server_class->build_php_mbstring();
+}
+
+function _check_mulitibyte_link()
+{
 	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=check_mb&amp;charset=UTF-8" target="_blank">';
 	echo _AM_WEBPHOTO_MULTIBYTE_LINK;
 	echo ' (UTF-8) </a><br />'."\n";
@@ -169,98 +104,72 @@ function check()
 		echo ' (Shift_JIS) </a><br />'."\n";
 	}
 	echo " &nbsp; "._AM_WEBPHOTO_MULTIBYTE_DSC."<br />\n" ;
+}
 
-	echo "<br />\n";
+function _check_pathinfo_link()
+{
 	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php/abc/" target="_blank">';
 	echo _AM_WEBPHOTO_PATHINFO_LINK;
 	echo '</a><br />'."\n";
 	echo " &nbsp; "._AM_WEBPHOTO_PATHINFO_DSC."<br />\n" ;
+}
 
-//
-// CONFIG CHECK
-//
+function _check_program()
+{
+	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
+	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
+	$cfg_imagickpath = $this->_config_class->get_dir_by_name('imagickpath');
+	$cfg_netpbmpath  = $this->_config_class->get_dir_by_name('netpbmpath');
+	$cfg_ffmpegpath  = $this->_config_class->get_dir_by_name('ffmpegpath');
+
 	echo "<h4>"._AM_WEBPHOTO_H4_CONFIG."</h4>\n" ;
 
-// pipe
 	echo "<b>"._AM_WEBPHOTO_PIPEFORIMAGES." : </b><br /><br />\n" ;
 
-	echo "<b>GD</b> <br />\n" ;
-	if ( function_exists( 'gd_info' ) ) {
-		$gd_info = gd_info() ;
-		echo ' &nbsp; GD Version: '. $gd_info['GD Version'] ."<br />\n" ;
+	list( $ret, $msg ) = $this->_server_class->build_php_gd_version();
+	echo $msg ;
+	if ( $ret ) {
 		echo "<br />\n";
 		echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=checkgd2" target="_blank">';
 		echo _AM_WEBPHOTO_LNK_CHECKGD2;
 		echo '</a><br />'."\n";
 		echo " &nbsp; "._AM_WEBPHOTO_CHECKGD2."<br />\n" ;
-	} else {
-		echo "cannot use GD<br />\n";
 	}
 	echo "<br />\n";
 
 	if (( $cfg_imagingpipe == _C_WEBPHOTO_PIPEID_IMAGICK ) ||
 	      $cfg_imagickpath ) {
-		echo "<b>ImageMagick</b><br />\n";
-		echo " &nbsp; Path: $cfg_imagickpath<br />\n" ;
-		$ret_array = array() ;
-		exec( "{$cfg_imagickpath}convert --help" , $ret_array ) ;
-		if( count( $ret_array ) < 1 ) {
-			$msg = " &nbsp; Error: {$cfg_imagickpath}convert can't be executed" ;
-			$this->_print_red( $msg );
-		} else {
-			echo " &nbsp; {$ret_array[0]} &nbsp; " ;
-			$this->_print_green( 'ok' );
-		}
+		list( $ret, $msg ) = $this->_server_class->build_imagemagick_version( $cfg_imagickpath );
+		echo $msg ;
 		echo "<br />\n";
 	}
 
 	if (( $cfg_imagingpipe == _C_WEBPHOTO_PIPEID_NETPBM ) ||
 		  $cfg_netpbmpath ) {
-		echo "<b>NetPBM</b><br />\n";
-		echo " &nbsp; Path: $cfg_netpbmpath<br />\n" ;
-		foreach( $netpbm_pipes as $pipe ) {
-			$ret_array = array() ;
-			exec( "{$cfg_netpbmpath}$pipe --version 2>&1" , $ret_array ) ;
-			if( count( $ret_array ) < 1 ) {
-				$msg = " &nbsp; Error: {$cfg_netpbmpath}pnmscale can't be executed" ;
-				$this->_print_red( $msg );
-			} else {
-				echo " &nbsp; {$ret_array[0]} &nbsp; " ;
-				$this->_print_green( 'ok' );
-			}
-		}
+  		$msg = $this->_server_class->build_netpbm_version( $cfg_netpbmpath );
+		echo $msg ;
 		echo "<br />\n";
 	}
 
-
 	if ( $cfg_use_ffmpeg || $cfg_ffmpegpath ) {
-		$flag_ffmpeg = false;
-		echo "<b>FFmpeg</b><br />\n";
-		echo " &nbsp; Path: $cfg_ffmpegpath<br />\n" ;
-
-		$ret_array = array() ;
-		exec( "{$cfg_ffmpegpath}ffmpeg -version 2>&1" , $ret_array ) ;
-		if ( is_array($ret_array) && count($ret_array) ) {
-			foreach ( $ret_array as $line ) {
-				if ( preg_match('/version/i', $line ) ) {
-					echo ' &nbsp; '. $line ."<br />\n";
-					$flag_ffmpeg = true;
-				}
-			}
-		}
-
-		if ( !$flag_ffmpeg ) {
-			$msg = " &nbsp; Error: {$cfg_ffmpegpath}ffmpeg can't be executed" ;
-			$this->_print_red( $msg );
-		}
-
+		list( $ret, $msg ) = $this->_server_class->build_ffmpeg_version( $cfg_ffmpegpath );
+		echo $msg ;
 		echo "<br />\n";
 
 	} else {
 		echo "<b>FFmpeg</b> : not use <br /><br />\n";
 	}
+}
 
-// directory
+function _check_directory()
+{
+	$cfg_uploadspath = $this->get_config_by_name('uploadspath');
+	$cfg_workdir     = $this->get_config_by_name('workdir');
+	$cfg_file_dir    = $this->get_config_by_name('file_dir');
+
+// BUG: ths -> this
+	$this->_ini_safe_mode = ini_get( "safe_mode" );
+
 	echo "<b>Directory : </b><br /><br />\n" ;
 
 // uploads
@@ -350,23 +259,17 @@ function _check_full_path( $full_path, $flag_root_path=false )
 
 function _print_on_off( $val, $flag_red=false )
 {
-	if ( $val ) {
-		$this->_print_green('on');
-	} elseif ( $flag_red ) { 
-		$this->_print_red('off');
-	} else { 
-		$this->_print_green('off');
-	}
+	echo $this->_server_class->build_on_off( $val, $flag_red )."<br />\n" ;
 }
 
 function _print_red( $str )
 {
-	echo '<font color="#FF0000"><b>'. $str .'</b></font>'."<br />\n" ;
+	echo $this->_server_class->font_red( $str )."<br />\n" ;
 }
 
 function _print_green( $str )
 {
-	echo '<font color="#00FF00"><b>'. $str .'</b></font>'."<br />\n" ;
+	echo $this->_server_class->font_green( $str )."<br />\n" ;
 }
 
 // --- class end ---

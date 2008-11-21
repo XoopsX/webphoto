@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.14 2008/11/19 10:26:00 ohwada Exp $
+// $Id: show_photo.php,v 1.15 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-11-16 K.OHWADA
+// webphoto_show_image
 // perm_download()
 // get_file_url_by_kind() -> get_show_file_url()
 // 2008-11-08 K.OHWADA
@@ -74,7 +75,7 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_image_class  =& webphoto_image_info::getInstance( $dirname, $trust_dirname );
+	$this->_image_class =& webphoto_show_image::getInstance( $dirname );
 
 	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
@@ -306,8 +307,8 @@ function build_photo_show( $row )
 		'taf_mailto'       => $this->build_show_taf_mailto( $item_id ) ,
 		'info_morephotos'  => $this->build_show_info_morephotos( $item_uid ),
 
-		'window_x'         => $arr1['photo_width']  + $this->_WINDOW_MERGIN ,
-		'window_y'         => $arr1['photo_height'] + $this->_WINDOW_MERGIN ,
+		'window_x'         => $arr1['img_photo_width']  + $this->_WINDOW_MERGIN ,
+		'window_y'         => $arr1['img_photo_height'] + $this->_WINDOW_MERGIN ,
 		
 	) ;
 
@@ -466,150 +467,36 @@ function can_download( $row )
 //---------------------------------------------------------
 // image
 //---------------------------------------------------------
-function build_show_imgsrc( $row, $show_arr )
+function build_show_imgsrc( $item_row, $show_arr )
 {
-	$ahref_file    = '';
-	$imgsrc_photo  = '';
-	$imgsrc_thumb  = '';
-	$imgsrc_middle = '';
-	$is_normal_image = false ;
+	$cont_row   = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
+	$thumb_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
+	$middle_row = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
 
-	$external_url_s    = $this->sanitize( $row['item_external_url'] );
-	$external_thumb_s  = $this->sanitize( $row['item_external_thumb'] );
-	$external_middle_s = $this->sanitize( $row['item_external_middle'] );
-	$is_image_kind     = $this->is_image_kind( $row['item_kind'] );
-
-	list( $cont_url, $cont_width, $cont_height ) =
-		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
-	list( $thumb_url, $thumb_width, $thumb_height ) =
-		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
-	list( $middle_url, $middle_width, $middle_height ) =
-		$this->get_show_file_u_w_h( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
-
-	$cont_url_s   = $this->sanitize( $cont_url );
-	$thumb_url_s  = $this->sanitize( $thumb_url );
-	$middle_url_s = $this->sanitize( $middle_url );
-
-// link file
-	if ( $cont_url_s  ) {
-		$ahref_file = $cont_url_s;
-
-	} elseif ( $external_url_s ) {
-		$ahref_file = $external_url_s;
-	}
-
-// photo image
-	if ( $cont_url_s && $is_image_kind ) {
-		$imgsrc_photo = $cont_url_s;
-
-	} elseif ( $external_url_s && $is_image_kind ) {
-		$imgsrc_photo = $external_url_s;
-
-	} elseif ( $middle_url_s ) {
-		$imgsrc_photo = $middle_url_s;
-
-	} elseif ( $thumb_url_s ) {
-		$imgsrc_photo = $thumb_url_s;
-
-	} elseif ( $external_thumb_s ) {
-		$imgsrc_photo = $external_thumb_s;
-
-	} else {
-		$imgsrc_photo = $this->_URL_DEFAULT_IMAGE;
-	}
-
-// thumb image
-	if ( $thumb_url_s ) {
-		$imgsrc_thumb = $thumb_url_s;
-
-	} elseif ( $external_thumb_s ) {
-		$imgsrc_thumb = $external_thumb_s ;
-		$thumb_width  = 0 ;
-		$thumb_height = 0 ;
-
-	} elseif ( $cont_url_s && $is_image_kind ) {
-		$imgsrc_thumb = $cont_url_s;
-		$thumb_width  = $cont_width;
-		$thumb_height = $cont_height;
-
-	} elseif ( $external_url_s && $is_image_kind ) {
-		$imgsrc_thumb = $external_url_s ;
-		$thumb_width  = 0 ;
-		$thumb_height = 0 ;
-
-	} else {
-		$imgsrc_thumb = $this->_URL_PIXEL_IMAGE;
-		$thumb_width  = 1;
-		$thumb_height = 1;
-	}
-
-	list( $thumb_width, $thumb_height )
-		= $this->_image_class->adjust_thumb_size( $thumb_width, $thumb_height );
-
-// middle image
-	if ( $middle_url_s ) {
-		$imgsrc_middle = $middle_url_s;
-
-	} elseif ( $external_middle_s ) {
-		$imgsrc_middle = $external_middle_s ;
-		$middle_width  = 0 ;
-		$middle_height = 0 ;
-
-	} elseif ( $cont_url_s && $is_image_kind ) {
-		$imgsrc_middle = $cont_url_s;
-		$middle_width  = $cont_width;
-		$middle_height = $cont_height;
-
-	} elseif ( $external_url_s && $is_image_kind ) {
-		$imgsrc_middle = $external_url_s ;
-		$middle_width  = 0 ;
-		$middle_height = 0 ;
-
-	} elseif ( $thumb_url_s ) {
-		$imgsrc_middle = $thumb_url_s;
-		$middle_width  = $thumb_width;
-		$middle_height = $thumb_height;
-
-	} elseif ( $external_thumb_s ) {
-		$imgsrc_middle = $external_thumb_s ;
-		$middle_width  = 0 ;
-		$middle_height = 0 ;
-
-	} else {
-		$imgsrc_middle = $this->_URL_DEFAULT_IMAGE;
-		$middle_width  = 1;
-		$middle_height = 1;
-	}
-
-	list( $middle_width, $middle_height )
-		= $this->_image_class->adjust_middle_size( $middle_width, $middle_height );
-
-	if ( $cont_url_s && $is_image_kind ) {
-		$is_normal_image = true ;
-	}
-
-	$arr = array(
-		'cont_url'         => $cont_url ,
-		'thumb_url'        => $thumb_url ,
-		'middle_url'       => $middle_url ,
-		'cont_url_s'       => $cont_url_s ,
-		'thumb_url_s'      => $thumb_url_s ,
-		'middle_url_s'     => $middle_url_s ,
-		'ahref_file'       => $ahref_file ,
-		'imgsrc_photo'     => $imgsrc_photo ,
-		'imgsrc_thumb'     => $imgsrc_thumb ,
-		'imgsrc_middle'    => $imgsrc_middle ,
-		'photo_width'      => $cont_width ,
-		'photo_height'     => $cont_height ,
-		'middle_width'     => $middle_width ,
-		'middle_height'    => $middle_height ,
-		'thumb_width'      => $thumb_width ,
-		'thumb_height'     => $thumb_height ,
-		'is_normal_image'  => $is_normal_image ,
+	$param = array(
+		'item_row'       => $item_row ,
+		'cont_row'       => $cont_row ,
+		'thumb_row'      => $thumb_row ,
+		'middle_row'     => $middle_row ,
+		'photo_default'  => true ,
+		'thumb_default'  => true ,
+		'middle_default' => true ,
 	);
 
-	return $arr;
+	$param_image = $this->_image_class->build_image_by_param( $param );
+	if ( ! is_array($param_image) ) {
+		return array() ;
+	}
 
+	$arr = $param_image ;
+	$arr['cont_url_s']        = $this->sanitize( $param_image['cont_url'] ) ;
+	$arr['thumb_url_s']       = $this->sanitize( $param_image['thumb_url'] ) ;
+	$arr['middle_url_s']      = $this->sanitize( $param_image['middle_url'] ) ;
+	$arr['media_url_s']       = $this->sanitize( $param_image['media_url'] ) ;
+	$arr['img_photo_src_s']   = $this->sanitize( $param_image['img_photo_src'] ) ;
+	$arr['img_middle_src_s']  = $this->sanitize( $param_image['img_middle_src'] ) ;
+	$arr['img_thumb_src_s']   = $this->sanitize( $param_image['img_thumb_src'] ) ;
+	return $arr ;
 }
 
 //---------------------------------------------------------

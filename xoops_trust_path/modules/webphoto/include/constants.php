@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.9 2008/11/19 10:26:00 ohwada Exp $
+// $Id: constants.php,v 1.10 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -274,6 +274,11 @@ define("_C_WEBPHOTO_PLAYLIST_TIME_HOUR",  "3600");
 define("_C_WEBPHOTO_PLAYLIST_TIME_DAY",   "86400");
 define("_C_WEBPHOTO_PLAYLIST_TIME_WEEK",  "604800");
 define("_C_WEBPHOTO_PLAYLIST_TIME_MONTH", "2592000");
+
+define("_C_WEBPHOTO_SMALL_WIDTH",  "60");
+define("_C_WEBPHOTO_SMALL_HEIGHT", "40");
+define("_C_WEBPHOTO_SMALL_CURRENT_WIDTH",  "80");
+define("_C_WEBPHOTO_SMALL_CURRENT_HEIGHT", "80");
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

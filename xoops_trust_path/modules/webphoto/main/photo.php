@@ -1,10 +1,16 @@
 <?php
-// $Id: photo.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: photo.php,v 1.2 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-16 K.OHWADA
+// photo_navi.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,6 +21,7 @@ webphoto_include_once( 'main/header.php' );
 webphoto_include_once( 'class/xoops/groupperm.php' );
 webphoto_include_once( 'class/d3/comment_view.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
+webphoto_include_once( 'class/webphoto/photo_navi.php' );
 webphoto_include_once( 'class/main/photo.php' );
 
 //=========================================================

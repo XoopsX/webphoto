@@ -1,11 +1,73 @@
-$Id: readme_jp.txt,v 1.14 2008/11/11 07:04:08 ohwada Exp $
+$Id: readme_jp.txt,v 1.15 2008/11/21 07:56:57 ohwada Exp $
+
+=================================================
+Version: 0.70
+Date:   2008-11-20
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+
+1. コード表示を追加した
+1.1 表示項目
+(1) メディアのダウンロード
+(2) フラッシュ動画のダウンロード
+(3) サムネイル画像のURL
+(4) ミドル画像のURL
+(5) 詳細ページのURL
+(6) サイトのURL
+(7) object 形式の埋込み
+(8) JavaScript 形式の埋込み
+
+1.2 ダウンロードの許可
+ダウンロードの許可をアイテム毎に設定する
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=418&forum=11
+
+2. 動画投稿サイト
+2.1 登録項目
+(1) 表示画面の横幅と高さを追加した
+(2) 埋込み形式を追加した
+
+2.2 プラグイン
+(1) pandora.tv を追加した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=873&forum=13
+
+(2) general を追加した
+埋込み形式を HTML 記法で登録する
+管理者だけが設定できる
+
+(3) webphoto を追加した
+他の webphoto に登録されている動画を引用する
+
+(4) youtube に横幅と高さを追加した
+
+3. 詳細ぺージのナビ
+数字からサムネイルに変更した
+
+4. バグ対策
+(1) 外部 URL の登録にて、fatal error
+(2) プラグインの登録にて、fatal error
+(3) プレイリストの登録にて、サムネイルが生成されない
+
+5. データベース構造
+テーブルの項目追加
+(1) item テーブル: item_codeinfo
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+  自動的にテーブルに項目が追加されます。
+
 
 =================================================
 Version: 0.60
 Date:   2008-11-10
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

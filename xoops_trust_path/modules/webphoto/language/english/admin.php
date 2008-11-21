@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: admin.php,v 1.9 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -457,6 +457,11 @@ define("_AM_WEBPHOTO_BUTTON_CLONE","Clone");
 define("_AM_WEBPHOTO_CAP_CAT_SELECT","Select the category image");
 define("_AM_WEBPHOTO_DSC_CAT_PATH" , "Set Path from the directory installed XOOPS.<br />(The first character must be '/'.)" ) ;
 define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "Show folder icon if not set" ) ;
+
+//---------------------------------------------------------
+// v0.70
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_RECOMMEND_OFF" , "recommend off" ) ;
 
 // === define end ===
 }

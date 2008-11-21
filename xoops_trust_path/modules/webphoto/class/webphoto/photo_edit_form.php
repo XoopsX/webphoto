@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.15 2008/11/20 11:15:46 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.16 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -55,6 +55,7 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_URL_SIZE          = 80;
 	var $_TAGS_SIZE         = 80;
 	var $_EMBED_SRC_SIZE    = 80;
+	var $_SELECT_SIZE       = 1;
 	var $_SELECT_PERM_SIZE  = 3;
 	var $_SELECT_INFO_SIZE  = 5;
 

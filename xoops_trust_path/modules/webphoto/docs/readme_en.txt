@@ -1,11 +1,72 @@
-$Id: readme_en.txt,v 1.14 2008/11/11 07:04:08 ohwada Exp $
+$Id: readme_en.txt,v 1.15 2008/11/21 07:56:57 ohwada Exp $
+
+=================================================
+Version: 0.70
+Date:   2008-11-20
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+
+1. added codebox
+1.1 display items
+(1) download media
+(2) download flash video
+(3) thumbnail image URL
+(4) middle image URL
+(5) page URL
+(6) website URL
+(7) embed with object form
+(8) embed with JavaScript
+
+1.2 download permission
+the user can set download permission in each item
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=418&forum=11
+
+2. video site
+2.1 submit form
+(1) added page width and height
+(2) added embed
+
+2.2 plugin
+(1) added pandora.tv
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=873&forum=13
+
+(2) added general
+the admin can submit HTML embed
+
+(3) added webphoto 
+the user quotes the video which is posted in other webphoto.
+
+(4) added width and height to youtube
+
+3. navigation in detail page
+changed figure to thumbnail in list
+
+4. Bug fix
+(1) fatal error when submit external URL
+(2) fatal error when submit embed plugin
+(3) cannot create thumb when submit playlist:
+
+5. Database structure
+5.1 add field of table
+(1) item table : item_codeinfo
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+  the fields are added to the table automatically. 
+
 
 =================================================
 Version: 0.60
 Date:   2008-11-10
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

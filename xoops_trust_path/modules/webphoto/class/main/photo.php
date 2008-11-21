@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.6 2008/11/19 10:26:00 ohwada Exp $
+// $Id: photo.php,v 1.7 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -33,6 +33,7 @@ class webphoto_main_photo extends webphoto_show_main
 	var $_flash_class;
 	var $_embed_class;
 	var $_d3_comment_view_class;
+	var $_photo_navi_class;
 
 	var $_get_photo_id;
 	var $_get_cat_id;
@@ -58,9 +59,12 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
 	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_embed_class      =& webphoto_embed::getInstance( $dirname, $trust_dirname );
 
-	$this->_flash_class  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
-	$this->_embed_class  =& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_photo_navi_class =& webphoto_photo_navi::getInstance( $dirname );
+	$this->_photo_navi_class->set_mark_id_prev( '<b>'. $this->get_constant('NAVI_PREVIOUS') .'</b>' );
+	$this->_photo_navi_class->set_mark_id_next( '<b>'. $this->get_constant('NAVI_NEXT') .'</b>' );
 
 	$this->_comment_view_class =& webphoto_d3_comment_view::getInstance();
 	$this->_comment_view_class->init( $dirname );
@@ -663,7 +667,9 @@ function _build_navi( $photo_id, $cat_id )
 	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
 	$id_array = $this->_item_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
 
-	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
+//	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
+
+	return $this->_photo_navi_class->build_navi( $script, $id_array, $photo_id );
 }
 
 function _build_tags_param( $photo_id )

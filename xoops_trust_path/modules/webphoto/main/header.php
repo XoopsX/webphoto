@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: header.php,v 1.5 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-16 K.OHWADA
+// show_image.php
 // 2008-10-01 K.OHWADA
 // player_handler.php  flashvar_handler.php
 // 2008-08-24 K.OHWADA
@@ -76,6 +78,7 @@ webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/flash_player.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
+webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/show_main.php' );
 webphoto_include_once( 'class/webphoto/show_list.php' );

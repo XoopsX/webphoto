@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: admin.php,v 1.9 2008/11/21 07:56:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -458,6 +458,11 @@ define("_AM_WEBPHOTO_BUTTON_CLONE","複製");
 define("_AM_WEBPHOTO_CAP_CAT_SELECT","カテゴリ画像の選択");
 define("_AM_WEBPHOTO_DSC_CAT_PATH" , "XOOPSインストール先からのパスを指定します（最初の'/'は必要）" ) ;
 define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "設定しないときは、フォルダーアイコンが表示されます" ) ;
+
+//---------------------------------------------------------
+// v0.70
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_RECOMMEND_OFF" , "推奨 off" ) ;
 
 // === define end ===
 }

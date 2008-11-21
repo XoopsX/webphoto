@@ -1,4 +1,4 @@
-<{* $Id: main_photo.html,v 1.11 2008/11/20 11:15:46 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.12 2008/11/21 07:56:57 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -86,13 +86,13 @@
 <{* IMAGES *}>
   <{if $photo.displaytype == 1 }>
 
-    <{if $photo.middle_width && $photo.middle_height }>
-      <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
-      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
+    <{if $photo.img_middle_width && $photo.img_middle_height }>
+      <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
+      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
 
     <{else}>
-      <a href="<{$photo.ahref_file}>" target="_blank" onClick="window.open('<{$photo.ahref_file}>', '', '' ); return(false);">
-      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+      <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', '' ); return(false);">
+      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
     <{/if}>
 
     </a> <br />
@@ -132,13 +132,13 @@
     <br />
 
 <{* GENERAL *}>
-  <{elseif $photo.ahref_file }>
-    <a href="<{$photo.ahref_file}>" target="_blank">
+  <{elseif $photo.media_url_s }>
+    <a href="<{$photo.media_url_s}>" target="_blank">
 
-    <{if $photo.imgsrc_middle && $photo.middle_width && $photo.middle_height }>
-      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.middle_width}>" height="<{$photo.middle_height}>" />
-    <{elseif $photo.imgsrc_middle }>
-      <img src="<{$photo.imgsrc_middle}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+    <{if $photo.img_middle_src_s && $photo.img_middle_width && $photo.img_middle_height }>
+      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
+    <{elseif $photo.img_middle_src_s }>
+      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
     <{elseif $photo.thumb_width && $photo.thumb_height }>
       <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
     <{else}>
@@ -264,11 +264,6 @@
 <{/if}>
 
 <div align="center">
-  <{$photo_nav}>
-</div>
-<br />
-
-<div align="center">
 <img src="<{$qrs_url}>/<{$mobile_qr_image}>" border="0" alt="qr_image" /><br />
 <a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
 </div>
@@ -291,6 +286,11 @@
   </div>
   <br />
 <{/if}>
+
+<div align="center">
+  <{$photo_nav}>
+</div>
+<br />
 
 <div class="webphoto_commentsnav">
   <{$commentsnav}>
