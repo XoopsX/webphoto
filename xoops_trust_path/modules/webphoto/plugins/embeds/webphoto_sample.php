@@ -1,5 +1,5 @@
 <?php
-// $Id: webphoto_sample.php,v 1.3 2008/11/21 10:38:26 ohwada Exp $
+// $Id: webphoto_sample.php,v 1.2 2008/11/21 10:34:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,7 +31,7 @@ function webphoto_embed_webphoto_sample()
 //	$this->_SITE = XOOPS_URL.'/modules/webphoto/';
 	$this->_SITE = 'http://linux2.ohwada.net/modules/webphoto/';
 
-	$this->webphoto_embed_base( 'webphoto_base' );
+	$this->webphoto_embed_base( 'webphoto' );
 	$this->set_url( $this->_SITE.'index.php/photo/' );
 	$this->set_sample( '123' );
 }
