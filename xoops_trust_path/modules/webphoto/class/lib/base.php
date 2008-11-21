@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.11 2008/11/20 11:15:46 ohwada Exp $
+// $Id: base.php,v 1.12 2008/11/21 08:54:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -544,7 +544,7 @@ function get_cached_xoops_db_groups()
 
 function get_xoops_group_name( $id, $format='s' )
 {
-	return $this->_xoops_class->get_group_by_id_name( $id, 'name', $format );
+	return $this->_xoops_class->get_cached_group_by_id_name( $id, 'name', $format );
 }
 
 //---------------------------------------------------------
