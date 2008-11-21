@@ -1,5 +1,5 @@
 <?php
-// $Id: webphoto_sample.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: webphoto_sample.php,v 1.3 2008/11/21 10:38:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -17,29 +17,29 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // <object codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="320" height="240" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000">
 // <param name="movie" value="http://localhost/modules/webphoto/libs/mediaplayer.swf" ></param>
 // <param name="flashvars" value="config=http%3A%2F%2Flocalhost%2Fmodules%2Fwebphoto%2Findex.php%3Ffct%3Dconfig%26item_id%3D1" ></param>
-// <embed src="http://localhost/modules/webphoto/libs/mediaplayer.swf" width="320" height="240" flashvars="config=http%3A%2F%2Flocalhost%2Fxoops_jpex_13%2Fmodules%2Fwebphoto%2Findex.php%3Ffct%3Dconfig%26item_id%3D1" type="application/x-shockwave-flash" ></embed>
+// <embed src="http://localhost/modules/webphoto/libs/mediaplayer.swf" width="320" height="240" flashvars="config=http%3A%2F%2Flocalhost%2Fxoops_jpex_13%2Fmodules%2Fwebphoto%2Findex.php%3Ffct%3Dflash_config%26item_id%3D1" type="application/x-shockwave-flash" ></embed>
 // </object>
 //
 //=========================================================
-class webphoto_embed_webphoto extends webphoto_embed_base
+class webphoto_embed_webphoto_sample extends webphoto_embed_base
 {
 	var $_SITE = '';
 
-function webphoto_embed_webphoto()
+function webphoto_embed_webphoto_sample()
 {
 // you can rewrite
 //	$this->_SITE = XOOPS_URL.'/modules/webphoto/';
 	$this->_SITE = 'http://linux2.ohwada.net/modules/webphoto/';
 
-	$this->webphoto_embed_base( 'webphoto' );
-	$this->set_url( $this->_SITE.'index.php?fct=photo&photo_id=' );
-	$this->set_sample( '1' );
+	$this->webphoto_embed_base( 'webphoto_base' );
+	$this->set_url( $this->_SITE.'index.php/photo/' );
+	$this->set_sample( '123' );
 }
 
 function embed( $src, $width, $height )
 {
 	$movie     = $this->_SITE .'libs/mediaplayer.swf';
-	$config    = $this->_SITE .'index.php?fct=config&item_id='.$src;
+	$config    = $this->_SITE .'index.php?fct=flash_config&item_id='.$src;
 	$flashvars = 'config='. urlencode($config) ;
 
 	$object_extra  = 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ';

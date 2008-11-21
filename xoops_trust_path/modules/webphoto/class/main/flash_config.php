@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_config.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: flash_config.php,v 1.2 2008/11/21 10:34:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,9 +12,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_main_flash_config
 //=========================================================
 class webphoto_main_flash_config extends webphoto_lib_base
+//class webphoto_main_flash_config
 {
 	var $_item_handler;
-	var $_flash_class;
+	var $_player_clss;
 	var $_post_class;
 	var $_xml_class;
 	var $_multibyte_class;
@@ -27,10 +28,16 @@ function webphoto_main_flash_config( $dirname , $trust_dirname )
 	$this->webphoto_lib_base( $dirname, $trust_dirname );
 
 	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_flash_class  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
+	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
+
+	$this->_player_clss  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 	$this->_xml_class    =& webphoto_lib_xml::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+
+	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
 
 }
 
@@ -54,10 +61,25 @@ function main()
 		exit();
 	}
 
-	$param = $this->_flash_class->get_param( $item_row );
-	$this->_flash_class->set_variables_in_buffer( $item_row, $param );
+	$player_id   = $item_row['item_player_id'] ;
+	$flashvar_id = $item_row['item_flashvar_id'] ;
+	$player_row  = $this->_player_handler->get_row_by_id_or_default( $player_id ) ; 
 
-	$buffers = $this->_flash_class->get_variable_buffers();
+	$param = array(
+		'item_row'       => $item_row , 
+		'cont_row'       => $this->_get_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_CONT ) , 
+		'thumb_row'      => $this->_get_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_THUMB ) , 
+		'middle_row'     => $this->_get_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE ) , 
+		'flash_row'      => $this->_get_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ) ,
+		'player_row'     => $player_row , 
+		'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
+		'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
+		'player_style'   => $player_row['player_style'] ,
+	);
+
+	$this->_player_clss->set_variables_in_buffer( $param );
+
+	$buffers = $this->_player_clss->get_variable_buffers();
 	if ( ! is_array($buffers) ) {
 		exit();
 	}
@@ -83,6 +105,21 @@ function main()
 	header("Content-Type:text/xml; charset=utf-8");
 	echo $var;
 
+}
+
+function _get_file_row_by_name( $item_row, $item_name )
+{
+	if ( isset(    $item_row[ $item_name ] ) ) {
+		$file_id = $item_row[ $item_name ] ;
+	} else {
+		return false;
+	}
+
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_row_by_id( $file_id );
+	}
+
+	return false ;
 }
 
 function _http_output( $encoding )
