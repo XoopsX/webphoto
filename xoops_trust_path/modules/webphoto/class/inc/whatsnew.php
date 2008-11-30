@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
+// $Id: whatsnew.php,v 1.7 2008/11/30 14:32:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -96,6 +96,8 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 		$time_create  = $item_row['item_time_create'];
 		$item_kind    = $item_row['item_kind'];
 
+		$is_image  = $this->is_image_kind( $item_kind );
+
 		$cat_row = $this->_get_cat_cached_row_by_id( $cat_id );
 		if ( is_array($cat_row) ) {
 			$cat_title = $cat_row['cat_title'];
@@ -117,13 +119,13 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 		list( $icon_url, $icon_width, $icon_height ) =
 			$this->build_show_icon_image( $item_row );
 
-		if ( $is_image || $this->_SHOW_IMAGE ) ) {
+		if ( $is_image || $this->_SHOW_IMAGE ) {
 			if ( $thumb_url ) {
 				$image  = $thumb_url;
 				$width  = $thumb_width;
 				$height = $thumb_height;
 
-			} else ( $this->_SHOW_ICON && $icon_url ) {
+			} elseif ( $this->_SHOW_ICON && $icon_url ) {
 				$imgage = $icon_url;
 				$width  = $icon_width;
 				$height = $icon_height;	

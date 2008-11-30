@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
+// $Id: flash_player.php,v 1.5 2008/11/30 14:32:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -105,8 +105,6 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function build_movie( $param )
 {
-echo " build_movie( $param ) ";
-
 	if ( ! is_array($param) ) {
 		return false ;
 	}

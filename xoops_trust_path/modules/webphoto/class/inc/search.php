@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.7 2008/11/30 10:36:34 ohwada Exp $
+// $Id: search.php,v 1.8 2008/11/30 14:32:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -105,13 +105,13 @@ function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
 		list( $icon_url, $icon_width, $icon_height ) =
 			$this->build_show_icon_image( $item_row );
 
-		if ( $is_image || $this->_SHOW_IMAGE ) ) {
+		if ( $is_image || $this->_SHOW_IMAGE ) {
 			if ( $thumb_url ) {
 				$img_url    = $thumb_url;
 				$img_width  = $thumb_width;
 				$img_height = $thumb_height;
 
-			} else ( $this->_SHOW_ICON && $icon_url ) {
+			} elseif ( $this->_SHOW_ICON && $icon_url ) {
 				$img_url    = $icon_url;
 				$img_width  = $icon_width;
 				$img_height = $icon_height;	
