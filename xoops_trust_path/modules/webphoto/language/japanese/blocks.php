@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: blocks.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -39,6 +39,15 @@ define($constpref."POPBOX_REVERT", "クリックすると、元の小さい写真になる");
 // v0.30
 //---------------------------------------------------------
 define($constpref."TEXT_CACHETIME", "キャッシュ時間");
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define($constpref."TEXT_CATLIST_SUB", "サブカテゴリの表示");
+define($constpref."TEXT_CATLIST_MAIN_IMG", "メインカテゴリの画像表示");
+define($constpref."TEXT_CATLIST_SUB_IMG", "サブカテゴリの画像表示");
+define($constpref."TEXT_CATLIST_COLS", "横に並べるカテゴリの数");
+define($constpref."TEXT_TAGCLOUD_LIMIT", "タグの表示する数");
 
 // === define end ===
 }

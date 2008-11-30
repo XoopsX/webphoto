@@ -1,0 +1,6 @@
+<{* $Id: block_tagcloud.html,v 1.1 2008/11/30 10:37:30 ohwada Exp $ *}>
+
+<{foreach from=$block.tagcloud item=tagc }>
+  <a href="<{$tagc.link}>" style="text-decoration:none;padding:2px;font-size:<{$tagc.size}>px;">
+  <{$tagc.name|escape}></a>
+<{/foreach}>

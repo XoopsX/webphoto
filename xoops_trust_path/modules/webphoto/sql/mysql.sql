@@ -1,14 +1,16 @@
-# $Id: mysql.sql,v 1.11 2008/11/19 10:26:00 ohwada Exp $
+# $Id: mysql.sql,v 1.12 2008/11/30 10:36:34 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
 
-# item_codeinfo VARCHAR(255) NOT NULL DEFAULT '',
-
 # =========================================================
 # change log
+# 2008-11-29 K.OHWADA
+# item_icon_width
+# 2008-11-16 K.OHWADA
+# item_codeinfo 
 # 2008-11-08 K.OHWADA
 # item_external_middle
 # cat_img_name
@@ -99,11 +101,13 @@ CREATE TABLE item (
   item_playlist_time  INT(11) UNSIGNED NOT NULL DEFAULT '0',
   item_showinfo  VARCHAR(255) NOT NULL DEFAULT '',  
   item_external_middle VARCHAR(255) NOT NULL DEFAULT '',
-  item_icon VARCHAR(255) NOT NULL DEFAULT '',
-  item_codeinfo VARCHAR(255) NOT NULL DEFAULT '',
+  item_icon_name VARCHAR(255) NOT NULL DEFAULT '',
+  item_codeinfo  VARCHAR(255) NOT NULL DEFAULT '',
   item_page_width  INT(11) NOT NULL DEFAULT '0',
   item_page_height INT(11) NOT NULL DEFAULT '0',
   item_embed_text  TEXT NOT NULL,
+  item_icon_width  INT(11) NOT NULL DEFAULT '0',
+  item_icon_height INT(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),

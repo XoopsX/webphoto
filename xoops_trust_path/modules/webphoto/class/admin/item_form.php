@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.5 2008/11/19 10:26:00 ohwada Exp $
+// $Id: item_form.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _build_ele_time_publish()
 // 2008-11-16 K.OHWADA
 // BUG: Warning [PHP]: Missing argument 1
 // build_ele_codeinfo()
@@ -134,6 +136,34 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 
 	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
 		$this->_build_ele_allowed_exts( $allowed_exts ) );
+
+	if ( $is_edit ) {
+		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_CREATE'),
+			$this->_build_ele_time_create() ) ;
+
+		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_UPDATE'),
+			$this->_build_ele_time_update() ) ;
+
+		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_PUBLISH'),
+			$this->_build_ele_time_publish() ) ;
+
+		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_EXPIRE'),
+			$this->_build_ele_time_expire() ) ;
+
+//		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
+//			$this->_build_ele_valid() ) ;
+
+		echo $this->build_line_ele( $this->get_constant('ITEM_STATUS'),
+			$this->_build_ele_status() ) ;
+
+	} else {
+		$this->set_row_hidden_buffer( 'item_time_create' ) ;
+		$this->set_row_hidden_buffer( 'item_time_update' ) ;
+		$this->set_row_hidden_buffer( 'item_time_publish' ) ;
+		$this->set_row_hidden_buffer( 'item_time_expire' ) ;
+		$this->set_row_hidden_buffer( 'item_time_status' ) ;
+
+	}
 
 	echo $this->build_line_ele( 
 		$this->get_constant('CATEGORY'), $this->_build_ele_category() );
@@ -281,21 +311,12 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	echo $this->build_line_ele(
 		$this->get_constant('ITEM_CODEINFO'), $this->_build_ele_codeinfo() );
 
-	if ( $is_edit && $this->_is_valid() ) {
-		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
-			$this->_build_ele_valid() ) ;
-
-	} else {
-		$this->set_row_hidden_buffer( 'item_status' ) ;
-	}
-
-	if ( $is_edit ) {
-		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_UPDATE'),
-			$this->_build_ele_time_update() ) ;
-
-	} else {
-		$this->set_row_hidden_buffer( 'item_time_update' ) ;
-	}
+//	if ( $is_edit && $this->_is_valid() ) {
+//		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
+//			$this->_build_ele_valid() ) ;
+//	} else {
+//		$this->set_row_hidden_buffer( 'item_status' ) ;
+//	}
 
 	echo $this->build_line_ele( '', $this->_build_ele_button( $mode ) );
 
@@ -358,7 +379,75 @@ function _build_ele_playlist_time()
 	return $this->build_form_select( $name, $value, $options, $this->_SELECT_SIZE );
 }
 
-function _is_valid()
+function _build_ele_time_create()
+{
+	return $this->_build_time_date( 'item_time_create', true ) ;
+}
+
+function _build_ele_time_update()
+{
+	$ele  = $this->_build_time_common( 'item_time_update', true );
+	$ele .= "<br />\n";
+	$ele .= _AM_WEBPHOTO_TIME_NOW .' : ';
+	$ele .= formatTimestamp( time(), $this->get_constant('DTFMT_YMDHI') ) ;
+	return $ele ;
+}
+
+function _build_ele_time_publish()
+{
+	return $this->_build_time_common( 'item_time_publish', false );
+}
+
+function _build_ele_time_expire()
+{
+	return $this->_build_time_common( 'item_time_expire', false );
+}
+
+function _build_time_common( $name, $flag_now, $size=50 )
+{
+	$name_checkbox  = $name.'_checkbox';
+	$value_checkbox = $this->_get_checkbox_by_name( $name_checkbox );
+
+	$date = $this->_build_time_date( $name, $flag_now ) ;
+
+	$text  = $this->build_input_checkbox_yes( $name_checkbox, $value_checkbox );
+	$text .= $this->get_constant( 'DSC_SET_'. $name ) ."<br />\n";
+	$text .= $this->build_input_text( $name, $date, $size );
+
+	return $text;
+}
+
+function _build_time_date( $name, $flag_now )
+{
+	$date  = '';
+	$value = intval( $this->get_row_by_key( $name ) );
+	if ( $flag_now && empty($value) ) {
+		$value = time();
+	}
+	if ( $value > 0 ) {
+		$date = $this->format_timestamp( $value, $this->get_constant('DTFMT_YMDHI') );
+	}
+	return $date ;
+}
+
+function _build_ele_status()
+{
+	$name = 'item_status';
+	$value = $this->get_row_by_key( $name );
+	$options = $this->_item_handler->get_status_options();
+
+	$ele = '';
+	if ( $value == _C_WEBPHOTO_STATUS_WAITING ) {
+		$ele .= $this->build_input_checkbox_yes( 'valid', 1 );
+		$ele .= ' '.$this->get_constant('CAP_VALIDPHOTO') ;
+		$ele .= "<br />\n" ;
+	}
+	$ele .= $this->build_form_select( $name, $value, $options, 1 );
+
+	return $ele;
+}
+
+function XX_is_valid()
 {
 	$status = $this->get_row_by_key( 'item_status' );
 	if ( $status <= 0 ) {
@@ -367,34 +456,11 @@ function _is_valid()
 	return false;
 }
 
-function _build_ele_valid()
+function XX_build_ele_valid()
 {
 	$value = intval( $this->_is_valid() ) ;
 	$text  = $this->build_input_checkbox_yes( 'valid', $value );
 	$text .= ' '.$this->get_constant('CAP_VALIDPHOTO') ;
-	return $text;
-}
-
-function _build_ele_time_update( $size=50 )
-{
-	$name = 'item_time_update';
-	$name_checkbox  = $name.'_checkbox';
-	$value_checkbox = $this->_get_checkbox_by_name( $name_checkbox );
-
-	$value = intval( $this->get_row_by_key( $name ) );
-	if ( empty($value) ) {
-		$value = time();
-	}
-	$date = formatTimestamp( $value, $this->get_constant('DTFMT_YMDHI') );
-	$now  = formatTimestamp( time(), $this->get_constant('DTFMT_YMDHI') );
-
-	$text  = $this->build_input_checkbox_yes( $name_checkbox, $value_checkbox );
-	$text .= $this->get_constant('DSC_SET_TIME_UPDATE') ."<br />\n";
-	$text .= $this->build_input_text( $name, $date, $size );
-	$text .= "<br />\n";
-	$text .= _AM_WEBPHOTO_TIME_NOW .' : ';
-	$text .= $now ;
-
 	return $text;
 }
 

@@ -1,13 +1,15 @@
 <?php
-// $Id: show_main.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: show_main.php,v 1.7 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
- 
+
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// webphoto_inc_catlist
 // 2008-11-08 K.OHWADA
 // build_show_imgurl()
 // 2008-10-01 K.OHWADA
@@ -48,8 +50,10 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_get_page;
 	var $_get_viewtype = null;
 
-	var $_cfg_gmap_apikey = null;
-	var $_cfg_use_popbox  = false;
+	var $_cfg_gmap_apikey    = null ;
+	var $_cfg_use_pathinfo   = false ;
+	var $_cfg_cat_main_width = 0 ;
+	var $_cfg_cat_sub_width  = 0 ;
 
 	var $_SORT_ARRAY = array();
 
@@ -81,9 +85,11 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_USE_POPBOX_JS    = false;
 
 // check show
-	var $_USE_BOX_JS      = true;
-	var $_SHOW_RSS        = true;
-	var $_SHOW_SUBCAT_IMG = true;
+	var $_USE_BOX_JS        = true;
+	var $_SHOW_RSS          = true;
+	var $_SHOW_CAT_SUB      = true;
+	var $_SHOW_CAT_MAIN_IMG = true;
+	var $_SHOW_CAT_SUB_IMG  = true;
 
 	var $_ARRAY_DENY_CATLIST      = array();	
 	var $_ARRAY_DENY_TAGCLOUD     = array();
@@ -124,12 +130,15 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
 
-	$cfg_newphotos           = $this->get_config_by_name('newphotos');
-	$cfg_viewcattype         = $this->get_config_by_name('viewcattype');
-	$cfg_sort                = $this->get_config_by_name('sort');
-	$cfg_use_popbox          = $this->get_config_by_name('use_popbox');
-	$this->_cfg_gmap_apikey  = $this->get_config_by_name('gmap_apikey');
-	$this->_cfg_use_pathinfo = $this->get_config_by_name('use_pathinfo');
+	$cfg_uploads_path          = $this->_config_class->get_uploads_path();
+	$cfg_newphotos             = $this->get_config_by_name('newphotos');
+	$cfg_viewcattype           = $this->get_config_by_name('viewcattype');
+	$cfg_sort                  = $this->get_config_by_name('sort');
+	$cfg_use_popbox            = $this->get_config_by_name('use_popbox');
+	$this->_cfg_gmap_apikey    = $this->get_config_by_name('gmap_apikey');
+	$this->_cfg_use_pathinfo   = $this->get_config_by_name('use_pathinfo');
+	$this->_cfg_cat_main_width = $this->get_config_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width  = $this->get_config_by_name('cat_sub_width');
 
 	$this->_MAX_PHOTOS         = $cfg_newphotos;
 	$this->_VIEWTYPE_DEFAULT   = $cfg_viewcattype;
@@ -138,11 +147,18 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class->set_photo_sort_default( $cfg_sort );
 
+	$this->_catlist_class =& webphoto_inc_catlist::getInstance();
+	$this->_catlist_class->init( $dirname );
+	$this->_catlist_class->set_uploads_path( $cfg_uploads_path );
+
 // separator
 	if ( $this->_cfg_use_pathinfo ) {
 		$this->_pagenavi_class->set_separator_path(  '/' );
 		$this->_pagenavi_class->set_separator_query( '/' );
 	}
+
+// auto publish
+	$this->auto_publish();
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -264,113 +280,47 @@ function build_show_nomatch( $total )
 }
 
 //---------------------------------------------------------
-// cat handler
+// catlist
 //---------------------------------------------------------
-function build_catlist( $cat_id, $catlist_cols, $catlist_delmita )
+function build_catlist( $cat_id, $cols, $delmita )
 {
-	$show = false;
+	$show = false ;
 
-	$cats = $this->get_categories_by_pid( $cat_id );
+	list( $cols, $width ) =
+		$this->_catlist_class->calc_width( $cols ) ;
+
+	$cats = $this->_catlist_class->build_catlist( 
+		$cat_id, $this->_SHOW_CAT_SUB ) ;
+
 	if ( is_array($cats) && count($cats) ) {
-		$show = true;
+		$show = true ;
 	}
 
-	$catlist_width = intval( 100 / $catlist_cols ) - 1;
-	if ( $catlist_width <= 0 ) {
-		 $catlist_width = 1;
-	}
+	$catlist = array(
+		'cats'            => $cats ,
+		'cols'            => $cols ,
+		'width'           => $width ,
+		'delmita'         => $delmita ,
+		'show_sub'        => $this->_SHOW_CAT_SUB ,
+		'show_main_img'   => $this->_SHOW_CAT_MAIN_IMG ,
+		'show_sub_img'    => $this->_SHOW_CAT_SUB_IMG ,
+		'use_pathinfo'    => $this->_cfg_use_pathinfo ,
+		'main_width'      => $this->_cfg_cat_main_width ,
+		'sub_width'       => $this->_cfg_cat_sub_width ,
+		'lang_total'      => $this->get_constant( 'CAPTION_TOTAL' ) ,
+	);
 
 	$arr = array(
-		'show_subcat_img'   => $this->_SHOW_SUBCAT_IMG ,
-		'show_catlist'      => $show,
-		'catlist_cats'      => $cats,
-		'catlist_cols'      => $catlist_cols ,
-		'catlist_width'     => $catlist_width,
-		'catlist_delmita'   => $catlist_delmita,
+		'show_catlist' => $show,
+		'catlist'      => $catlist,
 	);
-	return $arr;
+
+	return $arr ;
 }
 
-function build_show_cat( $row )
-{
-	$imgurl = $this->build_show_imgurl( $row );
-
-	$show = $row;
-	$show['cat_title_s'] = $this->sanitize( $row['cat_title'] ) ;
-	$show['imgurl']      = $imgurl ;
-	$show['imgurl_s']    = $this->sanitize( $imgurl ) ;
-
-	return $show;
-}
-
-function build_show_imgurl( $row )
-{
-	$img_name = $row['cat_img_name'] ;
-	if ( $img_name ) {
-		$url = $this->_CATS_URL .'/'. $img_name ;
-	} else {
-		$url = $this->_cat_handler->build_show_img_path( $row );
-	}
-	return $url;
-}
-
-// get list of categories in header space
-function get_categories_by_pid( $parent_id )
-{
-	$ret = array() ;
-
-	$orderby = 'cat_weight ASC, cat_title ASC';
-	$rows = $this->_cat_handler->get_rows_by_pid_orderby( $parent_id, $orderby );
-	foreach( $rows as $row )
-	{
-		$cat_id = $row['cat_id'];
-
-		// Show first child of this category
-		$subcat = array() ;
-
-		$child_arr = $this->_cat_handler->get_first_child( $cat_id , $orderby ) ;
-		foreach( $child_arr as $row_child ) 
-		{
-			$child_id = $row_child['cat_id'] ;
-
-			$sub_arr = $this->build_show_cat( $row_child );
-			$sub_arr['photo_small_sum']  
-				= $this->_item_handler->get_count_public_by_catid( $child_id ) ;
-			$sub_arr['photo_total_sum'] 
-				= $this->build_photo_total_in_parent_all_children( $child_id ) ;
-			$sub_arr['number_of_subcat'] 
-				= count( $this->_cat_handler->get_first_child_id( $child_id ) ) ;
-
-			$subcat[] = $sub_arr;
-		}
-
-		// Total sum of photos
-		$catid_arr = $this->_cat_handler->get_all_child_id( $cat_id ) ;
-		array_push( $catid_arr , $cat_id ) ;
-		$photo_total_sum = $this->_item_handler->get_count_public_by_catid_array( $catid_arr ) ;
-
-		$imgurl = $this->build_show_imgurl( $row );
-
-		$main_arr = $this->build_show_cat( $row );
-		$main_arr['photo_small_sum'] 
-			= $this->_item_handler->get_count_public_by_catid( $cat_id ) ;
-		$main_arr['photo_total_sum'] 
-			= $this->build_photo_total_in_parent_all_children( $cat_id ) ;
-		$main_arr['subcategories'] = $subcat ;
-
-		$ret[] = $main_arr;
-	}
-
-	return $ret ;
-}
-
-function build_photo_total_in_parent_all_children( $cat_id )
-{
-	$catid_arr = $this->_cat_handler->get_all_child_id( $cat_id ) ;
-	array_push( $catid_arr , $cat_id ) ;
-	return $this->_item_handler->get_count_public_by_catid_array( $catid_arr ) ;
-}
-
+//---------------------------------------------------------
+// cat handler
+//---------------------------------------------------------
 function build_cat_path( $cat_id )
 {
 	$rows = $this->_cat_handler->get_parent_path_array( $cat_id );
@@ -383,7 +333,7 @@ function build_cat_path( $cat_id )
 	$last  = $count - 1;
 
 	for ( $i = $last ; $i >= 0; $i-- ) {
-		$arr[] = $this->build_show_cat( $rows[ $i ] );
+		$arr[] = $this->_catlist_class->build_cat_show( $rows[ $i ] );
 	}
 
 	$ret = array();
@@ -782,6 +732,18 @@ function is_in_array( $needle, $haystack )
 		}
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// auto plublish
+//---------------------------------------------------------
+function auto_publish()
+{
+	$publish_class =& webphoto_inc_auto_publish::getInstance();
+	$publish_class->init( $this->_DIRNAME );
+	$publish_class->set_workdir( $this->_WORK_DIR );
+
+	$publish_class->auto_publish();
 }
 
 //---------------------------------------------------------

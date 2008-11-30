@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.9 2008/11/21 07:56:57 ohwada Exp $
+// $Id: admin.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -462,6 +462,13 @@ define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "設定しないときは、フォルダーアイコンが表
 // v0.70
 //---------------------------------------------------------
 define("_AM_WEBPHOTO_RECOMMEND_OFF" , "推奨 off" ) ;
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_TITLE_WAITING" , "承認待ち一覧" ) ;
+define("_AM_WEBPHOTO_TITLE_OFFLINE" , "オフライン一覧" ) ;
+define("_AM_WEBPHOTO_TITLE_EXPIRED" , "期限切れ一覧" ) ;
 
 // === define end ===
 }

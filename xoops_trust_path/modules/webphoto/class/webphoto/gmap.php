@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: gmap.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// build_show_file_image()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // used preload_init()
@@ -106,16 +108,10 @@ function _build_show_from_single_row( $item_row )
 
 function _build_gmap_info( $item_row )
 {
-	$thumb_url    = null ;
-	$thumb_width  = 0 ;
-	$thumb_height = 0 ;
-
 	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
-	if ( is_array($thumb_row) ) {
-		$thumb_url    = $thumb_row['file_url'] ;
-		$thumb_width  = $thumb_row['file_width'] ;
-		$thumb_height = $thumb_row['file_height'] ;
-	}
+
+	list( $thumb_url, $thumb_width, $thumb_height ) =
+		$this->build_show_file_image( $thumb_row ) ;
 
 	$param                 = $item_row ;
 	$param['thumb_url']    = $thumb_url ;

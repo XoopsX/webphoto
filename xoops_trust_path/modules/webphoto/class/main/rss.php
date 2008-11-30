@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: rss.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _build_file_image()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -222,15 +224,14 @@ function build_items()
 		$media_thumbnail_large_height = '' ;
 		$media_thumbnail_large_width  = '' ;
 
-
 		if ( is_array($cont_row) ) {
+
+			list( $media_content_url, $media_content_height, $media_content_width ) =
+				$this->_build_file_image( $cont_row ) ;
 
 			$media_title_xml        = $title_xml ;
 			$media_description      = $summary ;
-			$media_content_url      = $cont_row['file_url'] ;
 			$media_content_filesize = $cont_row['file_size'];
-			$media_content_height   = $cont_row['file_height'];
-			$media_content_width    = $cont_row['file_width'];
 			$media_content_duration = $cont_row['file_duration'];
 			$media_content_type     = $cont_row['file_mime'];
 
@@ -239,9 +240,10 @@ function build_items()
 				$media_content_medium   = 'image';
 
 				if ( is_array($thumb_row) ) {
-					$media_thumbnail_url          = $thumb_row['file_url'] ;
-					$media_thumbnail_height       = $thumb_row['file_height'];
-					$media_thumbnail_width        = $thumb_row['file_width'];
+
+					list( $media_thumbnail_url, $media_thumbnail_height, $media_thumbnail_width ) =
+						$this->_build_file_image( $thumb_row ) ;
+
 					$media_thumbnail_large_url    = $media_content_url ;
 					$media_thumbnail_large_height = $media_content_height ;
 					$media_thumbnail_large_width  = $media_content_width ;
@@ -292,10 +294,10 @@ function _build_description( $row, $thumb_row )
 	$desc = '';
 
 	if ( $this->_is_kind_image( $row ) && is_array($thumb_row) ) {
-		$thumb_url    = $thumb_row['file_url'] ;
-		$thumb_height = $thumb_row['file_height'];
-		$thumb_width  = $thumb_row['file_width'];
-	
+
+		list( $thumb_url, $thumb_width, $thumb_height )
+			$this->build_file_image( $thumb_row ) ;
+
 		$img  = '<img src="'. $thumb_url .'" ' ;
 		$img .= 'alt="'. $row['item_title'] .'" ';
 		if ( $thumb_width && $thumb_height ) {
@@ -351,6 +353,11 @@ function _get_file_row_by_kind( $row, $kind )
 		return $this->_file_handler->get_row_by_id( $file_id );
 	}
 	return null;
+}
+
+function _build_file_image( $file_row )
+{
+	return $this->_file_handler->build_show_file_image( $file_row );
 }
 
 //---------------------------------------------------------

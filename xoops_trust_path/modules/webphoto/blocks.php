@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
+// $Id: blocks.php,v 1.3 2008/11/30 10:36:33 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// auto_publish.php etc
 // 2008-07-01 K.OHWADA
 // use webphoto_include_once_trust()
 //---------------------------------------------------------
@@ -34,9 +36,13 @@ webphoto_include_once( 'preload/debug.php',          $MY_DIRNAME );
 webphoto_include_once( 'include/constants.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/xoops/base.php',       $MY_DIRNAME );
 webphoto_include_once( 'class/lib/multibyte.php',    $MY_DIRNAME );
+webphoto_include_once( 'class/lib/cloud.php',        $MY_DIRNAME );
 webphoto_include_once( 'class/inc/xoops_header.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',       $MY_DIRNAME );
+webphoto_include_once( 'class/inc/catlist.php',      $MY_DIRNAME );
+webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/uri.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/blocks.php',       $MY_DIRNAME );
 webphoto_include_once( 'blocks/functions.php',       $MY_DIRNAME );
 

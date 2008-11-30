@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
+// $Id: photo_create.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// create_thumb_icon() -> build_icon_image()
 // 2008-11-08 K.OHWADA
 // insert_file_by_params()
 // 2008-11-04 K.OHWADA
@@ -61,7 +63,11 @@ class webphoto_photo_create extends webphoto_base_this
 	var $_msg_item    = null ;
 
 	var $_TITLE_DEFAULT = 'no title';
-	var $_GMAP_ZOOM     = _C_WEBPHOTO_GMAP_ZOOM ;
+	var $_EXT_PNG       = 'png';
+	var $_ICON_NAME_DEFAULT = 'default.png';
+
+	var $_VODEO_THUMB_MAX = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
+	var $_GMAP_ZOOM       = _C_WEBPHOTO_GMAP_ZOOM ;
 
 //---------------------------------------------------------
 // constructor
@@ -97,21 +103,23 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // video thumb
 //---------------------------------------------------------
-function video_thumb( $item_row , $name=null )
+function video_thumb( $item_row )
 {
-	if ( empty($name) ) {
-		$name = $this->_post_class->get_post_text('name') ;
-	}
+//	if ( empty($name) ) {
+//		$name = $this->_post_class->get_post_text('name') ;
+//	}
 
-	$ret = $this->video_thumb_exec( $item_row, $name );
+	$num = $this->_post_class->get_post_text('num') ;
+
+	$ret = $this->video_thumb_exec( $item_row, $num );
 	return $this->build_failed_msg( $ret );
 }
 
-function video_thumb_exec( $item_row, $name )
+function video_thumb_exec( $item_row, $num )
 {
 	$this->clear_msg_array();
 
-	$ret = $this->update_video_thumb_by_item_row( $item_row, $name ) ;
+	$ret = $this->update_video_thumb_by_item_row( $item_row, $num ) ;
 	if ( $ret < 0 ) {
 		return $ret;
 	}
@@ -426,42 +434,64 @@ function get_video_param()
 //---------------------------------------------------------
 // updete item 
 //---------------------------------------------------------
-function build_update_item_row( $item_row, $file_id_array, $playlist_cache=null )
+function build_update_item_row( $item_row, $file_id_array, $playlist_cache=null, $specail_ext=null )
 {
-	$update_row = $item_row;
+	$row = $item_row;
 
-	$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
-	$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
-	$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
-	$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
-	$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
+	if ( is_array($file_id_array) ) {
+		$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
+		$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
+		$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
+		$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
+		$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
 
-	if ( $cont_id > 0 ) {
-		$update_row[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
-	}
+		if ( $cont_id > 0 ) {
+			$row[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
+		}
 
-	if ( $thumb_id > 0 ) {
-		$update_row[ _C_WEBPHOTO_ITEM_FILE_THUMB ] = $thumb_id;
-	}
+		if ( $thumb_id > 0 ) {
+			$row[ _C_WEBPHOTO_ITEM_FILE_THUMB ] = $thumb_id ;
+			$row['item_icon_name']   = '' ;
+			$row['item_icon_width']  = 0 ;
+			$row['item_icon_height'] = 0 ;
+			}
 
-	if ( $middle_id > 0 ) {
-		$update_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
-	}
+		if ( $middle_id > 0 ) {
+			$row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
+		}
 
-	if ( $flash_id > 0 ) {
-		$update_row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ]   = $flash_id;
-		$update_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-	}
+		if ( $flash_id > 0 ) {
+			$row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = $flash_id;
+			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+		}
 
-	if ( $docomo_id > 0 ) {
-		$update_row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO ] = $docomo_id;
+		if ( $docomo_id > 0 ) {
+			$row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO ] = $docomo_id;
+		}
 	}
 
 	if ( $playlist_cache ) {
-		$update_row['item_playlist_cache'] = $playlist_cache ;
+		$row['item_playlist_cache'] = $playlist_cache ;
 	}
 
-	return $update_row ;
+	if ( empty( $row[ _C_WEBPHOTO_ITEM_FILE_THUMB ] ) &&
+	     empty( $row[ 'item_external_thumb' ] ) &&
+	     empty( $row[ 'item_icon_name' ] ) ) {
+
+		if ( $specail_ext ) {
+			$ext = $specail_ext ;
+		} else {
+			$ext = $item_row['item_ext'] ;
+		}
+
+		list( $name, $width, $height ) =
+			$this->build_icon_image( $ext );
+		$row['item_icon_name']   = $name ;
+		$row['item_icon_width']  = $width ;
+		$row['item_icon_height'] = $height ;
+	}
+
+	return $row ;
 }
 
 function get_array_value_by_key( $array, $key )
@@ -644,14 +674,14 @@ function create_thumb_middle_param( $item_id, $param )
 	}
 
 // thumb icon
-	if ( $flag_thumb && !is_array($thumb_param) ) {
-		$this->create_thumb_icon( $item_id, $src_ext );
-		$thumb_param  = $this->get_thumb_param() ;
-	}
-	if ( $flag_middle && !is_array($middle_param) ) {
-		$this->create_middle_icon( $item_id, $src_ext );
-		$middle_param = $this->get_middle_param() ;
-	}
+//	if ( $flag_thumb && !is_array($thumb_param) ) {
+//		$this->create_thumb_icon( $item_id, $src_ext );
+//		$thumb_param  = $this->get_thumb_param() ;
+//	}
+//	if ( $flag_middle && !is_array($middle_param) ) {
+//		$this->create_middle_icon( $item_id, $src_ext );
+//		$middle_param = $this->get_middle_param() ;
+//	}
 
 // remove temp file
 	if ( $video_tmp_file ) {
@@ -778,11 +808,11 @@ function create_video_plural_thumbs( $item_id, $src_file, $src_ext )
 	if ( $count ) {
 
 // create thumb icon
-		$this->_image_class->copy_thumb_icon_in_dir( 
-			$this->_TMP_DIR, 
-			$this->_video_class->get_first_thumb_node(), 
-			$src_ext
-		);
+//		$this->_image_class->copy_thumb_icon_in_dir( 
+//			$this->_TMP_DIR, 
+//			$this->_video_class->get_first_thumb_node(), 
+//			$src_ext
+//		);
 
 		$this->_flag_video_thumb_created = true;
 		return true;
@@ -839,17 +869,7 @@ function create_video_docomo_param( $item_id, $cont_param )
 //---------------------------------------------------------
 // update video thumb
 //---------------------------------------------------------
-function update_video_thumb_by_item_id( $item_id, $name )
-{
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
-	if ( !is_array($item_row) ) {
-		return _C_WEBPHOTO_ERR_NO_RECORD;
-	}
-
-	return $this->update_video_thumb_by_item_row( $item_row, $name ) ;
-}
-
-function update_video_thumb_by_item_row( $item_row, $name )
+function update_video_thumb_by_item_row( $item_row, $num )
 {
 	if ( !is_array($item_row) ) {
 		return 0 ;	// no action
@@ -857,39 +877,46 @@ function update_video_thumb_by_item_row( $item_row, $name )
 
 	$item_id = $item_row['item_id'] ;
 	$cat_id  = $item_row['item_cat_id'] ;
+	$ext     = $item_row['item_ext'] ;
 
 	$this->_item_row    = null;
 	$this->_item_cat_id = 0 ;
 	$this->_flag_video_thumb_created = false ;
 	$this->_flag_video_thumb_failed  = false ;
 
-	$src_file = $this->_TMP_DIR .'/'.  $name;
+	$thumb_id    = 0 ;
+	$middle_id   = 0 ;
 
-// --- update thumb ---
-	$thumb_id = $this->create_update_video_thumb_common(
-		$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_THUMB );
-
-// --- update middle ---
-	$middle_id = $this->create_update_video_thumb_common(
-		$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+// created thumb
+	$src_file = $this->build_video_thumb_file( $item_id, $num );
+	if ( is_file($src_file) ) {
+		$thumb_id = $this->create_update_video_thumb_common(
+			$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_THUMB );
+		$middle_id = $this->create_update_video_thumb_common(
+			$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+	}
 
 // remove files
 	$this->unlink_video_thumb_temp_files( $item_id );
 
 // update date
-	$update_row = $item_row ;
-	$update_row[ _C_WEBPHOTO_ITEM_FILE_THUMB ]  = $thumb_id;
-	$update_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
+	$file_id_array = array(
+		'thumb_id'  => $thumb_id ,
+		'middle_id' => $middle_id ,
+	);
+
+	$row_update = $this->_photo_class->build_update_item_row( 
+		$item_row, $file_id_array );
 
 // --- update item ---
-	$ret = $this->_item_handler->update( $update_row, $this->_flag_force_db );
+	$ret = $this->_item_handler->update( $row_update, $this->_flag_force_db );
 	if ( !$ret ) {
 		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB ;
 	}
 
 // save row
-	$this->_item_row    = $update_row ;
+	$this->_item_row    = $row_update ;
 	$this->_item_cat_id = $cat_id ;
 
 	return 0;
@@ -929,10 +956,10 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 	}
 
 // icon if fail
-	if ( !is_array($param) ) {
-		$this->create_thumb_icon( $item_id, $item_ext );
-		$param = $this->get_thumb_param();
-	}
+//	if ( !is_array($param) ) {
+//		$this->create_thumb_icon( $item_id, $item_ext );
+//		$param = $this->get_thumb_param();
+//	}
 
 	$param['duration'] = 0 ;
 	$param['kind']     = $kind ;
@@ -991,21 +1018,31 @@ function unlink_current_file( $file_row, $param )
 
 function unlink_video_thumb_temp_files( $item_id )
 {
-// remove tmp
-	$max = $this->_video_class->get_thumb_plural_max();
-	for ( $i=0; $i<=$max; $i++ )
+	for ( $i = 1; $i <= $this->_VODEO_THUMB_MAX; $i ++ )
 	{
-		$tmp_name = $this->_video_class->build_thumb_name( $item_id, $i, true );
-		if ( $tmp_name ) {
-			$tmp_file = $this->_TMP_DIR .'/'.  $tmp_name;
-			$this->unlink_file( $tmp_file );
-		}
+		$file = $this->build_video_thumb_file( $item_id, $i );
+		$this->unlink_file( $file );
 	}
 }
 
 function get_item_cat_id()
 {
 	return $this->_item_cat_id ;
+}
+
+function build_video_thumb_name( $item_id, $num )
+{
+	return $this->_video_class->build_thumb_name( $item_id, $num );
+}
+
+function build_video_thumb_file( $item_id, $num )
+{
+	$file = null ;
+	$name = $this->_video_class->build_thumb_name( $item_id, $num );
+	if ( $name ) {
+		$file = $this->_TMP_DIR .'/'.  $name;
+	}
+	return $file ;
 }
 
 //---------------------------------------------------------
@@ -1108,6 +1145,32 @@ function print_msg_level_user( $msg, $flag_highlight=false, $flag_br=false )
 }
 
 //---------------------------------------------------------
+// icon
+//---------------------------------------------------------
+function build_icon_image( $ext )
+{
+	$name  = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	if ( $ext ) {
+		$name = $ext .'.'. $this->_EXT_PNG ;
+		$file = $this->_ROOT_EXTS_DIR .'/'. $name ;
+		if ( ! is_file( $file ) ) {
+			$name = $this->_ICON_NAME_DEFAULT ;
+			$file = $this->_ROOT_EXTS_DIR .'/'. $name ;
+		}
+		$size = getimagesize( $file );
+		if ( is_array($size) ) {
+			$width  = $size[0];
+			$height = $size[1];
+		}
+	}
+
+	return array( $name, $width, $height ) ;
+}
+
+//---------------------------------------------------------
 // image class
 //---------------------------------------------------------
 function build_photo_name( $id, $ext, $extra=null )
@@ -1120,11 +1183,6 @@ function create_thumb_from_image_file( $src_file, $photo_id, $src_ext=null  )
 	return $this->_image_class->create_thumb_from_image_file( $src_file, $photo_id, $src_ext );
 }
 
-function create_thumb_icon( $photo_id, $photo_ext )
-{
-	return $this->_image_class->create_thumb_icon( $photo_id, $photo_ext );
-}
-
 function get_thumb_param()
 {
 	return $this->_image_class->get_thumb_param();
@@ -1133,11 +1191,6 @@ function get_thumb_param()
 function create_middle_from_image_file( $src_file, $photo_id, $src_ext=null )
 {
 	return $this->_image_class->create_middle_from_image_file( $src_file, $photo_id, $src_ext );
-}
-
-function create_middle_icon( $photo_id, $photo_ext )
-{
-	return $this->_image_class->create_middle_icon( $photo_id, $photo_ext );
 }
 
 function get_middle_param()

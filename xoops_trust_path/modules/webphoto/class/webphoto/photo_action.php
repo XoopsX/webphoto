@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.8 2008/11/20 11:15:46 ohwada Exp $
+// $Id: photo_action.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// item_time_publish
+// build_show_file_image()
 // 2008-11-16 K.OHWADA
 // BUG: not set external type
 // BUG: error twice
@@ -34,6 +37,8 @@ class webphoto_photo_action extends webphoto_photo_edit
 	var $_row_update   = null ;
 	var $_form_action  = null;
 	var $_is_none_type = false;
+
+	var $_special_ext = null ;
 
 	var $_redirect_time = 0 ;
 	var $_redirect_url  = null ;
@@ -268,16 +273,31 @@ function build_form_param( $mode )
 //---------------------------------------------------------
 function build_modify_row_by_post( $item_row, $flag_default=false )
 {
-	$post_preview              = $this->_post_class->get_post_text('preview');
-	$post_submit               = $this->_post_class->get_post_text('submit' );
-	$post_time_update_checkbox = $this->_post_class->get_post_int( 'item_time_update_checkbox' );
-	$post_time_update          = $this->_post_class->get_post_time('item_time_update' );
+	$post_preview               = $this->_post_class->get_post_text('preview');
+	$post_submit                = $this->_post_class->get_post_text('submit' );
+	$post_time_update_checkbox  = $this->_post_class->get_post_int( 'item_time_update_checkbox' );
+	$post_time_publish_checkbox = $this->_post_class->get_post_int( 'item_time_publish_checkbox' );
+	$post_time_expire_checkbox  = $this->_post_class->get_post_int( 'item_time_expire_checkbox' );
+	$post_time_update           = $this->get_server_time_by_post('item_time_update' );
+	$post_time_publish          = $this->get_server_time_by_post('item_time_publish' );
+	$post_time_expire           = $this->get_server_time_by_post('item_time_expire' );
+
+	$publish_checkbox = _C_WEBPHOTO_NO ;
+	$expire_checkbox  = _C_WEBPHOTO_NO ;
+	if ( $item_row['item_time_publish'] > 0 ) {
+		$publish_checkbox = _C_WEBPHOTO_YES ;
+	}
+	if ( $item_row['item_time_expire'] > 0 ) {
+		$expire_checkbox = _C_WEBPHOTO_YES ;
+	}
 
 	if ( $flag_default ) {
-		$this->set_checkbox_by_name( 'item_datetime_checkbox',    _C_WEBPHOTO_YES );	
-		$this->set_checkbox_by_name( 'item_time_update_checkbox', _C_WEBPHOTO_YES );
-		$this->set_checkbox_by_name( 'thumb_checkbox',            _C_WEBPHOTO_YES );
+		$this->set_checkbox_by_name( 'item_datetime_checkbox',     _C_WEBPHOTO_YES );	
+		$this->set_checkbox_by_name( 'item_time_update_checkbox',  _C_WEBPHOTO_YES );
+		$this->set_checkbox_by_name( 'item_time_publish_checkbox', $publish_checkbox );
+		$this->set_checkbox_by_name( 'item_time_expire_checkbox',  $expire_checkbox );
 		$this->set_tag_name_array( $this->tag_handler_tag_name_array( $this->_post_photo_id ) );
+
 	}
 
 	if ( $post_preview || $post_submit ) {
@@ -287,8 +307,19 @@ function build_modify_row_by_post( $item_row, $flag_default=false )
 // admin
 		if ( $this->_FLAG_ADMIN ) {
 			if ( $post_time_update_checkbox ) {
-				$item_row['item_time_update'] = $post_time_update;
+				$item_row['item_time_update'] = $post_time_update ;
 			}
+
+			$time_publish = 0 ;
+			$time_expire  = 0 ;
+			if ( $post_time_publish_checkbox ) {
+				$time_publish = $post_time_publish ;
+			}
+			if ( $post_time_expire_checkbox ) {
+				$time_expire = $post_time_expire ;
+			}
+			$item_row['item_time_publish'] = $time_publish ;
+			$item_row['item_time_expire']  = $time_expire ;
 
 // user
 		} else {
@@ -342,20 +373,28 @@ function build_img_thumb( $item_row )
 	$src = null;
 	$str = null;
 
-	$cont_url = $this->get_file_url_by_kind( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ;
+	$cont_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	$thumb_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
-	$thumb_url = $this->get_file_url_by_kind( 
-		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
+	list( $cont_url, $cont_width, $cont_height ) =
+		$this->build_show_file_image( $cont_row ) ;
+
+	list( $thumb_url, $thumb_width, $thumb_height ) =
+		$this->build_show_file_image( $thumb_row ) ;
 
 	if ( $thumb_url ) {
-		$src = $thumb_url ;
+		$src    = $thumb_url ;
+		$width  = $thumb_width ;
+		$height = $thumb_height ;
+
 	} elseif ( $cont_url && $this->is_image_kind( $item_row['item_kind'] ) ) {
-		$src = $cont_url ;
+		$src    = $cont_url ;
+		$width  = $cont_width ;
+		$height = $cont_height ;
 	}
 
 	if ( $src ) {
-		$str  = '<img src="'. $this->sanitize($src) .'" border="0" />'."\n";
+		$str  = '<img src="'. $this->sanitize($src) .'" width="'. $width .'" height="'. $height .'" border="0" />'."\n";
 		$str .= "<br />\n";
 	}
 
@@ -613,16 +652,13 @@ function build_update_item_row( $item_row, $file_params )
 {
 	$item_id  = $item_row['item_id'];
 
-	$file_ids = $this->_photo_class->insert_files_from_params(
+	$file_id_array = $this->_photo_class->insert_files_from_params(
 		$item_id,  $file_params );
 
-	$update_row = $this->_photo_class->build_update_item_row(
-		$item_row, $file_ids );
+	$playlist_cache = $this->get_playlist_cache_if_empty( $item_row );
 
-	if ( $this->is_admin_playlist_type() ) {
-		$update_row['item_playlist_cache'] = 
-			$this->_playlist_class->build_name( $item_id ) ;
-	}
+	$update_row = $this->_photo_class->build_update_item_row(
+		$item_row, $file_id_array, $playlist_cache, $this->_special_ext );
 
 // set by create_thumb_from_external
 	if ( empty( $update_row['item_external_thumb'] ) ) {
@@ -803,8 +839,28 @@ function playlist_to_title()
 	return $title ;
 }
 
+function get_playlist_cache_if_empty( $item_row )
+{
+	$item_id             = $item_row['item_id'] ;
+	$item_playlist_cache = $item_row['item_playlist_cache'] ;
+	$cache = null ;
+
+	if ( $this->is_admin_playlist_type() && 
+	     empty($tem_playlist_cache) ) {
+
+		$cache = $this->_playlist_class->build_name( $item_id ) ;
+	}
+
+	return $cache ;
+}
+
+//---------------------------------------------------------
+// create photo thumb 
+//---------------------------------------------------------
 function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, $is_submit )
 {
+	$this->_special_ext = null ;
+
 	$item_id = $item_row['item_id'] ;
 
 	$post_rotate = $this->_post_class->get_post( 'rotate' ) ;
@@ -833,13 +889,16 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 		$thumb_param = $this->create_thumb_param_by_tmp( $item_id, $thumb_name );
 
 	} elseif ( $is_submit && $this->is_external_type() ) {
-		$thumb_param = $this->create_thumb_from_external( $item_id );
+//		$thumb_param = $this->create_thumb_from_external( $item_id );
+		$this->prepare_external_thumb();
 
 	} elseif ( $is_submit && $this->is_embed_type() ) {
-		$thumb_param = $this->create_thumb_from_embed( $item_id );
+//		$thumb_param = $this->create_thumb_from_embed( $item_id );
+		$this->prepare_embed_thumb() ;
 
 	} elseif ( $is_submit && $this->is_admin_playlist_type() ) {
-		$thumb_param = $this->create_thumb_for_playlist( $item_id );
+//		$thumb_param = $this->create_thumb_for_playlist( $item_id );
+		$this->prepare_playlist_thumb();
 
 	} elseif ( is_array($cont_param) ) {
 		$thumb_param = $this->create_thumb_param_by_param( $cont_param );
@@ -867,6 +926,36 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 	$this->_file_params['middle'] = $middle_param ;
 
 	return 0;
+}
+
+function prepare_external_thumb()
+{
+// image type
+	if ( $this->is_image_ext( $this->_item_ext ) && $this->_item_external_url ) {
+		$this->set_item_external_thumb( $this->_item_external_url );
+
+	} elseif ( empty( $this->_item_ext ) ) {
+		$this->_special_ext = $this->_EXTERNAL_THUMB_EXT_DEFAULT ;
+	}
+}
+
+function prepare_embed_thumb()
+{
+	$thumb = $this->_embed_class->build_thumb( 
+		$this->_item_embed_type, $this->_item_embed_src );
+
+// plugin thumb
+	if ( $thumb ) {
+		$this->set_item_external_thumb( $thumb );
+
+	} else {
+		$this->_special_ext = $this->_EMBED_THUMB_EXT_DEFAULT ;
+	}
+}
+
+function prepare_playlist_thumb()
+{
+	$this->_special_ext = $this->_PLAYLIST_THUMB_EXT_DEFAULT ;
 }
 
 function build_photo_param( $item_row, $photo_name, $thumb_name, $rotate )
@@ -966,11 +1055,8 @@ function modify_exec( $item_row )
 	$thumb_tmp_name = null;
 	$image_info     = null;
 
-	$cont_id   = 0 ;
-	$thumb_id  = 0 ;
-	$middle_id = 0 ;
-	$flash_id  = 0 ;
-	$docomo_id = 0 ;
+	$file_id_array  = null ;
+	$cont_id        = 0 ;
 
 	$this->clear_msg_array();
 
@@ -1017,40 +1103,18 @@ function modify_exec( $item_row )
 	if ( is_array($file_params) ) {
 		$file_id_array = $this->update_files_from_params( $item_row, $file_params );
 		$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
-		$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
-		$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
-		$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
-		$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
-	}
-
-	if ( $cont_id == 0 ) {
-		$this->update_all_file_duration( $item_row );
 	}
 
 	$row_update = $this->build_update_row_by_post( $item_row );
 
-	if ( $cont_id > 0 ) {
-		$row_update[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
-	}
-	if ( $thumb_id > 0 ) {
-		$row_update[ _C_WEBPHOTO_ITEM_FILE_THUMB ] = $thumb_id;
-	}
-	if ( $middle_id > 0 ) {
-		$row_update[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
-	}
-	if ( $flash_id > 0 ) {
-		$row_update[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = $flash_id;
-	}
-	if ( $docomo_id > 0 ) {
-		$row_update[ _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO ] = $docomo_id;
-	}
+	$playlist_cache = $this->get_playlist_cache_if_empty( $row_update );
 
-// set if empty
-	if ( $this->is_admin_playlist_type() && 
-	     empty( $row_update['item_playlist_cache'] ) ) {
+	$row_update = $this->_photo_class->build_update_item_row( 
+		$row_update, $file_id_array, $playlist_cache );
 
-		$update_row['item_playlist_cache'] = 
-			$this->_playlist_class->build_name( $item_id ) ;
+// update all file tables
+	if ( $cont_id == 0 ) {
+		$this->update_all_file_duration( $item_row );
 	}
 
 	$ret = $this->_item_handler->update( $row_update );
@@ -1083,7 +1147,7 @@ function build_update_row_by_post( $item_row )
 	$row_update = $this->build_modify_row_by_post( $item_row, false );
 
 	$row_update['item_status'] = 
-		$this->build_modify_status( $item_row['item_status'] );
+		$this->build_modify_status( $row_update );
 
 	$row_update['item_search'] = $this->build_search_for_edit( 
 		$row_update, $this->get_tag_name_array() );
@@ -1091,10 +1155,19 @@ function build_update_row_by_post( $item_row )
 	return $row_update;
 }
 
-function build_modify_status( $current_status )
+function build_modify_status( $item_row )
 {
-	$post_valid = $this->_post_class->get_post_int('valid');
-	$new_status = $current_status ;
+	$post_valid  = $this->_post_class->get_post_int('valid');
+	$post_status = $this->_post_class->get_post_int('item_status');
+
+	$current_status = $item_row['item_status'] ;
+	$time_publish   = $item_row['item_time_publish'] ;
+
+	if ( $this->_FLAG_ADMIN ) {
+		$new_status = $post_status ;
+	} else {
+		$new_status = $current_status ;
+	}
 
 	switch ( $current_status ) 
 	{
@@ -1109,6 +1182,24 @@ function build_modify_status( $current_status )
 			break;
 
 		case _C_WEBPHOTO_STATUS_UPDATED :
+		case _C_WEBPHOTO_STATUS_OFFLINE :
+		case _C_WEBPHOTO_STATUS_EXPIRED :
+		default:
+			break;
+	}
+
+	switch ( $new_status ) 
+	{
+		case _C_WEBPHOTO_STATUS_APPROVED : 
+		case _C_WEBPHOTO_STATUS_UPDATED :
+			if (   $this->_FLAG_ADMIN  &&
+			     ( $time_publish > 0 ) &&
+				 ( $time_publish > time() ) ) {
+				$new_status = _C_WEBPHOTO_STATUS_OFFLINE ;
+			}
+			break;
+
+		case _C_WEBPHOTO_STATUS_WAITING : 
 		case _C_WEBPHOTO_STATUS_OFFLINE :
 		case _C_WEBPHOTO_STATUS_EXPIRED :
 		default:
@@ -1212,8 +1303,13 @@ function update_photo_no_image( $item_row )
 
 function update_all_file_duration( $item_row )
 {
-	$duration      = $this->get_item_duration();
-	$cont_duration = $this->get_file_cont_duration( $item_row ); 
+	$duration = $this->get_item_duration();
+
+	$cont_duration = 0 ; 
+	$cont_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( is_array($cont_row) ) {
+		$cont_duration = $cont_row['file_duration'] ;
+	}
 
 	if ( $duration != $cont_duration ) {
 		$this->update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_CONT );

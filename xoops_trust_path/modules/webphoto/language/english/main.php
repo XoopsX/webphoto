@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.17 2008/11/19 10:26:00 ohwada Exp $
+// $Id: main.php,v 1.18 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -603,7 +603,9 @@ define("_WEBPHOTO_CAP_PHOTO_SELECT","Select the main image");
 define("_WEBPHOTO_CAP_THUMB_SELECT", "Select the thumb image");
 define("_WEBPHOTO_DSC_THUMB_SELECT", "create from the main image, when not select");
 define("_WEBPHOTO_DSC_SET_DATETIME",  "Set photo datetime");
-define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "Set update time");
+
+//define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "Set update time");
+
 define("_WEBPHOTO_DSC_PIXCEL_RESIZE", "Resize automatically if bigger than this size");
 define("_WEBPHOTO_DSC_PIXCEL_REJECT", "Cannot upload if bigger than this size");
 define("_WEBPHOTO_BUTTON_CLEAR", "Clear");
@@ -1201,7 +1203,8 @@ define("_WEBPHOTO_OR",  "OR" ) ;
 // v0.60
 //---------------------------------------------------------
 // item table
-define("_WEBPHOTO_ITEM_ICON" , "Icon Name" ) ;
+//define("_WEBPHOTO_ITEM_ICON" , "Icon Name" ) ;
+
 define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "External Middle URL" ) ;
 
 // cat table
@@ -1241,6 +1244,19 @@ define("_WEBPHOTO_DOWNLOAD","Download");
 
 // file_read
 define("_WEBPHOTO_NO_FILE", "Not exist file");
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_ICON_NAME" ,   "Icon Name" ) ;
+define("_WEBPHOTO_ITEM_ICON_WIDTH" ,  "Icon Width" ) ;
+define("_WEBPHOTO_ITEM_ICON_HEIGHT" , "Icon Height" ) ;
+
+// item form
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE",  "Set update time");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_PUBLISH", "Set publish time");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_EXPIRE",  "Set expire time");
 
 // === define end ===
 }

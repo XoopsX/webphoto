@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.16 2008/11/21 07:56:57 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.17 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _build_file_url()
 // 2008-11-16 K.OHWADA
 // _build_ele_codeinfo()
 // image -> image_tmp
@@ -77,12 +79,14 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
-
+	var $_VODEO_THUMB_MAX   = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
+	
 	var $_DETAIL_DIV_NAME = 'webphoto_detail';
 	var $_GMAP_DIV_NAME   = 'webphoto_gmap_iframe';
 	var $_GMAP_STYLE      = 'background-color: #ffffff; ';
 	var $_GMAP_WIDTH      = '100%';
 	var $_GMAP_HEIGHT     = '650px';
+	var $_ICON_DIV_STYLE  = 'border: #808080 1px solid; padding: 1px; width:80%; ' ;
 
 	var $_THIS_SUBMIT_FCT       = 'submit';
 	var $_THIS_FILE_FCT         = 'submit_file';
@@ -539,10 +543,7 @@ function _build_input_hidden_max_file_size()
 
 function _build_ele_photo_file( $cont_row )
 {
-	$url = '' ;
-	if ( isset($cont_row['file_url']) ) {
-		$url = $cont_row['file_url'] ;
-	}
+	$url  = $this->_build_file_url( $cont_row ) ;
 
 	$ele  = $this->build_form_file( $this->_PHOTO_FIELD_NAME );
 	$ele .= "<br />\n";
@@ -568,10 +569,10 @@ function _build_ele_photo_file_external( $cont_row )
 
 function _build_ele_thumb_file_external( $thumb_row )
 {
-	$name = 'item_external_thumb';
-
-	$ele = $this->_build_file_external( 
-		$name, $this->_THUMB_FIELD_NAME, $thumb_row );
+	$name_external = 'item_external_thumb';
+	$name_icon     = 'item_icon_name';
+	$value_icon    = $this->get_row_by_key( $name_icon );
+	$url_icon      = $this->_ROOT_EXTS_URL .'/'. $value_icon ;
 
 	$desc = null;
 	$value_type = $this->_get_embed_type( false );
@@ -582,13 +583,32 @@ function _build_ele_thumb_file_external( $thumb_row )
 		}
 	}
 
+	$link_file = $this->_build_file_link( $name_external, $this->_THUMB_FIELD_NAME, $thumb_row );
+
+	$ele  = $this->_build_file_external( 
+		$name_external, $this->_THUMB_FIELD_NAME, $thumb_row );
+
+// icon name
+	if ( empty($link_file) && $value_icon ) {
+		$ele .= $this->get_constant('OR')." ";
+		$ele .= "ICON NAME <br />\n" ;
+		$ele .= '<div style="'. $this->_ICON_DIV_STYLE .'">';
+		$ele .= $value_icon ;
+		$ele .= "</div><br />\n" ;
+	}
+
 	if ( $desc ) {
 		$ele .= $desc ;
 	} elseif ( empty($desc) && $this->_cfg_makethumb ) {
 		$ele .= $this->get_constant('DSC_THUMB_SELECT') ."<br />\n";
 	}
 
-	$ele .= $this->_build_file_link( $name, $this->_THUMB_FIELD_NAME, $thumb_row );
+	if ( $link_file ) {
+		$ele .= $link_file ;
+
+	} elseif ( $value_icon ) {
+		$ele .= $this->_build_link( $url_icon ) ;
+	}
 
 	return $ele;
 }
@@ -609,13 +629,9 @@ function _build_ele_middle_file_external( $middle_row )
 	return $ele;
 }
 
-function _build_file_external( $name, $field, $row )
+function _build_file_external( $name, $field, $file_row )
 {
-	$url = '' ;
-	if ( isset($row['file_url']) ) {
-		$url = $row['file_url'] ;
-	}
-
+	$url   = $this->_build_file_url( $file_row ) ;
 	$value = $this->get_row_by_key( $name );
 
 	$ele  = '';
@@ -632,12 +648,9 @@ function _build_file_external( $name, $field, $row )
 	return $ele;
 }
 
-function _build_file_link( $name, $field, $row )
+function _build_file_link( $name, $field, $file_row )
 {
-	$url = '' ;
-	if ( isset($row['file_url']) ) {
-		$url = $row['file_url'] ;
-	}
+	$url = $this->_build_file_url( $file_row ) ;
 
 // BUG: sanitize twice
 	$value = $this->get_row_by_key( $name, null, false );
@@ -655,6 +668,25 @@ function _build_file_link( $name, $field, $row )
 	}
 
 	return $ele;
+}
+
+function _build_file_url( $file_row )
+{
+	$url = '' ;
+	if ( ! is_array($file_row) ) {
+		return $url;
+	}
+
+	$url  = $file_row['file_url'] ;
+	$path = $file_row['file_path'] ;
+
+	$full_path = XOOPS_ROOT_PATH .'/'. $path ;
+	$full_url  = XOOPS_URL       .'/'. $path ;
+
+	if ( $path && file_exists( $full_path ) ) {
+		$url = $full_url ;
+	}
+	return $url;
 }
 
 function _build_ele_tags( $param )
@@ -1094,9 +1126,14 @@ function print_form_delete_confirm( $mode, $item_id )
 //---------------------------------------------------------
 function print_form_video_thumb( $mode, $row )
 {
-	$video_class =& webphoto_video::getInstance( $this->_DIRNAME );
+	$photo_class =& webphoto_photo_create::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+//	$video_class =& webphoto_video::getInstance( 
+//		$this->_DIRNAME );
 
 	$item_id = $row['item_id'];
+	$ext     = $row['item_ext'];
 
 	switch ($mode)
 	{
@@ -1119,7 +1156,9 @@ function print_form_video_thumb( $mode, $row )
 			break;
 	}
 
-	$max = $video_class->get_thumb_plural_max();
+//	$max = $video_class->get_thumb_plural_max();
+	$MAX = $this->_VODEO_THUMB_MAX;
+	$colspan = $MAX + 1 ;
 
 	echo $this->build_form_begin();
 	echo $this->build_input_hidden( 'op',       'video' );
@@ -1129,37 +1168,51 @@ function print_form_video_thumb( $mode, $row )
 	echo $this->build_input_hidden( 'photo_id', $item_id );
 
 	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), ( $max + 1 ) );
+	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), $colspan );
 	echo "<tr>\n";
 
-	for ( $i=0; $i<=$max; $i++ ) 
+	for ( $i = 0; $i <= $MAX; $i ++ ) 
 	{
-		$width = $this->_VIDEO_THUMB_WIDTH ;
+
+// default icon
 		if ( $i == 0 ) {
-			$width = $this->_VIDEO_ICON_WIDTH ;
-		}
+			list( $name, $width, $height ) = 
+				$photo_class->build_icon_image( $ext );
+			if ( $name ) {
+				$url = $this->_ROOT_EXTS_URL .'/'. $name ;
+				$this->print_form_video_thumb_single( $url, $width, $i );
+			}
 
-	 	$name = $video_class->build_thumb_name( $item_id, $i, true );
-		$file = $this->_TMP_DIR .'/'. $name ;
+// created thumbs
+		} else {
+		 	$name  = $photo_class->build_video_thumb_name( $item_id, $i );
+			$file  = $this->_TMP_DIR .'/'. $name ;
+			$width = $this->_VIDEO_THUMB_WIDTH ;
 
-		if ( is_file($file) ) {
-			$name_encode = rawurlencode( $name );
-			$url = $this->_MODULE_URL.'/index.php?fct=image_tmp&amp;name='. $name_encode ;
-			echo '<td align="center" class="odd">';
-			echo '<img src="'. $url .'" width="'. $width .'"><br />';
-			echo '<input type="radio" name="name" value="'. $name_encode .'" />';
-			echo "</td>\n";
+			if ( is_file($file) ) {
+				$name_encode = rawurlencode( $name );
+				$url = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. $name_encode ;
+				$this->print_form_video_thumb_single( $url, $width, $i );
+			}
 		}
 	}
 
 	echo "</tr>\n";
-	echo '<tr><td align="center" class="head" colspan="'. ($max + 1) .'">';
+	echo '<tr><td align="center" class="head" colspan="'. $colspan .'">';
 	echo '<input type="submit" name="submit" value="'.$this->get_constant('BUTTON_SELECT').'" />';
 	echo "</td></tr>\n";
 
 	echo $this->build_table_end();
 	echo $this->build_form_end();
 
+}
+
+function print_form_video_thumb_single( $url, $width, $num )
+{
+	echo '<td align="center" class="odd">';
+	echo '<img src="'. $this->sanitize($url) .'" width="'. $width .'"><br />';
+	echo '<input type="radio" name="num" value="'. $num .'" />';
+	echo "</td>\n";
 }
 
 //---------------------------------------------------------

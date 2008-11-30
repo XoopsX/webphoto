@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.3 2008/11/20 11:15:46 ohwada Exp $
+// $Id: flash_player.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// BUG: not show external swf 
 // 2008-11-16 K.OHWADA
 // load_movie() -> build_movie()
 // build_embedlink()
@@ -103,6 +105,8 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function build_movie( $param )
 {
+echo " build_movie( $param ) ";
+
 	if ( ! is_array($param) ) {
 		return false ;
 	}
@@ -170,14 +174,11 @@ function build_code_embed( $param )
 	$item_id     = $item_row['item_id'];
 	$player_id   = $item_row['item_player_id'];
 	$flashvar_id = $item_row['item_flashvar_id'];
-	$displaytype = $item_row['item_displaytype'];
-
-	$file_cont_url  = $this->get_file_url( $cont_row ) ;
 
 	$config_url = $this->_MODULE_URL.'/index.php?fct=flash_config&item_id='.$item_id;
 
 	list( $player_sel, $flashplayer ) = 
-		$this->get_player( $displaytype, $file_cont_url );
+		$this->get_player( $item_row, $cont_row );
 
 	if ( $player_sel == 0 ) {
 		return false ;
@@ -243,7 +244,6 @@ function set_variables_in_buffer( $param )
 	$siteurl       = $item_row['item_siteurl'];
 	$showinfo      = $item_row['item_showinfo'];
 	$perm_down     = $item_row['item_perm_down'];
-	$displaytype   = $item_row['item_displaytype'];
 	$external_url  = $item_row['item_external_url'];
 	$embed_type    = $item_row['item_embed_type'];
 	$embed_src     = $item_row['item_embed_src'];
@@ -349,7 +349,7 @@ function set_variables_in_buffer( $param )
 	$this->_player_style = $player_style ;
 
 	list( $player_sel, $flashplayer ) =
-		$this->get_player( $displaytype, $file_cont_url ) ;
+		$this->get_player( $item_row, $cont_row ) ;
 
 	switch ( $player_sel )
 	{
@@ -637,22 +637,39 @@ function build_embedjs( $item_id, $flashplayer, $width, $height, $config )
 //---------------------------------------------------------
 // utility
 //---------------------------------------------------------
-function get_file_url( $row )
+function get_file_url( $file_row )
 {
-	if ( isset( $row['file_url'] ) && $row['file_url'] ) {
-		return  $row['file_url'];
+	$url = null ;
+	if ( is_array($file_row) ) {
+		$url    = $file_row['file_url'] ;
+		$path   = $file_row['file_path'] ;
+		if ( $path ) {
+			$url = XOOPS_URL .'/'. $path ;
+		}
 	}
-	return null;
+	return $url ;
 }
 
-function get_player( $displaytype, $file_cont_url )
+// BUG: not show external swf 
+function get_player( $item_row, $cont_row )
 {
 	$sel    = 0 ;
 	$player = null;
+	$file   = null ;
 
-	if ( ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) && $file_cont_url ) {
+	$displaytype   = $item_row['item_displaytype'];
+	$external_url  = $item_row['item_external_url'];
+	$file_cont_url = $this->get_file_url( $cont_row ) ;
+
+	if ( $file_cont_url ) {
+		$file = $file_cont_url ;
+	} elseif ( $external_url ) {
+		$file = $external_url;
+	}
+
+	if ( ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) && $file ) {
 		$sel    = $displaytype ;
-		$player = $file_cont_url ;
+		$player = $file ;
 
 	} elseif ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ) {
 		$sel    = $displaytype ;

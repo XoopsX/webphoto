@@ -1,10 +1,16 @@
 <?php
-// $Id: file_handler.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: file_handler.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-29 K.OHWADA
+// build_show_file_image()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -165,6 +171,28 @@ function delete_by_itemid( $item_id )
 	$sql  = 'DELETE FROM '. $this->_table;
 	$sql .= ' WHERE file_item_id='. intval($item_id);
 	return $this->query( $sql );
+}
+
+//---------------------------------------------------------
+// show
+//---------------------------------------------------------
+function build_show_file_image( $file_row )
+{
+	$url    = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	if ( is_array($file_row) ) {
+		$url    = $file_row['file_url'] ;
+		$path   = $file_row['file_path'] ;
+		$width  = $file_row['file_width'] ;
+		$height = $file_row['file_height'] ;
+		if ( $path ) {
+			$url = XOOPS_URL .'/'. $path ;
+		}
+	}
+
+	return array( $url, $width, $height );
 }
 
 // --- class end ---

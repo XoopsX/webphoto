@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// check_file_time()
 // 2008-11-08 K.OHWADA
 // TMP_DIR -> MAIL_DIR
 // 2008-08-24 K.OHWADA
@@ -121,9 +123,6 @@ function retrieve()
 		return _C_WEBPHOTO_RETRIEVE_CODE_ACCESS_TIME ;
 	}
 
-// set time before execute
-	$this->renew_access_time();
-
 	$ret = $this->retrieve_exec();
 
 // set time after execute
@@ -134,26 +133,14 @@ function retrieve()
 
 function check_access_time()
 {
-// if passing access interval time
-	if ( file_exists( $this->_FILE_ACCESS ) ) {
-		$time = intval( trim( file_get_contents( $this->_FILE_ACCESS ) ) );
-		if ( ( $time > 0 ) && 
-		     ( time() > ( $time + $this->_TIME_ACCESS ) ) ) {
-			return true;
-		}
-
-// if not exists file ( at first time )
-	} else {
-		return true;
-	}
-
-	return false;
+	return $this->_utility_class->check_file_time( 
+		$this->_FILE_ACCESS, $this->_TIME_ACCESS );
 }
 
 function renew_access_time()
 {
-	$this->_utility_class->write_file( 
-		$this->_FILE_ACCESS, time(), 'w', $this->_flag_retrive_chmod );
+	$this->_utility_class->renew_file_time(  
+		$this->_FILE_ACCESS, $this->_flag_retrive_chmod );
 }
 
 function retrieve_exec()

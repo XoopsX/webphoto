@@ -1,10 +1,16 @@
 <?php
-// $Id: functions.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: functions.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-29 K.OHWADA
+// b_webphoto_catlist_show()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -57,6 +63,30 @@ function b_webphoto_rphoto_edit( $options )
 {
 	$inc_class =& webphoto_inc_blocks::getInstance();
 	return $inc_class->rphoto_edit( $options );
+}
+
+function b_webphoto_catlist_show( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->catlist_show( $options );
+}
+
+function b_webphoto_catlist_edit( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->catlist_edit( $options );
+}
+
+function b_webphoto_tagcloud_show( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->tagcloud_show( $options );
+}
+
+function b_webphoto_tagcloud_edit( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->tagcloud_edit( $options );
 }
 
 ?>

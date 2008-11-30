@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: item_manager.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _list_status()
+// _get_photo_url()
 // 2008-11-16 K.OHWADA
 // load_movie() -> build_movie()
 // 2008-11-08 K.OHWADA
@@ -88,6 +91,14 @@ function main()
 	{
 	case 'list_waiting':
 		$this->_list_waiting();
+		break;
+
+	case 'list_offline':
+		$this->_list_offline();
+		break;
+
+	case 'list_expired':
+		$this->_list_expired();
 		break;
 
 	case 'submit_form':
@@ -235,13 +246,19 @@ function _menu()
 	$item_rows = $this->_item_handler->get_rows_by_orderby( $orderby, $perpage, $start );
 
 // Waiting Admission
-	echo $this->build_check_waiting();
-	echo "<br />\n";
+//	echo $this->build_check_waiting();
+//	echo "<br />\n";
 
 	$form_class->print_form_refresh_cache();
 	echo "<br />\n";
 
 	$form_class->print_form_select_item( $item_id, $sort );
+	echo "<br />\n";
+
+	$this->_print_menu_status( _C_WEBPHOTO_STATUS_WAITING, 'waiting', false );
+	echo $this->build_check_waiting();
+	$this->_print_menu_status( _C_WEBPHOTO_STATUS_OFFLINE, 'offline', true );
+	$this->_print_menu_status( _C_WEBPHOTO_STATUS_EXPIRED, 'expired', true );
 	echo "<br />\n";
 
 	$this->_print_list_table( 'all', $item_rows );
@@ -258,6 +275,21 @@ function _get_perpage()
 		$perpage = $this->_PERPAGE_DEFAULT ;
 	}
 	return $perpage ;
+}
+
+function _print_menu_status( $status, $mode, $flag_br )
+{
+	$url = $this->_MODULE_URL.'/admin/index.php?fct=item_manager&amp;op=list_'.$mode ;
+	$count = $this->_item_handler->get_count_status( $status );
+
+	$str  = '- <a href="'. $url .'" >';
+	$str .= $this->get_admin_title( $mode ) ;
+	$str .= "</a>";
+	$str .= " (". $count .") \n";
+	if ( $flag_br ) {
+		$str .= "<br />\n";
+	}
+	echo $str;
 }
 
 function _print_list_table( $mode, $item_rows )
@@ -332,26 +364,19 @@ function _print_list_table( $mode, $item_rows )
 		list( $is_online, $status_report, $status_link, $status_icon )
 			= $this->_build_status( $row );
 
-		$catpath = $this->_cat_handler->get_nice_path_from_id( $cat_id, 'cat_title', $cat_func_url );
-
-		$playerpath  = '<a href="'. $player_url.'/'.$player_id .'" title="'. _AM_WEBPHOTO_PLAYER_MOD .'">';
-		$playerpath .= $player_id.'</a>'."\n";
-
-		if ( $is_online ) {
-			$photo_url = $this->_MODULE_URL.'/index.php?fct=photo&amp;photo_id='.$item_id ;
-		} else {
-			$photo_url = $this->sanitize( $this->_get_cont_url( $row ) );
-		}
+		$catpath      = $this->_cat_handler->get_nice_path_from_id( $cat_id, 'cat_title', $cat_func_url );
+		$photo_url_s  = $this->sanitize( $this->_get_photo_url( $row, $is_online ) );
+		$player_link  = '<a href="'. $player_url.'/'.$player_id .'" title="'. _AM_WEBPHOTO_PLAYER_MOD .'">';
+		$player_link .= $player_id.'</a>'."\n";
 
 		echo '<tr class="even" colspan="13">'."\n";
-
 		echo '<td align="center">';
 
 		if ( $is_waiting ) {
 			echo '<input type="checkbox" name="ids[]" value="'. $item_id .'" />';
 
 		} else {
-			echo $this->_build_link( $item_id, 'modify_form', 'edit.png',   _EDIT );
+//			echo $this->_build_link( $item_id, 'modify_form', 'edit.png',   _EDIT );
 //			echo $this->_build_link( $item_id, 'delete',      'delete.png', _DELETE );
 			echo '<a href="'.$status_link.'" title="'.$status_report.'">';
 			echo $this->_build_img_icon( $status_icon );
@@ -361,11 +386,12 @@ function _print_list_table( $mode, $item_rows )
 		echo '</td>'."\n";
 
 		echo '<td>';
+		echo $this->_build_link( $item_id, 'modify_form', 'edit.png',   _EDIT );
 		echo $this->_build_ahref_onclick( $item_id, 'modify_form', _EDIT, $item_id );
 		echo '</td>'."\n";
 
 		echo '<td width="18%">';
-		echo '<a href="'. $photo_url .'" title="'. _AM_WEBPHOTO_ITEM_LISTING .'" target="_blank">';
+		echo '<a href="'. $photo_url_s .'" title="'. _AM_WEBPHOTO_ITEM_LISTING .'" target="_blank">';
 		echo $this->sanitize( $row['item_title'] ) ;
 		echo '</a>'."\n";
 		echo '</td>'."\n";
@@ -373,9 +399,9 @@ function _print_list_table( $mode, $item_rows )
 		echo '<td>'. $kind_options[ $row['item_kind'] ] .'</td>'."\n";
 		echo '<td>'. $this->sanitize( $row['item_ext'] ).'</td>'."\n";
 		echo '<td>'. $catpath.'</td>'."\n";
-		echo '<td>'. $playerpath.'</td>'."\n";
-		echo '<td>'. formatTimestamp( $row['item_time_create'] , 'm' ).'</td>'."\n";
-		echo '<td>'. formatTimestamp( $row['item_time_update'] , 'm' ).'</td>'."\n";
+		echo '<td>'. $player_link.'</td>'."\n";
+		echo '<td>'. $this->format_timestamp( $row['item_time_create'] , 'm' ).'</td>'."\n";
+		echo '<td>'. $this->format_timestamp( $row['item_time_update'] , 'm' ).'</td>'."\n";
 		echo '<td>'. $row['item_hits'] .'</td>'."\n";
 		echo '<td>'. $row['item_views'] .'</td>'."\n";
 		echo '<td>'. $row['item_rating'] .'</td>'."\n";
@@ -414,13 +440,30 @@ function _print_list_table( $mode, $item_rows )
 
 function _print_list_navi( $total_all, $perpage )
 {
-	$start   = $this->_post_class->get_get_int('start');
-	$sort    = $this->_post_class->get_get_text('sort');
-	$navi_extra = 'fct='.$this->_THIS_FCT.'&amp;sort='.$sort.'&amp;perpage='.$perpage;
+	$op    = $this->_post_class->get_post_get_text('op' );
+	$start = $this->_post_class->get_get_int('start');
+	$sort  = $this->_post_class->get_get_text('sort');
+	$navi_extra = 'fct='.$this->_THIS_FCT.'&amp;op='.$op.'&amp;sort='.$sort.'&amp;perpage='.$perpage;
 
 	$pagenavi_class =& webphoto_lib_pagenavi::getInstance();
 	$pagenavi_class->XoopsPageNav( $total_all, $perpage, $start, 'start', $navi_extra );
 	echo $pagenavi_class->renderNav();
+}
+
+function _get_photo_url( $item_row, $is_online )
+{
+	$item_id      = $item_row['item_id'] ;
+	$external_url = $item_row['item_external_url'] ;
+
+	if ( $is_online ) {
+		$url = $this->_MODULE_URL.'/index.php?fct=photo&photo_id='.$item_id ;
+	} else {
+		$url = $this->_get_cont_url( $item_row );
+		if ( empty( $url ) ) {
+			$url = $external_url ;
+		}
+	}
+	return $url;
 }
 
 function _get_cont_url( $item_row )
@@ -428,9 +471,11 @@ function _get_cont_url( $item_row )
 	$url = null ;
 	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 	if ( is_array($cont_row) ) {
-		$url = $cont_row['file_url'] ;
-	} else {
-		$url = $item_row['item_external_url'] ;
+		$url  = $cont_row['file_url'] ;
+		$path = $cont_row['file_path'] ;
+		if ( $path ) {
+			$url = XOOPS_URL .'/'. $path ;
+		}
 	}
 	return $url;
 }
@@ -463,48 +508,54 @@ function _build_status( $row )
 // Entry will Auto-Publish
 		if ( ($publish > 0) && ($publish < time()) ) {
 			$is_online = true ;
-			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '.formatTimestamp($publish,'m');
+			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($publish,'m');
 			$link   = $photo_url ;
 			$icon   = 'online.png';
 
 			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_APPROVED, true ) ;
 
-		} elseif ( $publish > 0 ) {
-			$report = _AM_WEBPHOTO_STATUS_AUTO.' : '.formatTimestamp($publish,'m');
-			$link   = $modify_url ;
-			$icon   = 'offline.png';
-			$this->autoPublish( $row );
+//		} elseif ( $publish > 0 ) {
+//			$report = _AM_WEBPHOTO_STATUS_AUTO.' : '. $this->format_timestamp($publish,'m');
+//			$link   = $modify_url ;
+//			$icon   = 'offline.png';
+//			$this->autoPublish( $row );
 
 		} else {
 			$report = _AM_WEBPHOTO_STATUS_OFFLINE ;
-			$link   = $modify_url ;
+			$link   = $this->_THIS_URL.'&amp;op=list_offline';
+//			$link   = $modify_url ;
 			$icon   = 'offline.png';   	           
 		}
 		break;
 
 	case _C_WEBPHOTO_STATUS_EXPIRED :
-		$report = _WEBPHOTO_ITEM_STATUS_EXPIRED.' : '.formatTimestamp($expire,'m');
-		$link   = $modify_url ;
+		$report = _WEBPHOTO_ITEM_STATUS_EXPIRED.' : '. $this->format_timestamp($expire,'m');
+//		$link   = $modify_url ;
+		$link   = $this->_THIS_URL.'&amp;op=list_expired';
 		$icon   = 'offline.png'; 
 		break;
 
 	case _C_WEBPHOTO_STATUS_APPROVED :
 	case _C_WEBPHOTO_STATUS_UPDATED  :
 	default :
-		$is_online = true ;
-		$report = _AM_WEBPHOTO_STATUS_ONLINE;
-		$link   = $photo_url ;
-		$icon   = 'online.png';
-		break;
-	}
-
 // Entry has Expired
-	if ( ($expire > 0) && ($expire < time()) ) {
-		$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '.formatTimestamp($expire,'m');
-		$link   = $modify_url ;
-		$icon   = 'offline.png';   
+		if ( ($expire > 0) && ($expire < time()) ) {
+			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($expire,'m');
+//			$link   = $modify_url ;
+			$link   = $this->_THIS_URL.'&amp;op=list_expired';
 
-		$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, true ) ;
+			$icon   = 'offline.png';   
+
+			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, true ) ;
+
+// online
+		} else {
+			$is_online = true ;
+			$report = _AM_WEBPHOTO_STATUS_ONLINE;
+			$link   = $photo_url ;
+			$icon   = 'online.png';
+		}
+		break;
 	}
 
 	return array( $is_online, $report, $link, $icon );
@@ -542,7 +593,7 @@ function _build_button( $op, $value )
 //---------------------------------------------------------
 // list waiting
 //---------------------------------------------------------
-function _list_waiting()
+function XXX_list_waiting()
 {
 	$total = $this->_item_handler->get_count_waiting();
 
@@ -556,6 +607,45 @@ function _list_waiting()
 	} else {
 		$item_rows = $this->_item_handler->get_rows_waiting();
 		$this->_print_list_table( 'waiting', $item_rows );
+	}
+
+	xoops_cp_footer();
+	exit();
+}
+
+function _list_waiting()
+{
+	$this->_list_status( _C_WEBPHOTO_STATUS_WAITING, 'waiting' );
+}
+
+function _list_offline()
+{
+	$this->_list_status( _C_WEBPHOTO_STATUS_OFFLINE, 'offline' );
+}
+
+function _list_expired()
+{
+	$this->_list_status( _C_WEBPHOTO_STATUS_EXPIRED, 'expired' );
+}
+
+function _list_status( $status, $mode )
+{
+	$start   = $this->_post_class->get_get_int('start');
+	$perpage = $this->_get_perpage();
+
+	$total = $this->_item_handler->get_count_status( $status );
+
+	xoops_cp_header();
+	echo $this->_build_bread_crumb();
+	echo $this->build_admin_title( $mode );
+
+	if ( $total == 0 ) {
+		echo _AM_WEBPHOTO_ERR_NO_RECORD ."<br />\n";
+
+	} else {
+		$item_rows = $this->_item_handler->get_rows_status( $status, $perpage, $start );
+		$this->_print_list_table( $mode, $item_rows );
+		$this->_print_list_navi( $total, $perpage );
 	}
 
 	xoops_cp_footer();
@@ -838,8 +928,6 @@ function _modify()
 	xoops_cp_footer();
 	exit();
 }
-
-
 
 //---------------------------------------------------------
 // approve

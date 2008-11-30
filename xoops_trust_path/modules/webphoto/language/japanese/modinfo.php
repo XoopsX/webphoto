@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: modinfo.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -205,7 +205,8 @@ define($constpref."SMNAME_HIGHRATE","トップランク");
 define($constpref."SMNAME_MYPHOTO","自分の投稿");
 
 // Names of admin menu items
-define($constpref."ADMENU_ADMISSION","投稿された画像の承認");
+//define($constpref."ADMENU_ADMISSION","投稿された画像の承認");
+
 define($constpref."ADMENU_PHOTOMANAGER","画像管理");
 define($constpref."ADMENU_CATMANAGER","カテゴリ管理");
 define($constpref."ADMENU_CHECKCONFIGS","動作チェッカー");
@@ -303,6 +304,12 @@ define($constpref."CFG_CSUB_WIDTH" ,  "サブカテゴリに表示する画像の幅と高さ" ) ;
 define($constpref."CFG_GICON_WIDTH" ,  "GoogleMap アイコン画像の幅と高さ" ) ;
 define($constpref."CFG_JPEG_QUALITY" ,  "JPEG 品質" ) ;
 define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />画像処理パッケージとしてGDを選択した時のみ意味を持ちます" ) ;
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define($constpref."BNAME_CATLIST"  , "カテゴリ一覧" ) ;
+define($constpref."BNAME_TAGCLOUD" , "タグ一覧" ) ;
 
 }
 // === define begin ===

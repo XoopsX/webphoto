@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: video.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX
 // 2008-11-08 K.OHWADA
 // tmpdir -> workdir
 // 2008-10-01 K.OHWADA
@@ -40,7 +42,7 @@ class webphoto_video extends webphoto_lib_error
 	var $_FLASHS_PATH ;
 	var $_TMP_DIR ;
 
-	var $_PLURAL_MAX    = 5;
+	var $_PLURAL_MAX    = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
 	var $_PLURAL_SECOND = 0;
 	var $_PLURAL_FIRST  = 0;
 	var $_PLURAL_OFFSET = 1;
@@ -165,16 +167,10 @@ function build_ffmpeg_prefix( $id )
 	return $str;
 }
 
-function build_thumb_name( $id, $num, $flag_png=false )
+function build_thumb_name( $id, $num )
 {
-	if ( $flag_png && ( $num == 0 ) ) {
-		$ext = $this->_ICON_EXT ;
-	} else {
-		$ext = $this->_THUMB_EXT ;
-	}
-
 // prefix_123_456.jpg
-	$str = $this->build_thumb_node( $id, $num ) .'.'. $ext ;
+	$str = $this->build_thumb_node( $id, $num ) .'.'. $this->_THUMB_EXT ;
 	return $str;
 }
 
@@ -193,11 +189,6 @@ function get_first_thumb_node()
 function get_thumb_ext()
 {
 	return $this->_THUMB_EXT;
-}
-
-function get_thumb_plural_max()
-{
-	return $this->_PLURAL_MAX;
 }
 
 //---------------------------------------------------------

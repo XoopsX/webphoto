@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.4 2008/11/19 10:26:00 ohwada Exp $
+// $Id: form.php,v 1.5 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// format_timestamp()
 // 2008-11-16 K.OHWADA
 // get_cached_xoops_db_groups()
 // _xoops_user_groups -> _xoops_groups
@@ -269,6 +271,14 @@ function check_login()
 
 	redirect_header( XOOPS_URL.'/user.php', 3, $this->_LANG_MUST_LOGIN );
 	exit();
+}
+
+//---------------------------------------------------------
+// timestamp
+//---------------------------------------------------------
+function format_timestamp( $time, $format="l", $timeoffset="" )
+{
+	return formatTimestamp( $time, $format, $timeoffset );
 }
 
 //---------------------------------------------------------

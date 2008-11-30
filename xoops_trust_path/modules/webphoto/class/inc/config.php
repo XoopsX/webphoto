@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.2 2008/07/06 04:41:31 ohwada Exp $
+// $Id: config.php,v 1.3 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// get_path_by_name()
 // 2008-07-01 K.OHWADA
 // webphoto_xoops_base -> xoops_gethandler()
 //---------------------------------------------------------
@@ -60,12 +62,32 @@ function get_by_name( $name )
 	return false;
 }
 
+function get_path_by_name( $name )
+{
+	$path = $this->get_by_name( $name );
+	if ( $path ) {
+		return $this->_add_slash_to_head( $path );
+	}
+	return null;
+}
+
 function _init_cache( $dirname )
 {
 	if ( !isset( $this->_cached_config[ $dirname ] ) ) {
 		$this->_cached_config[ $dirname ] 
 			= $this->_get_xoops_config( $dirname );
 	}
+}
+
+function _add_slash_to_head( $str )
+{
+// ord : the ASCII value of the first character of string
+// 0x2f slash
+
+	if( ord( $str ) != 0x2f ) {
+		$str = "/". $str;
+	}
+	return $str;
 }
 
 //---------------------------------------------------------

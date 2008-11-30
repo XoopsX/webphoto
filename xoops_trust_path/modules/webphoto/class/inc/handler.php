@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.7 2008/10/30 00:22:49 ohwada Exp $
+// $Id: handler.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// build_show_file_image()
 // 2008-10-01 K.OHWADA
 // added update_xoops_config()
 // 2008-08-24 K.OHWADA
@@ -30,6 +32,10 @@ class webphoto_inc_handler
 	var $_DIRNAME;
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
+
+	var $_ROOT_EXTS_URL ;
+	var $_DEFAULT_ICON_SRC;
+	var $_PIXEL_ICON_SRC;
 
 	var $_NORMAL_EXTS;
 
@@ -58,6 +64,10 @@ function init_handler( $dirname )
 	$this->_DIRNAME = $dirname;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
+
+	$this->_ROOT_EXTS_URL    = $this->_MODULE_URL .'/images/exts';
+	$this->_DEFAULT_ICON_SRC = $this->_MODULE_URL .'/images/exts/default.png';
+	$this->_PIXEL_ICON_SRC   = $this->_MODULE_URL .'/images/icons/pixel_trans.png';
 
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_INC_SQL' );
@@ -112,6 +122,18 @@ function get_item_row_by_id( $item_id )
 	return $this->get_row_by_sql( $sql );
 }
 
+function build_show_icon_image( $item_row )
+{
+	$url    = null ;
+	$name   = $item_row['item_icon_name'] ;
+	$width  = $item_row['item_icon_width'] ;
+	$height = $item_row['item_icon_height'] ;
+	if ( $name ) {
+		$url = $this->_ROOT_EXTS_URL .'/'. $name ;
+	}
+	return array( $url, $width, $height ) ;
+}
+
 //---------------------------------------------------------
 // file handler
 //---------------------------------------------------------
@@ -138,6 +160,25 @@ function get_file_row_by_id( $file_id )
 	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'file' );
 	$sql .= ' WHERE file_id='. intval($file_id) ;
 	return $this->get_row_by_sql( $sql );
+}
+
+function build_show_file_image( $file_row )
+{
+	$url    = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	if ( is_array($file_row) ) {
+		$url    = $file_row['file_url'] ;
+		$path   = $file_row['file_path'] ;
+		$width  = $file_row['file_width'] ;
+		$height = $file_row['file_height'] ;
+		if ( $path ) {
+			$url = XOOPS_URL .'/'. $path ;
+		}
+	}
+
+	return array( $url, $width, $height );
 }
 
 //---------------------------------------------------------

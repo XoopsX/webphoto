@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.10 2008/11/21 07:56:57 ohwada Exp $
+// $Id: constants.php,v 1.11 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX
 // 2008-10-08 K.OHWADA
 // _C_WEBPHOTO_UPLOAD_FIELD_PHOTO
 // 2008-10-01 K.OHWADA
@@ -279,6 +281,9 @@ define("_C_WEBPHOTO_SMALL_WIDTH",  "60");
 define("_C_WEBPHOTO_SMALL_HEIGHT", "40");
 define("_C_WEBPHOTO_SMALL_CURRENT_WIDTH",  "80");
 define("_C_WEBPHOTO_SMALL_CURRENT_HEIGHT", "80");
+
+// v0.80
+define("_C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX",  "5" ) ;
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

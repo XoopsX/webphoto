@@ -1,10 +1,12 @@
 <?php
-// $Id: base.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: base.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+// user_to_server_time( $time )
 
 //---------------------------------------------------------
 // change log
@@ -289,6 +291,21 @@ function get_member_user_list( $limit=0, $start=0 )
 
 	$member_handler =& xoops_gethandler('member');
 	return $member_handler->getUserList( $criteria );
+}
+
+//---------------------------------------------------------
+// timestamp
+//---------------------------------------------------------
+function user_to_server_time( $time )
+{
+	global $xoopsConfig, $xoopsUser;
+	if ($xoopsUser) {
+		$timeoffset = $xoopsUser->getVar("timezone_offset");
+	} else {
+		$timeoffset = $xoopsConfig['default_TZ'];
+	}
+	$timestamp = $time - (($timeoffset - $xoopsConfig['server_TZ']) * 3600);
+	return $timestamp;
 }
 
 // --- class end ---

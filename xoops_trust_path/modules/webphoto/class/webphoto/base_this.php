@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.13 2008/11/20 11:15:46 ohwada Exp $
+// $Id: base_this.php,v 1.14 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// $_ROOT_EXTS_URL
+// build_show_file_image()
+// get_server_time_by_post()
 // 2008-11-16 K.OHWADA
 // set_xoops_groups()
 // _PLAYLISTS_URL
@@ -50,6 +54,7 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_preload_class;
 	var $_kind_class;
 
+	var $_cfg_uploads_path ;
 	var $_is_japanese = false;
 
 	var $_UPLOADS_DIR;
@@ -85,6 +90,9 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_TMP_DIR;
 	var $_LOG_DIR;
 	var $_FILE_DIR;
+	var $_ICONS_URL;
+	var $_ROOT_EXTS_DIR;
+	var $_ROOT_EXTS_URL;
 
 //---------------------------------------------------------
 // constructor
@@ -104,10 +112,10 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
 	$this->_cat_handler->set_xoops_groups( $this->_xoops_groups );
 
-	$uploads_path    = $this->_config_class->get_uploads_path();
-	$medias_path     = $this->_config_class->get_medias_path();
-	$this->_WORK_DIR = $this->_config_class->get_by_name( 'workdir' );
-	$this->_FILE_DIR = $this->_config_class->get_by_name( 'file_dir' );
+	$uploads_path     = $this->_config_class->get_uploads_path();
+	$medias_path      = $this->_config_class->get_medias_path();
+	$this->_WORK_DIR  = $this->_config_class->get_by_name( 'workdir' );
+	$this->_FILE_DIR  = $this->_config_class->get_by_name( 'file_dir' );
 
 	$this->_PHOTOS_PATH     = $uploads_path.'/photos' ;
 	$this->_THUMBS_PATH     = $uploads_path.'/thumbs' ;
@@ -147,7 +155,9 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_MAIL_DIR  = $this->_WORK_DIR .'/mail' ;
 	$this->_LOG_DIR   = $this->_WORK_DIR .'/log' ;
 
-	$this->_ICONS_URL = $this->_MODULE_URL .'/images/icons';
+	$this->_ICONS_URL     = $this->_MODULE_URL .'/images/icons';
+	$this->_ROOT_EXTS_URL = $this->_MODULE_URL .'/images/exts';
+	$this->_ROOT_EXTS_DIR = $this->_MODULE_DIR .'/images/exts';
 
 	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 }
@@ -399,6 +409,15 @@ function decode_uri_str( $str )
 }
 
 //---------------------------------------------------------
+// item handler
+//---------------------------------------------------------
+function build_show_icon_image( $item_row )
+{
+	return $this->_item_handler->build_show_item_image( 
+		$item_row, $this->_ROOT_EXTS_URL );
+}
+
+//---------------------------------------------------------
 // file handler
 //---------------------------------------------------------
 function get_file_row_by_kind( $row, $kind )
@@ -422,6 +441,11 @@ function get_cached_file_row_by_kind( $row, $kind )
 function build_value_fileid_by_kind( $row, $kind )
 {
 	return $this->_item_handler->build_value_fileid_by_kind( $row, $kind );
+}
+
+function build_show_file_image( $file_row )
+{
+	return $this->_file_handler->build_show_file_image( $file_row );
 }
 
 //---------------------------------------------------------
@@ -524,6 +548,19 @@ function is_photo_owner( $uid )
 		return true;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// timestamp
+//---------------------------------------------------------
+function get_server_time_by_post( $key, $default=0 )
+{
+	$time = $this->_post_class->get_post_time( $key, $default );
+	if ( $time > 0 ) {
+		return $this->user_to_server_time( $time );
+	} else {
+		return $default ;
+	}
 }
 
 // --- class end ---

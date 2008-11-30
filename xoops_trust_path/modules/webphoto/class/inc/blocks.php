@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.9 2008/11/02 05:33:19 ohwada Exp $
+// $Id: blocks.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// catlist_show()
+// build_show_file_image()
 // 2008-10-01 K.OHWADA
 // item_external_thumb
 // 2008-08-24 K.OHWADA
@@ -30,19 +33,24 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 {
 	var $_multibyte_class;
 
-	var $_cfg_use_popbox   = false;
-	var $_cfg_use_pathinfo = false;
-	var $_cfg_thumb_width  = 0 ;
-	var $_cfg_thumb_height = 0 ;
-
-	var $_URL_DEFUALT_ICON;
-	var $_URL_PIXEL_IMAGE;
+	var $_cfg_use_popbox     = false;
+	var $_cfg_use_pathinfo   = false;
+	var $_cfg_thumb_width    = 0 ;
+	var $_cfg_thumb_height   = 0 ;
+	var $_cfg_cat_main_width = 0 ;
+	var $_cfg_cat_sub_width  = 0 ;
+	var $_cfg_workdir        = null;
+	var $_cfg_uploadspath    = null ;
 
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
 
-	var $_CATLIMIT_OPTIONS = null;
+	var $_YESNO_OPTIONS = null;
 	var $_CACHE_OPTIONS    = null;
+
+	var $_TOP_CATLIST_DELMITA = '<br />';
+	var $_SHOW_SUBCAT_IMG     = true;
+	var $_lang_catlist_total  = 'Total:';
 
 //---------------------------------------------------------
 // constructor
@@ -53,7 +61,7 @@ function webphoto_inc_blocks()
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
-	$this->_CATLIMIT_OPTIONS = array(
+	$this->_YESNO_OPTIONS = array(
 		1 => _YES ,
 		0 => _NO  ,
 	);
@@ -149,6 +157,164 @@ function rphoto_edit( $options )
 }
 
 //---------------------------------------------------------
+// category list
+//
+// options
+//   0 : dirname
+//   1 : show_sub (1)
+//   2 : show_main_img (1)
+//   3 : show_sub_img  (1)
+//   4 : cols (3)
+//---------------------------------------------------------
+function catlist_show( $options )
+{
+	$this->_init( $options );
+	$show_sub      = $this->_get_option_int(  $options, 1 ) ;
+	$show_main_img = $this->_get_option_int(  $options, 2 ) ;
+	$show_sub_img  = $this->_get_option_int(  $options, 3 ) ;
+	$cols          = $this->_get_option_int(  $options, 4 ) ;
+
+	$block = array() ;
+	$block['dirname'] = $this->_DIRNAME ;
+
+	$catlist_class =& webphoto_inc_catlist::getInstance();
+	$catlist_class->init( $this->_DIRNAME );
+	$catlist_class->set_uploads_path( $this->_cfg_uploadspath );
+
+	list( $cols, $width ) =
+		$catlist_class->calc_width( $cols ) ;
+
+	$param = array(
+		'cats'            => $catlist_class->build_catlist( 0, $show_sub ) ,
+		'cols'            => $cols ,
+		'width'           => $width ,
+		'delmita'         => $this->_TOP_CATLIST_DELMITA ,
+		'show_sub'        => $show_sub ,
+		'show_main_img'   => $show_main_img ,
+		'show_sub_img'    => $show_sub_img ,
+		'use_pathinfo'    => $this->_cfg_use_pathinfo ,
+		'main_width'      => $this->_cfg_cat_main_width ,
+		'sub_width'       => $this->_cfg_cat_sub_width ,
+		'lang_total'      => $this->_lang_catlist_total ,
+	);
+
+	$block['catlist'] = $param ;
+
+	return $this->_assign_block( 'catlist', $block ) ;
+}
+
+function _assign_block( $mode, $block )
+{
+	$template = 'db:'. $this->_DIRNAME .'_block_'. $mode .'.html';
+	$tpl = new XoopsTpl();
+	$tpl->assign( 'block', $block );
+	$ret = array();
+	$ret['content'] = $tpl->fetch( $template ) ;
+	return $ret ;
+}
+
+function catlist_edit( $options )
+{
+	$this->_init( $options );
+	$show_sub      = $this->_get_option_int(  $options, 1 ) ;
+	$show_main_img = $this->_get_option_int(  $options, 2 ) ;
+	$show_sub_img  = $this->_get_option_int(  $options, 3 ) ;
+	$cols          = $this->_get_option_int(  $options, 4 ) ;
+
+	$ret  = '<table border="0"><tr><td>'."\n";
+	$ret .= 'dirname';
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->_DIRNAME;
+	$ret .= '<input type="hidden" name="options[0]" value="'. $this->_DIRNAME .'" />'."\n";
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIST_SUB' );
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->build_form_radio( 'options[1]', $show_sub, $this->_YESNO_OPTIONS );
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIST_MAIN_IMG' );
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->build_form_radio( 'options[2]', $show_main_img, $this->_YESNO_OPTIONS );
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIST_SUB_IMG' );
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->build_form_radio( 'options[3]', $show_sub_img, $this->_YESNO_OPTIONS );
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TEXT_CATLIST_COLS' );
+	$ret .= '</td><td>'."\n";
+	$ret .= '<input type="text" size="4" name="options[4]" value="'. $cols .'" />'."\n";
+	$ret .= '</td></tr>'."\n";
+	$ret .= '</table>'."\n";
+
+	return $ret ;
+}
+
+//---------------------------------------------------------
+// tag cloud
+//
+// options
+//   0 : dirname
+//   1 : limit (100)
+//---------------------------------------------------------
+function tagcloud_show( $options )
+{
+	$this->_init( $options );
+	$limit = $this->_get_option_int(  $options, 1 ) ;
+
+	$block = array() ;
+	$block['dirname'] = $this->_DIRNAME ;
+
+	$rows = $this->_get_tag_rows_with_count( $limit );
+	if ( !is_array($rows) || !count($rows) ) {
+		$block['tagcloud'] = null ;
+		return $block;
+	}
+
+	$block['tagcloud'] = $this->_build_tagcloud( $rows );
+
+	return $this->_assign_block( 'tagcloud', $block ) ;
+}
+
+function _build_tagcloud( $rows )
+{
+	$cloud_class =& new webphoto_lib_cloud();
+	$uri_class   =& webphoto_inc_uri::getInstance();
+	$uri_class->init( $this->_DIRNAME );
+	$uri_class->set_use_pathinfo( $this->_cfg_use_pathinfo );
+
+	ksort($rows);
+
+	foreach ( array_keys($rows) as $i )
+	{
+		$name  = $rows[$i]['tag_name'];
+		$count = $rows[$i]['photo_count'];
+		$link  = $uri_class->build_tag( $name );
+		$cloud_class->addElement( $name, $link, $count );
+	}
+
+	return $cloud_class->build();
+}
+
+function tagcloud_edit( $options )
+{
+	$this->_init( $options );
+	$limit = $this->_get_option_int( $options, 1 ) ;
+
+	$ret  = '<table border="0"><tr><td>'."\n";
+	$ret .= 'dirname';
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->_DIRNAME;
+	$ret .= '<input type="hidden" name="options[0]" value="'. $this->_DIRNAME .'" />'."\n";
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TEXT_TAGCLOUD_LIMIT' );
+	$ret .= '</td><td>'."\n";
+	$ret .= '<input type="text" size="4" name="options[1]" value="'. $limit .'" />'."\n";
+	$ret .= '</td></tr>'."\n";
+	$ret .= '</table>'."\n";
+
+	return $ret ;
+}
+
+//---------------------------------------------------------
 // common
 //---------------------------------------------------------
 function _init( $options )
@@ -157,10 +323,7 @@ function _init( $options )
 
 	$this->init_handler( $dirname );
 	$this->_init_xoops_config( $dirname );
-
-	$ICONS_URL               = XOOPS_URL  .'/modules/' .$dirname .'/images/icons';
-	$this->_URL_DEFUALT_ICON = $ICONS_URL .'/default.png';
-	$this->_URL_PIXEL_IMAGE  = $ICONS_URL .'/pixel_trans.png';
+	$this->_auto_publish( $dirname );
 }
 
 function _top_show_common( $mode , $options )
@@ -270,7 +433,7 @@ function _top_edit_common( $options )
 	$ret .= '</td></tr><tr><td>'."\n";
 	$ret .= $this->_constant( 'TEXT_CATLIMITRECURSIVE' );
 	$ret .= '</td><td>'."\n";
-	$ret .= $this->build_form_radio( 'options[3]', $cat_limit_recursive, $this->_CATLIMIT_OPTIONS );
+	$ret .= $this->build_form_radio( 'options[3]', $cat_limit_recursive, $this->_YESNO_OPTIONS );
 	$ret .= '</td></tr><tr><td>'."\n";
 	$ret .= $this->_constant( 'TEXT_STRLENGTH' );
 	$ret .= '</td><td>'."\n";
@@ -357,78 +520,110 @@ function _get_option_cols( $options, $num )
 
 function _build_imgsrc( $item_row )
 {
-	$imgsrc_photo = '';
-	$imgsrc_thumb = '';
+	$img_photo_src     = '';
+	$img_photo_width   = 0 ;
+	$img_photo_height  = 0 ;
+	$img_thumb_src     = '';
+	$img_thumb_width   = 0 ;
+	$img_thumb_height  = 0 ;
 
-	$cont_url     = null;
-	$cont_width   = 0;
-	$cont_height  = 0;
-	$thumb_url    = null;
-	$thumb_width  = 0;
-	$thumb_height = 0;
-
+	$kind           = $item_row['item_kind'] ;
+	$external_url   = $item_row['item_external_url'] ;
 	$external_thumb = $item_row['item_external_thumb'];
+
+	$is_image_kind = $this->_is_src_image_kind( $kind );
 
 	$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
-	if ( is_array($cont_row) ) {
-		$cont_url    = $cont_row['file_url'];
-		$cont_width  = $cont_row['file_width'];
-		$cont_height = $cont_row['file_height'];
-	}
+	list( $cont_url, $cont_width, $cont_height ) =
+		$this->build_show_file_image( $cont_row ) ;
 
-	if ( is_array($thumb_row) ) {
-		$thumb_url    = $thumb_row['file_url'];
-		$thumb_width  = $thumb_row['file_width'];
-		$thumb_height = $thumb_row['file_height'];
-	}
+	list( $thumb_url, $thumb_width, $thumb_height ) =
+		$this->build_show_file_image( $thumb_row ) ;
 
-	$cont_url_s       = $this->sanitize( $cont_url );
-	$thumb_url_s      = $this->sanitize( $thumb_url );
-	$external_thumb_s = $this->sanitize( $external_thumb );
+	list( $icon_url, $icon_width, $icon_height ) =
+		$this->build_show_icon_image( $item_row ) ;
 
-// normal exts
-	if ( $cont_url_s && $thumb_url_s ) {
-		$imgsrc_photo = $cont_url_s;
-		$imgsrc_thumb = $thumb_url_s;
+// photo image
+	if ( $cont_url && $is_image_kind ) {
+		$img_photo_src    = $cont_url;
+		$img_photo_width  = $cont_width ;
+		$img_photo_height = $cont_height ;
 
-// no thumbnail
-	} elseif ( $cont_url_s ) {
-		$imgsrc_photo = $cont_url_s;
-		$imgsrc_thumb = $cont_url_s;
+	} elseif ( $external_url && $is_image_kind ) {
+		$img_photo_src    = $external_url;
 
-// no main
-	} elseif ( $thumb_url_s ) {
-		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
-		$imgsrc_thumb = $thumb_url_s;
-
-// external thumb
-	} elseif ( $external_thumb_s ) {
-		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
-		$imgsrc_thumb = $external_thumb_s;
-
-// other
 	} else {
-		$imgsrc_photo = $this->_URL_DEFUALT_ICON;
-		$imgsrc_thumb = $this->_URL_PIXEL_IMAGE;
-		$thumb_width  = 1;
-		$thumb_height = 1;
+		$img_photo_src = $this->_DEFAULT_ICON_SRC ;
 	}
 
-	list( $thumb_width, $thumb_height )
-		= $this->_adjust_image_thumb( $thumb_width, $thumb_height );
+// thumb image
+	if ( $thumb_url ) {
+		$img_thumb_src    = $thumb_url ;
+		$img_thumb_width  = $thumb_width ;
+		$img_thumb_height = $thumb_height ;
+
+	} elseif ( $external_thumb ) {
+		$img_thumb_src    = $external_thumb ;
+
+	} elseif ( $icon_url ) {
+		$img_thumb_src    = $icon_url ;
+		$img_thumb_width  = $icon_width;
+		$img_thumb_height = $icon_height;
+
+	} elseif ( $cont_url && $is_image_kind ) {
+		$img_thumb_src    = $cont_url;
+		$img_thumb_width  = $cont_width;
+		$img_thumb_height = $cont_height;
+
+	} elseif ( $external_url && $is_image_kind ) {
+		$img_thumb_src    = $external_url ;
+
+	} else {
+		$img_thumb_src    = $this->_PIXEL_ICON_SRC;
+		$img_thumb_width  = 1;
+		$img_thumb_height = 1;
+	}
+
+	list( $img_thumb_width, $img_thumb_height )
+		= $this->_adjust_image_thumb( $img_thumb_width, $img_thumb_height );
 
 	$arr = array(
-		'imgsrc_thumb'     => $imgsrc_thumb ,
-		'imgsrc_photo'     => $imgsrc_photo ,
-		'photo_width'      => $cont_width ,
-		'photo_height'     => $cont_height ,
-		'thumb_width'      => $thumb_width ,
-		'thumb_height'     => $thumb_height ,
+		'cont_url'          => $cont_url ,
+		'cont_url_s'        => $this->sanitize( $cont_url ) ,
+		'cont_width'        => $cont_width ,
+		'cont_height'       => $cont_height ,
+		'thumb_url'         => $thumb_url ,
+		'thumb_url_s'       => $this->sanitize( $thumb_url ) ,
+		'thumb_width'       => $thumb_width ,
+		'thumb_height'      => $thumb_height ,
+		'icon_url'          => $icon_url ,
+		'icon_url_s'        => $this->sanitize( $icon_url ) ,
+		'icon_width'        => $icon_width ,
+		'icon_height'       => $icon_height ,
+		'img_photo_src'     => $img_photo_src ,
+		'img_photo_src_s'   => $this->sanitize( $img_photo_src ) ,
+		'img_photo_width'   => $img_photo_width ,
+		'img_photo_height'  => $img_photo_height ,
+		'img_thumb_src'     => $img_thumb_src ,
+		'img_thumb_src_s'   => $this->sanitize( $img_thumb_src ) ,
+		'img_thumb_width'   => $img_thumb_width ,
+		'img_thumb_height'  => $img_thumb_height ,
 	);
 	return $arr;
 
+}
+
+function _is_src_image_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
+		return true;
+	}
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ) {
+		return true;
+	}
+	return false;
 }
 
 function _build_short_title( $str, $max )
@@ -571,6 +766,21 @@ function _get_catselbox( $preset_id=0, $none=0, $sel_name='', $onchange='' )
 	return $catselbox;
 }
 
+function _get_tag_rows_with_count( $limit=0, $offset=0 )
+{
+	$table_tag = $this->prefix_dirname( 'tag' ) ;
+	$table_p2t = $this->prefix_dirname( 'p2t' ) ;
+
+	$sql  = 'SELECT t.*, COUNT(*) AS photo_count ';
+	$sql .= ' FROM '. $table_tag.' t, ';
+	$sql .= $table_p2t .' p2t ';
+	$sql .= ' WHERE t.tag_id = p2t.p2t_tag_id ';
+	$sql .= ' GROUP BY tag_id ';
+	$sql .= ' ORDER BY photo_count DESC';
+
+	return $this->get_rows_by_sql( $sql, $limit, $offset, 'tag_id' );
+}
+
 //---------------------------------------------------------
 // xoops header class
 //---------------------------------------------------------
@@ -601,6 +811,18 @@ function _get_popbox_js( $mode, $show_popbox )
 }
 
 //---------------------------------------------------------
+// auto publish
+//---------------------------------------------------------
+function _auto_publish( $dirname )
+{
+	$publish_class =& webphoto_inc_auto_publish::getInstance();
+	$publish_class->init( $dirname );
+	$publish_class->set_workdir( $this->_cfg_workdir );
+
+	$publish_class->auto_publish();
+}
+
+//---------------------------------------------------------
 // xoops_config
 //---------------------------------------------------------
 function _init_xoops_config( $dirname )
@@ -608,10 +830,14 @@ function _init_xoops_config( $dirname )
 	$config_handler =& webphoto_inc_config::getInstance();
 	$config_handler->init( $dirname );
 
-	$this->_cfg_use_popbox   = $config_handler->get_by_name('use_popbox');
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
-	$this->_cfg_thumb_width  = $config_handler->get_by_name('thumb_width');
-	$this->_cfg_thumb_height = $config_handler->get_by_name('thumb_height');
+	$this->_cfg_use_popbox     = $config_handler->get_by_name('use_popbox');
+	$this->_cfg_use_pathinfo   = $config_handler->get_by_name('use_pathinfo');
+	$this->_cfg_thumb_width    = $config_handler->get_by_name('thumb_width');
+	$this->_cfg_thumb_height   = $config_handler->get_by_name('thumb_height');
+	$this->_cfg_cat_main_width = $config_handler->get_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width  = $config_handler->get_by_name('cat_sub_width');
+	$this->_cfg_workdir        = $config_handler->get_by_name( 'workdir' );
+	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
 }
 
 // --- class end ---

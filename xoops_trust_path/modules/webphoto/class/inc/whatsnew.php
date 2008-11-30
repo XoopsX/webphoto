@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.5 2008/08/25 19:28:05 ohwada Exp $
+// $Id: whatsnew.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// build_show_file_image()
 // 2008-08-24 K.OHWADA
 // table_photo -> table_item
 // 2008-07-01 K.OHWADA
@@ -26,7 +28,8 @@ class webphoto_inc_whatsnew extends webphoto_inc_handler
 
 	var $_cat_cached = array();
 
-	var $_FLAG_SUBSTITUTE = false;
+	var $_SHOW_IMAGE = true ;
+	var $_SHOW_ICON  = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -53,9 +56,14 @@ function _init( $dirname )
 	$this->_init_xoops_config( $dirname );
 
 // preload
-	$name = strtoupper( '_P_'. $dirname .'_WHATSNEW_SUBSTITUTE' );
-	if ( defined( $name ) ) {
-		$this->_FLAG_SUBSTITUTE = constant( $name );
+	$name_image= strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_IMAGE' );
+	$name_icon = strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_ICON' );
+
+	if ( defined( $name_image ) ) {
+		$this->_SHOW_IMAGE = constant( $name_image );
+	}
+	if ( defined( $name_icon ) ) {
+		$this->_SHOW_ICON = constant( $name_icon );
 	}
 }
 
@@ -76,14 +84,11 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 
 	foreach( $item_rows as $item_row )
 	{
-		$cat_title    = null;
-		$cont_url     = null;
-		$cont_width   = 0;
-		$cont_height  = 0;
-		$cont_mime    = null;
-		$thumb_url    = null;
-		$thumb_width  = 0;
-		$thumb_height = 0;
+		$cat_title  = null;
+		$cont_mime  = null;
+		$image      = null ;
+		$width      = 0 ;
+		$height     = 0 ;
 
 		$item_id      = $item_row['item_id'];
 		$cat_id       = $item_row['item_cat_id'];
@@ -100,16 +105,29 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 		$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 		if ( is_array($cont_row) ) {
-			$cont_url    = $cont_row['file_url'];
-			$cont_width  = $cont_row['file_width'];
-			$cont_height = $cont_row['file_height'];
-			$cont_mime   = $cont_row['file_mime'];
+			$cont_mime = $cont_row['file_mime'];
 		}
 
-		if ( is_array($thumb_row) ) {
-			$thumb_url    = $thumb_row['file_url'];
-			$thumb_width  = $thumb_row['file_width'];
-			$thumb_height = $thumb_row['file_height'];
+		list( $cont_url, $cont_width, $cont_height ) =
+			$this->build_show_file_image( $cont_row ) ;
+
+		list( $thumb_url, $thumb_width, $thumb_height ) =
+			$this->build_show_file_image( $thumb_row ) ;
+
+		list( $icon_url, $icon_width, $icon_height ) =
+			$this->build_show_icon_image( $item_row );
+
+		if ( $is_image || $this->_SHOW_IMAGE ) ) {
+			if ( $thumb_url ) {
+				$image  = $thumb_url;
+				$width  = $thumb_width;
+				$height = $thumb_height;
+
+			} else ( $this->_SHOW_ICON && $icon_url ) {
+				$imgage = $icon_url;
+				$width  = $icon_width;
+				$height = $icon_height;	
+			}
 		}
 
 		if ( $this->_cfg_use_pathinfo ) {
@@ -141,11 +159,10 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 		$is_video = $this->is_video_kind( $item_kind );
 
 // photo image
-		if (( $is_image || $is_video || $this->_FLAG_SUBSTITUTE ) && 
-		      $thumb_url ) {
-			$arr['image']  = $thumb_url ;
-			$arr['width']  = $thumb_width ;
-			$arr['height'] = $thumb_height ;
+		if ( $image ) {
+			$arr['image']  = $image ;
+			$arr['width']  = $width ;
+			$arr['height'] = $height ;
 		}
 
 // media rss

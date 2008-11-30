@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: modinfo.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -205,7 +205,8 @@ define($constpref."SMNAME_HIGHRATE","Top Rated");
 define($constpref."SMNAME_MYPHOTO","My Photos");
 
 // Names of admin menu items
-define($constpref."ADMENU_ADMISSION","Admitting images");
+//define($constpref."ADMENU_ADMISSION","Admitting images");
+
 define($constpref."ADMENU_PHOTOMANAGER","Photo Management");
 define($constpref."ADMENU_CATMANAGER","Add/Edit Categories");
 define($constpref."ADMENU_CHECKCONFIGS","Check Configuration");
@@ -303,6 +304,12 @@ define($constpref."CFG_CSUB_WIDTH" ,  "Image Width and Height in Sub Category" )
 define($constpref."CFG_GICON_WIDTH" ,  "GoogleMap Icon Width and Height" ) ;
 define($constpref."CFG_JPEG_QUALITY" ,  "JPEG Quality" ) ;
 define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />This configuration is significant only when using GD" ) ;
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define($constpref."BNAME_CATLIST"  , "Category List" ) ;
+define($constpref."BNAME_TAGCLOUD" , "Tag Cloud" ) ;
 
 }
 // === define begin ===

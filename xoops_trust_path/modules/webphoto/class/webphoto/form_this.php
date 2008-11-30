@@ -1,5 +1,5 @@
 <?php
-// $Id: form_this.php,v 1.7 2008/11/20 11:15:46 ohwada Exp $
+// $Id: form_this.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// $_ROOT_EXTS_URL
 // 2008-11-16 K.OHWADA
 // set_xoops_groups()
 // 2008-11-08 K.OHWADA
@@ -64,6 +66,8 @@ class webphoto_form_this extends webphoto_lib_form
 
 	var $_ICONS_URL;
 	var $_ICON_ROTATE_URL;
+	var $_ROOT_EXTS_DIR;
+	var $_ROOT_EXTS_URL;
 
 	var $_TAGS_SIZE = 80;
 
@@ -109,7 +113,9 @@ function webphoto_form_this( $dirname , $trust_dirname )
 
 	$this->_ICONS_URL       = $this->_MODULE_URL .'/images/icons';
 	$this->_ICON_ROTATE_URL = $this->_MODULE_URL .'/images/uploader';
-
+	$this->_ROOT_EXTS_URL   = $this->_MODULE_URL .'/images/exts';
+	$this->_ROOT_EXTS_DIR   = $this->_MODULE_DIR .'/images/exts';
+	
 	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 }
 

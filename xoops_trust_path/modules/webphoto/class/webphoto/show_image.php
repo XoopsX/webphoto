@@ -1,10 +1,18 @@
 <?php
-// $Id: show_image.php,v 1.1 2008/11/21 07:56:57 ohwada Exp $
+// $Id: show_image.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-11-29 K.OHWADA
+// build_show_file_image()
+// BUG: not work when external image
+// is_image_kind -> is_src_image_kind
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -28,8 +36,9 @@ class webphoto_show_image
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
 
-	var $_URL_DEFAULT_IMAGE;
-	var $_URL_PIXEL_IMAGE;
+	var $_ROOT_EXTS_URL ;
+	var $_DEFAULT_ICON_SRC;
+	var $_PIXEL_ICON_SRC;
 
 //---------------------------------------------------------
 // constructor
@@ -52,8 +61,10 @@ function webphoto_show_image( $dirname )
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
-	$this->_URL_DEFAULT_IMAGE  = $this->_MODULE_URL .'/images/exts/default.png';
-	$this->_URL_PIXEL_IMAGE    = $this->_MODULE_URL .'/images/icons/pixel_trans.png';
+	$this->_ROOT_EXTS_URL    = $this->_MODULE_URL .'/images/exts';
+	$this->_DEFAULT_ICON_SRC = $this->_MODULE_URL .'/images/exts/default.png';
+	$this->_PIXEL_ICON_SRC   = $this->_MODULE_URL .'/images/icons/pixel_trans.png';
+
 }
 
 function &getInstance( $dirname )
@@ -122,24 +133,27 @@ function build_image_by_param( $param )
 	$is_normal_image   = false ;
 
 	$kind            = $item_row['item_kind'] ;
-	$title           = $item_row['item_title'] ;
 	$external_url    = $item_row['item_external_url'] ;
 	$external_thumb  = $item_row['item_external_thumb'] ;
 	$external_middle = $item_row['item_external_middle'] ;
 
-	$is_image_kind   = $this->is_image_kind( $kind );
+// BUG: not work when external image
+	$is_image_kind   = $this->is_src_image_kind( $kind );
+
+	list( $icon_url, $icon_width, $icon_height ) =
+		$this->build_show_icon_image( $item_row ) ;
 
 	list( $cont_url, $cont_width, $cont_height ) =
-		$this->get_file_image( $cont_row ) ;
+		$this->build_show_file_image( $cont_row ) ;
 
 	list( $thumb_url, $thumb_width, $thumb_height ) =
-		$this->get_file_image( $thumb_row ) ;
+		$this->build_show_file_image( $thumb_row ) ;
 
 	list( $middle_url, $middle_width, $middle_height ) =
-		$this->get_file_image( $middle_row ) ;
+		$this->build_show_file_image( $middle_row ) ;
 
 // link file
-	if ( $cont_url  ) {
+	if ( $cont_url ) {
 		$media_url = $cont_url;
 
 	} elseif ( $external_url ) {
@@ -157,24 +171,8 @@ function build_image_by_param( $param )
 		$img_photo_src    = $external_url;
 		$is_normal_image  = true ;
 
-	} elseif ( $middle_url ) {
-		$img_photo_src    = $middle_url;
-		$img_photo_width  = $middle_width ;
-		$img_photo_height = $middle_height ;
-
-	} elseif ( $thumb_url ) {
-		$img_photo_src    = $thumb_url;
-		$img_photo_width  = $thumb_width ;
-		$img_photo_height = $thumb_height ;
-
-	} elseif ( $external_middle ) {
-		$img_photo_src = $external_middle ;
-
-	} elseif ( $external_thumb ) {
-		$img_photo_src = $external_thumb ;
-
 	} elseif( $photo_default ) {
-		$img_photo_src = $this->_URL_DEFAULT_IMAGE ;
+		$img_photo_src = $this->_DEFAULT_ICON_SRC ;
 	}
 
 // thumb image
@@ -186,6 +184,11 @@ function build_image_by_param( $param )
 	} elseif ( $external_thumb ) {
 		$img_thumb_src    = $external_thumb ;
 
+	} elseif ( $icon_url ) {
+		$img_thumb_src    = $icon_url ;
+		$img_thumb_width  = $icon_width;
+		$img_thumb_height = $icon_height;
+
 	} elseif ( $cont_url && $is_image_kind ) {
 		$img_thumb_src    = $cont_url;
 		$img_thumb_width  = $cont_width;
@@ -195,7 +198,7 @@ function build_image_by_param( $param )
 		$img_thumb_src    = $external_url ;
 
 	} elseif( $thumb_default ) {
-		$img_thumb_src    = $this->_URL_PIXEL_IMAGE;
+		$img_thumb_src    = $this->_PIXEL_ICON_SRC;
 		$img_thumb_width  = 1;
 		$img_thumb_height = 1;
 	}
@@ -225,8 +228,13 @@ function build_image_by_param( $param )
 	} elseif ( $external_thumb ) {
 		$img_middle_src    = $external_thumb ;
 
+	} elseif ( $icon_url ) {
+		$img_middle_src    = $icon_url ;
+		$img_middle_width  = $icon_width;
+		$img_middle_height = $icon_height;
+
 	} elseif( $middle_default ) {
-		$img_middle_src    = $this->_URL_DEFAULT_IMAGE;
+		$img_middle_src    = $this->_DEFAULT_ICON_SRC;
 		$img_middle_width  = 1;
 		$img_middle_height = 1;
 	}
@@ -247,6 +255,9 @@ function build_image_by_param( $param )
 		'middle_url'        => $middle_url ,
 		'middle_width'      => $middle_width ,
 		'middle_height'     => $middle_height ,
+		'icon_url'          => $icon_url ,
+		'icon_width'        => $icon_width ,
+		'icon_height'       => $icon_height ,
 		'media_url'         => $media_url ,
 		'img_photo_src'     => $img_photo_src ,
 		'img_photo_width'   => $img_photo_width ,
@@ -278,27 +289,23 @@ function get_cached_file_row_by_name( $item_row, $item_name )
 	return false ;
 }
 
-function get_file_image( $file_row )
+function build_show_icon_image( $item_row )
 {
-	$url    = null ;
-	$width  = 0 ;
-	$height = 0 ;
+	return $this->_item_handler->build_show_icon_image( 
+		$item_row, $this->_ROOT_EXTS_URL );
+}
 
-	if ( is_array($file_row) ) {
-		$url    = $file_row['file_url'] ;
-		$width  = $file_row['file_width'] ;
-		$height = $file_row['file_height'] ;
-	}
-
-	return array( $url, $width, $height );
+function build_show_file_image( $file_row )
+{
+	return $this->_file_handler->build_show_file_image( $file_row );
 }
 
 //---------------------------------------------------------
 // kind class
 //---------------------------------------------------------
-function is_image_kind( $kind )
+function is_src_image_kind( $kind )
 {
-	return $this->_kind_class->is_image_kind( $kind ) ;
+	return $this->_kind_class->is_src_image_kind( $kind ) ;
 }
 
 //---------------------------------------------------------

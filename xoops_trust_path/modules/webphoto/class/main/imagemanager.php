@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.3 2008/09/12 22:42:19 ohwada Exp $
+// $Id: imagemanager.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _build_file_image()
 // 2008-09-13 K.OHWADA
 // BUG: not show category list if there is not one photo
 // 2008-08-24 K.OHWADA
@@ -197,24 +199,17 @@ function main()
 				continue;
 			}
 
+			list( $cont_url, $cont_width, $cont_height )
+				$this->_build_file_image( $cont_row, $cfg_usesiteimg ) ;
+
+			list( $thumb_url, $thumb_width, $thumb_height )
+				$this->_build_file_image( $thumb_row, $cfg_usesiteimg ) ;
+
 			$item_id    = $item_row['item_id'];
 			$item_uid   = $item_row['item_uid'];
 			$item_title = $item_row['item_title'];
 			$item_kind  = $item_row['item_kind'];
-
-			$cont_url    = $cont_row['file_url'];
-			$cont_width  = $cont_row['file_width'];
-			$cont_height = $cont_row['file_height'];
-			$cont_ext    = $cont_row['file_ext'];
-
-			$thumb_url    = $thumb_row['file_url'];
-			$thumb_width  = $thumb_row['file_width'];
-			$thumb_height = $thumb_row['file_height'];
-
-			if ( $cfg_usesiteimg ) {
-				$cont_url  = str_replace( XOOPS_URL.'/' , '', $cont_url );
-				$thumb_url = str_replace( XOOPS_URL.'/' , '', $thumb_url );
-			}
+			$cont_ext   = $cont_row['file_ext'];
 
 			$xcodel  = "[{$URL}={$cont_url}][{$IMG} align=left]{$thumb_url}[/{$IMG}][/{$URL}]";
 			$xcodec  = "[{$URL}={$cont_url}][{$IMG}]{$thumb_url}[/{$IMG}][/{$URL}]";
@@ -282,6 +277,32 @@ function main()
 	);
 
 	return array( $param, $photos );
+}
+
+function _build_file_image( $file_row, $cfg_usesiteimg )
+{
+	$url    = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	if ( is_array($file_row) ) {
+		return array( $url, $width, $height );
+	}
+
+	$url    = $file_row['file_url'] ;
+	$path   = $file_row['file_path'] ;
+	$width  = $file_row['file_width'] ;
+	$height = $file_row['file_height'] ;
+
+	if ( $cfg_usesiteimg && $path ) {
+		$url  = $path ;
+	} elseif ( $cfg_usesiteimg ) {
+		$url = str_replace( XOOPS_URL.'/' , '', $url );
+	} elseif ( $path ) {
+		$url = XOOPS_URL .'/'. $path ;
+	}
+
+	return array( $url, $width, $height );
 }
 
 function is_image_kind( $kind )

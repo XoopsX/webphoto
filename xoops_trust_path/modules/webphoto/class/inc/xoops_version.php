@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.14 2008/11/11 06:53:16 ohwada Exp $
+// $Id: xoops_version.php,v 1.15 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// b_webphoto_catlist_show
 // 2008-11-08 K.OHWADA
 // webphoto_inc_workdir
 // tmpdir -> workdir
@@ -379,6 +381,24 @@ function _build_blocks()
 	$arr[5]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
 	$arr[5]['template'] = '' ;
 	$arr[5]['can_clone'] = true ;
+
+	$arr[6]['file'] = "blocks.php";
+	$arr[6]['name'] = $this->_constant( 'BNAME_CATLIST' ) .' ('.$this->_DIRNAME.')' ;
+	$arr[6]['description'] = "Shows category list";
+	$arr[6]['show_func'] = "b_webphoto_catlist_show";
+	$arr[6]['edit_func'] = "b_webphoto_catlist_edit";
+	$arr[6]['options'] = $this->_DIRNAME.'|1|1|1|3';
+	$arr[6]['template'] = '' ;
+	$arr[6]['can_clone'] = true ;
+
+	$arr[7]['file'] = "blocks.php";
+	$arr[7]['name'] = $this->_constant( 'BNAME_TAGCLOUD' ) .' ('.$this->_DIRNAME.')' ;
+	$arr[7]['description'] = "Shows tag cloud";
+	$arr[7]['show_func'] = "b_webphoto_tagcloud_show";
+	$arr[7]['edit_func'] = "b_webphoto_tagcloud_edit";
+	$arr[7]['options'] = $this->_DIRNAME.'|100';
+	$arr[7]['template'] = '' ;
+	$arr[7]['can_clone'] = true ;
 
 // keep block's options
 	if( ! defined( 'XOOPS_CUBE_LEGACY' ) && substr( XOOPS_VERSION , 6 , 3 ) < 2.1 && ! empty( $_POST['fct'] ) && ! empty( $_POST['op'] ) && $_POST['fct'] == 'modulesadmin' && $_POST['op'] == 'update_ok' && $_POST['dirname'] == $this->_DIRNAME ) {

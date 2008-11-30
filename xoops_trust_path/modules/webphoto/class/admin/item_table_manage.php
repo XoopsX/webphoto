@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.5 2008/11/19 10:26:00 ohwada Exp $
+// $Id: item_table_manage.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// item_icon_width
 // 2008-11-16 K.OHWADA
 // item_codeinfo
 // 2008-11-08 K.OHWADA
@@ -119,7 +121,9 @@ function _build_row_by_post()
 		'item_external_url'    => $this->_post_class->get_post_text(  'item_external_url' ),
 		'item_external_thumb'  => $this->_post_class->get_post_text(  'item_external_thumb' ),
 		'item_external_middle' => $this->_post_class->get_post_text(  'item_external_middule' ),
-		'item_icon'            => $this->_post_class->get_post_text(  'item_icon' ),
+		'item_icon_name'       => $this->_post_class->get_post_text(  'item_icon_name' ),
+		'item_icon_width'      => $this->_post_class->get_post_int(   'item_icon_width' ),
+		'item_icon_height'     => $this->_post_class->get_post_int(   'item_icon_height' ),
 		'item_embed_type'      => $this->_post_class->get_post_text(  'item_embed_type' ),
 		'item_embed_src'       => $this->_post_class->get_post_text(  'item_embed_src' ),
 		'item_embed_text'      => $this->_post_class->get_post_text(  'item_embed_text' ),
@@ -195,7 +199,9 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_external_url' );
 	echo $this->build_comp_text( 'item_external_thumb' );
 	echo $this->build_comp_text( 'item_external_middle' );
-	echo $this->build_comp_text( 'item_icon' );
+	echo $this->build_comp_text( 'item_icon_name' );
+	echo $this->build_comp_text( 'item_icon_width' );
+	echo $this->build_comp_text( 'item_icon_height' );
 	echo $this->build_comp_text( 'item_embed_type' );
 	echo $this->build_comp_text( 'item_embed_src' );
 	echo $this->build_comp_text( 'item_embed_text' );

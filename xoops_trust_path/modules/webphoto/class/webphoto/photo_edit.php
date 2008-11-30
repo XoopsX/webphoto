@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.19 2008/11/19 10:26:00 ohwada Exp $
+// $Id: photo_edit.php,v 1.20 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// remove create_thumb_from_external() etc
 // 2008-11-16 K.OHWADA
 // item_codeinfo
 // Fatal error: Call to undefined method set_item_external_thumb()
@@ -812,20 +814,6 @@ function is_fill_item_playlist_dir()
 //---------------------------------------------------------
 // upload
 //---------------------------------------------------------
-function XXXupload_init( $flag_allow_all=false )
-{
-	list ( $allowed_mimes, $my_allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
-
-	if ( $flag_allow_all ) {
-		$allowed_exts = $my_allowed_exts ;
-	} else {
-		$allowed_exts = $this->get_normal_exts() ;
-	}
-
-// init uploader if photo file uploaded
-	$this->_upload_class->init_media_uploader( $this->_has_image_resize,  $allowed_mimes, $allowed_exts );
-}
-
 function upload_fetch_photo( $flag_allow_all=false )
 {
 	$this->_photo_tmp_name   = null ;
@@ -1094,67 +1082,6 @@ function conv_rotate( $rotate )
 }
 
 //---------------------------------------------------------
-// create thumb from external
-//---------------------------------------------------------
-function create_thumb_from_external( $item_id )
-{
-	$url   = null ;
-	$param = null ;
-
-	if ( $this->_item_ext ) {
-		$ext = $this->_item_ext ;
-	} else {
-		$ext = $this->_EXTERNAL_THUMB_EXT_DEFAULT ;
-	}
-
-// image type
-	if ( $this->is_image_ext( $ext ) && $this->_item_external_url ) {
-		$this->set_item_external_thumb( $this->_item_external_url );
-
-// icon if others
-	} else {
-		$this->_photo_class->create_thumb_icon( $item_id, $ext );
-		$param = $this->_photo_class->get_thumb_param();
-	}
-
-	return $param;
-}
-
-//---------------------------------------------------------
-// create thumb from embed
-//---------------------------------------------------------
-function create_thumb_from_embed( $item_id )
-{
-	$param = null;
-
-	$thumb = $this->_embed_class->build_thumb( 
-		$this->_item_embed_type, $this->_item_embed_src );
-
-// plugin thumb
-	if ( $thumb ) {
-		$this->set_item_external_thumb( $thumb );
-
-// icon if others
-	} else {
-		$this->_photo_class->create_thumb_icon( $item_id, $this->_EMBED_THUMB_EXT_DEFAULT );
-		$param = $this->_photo_class->get_thumb_param() ;
-	}
-
-	return $param;
-}
-
-//---------------------------------------------------------
-// create thumb for playlist
-//---------------------------------------------------------
-function create_thumb_for_playlist( $item_id )
-{
-	$this->_photo_class->create_thumb_icon( 
-		$item_id, $this->_PLAYLIST_THUMB_EXT_DEFAULT );
-	$param = $this->_photo_class->get_thumb_param() ;
-	return $param;
-}
-
-//---------------------------------------------------------
 // mime type
 //---------------------------------------------------------
 function add_mime_if_empty( $photo_param )
@@ -1190,36 +1117,6 @@ function add_mime_if_empty( $photo_param )
 function build_search_for_edit( $photo_row, $tag_name_array=null )
 {
 	return $this->_build_class->build_search( $photo_row, $tag_name_array );
-}
-
-//---------------------------------------------------------
-// update
-//---------------------------------------------------------
-function get_file_url_by_kind( $item_row, $kind )
-{
-	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
-	if ( is_array($file_row) ) {
-		return $file_row['file_url'];
-	}
-	return null;
-}
-
-function get_file_path_by_kind( $item_row, $kind )
-{
-	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
-	if ( is_array($file_row) ) {
-		return $file_row['file_path'];
-	}
-	return null;
-}
-
-function get_file_cont_duration( $item_row )
-{
-	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( is_array($cont_row) ) {
-		return $cont_row['file_duration'] ;
-	}
-	return null;
 }
 
 //---------------------------------------------------------

@@ -1,11 +1,70 @@
-$Id: readme_en.txt,v 1.15 2008/11/21 07:56:57 ohwada Exp $
+$Id: readme_en.txt,v 1.16 2008/11/30 10:36:34 ohwada Exp $
+
+=================================================
+Version: 0.80
+Date:   2008-11-30
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Creation of Icon
+In old version, the icon was copied each item.
+In this version, the icon is used just as in images/exts directory. 
+
+2. File Management System
+changed to use the file location in relative path from full path .
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?vtopic_id=869&forum=13
+
+3. Publish Time and Expire Time
+3.1 the admin can set publish time and expire time each item
+3.2 Automatic Publish and Expire
+(1) When becoming at the publish time, the item becomes online mode automatically.
+(2) When becoming at the expire time, the item becomes offline mode automatically.
+3.3 added the offline list and the expired list in the item management.
+
+4. Added Block
+(1) Category List Block
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=428&forum=11
+
+(2) Tag Cloud Block
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=835&forum=13
+
+5. Bug Fix
+(1) Wrong popup image when external image.
+(2) Not show when external swf.
+(3) Wrong time when when $the admin's time zone is different from the server.
+
+6. Database structure
+6.1 add field of table
+(1) item table : item_icon_width
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+  the fields are added to the table automatically. 
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Referred webshow about Publish Time and Expire Time.
+- http://wikiwebshow.com/
+Special thanks to authors.
+
 
 =================================================
 Version: 0.70
 Date:   2008-11-20
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -62,6 +121,12 @@ changed figure to thumbnail in list
   Please copy and overwrite in the directory which XOOPS correspond
 (2) Execute the module update in the admin cp
   the fields are added to the table automatically. 
+
+
+* Special Thanks *
+Referred webshow about codebox.
+- http://wikiwebshow.com/
+Special thanks to authors.
 
 
 =================================================

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.5 2008/11/21 07:56:57 ohwada Exp $
+// $Id: photo_form.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// _WEBPHOTO_DSC_SET_TIME_UPDATE -> _WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE
 // 2008-11-16 K.OHWADA
 // ahref_file -> media_url_s 
 // 2008-10-01 K.OHWADA
@@ -392,7 +394,7 @@ function _build_ed_ele_time_update()
 	$date = formatTimestamp( time(), _WEBPHOTO_DTFMT_YMDHI );
 
 	$text  = $this->build_input_checkbox_yes( $name_checkbox, $this->_C_NO );
-	$text .= _WEBPHOTO_DSC_SET_TIME_UPDATE ."<br />\n";
+	$text .= _WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE ."<br />\n";
 	$text .= $this->build_input_text( $name, $date );
 
 	return $text;

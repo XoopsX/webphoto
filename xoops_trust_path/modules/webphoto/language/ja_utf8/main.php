@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.15 2008/11/19 10:26:00 ohwada Exp $
+// $Id: main.php,v 1.16 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -604,7 +604,9 @@ define("_WEBPHOTO_CAP_PHOTO_SELECT","メイン画像の選択");
 define("_WEBPHOTO_CAP_THUMB_SELECT", "サムネイル画像の選択");
 define("_WEBPHOTO_DSC_THUMB_SELECT", "指定しないときは、メイン画像より自動生成される");
 define("_WEBPHOTO_DSC_SET_DATETIME",   "撮影日時を設定する");
-define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "更新日時を変更する");
+
+//define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "更新日時を変更する");
+
 define("_WEBPHOTO_DSC_PIXCEL_RESIZE", "これ以上大きい画像はリサイズします");
 define("_WEBPHOTO_DSC_PIXCEL_REJECT", "これ以上大きい画像はアップロードできません");
 define("_WEBPHOTO_BUTTON_CLEAR", "リセット");
@@ -1202,7 +1204,8 @@ define("_WEBPHOTO_OR",  "あるいは" ) ;
 // v0.60
 //---------------------------------------------------------
 // item table
-define("_WEBPHOTO_ITEM_ICON" , "アイコン名" ) ;
+//define("_WEBPHOTO_ITEM_ICON" , "アイコン名" ) ;
+
 define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "外部リンクのミドルURL" ) ;
 
 // cat table
@@ -1242,6 +1245,19 @@ define("_WEBPHOTO_DOWNLOAD","ダウンロード");
 
 // file_read
 define("_WEBPHOTO_NO_FILE", "ファイルが存在しない");
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_ICON_NAME" ,   "アイコン名" ) ;
+define("_WEBPHOTO_ITEM_ICON_WIDTH" ,  "アイコン横幅" ) ;
+define("_WEBPHOTO_ITEM_ICON_HEIGHT" , "アイコン高さ" ) ;
+
+// item form
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE",  "更新日時を変更する");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_PUBLISH", "発行日時を設定する");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_EXPIRE",  "終了日時を設定する");
 
 // === define end ===
 }

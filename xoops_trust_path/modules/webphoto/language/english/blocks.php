@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.3 2008/08/08 04:36:09 ohwada Exp $
+// $Id: blocks.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -39,6 +39,15 @@ define($constpref."POPBOX_REVERT", "Click the image to shrink it.");
 // v0.30
 //---------------------------------------------------------
 define($constpref."TEXT_CACHETIME", "Cache Time");
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define($constpref."TEXT_CATLIST_SUB", "Show sub category");
+define($constpref."TEXT_CATLIST_MAIN_IMG", "Show image of main category");
+define($constpref."TEXT_CATLIST_SUB_IMG", "Show image of sub category");
+define($constpref."TEXT_CATLIST_COLS", "Number of columns");
+define($constpref."TEXT_TAGCLOUD_LIMIT", "Number of tags");
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.12 2008/11/19 10:26:00 ohwada Exp $
+// $Id: oninstall.php,v 1.13 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,9 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-11-08 K.OHWADA
+// 2008-11-29 K.OHWADA
+// item_add_column_080()
+// 2008-11-16 K.OHWADA
 // item_add_column_070()
 // 2008-11-08 K.OHWADA
 // item_add_column_060()
@@ -569,6 +571,8 @@ function _item_update()
 	$this->_item_add_column_050();
 	$this->_item_add_column_060();
 	$this->_item_add_column_070();
+	$this->_item_add_column_080();
+	$this->_item_chang_column_080();
 }
 
 function _item_add_column_050()
@@ -630,7 +634,7 @@ function _item_add_column_060()
 	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
 
 	$sql  .= "item_external_middle VARCHAR(255) NOT NULL DEFAULT '', " ;
-	$sql  .= "item_icon VARCHAR(255) NOT NULL DEFAULT '' " ;
+	$sql  .= "item_icon_name VARCHAR(255) NOT NULL DEFAULT '' " ;
 
 	$sql .= " )";
 	$ret = $this->query( $sql );
@@ -687,6 +691,52 @@ function _item_update_070()
 	if ( $ret ) {
 		$this->_set_msg( 'Update item_codeinfo in <b>'. $this->_table_item .'</b>' );
 		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_080()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_icon_width' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_icon_width  INT(11) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_icon_height INT(11) NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_width in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_chang_column_080()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_icon_name' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." CHANGE " ;
+	$sql .= "item_icon item_icon_name VARCHAR(255) NOT NULL DEFAULT '' " ;
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Change item_icon_name in <b>'. $this->_table_item .'</b>' );
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
 		return false;

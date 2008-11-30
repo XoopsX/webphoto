@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.8 2008/11/11 06:53:16 ohwada Exp $
+// $Id: utility.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// check_file_time()
 // 2008-11-08 K.OHWADA
 // read_file_cvs() get_array_value_by_key()
 // 2008-10-01 K.OHWADA
@@ -313,6 +315,29 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 	}
 
 	return $byte;
+}
+
+function check_file_time( $file, $interval )
+{
+// if passing interval time
+	if ( file_exists( $file ) ) {
+		$time = intval( trim( file_get_contents( $file ) ) );
+		if ( ( $time > 0 ) && 
+		     ( time() > ( $time + $interval ) ) ) {
+			return true;
+		}
+
+// if not exists file ( at first time )
+	} else {
+		return true;
+	}
+
+	return false;
+}
+
+function renew_file_time( $file, $chmod )
+{
+	$this->write_file( $file, time(), 'w', $chmod );
 }
 
 //---------------------------------------------------------

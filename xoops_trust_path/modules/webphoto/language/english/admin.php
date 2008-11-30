@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.9 2008/11/21 07:56:57 ohwada Exp $
+// $Id: admin.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -462,6 +462,13 @@ define("_AM_WEBPHOTO_DSC_CAT_FOLDER" , "Show folder icon if not set" ) ;
 // v0.70
 //---------------------------------------------------------
 define("_AM_WEBPHOTO_RECOMMEND_OFF" , "recommend off" ) ;
+
+//---------------------------------------------------------
+// v0.80
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_TITLE_WAITING" , "List of Wating to approve" ) ;
+define("_AM_WEBPHOTO_TITLE_OFFLINE" , "List of Offline" ) ;
+define("_AM_WEBPHOTO_TITLE_EXPIRED" , "List of Expired" ) ;
 
 // === define end ===
 }

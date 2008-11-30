@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.7 2008/11/19 10:26:00 ohwada Exp $
+// $Id: item_handler.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// item_icon_width
+// get_rows_waiting() -> get_rows_status()
 // 2008-11-16 K.OHWADA
 // item_codeinfo
 // 2008-11-08 K.OHWADA
@@ -118,7 +121,9 @@ function create( $flag_new=false )
 		'item_onclick'         => 0,
 		'item_views'           => 0,
 		'item_chain'           => 0,
-		'item_icon'            => '',
+		'item_icon_name'       => '',
+		'item_icon_width'      => 0,
+		'item_icon_height'     => 0,
 		'item_external_url'    => '',
 		'item_external_thumb'  => '',
 		'item_external_middle' => '',
@@ -205,7 +210,9 @@ function insert( $row, $force=false )
 	$sql .= 'item_artist, ';
 	$sql .= 'item_album, ';
 	$sql .= 'item_label, ';
-	$sql .= 'item_icon, ';
+	$sql .= 'item_icon_name, ';
+	$sql .= 'item_icon_width, ';
+	$sql .= 'item_icon_height, ';
 	$sql .= 'item_external_url, ';
 	$sql .= 'item_external_thumb, ';
 	$sql .= 'item_external_middle, ';
@@ -275,7 +282,9 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_artist).', ';
 	$sql .= $this->quote($item_album).', ';
 	$sql .= $this->quote($item_label).', ';
-	$sql .= $this->quote($item_icon).', ';
+	$sql .= $this->quote($item_icon_name).', ';
+	$sql .= intval($item_icon_width).', ';
+	$sql .= intval($item_icon_height).', ';
 	$sql .= $this->quote($item_external_url).', ';
 	$sql .= $this->quote($item_external_thumb).', ';
 	$sql .= $this->quote($item_external_middle).', ';
@@ -359,7 +368,9 @@ function update( $row, $force=false )
 	$sql .= 'item_artist='.$this->quote($item_artist).', ';
 	$sql .= 'item_album='.$this->quote($item_album).', ';
 	$sql .= 'item_label='.$this->quote($item_label).', ';
-	$sql .= 'item_icon='.$this->quote($item_icon).', ';
+	$sql .= 'item_icon_name='.$this->quote($item_icon_name).', ';
+	$sql .= 'item_icon_width='.intval($item_icon_width).', ';
+	$sql .= 'item_icon_height='.intval($item_icon_height).', ';
 	$sql .= 'item_external_url='.$this->quote($item_external_url).', ';
 	$sql .= 'item_external_thumb='.$this->quote($item_external_thumb).', ';
 	$sql .= 'item_external_middle='.$this->quote($item_external_middle).', ';
@@ -446,9 +457,8 @@ function countup_views( $item_id, $force=false )
 function update_status( $item_id, $status, $force=false )
 {
 	$sql  = 'UPDATE '.$this->_table.' SET ';
-	$sql .= 'item_status = '. intval($status) ;
-	$sql .= 'WHERE '. $this->build_where_public();
-	$sql .= 'AND item_id='.intval($item_id);
+	$sql .= ' item_status = '. intval($status) ;
+	$sql .= ' WHERE item_id='.intval($item_id);
 
 	return $this->query( $sql, 0, 0, $force );
 }
@@ -471,9 +481,14 @@ function get_count_public()
 	return $this->get_count_by_where( $where );
 }
 
+function get_count_status( $status )
+{
+	return $this->get_count_by_where( $this->build_where_status( $status ) );
+}
+
 function get_count_waiting()
 {
-	return $this->get_count_by_where( $this->build_where_waiting() );
+	return $this->get_count_status( _C_WEBPHOTO_STATUS_WAITING );
 }
 
 function get_count_by_catid( $cat_id )
@@ -593,9 +608,9 @@ function get_rows_public_imode_by_orderby( $orderby, $limit=0, $offset=0 )
 	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
 }
 
-function get_rows_waiting( $limit=0, $offset=0 )
+function get_rows_status( $status, $limit=0, $offset=0 )
 {
-	$where   = $this->build_where_waiting();
+	$where   = $this->build_where_status( $status );
 	$orderby = 'item_id ASC';
 	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
 }
@@ -791,9 +806,9 @@ function build_where_public()
 	return $where;
 }
 
-function build_where_waiting()
+function build_where_status( $status )
 {
-	$where = ' item_status = 0 ';
+	$where = ' item_status = '. intval($status) ;
 	return $where;
 }
 
@@ -827,16 +842,6 @@ function build_where_gmap()
 function build_where_place_array( $place_array )
 {
 	return $this->build_where_by_keyword_array( $place_array, 'AND', 'item_place' );
-}
-
-function build_where_waiting_by_keyword_array( $keyword_array )
-{
-	$where = $this->build_where_waiting() ;
-	$where_key = $this->build_where_by_keyword_array( $keyword_array );
-	if ( $where_key ) {
-		$where .= ' AND '.$where_key ;
-	}
-	return $where;
 }
 
 function build_where_by_keyword_array_catid( $keyword_array, $cat_id )
@@ -1087,6 +1092,18 @@ function check_perm( $val, $groups )
 	return $this->check_perms_in_groups( $perms, $groups );
 }
 
+function build_show_icon_image( $item_row, $base_url )
+{
+	$url    = null ;
+	$name   = $item_row['item_icon_name'] ;
+	$width  = $item_row['item_icon_width'] ;
+	$height = $item_row['item_icon_height'] ;
+	if ( $name ) {
+		$url = $base_url .'/'. $name ;
+	}
+	return array( $url, $width, $height ) ;
+}
+
 //---------------------------------------------------------
 // for comment_new
 //---------------------------------------------------------
@@ -1165,6 +1182,18 @@ function get_onclick_options()
 		_C_WEBPHOTO_ONCLICK_PAGE    => _WEBPHOTO_ITEM_ONCLICK_PAGE ,
 		_C_WEBPHOTO_ONCLICK_DIRECT  => _WEBPHOTO_ITEM_ONCLICK_DIRECT ,
 		_C_WEBPHOTO_ONCLICK_POPUP   => _WEBPHOTO_ITEM_ONCLICK_POPUP ,
+	);
+	return $arr;
+}
+
+function get_status_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_STATUS_WAITING  => _WEBPHOTO_ITEM_STATUS_WAITING ,
+		_C_WEBPHOTO_STATUS_APPROVED => _WEBPHOTO_ITEM_STATUS_APPROVED ,
+		_C_WEBPHOTO_STATUS_UPDATED  => _WEBPHOTO_ITEM_STATUS_UPDATED ,
+		_C_WEBPHOTO_STATUS_OFFLINE  => _WEBPHOTO_ITEM_STATUS_OFFLINE ,
+		_C_WEBPHOTO_STATUS_EXPIRED  => _WEBPHOTO_ITEM_STATUS_EXPIRED ,
 	);
 	return $arr;
 }

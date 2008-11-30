@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.15 2008/11/21 07:56:57 ohwada Exp $
+// $Id: show_photo.php,v 1.16 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// remove get_show_file_url()
 // 2008-11-16 K.OHWADA
 // webphoto_show_image
 // perm_download()
@@ -151,7 +153,9 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'label'           => $item_label ,
 		'displaytype'     => $item_displaytype,
 		'onclick'         => $item_onclick,
-		'icon'            => $item_icon,
+		'icon_name'       => $item_icon_name,
+		'icon_width'      => $item_icon_width,
+		'icon_height'     => $item_icon_height,
 		'perm_read'       => $item_perm_read,
 		'perm_down'       => $item_perm_down,
 		'external_url'    => $item_external_url,
@@ -187,7 +191,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'artist_s'          => $this->sanitize( $item_artist ) ,
 		'album_s'           => $this->sanitize( $item_album ) ,
 		'label_s'           => $this->sanitize( $item_label ) ,
-		'icon_s'            => $this->sanitize( $item_icon ) ,
+		'icon_name_s'       => $this->sanitize( $item_icon_name ) ,
 		'external_url_s'    => $this->sanitize( $item_external_url ) ,
 		'external_thumb_s'  => $this->sanitize( $item_external_thumb ) ,
 		'external_middle_s' => $this->sanitize( $item_external_middle ) ,
@@ -198,7 +202,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		'playlist_cache_s'  => $this->sanitize( $item_playlist_cache ) ,
 		'uname_s'           => $this->build_show_uname( $item_uid ) ,
 
-		'time_update_m'       => formatTimestamp( $item_time_update , 'm' ) ,
+		'time_update_m'       => $this->format_timestamp( $item_time_update , 'm' ) ,
 		'datetime_disp'       => $datetime_disp ,
 		'datetime_urlencode'  => $this->rawurlencode_uri_encode_str( $datetime_disp ) ,
 		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $item_place ),
@@ -519,34 +523,6 @@ function get_show_file_size_duration( $show_arr, $kind )
 	}
 
 	return array( $size, $duration );
-}
-
-function get_show_file_url( $show_arr, $kind )
-{
-	$url = null;
-
-	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
-	if ( is_array($file_row) ) {
-		$url = $file_row['file_url'] ;
-	}
-
-	return $url ;
-}
-
-function get_show_file_u_w_h( $show_arr, $kind )
-{
-	$url    = null ;
-	$width  = 0 ;
-	$height = 0 ;
-
-	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
-	if ( is_array($file_row) ) {
-		$url    = $file_row['file_url'] ;
-		$width  = $file_row['file_width'] ;
-		$height = $file_row['file_height'] ;
-	}
-
-	return array( $url, $width, $height );
 }
 
 function has_file_url( $url )

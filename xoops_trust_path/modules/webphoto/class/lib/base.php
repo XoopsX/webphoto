@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.12 2008/11/21 08:54:07 ohwada Exp $
+// $Id: base.php,v 1.13 2008/11/30 10:36:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// user_to_server_time()
 // 2008-11-16 K.OHWADA
 // get_cached_xoops_db_groups()
 // 2008-10-10 K.OHWADA
@@ -545,6 +547,19 @@ function get_cached_xoops_db_groups()
 function get_xoops_group_name( $id, $format='s' )
 {
 	return $this->_xoops_class->get_cached_group_by_id_name( $id, 'name', $format );
+}
+
+//---------------------------------------------------------
+// timestamp
+//---------------------------------------------------------
+function user_to_server_time( $time )
+{
+	return $this->_xoops_class->user_to_server_time( $time );
+}
+
+function format_timestamp( $time, $format="l", $timeoffset="" )
+{
+	return formatTimestamp( $time, $format, $timeoffset );
 }
 
 //---------------------------------------------------------
