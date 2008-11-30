@@ -1,5 +1,5 @@
 <?php
-// $Id: auto_publish.php,v 1.1 2008/11/30 10:37:07 ohwada Exp $
+// $Id: auto_publish.php,v 1.2 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -125,35 +125,37 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 //---------------------------------------------------------
 function item_auto_publish( $force=false )
 {
-	$rows = $this->get_item_rows_until_publish() ;
+	$rows = $this->get_item_rows_coming_publish() ;
 	if ( is_array($rows) && count($rows) ) {
 		foreach ( $rows as $row ) {
-			$this->update_item_status( $item_id, _C_WEBPHOTO_STATUS_APPROVED, $force ) ;
+			$this->update_item_status( 
+				$row['item_id'], _C_WEBPHOTO_STATUS_UPDATED, $force ) ;
 		}
 	}
 }
 
 function item_auto_expire( $force=false )
 {
-	$rows = $this->get_item_rows_until_expire() ;
+	$rows = $this->get_item_rows_coming_expire() ;
 	if ( is_array($rows) && count($rows) ) {
 		foreach ( $rows as $row ) {
-			$this->update_item_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, $force ) ;
+			$this->update_item_status( 
+				$row['item_id'], _C_WEBPHOTO_STATUS_EXPIRED, $force ) ;
 		}
 	}
 }
 
-function get_item_rows_until_publish( $limit=0, $offset=0 )
+function get_item_rows_coming_publish( $limit=0, $offset=0 )
 {
 	$sql  = 'SELECT * FROM '. $this->_table_item;
 	$sql .= ' WHERE item_status = '. _C_WEBPHOTO_STATUS_OFFLINE ;
 	$sql .= ' AND item_time_publish > 0 ' ;
-	$sql .= ' AND item_time_publish > '. time() ;
+	$sql .= ' AND item_time_publish < '. time() ;
 	$sql .= ' ORDER BY item_id' ;
 	return $this->get_rows_by_sql( $sql, $limit, $offset );
 }
 
-function get_item_rows_until_expire( $limit=0, $offset=0 )
+function get_item_rows_coming_expire( $limit=0, $offset=0 )
 {
 	$sql  = 'SELECT * FROM '. $this->_table_item;
 	$sql .= ' WHERE item_status > 0 ' ;

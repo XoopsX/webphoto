@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.18 2008/11/30 10:36:34 ohwada Exp $
+// $Id: main.php,v 1.19 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1079,7 +1079,7 @@ define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","Feed");
 
 define("_WEBPHOTO_ITEM_STATUS_WAITING","Waiting Approval");
 define("_WEBPHOTO_ITEM_STATUS_APPROVED","Appoved");
-define("_WEBPHOTO_ITEM_STATUS_UPDATED","Updated");
+define("_WEBPHOTO_ITEM_STATUS_UPDATED","Online (Updated)");
 define("_WEBPHOTO_ITEM_STATUS_OFFLINE","Off Line");
 define("_WEBPHOTO_ITEM_STATUS_EXPIRED","Expired");
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
+// $Id: uri.php,v 1.3 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,7 +31,7 @@ class webphoto_uri extends webphoto_inc_uri
 function webphoto_uri( $dirname )
 {
 	$this->webphoto_inc_uri();
-	$this->init( $this->_DIRNAME );
+	$this->init( $dirname );
 
 	$this->_xoops_class    =& webphoto_xoops_base::getInstance();
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();

@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
+// $Id: handler.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -281,14 +281,35 @@ function get_column_row( $table, $column )
 //---------------------------------------------------------
 // handler
 //---------------------------------------------------------
-function query( $sql, $limit=0, $offset=0 )
+function query( $sql, $limit=0, $offset=0, $force=false )
 {
+	if ( $force ) {
+		return $this->queryF( $sql, $limit, $offset );
+	}
+
 	if ( $this->_DEBUG_SQL ) {
 		echo $this->sanitize( $sql ) .': limit='. $limit .' :offset='. $offset. "<br />\n";
 	}
 
 	$res = $this->_db->query( $sql, intval($limit), intval($offset) );
 	if ( !$res  ) {
+		$this->_db_error = $this->_db->error();
+		if ( $this->_DEBUG_ERROR ) {
+			echo $this->highlight( $this->_db_error )."<br />\n";
+		}
+	}
+
+	return $res;
+}
+
+function queryF( $sql, $limit=0, $offset=0 )
+{
+	if ( $this->_DEBUG_SQL ) {
+		echo $this->sanitize( $sql ) .': limit='. $limit .' :offset='. $offset. "<br />\n";
+	}
+
+	$res = $this->_db->queryF( $sql, intval($limit), intval($offset) );
+	if ( !$res ) {
 		$this->_db_error = $this->_db->error();
 		if ( $this->_DEBUG_ERROR ) {
 			echo $this->highlight( $this->_db_error )."<br />\n";

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
+// $Id: item_manager.php,v 1.5 2008/11/30 13:41:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -244,10 +244,6 @@ function _menu()
 
 	$total_all = $this->_item_handler->get_count_all();
 	$item_rows = $this->_item_handler->get_rows_by_orderby( $orderby, $perpage, $start );
-
-// Waiting Admission
-//	echo $this->build_check_waiting();
-//	echo "<br />\n";
 
 	$form_class->print_form_refresh_cache();
 	echo "<br />\n";
@@ -511,26 +507,17 @@ function _build_status( $row )
 			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($publish,'m');
 			$link   = $photo_url ;
 			$icon   = 'online.png';
-
-			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_APPROVED, true ) ;
-
-//		} elseif ( $publish > 0 ) {
-//			$report = _AM_WEBPHOTO_STATUS_AUTO.' : '. $this->format_timestamp($publish,'m');
-//			$link   = $modify_url ;
-//			$icon   = 'offline.png';
-//			$this->autoPublish( $row );
+			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_UPDATED, true ) ;
 
 		} else {
 			$report = _AM_WEBPHOTO_STATUS_OFFLINE ;
 			$link   = $this->_THIS_URL.'&amp;op=list_offline';
-//			$link   = $modify_url ;
 			$icon   = 'offline.png';   	           
 		}
 		break;
 
 	case _C_WEBPHOTO_STATUS_EXPIRED :
 		$report = _WEBPHOTO_ITEM_STATUS_EXPIRED.' : '. $this->format_timestamp($expire,'m');
-//		$link   = $modify_url ;
 		$link   = $this->_THIS_URL.'&amp;op=list_expired';
 		$icon   = 'offline.png'; 
 		break;
@@ -541,11 +528,8 @@ function _build_status( $row )
 // Entry has Expired
 		if ( ($expire > 0) && ($expire < time()) ) {
 			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($expire,'m');
-//			$link   = $modify_url ;
 			$link   = $this->_THIS_URL.'&amp;op=list_expired';
-
 			$icon   = 'offline.png';   
-
 			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, true ) ;
 
 // online

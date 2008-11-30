@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.8 2008/11/21 13:09:45 ohwada Exp $
+// $Id: photo.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -667,8 +667,6 @@ function _build_navi( $photo_id, $cat_id )
 	$script   = $this->_uri_class->build_photo_pagenavi() ;
 	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
 	$id_array = $this->_item_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
-
-//	return $this->_pagenavi_class->build_id_array( $script, $id_array, $photo_id );
 
 	return $this->_photo_navi_class->build_navi( $script, $id_array, $photo_id );
 }

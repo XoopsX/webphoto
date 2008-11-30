@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
+// $Id: photo_create.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -905,7 +905,7 @@ function update_video_thumb_by_item_row( $item_row, $num )
 		'middle_id' => $middle_id ,
 	);
 
-	$row_update = $this->_photo_class->build_update_item_row( 
+	$row_update = $this->build_update_item_row( 
 		$item_row, $file_id_array );
 
 // --- update item ---

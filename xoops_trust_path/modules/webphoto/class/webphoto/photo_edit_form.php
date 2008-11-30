@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.17 2008/11/30 10:36:34 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.18 2008/11/30 13:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -591,7 +591,7 @@ function _build_ele_thumb_file_external( $thumb_row )
 // icon name
 	if ( empty($link_file) && $value_icon ) {
 		$ele .= $this->get_constant('OR')." ";
-		$ele .= "ICON NAME <br />\n" ;
+		$ele .= $this->get_constant('ITEM_ICON_NAME')."<br />\n" ;
 		$ele .= '<div style="'. $this->_ICON_DIV_STYLE .'">';
 		$ele .= $value_icon ;
 		$ele .= "</div><br />\n" ;
