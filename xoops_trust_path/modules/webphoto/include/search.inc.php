@@ -1,5 +1,5 @@
 <?php
-// $Id: search.inc.php,v 1.2 2008/07/05 16:57:40 ohwada Exp $
+// $Id: search.inc.php,v 1.3 2008/12/02 12:19:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-11-29 K.OHWADA
+// auto_publish.php
 // 2008-07-01 K.OHWADA
 // added config.php
 //---------------------------------------------------------
@@ -21,10 +23,11 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
-webphoto_include_once( 'class/inc/handler.php',  $MY_DIRNAME );
-webphoto_include_once( 'class/inc/config.php' ,  $MY_DIRNAME );
-webphoto_include_once( 'class/inc/search.php' ,  $MY_DIRNAME );
-webphoto_include_once( 'preload/search.php' ,    $MY_DIRNAME  );
+webphoto_include_once( 'class/inc/handler.php',      $MY_DIRNAME );
+webphoto_include_once( 'class/inc/config.php' ,      $MY_DIRNAME );
+webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/search.php' ,      $MY_DIRNAME );
+webphoto_include_once( 'preload/search.php' ,        $MY_DIRNAME  );
 
 //=========================================================
 // search functions

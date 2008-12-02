@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
+// $Id: blocks.php,v 1.11 2008/12/02 12:19:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -324,6 +324,7 @@ function _init( $options )
 	$this->init_handler( $dirname );
 	$this->_init_xoops_config( $dirname );
 	$this->_auto_publish( $dirname );
+
 }
 
 function _top_show_common( $mode , $options )

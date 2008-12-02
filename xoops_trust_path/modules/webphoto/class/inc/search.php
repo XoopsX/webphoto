@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.8 2008/11/30 14:32:40 ohwada Exp $
+// $Id: search.php,v 1.9 2008/12/02 12:19:43 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -27,6 +27,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_inc_search extends webphoto_inc_handler
 {
 	var $_cfg_use_pathinfo = false;
+	var $_cfg_workdir      = null;
 
 	var $_SHOW_IMAGE = true ;
 	var $_SHOW_ICON  = false ;
@@ -53,6 +54,7 @@ function _init( $dirname )
 {
 	$this->init_handler( $dirname );
 	$this->_init_xoops_config( $dirname );
+	$this->_auto_publish( $dirname );
 
 // preload
 	$name_image= strtoupper( '_P_'. $dirname .'_SEARCH_SHOW_IMAGE' );
@@ -255,6 +257,18 @@ function _build_where_search_single( $str )
 }
 
 //---------------------------------------------------------
+// auto publish
+//---------------------------------------------------------
+function _auto_publish( $dirname )
+{
+	$publish_class =& webphoto_inc_auto_publish::getInstance();
+	$publish_class->init( $dirname );
+	$publish_class->set_workdir( $this->_cfg_workdir );
+
+	$publish_class->auto_publish();
+}
+
+//---------------------------------------------------------
 // xoops_config
 //---------------------------------------------------------
 function _init_xoops_config( $dirname )
@@ -263,6 +277,7 @@ function _init_xoops_config( $dirname )
 	$config_handler->init( $dirname );
 
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
+	$this->_cfg_workdir      = $config_handler->get_by_name( 'workdir' );
 }
 
 // --- class end ---
