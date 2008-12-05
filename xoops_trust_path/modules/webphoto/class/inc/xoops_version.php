@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.15 2008/11/30 10:36:34 ohwada Exp $
+// $Id: xoops_version.php,v 1.16 2008/12/05 10:38:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-05 K.OHWADA
+// _init_workdir()
 // 2008-11-29 K.OHWADA
 // b_webphoto_catlist_show
 // 2008-11-08 K.OHWADA
@@ -40,13 +42,13 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_xoops_version extends webphoto_inc_handler
 {
-	var $_workdir_class ;
-
 	var $_cfg_catonsubmenu = false;
 	var $_cfg_use_pathinfo = false;
 	var $_has_insertable   = false;
 	var $_has_rateview     = false;
 	var $_is_module_admin  = false;
+
+	var $_config_workdir_default = null;
 
 	var $_TRUST_DIRNAME = null ;
 	var $_MODULE_ID     = 0;
@@ -79,8 +81,6 @@ function build_modversion( $dirname, $trust_dirname )
 {
 	$this->_init( $dirname, $trust_dirname );
 
-	$this->_workdir_class =& webphoto_inc_workdir::getInstance( $dirname, $trust_dirname );
-
 // probably install or update
 	if ( $this->_is_module_admin && 
 	   ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) ) {
@@ -104,6 +104,7 @@ function _init( $dirname, $trust_dirname )
 	$this->_init_config( $dirname );
 	$this->_init_group_permission( $dirname );
 	$this->_init_is_module_admin();
+	$this->_init_workdir( $dirname, $trust_dirname );
 
 	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
 
@@ -440,7 +441,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_WORKDIR_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> $this->_build_config_workdir() ,
+		'default'		=> $this->_config_workdir_default ,
 		'options'		=> array()
 	) ;
 
@@ -1023,11 +1024,6 @@ function _build_config_index_desc()
 	return $str;
 }
 
-function _build_config_workdir()
-{
-	return $this->_workdir_class->get_config_workdir() ;
-}
-
 //---------------------------------------------------------
 // langauge
 //---------------------------------------------------------
@@ -1183,6 +1179,16 @@ function _init_is_module_admin()
 			$this->_is_module_admin = true;
 		}
 	}
+}
+
+//---------------------------------------------------------
+// workdir
+//---------------------------------------------------------
+function _init_workdir( $dirname, $trust_dirname )
+{
+	$workdir_class =& webphoto_inc_workdir::getInstance();
+	$workdir_class->init( $dirname, $trust_dirname );
+	$this->_config_workdir_default = $workdir_class->get_config_workdir() ;
 }
 
 // --- class end ---

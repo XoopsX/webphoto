@@ -1,10 +1,16 @@
 <?php
-// $Id: workdir.php,v 1.3 2008/11/11 14:20:45 ohwada Exp $
+// $Id: workdir.php,v 1.4 2008/12/05 10:38:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-08 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-05 K.OHWADA
+// init()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,24 +27,29 @@ class webphoto_inc_workdir
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_workdir( $dirname, $trust_dirname )
+function webphoto_inc_workdir()
 {
-	$this->_DIRNAME       = $dirname ;
+	// dummy
+}
+
+function &getInstance()
+{
+	static $instance;
+	if (!isset($instance)) {
+		$instance = new webphoto_inc_workdir();
+	}
+	return $instance;
+}
+
+function init( $dirname, $trust_dirname )
+{
+	$this->_DIRNAME       = $dirname;
 	$this->_TRUST_DIRNAME = $trust_dirname ;
 
 	$this->_DIR_TRUST_UPLOADS =
 		XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
 
 	$this->_FILE_WORKDIR = $this->_DIR_TRUST_UPLOADS .'/workdir.txt' ;
-}
-
-function &getInstance( $dirname, $trust_dirname )
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_workdir( $dirname, $trust_dirname );
-	}
-	return $instance;
 }
 
 //---------------------------------------------------------

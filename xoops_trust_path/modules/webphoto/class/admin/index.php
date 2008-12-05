@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.10 2008/11/11 16:26:21 ohwada Exp $
+// $Id: index.php,v 1.11 2008/12/05 10:38:32 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-05 K.OHWADA
+// $this->_workdir_class->init()
 // 2008-11-08 K.OHWADA
 // webphoto_inc_workdir
 // 2008-10-01 K.OHWADA
@@ -45,7 +47,9 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 
 	$this->_update_check_class  =& webphoto_admin_update_check::getInstance( $dirname , $trust_dirname );
 	$this->_checkconfig_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
-	$this->_workdir_class       =& webphoto_inc_workdir::getInstance( $dirname, $trust_dirname );
+
+	$this->_workdir_class =& webphoto_inc_workdir::getInstance();
+	$this->_workdir_class->init( $dirname, $trust_dirname );
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';
@@ -160,7 +164,7 @@ function _workdir_file()
 
 // unmatch
 		case 1 :
-			$msg = 'ERROR same tmp dir';
+			$msg = 'ERROR same work dir';
 			echo $this->build_error_msg( $msg, '', false );
 			return false ;
 
