@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.4 2008/11/11 12:49:07 ohwada Exp $
+// $Id: retrieve.php,v 1.5 2008/12/05 10:42:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-05 K.OHWADA
+// class/inc/uri.php
 // 2008-11-08 K.OHWADA
 // imagemagick.php
 // 2008-11-03 K.OHWADA
@@ -37,6 +39,7 @@ webphoto_include_once( 'class/bin/xoops_mysql_database.php' );
 webphoto_include_once( 'class/bin/xoops_base.php' );
 webphoto_include_once( 'class/bin/permission.php' );
 webphoto_include_once( 'class/bin/base.php' );
+webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/preload.php' );
 webphoto_include_once( 'class/lib/tree_handler.php' );
