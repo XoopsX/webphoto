@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.11 2008/12/05 10:38:32 ohwada Exp $
+// $Id: index.php,v 1.12 2008/12/06 15:47:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-06 K.OHWADA
+// check_writable
 // 2008-12-05 K.OHWADA
 // $this->_workdir_class->init()
 // 2008-11-08 K.OHWADA
@@ -110,11 +112,11 @@ function _print_check()
 	echo $this->_make_dir( $this->_QRS_DIR );
 	echo $this->_make_dir( $this->_PLAYLISTS_DIR );
 	echo $this->_make_dir( $this->_LOGOS_DIR );
-	echo $this->_make_dir( $this->_MEDIAS_DIR );
 	echo $this->_make_dir( $this->_WORK_DIR );
 	echo $this->_make_dir( $this->_TMP_DIR );
 	echo $this->_make_dir( $this->_MAIL_DIR );
 	echo $this->_make_dir( $this->_LOG_DIR );
+	echo $this->_make_dir( $this->_MEDIAS_DIR, false );
 
 	$this->_workdir_file();
 
@@ -131,17 +133,27 @@ function _print_check()
 	echo "<br />\n";
 }
 
-function _make_dir( $dir )
+function _make_dir( $dir, $check_writable=true )
 {
-	if ( is_dir( $dir ) ) { return ''; }
+	$not_dir = true ;
+	if ( is_dir( $dir ) ) {
+		$not_dir = false ;
+		if ( $check_writable && is_writable( $dir ) ) {
+			return ''; 
+	 	} elseif ( !$check_writable ) {
+			return ''; 
+	 	}
+	}
 
 	if ( ini_get('safe_mode') ) {
 		return $this->highlight( 'At first create & chmod 777 "'. $dir .'" by ftp or shell.' )."<br />\n";
 	}
 
-	$ret = mkdir( $dir, $this->_MKDIR_MODE ) ;
-	if ( !$ret ) {
-		return $this->highlight( 'can not create directory : <b>'. $dir .'</b>' )."<br />\n";
+	if ( $not_dir ) {
+		$ret = mkdir( $dir, $this->_MKDIR_MODE ) ;
+		if ( !$ret ) {
+			return $this->highlight( 'can not create directory : <b>'. $dir .'</b>' )."<br />\n";
+		}
 	}
 
 	$ret = chmod( $dir, $this->_MKDIR_MODE ) ;
