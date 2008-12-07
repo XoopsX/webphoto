@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.4 2008/09/04 00:46:47 ohwada Exp $
+// $Id: i.php,v 1.5 2008/12/07 15:07:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// $_ARRAY_MOBILE_TEXT
 // 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 // added _judge()
@@ -24,24 +26,26 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_retrieve_class;
 	var $_pagenavi_class;
 	var $_multibyte_class;
-	var $_image_create_class;
 
 	var $_xoops_sitename = null;
 
-	var $_TEMPLATE = null;
+	var $_MOBILE_TEMPLATE = null;
 
-	var $_CHARSET        = _CHARSET ;
-	var $_CHARSET_OUTPUT = _CHARSET ;
+	var $_MOBILE_CHARSET_INTERNAL = _CHARSET ;
+	var $_MOBILE_CHARSET_OUTPUT   = _CHARSET ;
 
-	var $_LATEST_LIMIT   = 1;
-	var $_RANDOM_LIMIT   = 1;
-	var $_RAMDOM_ORDERBY = 'rand()';
-	var $_LIST_LIMIT     = 10;
-	var $_LIST_ORDERBY   = 'item_time_update DESC, item_id DESC';
-	var $_NAVI_WINDOWS   = 4;
+	var $_MOBILE_LATEST_LIMIT   = 1;
+	var $_MOBILE_RANDOM_LIMIT   = 1;
+	var $_MOBILE_RANDOM_ORDERBY = 'rand()';
+	var $_MOBILE_LIST_LIMIT     = 10;
+	var $_MOBILE_LIST_ORDERBY   = 'item_time_update DESC, item_id DESC';
+	var $_MOBILE_NAVI_WINDOWS   = 4;
 
-	var $_MAX_MOBILE_WIDTH  = 480;
-	var $_MAX_MOBILE_HEIGHT = 480;
+	var $_ITEM_CONV_ARRAY = array(
+		'title', 'place', 'equipment', 'artist', 'album', 'label', 'uname' );
+
+// preload
+	var $_ARRAY_MOBILE_TEXT = null;
 
 //---------------------------------------------------------
 // constructor
@@ -54,14 +58,17 @@ function webphoto_main_i( $dirname , $trust_dirname )
 	$this->_retrieve_class  =& webphoto_mail_retrieve::getInstance( $dirname , $trust_dirname );
 	$this->_pagenavi_class  =& webphoto_lib_pagenavi::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 
 	$this->_set_charset_output();
 	$this->_set_mobile_carrier_array();
 
-	$this->_TEMPLATE = 'db:'. $dirname .'_main_i.html';
+	$this->_MOBILE_TEMPLATE = 'db:'. $dirname .'_main_i.html';
 
 	$this->_xoops_sitename = $this->_xoops_class->get_config_by_name( 'sitename' ) ;
+
+// preload
+	$this->preload_init();
+	$this->preload_constant();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -77,7 +84,7 @@ function _set_charset_output()
 {
 	if ( defined("_WEBPHOTO_CHARSET_MOBILE") ) { 
 		if ( constant("_WEBPHOTO_CHARSET_MOBILE") ) {
-			$this->_CHARSET_OUTPUT = _WEBPHOTO_CHARSET_MOBILE;
+			$this->_MOBILE_CHARSET_OUTPUT = _WEBPHOTO_CHARSET_MOBILE;
 		}
 	}
 }
@@ -98,7 +105,7 @@ function _set_mobile_carrier_array()
 function main()
 {
 	$this->http_output('pass');
-	header( 'Content-Type:text/html; charset='.$this->_CHARSET_OUTPUT );
+	header( 'Content-Type:text/html; charset='.$this->_MOBILE_CHARSET_OUTPUT );
 
 	$op = $this->_post_class->get_get_text('op');
 	switch ( $op )
@@ -125,7 +132,7 @@ function _post()
 {
 	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
 
-	$text  = $this->build_html_head( $this->sanitize($title), $this->_CHARSET_OUTPUT );
+	$text  = $this->build_html_head( $this->sanitize($title), $this->_MOBILE_CHARSET_OUTPUT );
 	$text .= $this->build_html_body_begin();
 	$text .= $this->_post_exec();
 	$text .= $this->_build_goto();
@@ -227,7 +234,7 @@ function _judge()
 {
 	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
 
-	$text  = $this->build_html_head( $this->sanitize($title), $this->_CHARSET_OUTPUT );
+	$text  = $this->build_html_head( $this->sanitize($title), $this->_MOBILE_CHARSET_OUTPUT );
 	$text .= $this->build_html_body_begin();
 	$text .= $this->_judge_exec();
 	$text .= $this->_build_goto();
@@ -270,7 +277,7 @@ function _show()
 {
 	$tpl = new XoopsTpl();
 	$tpl->assign( $this->_show_exec() ) ;
-	$tpl->display( $this->_TEMPLATE );
+	$tpl->display( $this->_MOBILE_TEMPLATE );
 }
 
 function _show_exec()
@@ -299,13 +306,14 @@ function _show_exec()
 		'photo_list'    => $this->_get_photo_list( $page ),
 		'navi'          => $this->_build_navi( $page ) ,
 		'xoops_dirname' => $this->_DIRNAME ,
-		'charset'       => $this->_CHARSET_OUTPUT,
+		'charset'       => $this->_MOBILE_CHARSET_OUTPUT,
 		'size'          => $size,
 		'show_photo'    => $show_photo ,
 		'show_post'     => $this->_check_perm() ,
 		'token'         => $this->get_token() ,
-		'mobile_width'  => $this->_MAX_MOBILE_WIDTH ,
 
+		'cfg_thumb_width'  => $this->get_config_by_name('thumb_width') ,
+		'cfg_middle_width' => $this->get_config_by_name('middle_width') ,
 		'sitename_conv'    => $this->conv( $this->sanitize( $this->_xoops_sitename ) ) ,
 		'pagetitle_conv'   => $this->conv( $this->sanitize( $pagetitle ) ) ,
 		'modulename_conv'  => $this->conv( $this->sanitize( $this->_MODULE_NAME ) ) ,
@@ -326,7 +334,7 @@ function _get_photo( $op, $id )
 // latest
 	if ( $op == 'latest' ) {
 		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby(
-			$this->_LIST_ORDERBY, $this->_LATEST_LIMIT );
+			$this->_MOBILE_LIST_ORDERBY, $this->_MOBILE_LATEST_LIMIT );
 		if ( isset($item_rows[0]) ) {
 			$item_row = $item_rows[0] ;
 		}
@@ -339,7 +347,7 @@ function _get_photo( $op, $id )
 // random
 	if ( !is_array($item_row) ) {
 		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby( 
-			$this->_RAMDOM_ORDERBY, $this->_RANDOM_LIMIT );
+			$this->_MOBILE_RANDOM_ORDERBY, $this->_MOBILE_RANDOM_LIMIT );
 		if ( isset($item_rows[0]) ) {
 			$item_row = $item_rows[0] ;
 		}
@@ -355,9 +363,9 @@ function _get_photo( $op, $id )
 function _get_photo_list( $page )
 {
 	$this->_pagenavi_class->set_page( $page );
-	$start = $this->_pagenavi_class->calc_start( $page, $this->_LIST_LIMIT );
+	$start = $this->_pagenavi_class->calc_start( $page, $this->_MOBILE_LIST_LIMIT );
 	$item_rows  = $this->_item_handler->get_rows_public_imode_by_orderby(
-		$this->_LIST_ORDERBY, $this->_LIST_LIMIT, $start );
+		$this->_MOBILE_LIST_ORDERBY, $this->_MOBILE_LIST_LIMIT, $start );
 	return $this->build_show_conv_from_rows( $item_rows );
 }
 
@@ -366,7 +374,7 @@ function _build_navi( $page )
 	$url = $this->_MODULE_URL .'/i.php?';
 	$total = $this->_item_handler->get_count_public_imode();
 	return $this->_pagenavi_class->build( 
-		$url, $page, $this->_LIST_LIMIT, $total, $this->_NAVI_WINDOWS );
+		$url, $page, $this->_MOBILE_LIST_LIMIT, $total, $this->_MOBILE_NAVI_WINDOWS );
 }
 
 //---------------------------------------------------------
@@ -374,16 +382,28 @@ function _build_navi( $page )
 //---------------------------------------------------------
 function build_show_conv( $item_row )
 {
-	$photo = $this->build_photo_show( $item_row );
+	$conv_array = $this->_ITEM_CONV_ARRAY ;
 
-	$photo['title_conv']       = $this->conv( $photo['title_s'] ) ;
-	$photo['place_conv']       = $this->conv( $photo['place_s'] ) ;
-	$photo['equipment_conv']   = $this->conv( $photo['equipment_s'] ) ;
-	$photo['uname_conv']       = $this->conv( $photo['uname_s'] ) ;
-	$photo['description_conv'] = $this->conv( $photo['description_disp'] ) ;
-	$photo['summary_conv']     = $this->conv( $photo['summary'] ) ;
+	if ( is_array($this->_ARRAY_MOBILE_TEXT) ) {
+		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
+		{
+			$name_i = 'text_'. $i ;
+			if ( in_array( 'item_'.$name_i, $this->_ARRAY_MOBILE_TEXT ) ) {
+				$conv_array[] = $name_i ;
+			}
+		}
+	}
 
-	return $photo;
+	$arr = $this->build_photo_show( $item_row );
+
+	$arr['description_conv'] = $this->conv( $arr['description_disp'] ) ;
+	$arr['summary_conv']     = $this->conv( $arr['summary'] ) ;
+
+	foreach ( $conv_array as $name ) {
+		$arr[ $name.'_conv' ] = $this->conv( $arr[ $name.'_s'] ) ;
+	}
+
+	return $arr;
 }
 
 function build_show_conv_from_rows( $item_rows )
@@ -406,7 +426,8 @@ function http_output( $encoding )
 
 function conv( $str )
 {
-	return $this->_multibyte_class->convert_encoding( $str, $this->_CHARSET_OUTPUT, $this->_CHARSET );
+	return $this->_multibyte_class->convert_encoding( 
+		$str, $this->_MOBILE_CHARSET_OUTPUT, $this->_MOBILE_CHARSET_INTERNAL );
 }
 
 // --- class end ---
