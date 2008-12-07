@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.6 2008/11/21 08:11:00 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.7 2008/12/07 15:11:50 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -16,8 +16,8 @@
 
 <{* DIRECT LINK *}>
 <{elseif $photo.onclick == 1 }>
-  <{if $photo.ahref_file }>
-    <a href="<{$photo.ahref_file}>" target="_blank">
+  <{if $photo.media_url_s }>
+    <a href="<{$photo.media_url_s}>" target="_blank">
   <{elseif $use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
