@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
+// $Id: rss.php,v 1.5 2008/12/09 10:04:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-09 K.OHWADA
+// Parse error & Fatal error
 // 2008-11-29 K.OHWADA
 // _build_file_image()
 // 2008-08-24 K.OHWADA
@@ -18,12 +20,14 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // usage
-// index.php/rss/mode/param/limit=xxx/
+// index.php/rss/mode/param/limit=xxx/clear=1/
 //   mode : latest (default)
 //          category, user, random, etc
 //   param : non (default)
 //          category id, user id, etc
 //   limit : 20 (default) : max 100
+//   clear : 0 = noting (default)
+//           1 = clear compiled template & cache
 //---------------------------------------------------------
 
 //---------------------------------------------------------
@@ -109,13 +113,10 @@ function &getInstance( $dirname, $trust_dirname )
 function main()
 {
 	$this->_get_pathinfo_param();
+	$clear = $this->_pathinfo_class->get_int('clear');
 
 	switch ( $this->_mode )
 	{
-		case 'clear':
-			$this->clear_compiled_tpl();
-			exit();
-
 		case 'random':
 			$cache_time = $this->_CACHE_TIME_RAMDOM;
 			break;
@@ -135,6 +136,12 @@ function main()
 	}
 
 	$cache_id = md5( $this->_mode.$this->_param );
+
+	if ( $clear ) {
+		$this->clear_compiled_tpl( $cache_id );
+		exit();
+	}
+
 	echo $this->build_rss( $cache_id, $cache_time );
 }
 
@@ -295,8 +302,9 @@ function _build_description( $row, $thumb_row )
 
 	if ( $this->_is_kind_image( $row ) && is_array($thumb_row) ) {
 
-		list( $thumb_url, $thumb_width, $thumb_height )
-			$this->build_file_image( $thumb_row ) ;
+// Parse error & Fatal error
+		list( $thumb_url, $thumb_width, $thumb_height ) =
+			$this->_build_file_image( $thumb_row ) ;
 
 		$img  = '<img src="'. $thumb_url .'" ' ;
 		$img .= 'alt="'. $row['item_title'] .'" ';

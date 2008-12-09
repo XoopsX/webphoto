@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.4 2008/11/01 23:53:08 ohwada Exp $
+// $Id: rss.php,v 1.5 2008/12/09 10:04:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-09 K.OHWADA
+// class/inc/uri.php
 // 2008-10-01 K.OHWADA
 // added xml.php
 // 2008-08-24 K.OHWADA
@@ -34,6 +36,7 @@ include_once XOOPS_ROOT_PATH.'/class/template.php';
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/config.php' );
+webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/error.php' );

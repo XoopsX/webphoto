@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: rss.php,v 1.4 2008/12/09 10:04:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-09 K.OHWADA
+// $cache_id in clear_compiled_tpl()
 // 2008-10-01 K.OHWADA
 // used webphoto_lib_xml 
 // 2008-08-01 K.OHWADA
@@ -203,12 +205,12 @@ function build_items()
 //---------------------------------------------------------
 // clear template
 //---------------------------------------------------------
-function clear_compiled_tpl()
+function clear_compiled_tpl( $cache_id=null )
 {
 	if ( $this->_is_module_admin ) {
 		$tpl = new XoopsTpl();
 		$tpl->clear_compiled_tpl( $this->_template );
-		$tpl->clear_cache( $this->_template );
+		$tpl->clear_cache( $this->_template, $cache_id );
 		echo "template cleared : ". $this->_template ;
 	}
 }
