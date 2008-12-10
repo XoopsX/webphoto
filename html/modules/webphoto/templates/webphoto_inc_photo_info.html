@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_info.html,v 1.4 2008/11/02 00:17:37 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_info.html,v 1.5 2008/12/10 19:26:05 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -176,7 +176,7 @@
 <{/if}>
 
 <{* VOTE BUTTON *}>
-<{if $has_ratevote}>
+<{if $has_ratevote && $photo.can_rate }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rate&amp;photo_id=<{$photo.photo_id}>">
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/vote.png" alt="<{$lang_votethis}>" title="<{$lang_votethis}>" border="0" />
   <{$lang_votethis}></a>
