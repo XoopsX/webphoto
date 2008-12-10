@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.12 2008/12/06 15:47:36 ohwada Exp $
+// $Id: index.php,v 1.13 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// window.close()
 // 2008-12-06 K.OHWADA
 // check_writable
 // 2008-12-05 K.OHWADA
@@ -78,9 +80,10 @@ function main()
 	if ( isset($_SERVER["PATH_INFO"]) && $_SERVER["PATH_INFO"] ) {
 		restore_error_handler() ;
 		error_reporting( E_ALL ) ;
-		echo "<b>". _AM_WEBPHOTO_PATHINFO_SUCCESS. "</b><br />\n";
-		echo 'PATH_INFO : ' . $_SERVER["PATH_INFO"]. "<br />\n"; ;
-
+		echo _AM_WEBPHOTO_PATHINFO_SUCCESS. "<br />\n";
+		echo 'PATH_INFO : ' . $_SERVER["PATH_INFO"] ;
+		echo "<br /><br />\n";
+		echo '<input class="formButton" value="'. _CLOSE .'" type="button" onclick="javascript:window.close();" />';
 		xoops_cp_footer();
 		exit();
 	}

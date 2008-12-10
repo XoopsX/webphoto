@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
+// $Id: file_handler.php,v 1.3 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// not need '/' in build_show_file_image()
 // 2008-11-29 K.OHWADA
 // build_show_file_image()
 //---------------------------------------------------------
@@ -188,7 +190,8 @@ function build_show_file_image( $file_row )
 		$width  = $file_row['file_width'] ;
 		$height = $file_row['file_height'] ;
 		if ( $path ) {
-			$url = XOOPS_URL .'/'. $path ;
+// not need '/'
+			$url = XOOPS_URL . $path ;
 		}
 	}
 

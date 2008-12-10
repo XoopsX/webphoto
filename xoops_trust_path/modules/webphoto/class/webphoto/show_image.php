@@ -1,5 +1,5 @@
 <?php
-// $Id: show_image.php,v 1.2 2008/11/30 10:36:34 ohwada Exp $
+// $Id: show_image.php,v 1.3 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// build_img_tag_by_item_row()
 // 2008-11-29 K.OHWADA
 // build_show_file_image()
 // BUG: not work when external image
@@ -79,6 +81,53 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // image
 //---------------------------------------------------------
+function build_img_tag_by_item_row( $item_row )
+{
+	$arr = $this->build_image_title_by_item_row( $item_row ) ;
+
+	$title_s = $arr['title_s'] ;
+	$src_s   = $arr['img_thumb_src_s'] ;
+	$width   = $arr['img_thumb_width'] ;
+	$height  = $arr['img_thumb_height'] ;
+
+	$str = null;
+
+	if ( $src_s && $width && $height ) {
+		$str = '<img src="'. $src_s .'" alt="'. $title_s .'" border="0" width="'. $width .'" height="'. $height .'" />'."\n";
+	} elseif ( $src_s ) {
+		$str = '<img src="'. $src_s .'" alt="'. $title_s .'" border="0" width="'. $this->_max_thumb_width .'"/>'."\n";
+	}
+
+	return $str ;
+}
+
+function build_image_title_by_item_row( $item_row, $default=true )
+{
+	$item_id   = $item_row['item_id'];
+	$title     = $item_row['item_title'];
+	$thumb_src = null ;
+
+	$arr = $this->build_image_by_item_row( $item_row, $default );
+	if ( is_array($arr) ) {
+		$arr['img_thumb_src_s'] = $this->sanitize( $arr['img_thumb_src'] ) ;
+
+	} else {
+		$arr = array(
+			'img_thumb_src'    => null ,
+			'img_thumb_src_s'  => null ,
+			'img_thumb_width'  => 0 ,
+			'img_thumb_height' => 0 ,
+		);
+	}
+
+	$arr['item_id']   = $item_id ;
+	$arr['photo_id']  = $item_id ;
+	$arr['title']     = $title ;
+	$arr['title_s']   = $this->sanitize( $title ) ;
+
+	return $arr;
+}
+
 function build_image_by_item_row( $item_row, $default )
 {
 	if ( ! is_array($item_row) ) {
@@ -327,6 +376,14 @@ function adjust_image_size( $width, $height, $max_width, $max_height )
 		return $this->_utility_class->adjust_image_size( $width, $height, $max_width, $max_height );
 	}
 	return array( 0, 0 );
+}
+
+//---------------------------------------------------------
+// sanitize
+//---------------------------------------------------------
+function sanitize( $str )
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
+// $Id: admin.php,v 1.11 2008/12/10 19:08:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -469,6 +469,16 @@ define("_AM_WEBPHOTO_RECOMMEND_OFF" , "recommend off" ) ;
 define("_AM_WEBPHOTO_TITLE_WAITING" , "List of Wating to approve" ) ;
 define("_AM_WEBPHOTO_TITLE_OFFLINE" , "List of Offline" ) ;
 define("_AM_WEBPHOTO_TITLE_EXPIRED" , "List of Expired" ) ;
+
+//---------------------------------------------------------
+// v0.81
+//---------------------------------------------------------
+// checkconfigs
+define("_AM_WEBPHOTO_QR_CHECK_LINK" , "Check that 'QR Code' is working correctly" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_DSC" , "If the page linked to from here doesn't display correctly, you should not use 'QR Code' " ) ;
+define("_AM_WEBPHOTO_QR_CHECK_SUCCESS" , "Can you see 'QR Code' correctly" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_SHOW" , "Show Debug Info" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_INFO" , "Debug Info" ) ;
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.8 2008/11/21 07:56:57 ohwada Exp $
+// $Id: checkconfigs.php,v 1.9 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// _check_qr_code()
 // 2008-11-16 K.OHWADA
 // webphoto_lib_server_info
 // 2008-11-08 K.OHWADA
@@ -137,6 +139,9 @@ function _check_program()
 	}
 	echo "<br />\n";
 
+	$this->_check_qr_code();
+	echo "<br />\n";
+
 	if (( $cfg_imagingpipe == _C_WEBPHOTO_PIPEID_IMAGICK ) ||
 	      $cfg_imagickpath ) {
 		list( $ret, $msg ) = $this->_server_class->build_imagemagick_version( $cfg_imagickpath );
@@ -159,6 +164,15 @@ function _check_program()
 	} else {
 		echo "<b>FFmpeg</b> : not use <br /><br />\n";
 	}
+}
+
+function _check_qr_code()
+{
+	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=check_qr" target="_blank">';
+	echo _AM_WEBPHOTO_QR_CHECK_LINK ;
+	echo '</a><br />'."\n";
+	echo " &nbsp; "._AM_WEBPHOTO_QR_CHECK_DSC."<br />\n" ;
+
 }
 
 function _check_directory()

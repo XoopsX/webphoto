@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.7 2008/11/30 10:36:34 ohwada Exp $
+// $Id: show_main.php,v 1.8 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// build_photo_show() -> build_photo_show_main()
 // 2008-11-29 K.OHWADA
 // webphoto_inc_catlist
 // 2008-11-08 K.OHWADA
@@ -36,6 +38,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_pagenavi_class;
 	var $_d3_notification_select_class;
 	var $_sort_class;
+	var $_rate_check_class;
 
 	var $_sort_name;
 
@@ -120,6 +123,7 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_user_handler =& webphoto_user_handler::getInstance( $dirname );
 	$this->_gmap_class   =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
+	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
 
 	$this->_notification_select_class =& webphoto_d3_notification_select::getInstance();
 	$this->_notification_select_class->init( $dirname ); 
@@ -247,7 +251,7 @@ function build_photo_show_from_rows( $rows )
 {
 	$arr = array();
 	foreach ( $rows as $row ) {
-		$arr[] = $this->build_photo_show( $row ) ;
+		$arr[] = $this->build_photo_show_main( $row ) ;
 	}
 	return $arr;
 }
@@ -257,9 +261,16 @@ function build_photo_show_from_id_array( $id_array )
 	$arr = array();
 	foreach ( $id_array as $id )
 	{
-		$arr[] = $this->build_photo_show( 
+		$arr[] = $this->build_photo_show_main( 
 			$this->_item_handler->get_row_by_id( $id ) ) ;
 	}
+	return $arr;
+}
+
+function build_photo_show_main( $row )
+{
+	$arr = $this->build_photo_show( $row ) ;
+	$arr['can_rate'] = $this->_rate_check_class->can_rate( $row['item_id'] ) ;
 	return $arr;
 }
 

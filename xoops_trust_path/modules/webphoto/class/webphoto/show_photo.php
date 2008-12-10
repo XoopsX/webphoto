@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.16 2008/11/30 10:36:34 ohwada Exp $
+// $Id: show_photo.php,v 1.17 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// get_text_type_array()
 // 2008-11-29 K.OHWADA
 // remove get_show_file_url()
 // 2008-11-16 K.OHWADA
@@ -48,6 +50,7 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_cfg_thumb_width;
 	var $_cfg_middle_width;
 
+	var $_item_text_type_array;
 	var $_time_newdays;
 	var $_usereal;
 
@@ -98,6 +101,8 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_cfg_thumb_width  = $this->get_config_by_name('thumb_width' ) ;
 	$this->_cfg_middle_width = $this->get_config_by_name('middle_width' ) ;
 
+	$this->_item_text_type_array = $this->_item_handler->get_text_type_array();
+
 	$this->_time_newdays = time() - 86400 * $this->_cfg_newdays ;
 	$this->_usereal = ( $this->_cfg_nameoruname == 'name' ) ? 1 : 0 ;
 
@@ -124,102 +129,38 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 {
 	extract( $row ) ;
 
+	$show_arr = array();
+	foreach ( $row as $k => $v )
+	{
+		$name = str_replace( 'item_', '', $k );
+		$show_arr[ $name ] = $v;
+		if ( in_array( $k, $this->_item_text_type_array ) ) {
+			$show_arr[ $name.'_s' ] = $this->sanitize( $v );
+		}
+	}
+
 	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
 
 	$datetime_disp = $this->mysql_datetime_to_str( $item_datetime );
 
-	$show_arr = array(
-		'photo_id'        => $item_id ,
-		'item_id'         => $item_id ,
-		'time_cretae'     => $item_time_create,
-		'time_update'     => $item_time_update,
-		'time_publish'    => $item_time_publish,
-		'time_expire'     => $item_time_expire,
-		'cat_id'          => $item_cat_id ,
-		'player_id'       => $item_player_id ,
-		'flashvar_id'     => $item_flashvar_id ,
-		'uid'             => $item_uid ,
-		'kind'            => $item_kind ,
-		'ext'             => $item_ext ,
-		'datetime'        => $item_datetime,
-		'title'           => $item_title ,
-		'place'           => $item_place ,
-		'equipment'       => $item_equipment ,
-		'duration'        => $item_duration ,
-		'siteurl'         => $item_siteurl ,
-		'artist'          => $item_artist ,
-		'album'           => $item_album ,
-		'label'           => $item_label ,
-		'displaytype'     => $item_displaytype,
-		'onclick'         => $item_onclick,
-		'icon_name'       => $item_icon_name,
-		'icon_width'      => $item_icon_width,
-		'icon_height'     => $item_icon_height,
-		'perm_read'       => $item_perm_read,
-		'perm_down'       => $item_perm_down,
-		'external_url'    => $item_external_url,
-		'external_thumb'  => $item_external_thumb,
-		'external_middle' => $item_external_middle,
-		'embed_type'      => $item_embed_type,
-		'embed_src'       => $item_embed_src,
-		'embed_text'      => $item_embed_text,
-		'gmap_latitude'   => $item_gmap_latitude,
-		'gmap_longitude'  => $item_gmap_longitude,
-		'gmap_zoom'       => $item_gmap_zoom,
-		'status'          => $item_status ,
-		'hits'            => $item_hits ,
-		'views'           => $item_views ,
-		'rating'          => $item_rating ,
-		'votes'           => $item_votes ,
-		'comments'        => $item_comments ,
-		'description'     => $item_description,
-		'search'          => $item_search,
-		'chain'           => $item_chain,
-		'playlist_feed'   => $item_playlist_feed,
-		'playlist_dir'    => $item_playlist_dir,
-		'playlist_cache'  => $item_playlist_cache,
-		'playlist_type'   => $item_playlist_type,
-		'playlist_time'   => $item_playlist_time,
-		'page_width'      => $item_page_width,
-		'page_height'     => $item_page_height,
-
-		'title_s'           => $this->sanitize( $item_title ) ,
-		'place_s'           => $this->sanitize( $item_place ) ,
-		'equipment_s'       => $this->sanitize( $item_equipment ) ,
-		'siteurl_s'         => $this->sanitize( $item_siteurl ) ,
-		'artist_s'          => $this->sanitize( $item_artist ) ,
-		'album_s'           => $this->sanitize( $item_album ) ,
-		'label_s'           => $this->sanitize( $item_label ) ,
-		'icon_name_s'       => $this->sanitize( $item_icon_name ) ,
-		'external_url_s'    => $this->sanitize( $item_external_url ) ,
-		'external_thumb_s'  => $this->sanitize( $item_external_thumb ) ,
-		'external_middle_s' => $this->sanitize( $item_external_middle ) ,
-		'embed_type_s'      => $this->sanitize( $item_embed_type ) ,
-		'embed_src_s'       => $this->sanitize( $item_embed_src ) ,
-		'playlist_feed_s'   => $this->sanitize( $item_playlist_feed ) ,
-		'playlist_dir_s'    => $this->sanitize( $item_playlist_dir ) ,
-		'playlist_cache_s'  => $this->sanitize( $item_playlist_cache ) ,
-		'uname_s'           => $this->build_show_uname( $item_uid ) ,
-
-		'time_update_m'       => $this->format_timestamp( $item_time_update , 'm' ) ,
-		'datetime_disp'       => $datetime_disp ,
-		'datetime_urlencode'  => $this->rawurlencode_uri_encode_str( $datetime_disp ) ,
-		'place_urlencode'     => $this->rawurlencode_uri_encode_str( $item_place ),
-		'equipment_urlencode' => $this->rawurlencode_uri_encode_str( $item_equipment ),
-		'description_disp'    => $desc_disp ,
-		'summary'             => $summary ,
-		'cont_exif_disp'      => $this->_item_handler->build_show_exif_disp( $row ) ,
-
-		'tags'      => $this->build_show_tags_from_tag_name_array( $tag_name_array ),
-		'is_owner'  => $this->is_photo_owner( $item_uid ),
-		'is_video'  => $this->is_video_kind( $row['item_kind'] ) ,
-		'perm_download' => $this->perm_download( $row ) ,
-		'can_download'  => $this->can_download( $row ) ,
-	);
+	$show_arr['photo_id']            = $item_id ;
+	$show_arr['uname_s']             = $this->build_show_uname( $item_uid ) ;
+	$show_arr['time_update_m']       = $this->format_timestamp( $item_time_update , 'm' ) ;
+	$show_arr['datetime_disp']       = $datetime_disp ;
+	$show_arr['datetime_urlencode']  = $this->rawurlencode_uri_encode_str( $datetime_disp ) ;
+	$show_arr['place_urlencode']     = $this->rawurlencode_uri_encode_str( $item_place ) ;
+	$show_arr['equipment_urlencode'] = $this->rawurlencode_uri_encode_str( $item_equipment ) ;
+	$show_arr['description_disp']    = $desc_disp ;
+	$show_arr['summary']             = $summary ;
+	$show_arr['cont_exif_disp']      = $this->_item_handler->build_show_exif_disp( $row ) ;
+	$show_arr['tags']                = $this->build_show_tags_from_tag_name_array( $tag_name_array ) ;
+	$show_arr['is_owner']            = $this->is_photo_owner( $item_uid ) ;
+	$show_arr['is_video']            = $this->is_video_kind( $item_kind ) ;
+	$show_arr['perm_download']       = $this->perm_download( $row ) ;
+	$show_arr['can_download']        = $this->can_download( $row ) ;
 
 	$show_desc = false;
-
 	foreach ( $this->_SHOW_DESC_ARRAY as $key ) 
 	{
 		if ( $show_arr[ $key ] ) {

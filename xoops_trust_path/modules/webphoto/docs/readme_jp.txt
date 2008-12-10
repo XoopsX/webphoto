@@ -1,11 +1,50 @@
-$Id: readme_jp.txt,v 1.16 2008/11/30 10:36:34 ohwada Exp $
+$Id: readme_jp.txt,v 1.17 2008/12/10 19:08:56 ohwada Exp $
+
+=================================================
+Version: 0.81
+Date:   2008-12-10
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 投票機能
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=868&forum=13
+１から１０までの評価を「とても素晴らしい」など文章で表現するカスタマイズを可能にした
+
+2. バグ修正
+(1) コマンドのメール受信にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=882&forum=13
+
+(2) QRコードが出力しない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=882&forum=13
+
+(3) 複数設置の不具合
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=887&forum=13
+
+(4) 携帯表示にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=889&forum=13
+
+(5) RSS にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=890&forum=13
+
+(6) magplus.cur が 404 エラー
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=890&forum=13
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+  自動的にテーブルに項目が追加されます。
+
 
 =================================================
 Version: 0.80
 Date:   2008-11-30
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

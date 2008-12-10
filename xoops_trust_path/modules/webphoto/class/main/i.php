@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.5 2008/12/07 15:07:39 ohwada Exp $
+// $Id: i.php,v 1.6 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-08 K.OHWADA
+// _get_encode_type_array()
 // 2008-12-07 K.OHWADA
 // $_ARRAY_MOBILE_TEXT
 // 2008-09-01 K.OHWADA
@@ -27,7 +29,8 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_pagenavi_class;
 	var $_multibyte_class;
 
-	var $_xoops_sitename = null;
+	var $_xoops_sitename;
+	var $_item_ecnode_type_array;
 
 	var $_MOBILE_TEMPLATE = null;
 
@@ -40,9 +43,6 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_MOBILE_LIST_LIMIT     = 10;
 	var $_MOBILE_LIST_ORDERBY   = 'item_time_update DESC, item_id DESC';
 	var $_MOBILE_NAVI_WINDOWS   = 4;
-
-	var $_ITEM_CONV_ARRAY = array(
-		'title', 'place', 'equipment', 'artist', 'album', 'label', 'uname' );
 
 // preload
 	var $_ARRAY_MOBILE_TEXT = null;
@@ -69,6 +69,8 @@ function webphoto_main_i( $dirname , $trust_dirname )
 // preload
 	$this->preload_init();
 	$this->preload_constant();
+
+	$this->_encode_type_array = $this->_get_encode_type_array();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -97,6 +99,29 @@ function _set_mobile_carrier_array()
 			$this->_agent_class->set_mobile_carrier_array( $arr );
 		}
 	}
+}
+
+function _get_encode_type_array()
+{
+	$encode_type_array = $this->_item_handler->get_encode_type_array();
+
+	$arr = array( 'uname' );
+
+	foreach( $encode_type_array as $name ) {
+		$arr[] = str_replace( 'item_', '', $name );
+	}
+
+	if ( is_array($this->_ARRAY_MOBILE_TEXT) ) {
+		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
+		{
+			$name_i = 'text_'. $i ;
+			if ( in_array( 'item_'.$name_i, $this->_ARRAY_MOBILE_TEXT ) ) {
+				$arr[] = $name_i ;
+			}
+		}
+	}
+
+	return $arr;
 }
 
 //---------------------------------------------------------
@@ -382,24 +407,12 @@ function _build_navi( $page )
 //---------------------------------------------------------
 function build_show_conv( $item_row )
 {
-	$conv_array = $this->_ITEM_CONV_ARRAY ;
-
-	if ( is_array($this->_ARRAY_MOBILE_TEXT) ) {
-		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
-		{
-			$name_i = 'text_'. $i ;
-			if ( in_array( 'item_'.$name_i, $this->_ARRAY_MOBILE_TEXT ) ) {
-				$conv_array[] = $name_i ;
-			}
-		}
-	}
-
 	$arr = $this->build_photo_show( $item_row );
 
 	$arr['description_conv'] = $this->conv( $arr['description_disp'] ) ;
 	$arr['summary_conv']     = $this->conv( $arr['summary'] ) ;
 
-	foreach ( $conv_array as $name ) {
+	foreach ( $this->_encode_type_array as $name ) {
 		$arr[ $name.'_conv' ] = $this->conv( $arr[ $name.'_s'] ) ;
 	}
 

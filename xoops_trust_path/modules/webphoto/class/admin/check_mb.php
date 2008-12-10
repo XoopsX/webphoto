@@ -1,10 +1,16 @@
 <?php
-// $Id: check_mb.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: check_mb.php,v 1.2 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-07 K.OHWADA
+// window.close()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -53,6 +59,8 @@ function main()
 	$text .= $this->build_html_body_begin();
 	$text .= 'charset : '.$charset."<br />\n";
 	$text .= _AM_WEBPHOTO_MULTIBYTE_SUCCESS ;
+	$text .= "<br /><br />\n";
+	$text .= '<input class="formButton" value="'. _CLOSE .'" type="button" onclick="javascript:window.close();" />';
 	$text .= $this->build_html_body_end();
 
 	echo $this->conv( $text, $charset );

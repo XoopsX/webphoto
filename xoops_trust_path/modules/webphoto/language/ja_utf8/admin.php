@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.10 2008/11/30 10:36:34 ohwada Exp $
+// $Id: admin.php,v 1.11 2008/12/10 19:08:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -470,6 +470,16 @@ define("_AM_WEBPHOTO_RECOMMEND_OFF" , "推奨 off" ) ;
 define("_AM_WEBPHOTO_TITLE_WAITING" , "承認待ち一覧" ) ;
 define("_AM_WEBPHOTO_TITLE_OFFLINE" , "オフライン一覧" ) ;
 define("_AM_WEBPHOTO_TITLE_EXPIRED" , "期限切れ一覧" ) ;
+
+//---------------------------------------------------------
+// v0.81
+//---------------------------------------------------------
+// checkconfigs
+define("_AM_WEBPHOTO_QR_CHECK_LINK" , "QRコードが表示できるかのチェック" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_DSC" , "（このリンク先が正常に表示されなければ、QRコードが表示できません）" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_SUCCESS" , "QRコードが表示されていますか？" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_SHOW" , "デバック情報を見る" ) ;
+define("_AM_WEBPHOTO_QR_CHECK_INFO" , "デバック情報" ) ;
 
 // === define end ===
 }

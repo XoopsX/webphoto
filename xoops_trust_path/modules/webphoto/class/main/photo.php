@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
+// $Id: photo.php,v 1.10 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// build_photo_show() -> build_photo_show_main()
 // 2008-11-16 K.OHWADA
 // _build_code()
 // refresh_cache_by_item_row()
@@ -207,7 +209,7 @@ function main()
 	}
 
 	$total_all  = $this->_item_handler->get_count_public();
-	$photo      = $this->_build_photo_show_main( $row );
+	$photo      = $this->_build_photo_show_photo( $row );
 
 	$gmap_param = $this->_build_gmap_param( $row );
 	$show_gmap  = $gmap_param['show_gmap'];
@@ -245,9 +247,9 @@ function main()
 //---------------------------------------------------------
 // show main
 //---------------------------------------------------------
-function _build_photo_show_main( $row )
+function _build_photo_show_photo( $row )
 {
-	$arr1 = $this->build_photo_show( $row );
+	$arr1 = $this->build_photo_show_main( $row );
 
 	$this->_perm_download = $arr1['perm_download'] ;
 
@@ -596,7 +598,7 @@ function _build_play_link( $item_id, $kind, $item_title, $feed, $cache )
 	if ( $url ) {
 		$url_s    = $this->sanitize($url);
 		$title_s  = $this->sanitize( $item_title .' '. $lang_play ) ;
-		$atag     = '<a href="'. $url_s .'" target="_blank" title="'.$title_s.'">';
+		$link     = '<a href="'. $url_s .'" target="_blank" title="'.$title_s.'">';
 		$link    .= $lang_play .'</a>'; 
 	}
 

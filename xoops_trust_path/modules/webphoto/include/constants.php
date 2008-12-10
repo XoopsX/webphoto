@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.11 2008/11/30 10:36:34 ohwada Exp $
+// $Id: constants.php,v 1.12 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -316,6 +316,11 @@ define("_C_WEBPHOTO_ERR_GET_IMAGE_SIZE",  -121 ) ;
 define("_C_WEBPHOTO_ERR_EMBED",       -122 ) ;
 define("_C_WEBPHOTO_ERR_PLAYLIST",    -123 ) ;
 define("_C_WEBPHOTO_ERR_NO_FALSHVAR", -124 ) ;
+
+// v0.81
+define("_C_WEBPHOTO_ERR_VOTE_OWN",   -125 ) ;
+define("_C_WEBPHOTO_ERR_VOTE_ONCE",  -126 ) ;
+define("_C_WEBPHOTO_ERR_NO_RATING",  -127 ) ;
 
 // for Japanese
 define("_C_WEBPHOTO_JPAPANESE" , "japanese|japaneseutf|ja_utf8" ) ;

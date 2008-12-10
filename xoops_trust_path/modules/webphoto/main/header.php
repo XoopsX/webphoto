@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
+// $Id: header.php,v 1.7 2008/12/10 19:08:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// rate_check.php
 // 2008-11-29 K.OHWADA
 // auto_publish.php etc
 // 2008-11-16 K.OHWADA
@@ -69,6 +71,7 @@ webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/flashvar_handler.php' );
+webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
@@ -83,6 +86,7 @@ webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/flash_player.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
+webphoto_include_once( 'class/webphoto/rate_check.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/show_main.php' );

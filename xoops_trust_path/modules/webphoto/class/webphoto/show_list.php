@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.3 2008/08/25 19:28:06 ohwada Exp $
+// $Id: show_list.php,v 1.4 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// build_photo_show() -> build_photo_show_main()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -157,7 +159,7 @@ function list_build_photo_array( $title, $param, $total, $row, $link=null, $phot
 	}
 
 	if ( empty($photo) && is_array($row) ) {
-		$photo = $this->build_photo_show( $row );
+		$photo = $this->build_photo_show_main( $row );
 	}
 
 	$arr = array(

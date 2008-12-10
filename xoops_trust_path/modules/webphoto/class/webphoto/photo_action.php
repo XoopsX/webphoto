@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
+// $Id: photo_action.php,v 1.10 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// webphoto_show_image
 // 2008-11-29 K.OHWADA
 // item_time_publish
 // build_show_file_image()
@@ -31,6 +33,7 @@ class webphoto_photo_action extends webphoto_photo_edit
 {
 	var $_redirect_class;
 	var $_embed_class ;
+	var $_show_image_class;
 
 	var $_row_create   = null ;
 	var $_row_current  = null;
@@ -60,8 +63,9 @@ function webphoto_photo_action( $dirname , $trust_dirname )
 {
 	$this->webphoto_photo_edit( $dirname , $trust_dirname );
 
-	$this->_redirect_class =& webphoto_photo_redirect::getInstance( $dirname, $trust_dirname );
-	$this->_embed_class    =& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_redirect_class   =& webphoto_photo_redirect::getInstance( $dirname, $trust_dirname );
+	$this->_embed_class      =& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
 
 	$this->_FLAG_ALLOW_NONE = $this->_cfg_allownoimage ;
 }
@@ -351,13 +355,13 @@ function print_form_video_thumb( $mode, $item_row )
 //---------------------------------------------------------
 function print_form_delete_confirm( $mode, $item_row )
 {
-	$img = $this->build_img_thumb( $item_row );
+	$img_tag = $this->_show_image_class->build_img_tag_by_item_row( $item_row ) ;
 
 	echo '<h4>'. $this->get_constant('TITLE_PHOTODEL') ."</h4>\n";
 	echo '<b>'. $this->sanitize( $item_row['item_title'] ) ."<b><br />\n";
 
-	if ( $img ) {
-		echo $img ;
+	if ( $img_tag ) {
+		echo $img_tag ;
 	}
 
 	echo "<br />\n";
@@ -366,39 +370,6 @@ function print_form_delete_confirm( $mode, $item_row )
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_delete_confirm( 'admin', $item_row['item_id'] );
-}
-
-function build_img_thumb( $item_row )
-{
-	$src = null;
-	$str = null;
-
-	$cont_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	$thumb_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
-
-	list( $cont_url, $cont_width, $cont_height ) =
-		$this->build_show_file_image( $cont_row ) ;
-
-	list( $thumb_url, $thumb_width, $thumb_height ) =
-		$this->build_show_file_image( $thumb_row ) ;
-
-	if ( $thumb_url ) {
-		$src    = $thumb_url ;
-		$width  = $thumb_width ;
-		$height = $thumb_height ;
-
-	} elseif ( $cont_url && $this->is_image_kind( $item_row['item_kind'] ) ) {
-		$src    = $cont_url ;
-		$width  = $cont_width ;
-		$height = $cont_height ;
-	}
-
-	if ( $src ) {
-		$str  = '<img src="'. $this->sanitize($src) .'" width="'. $width .'" height="'. $height .'" border="0" />'."\n";
-		$str .= "<br />\n";
-	}
-
-	return $str ;
 }
 
 //---------------------------------------------------------
@@ -889,15 +860,12 @@ function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, 
 		$thumb_param = $this->create_thumb_param_by_tmp( $item_id, $thumb_name );
 
 	} elseif ( $is_submit && $this->is_external_type() ) {
-//		$thumb_param = $this->create_thumb_from_external( $item_id );
 		$this->prepare_external_thumb();
 
 	} elseif ( $is_submit && $this->is_embed_type() ) {
-//		$thumb_param = $this->create_thumb_from_embed( $item_id );
 		$this->prepare_embed_thumb() ;
 
 	} elseif ( $is_submit && $this->is_admin_playlist_type() ) {
-//		$thumb_param = $this->create_thumb_for_playlist( $item_id );
 		$this->prepare_playlist_thumb();
 
 	} elseif ( is_array($cont_param) ) {

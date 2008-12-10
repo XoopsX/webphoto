@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
+// $Id: item_handler.php,v 1.9 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// get_text_type_array()
 // 2008-11-29 K.OHWADA
 // item_icon_width
 // get_rows_waiting() -> get_rows_status()
@@ -43,8 +45,19 @@ class webphoto_item_handler extends webphoto_lib_handler
 	var $_AREA_EW = 1.0;
 
 	var $_BUILD_SEARCH_ARRAY = array(
-		'item_datetime', 'item_title', 'item_place', 'item_equipment', 'item_ext',
-		'item_description', 'item_artist', 'item_album', 'item_label' );
+		'item_title', 'item_place', 'item_equipment', 
+		'item_artist', 'item_album', 'item_label',
+		'item_datetime', 'item_ext', 'item_description' );
+
+	var $_TEXT_ARRAY = array(
+		'item_siteurl', 'item_icon_name', 
+		'item_external_url', 'item_external_thumb', 'item_external_middle', 
+		'item_playlist_feed', 'item_playlist_dir', 'item_playlist_cache', 
+		'item_embed_type', 'item_embed_src' ); 
+
+	var $_ENCODE_ARRAY = array(
+		'item_title', 'item_place', 'item_equipment', 
+		'item_artist', 'item_album', 'item_label' );
 
 //---------------------------------------------------------
 // constructor
@@ -1115,6 +1128,19 @@ function get_replytitle()
 		return $this->get_title_by_id( $com_itemid );
 	}
 	return null;
+}
+
+//---------------------------------------------------------
+// text define
+//---------------------------------------------------------
+function get_text_type_array()
+{
+	return array_merge( $this->_TEXT_ARRAY, $this->_ENCODE_ARRAY) ;
+}
+
+function get_encode_type_array()
+{
+	return $this->_ENCODE_ARRAY ;
 }
 
 //---------------------------------------------------------

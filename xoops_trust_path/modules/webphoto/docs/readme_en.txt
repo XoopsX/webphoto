@@ -1,11 +1,50 @@
-$Id: readme_en.txt,v 1.16 2008/11/30 10:36:34 ohwada Exp $
+$Id: readme_en.txt,v 1.17 2008/12/10 19:08:56 ohwada Exp $
+
+=================================================
+Version: 0.81
+Date:   2008-12-10
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. rating
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=868&forum=13
+the admin can customize the rating from 1 to 10 by the sentences such as "Excellent"
+
+2. bug fix
+(1) fatal error in bin/retrieve.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=882&forum=13
+
+(2) not show QR code
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=882&forum=13
+
+(3) problem of module clone
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=887&forum=13
+
+(4) fatal error in i.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=889&forum=13
+
+(5) fatal error in RSS
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=890&forum=13
+
+(6) 404 error of magplus.cur
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=890&forum=13
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+  the fields are added to the table automatically. 
+
 
 =================================================
 Version: 0.80
 Date:   2008-11-30
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

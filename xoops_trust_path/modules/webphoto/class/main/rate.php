@@ -1,5 +1,5 @@
 <?php
-// $Id: rate.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: rate.php,v 1.4 2008/12/10 19:08:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// webphoto_rate_check
 // 2008-10-01 K.OHWADA
 // use get_rating_by_photoid()
 // 2008-08-24 K.OHWADA
@@ -22,15 +24,27 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_rate extends webphoto_base_this
 {
 	var $_vote_handler;
+	var $_rate_check_class;
 
-	var $_session_name;
+	var $_photo_id = 0 ;
+	var $_item_row = null ;
 
-	var $_ERR_NO_RATING = -1;
-	var $_ERR_VOTE_OWN  = -2;
-	var $_ERR_VOTE_ONCE = -3;
+	var $_RATE_SESSION_NAME = null ;
+	var $_RATE_MIN_RATING   = 1;
+	var $_RATE_MAX_RATING   = 10;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
+
+	var $_INDEX_PHP ;
+
+// overwrite by preload
+	var $_ARRAY_RATING_OPTIONS = array(
+		'10','9','8','7','6','5','4','3','2','1' ) ;
+
+	var $_RATE_SELECT_TYPE    = '';
+	var $_RATE_SELECT_DELMITA = ' ';
+	var $_RATE_RADIO_DELMITA  = '';
 
 //---------------------------------------------------------
 // constructor
@@ -40,8 +54,15 @@ function webphoto_main_rate( $dirname, $trust_dirname )
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
 	$this->_vote_handler =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
 
-	$this->_session_name = $dirname.'_uri4return';
+	$this->_RATE_SESSION_NAME = $dirname.'_rate_uri';
+
+	$this->_INDEX_PHP = $this->_MODULE_URL.'/index.php' ;
+
+// preload
+	$this->preload_init();
+	$this->preload_constant();
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -58,6 +79,8 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function rate()
 {
+	$this->_check();
+
 	if ( $this->_is_rate() ) {
 		$this->_rate();
 		exit();
@@ -69,6 +92,36 @@ function rate()
 	}
 }
 
+function _check()
+{
+	$this->_photo_id = $this->_post_class->get_post_get_int('photo_id') ;
+
+	$url = $this->_INDEX_PHP ;
+
+// store the referer
+	if ( ! empty(  $_SERVER['HTTP_REFERER'] ) ) {
+		$referer = $_SERVER['HTTP_REFERER'] ;
+		if ( ! preg_match( '/fct=rate/i', $referer ) ) {
+			$url = $referer ;
+			$_SESSION[ $this->_RATE_SESSION_NAME ] = $referer ;
+		}
+	}
+
+	$check = $this->_rate_check_class->check( $this->_photo_id );
+	if ( $check < 0 ) {
+		$this->_rate_check_class->redirect( $check, $url, $this->_TIME_FAIL );
+		exit();
+	}
+
+	$row = $this->_item_handler->get_row_by_id( $this->_photo_id );
+	if ( !is_array($row) || ($row['item_status'] <= 0) ) {
+		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
+		exit() ;
+	}
+
+	$this->_item_row = $row ;
+}
+
 function _is_rate()
 {
 	return $this->_post_class->get_post_text('submit');
@@ -76,21 +129,12 @@ function _is_rate()
 
 function _rate()
 {
-	$post_photo_id = $this->_post_class->get_post_int('photo_id') ;
-	$url_rate = $this->_MODULE_URL.'/index.php?fct=rate&amp;photo_id='.$post_photo_id;
+	$url_rate = $this->_MODULE_URL.'/index.php?fct=rate&amp;photo_id='.$this->_photo_id;
 
 	$ret = $this->_exec_rate();
 	switch ( $ret )
 	{
-		case $this->_ERR_VOTE_OWN:
-			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('ERR_CANTVOTEOWN') ) ;
-			exit() ;
-
-		case $this->_ERR_VOTE_ONCE:
-			redirect_header( $this->_INDEX_PHP, $this->_TIME_FAIL , $this->get_constant('ERR_VOTEONCE') ) ;
-			exit() ;
-
-		case $this->_ERR_NO_RATING:
+		case _C_WEBPHOTO_ERR_NO_RATING :
 			redirect_header( $url_rate , $this->_TIME_FAIL , $this->get_constant('ERR_NORATING') ) ;
 			exit() ;
 
@@ -119,9 +163,9 @@ function _rate()
 	$msg  = $this->get_constant( 'RATE_VOTEAPPRE') ."<br />\n";
 	$msg .= sprintf( $this->get_constant( 'RATE_S_THANKURATE') , $this->_xoops_sitename );
 
-	if ( isset( $_SESSION[ $this->_session_name ] ) ) {
-		$url =  $_SESSION[ $this->_session_name ] ;
-		unset(  $_SESSION[ $this->_session_name ] ) ;
+	if ( isset( $_SESSION[ $this->_RATE_SESSION_NAME ] ) ) {
+		$url =  $_SESSION[ $this->_RATE_SESSION_NAME ] ;
+		unset(  $_SESSION[ $this->_RATE_SESSION_NAME ] ) ;
 	}
 
 	redirect_header( $url , $this->_TIME_SUCCESS , $msg ) ;
@@ -132,48 +176,26 @@ function _exec_rate()
 {
 	if ( ! $this->check_token() ) { return _C_WEBPHOTO_ERR_TOKEN; }
 
-	//Make sure only 1 anonymous from an IP in a single day.
-	$ip = getenv( "REMOTE_ADDR" ) ;
-
-	$post_photo_id = $this->_post_class->get_post_int('photo_id') ;
-	$post_rating   = $this->_post_class->get_post_int('rating') ;
+	$post_rating = $this->_post_class->get_post_int('rating') ;
 
 	// Check if rating is valid
-	if( $post_rating <= 0 || $post_rating > 10 ) {
-		return $this->_ERR_NO_RATING;
-	}
-
-// registered user
-	if ( $this->_xoops_uid != 0 ) {
-
-		// Check if Photo POSTER is voting
-		$photo_count = $this->_item_handler->get_count_by_itemid_uid( $post_photo_id, $this->_xoops_uid );
-		if ( $photo_count ) { return $this->_ERR_VOTE_OWN; }
-
-		// Check if REG user is trying to vote twice.
-		$vote_count = $this->_vote_handler->get_count_by_photoid_uid( $post_photo_id, $this->_xoops_uid );
-		if ( $vote_count ) { return $this->_ERR_VOTE_ONCE; }
-
-// anonymous user
-	} else {
-		// Check if ANONYMOUS user is trying to vote more than once per day.
-		$vote_anonymous_count = $this->_vote_handler->get_count_anonymous_by_photoid_hostname( $post_photo_id, $ip );
-		if ( $vote_anonymous_count ) { return $this->_ERR_VOTE_ONCE; }
-
+	if ( $post_rating < $this->_RATE_MIN_RATING || 
+	     $post_rating > $this->_RATE_MAX_RATING ) {
+		return _C_WEBPHOTO_ERR_NO_RATING ;
 	}
 
 	// All is well.  Add to Line Item Rate to DB.
 	$row = $this->_vote_handler->create( true );
-	$row['vote_photo_id'] = $post_photo_id;
+	$row['vote_photo_id'] = $this->_photo_id;
 	$row['vote_uid']      = $this->_xoops_uid;
 	$row['vote_rating']   = $post_rating;
-	$row['vote_hostname'] = $ip;
+	$row['vote_hostname'] = getenv( "REMOTE_ADDR" ) ;
 
 	$ret = $this->_vote_handler->insert( $row );
 	if ( !$ret ) { return _C_WEBPHOTO_ERR_DB; }
 
 	//All is well.  Calculate Score & Add to Summary (for quick retrieval & sorting) to DB.
-	$ret = $this->update_rating_by_photoid( $post_photo_id );
+	$ret = $this->update_rating_by_photoid( $this->_photo_id );
 	if ( !$ret ) { return _C_WEBPHOTO_ERR_DB; }
 
 	return 0;
@@ -199,30 +221,33 @@ function update_rating_by_photoid( $photo_id )
 
 function get_photo()
 {
-	$show_class  =& webphoto_show_photo::getInstance( $this->_DIRNAME, $this->_TRUST_DIRNAME );
-
-	$get_photo_id = $this->_post_class->get_get_int('photo_id') ;
-
-	// store the referer
-	if( ! empty( $_SERVER['HTTP_REFERER'] ) ) {
-		$_SESSION[ $this->_session_name ] = $_SERVER['HTTP_REFERER'] ;
-	}
-
-	$row = $this->_item_handler->get_row_by_id( $get_photo_id );
-	if ( !is_array($row) || ($row['item_status'] == 0) ) {
-		redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
-		exit ;
-	}
+	$show_class =& webphoto_show_image::getInstance( $this->_DIRNAME );
 
 	$arr = array(
-		'photo'       => $show_class->build_photo_show( $row ),
-		'token_name'  => $this->get_token_name(),
-		'token_value' => $this->get_token(),
+		'photo'          => $show_class->build_image_title_by_item_row( $this->_item_row ) ,
+		'token_name'     => $this->get_token_name(),
+		'token_value'    => $this->get_token(),
+		'rating_options' => $this->_build_rating_options(),
+		'select_type'    => $this->_RATE_SELECT_TYPE ,
+		'select_delmita' => $this->_RATE_SELECT_DELMITA ,
+		'radio_delmita'  => $this->_RATE_RADIO_DELMITA ,
 	);
 
 	return $arr;
 }
 
+function _build_rating_options()
+{
+	$arr = array();
+	foreach ( $this->_ARRAY_RATING_OPTIONS as $key ) 
+	{
+		$arr[] = array(
+			'value' => $key ,
+			'name'  => $this->get_constant( 'VOTE_RATING_'.$key ) ,
+		);
+	}
+	return $arr ;
+}
 
 // --- class end ---
 }

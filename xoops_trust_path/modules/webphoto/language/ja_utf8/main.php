@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.16 2008/11/30 10:36:34 ohwada Exp $
+// $Id: main.php,v 1.17 2008/12/10 19:08:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1258,6 +1258,21 @@ define("_WEBPHOTO_ITEM_ICON_HEIGHT" , "アイコン高さ" ) ;
 define("_WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE",  "更新日時を変更する");
 define("_WEBPHOTO_DSC_SET_ITEM_TIME_PUBLISH", "発行日時を設定する");
 define("_WEBPHOTO_DSC_SET_ITEM_TIME_EXPIRE",  "終了日時を設定する");
+
+//---------------------------------------------------------
+// v0.81
+//---------------------------------------------------------
+// vote option
+define("_WEBPHOTO_VOTE_RATING_1", "1");
+define("_WEBPHOTO_VOTE_RATING_2", "2");
+define("_WEBPHOTO_VOTE_RATING_3", "3");
+define("_WEBPHOTO_VOTE_RATING_4", "4");
+define("_WEBPHOTO_VOTE_RATING_5", "5");
+define("_WEBPHOTO_VOTE_RATING_6", "6");
+define("_WEBPHOTO_VOTE_RATING_7", "7");
+define("_WEBPHOTO_VOTE_RATING_8", "8");
+define("_WEBPHOTO_VOTE_RATING_9", "9");
+define("_WEBPHOTO_VOTE_RATING_10","10");
 
 // === define end ===
 }
