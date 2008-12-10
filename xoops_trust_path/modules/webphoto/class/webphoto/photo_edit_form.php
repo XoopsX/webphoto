@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.19 2008/12/10 19:08:56 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.20 2008/12/10 19:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-12-07 K.OHWADA
-// not need '/' in _build_file_url()
+// build_show_file_image()
 // 2008-11-29 K.OHWADA
 // _build_file_url()
 // 2008-11-16 K.OHWADA
@@ -674,21 +674,9 @@ function _build_file_link( $name, $field, $file_row )
 
 function _build_file_url( $file_row )
 {
-	$url = '' ;
-	if ( ! is_array($file_row) ) {
-		return $url;
-	}
+	list( $url, $width, $height ) =
+		$this->_file_handler->build_show_file_image( $file_row, true ) ;
 
-	$url  = $file_row['file_url'] ;
-	$path = $file_row['file_path'] ;
-
-// not need '/'
-	$full_path = XOOPS_ROOT_PATH . $path ;
-	$full_url  = XOOPS_URL       . $path ;
-
-	if ( $path && file_exists( $full_path ) ) {
-		$url = $full_url ;
-	}
 	return $url;
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.3 2008/12/10 19:08:56 ohwada Exp $
+// $Id: file_handler.php,v 1.4 2008/12/10 19:41:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -178,7 +178,7 @@ function delete_by_itemid( $item_id )
 //---------------------------------------------------------
 // show
 //---------------------------------------------------------
-function build_show_file_image( $file_row )
+function build_show_file_image( $file_row, $flag_exists=false )
 {
 	$url    = null ;
 	$width  = 0 ;
@@ -189,9 +189,17 @@ function build_show_file_image( $file_row )
 		$path   = $file_row['file_path'] ;
 		$width  = $file_row['file_width'] ;
 		$height = $file_row['file_height'] ;
-		if ( $path ) {
+
 // not need '/'
-			$url = XOOPS_URL . $path ;
+		$full_path = XOOPS_ROOT_PATH . $path ;
+		$full_url  = XOOPS_URL       . $path ;
+
+		if ( $path ) {
+			if ( $flag_exists && file_exists( $full_path ) ) {
+				$url = $full_url ;
+			} else {
+				$url = $full_url ;
+			}
 		}
 	}
 
