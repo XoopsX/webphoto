@@ -1,5 +1,5 @@
 <?php
-// $Id: vote_handler.php,v 1.2 2008/10/30 00:22:49 ohwada Exp $
+// $Id: vote_handler.php,v 1.3 2008/12/10 23:29:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// get_count_by_photoid()
 // 2008-10-01 K.OHWADA
 // BUG : Undefined variable: yesterdaytname
 // calc_rating_by_photoid()
@@ -149,6 +151,12 @@ function delete_by_photoid( $photo_id )
 //---------------------------------------------------------
 // count
 //---------------------------------------------------------
+function get_count_by_photoid( $photo_id )
+{
+	$where = 'vote_photo_id='.intval($photo_id);
+	return $this->get_count_by_where( $where );
+}
+
 function get_count_by_photoid_uid( $photo_id, $uid )
 {
 	$where  = 'vote_photo_id='.intval($photo_id);
@@ -194,6 +202,20 @@ function get_rows_guest( )
 	return $this->get_rows_by_where( $where );
 }
 
+function get_rows_user_by_photoid( $photo_id )
+{
+	$where  = 'vote_uid>0 ';
+	$where .= 'AND vote_photo_id='.intval($photo_id);
+	return $this->get_rows_by_where( $where );
+}
+
+function get_rows_guest_by_photoid( $photo_id )
+{
+	$where  = 'vote_uid=0 ';
+	$where .= 'AND vote_photo_id='.intval($photo_id);
+	return $this->get_rows_by_where( $where );
+}
+
 //---------------------------------------------------------
 // calc
 //---------------------------------------------------------
@@ -217,13 +239,14 @@ function calc_rating_by_rows( $rows, $decimals=0 )
 
 	if ( is_array($rows) ) {
 		$votes = count($rows);
-		$total = 0;
-		foreach( $rows as $row ) {
-			$total += $row['vote_rating'] ;
-		}
-		$rating = $total / $votes;
-		if ( $decimals > 0 ) {
-			$rating = $this->format_rating( $rating, $decimals );
+		if ( $votes > 0 ) {
+			foreach( $rows as $row ) {
+				$total += $row['vote_rating'] ;
+			}
+			$rating = $total / $votes ;
+			if ( $decimals > 0 ) {
+				$rating = $this->format_rating( $rating, $decimals );
+			}
 		}
 	}
 

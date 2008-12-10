@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.5 2008/11/30 13:41:18 ohwada Exp $
+// $Id: item_manager.php,v 1.6 2008/12/10 23:29:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// _print_menu_link()
 // 2008-11-29 K.OHWADA
 // _list_status()
 // _get_photo_url()
@@ -253,8 +255,13 @@ function _menu()
 
 	$this->_print_menu_status( _C_WEBPHOTO_STATUS_WAITING, 'waiting', false );
 	echo $this->build_check_waiting();
+	echo "<br />\n";
+
 	$this->_print_menu_status( _C_WEBPHOTO_STATUS_OFFLINE, 'offline', true );
 	$this->_print_menu_status( _C_WEBPHOTO_STATUS_EXPIRED, 'expired', true );
+
+	$this->_print_menu_link( 'vote_stats', _AM_WEBPHOTO_VOTE_STATS, true );
+	$this->_print_menu_link( 'view_log',   _AM_WEBPHOTO_LOG_VIEW, true );
 	echo "<br />\n";
 
 	$this->_print_list_table( 'all', $item_rows );
@@ -275,17 +282,33 @@ function _get_perpage()
 
 function _print_menu_status( $status, $mode, $flag_br )
 {
-	$url = $this->_MODULE_URL.'/admin/index.php?fct=item_manager&amp;op=list_'.$mode ;
+	$url   = $this->_THIS_URL.'&amp;op=list_'.$mode ;
 	$count = $this->_item_handler->get_count_status( $status );
 
-	$str  = '- <a href="'. $url .'" >';
-	$str .= $this->get_admin_title( $mode ) ;
-	$str .= "</a>";
+	$str  = $this->_build_mene_link(
+		$url, $this->get_admin_title( $mode ), false );
 	$str .= " (". $count .") \n";
 	if ( $flag_br ) {
 		$str .= "<br />\n";
 	}
 	echo $str;
+}
+
+function _print_menu_link( $op, $title, $flag_br )
+{
+	$url = $this->_THIS_URL.'&amp;op='.$op ;
+	echo $this->_build_mene_link( $url, $title, $flag_br );
+}
+
+function _build_mene_link( $url, $title, $flag_br )
+{
+	$str  = '- <a href="'. $url .'" >';
+	$str .= $title ;
+	$str .= "</a>";
+	if ( $flag_br ) {
+		$str .= "<br />\n";
+	}
+	return $str;
 }
 
 function _print_list_table( $mode, $item_rows )
@@ -372,8 +395,8 @@ function _print_list_table( $mode, $item_rows )
 			echo '<input type="checkbox" name="ids[]" value="'. $item_id .'" />';
 
 		} else {
-//			echo $this->_build_link( $item_id, 'modify_form', 'edit.png',   _EDIT );
-//			echo $this->_build_link( $item_id, 'delete',      'delete.png', _DELETE );
+//			echo $this->_build_link_icon( $item_id, 'modify_form', 'edit.png',   _EDIT );
+//			echo $this->_build_link_icon( $item_id, 'delete',      'delete.png', _DELETE );
 			echo '<a href="'.$status_link.'" title="'.$status_report.'">';
 			echo $this->_build_img_icon( $status_icon );
 			echo '</a>'."\n";
@@ -382,7 +405,7 @@ function _print_list_table( $mode, $item_rows )
 		echo '</td>'."\n";
 
 		echo '<td>';
-		echo $this->_build_link( $item_id, 'modify_form', 'edit.png',   _EDIT );
+		echo $this->_build_link_icon( $item_id, 'modify_form', 'edit.png',   _EDIT );
 		echo $this->_build_ahref_onclick( $item_id, 'modify_form', _EDIT, $item_id );
 		echo '</td>'."\n";
 
@@ -545,7 +568,7 @@ function _build_status( $row )
 	return array( $is_online, $report, $link, $icon );
 }
 
-function _build_link( $item_id, $op, $icon, $title )
+function _build_link_icon( $item_id, $op, $icon, $title )
 {
 	$str = $this->_build_ahref_onclick( $item_id, $op, $title, $this->_build_img_icon( $icon ) ) ;
 	return $str;
@@ -1230,47 +1253,56 @@ function _vote_stats()
 	xoops_cp_header();
 	echo $this->_build_bread_crumb();
 
-	$item_id   =  $this->_post_class->get_get_int('item_id') ;
+	$item_id   = $this->_post_class->get_get_int('item_id') ;
 	$flag_item = false ;
 
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
-	if ( is_array($item_row) ) {
-		$flag_item = true;
+	if ( $item_id > 0 ) {
+		$item_row = $this->_item_handler->get_row_by_id( $item_id );
+		if ( is_array($item_row) ) {
+			$flag_item = true;
+		}
 	}
-
-	$location = $this->_THIS_URL ."&amp;op=vote_stats&amp;item_id=" ;
-	$onchange = "window.location='". $location ."'+this.value";
-	$selbox   = $this->_item_handler->build_form_selbox( 'item_id', $item_id, 1, $onchange );
-
-	$total_all = $this->_vote_handler->get_count_all();
 
 	echo '<h3>'. _AM_WEBPHOTO_VOTE_STATS .'</h3>'."\n";
 
-	echo _AM_WEBPHOTO_ITEM_SELECT .' ' ;  
-	echo $selbox ;
-	echo $this->_build_button( 'submit_form', _AM_WEBPHOTO_ITEM_ADD ) ;
-	echo $this->_build_button( 'view_log',    _AM_WEBPHOTO_LOG_VIEW ) ;
-	echo "<br /><br />\n";
-
 	if ( ! $flag_item ) {
-		return;
+		$location = $this->_THIS_URL ."&amp;op=vote_stats&amp;item_id=" ;
+		$onchange = "window.location='". $location ."'+this.value";
+		$selbox   = $this->_item_handler->build_form_selbox( 'item_id', $item_id, 1, $onchange );
+
+		echo _AM_WEBPHOTO_ITEM_SELECT .' ' ;  
+		echo $selbox ;
+		echo $this->_build_button( 'submit_form', _AM_WEBPHOTO_ITEM_ADD ) ;
+		echo $this->_build_button( 'view_log',    _AM_WEBPHOTO_LOG_VIEW ) ;
+		echo "<br /><br />\n";
 	}
 
 	$user_total  = 0 ;
 	$guest_total = 0 ;
 
-	$user_rows = $this->_vote_handler->get_rows_user();
+	if ( $flag_item ) {
+		$total_all = $this->_vote_handler->get_count_by_photoid( $item_id );
+		$user_rows = $this->_vote_handler->get_rows_user_by_photoid( $item_id );
+		$guest_rows = $this->_vote_handler->get_rows_guest_by_photoid( $item_id );
+
+	} else {
+		$total_all = $this->_vote_handler->get_count_all();
+		$user_rows = $this->_vote_handler->get_rows_user();
+		$guest_rows = $this->_vote_handler->get_rows_guest();
+	}
+
 	if ( is_array($user_rows ) ) {
 		$user_total = count($user_rows) ;
 	}
 
-	$guest_rows = $this->_vote_handler->get_rows_guest();
 	if ( is_array($guest_rows ) ) {
 		$guest_total = count($guest_rows) ;
 	}
 
-	echo $this->build_preview_template( 
-		$show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ) ;
+	if ( $flag_item ) {
+		echo $this->build_preview_template( 
+			$show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ) ;
+	}
 
 	echo $this->_vote_build_title( _AM_WEBPHOTO_VOTE_ENTRY, $total_all ) ;
 	echo $this->_vote_build_title( _AM_WEBPHOTO_VOTE_USER,  $user_total ) ;

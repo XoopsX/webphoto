@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
+// $Id: item_form.php,v 1.7 2008/12/10 23:29:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-07 K.OHWADA
+// _build_ele_votes()
 // 2008-11-29 K.OHWADA
 // _build_ele_time_publish()
 // 2008-11-16 K.OHWADA
@@ -318,6 +320,18 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 //		$this->set_row_hidden_buffer( 'item_status' ) ;
 //	}
 
+	echo $this->build_row_label( 
+		$this->get_constant('ITEM_HITS'), 'item_hits' );
+
+	echo $this->build_row_label( 
+		$this->get_constant('ITEM_VIEWS'), 'item_views' );
+
+	echo $this->build_row_label( 
+		$this->get_constant('ITEM_RATING'), 'item_rating' );
+
+	echo $this->build_line_ele( 
+		$this->get_constant('ITEM_VOTES'), $this->_build_ele_votes() );
+
 	echo $this->build_line_ele( '', $this->_build_ele_button( $mode ) );
 
 	echo $this->build_table_end();
@@ -447,23 +461,6 @@ function _build_ele_status()
 	return $ele;
 }
 
-function XX_is_valid()
-{
-	$status = $this->get_row_by_key( 'item_status' );
-	if ( $status <= 0 ) {
-		return true;
-	}
-	return false;
-}
-
-function XX_build_ele_valid()
-{
-	$value = intval( $this->_is_valid() ) ;
-	$text  = $this->build_input_checkbox_yes( 'valid', $value );
-	$text .= ' '.$this->get_constant('CAP_VALIDPHOTO') ;
-	return $text;
-}
-
 // BUG: Warning [PHP]: Missing argument 1
 function _build_ele_playlist_feed()
 {
@@ -503,6 +500,24 @@ function _build_ele_playlist_cache()
 function _build_ele_playlist_chain()
 {
 	// dummy
+}
+
+function _build_ele_votes()
+{
+	$item_id = $this->get_row_by_key( 'item_id' );
+	$votes   = $this->get_row_by_key( 'item_votes' );
+
+	if ( $votes > 0 ) {
+		$url  = $this->_THIS_URL.'&amp;op=vote_stats&amp;item_id='.$item_id ;
+		$str  = '<a href="'. $url .'">';
+		$str .= _AM_WEBPHOTO_VOTE_STATS .' ';
+		$str .= $votes ;
+		$str .= '</a>'."\n";
+	} else {
+		$str = $this->_TEXT_EMPTY_SUBSUTITUTE ;
+	}
+
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -593,7 +608,6 @@ function print_form_select_item( $item_id, $sort )
 	echo '<form style="left; width: 60%;" name="sortform" id="sortform">'."\n";      
 	echo $this->_build_sort_select( $sort );
 	echo $this->_build_button( 'submit_form', _AM_WEBPHOTO_ITEM_ADD );
-	echo $this->_build_button( 'view_log',    _AM_WEBPHOTO_LOG_VIEW );
 	echo $this->build_form_end();
 
 }
