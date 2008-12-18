@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
+// $Id: gmap.php,v 1.6 2008/12/18 14:05:33 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -74,7 +74,7 @@ function build_photo_list_by_catid( $cat_id, $limit=0, $offset=0 )
 
 	$cat_id = intval($cat_id);
 	if ( $cat_id > 0 ) {
-		$catid_array = $this->_cat_handler->get_all_child_id( $cat_id );
+		$catid_array = $this->_cat_handler->getAllChildId( $cat_id );
 		array_push( $catid_array , $cat_id ) ;
 
 		$rows = $this->get_rows_by_gmap_catid_array(
@@ -155,7 +155,8 @@ function _build_icon_id( $item_row )
 
 function _build_cat_gicon_id( $item_row )
 {
-	return $this->_cat_handler->get_cached_value_by_id_name( $item_row['item_cat_id'], 'cat_gicon_id' );
+	return $this->_cat_handler->get_cached_value_by_id_name( 
+		$item_row['item_cat_id'], 'cat_gicon_id' );
 }
 
 //---------------------------------------------------------
