@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.4 2008/09/12 22:51:27 ohwada Exp $
+// $Id: category.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public_class
 // 2008-09-13 K.OHWADA
 // show cat_id for submit
 // 2008-08-24 K.OHWADA
@@ -62,7 +64,7 @@ function list_build_list()
 // overwrite
 function list_get_photo_list()
 {
-	$cat_rows = $this->_cat_handler->get_all_tree_array();
+	$cat_rows = $this->_public_class->get_cat_all_tree_array();
 	if ( !is_array($cat_rows) || !count($cat_rows) ) {
 		return false;
 	}
@@ -79,7 +81,7 @@ function list_get_photo_list()
 			$show_catpath = true;
 		}
 
-		list( $total, $this_sum, $photo ) = $this->_get_photo_for_list( $cat_id );
+		list( $photo, $total, $this_sum ) = $this->_get_photo_for_list( $cat_id );
 
 		$arr[] = array(
 			'title'        => '' ,
@@ -102,26 +104,15 @@ function _get_photo_for_list( $cat_id )
 {
 	$photo = null;
 
-	$catid_array = $this->_cat_handler->get_all_child_id( $cat_id );
-	array_push( $catid_array , $cat_id ) ;
+	list( $rows, $total, $this_sum ) =
+		$this->_public_class->get_rows_total_by_catid( 
+			$cat_id, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
 
-	$this_sum = $this->_item_handler->get_count_public_by_catid( $cat_id );
-	$total    = $this->_item_handler->get_count_public_by_catid_array( $catid_array );
-
-	if ( $total > 0 ) {
-
-// this category
-		if ( $this_sum > 0 ) {
-			$photo_rows = $this->_item_handler->get_rows_public_by_catid_orderby( 
-				$cat_id, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
-
-			if ( is_array($photo_rows) && count($photo_rows) ) {
-				$photo = $this->build_photo_show( $photo_rows[0] );
-			}
-		}
+	if ( is_array($rows) && count($rows) ) {
+		$photo = $this->build_photo_show( $rows[0] );
 	}
 
-	return array( $total, $this_sum, $photo );
+	return array( $photo, $total, $this_sum );
 }
 
 //---------------------------------------------------------
@@ -171,7 +162,8 @@ function list_build_detail( $cat_id )
 
 function _build_category( $cat_id, $limit, $start )
 {
-	$row = $this->_cat_handler->get_cached_row_by_id( $cat_id );
+	$row = $this->_public_class->get_cat_row( $cat_id );
+
 	if ( !is_array( $row ) ) {
 		$arr = array(
 			'cat_title'       => '',
@@ -194,8 +186,9 @@ function _build_category( $cat_id, $limit, $start )
 	$show_sort     = false ;
 	$show_catpath  = false ;
 
-	list( $total, $this_sum, $photo_rows ) 
-		= $this->_get_photos_for_detail( $cat_id, $orderby, $limit, $start );
+	list( $photo_rows, $total, $this_sum ) =
+		$this->_public_class->get_rows_total_by_catid( 
+			$cat_id, $orderby, $limit, $start, true );
 
 	if (( $this_sum > 1 ) ||
 	    ( $this_sum == 0 ) && ( $total > 1 )) {
@@ -221,34 +214,6 @@ function _build_category( $cat_id, $limit, $start )
 
 	return $arr;
 
-}
-
-function _get_photos_for_detail( $cat_id, $orderby, $limit, $start )
-{
-	$photo_rows = null;
-
-	$catid_array = $this->_cat_handler->get_all_child_id( $cat_id );
-	array_push( $catid_array , $cat_id ) ;
-
-	$this_sum = $this->_item_handler->get_count_public_by_catid( $cat_id );
-	$total    = $this->_item_handler->get_count_public_by_catid_array( $catid_array );
-
-	if ( $total > 0 ) {
-
-// this category
-		if ( $this_sum > 0 ) {
-			$where = $this->_item_handler->build_where_public_by_catid( $cat_id );
-
-// this category & all children
-		} else {
-			$where = $this->_item_handler->build_where_public_by_catid_array( $catid_array );
-		}
-
-		$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
-			$where, $orderby, $limit, $start );
-	}
-
-	return array( $total, $this_sum, $photo_rows );
 }
 
 // --- class end ---

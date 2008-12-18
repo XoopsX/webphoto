@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit.php,v 1.20 2008/11/30 10:36:34 ohwada Exp $
+// $Id: photo_edit.php,v 1.21 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// build_row_extend_by_post()
 // 2008-11-29 K.OHWADA
 // remove create_thumb_from_external() etc
 // 2008-11-16 K.OHWADA
@@ -53,18 +55,19 @@ class webphoto_photo_edit extends webphoto_base_this
 	var $_photo_class;
 	var $_embed_class;
 
-	var $_cfg_makethumb    = false;
-	var $_cfg_allownoimage = false ;
-	var $_cfg_addposts     = 0 ;
-	var $_cfg_fsize        = 0 ;
-	var $_cfg_width        = 0 ;
-	var $_cfg_height       = 0 ;
-	var $_has_insertable   = false;
-	var $_has_superinsert  = false;
-	var $_has_editable     = false;
-	var $_has_deletable    = false;
-	var $_has_image_resize = false;
-	var $_has_image_rotate = false;
+	var $_cfg_makethumb      = false;
+	var $_cfg_allownoimage   = false ;
+	var $_cfg_addposts       = 0 ;
+	var $_cfg_fsize          = 0 ;
+	var $_cfg_width          = 0 ;
+	var $_cfg_height         = 0 ;
+	var $_cfg_perm_item_read = 0 ;
+	var $_has_insertable     = false;
+	var $_has_superinsert    = false;
+	var $_has_editable       = false;
+	var $_has_deletable      = false;
+	var $_has_image_resize   = false;
+	var $_has_image_rotate   = false;
 
 	var $_post_photo_id    = 0;
 	var $_post_item_id     = 0;
@@ -167,11 +170,12 @@ function webphoto_photo_edit( $dirname , $trust_dirname )
 	$this->_has_editable    = $this->_perm_class->has_editable();
 	$this->_has_deletable   = $this->_perm_class->has_deletable();
 
-	$this->_cfg_makethumb    = $this->get_config_by_name( 'makethumb' );
-	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
-	$this->_cfg_addposts     = $this->get_config_by_name( 'addposts' );
-	$this->_cfg_width        = $this->get_config_by_name( 'width' );
-	$this->_cfg_height       = $this->get_config_by_name( 'height' );
+	$this->_cfg_makethumb      = $this->get_config_by_name( 'makethumb' );
+	$this->_cfg_allownoimage   = $this->get_config_by_name( 'allownoimage' );
+	$this->_cfg_addposts       = $this->get_config_by_name( 'addposts' );
+	$this->_cfg_width          = $this->get_config_by_name( 'width' );
+	$this->_cfg_height         = $this->get_config_by_name( 'height' );
+	$this->_cfg_perm_item_read = $this->get_config_by_name( 'perm_item_read' );
 
 }
 
@@ -282,8 +286,8 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	}
 
 	$row['item_title']            = $this->get_item_title();
-	$row['item_equipment']        = $this->get_item_equipment();
 	$row['item_cat_id']           = $this->_post_item_cat_id;
+	$row['item_equipment']        = $this->get_item_equipment();
 	$row['item_exif']             = $this->_item_exif ;
 	$row['item_embed_type']       = $this->_item_embed_type ;
 	$row['item_embed_src']        = $this->_item_embed_src ;
@@ -297,20 +301,6 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$row['item_player_id']        = $this->_item_player_id ;
 	$row['item_page_width']       = $this->_item_page_width ;
 	$row['item_page_height']      = $this->_item_page_height ;
-
-	$row['item_gicon_id']         = $this->_post_class->get_post_int(  'item_gicon_id' );
-	$row['item_place']            = $this->_post_class->get_post_text( 'item_place' );
-	$row['item_description']      = $this->_post_class->get_post_text( 'item_description' );
-	$row['item_siteurl']          = $this->_post_class->get_post_text( 'item_siteurl' );
-	$row['item_artist']           = $this->_post_class->get_post_text( 'item_artist' );
-	$row['item_album']            = $this->_post_class->get_post_text( 'item_album' );
-	$row['item_label']            = $this->_post_class->get_post_text( 'item_label' );
-	$row['item_perm_down']        = $this->build_perm_by_post( 'item_perm_down' );
-	$row['item_codeinfo']         = $this->build_info_by_post( 'item_codeinfo' );
-
-// for future
-//	$row['item_perm_read']        = $this->build_perm_by_post( 'item_perm_read' );
-//	$row['item_showinfo']         = $this->build_info_by_post( 'item_showinfo' );
 
 	if ( $this->is_fill_item_datetime() ) {
 		$row['item_datetime'] = $this->get_item_datetime();
@@ -329,13 +319,39 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 		$row['item_onclick']     = $this->_item_onclick ;
 	}
 
+	if ( $this->_FLAG_ROW_EXTEND ) {
+		$row = $this->build_row_extend_by_post( $row, $is_submit );
+	}
+
+	return $row;
+}
+
+function build_row_extend_by_post( $row, $is_submit=false )
+{
+
+	$row['item_gicon_id']         = $this->_post_class->get_post_int(  'item_gicon_id' );
+	$row['item_place']            = $this->_post_class->get_post_text( 'item_place' );
+	$row['item_description']      = $this->_post_class->get_post_text( 'item_description' );
+	$row['item_siteurl']          = $this->_post_class->get_post_text( 'item_siteurl' );
+	$row['item_artist']           = $this->_post_class->get_post_text( 'item_artist' );
+	$row['item_album']            = $this->_post_class->get_post_text( 'item_album' );
+	$row['item_label']            = $this->_post_class->get_post_text( 'item_label' );
+	$row['item_perm_down']        = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
+	$row['item_codeinfo']         = $this->build_info_by_post( 'item_codeinfo' );
+
+	if ( $this->_cfg_perm_item_read > 0 ) {
+		$row['item_perm_read'] = $this->get_group_perms_str_by_post( 'item_perm_read_ids' );
+	}
+
+// for future
+//	$row['item_showinfo']         = $this->build_info_by_post( 'item_showinfo' );
+
 	if ( $this->_FLAG_ADMIN ) {
 		$row['item_playlist_type'] = $this->_item_playlist_type ;
 		$row['item_playlist_feed'] = $this->_item_playlist_feed ;
 		$row['item_playlist_dir']  = $this->_item_playlist_dir ;
 		$row['item_playlist_time'] = 
 			$this->_post_class->get_post_int( 'item_playlist_time' ) ;
-
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
@@ -348,12 +364,6 @@ function build_row_by_post( $row, $is_submit=false, $flag_title=true )
 	$this->set_tag_name_array( $this->_tag_class->str_to_tag_name_array( $post_tags ) );
 
 	return $row;
-}
-
-function build_perm_by_post( $name )
-{
-	return $this->_item_handler->build_perm( 
-		$this->_post_class->get_post( $name ) );
 }
 
 function build_info_by_post( $name )

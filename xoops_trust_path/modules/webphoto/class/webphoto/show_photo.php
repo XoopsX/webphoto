@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.17 2008/12/10 19:08:56 ohwada Exp $
+// $Id: show_photo.php,v 1.18 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// check_perm() -> check_perm_down_by_row()
 // 2008-12-07 K.OHWADA
 // get_text_type_array()
 // 2008-11-29 K.OHWADA
@@ -378,8 +380,7 @@ function format_time( $time )
 
 function perm_download( $row )
 {
-	$perm = $row['item_perm_down'];
-	return $this->_item_handler->check_perm( $perm, $this->_xoops_groups );
+	return $this->_item_handler->check_perm_down_by_row( $row, $this->_xoops_groups );
 }
 
 function can_download( $row )

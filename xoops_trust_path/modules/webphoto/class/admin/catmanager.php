@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.5 2008/11/11 12:50:34 ohwada Exp $
+// $Id: catmanager.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// get_group_perms_str_by_post()
 // 2008-11-08 K.OHWADA
 // _fetch_image()
 // _C_WEBPHOTO_CAT_MAIN_WIDTH_DEFAULT -> cfg_cat_width
@@ -29,8 +31,9 @@ class webphoto_admin_catmanager extends webphoto_base_this
 	var $_upload_class;
 	var $_image_cmd_class;
 
-	var $_cfg_cat_width  = 0 ;
-	var $_cfg_csub_width = 0 ;
+	var $_cfg_cat_width  ;
+	var $_cfg_csub_width ;
+	var $_cfg_perm_cat_read ;
 
 	var $_get_catid;
 
@@ -55,8 +58,9 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 	$this->_upload_class    =& webphoto_upload::getInstance( $dirname , $trust_dirname );
 	$this->_image_cmd_class =& webphoto_lib_image_cmd::getInstance();
 
-	$this->_cfg_cat_width  = $this->_config_class->get_by_name( 'cat_width' );
-	$this->_cfg_csub_width = $this->_config_class->get_by_name( 'csub_width' );
+	$this->_cfg_cat_width     = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_csub_width    = $this->_config_class->get_by_name( 'csub_width' );
+	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
@@ -226,7 +230,11 @@ function _build_row_by_post( $row )
 	$row['cat_weight']      = $this->_post_class->get_post_int('cat_weight');
 	$row['cat_title']       = $this->_post_class->get_post_text('cat_title');
 	$row['cat_description'] = $this->_post_class->get_post_text('cat_description');
-	$row['cat_perm_post']   = $this->_build_perm_post_by_post();
+	$row['cat_perm_post']   = $this->get_group_perms_str_by_post('cat_perm_post_ids');
+
+	if ( $this->_cfg_perm_cat_read > 0 ) {
+		$row['cat_perm_read'] = $this->get_group_perms_str_by_post('cat_perm_read_ids');
+	}
 
 	return $row;
 }
@@ -242,37 +250,6 @@ function _build_img_path_by_post()
 	}
 
 	return $this->add_slash_to_head( $img_path );
-}
-
-function _build_perm_post_by_post()
-{
-	$allow_all = $this->_post_class->get_post_int('perm_post_allow_all');
-	$perm_arr  = $this->_post_class->get_post('perm_post');
-
-	if ( $allow_all == _C_WEBPHOTO_YES ) {
-		return _C_WEBPHOTO_PERM_ALLOW_ALL;
-	}
-
-	if ( !is_array($perm_arr) || !count($perm_arr) ) {
-		return _C_WEBPHOTO_PERM_DENOY_ALL;
-	}
-
-	$arr = array();
-	foreach( $perm_arr as $k => $v ) 
-	{
-		if ( $v == _C_WEBPHOTO_YES ) {
-			$arr[] = $k;
-		}
-	}
-
-	if ( !is_array($arr) || !count($arr) ) {
-		return _C_WEBPHOTO_PERM_DENOY_ALL;
-	}
-
-	$ret  = _C_WEBPHOTO_PERM_SEPARATOR;
-	$ret .= implode( _C_WEBPHOTO_PERM_SEPARATOR, $arr );
-	$ret .= _C_WEBPHOTO_PERM_SEPARATOR;
-	return $ret;
 }
 
 function _build_img_name( $row )
@@ -408,6 +385,14 @@ function _update()
 		exit();
 	}
 
+	$ret = $this->_update_child( $post_catid, $row_update );
+	if ( !$ret ) {
+		$msg  = "DB Error: update category <br />";
+		$msg .= $this->get_format_error();
+		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , $msg ) ;
+		exit();
+	}
+
 	$url = $this->_THIS_URL.'&amp;disp=edit&amp;cat_id='.$post_catid;
 
 	if ( $this->_error_upload ) {
@@ -420,6 +405,46 @@ function _update()
 
 	redirect_header( $url , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_UPDATED ) ;
 	exit() ;
+}
+
+function _update_child( $cat_id, $row_update )
+{
+	$post_perm_child = $this->_post_class->get_post_int('perm_child');
+
+	if ( $post_perm_child != _C_WEBPHOTO_YES ) {
+		return true;	// no action
+	}
+
+	$id_arr = $this->_cat_handler->getAllChildId( $cat_id );
+	if ( ! is_array($id_arr) || ! count($id_arr) ) {
+		return true;	// no action
+	}
+
+	$err      = false ;
+	$new_read = $row_update['cat_perm_read'] ;
+	$new_post = $row_update['cat_perm_post'] ;
+
+	foreach ( $id_arr as $id )
+	{
+		$row = $this->_cat_handler->get_row_by_id( $id );
+		$current_read = $row['cat_perm_read'] ;
+		$current_post = $row['cat_perm_post'] ;
+
+// skip if no change
+		if (( $current_read == $new_read )&&
+		    ( $current_post == $new_post )) {
+			continue ;
+		}
+
+		$row['cat_perm_read'] = $new_read ;
+		$row['cat_perm_post'] = $new_post ;
+		$ret = $this->_cat_handler->update( $row );
+		if ( !$ret ) {
+			$err = true;
+		}
+	}
+
+	return ( ! $err );
 }
 
 //---------------------------------------------------------
@@ -523,23 +548,44 @@ function _weight()
 //---------------------------------------------------------
 function _print_new_form()
 {
-	// New
+// New
 	$row = $this->_cat_handler->create( true );
-	$row['cat_pid'] = $this->_get_catid;
+	$row['cat_pid'] = $this->_get_catid ;
 
-	$this->_print_cat_form( 'new', $row ) ;
+	$parent = null ;
+
+	if ( $this->_get_catid > 0 ) {
+		$parent_row = $this->_cat_handler->get_row_by_id( $this->_get_catid );
+		if ( is_array($parent_row) ) {
+			$row['cat_perm_read'] = $parent_row['cat_perm_read'] ;
+			$row['cat_perm_post'] = $parent_row['cat_perm_post'] ;
+			$parent               = $parent_row['cat_title'] ;
+		}
+	}
+
+	$param = array(
+		'mode'   => 'new',
+		'parent' => $parent,
+	);
+
+	$this->_print_cat_form( $row, $param ) ;
 }
 
 function _print_edit_form()
 {
-	// Editing
+// Editing
 	$row = $this->_cat_handler->get_row_by_id( $this->_get_catid );
 	if ( !is_array($row ) ) {
 		redirect_header( $this->_THIS_URL , $this->_TIME_FAIL , _AM_WEBPHOTO_ERR_NO_RECORD ) ;
 		exit();
 	}
 
-	$this->_print_cat_form( 'edit', $row );
+	$param = array(
+		'mode'   => 'edit',
+		'parent' => null,
+	);
+
+	$this->_print_cat_form( $row, $param );
 }
 
 //---------------------------------------------------------
@@ -579,11 +625,11 @@ function _print_list( )
 //---------------------------------------------------------
 // admin_cat_form
 //---------------------------------------------------------
-function _print_cat_form( $mode, $row )
+function _print_cat_form( $row, $param )
 {
 	$cat_form =& webphoto_admin_cat_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$cat_form->print_form( $mode, $row );
+	$cat_form->print_form( $row, $param );
 }
 
 function _print_cat_list( $cat_tree_array )

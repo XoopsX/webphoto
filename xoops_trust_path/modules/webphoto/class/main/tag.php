@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: tag.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public_class
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -65,27 +67,22 @@ function list_build_list()
 // overwrite
 function list_get_photo_list()
 {
-	$list_rows = $this->_tag_class->get_tag_rows_with_count( $this->_LIST_LIMIT, $this->_LIST_START );
+	$list_rows = $this->_public_class->get_tag_rows( $this->_LIST_LIMIT, $this->_LIST_START );
 	if ( !is_array($list_rows) ) {
 		return false;
 	}
 
 	$this->_list_rows = $list_rows;
 
-	$orderby = $this->convert_orderby_join( $this->_PHOTO_LIST_ORDER );
-
 	$i   = 0;
 	$arr = array();
 	foreach ( $list_rows as $row )
 	{
-		$tag_name = $row['tag_name'];
-		$total    = $row['photo_count'];
+		$tag_name  = $row['tag_name'];
+		$total     = $row['photo_count'];
 
-		$id_array = $this->_tag_class->get_photo_id_array_public_latest_by_tag_orderby(
-			$tag_name, $orderby, $this->_PHOTO_LIST_LIMIT );
-		if ( isset( $id_array[0] ) ) {
-			$photo_row = $this->_item_handler->get_row_by_id( $id_array[0] );
-		}
+		$photo_row = $this->_public_class->get_first_row_by_tag_orderby(
+			$tag_name, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
 
 		$arr[] = $this->list_build_photo_array(
 			$tag_name, $tag_name, $total, $photo_row );
@@ -106,7 +103,7 @@ function _get_tagcloud_param()
 	$error    = null;
 
 	if ( is_array($this->_list_rows) && count($this->_list_rows) ) {
-		$tagcloud = $this->_tag_class->build_tagcloud_by_rows( $this->_list_rows );
+		$tagcloud = $this->_public_class->build_tagcloud_by_rows( $this->_list_rows );
 		if ( is_array($tagcloud) && count($tagcloud) ) {
 			$show = true;
 		}
@@ -133,26 +130,24 @@ function list_build_detail( $tag_in )
 	$rows    = null ;
 	$limit   = $this->_MAX_PHOTOS;
 	$start   = $this->pagenavi_calc_start( $limit );
-	$orderby = $this->convert_orderby_join( $this->get_orderby_by_post() );
+
+//	$orderby = $this->convert_orderby_join( $this->get_orderby_by_post() );
+	$orderby = $this->get_orderby_by_post() ;
 
 	$tag_name = $this->decode_uri_str( $tag_in );
 
 	$init_param = $this->list_build_init_param( true );
 
 	$title = $this->get_constant('TITLE_TAGS') .' : '. $tag_name ;
-	$total = $this->_tag_class->get_photo_count_public_by_tag( $tag_name );
+	$total = $this->_public_class->get_count_by_tag( $tag_name );
 
 	if ( $total > 0 ) {
-		$id_array = $this->_tag_class->get_photo_id_array_public_latest_by_tag_orderby(
+		$rows = $this->_public_class->get_rows_by_tag_orderby(
 			$tag_name, $orderby, $limit, $start );
-
-		if ( is_array($id_array) && count($id_array) ) {
-			$rows = $this->_item_handler->get_rows_from_id_array( $id_array );
-		}
 	}
 
 	$param          = $this->list_build_detail_common( $title, $total, $rows );
-	$tagcloud_param = $this->_tag_class->build_tagcloud( $this->_MAX_TAG_CLOUD );
+	$tagcloud_param = $this->_public_class->build_tagcloud( $this->_MAX_TAG_CLOUD );
 	$navi_param     = $this->list_build_navi( $total, $limit );
 
 	$this->list_assign_xoops_header();

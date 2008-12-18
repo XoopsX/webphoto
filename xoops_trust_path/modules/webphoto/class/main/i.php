@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.6 2008/12/10 19:08:56 ohwada Exp $
+// $Id: i.php,v 1.7 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_photo_public
 // 2008-12-08 K.OHWADA
 // _get_encode_type_array()
 // 2008-12-07 K.OHWADA
@@ -28,6 +30,7 @@ class webphoto_main_i extends webphoto_show_photo
 	var $_retrieve_class;
 	var $_pagenavi_class;
 	var $_multibyte_class;
+	var $_public_class;
 
 	var $_xoops_sitename;
 	var $_item_ecnode_type_array;
@@ -58,6 +61,7 @@ function webphoto_main_i( $dirname , $trust_dirname )
 	$this->_retrieve_class  =& webphoto_mail_retrieve::getInstance( $dirname , $trust_dirname );
 	$this->_pagenavi_class  =& webphoto_lib_pagenavi::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_public_class    =& webphoto_photo_public::getInstance( $dirname );
 
 	$this->_set_charset_output();
 	$this->_set_mobile_carrier_array();
@@ -358,21 +362,24 @@ function _get_photo( $op, $id )
 
 // latest
 	if ( $op == 'latest' ) {
-		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby(
+		$item_rows = $this->_public_class->get_rows_imode_by_orderby(
 			$this->_MOBILE_LIST_ORDERBY, $this->_MOBILE_LATEST_LIMIT );
+
 		if ( isset($item_rows[0]) ) {
 			$item_row = $item_rows[0] ;
 		}
 
 // specified
 	} elseif ( $id > 0 ) {
-		$item_row = $this->_item_handler->get_row_by_id( $id );
+		$item_row = $this->_public_class->get_row( $id );
+
 	}
 
 // random
 	if ( !is_array($item_row) ) {
-		$item_rows = $this->_item_handler->get_rows_public_imode_by_orderby( 
+		$item_rows = $this->_public_class->get_rows_imode_by_orderby(
 			$this->_MOBILE_RANDOM_ORDERBY, $this->_MOBILE_RANDOM_LIMIT );
+
 		if ( isset($item_rows[0]) ) {
 			$item_row = $item_rows[0] ;
 		}
@@ -389,15 +396,18 @@ function _get_photo_list( $page )
 {
 	$this->_pagenavi_class->set_page( $page );
 	$start = $this->_pagenavi_class->calc_start( $page, $this->_MOBILE_LIST_LIMIT );
-	$item_rows  = $this->_item_handler->get_rows_public_imode_by_orderby(
-		$this->_MOBILE_LIST_ORDERBY, $this->_MOBILE_LIST_LIMIT, $start );
+
+	$item_rows = $this->_public_class->get_rows_imode_by_orderby(
+		$this->_MOBILE_LIST_ORDERBY, $this->_MOBILE_LATEST_LIMIT, $start );
+
 	return $this->build_show_conv_from_rows( $item_rows );
 }
 
 function _build_navi( $page )
 {
-	$url = $this->_MODULE_URL .'/i.php?';
-	$total = $this->_item_handler->get_count_public_imode();
+	$url   = $this->_MODULE_URL .'/i.php?';
+	$total = $this->_public_class->get_count_imode();
+
 	return $this->_pagenavi_class->build( 
 		$url, $page, $this->_MOBILE_LIST_LIMIT, $total, $this->_MOBILE_NAVI_WINDOWS );
 }

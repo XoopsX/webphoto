@@ -1,37 +1,38 @@
 <?php
-// $Id: file_read.php,v 1.2 2008/11/21 13:09:45 ohwada Exp $
+// $Id: file_read.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// webphoto_item_public
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_file_read
 //=========================================================
-class webphoto_file_read extends webphoto_lib_base
+class webphoto_file_read extends webphoto_item_public
 {
-	var $_item_handler;
 	var $_file_handler;
 	var $_multibyte_class;
 	var $_post_class;
-
-	var $_error = null;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_file_read( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_item_public( $dirname, $trust_dirname );
 
-	$this->_item_handler    =& webphoto_item_handler::getInstance( $dirname );
 	$this->_file_handler    =& webphoto_file_handler::getInstance( $dirname );
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 	$this->_post_class      =& webphoto_lib_post::getInstance();
-
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -46,24 +47,6 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-function get_item_row( $item_id )
-{
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
-	if ( ! is_array($item_row ) ) {
-		$this->_error = $this->get_constant( 'NOMATCH_PHOTO' ) ;
-		return false;
-	}
-
-	$status = $item_row['item_status'] ;
-
-	if ( $status <= 0 ) {
-		$this->_error = $this->get_constant( 'NOMATCH_PHOTO' ) ;
-		return false;
-	}
-
-	return $item_row ;
-}
-
 function get_file_row( $item_row, $file_kind )
 {
 	$item_file_id = 'item_file_id_'.$file_kind ;
@@ -91,11 +74,6 @@ function get_file_row( $item_row, $file_kind )
 
 	$file_row['file_full'] = $file;
 	return $file_row ;
-}
-
-function check_perm( $perm )
-{
-	return $this->_item_handler->check_perm( $perm, $this->_xoops_groups );
 }
 
 function http_output_pass()

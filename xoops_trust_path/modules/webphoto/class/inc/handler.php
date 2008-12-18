@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
+// $Id: handler.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// check_perm_by_row_name_groups()
 // 2008-11-29 K.OHWADA
 // build_show_file_image()
 // 2008-10-01 K.OHWADA
@@ -29,6 +31,8 @@ class webphoto_inc_handler
 	var $_db;
 	var $_db_error;
 
+	var $_xoops_groups = null ;
+
 	var $_DIRNAME;
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
@@ -39,6 +43,10 @@ class webphoto_inc_handler
 
 	var $_NORMAL_EXTS;
 
+	var $_PERM_ALLOW_ALL = '*' ;
+	var $_PERM_DENOY_ALL = 'x' ;
+	var $_PERM_SEPARATOR = '&' ;
+
 	var $_DEBUG_SQL   = false;
 	var $_DEBUG_ERROR = false;
 
@@ -48,6 +56,8 @@ class webphoto_inc_handler
 function webphoto_inc_handler()
 {
 	$this->_db =& Database::getInstance();
+
+	$this->_init_xoops_groups();
 }
 
 function &getInstance()
@@ -229,6 +239,19 @@ function get_rows_by_sql( $sql, $limit=0, $offset=0, $key=null )
 	return $arr; 
 }
 
+function get_first_rows_by_sql( $sql, $limit=0, $offset=0 )
+{
+	$res = $this->query( $sql, $limit, $offset );
+	if ( !$res ) { return false; }
+
+	$arr = array();
+
+	while ( $row = $this->_db->fetchRow($res) ) {
+		$arr[] = $row[0];
+	}
+	return $arr;
+}
+
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
@@ -331,8 +354,173 @@ function quote( $str )
 }
 
 //---------------------------------------------------------
+// item cat handler
+// require $_xoops_groups $_cfg_perm_item_read
+//---------------------------------------------------------
+function build_where_public_with_item_cat( $groups=null )
+{
+	$where  = $this->convert_item_field( 
+		$this->build_where_public_with_item() ) ;
+	$where .= ' AND ';
+	$where .= $this->build_where_cat_perm_read( $groups ) ;
+
+	return $where;
+}
+
+function build_where_public_with_item( $groups=null )
+{
+	$where = ' item_status > 0 ';
+	if ( $this->_cfg_perm_item_read != _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
+		$where .= ' AND ';
+		$where .= $this->build_where_item_perm_read( $groups ) ;
+	}
+	return $where;
+}
+
+function build_where_cat_perm_read( $groups=null )
+{
+	$where = $this->build_where_perm_groups( 'c.cat_perm_read', $groups );
+	return $where;
+}
+
+function build_where_item_perm_read( $groups=null )
+{
+	$where = $this->build_where_perm_groups( 'item_perm_read', $groups );
+	return $where;
+}
+
+function get_item_count_by_where_with_cat( $where )
+{
+	$sql  = 'SELECT COUNT(*) FROM ';
+	$sql .= $this->prefix_dirname( 'item' ) .' i ';
+	$sql .= ' INNER JOIN ';
+	$sql .= $this->prefix_dirname( 'cat' ) .' c ';
+	$sql .= ' ON i.item_cat_id = c.cat_id ';
+	$sql .= ' WHERE '. $where;
+	return $this->get_count_by_sql( $sql );
+}
+
+function get_item_count_by_where( $where )
+{
+	$sql  = 'SELECT COUNT(*) FROM ';
+	$sql .= $this->prefix_dirname( 'item' ) ;
+	$sql .= ' WHERE '. $where;
+	return $this->get_count_by_sql( $sql );
+}
+
+function get_item_rows_by_where_orderby_with_cat( $where, $orderby, $limit=0, $offset=0 )
+{
+	$sql  = 'SELECT i.* FROM ';
+	$sql .= $this->prefix_dirname( 'item' ) .' i ';
+	$sql .= ' INNER JOIN ';
+	$sql .= $this->prefix_dirname( 'cat' ) .' c ';
+	$sql .= ' ON i.item_cat_id = c.cat_id ';
+	$sql .= ' WHERE '. $where;
+	$sql .= ' ORDER BY '. $orderby;
+	return $this->get_rows_by_sql( $sql, $limit, $offset );
+}
+
+function get_item_rows_by_where_orderby( $where, $orderby, $limit=0, $offset=0 )
+{
+	$sql  = 'SELECT * FROM ';
+	$sql .= $this->prefix_dirname( 'item' ) ;
+	$sql .= ' WHERE '. $where;
+	$sql .= ' ORDER BY '. $orderby;
+	return $this->get_rows_by_sql( $sql, $limit, $offset );
+}
+
+function convert_item_field( $str )
+{
+	return str_replace( 'item_', 'i.item_', $str );
+}
+
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function build_where_perm_groups( $name, $groups=null )
+{
+	if ( empty($groups) ) {
+		$groups = $this->_xoops_groups ;
+	}
+
+	$pre  = '%'. $this->_PERM_SEPARATOR ; 
+	$post = $this->_PERM_SEPARATOR . '%' ;
+
+	$where = $name .'='. $this->quote( $this->_PERM_ALLOW_ALL ) ;
+
+	if ( is_array($groups) && count($groups) ) {
+		foreach ( $groups as $group ) 
+		{
+			$where .= ' OR '. $name .' LIKE ';
+			$where .= $this->quote( $pre . intval($group) . $post ) ;
+		}
+	}
+
+	return ' ( '. $where .' ) ';
+}
+
+function check_perm_by_row_name_groups( $row, $name, $groups=null )
+{
+	if ( ! isset( $row[ $name ] ) ) {
+		return false ;
+	}
+
+	$val = $row[ $name ] ;
+
+	if ( $this->_PERM_ALLOW_ALL && ( $val == $this->_PERM_ALLOW_ALL ) ) {
+		return true;
+	}
+
+	if ( $this->_PERM_DENOY_ALL && ( $val == $this->_PERM_DENOY_ALL ) ) {
+		return false;
+	}
+
+	$perms = $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+	return $this->check_perms_in_groups( $perms, $groups );
+}
+
+function check_perms_in_groups( $perms, $groups=null )
+{
+	if ( !is_array($perms) || !count($perms) ) {
+		return false;
+	}
+
+	if ( empty($groups) ) {
+		$groups = $this->_xoops_groups ;
+	}
+
+	$arr = array_intersect( $groups, $perms );
+	if ( is_array($arr) && count($arr) ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
 // utility
 //---------------------------------------------------------
+function str_to_array( $str, $pattern )
+{
+	$arr1 = explode( $pattern, $str );
+	$arr2 = array();
+	foreach ( $arr1 as $v )
+	{
+		$v = trim($v);
+		if ($v == '') { continue; }
+		$arr2[] = $v;
+	}
+	return $arr2;
+}
+
+function array_to_str( $arr, $glue )
+{
+	$val = false;
+	if ( is_array($arr) && count($arr) ) {
+		$val = implode($glue, $arr);
+	}
+	return $val;
+}
+
 function is_normal_ext( $ext )
 {
 	if ( in_array( strtolower( $ext ) , $this->_NORMAL_EXTS ) ) {
@@ -372,6 +560,33 @@ function is_video_kind( $kind )
 		return true;
 	}
 	return false;
+}
+
+function check_http_null( $str )
+{
+	if ( ($str == '') || ($str == 'http://') || ($str == 'https://') ) {
+		return true;
+	}
+	return false;
+}
+
+function check_http_start( $str )
+{
+	if ( preg_match("|^https?://|", $str) ) {
+		return true;	// include HTTP
+	}
+	return false;
+}
+
+function add_slash_to_head( $str )
+{
+// ord : the ASCII value of the first character of string
+// 0x2f slash
+
+	if( ord( $str ) != 0x2f ) {
+		$str = "/". $str;
+	}
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -427,6 +642,19 @@ function set_debug_sql( $val )
 function set_debug_error( $val )
 {
 	$this->_DEBUG_ERROR = (bool)$val;
+}
+
+//---------------------------------------------------------
+// xoops groups
+//---------------------------------------------------------
+function _init_xoops_groups()
+{
+	global $xoopsUser;
+	if ( is_object($xoopsUser) ) {
+		$this->_xoops_groups = $xoopsUser->getGroups() ;
+	} else {
+		$this->_xoops_groups = array( XOOPS_GROUP_ANONYMOUS );
+	}
 }
 
 // --- class end ---

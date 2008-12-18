@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.7 2008/12/10 19:08:57 ohwada Exp $
+// $Id: header.php,v 1.8 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// photo_public.php
 // 2008-12-07 K.OHWADA
 // rate_check.php
 // 2008-11-29 K.OHWADA
@@ -43,6 +45,7 @@ webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/xoops_header.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
+webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/inc/auto_publish.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/d3/language.php' );
@@ -72,6 +75,7 @@ webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/flashvar_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
+webphoto_include_once( 'class/handler/item_cat_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
@@ -82,6 +86,7 @@ webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
+webphoto_include_once( 'class/webphoto/photo_public.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/flash_player.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );

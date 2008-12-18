@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_edit_form.php,v 1.20 2008/12/10 19:41:19 ohwada Exp $
+// $Id: photo_edit_form.php,v 1.21 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_inc_catlist
+// _build_ele_perm_read()
 // 2008-12-07 K.OHWADA
 // build_show_file_image()
 // 2008-11-29 K.OHWADA
@@ -49,6 +52,7 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_cfg_fsize ;
 	var $_cfg_makethumb ;
 	var $_cfg_file_size ;
+	var $_cfg_perm_item_read ;
 
 	var $_has_deletable ;
 
@@ -82,7 +86,9 @@ class webphoto_photo_edit_form extends webphoto_form_this
 	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
 	var $_VODEO_THUMB_MAX   = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
-	
+
+	var $_CAT_ORDER   = 'cat_weight ASC, cat_title ASC, cat_id ASC';
+
 	var $_DETAIL_DIV_NAME = 'webphoto_detail';
 	var $_GMAP_DIV_NAME   = 'webphoto_gmap_iframe';
 	var $_GMAP_STYLE      = 'background-color: #ffffff; ';
@@ -112,12 +118,14 @@ function webphoto_photo_edit_form( $dirname, $trust_dirname )
 	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 
-	$this->_cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
-	$this->_cfg_width       = $this->_config_class->get_by_name( 'width' );
-	$this->_cfg_height      = $this->_config_class->get_by_name( 'height' );
-	$this->_cfg_fsize       = $this->_config_class->get_by_name( 'fsize' );
-	$this->_cfg_makethumb   = $this->_config_class->get_by_name( 'makethumb' );
-	$this->_cfg_file_size   = $this->_config_class->get_by_name( 'file_size' );
+	$this->_cfg_gmap_apikey    = $this->_config_class->get_by_name( 'gmap_apikey' );
+	$this->_cfg_width          = $this->_config_class->get_by_name( 'width' );
+	$this->_cfg_height         = $this->_config_class->get_by_name( 'height' );
+	$this->_cfg_fsize          = $this->_config_class->get_by_name( 'fsize' );
+	$this->_cfg_makethumb      = $this->_config_class->get_by_name( 'makethumb' );
+	$this->_cfg_file_size      = $this->_config_class->get_by_name( 'file_size' );
+	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' );
+	$cfg_perm_cat_read         = $this->_config_class->get_by_name( 'perm_cat_read' );
 
 	$this->_has_deletable   = $this->_perm_class->has_deletable();
 
@@ -331,9 +339,12 @@ function print_form_common( $item_row, $param )
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
 
+	if ( $this->_cfg_perm_item_read > 0 ) {
+		echo $this->build_line_ele(
+			$this->get_constant('ITEM_PERM_READ'), $this->_build_ele_perm_read() );
+	}
+
 // for future
-//	echo $this->build_line_ele(
-//		$this->get_constant('ITEM_PERM_READ'), $this->_build_ele_perm_read() );
 //	echo $this->build_line_ele(
 //		$this->get_constant('ITEM_SHOWINFO'), $this->_build_ele_showinfo() );
 
@@ -756,8 +767,9 @@ function _build_delete_button( $name )
 
 function _build_ele_category()
 {
-	return $this->_cat_handler->build_selbox_with_perm_post(
-		$this->get_row_by_key( 'item_cat_id' ) , 'item_cat_id' );
+	$name  = 'item_cat_id';
+	$value = $this->get_row_by_key( $name );
+	return $this->_cat_handler->build_selbox_with_perm_post( $value, $name );
 }
 
 function _build_ele_gicon()
@@ -816,27 +828,12 @@ function _build_ele_embed_src()
 
 function _build_ele_perm_read()
 {
-	$name    = 'item_perm_read' ;
-	$values  = $this->_build_perm( $name );
-	return $this->build_form_select_multiple(
-		$name, $values, $this->_xoops_db_groups, $this->_SELECT_PERM_SIZE );
+	return $this->build_ele_group_perms_by_key( 'item_perm_read' );
 }
 
 function _build_ele_perm_down()
 {
-	$name    = 'item_perm_down' ;
-	$values  = $this->_build_perm( $name );
-	return $this->build_form_select_multiple(
-		$name, $values, $this->_xoops_db_groups, $this->_SELECT_PERM_SIZE );
-}
-
-function _build_perm( $name )
-{
-	$value = $this->get_row_by_key( $name, null, false );
-	if ( $value == _C_WEBPHOTO_PERM_ALLOW_ALL ) {
-		return array_keys( $this->_xoops_db_groups ) ;
-	}
-	return $this->_item_handler->get_perm_array( $value );
+	return $this->build_ele_group_perms_by_key( 'item_perm_down' );
 }
 
 function _build_ele_showinfo()
@@ -899,9 +896,10 @@ function _build_gmap_div()
 
 function _build_script()
 {
-	$js  = $this->_build_detail_js();
+	$js  = $this->build_js_check_all();
+	$js .= $this->_build_detail_js();
 	$js .= $this->_build_iframe_js();
-	return $this->_build_envelop_script( $js );
+	return $this->build_js_envelop( $js );
 }
 
 function _build_detail_js()
@@ -949,19 +947,6 @@ function webphoto_gmap_disp_on()
 	document.getElementById("$DIV_NAME").innerHTML = '$iframe';
 }
 
-END_OF_TEXT;
-
-	return $text."\n";
-}
-
-function _build_envelop_script( $content )
-{
-	$text = <<< END_OF_TEXT
-<script type="text/javascript">
-//<![CDATA[
-$content
-//]]>
-</script>
 END_OF_TEXT;
 
 	return $text."\n";

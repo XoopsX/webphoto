@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.16 2008/12/05 10:38:32 ohwada Exp $
+// $Id: xoops_version.php,v 1.17 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// perm_cat_read
 // 2008-12-05 K.OHWADA
 // _init_workdir()
 // 2008-11-29 K.OHWADA
@@ -1008,6 +1010,33 @@ function _build_config()
 		'options'		=> array(
 			'_FLAT'     => 'listposts_flat' ,
 			'_THREADED' => 'listtopics'
+		)
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'perm_cat_read' ,
+		'title'			=> $this->_constant_name( 'CFG_PERM_CAT_READ' ) ,
+		'description'	=> $this->_constant_name( 'CFG_PERM_CAT_READ_DSC' ) ,
+		'formtype'		=> 'select' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '0' ,
+		'options'		=> array(
+			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
+			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
+			$this->_constant( 'OPT_PERM_READ_NO_CAT'  ) => '2',
+		)
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'perm_item_read' ,
+		'title'			=> $this->_constant_name( 'CFG_PERM_ITEM_READ' ) ,
+		'description'	=> $this->_constant_name( 'CFG_PERM_ITEM_READ_DSC' ) ,
+		'formtype'		=> 'select' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '0' ,
+		'options'		=> array(
+			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
+			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
 		)
 	) ;
 

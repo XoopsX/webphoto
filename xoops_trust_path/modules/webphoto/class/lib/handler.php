@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.4 2008/11/19 10:26:00 ohwada Exp $
+// $Id: handler.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// check_perm_by_row_name_groups()
 // 2008-11-16 K.OHWADA
 // check_perms_in_groups()
 // 2008-10-01 K.OHWADA
@@ -31,16 +33,21 @@ class webphoto_lib_handler extends webphoto_lib_error
 	var $_pid_name;
 	var $_title_name;
 
-	var $_id          = 0;
-	var $_xoops_uid   = 0;
-	var $_cached      = array();
-	var $_flag_cached = false;
+	var $_id           = 0;
+	var $_xoops_uid    = 0;
+	var $_xoops_groups = null;
+	var $_cached       = array();
+	var $_flag_cached  = false;
 
 	var $_use_prefix  = false;
 	var $_NONE_VALUE  = '---' ;
 	var $_PREFIX_NAME = 'prefix' ;
 	var $_PREFIX_MARK = '.' ;
 	var $_PREFIX_BAR  = '--' ;
+
+	var $_PERM_ALLOW_ALL = '*' ;
+	var $_PERM_DENOY_ALL = 'x' ;
+	var $_PERM_SEPARATOR = '&' ;
 
 	var $_DEBUG_SQL   = false;
 	var $_DEBUG_ERROR = false;
@@ -51,7 +58,9 @@ class webphoto_lib_handler extends webphoto_lib_error
 function webphoto_lib_handler( $dirname=null )
 {
 	$this->webphoto_lib_error();
+
 	$this->_db =& Database::getInstance();
+	$this->_init_xoops_groups() ;
 
 	$this->_DIRNAME = $dirname;
 }
@@ -467,15 +476,130 @@ function quote( $str )
 }
 
 //---------------------------------------------------------
-// check perm
+// search
 //---------------------------------------------------------
-function check_perms_in_groups( $perms, $groups )
+function build_where_by_keyword_array( $keyword_array, $name, $andor='AND' )
+{
+	if ( !is_array($keyword_array) || !count($keyword_array) ) {
+		return null;
+	}
+
+	switch ( strtolower($andor) )
+	{
+		case 'exact':
+			$where = $this->build_where_keyword_single( $keyword_array[0], $name );
+			return $where;
+
+		case 'or':
+			$andor_glue = 'OR';
+			break;
+
+		case 'and':
+		default:
+			$andor_glue = 'AND';
+			break;
+	}
+
+	$arr = array();
+
+	foreach( $keyword_array as $keyword ) 
+	{
+		$keyword = trim($keyword);
+		if ( $keyword ) {
+			$arr[] = $this->build_where_keyword_single( $keyword, $name ) ;
+		}
+	}
+
+	if ( is_array( $arr ) && count( $arr ) ) {
+		$glue  = ' '. $andor_glue .' ';
+		$where = ' ( '. implode( $glue , $arr ) .' ) ' ;
+		return $where;
+	}
+
+	return null;
+}
+
+function build_where_keyword_single( $str, $name )
+{
+	$text = $name ." LIKE '%" . addslashes( $str ) . "%'" ;
+	return $text;
+}
+
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function build_id_array_with_perm( $id_array, $name, $groups=null )
+{
+	$arr = array();
+	foreach ( $id_array as $id ) 
+	{
+		if ( $this->check_perm_by_id_name_groups( $id, $name, $groups ) ) {
+			$arr[] = $id ;
+		}
+	}
+	return $arr;
+}
+
+function build_rows_with_perm( $rows, $name, $groups=null )
+{
+	$arr = array();
+	foreach ( $rows as $row ) 
+	{
+		if ( $this->check_perm_by_row_name_groups( $row, $name, $groups ) ) {
+			$arr[] = $row ;
+		}
+	}
+	return $arr;
+}
+
+function check_perm_by_id_name_groups( $id, $name, $groups=null )
+{
+	$row = $this->get_cached_row_by_id( $id ) ;
+	return $this->check_perm_by_row_name_groups( $row, $name, $groups );
+}
+
+function check_perm_by_row_name_groups( $row, $name, $groups=null )
+{
+	if ( ! isset( $row[ $name ] ) ) {
+		return false ;
+	}
+
+	$val = $row[ $name ] ;
+
+	if ( $this->_PERM_ALLOW_ALL && ( $val == $this->_PERM_ALLOW_ALL ) ) {
+		return true;
+	}
+
+	if ( $this->_PERM_DENOY_ALL && ( $val == $this->_PERM_DENOY_ALL ) ) {
+		return false;
+	}
+
+	$perms = $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+	return $this->check_perms_in_groups( $perms, $groups );
+}
+
+function check_perm_by_perm_groups( $perm, $groups=null )
+{
+	if ( $this->_PERM_ALLOW_ALL && ( $perm == $this->_PERM_ALLOW_ALL ) ) {
+		return true;
+	}
+
+	if ( $this->_PERM_DENOY_ALL && ( $perm == $this->_PERM_DENOY_ALL ) ) {
+		return false;
+	}
+
+	$perms = $this->str_to_array( $perm, $this->_PERM_SEPARATOR );
+	return $this->check_perms_in_groups( $perms, $groups );
+}
+
+function check_perms_in_groups( $perms, $groups=null )
 {
 	if ( !is_array($perms) || !count($perms) ) {
 		return false;
 	}
-	if ( !is_array($groups) || !count($groups) ) {
-		return false;
+
+	if ( empty($groups) ) {
+		$groups = $this->_xoops_groups ;
 	}
 
 	$arr = array_intersect( $groups, $perms );
@@ -483,6 +607,20 @@ function check_perms_in_groups( $perms, $groups )
 		return true;
 	}
 	return false;
+}
+
+function get_perm_array_by_row_name( $row, $name )
+{
+	if ( isset( $row[ $name ] ) ) {
+		return $this->get_perm_array( $row[ $name ] );
+	} else {
+		return array() ;
+	}
+}
+
+function get_perm_array( $val )
+{
+	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
 }
 
 //---------------------------------------------------------
@@ -593,6 +731,19 @@ function sanitize_array_int( $arr_in )
 		$arr_out[] = intval($in);
 	}
 	return $arr_out;
+}
+
+//---------------------------------------------------------
+// xoops groups
+//---------------------------------------------------------
+function _init_xoops_groups()
+{
+	global $xoopsUser;
+	if ( is_object($xoopsUser) ) {
+		$this->_xoops_groups = $xoopsUser->getGroups() ;
+	} else {
+		$this->_xoops_groups = array( XOOPS_GROUP_ANONYMOUS );
+	}
 }
 
 //----- class end -----

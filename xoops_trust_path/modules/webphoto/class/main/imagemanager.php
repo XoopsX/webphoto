@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
+// $Id: imagemanager.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_inc_public
 // 2008-11-29 K.OHWADA
 // _build_file_image()
 // 2008-09-13 K.OHWADA
@@ -21,14 +23,19 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_imagemanager
 //=========================================================
-class webphoto_main_imagemanager extends webphoto_inc_handler
+class webphoto_main_imagemanager extends webphoto_inc_public
 {
-	var $_config_class;
-	var $_perm_class;
+	var $_xoops_sitename  = null ;
+	var $_xoops_mid       = 0 ;
+	var $_xoops_uid       = 0 ;
+	var $_is_module_admin = false;
 
-	var $_cat_table;
-	var $_item_table;
-	var $_file_table;
+	var $_cfg_makethumb ;
+	var $_cfg_usesiteimg ;
+	var $_cfg_uploadspath ;
+
+	var $_has_insertable ;
+	var $_has_editable ;
 
 	var $_DIRNAME;
 
@@ -39,23 +46,25 @@ class webphoto_main_imagemanager extends webphoto_inc_handler
 
 	var $_LANG_NO_CATEGORY = 'There are no category';
 
+//	var $_ITEM_ORDERBY = 'item_time_update DESC, item_id DESC';
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_main_imagemanager( $dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_public();
 	$this->init_handler( $dirname );
+	$this->init_xoops_config( $dirname );
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
-	$this->_config_class =& webphoto_inc_config::getInstance();
-	$this->_config_class->init( $dirname );
+	$this->_init_xoops_module( $dirname ) ;
+	$this->_init_xoops_param() ;
+	$this->_init_xoops_config( $dirname );
 
-	$this->_perm_class =& webphoto_permission::getInstance( $dirname );
-
-	$this->_cat_table  = $this->prefix_dirname( 'cat' );
-	$this->_item_table = $this->prefix_dirname( 'item' );
-	$this->_file_table = $this->prefix_dirname( 'file' );
+	$perm_class =& webphoto_permission::getInstance( $dirname );
+	$this->_has_insertable = $perm_class->has_insertable();
+	$this->_has_editable   = $perm_class->has_editable();
 
 	$this->_DIRNAME = $dirname;
 }
@@ -80,24 +89,14 @@ function get_template()
 
 function check()
 {
-	global $xoopsUser, $xoopsModule;
-
-// checking isactive
-	$module_handler =& xoops_gethandler('module');
-	$xoopsModule =& $module_handler->getByDirname( $this->_DIRNAME );
-	if ( empty($xoopsModule) || !$xoopsModule->getVar('isactive')) {
+	if ( $this->_xoops_mid == 0 ) {
 		die( _MODULENOEXIST ) ;
-	}
-
-	if (is_object($xoopsUser)) {
-		$groups = $xoopsUser->getGroups() ;
-	} else {
-		$groups = XOOPS_GROUP_ANONYMOUS ;
 	}
 
 // checking permission
 	$moduleperm_handler =& xoops_gethandler('groupperm');
-	if ( !$moduleperm_handler->checkRight('module_read', $xoopsModule->getVar('mid'), $groups )) {
+	if ( ! $moduleperm_handler->checkRight( 
+		'module_read', $this->_xoops_mid, $this->_xoops_groups )) {
 		die( _NOPERM ) ;
 	}
 
@@ -108,29 +107,12 @@ function check()
 
 function main()
 {
-	global $xoopsConfig , $xoopsUser, $xoopsModule;
-
-	$mid    = 0;
-	$my_uid = 0 ;
-	$is_module_admin = false;
-
-	if ( is_object($xoopsModule) ) {
-		$mid = $xoopsModule->mid();
-	}
-
-	if (is_object($xoopsUser)) {
-		$my_uid = $xoopsUser->getVar('uid') ;
-
-		if ( $xoopsUser->isAdmin( $mid ) ) {
-			$is_module_admin = true;
-		}
-	}
 
 // Get variables
-	$target = htmlspecialchars($_GET['target'], ENT_QUOTES);
-	$cat_id = !isset($_GET['cat_id']) ? 0 : intval($_GET['cat_id']);
-	$num    = empty( $_GET['num'] ) ? 10 : intval( $_GET['num'] ) ;
-	$start  = empty( $_GET['start'] ) ? 0 : intval( $_GET['start'] ) ;
+	$target = $this->sanitize( $_GET['target'] );
+	$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : 0 ;
+	$num    = isset($_GET['num'])    ? intval($_GET['num'])    : 10 ;
+	$start  = isset($_GET['start'])  ? intval($_GET['start'])  : 0 ;
 
 	$xsize = $this->_XSIZE_SAMLL;
 	$ysize = $this->_YSIZE_SAMLL;
@@ -141,16 +123,8 @@ function main()
 
 	$show_cat_form = false ;
 
-// config
-	$cfg_makethumb  = $this->_config_class->get_by_name( 'makethumb' );
-	$cfg_usesiteimg = $this->_config_class->get_by_name( 'usesiteimg' );
-
-// group permission
-	$has_insertable = $this->_perm_class->has_insertable();
-	$has_editable   = $this->_perm_class->has_editable();
-
 	// use [siteimg] or [img]
-	if ( $cfg_usesiteimg ) {
+	if ( $this->_cfg_usesiteimg ) {
 		// using links without XOOPS_URL
 		$IMG = 'siteimg' ;
 		$URL = 'siteurl' ;
@@ -161,17 +135,16 @@ function main()
 		$URL = 'url' ;
 	}
 
-	$cat_tree = $this->get_cat_tree();
-
+	$cat_tree = $this->_get_cat_tree();
 	if ( sizeof( $cat_tree ) > 0 ) {
 		$show_cat_form = true ;
 
 		$xsize = $this->_XSIZE_LARGE;
 		$ysize = $this->_YSIZE_LARGE;
-		$cat_options = $this->build_cat_options( $cat_id, $cat_tree );
+		$cat_options = $this->_build_cat_options( $cat_id, $cat_tree );
 
 		if ( $cat_id > 0 ) {
-			$total  = $this->get_item_count_by_catid( $cat_id ) ;
+			$total  = $this->get_item_count_for_imagemanager( $cat_id ) ;
 		}
 	}
 
@@ -185,7 +158,7 @@ function main()
 
 		$i = 1 ;
 
-		$item_rows = $this->get_item_rows_by_catid( $cat_id, $num , $start );
+		$item_rows = $this->get_item_rows_for_imagemanager( $cat_id, $num , $start );
 		foreach( $item_rows as $item_row )
 		{
 			$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
@@ -199,11 +172,11 @@ function main()
 				continue;
 			}
 
-			list( $cont_url, $cont_width, $cont_height )
-				$this->_build_file_image( $cont_row, $cfg_usesiteimg ) ;
+			list( $cont_url, $cont_width, $cont_height ) =
+				$this->_build_file_image( $cont_row ) ;
 
-			list( $thumb_url, $thumb_width, $thumb_height )
-				$this->_build_file_image( $thumb_row, $cfg_usesiteimg ) ;
+			list( $thumb_url, $thumb_width, $thumb_height ) =
+				$this->_build_file_image( $thumb_row ) ;
 
 			$item_id    = $item_row['item_id'];
 			$item_uid   = $item_row['item_uid'];
@@ -218,8 +191,6 @@ function main()
 			$xcodebc = "[{$IMG}]{$cont_url}[/{$IMG}]";
 			$xcodebr = "[{$IMG} align=right]{$cont_url}[/{$IMG}]";
 
-			$can_edit = ( $has_editable && ( $my_uid == $item_uid || $is_module_admin ) ) ;
-
 			$photos[] = array(
 				'photo_id'     => $item_id ,
 				'cont_ext'     => $cont_ext ,
@@ -227,9 +198,9 @@ function main()
 				'cont_height'  => $cont_height ,
 				'thumb_width'  => $thumb_width ,
 				'thumb_height' => $thumb_height ,
-				'nicename'     => htmlspecialchars( $item_title, ENT_QUOTES ) ,
+				'nicename'     => $this->sanitize( $item_title ) ,
 				'src'          => $thumb_url ,
-				'can_edit'     => $can_edit ,
+				'can_edit'     => $this->_build_can_edit( $item_uid ) ,
 				'xcodel'       => $xcodel ,
 				'xcodec'       => $xcodec ,
 				'xcoder'       => $xcoder ,
@@ -259,12 +230,12 @@ function main()
 		'lang_refresh'    => _WEBPHOTO_CAPTION_REFRESH ,
 		'lang_title_edit' => _WEBPHOTO_TITLE_EDIT ,
 
-		'sitename'    => $xoopsConfig['sitename'] ,
+		'sitename'    => $this->_xoops_sitename ,
 		'target'      => $target ,
 		'dirname'     => $this->_DIRNAME ,
 		'cat_id'      => $cat_id ,
-		'can_add'     => ( $has_insertable && $cat_id ) ,
-		'makethumb'   => $cfg_makethumb ,
+		'can_add'     => ( $this->_has_insertable && $cat_id ) ,
+		'makethumb'   => $this->_cfg_makethumb ,
 		'xsize'       => $xsize ,
 		'ysize'       => $ysize ,
 		'cat_options' => $cat_options ,
@@ -279,13 +250,13 @@ function main()
 	return array( $param, $photos );
 }
 
-function _build_file_image( $file_row, $cfg_usesiteimg )
+function _build_file_image( $file_row )
 {
 	$url    = null ;
 	$width  = 0 ;
 	$height = 0 ;
 
-	if ( is_array($file_row) ) {
+	if ( ! is_array($file_row) ) {
 		return array( $url, $width, $height );
 	}
 
@@ -294,9 +265,9 @@ function _build_file_image( $file_row, $cfg_usesiteimg )
 	$width  = $file_row['file_width'] ;
 	$height = $file_row['file_height'] ;
 
-	if ( $cfg_usesiteimg && $path ) {
+	if ( $this->_cfg_usesiteimg && $path ) {
 		$url  = $path ;
-	} elseif ( $cfg_usesiteimg ) {
+	} elseif ( $this->_cfg_usesiteimg ) {
 		$url = str_replace( XOOPS_URL.'/' , '', $url );
 	} elseif ( $path ) {
 		$url = XOOPS_URL .'/'. $path ;
@@ -305,28 +276,16 @@ function _build_file_image( $file_row, $cfg_usesiteimg )
 	return array( $url, $width, $height );
 }
 
-function is_image_kind( $kind )
+function _build_can_edit( $item_uid )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
+	if ( ! $this->_has_editable ) {
+		return false ;
+	}
+	if ( $this->_xoops_uid == $item_uid ) {
+		return true ;
+	}
+	if ( $this->_is_module_admin ) {
 		return true;
-	}
-	return false;
-}
-
-function get_file_row_by_kind( $item_row, $kind )
-{
-	$id = $this->get_file_id_by_kind( $item_row, $kind );
-	if ( $id > 0 ) {
-		return $this->get_file_row_by_id( $id );
-	}
-	return false ;
-}
-
-function get_file_id_by_kind( $item_row, $kind )
-{
-	$name = 'item_file_id_'.$kind;
-	if ( isset( $item_row[ $name ] ) ) {
-		return  $item_row[ $name ] ;
 	}
 	return false ;
 }
@@ -334,17 +293,16 @@ function get_file_id_by_kind( $item_row, $kind )
 //---------------------------------------------------------
 // handler
 //---------------------------------------------------------
-function build_cat_options( $cat_id, $cat_tree )
+function _build_cat_options( $cat_id, $cat_tree )
 {
 	if ( !is_array($cat_tree) || !count($cat_tree) ) {
 		return null;
 	}
 
 // select box for category
-
 // BUG: not show category list if there is not one photo
 	$count_arr = array() ;
-	$catlist = $this->get_item_catlist();
+	$catlist = $this->get_item_catlist_for_imagemanager();
 
 	if ( is_array($catlist) && count($catlist) ) {
 		foreach ( $catlist as $item_row ) {
@@ -369,44 +327,53 @@ function build_cat_options( $cat_id, $cat_tree )
 	return $options;
 }
 
-function get_cat_tree()
+function _get_cat_tree()
 {
-	$cattree = new XoopsTree( $this->_cat_table , 'cat_id' , 'cat_pid' ) ;
-	return $cattree->getChildTreeArray( 0 , 'cat_title' ) ;
+	$catlist_class =& webphoto_inc_catlist::getInstance();
+	$catlist_class->init( $this->_DIRNAME );
+	$catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
+	$catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
+	$catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
+	return $catlist_class->get_cat_all_child_tree_array( 0 );
 }
 
-function get_item_catlist( $limit=0 , $offset=0 )
+//---------------------------------------------------------
+// xoops param
+//---------------------------------------------------------
+function _init_xoops_module( $dirname )
 {
-	$sql  = 'SELECT item_cat_id, COUNT(item_id) AS photo_sum ';
-	$sql .= ' FROM .'. $this->_item_table ;
-	$sql .= ' WHERE item_status > 0 ';
-	$sql .= ' GROUP BY item_cat_id' ;
-	$sql .= ' ORDER BY item_cat_id' ;
-	return $this->get_rows_by_sql( $sql, $limit , $offset );
+	$module_handler =& xoops_gethandler('module');
+	$module = $module_handler->getByDirname( $dirname );
+	if ( is_object($module) ) {
+		if ( $module->getVar('isactive') ) {
+			$this->_xoops_mid = $module->getVar( 'mid' );
+		}
+	}
 }
 
-function get_item_count_by_catid( $cat_id )
+function _init_xoops_param()
 {
-	$sql  = 'SELECT COUNT(*) FROM '. $this->_item_table ;
-	$sql .= ' WHERE item_cat_id='.intval($cat_id);
-	$sql .= ' AND item_status > 0 ';
-	return $this->get_count_by_sql( $sql );
+	global $xoopsConfig, $xoopsUser ;
+
+	$this->_xoops_sitename = $xoopsConfig['sitename'] ;
+
+	if (is_object($xoopsUser)) {
+		$this->_xoops_uid = $xoopsUser->getVar('uid') ;
+
+		if ( $xoopsUser->isAdmin( $this->_xoops_mid ) ) {
+			$this->_is_module_admin = true;
+		}
+	}
 }
 
-function get_item_rows_by_catid( $cat_id, $limit=0 , $offset=0 )
+function _init_xoops_config( $dirname )
 {
-	$sql  = 'SELECT * FROM '. $this->_item_table ;
-	$sql .= ' WHERE item_cat_id='.intval($cat_id);
-	$sql .= ' AND item_status > 0 ';
-	$sql .= ' ORDER BY item_time_update DESC';
-	return $this->get_rows_by_sql( $sql, $limit , $offset );
-}
+	$config_handler =& webphoto_inc_config::getInstance();
+	$config_handler->init( $dirname );
 
-function get_file_row_by_id( $file_id )
-{
-	$sql  = 'SELECT * FROM .'. $this->_file_table ;
-	$sql .= ' WHERE file_id='.intval($file_id);
-	return $this->get_row_by_sql( $sql );
+	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
+	$this->_cfg_makethumb      = $config_handler->get_by_name( 'makethumb' );
+	$this->_cfg_usesiteimg     = $config_handler->get_by_name( 'usesiteimg' );
 }
 
 // --- class end ---

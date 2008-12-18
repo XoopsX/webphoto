@@ -1,10 +1,16 @@
 <?php
-// $Id: download.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: download.php,v 1.2 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// check_perm -> check_item_perm
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -47,7 +53,7 @@ function main()
 	}
 
 // check perm down
-	if ( !$this->check_perm( $item_row['item_perm_down'] ) ) {
+	if ( !$this->check_item_perm( $item_row['item_perm_down'] ) ) {
 		redirect_header( $this->_MODULE_URL, $this->_TIME_FAIL, _NOPERM );
 		exit();
 	}

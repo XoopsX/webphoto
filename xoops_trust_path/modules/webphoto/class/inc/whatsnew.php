@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.8 2008/12/02 12:19:43 ohwada Exp $
+// $Id: whatsnew.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_inc_public
 // 2008-11-29 K.OHWADA
 // build_show_file_image() etc
 // 2008-08-24 K.OHWADA
@@ -22,13 +24,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_whatsnew
 //=========================================================
-class webphoto_inc_whatsnew extends webphoto_inc_handler
+class webphoto_inc_whatsnew extends webphoto_inc_public
 {
-	var $_cfg_use_pathinfo = false;
-	var $_cfg_workdir      = null;
-
-	var $_cat_cached = array();
-
 	var $_SHOW_IMAGE = true ;
 	var $_SHOW_ICON  = false ;
 
@@ -37,9 +34,8 @@ class webphoto_inc_whatsnew extends webphoto_inc_handler
 //---------------------------------------------------------
 function webphoto_inc_whatsnew()
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_public();
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
-
 }
 
 function &getInstance()
@@ -54,8 +50,8 @@ function &getInstance()
 function _init( $dirname )
 {
 	$this->init_handler( $dirname );
-	$this->_init_xoops_config( $dirname );
-	$this->_auto_publish( $dirname );
+	$this->init_xoops_config( $dirname );
+	$this->auto_publish( $dirname );
 
 // preload
 	$name_image= strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_IMAGE' );
@@ -76,7 +72,7 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 {
 	$this->_init( $dirname );
 
-	$item_rows = $this->_get_item_rows( $limit, $offset );
+	$item_rows = $this->get_item_rows_for_whatsnew( $limit, $offset );
 	if ( !is_array($item_rows) ) {
 		return array(); 
 	}
@@ -100,7 +96,7 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 
 		$is_image  = $this->is_image_kind( $item_kind );
 
-		$cat_row = $this->_get_cat_cached_row_by_id( $cat_id );
+		$cat_row = $this->get_cat_cached_row_by_id( $cat_id );
 		if ( is_array($cat_row) ) {
 			$cat_title = $cat_row['cat_title'];
 		}
@@ -156,7 +152,7 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 			'modified'    => $time_update ,
 			'issued'      => $time_create ,
 			'created'     => $time_create ,
-			'description' => $this->_build_description( $item_row ) ,
+			'description' => $this->build_item_description( $item_row ) ,
 		);
 
 		$is_image = $this->is_image_kind( $item_kind );
@@ -200,12 +196,6 @@ function whatsnew( $dirname , $limit=0 , $offset=0 )
 //---------------------------------------------------------
 // private
 //---------------------------------------------------------
-function _build_description( $row )
-{
-	$myts =& MyTextSanitizer::getInstance();
-	return $myts->displayTarea( $row['item_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
-}
-
 function _is_gmap( $row )
 {
 	if (( floatval( $row['item_gmap_latitude'] )  != 0 )||
@@ -214,56 +204,6 @@ function _is_gmap( $row )
 		return true;
 	}
 	return false;
-}
-
-//---------------------------------------------------------
-// handler
-//---------------------------------------------------------
-function _get_item_rows( $limit=0, $offset=0 )
-{
-	$sql  = 'SELECT * FROM '. $this->prefix_dirname( 'item' );
-	$sql .= ' WHERE item_status > 0 ';
-	$sql .= ' ORDER BY item_time_update DESC, item_id DESC';
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
-}
-
-function _get_cat_cached_row_by_id( $id )
-{
-	if ( isset( $this->_cat_cached[ $id ] ) ) {
-		return  $this->_cat_cached[ $id ];
-	}
-
-	$row = $this->get_cat_row_by_id( $id );
-	if ( is_array($row) ) {
-		$this->_cat_cached[ $id ] = $row;
-		return $row;
-	}
-
-	return null;
-}
-
-//---------------------------------------------------------
-// auto publish
-//---------------------------------------------------------
-function _auto_publish( $dirname )
-{
-	$publish_class =& webphoto_inc_auto_publish::getInstance();
-	$publish_class->init( $dirname );
-	$publish_class->set_workdir( $this->_cfg_workdir );
-
-	$publish_class->auto_publish();
-}
-
-//---------------------------------------------------------
-// xoops_config
-//---------------------------------------------------------
-function _init_xoops_config( $dirname )
-{
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
-
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
-	$this->_cfg_workdir      = $config_handler->get_by_name( 'workdir' );
 }
 
 // --- class end ---

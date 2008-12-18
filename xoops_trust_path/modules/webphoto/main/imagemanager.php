@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: imagemanager.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public.php
 // 2008-07-01 K.OHWADA
 // added class/xoops/base.php etc
 //---------------------------------------------------------
@@ -40,6 +42,8 @@ webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
+webphoto_include_once( 'class/inc/catlist.php' );
+webphoto_include_once( 'class/inc/public.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/main/imagemanager.php' );

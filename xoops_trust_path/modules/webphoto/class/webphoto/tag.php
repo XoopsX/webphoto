@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: tag.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// move build_tagcloud() to webphoto_inc_tag
 // 2008-07-01 K.OHWADA
 // used uri_class
 //---------------------------------------------------------
@@ -165,70 +167,6 @@ function build_delete_tags( $old_array, $new_array )
 		}
 	}
 	return $arr;
-}
-
-//---------------------------------------------------------
-// tag cloud
-//---------------------------------------------------------
-function build_tagcloud( $limit=0, $offset=0  )
-{
-	$show     = false;
-	$tagcloud = null;
-
-	$rows = $this->get_tag_rows_with_count( 'tag_id', $limit, $offset );
-	if ( is_array($rows) ) {
-		$tagcloud = $this->build_tagcloud_by_rows( $rows );
-		if ( is_array($tagcloud) && count($tagcloud) ) {
-			$show = true;
-		}
-	}
-
-	$arr = array(
-		'show_tagcloud' => $show,
-		'tagcloud'      => $tagcloud,
-	);
-	return $arr;
-}
-
-function build_tagcloud_by_rows( $rows )
-{
-	if ( !is_array($rows) || !count($rows) ) {
-		return array();
-	}
-
-	$cloud_class =& new webphoto_lib_cloud();
-
-	ksort($rows);
-
-	foreach ( array_keys($rows) as $i )
-	{
-		$name  = $rows[$i]['tag_name'];
-		$count = $rows[$i]['photo_count'];
-		$link  = $this->_uri_class->build_tag( $name );
-		$cloud_class->addElement( $name,  $link, $count );
-	}
-
-	$ret = $cloud_class->build();
-	return $ret;
-}
-
-//---------------------------------------------------------
-// for index.php
-//---------------------------------------------------------
-function get_photo_count_public_by_tag( $tag )
-{
-	return $this->_photo_tag_handler->get_photo_count_public_by_tag( $tag );
-}
-
-function get_photo_id_array_public_latest_by_tag_orderby( $tag, $orderby, $limit=0, $offset=0 )
-{
-	return $this->_photo_tag_handler->get_photo_id_array_public_latest_by_tag_orderby(
-		$tag, $orderby, $limit, $offset );
-}
-
-function get_tag_rows_with_count( $key='tag_id', $limit=0, $offset=0 )
-{
-	return $this->_photo_tag_handler->get_tag_rows_with_count( $key, $limit, $offset );
 }
 
 //---------------------------------------------------------

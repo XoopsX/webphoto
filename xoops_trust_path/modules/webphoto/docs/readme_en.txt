@@ -1,11 +1,71 @@
-$Id: readme_en.txt,v 1.17 2008/12/10 19:08:56 ohwada Exp $
+$Id: readme_en.txt,v 1.18 2008/12/18 13:23:16 ohwada Exp $
+
+=================================================
+Version: 0.90
+Date:   2008-12-18
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Read Permission
+1.1 Added read permission each category
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=893&forum=13
+
+(1) accedes to the permission of the parent category,
+when adding a new category. 
+
+(2) changes the permission of the child categories,
+when changing a category
+
+1.2 Added read permission each item
+
+2. Bug Fix
+(1) Not set permission to download, when submitting in imagemanager
+(2) Not show google marker in the neighborhood in submit form
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp.
+
+
+* Notice for usage *
+1. Read Permission  of category
+The permission of the category acts independently with the parent category.
+In general make the permission of the category the same as the parent category.
+
+For example, 
+when there is category B under category A,
+you set the permisson of category A that the guest can not read 
+and the permisson of category B that the guest can read,
+the guest can read the items which belongs to category B.
+
+2. Server load
+The server load will be increased much,
+when you use the read permisson of the category and the read permisson of the item.
+
+I recommend to divide into more than one module
+and to set permisson for each of the modules,
+when there are many numbers of the categories and numbers of the items
+
+The server load will be increased a bit ,
+when you use the post premisson of the category and The download permission of the item.
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 0.81
 Date:   2008-12-10
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

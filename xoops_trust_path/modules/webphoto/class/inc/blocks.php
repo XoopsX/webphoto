@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.11 2008/12/02 12:19:43 ohwada Exp $
+// $Id: blocks.php,v 1.12 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_inc_public
 // 2008-11-29 K.OHWADA
 // catlist_show()
 // build_show_file_image()
@@ -29,17 +31,16 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_blocks
 //=========================================================
-class webphoto_inc_blocks extends webphoto_inc_handler
+class webphoto_inc_blocks extends webphoto_inc_public
 {
-	var $_multibyte_class;
+	var $_multibyte_class ;
+	var $_catlist_class ;
 
 	var $_cfg_use_popbox     = false;
-	var $_cfg_use_pathinfo   = false;
 	var $_cfg_thumb_width    = 0 ;
 	var $_cfg_thumb_height   = 0 ;
 	var $_cfg_cat_main_width = 0 ;
 	var $_cfg_cat_sub_width  = 0 ;
-	var $_cfg_workdir        = null;
 	var $_cfg_uploadspath    = null ;
 
 	var $_CHECKED  = 'checked="checked"';
@@ -57,7 +58,7 @@ class webphoto_inc_blocks extends webphoto_inc_handler
 //---------------------------------------------------------
 function webphoto_inc_blocks()
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_public();
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
@@ -177,15 +178,11 @@ function catlist_show( $options )
 	$block = array() ;
 	$block['dirname'] = $this->_DIRNAME ;
 
-	$catlist_class =& webphoto_inc_catlist::getInstance();
-	$catlist_class->init( $this->_DIRNAME );
-	$catlist_class->set_uploads_path( $this->_cfg_uploadspath );
-
 	list( $cols, $width ) =
-		$catlist_class->calc_width( $cols ) ;
+		$this->_catlist_class->calc_width( $cols ) ;
 
 	$param = array(
-		'cats'            => $catlist_class->build_catlist( 0, $show_sub ) ,
+		'cats'            => $this->_catlist_class->build_catlist( 0, $show_sub ) ,
 		'cols'            => $cols ,
 		'width'           => $width ,
 		'delmita'         => $this->_TOP_CATLIST_DELMITA ,
@@ -263,35 +260,15 @@ function tagcloud_show( $options )
 	$block = array() ;
 	$block['dirname'] = $this->_DIRNAME ;
 
-	$rows = $this->_get_tag_rows_with_count( $limit );
-	if ( !is_array($rows) || !count($rows) ) {
-		$block['tagcloud'] = null ;
-		return $block;
-	}
+	$tagcloud_class =& webphoto_inc_tagcloud::getInstance();
+	$tagcloud_class->init( $this->_DIRNAME );
+	$tagcloud_class->set_use_pathinfo(   $this->_cfg_use_pathinfo );
+	$tagcloud_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
+	$tagcloud_class->set_perm_item_read( $this->_cfg_perm_item_read );
 
-	$block['tagcloud'] = $this->_build_tagcloud( $rows );
+	$block['tagcloud'] = $tagcloud_class->build_tagcloud( $limit );
 
 	return $this->_assign_block( 'tagcloud', $block ) ;
-}
-
-function _build_tagcloud( $rows )
-{
-	$cloud_class =& new webphoto_lib_cloud();
-	$uri_class   =& webphoto_inc_uri::getInstance();
-	$uri_class->init( $this->_DIRNAME );
-	$uri_class->set_use_pathinfo( $this->_cfg_use_pathinfo );
-
-	ksort($rows);
-
-	foreach ( array_keys($rows) as $i )
-	{
-		$name  = $rows[$i]['tag_name'];
-		$count = $rows[$i]['photo_count'];
-		$link  = $uri_class->build_tag( $name );
-		$cloud_class->addElement( $name, $link, $count );
-	}
-
-	return $cloud_class->build();
 }
 
 function tagcloud_edit( $options )
@@ -322,9 +299,15 @@ function _init( $options )
 	$dirname = $this->_get_option( $options, 0, null ) ;
 
 	$this->init_handler( $dirname );
-	$this->_init_xoops_config( $dirname );
-	$this->_auto_publish( $dirname );
+	$this->init_xoops_config( $dirname );
+	$this->_init_xoops_config_for_block( $dirname );
+	$this->auto_publish( $dirname );
 
+	$this->_catlist_class =& webphoto_inc_catlist::getInstance();
+	$this->_catlist_class->init( $dirname );
+	$this->_catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
+	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
+	$this->_catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
 }
 
 function _top_show_common( $mode , $options )
@@ -692,15 +675,13 @@ function _shorten_text( $str, $max )
 //---------------------------------------------------------
 function _get_item_rows_top_common( $mode, $options )
 {
-	$photos_num          = $this->_get_option_int(  $options, 1, 5 ) ;
-	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
-	$cat_limit_recursive = $this->_get_option_int(  $options, 3, 0 ) ;
+	$photos_num = $this->_get_option_int(  $options, 1, 5 ) ;
 
 	switch( $mode )
 	{
 		case 'tophits':
 		case 'tophits_p':
-			$orderby = 'i.item_hits DESC, i.item_id DESC';
+			$orderby = 'item_hits DESC, item_id DESC';
 			break;
 
 		case 'rphoto':
@@ -710,46 +691,38 @@ function _get_item_rows_top_common( $mode, $options )
 		case 'topnews':
 		case 'topnews_p':
 		default:
-			$orderby = 'i.item_time_update DESC, i.item_id DESC';
+			$orderby = 'item_time_update DESC, item_id DESC';
 			break;
 	}
 
-	$table_item = $this->prefix_dirname( 'item' ) ;
-	$table_cat  = $this->prefix_dirname( 'cat' ) ;
+	return $this->get_item_rows_for_block( $options, $orderby, $photos_num );
+}
 
-	// Category limitation
+function build_where_block_cat_limitation( $options )
+{
+	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
+	$cat_limit_recursive = $this->_get_option_int(  $options, 3, 0 ) ;
+
+// Category limitation
 	$where = '' ;
 	if ( $cat_limitation ) {
 		if ( $cat_limit_recursive ) {
 
-// BUG: cannot select category
-			$cattree = new XoopsTree( $table_cat , 'cat_id' , 'cat_pid' ) ;
+			$id_array = $this->_catlist_class->get_cat_parent_all_child_id( $cat_id );
 
-			$children = $cattree->getAllChildId( $cat_limitation ) ;
-
-			$where = 'i.item_cat_id IN (' ;
-			foreach( $children as $child ) {
-				$where .= intval($child) . ',' ;
+			$where = 'item_cat_id IN (' ;
+			foreach( $id_array as $id ) {
+				$where .= intval($id) . ',' ;
 			}
-			$where .= intval($cat_limitation) .')' ;
+			$where .= ')' ;
 
 		} else {
-			$where = 'i.item_cat_id='. intval($cat_limitation) ;
+			$where = 'item_cat_id='. intval($cat_limitation) ;
 		}
 
 	}
 
-	$sql  = 'SELECT i.* , c.* ';
-	$sql .= 'FROM '. $table_item .' i ';
-	$sql .= 'LEFT JOIN '. $table_cat .' c ';
-	$sql .= 'ON i.item_cat_id = c.cat_id ';
-	$sql .= 'WHERE i.item_status > 0 ';
-	if ( $where ) {
-		$sql .= 'AND '. $where;
-	}
-	$sql .= ' ORDER BY '.$orderby;
-
-	return $this->get_rows_by_sql( $sql, $photos_num );
+	return $where ;
 }
 
 function _get_catselbox( $preset_id=0, $none=0, $sel_name='', $onchange='' )
@@ -765,21 +738,6 @@ function _get_catselbox( $preset_id=0, $none=0, $sel_name='', $onchange='' )
 	ob_end_clean() ;
 
 	return $catselbox;
-}
-
-function _get_tag_rows_with_count( $limit=0, $offset=0 )
-{
-	$table_tag = $this->prefix_dirname( 'tag' ) ;
-	$table_p2t = $this->prefix_dirname( 'p2t' ) ;
-
-	$sql  = 'SELECT t.*, COUNT(*) AS photo_count ';
-	$sql .= ' FROM '. $table_tag.' t, ';
-	$sql .= $table_p2t .' p2t ';
-	$sql .= ' WHERE t.tag_id = p2t.p2t_tag_id ';
-	$sql .= ' GROUP BY tag_id ';
-	$sql .= ' ORDER BY photo_count DESC';
-
-	return $this->get_rows_by_sql( $sql, $limit, $offset, 'tag_id' );
 }
 
 //---------------------------------------------------------
@@ -812,33 +770,19 @@ function _get_popbox_js( $mode, $show_popbox )
 }
 
 //---------------------------------------------------------
-// auto publish
-//---------------------------------------------------------
-function _auto_publish( $dirname )
-{
-	$publish_class =& webphoto_inc_auto_publish::getInstance();
-	$publish_class->init( $dirname );
-	$publish_class->set_workdir( $this->_cfg_workdir );
-
-	$publish_class->auto_publish();
-}
-
-//---------------------------------------------------------
 // xoops_config
 //---------------------------------------------------------
-function _init_xoops_config( $dirname )
+function _init_xoops_config_for_block( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getInstance();
 	$config_handler->init( $dirname );
 
-	$this->_cfg_use_popbox     = $config_handler->get_by_name('use_popbox');
-	$this->_cfg_use_pathinfo   = $config_handler->get_by_name('use_pathinfo');
-	$this->_cfg_thumb_width    = $config_handler->get_by_name('thumb_width');
-	$this->_cfg_thumb_height   = $config_handler->get_by_name('thumb_height');
-	$this->_cfg_cat_main_width = $config_handler->get_by_name('cat_main_width');
-	$this->_cfg_cat_sub_width  = $config_handler->get_by_name('cat_sub_width');
-	$this->_cfg_workdir        = $config_handler->get_by_name( 'workdir' );
 	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
+	$this->_cfg_use_popbox     = $config_handler->get_by_name( 'use_popbox' );
+	$this->_cfg_thumb_width    = $config_handler->get_by_name( 'thumb_width' );
+	$this->_cfg_thumb_height   = $config_handler->get_by_name( 'thumb_height' );
+	$this->_cfg_cat_main_width = $config_handler->get_by_name( 'cat_main_width' );
+	$this->_cfg_cat_sub_width  = $config_handler->get_by_name( 'cat_sub_width' );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.11 2008/12/10 19:08:57 ohwada Exp $
+// $Id: admin.php,v 1.12 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -341,8 +341,7 @@ define("_AM_WEBPHOTO_ERR_NO_RECORD", "There are no record");
 // cat manager
 //---------------------------------------------------------
 //define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "Please upload the desired category image file<br />and set Path from the directory installed XOOPS.<br />(The first character must be '/'.)<br />Show folder icon if not set" ) ;
-
-define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "All Groups" ) ;
+//define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "All Groups" ) ;
 
 //---------------------------------------------------------
 // import
@@ -479,6 +478,16 @@ define("_AM_WEBPHOTO_QR_CHECK_DSC" , "If the page linked to from here doesn't di
 define("_AM_WEBPHOTO_QR_CHECK_SUCCESS" , "Can you see 'QR Code' correctly" ) ;
 define("_AM_WEBPHOTO_QR_CHECK_SHOW" , "Show Debug Info" ) ;
 define("_AM_WEBPHOTO_QR_CHECK_INFO" , "Debug Info" ) ;
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+// cat form
+define("_AM_WEBPHOTO_CAT_PARENT_CAP" , "Pemission of Parent Category" ) ;
+define("_AM_WEBPHOTO_CAT_PARENT_FMT" , "Accede permission of parent category ( %s )" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_CAP"  , "Child Categoris" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_NUM"  , "Number of child categoris" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categoris" ) ;
 
 // === define end ===
 }

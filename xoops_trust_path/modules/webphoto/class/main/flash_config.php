@@ -1,20 +1,24 @@
 <?php
-// $Id: flash_config.php,v 1.2 2008/11/21 10:34:53 ohwada Exp $
+// $Id: flash_config.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// webphoto_item_public
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_main_flash_config
 //=========================================================
-class webphoto_main_flash_config extends webphoto_lib_base
-//class webphoto_main_flash_config
+class webphoto_main_flash_config extends webphoto_item_public
 {
-	var $_item_handler;
 	var $_player_clss;
 	var $_post_class;
 	var $_xml_class;
@@ -25,19 +29,16 @@ class webphoto_main_flash_config extends webphoto_lib_base
 //---------------------------------------------------------
 function webphoto_main_flash_config( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_item_public( $dirname, $trust_dirname );
 
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
-	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
+	$this->_file_handler     =& webphoto_file_handler::getInstance( $dirname );
+	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-
-	$this->_player_clss  =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
-	$this->_post_class   =& webphoto_lib_post::getInstance();
-	$this->_xml_class    =& webphoto_lib_xml::getInstance();
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-
+	$this->_player_clss      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
 	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_post_class       =& webphoto_lib_post::getInstance();
+	$this->_xml_class        =& webphoto_lib_xml::getInstance();
+	$this->_multibyte_class  =& webphoto_lib_multibyte::getInstance();
 
 }
 
@@ -56,7 +57,7 @@ function &getInstance( $dirname , $trust_dirname )
 function main()
 {
 	$item_id  = $this->_post_class->get_get_int('item_id') ;
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->get_item_row( $item_id );
 	if ( ! is_array($item_row ) ) {
 		exit();
 	}

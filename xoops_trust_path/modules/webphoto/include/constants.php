@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.12 2008/12/10 19:08:56 ohwada Exp $
+// $Id: constants.php,v 1.13 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -284,6 +284,11 @@ define("_C_WEBPHOTO_SMALL_CURRENT_HEIGHT", "80");
 
 // v0.80
 define("_C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX",  "5" ) ;
+
+// v0.90
+define("_C_WEBPHOTO_OPT_PERM_READ_ALL"     , 0 ) ;
+define("_C_WEBPHOTO_OPT_PERM_READ_NO_ITEM" , 1 ) ;
+define("_C_WEBPHOTO_OPT_PERM_READ_NO_CAT"  , 2 ) ;
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.7 2008/12/10 23:29:23 ohwada Exp $
+// $Id: item_form.php,v 1.8 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// build_ele_perm_read()
 // 2008-12-07 K.OHWADA
 // _build_ele_votes()
 // 2008-11-29 K.OHWADA
@@ -102,6 +104,8 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
 
 	$this->set_row( $item_row );
+
+	echo $this->_build_script();
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->_build_gmap_iframe();
@@ -307,18 +311,16 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
 
+	if ( $this->_cfg_perm_item_read > 0 ) {
+		echo $this->build_line_ele(
+			$this->get_constant('ITEM_PERM_READ'), $this->_build_ele_perm_read() );
+	}
+
 	echo $this->build_line_ele(
 		$this->get_constant('ITEM_PERM_DOWN'), $this->_build_ele_perm_down() );
 
 	echo $this->build_line_ele(
 		$this->get_constant('ITEM_CODEINFO'), $this->_build_ele_codeinfo() );
-
-//	if ( $is_edit && $this->_is_valid() ) {
-//		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
-//			$this->_build_ele_valid() ) ;
-//	} else {
-//		$this->set_row_hidden_buffer( 'item_status' ) ;
-//	}
 
 	echo $this->build_row_label( 
 		$this->get_constant('ITEM_HITS'), 'item_hits' );
@@ -518,6 +520,11 @@ function _build_ele_votes()
 	}
 
 	return $str;
+}
+
+function _build_script()
+{
+	return $this->build_js_envelop( $this->build_js_check_all() );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.4 2008/11/20 11:15:46 ohwada Exp $
+// $Id: cat_handler.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// check_perm_by_row_name_groups()
 // 2008-11-16 K.OHWADA
 // check_perms_in_groups()
 // 2008-11-08 K.OHWADA
@@ -21,12 +23,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_cat_handler extends webphoto_lib_tree_handler
 {
-	var $_xoops_groups = null;
-
 	var $_ALLOWED_EXT_DEFAULT = _C_WEBPHOTO_IMAGE_EXTS;
-	var $_PREM_ALLOW_ALL      = _C_WEBPHOTO_PERM_ALLOW_ALL;
-	var $_PREM_DENOY_ALL      = _C_WEBPHOTO_PERM_DENOY_ALL;
-	var $_PREM_SEPARATOR      = _C_WEBPHOTO_PERM_SEPARATOR;
 	var $_WEIGHT_DEFAULT = 1;
 
 //---------------------------------------------------------
@@ -38,8 +35,8 @@ function webphoto_cat_handler( $dirname )
 	$this->set_table_prefix_dirname( 'cat' );
 	$this->set_id_name(  'cat_id' );
 	$this->set_pid_name( 'cat_pid' );
-	$this->init_xoops_tree();
 	$this->set_order_default( 'cat_weight ASC, cat_title ASC, cat_id ASC' );
+	$this->init_xoops_tree();
 
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
@@ -53,16 +50,6 @@ function &getInstance( $dirname )
 		$instance = new webphoto_cat_handler( $dirname );
 	}
 	return $instance;
-}
-
-//---------------------------------------------------------
-// set param
-//---------------------------------------------------------
-function set_xoops_groups( $val )
-{
-	if ( is_array($val) && count($val) ) {
-		$this->_xoops_groups = $val;
-	}
 }
 
 //---------------------------------------------------------
@@ -105,8 +92,8 @@ function create( $flag_new=false )
 		'cat_gmap_longitude' => 0,
 		'cat_gmap_zoom'      => 0,
 		'cat_gmap_type'      => 0,
-		'cat_perm_read'      => $this->_PREM_ALLOW_ALL ,
-		'cat_perm_post'      => $this->_PREM_ALLOW_ALL ,
+		'cat_perm_read'      => $this->_PERM_ALLOW_ALL ,
+		'cat_perm_post'      => $this->_PERM_ALLOW_ALL ,
 		'cat_description'    => '',
 	);
 
@@ -296,7 +283,7 @@ function get_cached_title_by_id( $cat_id, $flag_sanitize=false )
 //---------------------------------------------------------
 function get_rows_ghost()
 {
-	$live_cids = $this->get_all_child_id( 0 );
+	$live_cids = $this->getAllChildId( 0 );
 
 	$where = 'cat_id NOT IN ( ' ;
 	foreach( $live_cids as $cid ) {
@@ -318,6 +305,41 @@ function get_rows_by_pid( $pid, $limit=0, $offset=0 )
 function get_rows_by_pid_orderby( $pid, $order, $limit=0, $offset=0 )
 {
 	return $this->get_rows_by_pid_order( $pid, $order, $limit, $offset );
+}
+
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function get_perm_read_array( $row )
+{
+	return $this->get_perm_array_by_row_name( $row, 'cat_perm_read' );
+}
+
+function get_perm_post_array( $row )
+{
+	return $this->get_perm_array_by_row_name( $row, 'cat_perm_post' );
+}
+
+function check_perm_read_by_id( $id, $groups )
+{
+	$row = $this->get_row_by_id( $id );
+	return $this->check_perm_read_by_row( $row, $groups ) ;
+}
+
+function check_perm_post_by_id( $id, $groups )
+{
+	$row = $this->get_row_by_id( $id );
+	return $this->check_post_read_by_row( $row, $groups ) ;
+}
+
+function check_perm_read_by_row( $row, $groups )
+{
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_read', $groups );
+}
+
+function check_perm_post_by_row( $row, $groups )
+{
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post', $groups );
 }
 
 //---------------------------------------------------------
@@ -384,40 +406,9 @@ function build_selbox_pid( $pid )
 
 function build_selbox_with_perm_post( $cat_id, $sel_name )
 {
-	return $this->build_sel_box(
-		$this->get_all_tree_array( '', true ), 
-		'cat_title', $cat_id, 0, $sel_name ) ;
+	$tree = $this->get_all_tree_array( '', 'cat_perm_post' );
+	return $this->build_sel_box( $tree, 'cat_title', $cat_id, 0, $sel_name ) ;
 }
-
-//---------------------------------------------------------
-// overwrite
-//---------------------------------------------------------
-function build_rows_with_perm( $rows )
-{
-	$arr = array();
-	foreach ( $rows as $row ) 
-	{
-		if ( $this->check_perm_post( $row['cat_perm_post'] ) ) {
-			$arr[] = $row;
-		}
-	}
-	return $arr;
-}
-
-function check_perm_post( $perm_post )
-{
-	if ( $perm_post == $this->_PREM_ALLOW_ALL ) {
-		return true;
-	}
-	if ( $perm_post == $this->_PREM_DENOY_ALL ) {
-		return false;
-	}
-
-	$perms = $this->str_to_array( $perm_post, $this->_PREM_SEPARATOR );
-	return $this->check_perms_in_groups( $perms, $this->_xoops_groups );
-}
-
-
 
 // --- class end ---
 }

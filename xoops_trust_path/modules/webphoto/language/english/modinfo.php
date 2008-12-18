@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
+// $Id: modinfo.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -310,6 +310,17 @@ define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />This configuration is
 //---------------------------------------------------------
 define($constpref."BNAME_CATLIST"  , "Category List" ) ;
 define($constpref."BNAME_TAGCLOUD" , "Tag Cloud" ) ;
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+define($constpref."CFG_PERM_CAT_READ"      , "Permission of Category" ) ;
+define($constpref."CFG_PERM_CAT_READ_DSC"  , "Enable with the setting of Category table" ) ;
+define($constpref."CFG_PERM_ITEM_READ"     , "Permission od Item" ) ;
+define($constpref."CFG_PERM_ITEM_READ_DSC" , "Enable with the setting of Item table" ) ;
+define($constpref."OPT_PERM_READ_ALL"     , "Show ALL" ) ;
+define($constpref."OPT_PERM_READ_NO_ITEM" , "Not show Items" ) ;
+define($constpref."OPT_PERM_READ_NO_CAT"  , "Not show Categories and Items" ) ;
 
 }
 // === define begin ===

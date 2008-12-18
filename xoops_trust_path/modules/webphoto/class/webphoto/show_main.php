@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.8 2008/12/10 19:08:56 ohwada Exp $
+// $Id: show_main.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_photo_public
 // 2008-12-07 K.OHWADA
 // build_photo_show() -> build_photo_show_main()
 // 2008-11-29 K.OHWADA
@@ -39,6 +41,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_d3_notification_select_class;
 	var $_sort_class;
 	var $_rate_check_class;
+	var $_public_class ;
 
 	var $_sort_name;
 
@@ -121,9 +124,10 @@ function webphoto_show_main( $dirname, $trust_dirname )
 {
 	$this->webphoto_show_photo( $dirname, $trust_dirname );
 
-	$this->_user_handler =& webphoto_user_handler::getInstance( $dirname );
-	$this->_gmap_class   =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
+	$this->_user_handler     =& webphoto_user_handler::getInstance( $dirname );
+	$this->_gmap_class       =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
 	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
+	$this->_public_class     =& webphoto_photo_public::getInstance( $dirname );
 
 	$this->_notification_select_class =& webphoto_d3_notification_select::getInstance();
 	$this->_notification_select_class->init( $dirname ); 
@@ -134,11 +138,12 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
 
-	$cfg_uploads_path          = $this->_config_class->get_uploads_path();
 	$cfg_newphotos             = $this->get_config_by_name('newphotos');
 	$cfg_viewcattype           = $this->get_config_by_name('viewcattype');
 	$cfg_sort                  = $this->get_config_by_name('sort');
 	$cfg_use_popbox            = $this->get_config_by_name('use_popbox');
+	$cfg_perm_cat_read         = $this->get_config_by_name('perm_cat_read');
+	$cfg_perm_item_read        = $this->get_config_by_name('perm_item_read');
 	$this->_cfg_gmap_apikey    = $this->get_config_by_name('gmap_apikey');
 	$this->_cfg_use_pathinfo   = $this->get_config_by_name('use_pathinfo');
 	$this->_cfg_cat_main_width = $this->get_config_by_name('cat_main_width');
@@ -150,10 +155,6 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class->set_photo_sort_default( $cfg_sort );
-
-	$this->_catlist_class =& webphoto_inc_catlist::getInstance();
-	$this->_catlist_class->init( $dirname );
-	$this->_catlist_class->set_uploads_path( $cfg_uploads_path );
 
 // separator
 	if ( $this->_cfg_use_pathinfo ) {
@@ -202,7 +203,7 @@ function _preload_photo_sort_array()
 function build_list_common( $const_name, $show_photo_desc=false )
 {
 	$title_s   = $this->sanitize( $this->get_constant( $const_name ) );
-	$total_all = $this->_item_handler->get_count_public();
+	$total_all = $this->_public_class->get_count();
 
 	$arr = array(
 		'xoops_pagetitle'   => $title_s ,
@@ -297,11 +298,9 @@ function build_catlist( $cat_id, $cols, $delmita )
 {
 	$show = false ;
 
-	list( $cols, $width ) =
-		$this->_catlist_class->calc_width( $cols ) ;
-
-	$cats = $this->_catlist_class->build_catlist( 
-		$cat_id, $this->_SHOW_CAT_SUB ) ;
+	list( $cats, $cols, $width ) =
+		$this->_public_class->build_catlist( 
+			$cat_id, $this->_SHOW_CAT_SUB, $cols ) ;
 
 	if ( is_array($cats) && count($cats) ) {
 		$show = true ;
@@ -344,7 +343,7 @@ function build_cat_path( $cat_id )
 	$last  = $count - 1;
 
 	for ( $i = $last ; $i >= 0; $i-- ) {
-		$arr[] = $this->_catlist_class->build_cat_show( $rows[ $i ] );
+		$arr[] = $this->_public_class->build_cat_show( $rows[ $i ] );
 	}
 
 	$ret = array();
@@ -637,7 +636,7 @@ function build_box_list( $param )
 
 function build_init_param( $mode, $show_photo_desc=false )
 {
-	$total_all = $this->_item_handler->get_count_public();
+	$total_all = $this->_public_class->get_count();
 
 	$arr = array(
 		'use_popbox_js'   => $this->_USE_POPBOX_JS ,

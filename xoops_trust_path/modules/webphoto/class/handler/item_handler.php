@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.9 2008/12/10 19:08:56 ohwada Exp $
+// $Id: item_handler.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// check_perm_by_row_name_groups()
+// move get_rows_public() to item_cat_handler
 // 2008-12-07 K.OHWADA
 // get_text_type_array()
 // 2008-11-29 K.OHWADA
@@ -38,11 +41,8 @@ class webphoto_item_handler extends webphoto_lib_handler
 	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
 	var $_PERM_READ             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
 	var $_PERM_DOWN             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
-	var $_PERM_SEPARATOR        = _C_WEBPHOTO_PERM_SEPARATOR;
-	var $_INFO_SEPARATOR        = _C_WEBPHOTO_INFO_SEPARATOR;
 
-	var $_AREA_NS = 1.0;
-	var $_AREA_EW = 1.0;
+	var $_INFO_SEPARATOR        = _C_WEBPHOTO_INFO_SEPARATOR;
 
 	var $_BUILD_SEARCH_ARRAY = array(
 		'item_title', 'item_place', 'item_equipment', 
@@ -488,12 +488,6 @@ function update_playlist_cache( $item_id, $cache, $force=false )
 //---------------------------------------------------------
 // get count
 //---------------------------------------------------------
-function get_count_public()
-{
-	$where = $this->build_where_public();
-	return $this->get_count_by_where( $where );
-}
-
 function get_count_status( $status )
 {
 	return $this->get_count_by_where( $this->build_where_status( $status ) );
@@ -510,24 +504,6 @@ function get_count_by_catid( $cat_id )
 	return $this->get_count_by_where( $where );
 }
 
-function get_count_public_by_catid( $cat_id )
-{
-	$where = $this->build_where_public_by_catid( $cat_id );
-	return $this->get_count_by_where( $where );
-}
-
-function get_count_public_by_catid_array( $catid_array )
-{
-	$where = $this->build_where_public_by_catid_array( $catid_array );
-	return $this->get_count_by_where( $where );
-}
-
-function get_count_public_by_uid( $uid )
-{
-	$where = $this->build_where_public_by_uid( $uid );
-	return $this->get_count_by_where( $where );
-}
-
 function get_count_by_itemid_uid( $item_id, $uid )
 {
 	$where  = 'item_id='.intval($item_id);
@@ -535,35 +511,9 @@ function get_count_by_itemid_uid( $item_id, $uid )
 	return $this->get_count_by_where( $where );
 }
 
-function get_count_public_by_datetime( $datetime )
-{
-	$where = $this->build_where_public_by_datetime( $datetime );
-	return $this->get_count_by_where( $where );
-}
-
-function get_count_public_by_like_datetime( $datetime )
-{
-	$where = $this->build_where_public_by_like_datetime( $datetime );
-	return $this->get_count_by_where( $where );
-}
-
-function get_count_public_imode()
-{
-	$where = $this->build_where_public_imode();
-	return $this->get_count_by_where( $where );
-}
-
 //---------------------------------------------------------
 // get row
 //---------------------------------------------------------
-function get_row_public_by_id( $item_id )
-{
-	$sql  = 'SELECT * FROM '.$this->_table;
-	$sql .= ' WHERE '. $this->build_where_public();
-	$sql .= ' AND item_id='.intval($item_id);
-	return $this->get_row_by_sql( $sql );
-}
-
 function get_title_by_id( $item_id )
 {
 	$row = $this->get_row_by_id( $item_id );
@@ -576,51 +526,6 @@ function get_title_by_id( $item_id )
 //---------------------------------------------------------
 // get rows
 //---------------------------------------------------------
-function get_rows_public( $limit=0, $offset=0 )
-{
-	$where   = $this->build_where_public();
-	$orderby = 'item_id ASC';
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_latest( $limit=0, $offset=0 )
-{
-	$where   = $this->build_where_public();
-	$orderby = 'item_time_update DESC, item_id DESC';
-	return $this->get__rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_by_orderby( $orderby, $limit=0, $offset=0  )
-{
-	$where = $this->build_where_public();
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_by_catid_orderby( $cat_id, $orderby, $limit=0, $offset=0  )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_cat_id='.intval($cat_id);
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_by_uid_orderby( $uid, $orderby, $limit=0, $offset=0 )
-{
-	$where = $this->build_where_public_by_uid( $uid );
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_by_datetime_orderby( $datetime, $orderby, $limit=0, $offset=0 )
-{
-	$where = $this->build_where_public_by_datetime( $datetime );
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_imode_by_orderby( $orderby, $limit=0, $offset=0 )
-{
-	$where = $this->build_where_public_imode();
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
 function get_rows_status( $status, $limit=0, $offset=0 )
 {
 	$where   = $this->build_where_status( $status );
@@ -642,56 +547,11 @@ function get_rows_by_id_array( $id_array, $limit=0, $offset=0  )
 	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
 }
 
-function get_rows_public_gmap_latest( $limit=0, $offset=0 )
-{
-	$where   = $this->build_where_public();
-	$where  .= ' AND '. $this->build_where_gmap();
-	$orderby = 'item_time_update DESC, item_id DESC';
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_gmap_latest_by_catid_array( $catid_array, $limit=0, $offset=0 )
-{
-	$where   = $this->build_where_public_by_catid_array( $catid_array );
-	$where  .= ' AND '. $this->build_where_gmap();
-	$orderby = 'item_time_update DESC, item_id DESC';
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
-function get_rows_public_gmap_area( $item_id, $lat, $lon, $limit=0, $offset=0 )
-{
-	$where   = $this->build_where_public();
-	$where  .= ' AND '. $this->build_where_gmap();
-	$where  .= ' AND '. $this->build_where_gmap_area( $lat, $lon );
-	$where  .= ' AND item_id <> '. intval($item_id);
-	$orderby = 'item_id ASC';
-	return $this->get_rows_by_where_orderby( $where, $orderby, $limit, $offset );
-}
-
 function get_rows_flashplayer( $limit=0, $offset=0 )
 {
 	$sql  = 'SELECT * FROM '. $this->_table;
 	$sql .= ' WHERE item_displaytype >= '. _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
 	$sql .= ' ORDER BY item_title ASC';
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
-}
-
-function get_rows_public_by_kind( $kind, $limit=0, $offset=0 )
-{
-	$sql  = 'SELECT * FROM '. $this->_table;
-	$sql .= ' WHERE '. $this->build_where_public();
-	$sql .= ' AND item_kind = '. intval($kind) ;
-	$sql .= ' ORDER BY item_id ASC';
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
-}
-
-function get_rows_public_catlist( $limit=0, $offset=0 )
-{
-	$sql  = 'SELECT *, COUNT(item_id) AS cat_sum ';
-	$sql .= ' FROM '. $this->_table;
-	$sql .= ' WHERE '. $this->build_where_public();
-	$sql .= ' GROUP BY item_cat_id' ;
-	$sql .= ' ORDER BY item_cat_id' ;
 	return $this->get_rows_by_sql( $sql, $limit, $offset );
 }
 
@@ -705,13 +565,28 @@ function get_rows_from_id_array( $id_array )
 }
 
 //---------------------------------------------------------
-// get id array
+// where
 //---------------------------------------------------------
-function get_id_array_public_by_catid_orderby( $cat_id, $orderby, $limit=0, $offset=0 )
+function build_where_by_keyword_array_catid( $keyword_array, $cat_id )
 {
-	$where  = $this->build_where_public();
-	$where .= ' AND item_cat_id='.intval($cat_id);
-	return $this->get_id_array_by_where_orderby( $where, $orderby, $limit, $offset );
+	$where_key = $this->build_where_by_keyword_array( 
+		$keyword_array, 'item_search' );
+
+	$where_cat = null;
+	if ( $cat_id != 0 ) {
+		$where_cat = "item_cat_id=".intval($cat_id);
+	}
+
+	if ( $where_key && $where_cat ) {
+		$where = $where_key .' AND '. $where_cat ;
+		return $where;
+	} elseif ( $where_key ) {
+		return $where_key;
+	} elseif ( $where_cat ) {
+		return $where_cat;
+	}
+
+	return null;
 }
 
 //---------------------------------------------------------
@@ -742,77 +617,6 @@ function build_search( $row )
 //---------------------------------------------------------
 // where
 //---------------------------------------------------------
-function build_where_public_by_catid( $cat_id )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_cat_id='.intval($cat_id);
-	return $where;
-}
-
-function build_where_public_by_catid_array( $catid_array )
-{
-	$where  = $this->build_where_public() ;
-	$where .= ' AND '. $this->build_where_by_catid_array( $catid_array );
-	return $where;
-}
-
-function build_where_public_by_uid( $uid )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_uid='.intval($uid);
-	return $where;
-}
-
-function build_where_public_by_datetime( $datetime )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_datetime ='. $this->quote($datetime);
-	return $where;
-}
-
-function build_where_public_by_like_datetime( $datetime )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_datetime LIKE '. $this->quote( $datetime.'%' );
-	return $where;
-}
-
-function build_where_public_by_place( $place )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND item_place ='. $this->quote($place);
-	return $where;
-}
-
-function build_where_public_by_place_array( $place_array )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND '.$this->build_where_place_array( $place_array );
-	return $where;
-}
-
-function build_where_public_photo()
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND '. $this->build_where_photo();
-	return $where;
-}
-
-function build_where_public_photo_by_catid( $cat_id )
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND '. $this->build_where_photo();
-	$where .= ' AND item_cat_id='. intval($cat_id);
-	return $where;
-}
-
-function build_where_public_imode()
-{
-	$where  = $this->build_where_public();
-	$where .= ' AND '. $this->build_where_imode();
-	return $where;
-}
-
 function build_where_public()
 {
 	$where = ' item_status > 0 ';
@@ -825,106 +629,6 @@ function build_where_status( $status )
 	return $where;
 }
 
-function build_where_imode()
-{
-	$where  = " ( item_ext='gif' ";
-	$where .= "OR item_ext='jpg' ";
-	$where .= "OR item_ext='jpeg' ";
-	$where .= "OR item_ext='3gp' ";
-	$where .= "OR item_ext='3g2' )";
-	return $where;
-}
-
-function build_where_photo()
-{
-	$where  = " ( item_ext='gif' ";
-	$where .= "OR item_ext='png' ";
-	$where .= "OR item_ext='jpg' ";
-	$where .= "OR item_ext='jpeg' ) ";
-	return $where;
-}
-
-function build_where_gmap()
-{
-	$where  = ' ( item_gmap_latitude <> 0 ';
-	$where .= 'OR item_gmap_longitude <> 0 ';
-	$where .= 'OR item_gmap_zoom <> 0 ) ';
-	return $where;
-}
-
-function build_where_place_array( $place_array )
-{
-	return $this->build_where_by_keyword_array( $place_array, 'AND', 'item_place' );
-}
-
-function build_where_by_keyword_array_catid( $keyword_array, $cat_id )
-{
-	$where_key = $this->build_where_by_keyword_array( $keyword_array );
-
-	$where_cat = null;
-	if ( $cat_id != 0 ) {
-		$where_cat = "item_cat_id=".intval($cat_id);
-	}
-
-	if ( $where_key && $where_cat ) {
-		$where = $where_key .' AND '. $where_cat ;
-		return $where;
-	} elseif ( $where_key ) {
-		return $where_key;
-	} elseif ( $where_cat ) {
-		return $where_cat;
-	}
-
-	return null;
-}
-
-function build_where_by_keyword_array( $keyword_array, $andor='AND', $name='item_search' )
-{
-	if ( !is_array($keyword_array) || !count($keyword_array) ) {
-		return null;
-	}
-
-	switch ( strtolower($andor) )
-	{
-		case 'exact':
-			$where = $this->build_where_keyword_single( $keyword_array[0], $name );
-			return $where;
-
-		case 'or':
-			$andor_glue = 'OR';
-			break;
-
-		case 'and':
-		default:
-			$andor_glue = 'AND';
-			break;
-	}
-
-	$arr = array();
-
-	foreach( $keyword_array as $keyword ) 
-	{
-		$keyword = trim($keyword);
-		if ( $keyword ) {
-			$arr[] = $this->build_where_keyword_single( $keyword, $name ) ;
-		}
-	}
-
-	if ( is_array( $arr ) && count( $arr ) ) {
-		$glue  = ' '. $andor_glue .' ';
-		$where = ' ( '. implode( $glue , $arr ) .' ) ' ;
-		return $where;
-	}
-
-	return null;
-}
-
-function build_where_keyword_single( $str, $name='item_search' )
-{
-	$text = $name ." LIKE '%" . addslashes( $str ) . "%'" ;
-	return $text;
-}
-
 function build_where_by_itemid_array( $id_array )
 {
 	$where = '';
@@ -935,60 +639,6 @@ function build_where_by_itemid_array( $id_array )
 // 0 means to belong no category
 	$where .= '0';
 	return $where;
-}
-
-function build_where_by_catid_array( $catid_array )
-{
-	$where  = ' item_cat_id IN ( ' ;
-	foreach( $catid_array as $id ) {
-		$where .= intval($id) .', ';
-	}
-
-// 0 means to belong no category	
-	$where .= ' 0 )';
-	return $where;
-}
-
-//---------------------------------------------------------
-// build gmap
-//---------------------------------------------------------
-function build_where_gmap_area( $lat, $lon )
-{
-	$north = $this->adjust_latitude(  $lat + $this->_AREA_NS );
-	$south = $this->adjust_latitude(  $lat - $this->_AREA_NS );
-	$east  = $this->adjust_longitude( $lon + $this->_AREA_EW );
-	$west  = $this->adjust_longitude( $lon - $this->_AREA_EW );
-
-	$where  = ' item_gmap_latitude > '.floatval($south);
-	$where .= ' AND item_gmap_latitude  < '.floatval($north);
-	$where .= ' AND item_gmap_longitude > '.floatval($west);
-	$where .= ' AND item_gmap_longitude < '.floatval($east);
-	return $where;
-}
-
-function adjust_latitude( $lat )
-{
-// north pole
-	if ( $lat > 90 ) {
-		$lat = 90;
-
-// south pole
-	} elseif ( $lat < -90 ) {
-		$lat = -90;
-	}
-
-	return $lat;
-}
-
-function adjust_longitude( $lon )
-{
-// international date line
-	if ( $lon > 180 ) {
-		$lon = -360 + $lon;
-	} elseif ( $lon < -180 ) {
-		$lon = 360 + $lon;
-	}
-	return $lon;
 }
 
 //---------------------------------------------------------
@@ -1004,12 +654,6 @@ function build_datetime( $str )
 {
 	$utility_class =& webphoto_lib_utility::getInstance();
 	return $utility_class->str_to_mysql_datetime( $str );
-}
-
-function build_perm( $arr )
-{
-	return $this->array_to_perm( 
-		$this->sanitize_array_int( $arr ), $this->_PERM_SEPARATOR );
 }
 
 function build_info( $arr )
@@ -1086,23 +730,14 @@ function get_codeinfo_array( $row )
 	return $this->str_to_array( $row['item_codeinfo'], $this->_INFO_SEPARATOR );
 }
 
-function check_perm_read( $row, $groups )
+function check_perm_read_by_row( $row, $groups )
 {
-	return $this->check_perm( $row['item_perm_read'], $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read', $groups );
 }
 
-function check_perm_down( $row, $groups )
+function check_perm_down_by_row( $row, $groups )
 {
-	return $this->check_perm( $row['item_perm_down'], $groups );
-}
-
-function check_perm( $val, $groups )
-{
-	if ( $val == _C_WEBPHOTO_PERM_ALLOW_ALL ) {
-		return true;
-	}
-	$perms = $this->str_to_array( $val, $this->_PERM_SEPARATOR );
-	return $this->check_perms_in_groups( $perms, $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down', $groups );
 }
 
 function build_show_icon_image( $item_row, $base_url )

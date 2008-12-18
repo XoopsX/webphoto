@@ -1,5 +1,5 @@
 <?php
-// $Id: form_this.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
+// $Id: form_this.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// $_UPLOADS_PATH
 // 2008-11-29 K.OHWADA
 // $_ROOT_EXTS_URL
 // 2008-11-16 K.OHWADA
@@ -45,6 +47,10 @@ class webphoto_form_this extends webphoto_lib_form
 	var $_FILED_COUNTER_1  = 1;
 	var $_FILED_COUNTER_2  = 2;
 
+	var $_UPLOADS_PATH ;
+	var $_MEDIAS_PATH ;
+	var $_WORK_DIR ;
+	var $_FILE_DIR ;
 	var $_PHOTOS_PATH;
 	var $_PHOTOS_DIR ;
 	var $_PHOTOS_URL ;
@@ -58,11 +64,9 @@ class webphoto_form_this extends webphoto_lib_form
 	var $_MEDIAS_URL;
 	var $_PLAYLISTS_DIR ;
 	var $_PLAYLISTS_URL ;
-	var $_WORK_DIR;
 	var $_TMP_DIR;
 	var $_MAIL_DIR;
 	var $_LOG_DIR;
-	var $_FILE_DIR;
 
 	var $_ICONS_URL;
 	var $_ICON_ROTATE_URL;
@@ -81,30 +85,28 @@ function webphoto_form_this( $dirname , $trust_dirname )
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
 	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
-
 	$this->_cat_handler  =& webphoto_cat_handler::getInstance(   $dirname );
-	$this->_cat_handler->set_xoops_groups( $this->_xoops_groups );
 
-	$uploads_path    = $this->_config_class->get_uploads_path();
-	$medias_path     = $this->_config_class->get_medias_path();
-	$this->_WORK_DIR = $this->_config_class->get_by_name( 'workdir' );
-	$this->_FILE_DIR = $this->_config_class->get_by_name( 'file_dir' );
+	$this->_UPLOADS_PATH = $this->_config_class->get_uploads_path();
+	$this->_MEDIAS_PATH  = $this->_config_class->get_medias_path();
+	$this->_WORK_DIR     = $this->_config_class->get_by_name( 'workdir' );
+	$this->_FILE_DIR     = $this->_config_class->get_by_name( 'file_dir' );
 
-	$this->_PHOTOS_PATH = $uploads_path.'/photos' ;
-	$this->_THUMBS_PATH = $uploads_path.'/thumbs' ;
-	$this->_CATS_PATH   = $uploads_path.'/categories' ;
-	$playlists_path     = $uploads_path.'/playlists' ;
+	$this->_PHOTOS_PATH = $this->_UPLOADS_PATH.'/photos' ;
+	$this->_THUMBS_PATH = $this->_UPLOADS_PATH.'/thumbs' ;
+	$this->_CATS_PATH   = $this->_UPLOADS_PATH.'/categories' ;
+	$playlists_path     = $this->_UPLOADS_PATH.'/playlists' ;
 
 	$this->_PHOTOS_DIR    = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR    = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
 	$this->_CATS_DIR      = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
-	$this->_MEDIAS_DIR    = XOOPS_ROOT_PATH . $medias_path ;
+	$this->_MEDIAS_DIR    = XOOPS_ROOT_PATH . $this->_MEDIAS_PATH ;
 	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $playlists_path ;
 
 	$this->_PHOTOS_URL    = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL    = XOOPS_URL . $this->_THUMBS_PATH ;
 	$this->_CATS_URL      = XOOPS_URL . $this->_CATS_PATH ;
-	$this->_MEDIAS_URL    = XOOPS_URL . $medias_path ;
+	$this->_MEDIAS_URL    = XOOPS_URL . $this->_MEDIAS_PATH ;
 	$this->_PLAYLISTS_URL = XOOPS_URL . $playlists_path ;
 
 	$this->_TMP_DIR   = $this->_WORK_DIR .'/tmp' ;
@@ -197,6 +199,84 @@ function get_cached_file_row_by_kind( $item_row, $kind )
 		return $this->_file_handler->get_cached_row_by_id( $file_id );
 	}
 	return null;
+}
+
+//---------------------------------------------------------
+// group perms
+//---------------------------------------------------------
+function build_ele_group_perms_by_key( $name )
+{
+	$all_name = $name .'_all';
+	$id_name  = $name .'_ids';
+
+	$groups = $this->get_cached_xoops_db_groups() ;
+	$perms  = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+
+	$text  = '';
+	$text .= $this->build_input_checkbox_js_check_all( $all_name, $id_name );
+	$text .= $this->get_constant('GROUP_PERM_ALL') ;
+	$text .= "<br />\n";
+	$text .= $this->build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes );
+
+	return $text;
+}
+
+function get_group_perms_array_by_row_name( $row, $name )
+{
+	if ( isset( $row[ $name ] ) ) {
+		return $this->get_group_perms_array( $row[ $name ] );
+	} else {
+		return array() ;
+	}
+}
+
+function get_group_perms_array( $val )
+{
+	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+}
+
+//---------------------------------------------------------
+// java script
+//---------------------------------------------------------
+function build_input_checkbox_js_check_all( $name, $id_name )
+{
+	$onclick = "webphoto_check_all(this, '". $id_name ."')";
+	$extra   = 'onclick="'. $onclick .'"';
+	return $this->build_input_checkbox_yes( $name, 0, $extra );
+}
+
+function build_js_check_all()
+{
+	$text = <<< END_OF_TEXT
+/* edit form */
+function webphoto_check_all(cbox, prefix) 
+{
+	var regexp = new RegExp("^" + prefix );
+	var inputs = document.getElementsByTagName("input");
+	for (i=0; i<inputs.length; i++) {
+		var ele = inputs[i];
+        if (ele.type == "checkbox" && ele.name.match(regexp)) {
+			ele.checked = cbox.checked;
+		}
+	}
+}
+END_OF_TEXT;
+
+	return $text."\n";
+}
+
+function build_js_envelop( $content )
+{
+	$text = <<< END_OF_TEXT
+<script type="text/javascript">
+//<![CDATA[
+$content
+//]]>
+</script>
+END_OF_TEXT;
+
+	return $text."\n";
 }
 
 //---------------------------------------------------------

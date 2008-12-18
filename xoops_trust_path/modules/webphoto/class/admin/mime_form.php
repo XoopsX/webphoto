@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: mime_form.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// build_ele_group_perms_by_key()
 // 2008-07-01 K.OHWADA
 // added mime_ffmpeg
 //---------------------------------------------------------
@@ -19,6 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_mime_form extends webphoto_form_this
 {
+	var $_mime_handler;
 
 //---------------------------------------------------------
 // constructor
@@ -26,6 +29,8 @@ class webphoto_admin_mime_form extends webphoto_form_this
 function webphoto_admin_mime_form( $dirname , $trust_dirname )
 {
 	$this->webphoto_form_this( $dirname , $trust_dirname );
+
+	$this->_mime_handler =& webphoto_mime_handler::getInstance( $dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -50,6 +55,8 @@ function print_form_mimetype( $row )
 	$extra_delete  = 'onclick="this.form.elements.op.value=\'delete\'" ';
 	$extra_cancel  = 'onclick="history.go(-1)" ';
 	$button_cancel = $this->build_input_button( 'cancel', _CANCEL, $extra_cancel );
+
+	echo $this->_build_script();
 
 	echo $this->build_form_tag( 'mimetype' );
 	echo $this->build_html_token();
@@ -89,19 +96,12 @@ function print_form_mimetype( $row )
 
 function _build_ele_perms()
 {
-	$group_objs = $this->get_xoops_group_objs();
-	$perm_array = $this->str_to_array( $this->get_row_by_key('mime_perms', null, false), '&' );
+	return $this->build_ele_group_perms_by_key( 'mime_perms' );
+}
 
-	$text = '';
-	foreach ( $group_objs as $obj )
-	{
-		$groupid = $obj->getVar('groupid');
-		$name  = 'perms['. $groupid .']';
-		$value = intval( in_array( $groupid, $perm_array ) );
-		$text .= $this->build_input_checkbox_yes( $name, $value );
-		$text .= $obj->getVar('name', 's');
-	}
-	return $text;
+function _build_script()
+{
+	return $this->build_js_envelop( $this->build_js_check_all() );
 }
 
 //---------------------------------------------------------

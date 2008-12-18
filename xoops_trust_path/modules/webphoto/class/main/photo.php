@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.10 2008/12/10 19:08:56 ohwada Exp $
+// $Id: photo.php,v 1.11 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_item_public
 // 2008-12-07 K.OHWADA
 // build_photo_show() -> build_photo_show_main()
 // 2008-11-16 K.OHWADA
@@ -36,6 +38,7 @@ class webphoto_main_photo extends webphoto_show_main
 	var $_embed_class;
 	var $_d3_comment_view_class;
 	var $_photo_navi_class;
+	var $_item_public_class;
 
 	var $_get_photo_id;
 	var $_get_cat_id;
@@ -58,11 +61,12 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 	$this->webphoto_show_main( $dirname , $trust_dirname );
 	$this->set_flag_highlight( true );
 
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
-	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
-	$this->_embed_class      =& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_player_handler    =& webphoto_player_handler::getInstance( $dirname );
+	$this->_flashvar_handler  =& webphoto_flashvar_handler::getInstance( $dirname );
+	$this->_playlist_class    =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_flash_class       =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_embed_class       =& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_item_public_class =& webphoto_item_public::getInstance( $dirname, $trust_dirname );
 
 	$this->_photo_navi_class =& webphoto_photo_navi::getInstance( $dirname );
 	$this->_photo_navi_class->set_mark_id_prev( '<b>'. $this->get_constant('NAVI_PREVIOUS') .'</b>' );
@@ -105,7 +109,7 @@ function _check()
 	$this->_get_cat_id   = $this->_pathinfo_class->get_int( 'cat_id' );
 	$this->_get_order    = $this->_pathinfo_class->get( 'order' );
 
-	$row = $this->_item_handler->get_row_public_by_id( $this->_get_photo_id ) ;
+	$row = $this->_item_public_class->get_item_row( $this->_get_photo_id ) ;
 	if( !is_array($row) ) {
 		redirect_header( $this->_MODULE_URL.'/' , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit();
@@ -208,17 +212,13 @@ function main()
 		$this->_item_handler->countup_hits( $photo_id, true );
 	}
 
-	$total_all  = $this->_item_handler->get_count_public();
+	$total_all  = $this->_public_class->get_count();
 	$photo      = $this->_build_photo_show_photo( $row );
-
 	$gmap_param = $this->_build_gmap_param( $row );
 	$show_gmap  = $gmap_param['show_gmap'];
-
 	$tags_param = $this->_build_tags_param( $photo_id );
-
 	$noti_param = $this->build_notification_select();
-
-	$cat_id = $this->_get_catid_row_or_post( $row ) ;
+	$cat_id     = $this->_get_catid_row_or_post( $row ) ;
 
 	$this->assign_xoops_header( 'category', $cat_id, $show_gmap );
 
@@ -668,7 +668,7 @@ function _build_navi( $photo_id, $cat_id )
 {
 	$script   = $this->_uri_class->build_photo_pagenavi() ;
 	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
-	$id_array = $this->_item_handler->get_id_array_public_by_catid_orderby( $cat_id, $orderby );
+	$id_array = $this->_public_class->get_id_array_by_catid_orderby( $cat_id, $orderby );
 
 	return $this->_photo_navi_class->build_navi( $script, $id_array, $photo_id );
 }

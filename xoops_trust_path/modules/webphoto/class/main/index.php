@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: index.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public_class
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // QR code
@@ -29,6 +31,7 @@ class webphoto_main_index extends webphoto_show_main
 function webphoto_main_index( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_main( $dirname , $trust_dirname );
+
 	$this->init_preload();
 }
 
@@ -52,8 +55,7 @@ function main()
 	$mode  = $this->_get_action();
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
-
-	$total = $this->_item_handler->get_count_public();
+	$total = $this->_public_class->get_count();
 
 	if ( $total > 0 ) {
 		$show_photo = true;
@@ -121,7 +123,7 @@ function _get_action()
 function _get_photos_by_mode( $mode, $limit, $start )
 {
 	$orderby  = $this->_sort_class->mode_to_orderby( $mode );
-	$rows     = $this->_item_handler->get_rows_public_by_orderby( $orderby, $limit, $start );
+	$rows     = $this->_public_class->get_rows_by_orderby( $orderby, $limit, $start );
 	return $this->build_photo_show_from_rows( $rows );
 }
 
@@ -167,13 +169,23 @@ function _build_catlist_param( $mode )
 //---------------------------------------------------------
 function _build_tagcloud_param( $mode )
 {
+	$show     = false;
+	$tagcloud = null;
+
 	if ( $this->check_show_tagcloud( $mode ) ) {
-		return $this->_tag_class->build_tagcloud( $this->_MAX_TAG_CLOUD );
+		$tagcloud = $this->_public_class->build_tagcloud( $this->_MAX_TAG_CLOUD );
+
+		if ( is_array($tagcloud) && count($tagcloud) ) {
+			$show = true;
+		}
+
 	}
 
 	$arr = array(
-		'show_tagcloud' => false
+		'show_tagcloud' => $show,
+		'tagcloud'      => $tagcloud,
 	);
+
 	return $arr;
 }
 

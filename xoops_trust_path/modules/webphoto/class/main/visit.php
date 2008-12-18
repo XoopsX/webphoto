@@ -1,19 +1,24 @@
 <?php
-// $Id: visit.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: visit.php,v 1.2 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// webphoto_item_public
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_main_visit
 //=========================================================
-class webphoto_main_visit extends webphoto_lib_error
+class webphoto_main_visit extends webphoto_item_public
 {
-	var $_item_handler;
 	var $_post_class;
 
 	var $_FLAG_REDIRECT = true;
@@ -23,10 +28,9 @@ class webphoto_main_visit extends webphoto_lib_error
 //---------------------------------------------------------
 function webphoto_main_visit( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_error();
+	$this->webphoto_item_public( $dirname , $trust_dirname );
 
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_post_class   =& webphoto_lib_post::getInstance();
+	$this->_post_class =& webphoto_lib_post::getInstance();
 
 }
 
@@ -45,7 +49,7 @@ function &getInstance( $dirname , $trust_dirname )
 function main()
 {
 	$item_id  = $this->_post_class->get_get_int('item_id') ;
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->get_item_row( $item_id );
 	if ( ! is_array($item_row ) ) {
 		exit();
 	}

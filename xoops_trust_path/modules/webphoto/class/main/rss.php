@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.5 2008/12/09 10:04:48 ohwada Exp $
+// $Id: rss.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// webphoto_photo_public
 // 2008-12-09 K.OHWADA
 // Parse error & Fatal error
 // 2008-11-29 K.OHWADA
@@ -48,7 +50,7 @@ class webphoto_main_rss extends webphoto_lib_rss
 	var $_sort_class;
 	var $_search_class;
 	var $_utility_class;
-	var $_tag_class;
+	var $_public_class;
 
 	var $_mode  = null;
 	var $_param = null;
@@ -82,12 +84,10 @@ function webphoto_main_rss( $dirname, $trust_dirname )
 	$this->_search_class   =& webphoto_lib_search::getInstance();
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
 	$this->_sort_class     =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
+	$this->_public_class   =& webphoto_photo_public::getInstance( $dirname );
 
 	$this->_NORMAL_EXTS = explode('|', _C_WEBPHOTO_IMAGE_EXTS);
 	$this->_is_japanese = $this->_is_xoops_japanese( _C_WEBPHOTO_JPAPANESE ) ;
-
-	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
-	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 	$this->_multibyte_class->set_is_japanese( $this->_is_japanese );
@@ -382,49 +382,34 @@ function _get_photo_rows()
 	$where   = null;
 	$orderby = null;
 	$rows    = null;
+
 	$orderby_default = $this->_sort_class->sort_to_orderby( null );
+	$orderby         = $orderby_default ;
 
 	switch ( $this->_mode )
 	{
-		case 'tag':
-			if ( $param ) {
-				$orderby  = $this->_sort_class->convert_orderby_join( $orderby_default );
-				$id_array = $this->_tag_class->get_photo_id_array_public_latest_by_tag_orderby(
-					$param, $orderby, $limit );
-				$rows = $this->_item_handler->get_rows_from_id_array( $id_array );
+		case 'category':
+			if ( $param_int > 0 ) {
+				$rows = $this->_public_class->get_rows_by_catid_orderby(
+					$param_int, $orderby, $limit );
 			}
 			break;
 
 		case 'date':
 			if ( $param ) {
-				$where = $this->_item_handler->build_where_public_by_like_datetime( $param );
+				$rows = $this->_public_class->get_rows_by_like_datetime_orderby(
+					$param, $orderby, $limit ) ;
 			}
 			break;
 
 		case 'place':
 			if ( $param == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
-				$where = $this->_item_handler->build_where_public_by_place(
-					_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
+				$rows = $this->_public_class->get_rows_by_place_orderby(
+					_C_WEBPHOTO_PLACE_VALUE_NOT_SET, $orderby, $limit );
+
 			} elseif ( is_array($place_arr) && count($place_arr) ) {
-				$where = $this->_item_handler->build_where_public_by_place_array( $place_arr );
-			}
-			break;
-
-		case 'search':
-			if ( $param ) {
-				$where = $this->_build_where_by_query( $param );
-			}
-			break;
-
-		case 'category':
-			if ( $param_int > 0 ) {
-				$where = $this->_item_handler->build_where_public_by_catid( $param_int );
-			}
-			break;
-
-		case 'user':
-			if ( $param_int > 0 ) {
-				$where = $this->_item_handler->build_where_public_by_uid( $param_int );
+				$rows = $this->_public_class->get_rows_by_place_array_orderby(
+					$place_arr, $orderby, $limit );
 			}
 			break;
 
@@ -432,9 +417,34 @@ function _get_photo_rows()
 		case 'random':
 			$orderby = $this->_sort_class->get_random_orderby();
 			if ( $param_int > 0 ) {
-				$where = $this->_item_handler->build_where_public_photo_by_catid( $param_int );
+				$rows = $this->_public_class->get_rows_photo_by_catid_orderby(
+					$param_int, $orderby, $limit );
+
 			} else {
-				$where = $this->_item_handler->build_where_public_photo();
+				$rows = $this->_public_class->get_rows_photo_by_orderby(
+					$orderby, $limit );
+			}
+			break;
+
+		case 'search':
+			if ( $param ) {
+				$sql_query = $this->_build_sql_query( $param );
+				$rows = $this->_public_class->get_rows_by_search_orderby(
+					$sql_query, $orderby, $limit );
+			}
+			break;
+
+		case 'tag':
+			if ( $param ) {
+				$rows = $this->_public_class->get_rows_by_tag_orderby(
+					$param, $orderby_default, $limit );
+			}
+			break;
+
+		case 'user':
+			if ( $param_int > 0 ) {
+				$rows = $this->_public_class->get_rows_by_uid_orderby(
+					$param_int, $orderby, $limit );
 			}
 			break;
 
@@ -444,8 +454,12 @@ function _get_photo_rows()
 		default:
 			$orderby = $this->_sort_class->mode_to_orderby( $this->_mode );
 			if ( $param_int > 0 ) {
-				$where = $this->_item_handler->build_where_public_by_catid( $param_int );
+				$rows = $this->_public_class->get_rows_by_catid_orderby(
+					$param_int, $orderby, $limit );
+			} else {
+				$rows = $this->_public_class->get_rows_by_orderby( $orderby, $limit );
 			}
+
 			break;
 	}
 
@@ -453,19 +467,11 @@ function _get_photo_rows()
 		return $rows;
 	}
 
-	if ( empty($where) ) {
-		$where = $this->_item_handler->build_where_public();
-	}
-
-	if ( empty($orderby) ) {
-		$orderby = $orderby_default;
-	}
-
-	$rows = $this->_item_handler->get_rows_by_where_orderby( $where, $orderby, $limit );
+	$rows = $this->_public_class->get_rows_by_orderby( $orderby, $limit );
 	return $rows;
 }
 
-function _build_where_by_query( $query )
+function _build_sql_query( $query )
 {
 	$this->_search_class->set_lang_zenkaku( $this->get_constant('SR_ZENKAKU') );
 	$this->_search_class->set_lang_hankaku( $this->get_constant('SR_HANKAKU') );

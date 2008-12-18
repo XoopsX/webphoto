@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.8 2008/11/30 10:36:34 ohwada Exp $
+// $Id: modinfo.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -311,6 +311,17 @@ define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />画像処理パッケ
 //---------------------------------------------------------
 define($constpref."BNAME_CATLIST"  , "カテゴリ一覧" ) ;
 define($constpref."BNAME_TAGCLOUD" , "タグ一覧" ) ;
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+define($constpref."CFG_PERM_CAT_READ"      , "カテゴリの閲覧権限" ) ;
+define($constpref."CFG_PERM_CAT_READ_DSC"  , "カテゴリ・テーブルの設定と合わせて有効になる" ) ;
+define($constpref."CFG_PERM_ITEM_READ"     , "アイテムの閲覧権限" ) ;
+define($constpref."CFG_PERM_ITEM_READ_DSC" , "アイテム・テーブルの設定と合わせて有効になる" ) ;
+define($constpref."OPT_PERM_READ_ALL"     , "全て表示する" ) ;
+define($constpref."OPT_PERM_READ_NO_ITEM" , "アイテムを非表示にする" ) ;
+define($constpref."OPT_PERM_READ_NO_CAT"  , "カテゴリとアイテムを非表示にする" ) ;
 
 }
 // === define begin ===

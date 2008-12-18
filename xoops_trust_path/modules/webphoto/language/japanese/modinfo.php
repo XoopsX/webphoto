@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
+// $Id: modinfo.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -310,6 +310,17 @@ define($constpref."CFG_JPEG_QUALITY_DSC" ,  "1 - 100 <br />²èÁü½èÍý¥Ñ¥Ã¥±¡¼¥¸¤È¤
 //---------------------------------------------------------
 define($constpref."BNAME_CATLIST"  , "¥«¥Æ¥´¥ê°ìÍ÷" ) ;
 define($constpref."BNAME_TAGCLOUD" , "¥¿¥°°ìÍ÷" ) ;
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+define($constpref."CFG_PERM_CAT_READ"      , "¥«¥Æ¥´¥ê¤Î±ÜÍ÷¸¢¸Â" ) ;
+define($constpref."CFG_PERM_CAT_READ_DSC"  , "¥«¥Æ¥´¥ê¡¦¥Æ¡¼¥Ö¥ë¤ÎÀßÄê¤È¹ç¤ï¤»¤ÆÍ­¸ú¤Ë¤Ê¤ë" ) ;
+define($constpref."CFG_PERM_ITEM_READ"     , "¥¢¥¤¥Æ¥à¤Î±ÜÍ÷¸¢¸Â" ) ;
+define($constpref."CFG_PERM_ITEM_READ_DSC" , "¥¢¥¤¥Æ¥à¡¦¥Æ¡¼¥Ö¥ë¤ÎÀßÄê¤È¹ç¤ï¤»¤ÆÍ­¸ú¤Ë¤Ê¤ë" ) ;
+define($constpref."OPT_PERM_READ_ALL"     , "Á´¤ÆÉ½¼¨¤¹¤ë" ) ;
+define($constpref."OPT_PERM_READ_NO_ITEM" , "¥¢¥¤¥Æ¥à¤òÈóÉ½¼¨¤Ë¤¹¤ë" ) ;
+define($constpref."OPT_PERM_READ_NO_CAT"  , "¥«¥Æ¥´¥ê¤È¥¢¥¤¥Æ¥à¤òÈóÉ½¼¨¤Ë¤¹¤ë" ) ;
 
 }
 // === define begin ===

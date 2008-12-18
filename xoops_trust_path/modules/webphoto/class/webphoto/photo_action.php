@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.10 2008/12/10 19:08:56 ohwada Exp $
+// $Id: photo_action.php,v 1.11 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// set_flag_row_extend()
 // 2008-12-07 K.OHWADA
 // webphoto_show_image
 // 2008-11-29 K.OHWADA
@@ -55,6 +57,7 @@ class webphoto_photo_action extends webphoto_photo_edit
 	var $_FLAG_ALLOW_NONE  = false ;
 	var $_FLAG_POST_COUNT  = true ;
 	var $_FLAG_NOTIFY      = true ;
+	var $_FLAG_ROW_EXTEND  = true ;
 
 //---------------------------------------------------------
 // constructor
@@ -105,7 +108,12 @@ function set_flag_post_count( $val )
 
 function set_flag_notify( $val )
 {
-	$this->_FLAG_NOTIFY      = (bool)$val ;
+	$this->_FLAG_NOTIFY = (bool)$val ;
+}
+
+function set_flag_row_extend( $val )
+{
+	$this->_FLAG_ROW_EXTEND = (bool)$val ;
 }
 
 //---------------------------------------------------------

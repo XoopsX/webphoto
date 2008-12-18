@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.2 2008/11/21 07:56:57 ohwada Exp $
+// $Id: photo.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// item_public.php
 // 2008-11-16 K.OHWADA
 // photo_navi.php
 //---------------------------------------------------------
@@ -21,6 +23,7 @@ webphoto_include_once( 'main/header.php' );
 webphoto_include_once( 'class/xoops/groupperm.php' );
 webphoto_include_once( 'class/d3/comment_view.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
+webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/photo_navi.php' );
 webphoto_include_once( 'class/main/photo.php' );
 

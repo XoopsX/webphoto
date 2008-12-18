@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.4 2008/08/27 23:05:56 ohwada Exp $
+// $Id: mimetypes.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// build_group_perms_by_post()
 // 2008-08-24 K.OHWADA
 // used build_perms_array_to_str()
 // 2008-08-01 K.OHWADA
@@ -147,8 +149,7 @@ function _save()
 	$row['mime_name']   = $this->_post_class->get_post_text('mime_name');
 	$row['mime_type']   = $this->_post_class->get_post_text('mime_type');
 	$row['mime_ffmpeg'] = $this->_post_class->get_post_text('mime_ffmpeg');
-	$row['mime_perms']  = $this->_mime_handler->build_perms_array_to_str(
-		$this->_build_save_perms() );
+	$row['mime_perms']  = $this->get_group_perms_str_by_post('mime_perms_ids');
 
 	if ( $post_mime_id > 0 ) {
 		$res = $this->_mime_handler->update($row);
@@ -167,24 +168,6 @@ function _save()
 
 	redirect_header( $this->_ADMIN_MIME_PHP, 1, $msg);
 	exit();
-}
-
-function _build_save_perms()
-{
-	$post_perms = $this->_post_class->get_post('perms');
-
-	if ( !is_array($post_perms) || !count($post_perms) ) {
-		return null ;
-	}
-
-	$arr = array();
-	foreach( $post_perms as $k => $v ) {
-		if ( $v == 1 ) {
-			$arr[] = $k;
-		}
-	}
-
-	return $arr ;
 }
 
 //---------------------------------------------------------

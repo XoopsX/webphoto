@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.17 2008/12/10 19:08:57 ohwada Exp $
+// $Id: main.php,v 1.18 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1273,6 +1273,12 @@ define("_WEBPHOTO_VOTE_RATING_7", "7");
 define("_WEBPHOTO_VOTE_RATING_8", "8");
 define("_WEBPHOTO_VOTE_RATING_9", "9");
 define("_WEBPHOTO_VOTE_RATING_10","10");
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+// edit form
+define("_WEBPHOTO_GROUP_PERM_ALL" , "全てのグループ" ) ;
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.4 2008/12/10 19:08:56 ohwada Exp $
+// $Id: show_list.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public_class
 // 2008-12-07 K.OHWADA
 // build_photo_show() -> build_photo_show_main()
 // 2008-08-24 K.OHWADA
@@ -129,7 +131,7 @@ function list_build_list_common( $show_photo_desc=false, $title=null )
 	}
 
 	$title_s   = $this->sanitize( $title );
-	$total_all = $this->_item_handler->get_count_public();
+	$total_all = $this->_public_class->get_count();
 
 	$arr = array(
 		'xoops_pagetitle'   => $title_s ,
@@ -215,7 +217,7 @@ function list_build_detail_common( $title, $total, $rows, $photos=null )
 
 function list_build_init_param( $show_photo_desc=false )
 {
-	$total_all = $this->_item_handler->get_count_public();
+	$total_all = $this->_public_class->get_count();
 
 	$arr = array(
 		'mode'              => $this->_mode,

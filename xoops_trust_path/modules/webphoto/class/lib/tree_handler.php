@@ -1,5 +1,5 @@
 <?php
-// $Id: tree_handler.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: tree_handler.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,7 @@
 
 //---------------------------------------------------------
 // change log
+// remove check_row_perm()
 // 2008-10-01 K.OHWADA
 // used build_form_select_list()
 // 2008-09-20 K.OHWADA
@@ -127,13 +128,13 @@ function build_sel_box( $tree, $title_name, $preset_id=0, $none=0, $sel_name='',
 	return $this->build_form_select_list( $tree, $title_name, $preset_id, $none, $sel_name, $onchange );
 }
 
-function get_all_tree_array( $order='', $flag_perm=false )
+function get_all_tree_array( $order='', $name_perm=null )
 {
 	if ( empty($order) ) {
 		$order = $this->_ORDER_DEFAULT;
 	}
 
-	$pid_rows = $this->get_rows_by_pid_order_with_perm( 0, $order, $flag_perm );
+	$pid_rows = $this->get_rows_by_pid_order_with_perm( 0, $order, $name_perm );
 	if ( !is_array($pid_rows) ) {
 		return false;
 	}
@@ -142,11 +143,11 @@ function get_all_tree_array( $order='', $flag_perm=false )
 	foreach ( $pid_rows as $row )
 	{
 		$catid = $row[ $this->_id_name ];
-		$row['prefix'] = '';
+		$row[ $this->_PREFIX_NAME ] = '';
 
 		$tree[] = $row;
 
-		$child_arr = $this->get_child_tree_array( $catid, $order, array(), '', $flag_perm );
+		$child_arr = $this->get_child_tree_array( $catid, $order, array(), '', $name_perm );
 		foreach ( $child_arr as $child ) {
 			$tree[] = $child;
 		}
@@ -159,37 +160,38 @@ function get_all_tree_array( $order='', $flag_perm=false )
 // base on XoopsTree::getChildTreeArray 
 //---------------------------------------------------------
 // recursible function
-function get_child_tree_array( $sel_id=0, $order='', $parray=array(), $r_prefix='', $flag_perm=false )
+function get_child_tree_array( $sel_id=0, $order='', $parray=array(), $r_prefix='', $name_perm=null )
 {
-	$rows  = $this->get_rows_by_pid_order_with_perm( $sel_id, $order, $flag_perm );
+	$rows  = $this->get_rows_by_pid_order_with_perm( $sel_id, $order, $name_perm );
 	if ( !is_array($rows) || !count($rows) ) {
 		return $parray;
 	}
 
 	foreach ( $rows as $row ) 
 	{
-// add dot
-		$row['prefix'] = $r_prefix . $this->_PREFIX_MARK;
+// add mark
+		$new_r_prefix = $r_prefix . $this->_PREFIX_MARK ;
+		$row[ $this->_PREFIX_NAME ] = $r_prefix . $this->_PREFIX_MARK;
 
 		array_push( $parray, $row );
 
 // recursible call
 		$new_sel_id = $row[ $this->_id_name ];
-		$parray = $this->get_child_tree_array( $new_sel_id, $order, $parray, $row['prefix'], $flag_perm ) ;
+		$parray = $this->get_child_tree_array( $new_sel_id, $order, $parray, $new_r_prefix, $name_perm ) ;
 	}
 
 	return $parray;
 }
 
-function get_rows_by_pid_order_with_perm( $pid, $order='', $flag_perm=false, $limit=0, $offset=0 )
+function get_rows_by_pid_order_with_perm( $pid, $order='', $name_perm=null, $limit=0, $offset=0 )
 {
 	$rows = $this->get_rows_by_pid_order( $pid, $order, $limit, $offset );
 	if ( !is_array($rows) || !count($rows) ) {
 		return false;
 	}
 
-	if ( $flag_perm ) {
-		return $this->build_rows_with_perm( $rows );
+	if ( $name_perm ) {
+		return $this->build_rows_with_perm( $rows, $name_perm );
 	}
 
 	return $rows;
@@ -206,29 +208,57 @@ function get_rows_by_pid_order( $pid, $order='', $limit=0, $offset=0 )
 }
 
 //---------------------------------------------------------
-// dummy for overwrite
-//---------------------------------------------------------
-function build_rows_with_perm( $rows )
-{
-	return $rows;
-}
-
-//---------------------------------------------------------
 // tree handler
 //---------------------------------------------------------
-function get_all_child_id( $sel_id=0, $order="", $parray = array() )
-{
-	return $this->_xoops_tree_handler->getAllChildId( $sel_id, $order, $parray );
-}
-
-function get_first_child( $sel_id, $order="" )
+function getFirstChild( $sel_id, $order="" )
 {
 	return $this->_xoops_tree_handler->getFirstChild( $sel_id, $order ) ;
 }
 
-function get_first_child_id( $sel_id )
+function getFirstChildId( $sel_id )
 {
 	return $this->_xoops_tree_handler->getFirstChildId( $sel_id ) ;
+}
+
+function getAllChildId( $sel_id=0, $order="", $parray = array() )
+{
+	return $this->_xoops_tree_handler->getAllChildId( $sel_id, $order, $parray );
+}
+
+function getAllParentId( $sel_id, $order="", $idarray = array() )
+{
+	return $this->_xoops_tree_handler->getAllParentId( $sel_id, $order, $idarray );
+}
+
+function getPathFromId( $sel_id, $title, $path="" )
+{
+	return $this->_xoops_tree_handler->getPathFromId( $sel_id, $title, $path );
+}
+
+function makeMySelBox( $title, $order="", $preset_id=0, $none=0, $sel_name="", $onchange="" )
+{
+	return $this->_xoops_tree_handler->makeMySelBox( $title, $order, $preset_id, $none, $sel_name, $onchange );
+
+}
+
+function getNicePathFromId( $sel_id, $title, $funcURL, $path="" )
+{
+	return $this->_xoops_tree_handler->getNicePathFromId( $sel_id, $title, $funcURL, $path ) ;
+}
+
+function getIdPathFromId($sel_id, $path="")
+{
+	return $this->_xoops_tree_handler->getIdPathFromId( $sel_id, $path ) ;
+}
+
+function getAllChild( $sel_id=0, $order="", $parray = array() )
+{
+	return $this->_xoops_tree_handler->getAllChild( $sel_id, $order, $parray ) ;
+}
+
+function getChildTreeArray( $sel_id=0, $order="", $parray = array(), $r_prefix="" )
+{
+	return $this->_xoops_tree_handler->getChildTreeArray( $sel_id, $order, $parray, $r_prefix ) ;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.6 2008/12/10 23:29:23 ohwada Exp $
+// $Id: item_manager.php,v 1.7 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// $ext_disp in _print_list_table()
 // 2008-12-07 K.OHWADA
 // _print_menu_link()
 // 2008-11-29 K.OHWADA
@@ -379,6 +381,13 @@ function _print_list_table( $mode, $item_rows )
 		$item_id   = $row['item_id'];
 		$cat_id    = $row['item_cat_id'];
 		$player_id = $row['item_player_id'];
+		$ext       = $row['item_ext'] ;
+		
+		if ( $ext ) {
+			$ext_disp = $ext ;
+		} else {
+			$ext_disp = '---' ;
+		}
 
 		list( $is_online, $status_report, $status_link, $status_icon )
 			= $this->_build_status( $row );
@@ -416,7 +425,7 @@ function _print_list_table( $mode, $item_rows )
 		echo '</td>'."\n";
 
 		echo '<td>'. $kind_options[ $row['item_kind'] ] .'</td>'."\n";
-		echo '<td>'. $this->sanitize( $row['item_ext'] ).'</td>'."\n";
+		echo '<td>'. $this->sanitize( $ext_disp ).'</td>'."\n";
 		echo '<td>'. $catpath.'</td>'."\n";
 		echo '<td>'. $player_link.'</td>'."\n";
 		echo '<td>'. $this->format_timestamp( $row['item_time_create'] , 'm' ).'</td>'."\n";

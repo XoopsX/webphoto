@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.5 2008/10/30 13:02:36 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// set_flag_row_extend()
 // 2008-10-01 K.OHWADA
 // webphoto_photo_action
 // 2008-08-24 K.OHWADA
@@ -93,6 +95,7 @@ function _submit()
 	$this->set_flag_allow_none( false );
 	$this->set_flag_post_count( false );
 	$this->set_flag_notify( false );
+	$this->set_flag_row_extend( false );
 
 	$ret = $this->submit();
 	switch ( $ret )

@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.14 2008/11/30 10:36:34 ohwada Exp $
+// $Id: base_this.php,v 1.15 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// $_UPLOADS_PATH
 // 2008-11-29 K.OHWADA
 // $_ROOT_EXTS_URL
 // build_show_file_image()
@@ -57,6 +59,10 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_cfg_uploads_path ;
 	var $_is_japanese = false;
 
+	var $_UPLOADS_PATH ;
+	var $_MEDIAS_PATH ;
+	var $_WORK_DIR ;
+	var $_FILE_DIR ;
 	var $_UPLOADS_DIR;
 	var $_PHOTOS_PATH;
 	var $_PHOTOS_DIR ;
@@ -85,14 +91,14 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_PLAYLISTS_URL;
 	var $_LOGOS_DIR;
 	var $_MEDIAS_DIR;
-	var $_WORK_DIR;
 	var $_MAIL_DIR;
 	var $_TMP_DIR;
 	var $_LOG_DIR;
-	var $_FILE_DIR;
 	var $_ICONS_URL;
 	var $_ROOT_EXTS_DIR;
 	var $_ROOT_EXTS_URL;
+
+	var $_C_YES = 1;
 
 //---------------------------------------------------------
 // constructor
@@ -108,27 +114,25 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
-
 	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
-	$this->_cat_handler->set_xoops_groups( $this->_xoops_groups );
 
-	$uploads_path     = $this->_config_class->get_uploads_path();
-	$medias_path      = $this->_config_class->get_medias_path();
-	$this->_WORK_DIR  = $this->_config_class->get_by_name( 'workdir' );
-	$this->_FILE_DIR  = $this->_config_class->get_by_name( 'file_dir' );
+	$this->_UPLOADS_PATH = $this->_config_class->get_uploads_path();
+	$this->_MEDIAS_PATH  = $this->_config_class->get_medias_path();
+	$this->_WORK_DIR     = $this->_config_class->get_by_name( 'workdir' );
+	$this->_FILE_DIR     = $this->_config_class->get_by_name( 'file_dir' );
 
-	$this->_PHOTOS_PATH     = $uploads_path.'/photos' ;
-	$this->_THUMBS_PATH     = $uploads_path.'/thumbs' ;
-	$this->_MIDDLES_PATH    = $uploads_path.'/middles' ;
-	$this->_CATS_PATH       = $uploads_path.'/categories' ;
-	$this->_GICONS_PATH     = $uploads_path.'/gicons' ;
-	$this->_GSHADOWS_PATH   = $uploads_path.'/gshadows' ;
-	$this->_FLASHS_PATH     = $uploads_path.'/flashs' ;
-	$qrs_path               = $uploads_path.'/qrs' ;
-	$playlists_path         = $uploads_path.'/playlists' ;
-	$logos_path             = $uploads_path.'/logos' ;
+	$this->_PHOTOS_PATH     = $this->_UPLOADS_PATH.'/photos' ;
+	$this->_THUMBS_PATH     = $this->_UPLOADS_PATH.'/thumbs' ;
+	$this->_MIDDLES_PATH    = $this->_UPLOADS_PATH.'/middles' ;
+	$this->_CATS_PATH       = $this->_UPLOADS_PATH.'/categories' ;
+	$this->_GICONS_PATH     = $this->_UPLOADS_PATH.'/gicons' ;
+	$this->_GSHADOWS_PATH   = $this->_UPLOADS_PATH.'/gshadows' ;
+	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
+	$qrs_path               = $this->_UPLOADS_PATH.'/qrs' ;
+	$playlists_path         = $this->_UPLOADS_PATH.'/playlists' ;
+	$logos_path             = $this->_UPLOADS_PATH.'/logos' ;
 
-	$this->_UPLOADS_DIR    = XOOPS_ROOT_PATH . $uploads_path ;
+	$this->_UPLOADS_DIR    = XOOPS_ROOT_PATH . $this->_UPLOADS_PATH ;
 	$this->_PHOTOS_DIR     = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR     = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_DIR    = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
@@ -139,7 +143,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_QRS_DIR        = XOOPS_ROOT_PATH . $qrs_path ;
 	$this->_PLAYLISTS_DIR  = XOOPS_ROOT_PATH . $playlists_path ;
 	$this->_LOGOS_DIR      = XOOPS_ROOT_PATH . $logos_path ;
-	$this->_MEDIAS_DIR     = XOOPS_ROOT_PATH . $medias_path ;
+	$this->_MEDIAS_DIR     = XOOPS_ROOT_PATH . $this->_MEDIAS_PATH ;
 
 	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
@@ -252,6 +256,43 @@ function build_check_waiting()
 		$str .= "</a><br />\n";
 	}
 	return $str;
+}
+
+//---------------------------------------------------------
+// perms
+//---------------------------------------------------------
+function get_group_perms_str_by_post( $name )
+{
+	$arr = $this->get_group_perms_array_by_post( $name );
+	return $this->convert_group_perms_array_to_perm( $arr );
+}
+
+function convert_group_perms_array_to_perm( $arr )
+{
+	return $this->array_to_perm( 
+		$this->sanitize_array_int( $arr ), $this->_PERM_SEPARATOR );
+}
+
+function get_group_perms_array_by_post( $name )
+{
+	$perms = $this->_post_class->get_post( $name );
+	return $this->arrenge_group_perms_array( $perms );
+}
+
+function arrenge_group_perms_array( $perms )
+{
+	if ( !is_array($perms) || !count($perms) ) {
+		return null ;
+	}
+
+	$arr = array();
+	foreach( $perms as $k => $v ) {
+		if ( $v == $this->_C_YES ) {
+			$arr[] = $k;
+		}
+	}
+
+	return $arr ;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.11 2008/12/10 19:08:57 ohwada Exp $
+// $Id: admin.php,v 1.12 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -341,8 +341,7 @@ define("_AM_WEBPHOTO_ERR_NO_RECORD", "データが存在しない");
 // cat manager
 //---------------------------------------------------------
 //define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "画像ファイルをアップロードしてください<br />XOOPSインストール先からのパスを指定します（最初の'/'は必要）<br />設定しないときは、フォルダーアイコンが表示されます" ) ;
-
-define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "全てのグループ" ) ;
+//define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "全てのグループ" ) ;
 
 //---------------------------------------------------------
 // import
@@ -479,6 +478,16 @@ define("_AM_WEBPHOTO_QR_CHECK_DSC" , "（このリンク先が正常に表示されなければ、QR
 define("_AM_WEBPHOTO_QR_CHECK_SUCCESS" , "QRコードが表示されていますか？" ) ;
 define("_AM_WEBPHOTO_QR_CHECK_SHOW" , "デバック情報を見る" ) ;
 define("_AM_WEBPHOTO_QR_CHECK_INFO" , "デバック情報" ) ;
+
+//---------------------------------------------------------
+// v0.90
+//---------------------------------------------------------
+// cat form
+define("_AM_WEBPHOTO_CAT_PARENT_CAP" , "親カテゴリの権限" ) ;
+define("_AM_WEBPHOTO_CAT_PARENT_FMT" , "親カテゴリ ( %s ) の権限を継承する" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_CAP"  , "下位のカテゴリ" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_NUM"  , "下位のカテゴリの数" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "下位のカテゴリの権限を変更する" ) ;
 
 // === define end ===
 }

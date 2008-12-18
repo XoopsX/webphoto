@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.13 2008/11/30 10:36:34 ohwada Exp $
+// $Id: base.php,v 1.14 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// array_to_perm()
 // 2008-11-29 K.OHWADA
 // user_to_server_time()
 // 2008-11-16 K.OHWADA
@@ -67,6 +69,10 @@ class webphoto_lib_base extends webphoto_lib_error
 	var $_MODULE_HAS_CONFIG = false;
 
 	var $_FLAG_ADMIN_SUB_MENU = true;
+
+	var $_PERM_ALLOW_ALL = '*' ;
+	var $_PERM_DENOY_ALL = 'x' ;
+	var $_PERM_SEPARATOR = '&' ;
 
 //---------------------------------------------------------
 // constructor
@@ -192,6 +198,15 @@ function build_admin_msg( $msg, $flag_highlight=false, $flag_br=false )
 //---------------------------------------------------------
 // utility
 //---------------------------------------------------------
+function array_to_perm( $arr, $glue )
+{
+	$val = $this->array_to_str( $arr, $glue );
+	if ( $val ) {
+		$val = $glue . $val . $glue ;
+	}
+	return $val;
+}
+
 function str_to_array( $str, $pattern )
 {
 	return $this->_utility_class->str_to_array( $str, $pattern );
@@ -304,6 +319,19 @@ function str_replace_return_code( $str, $replace=' ' )
 	$str = preg_replace("/\n/", $replace, $str);
 	$str = preg_replace("/\r/", $replace, $str);
 	return $str;
+}
+
+function sanitize_array_int( $arr_in )
+{
+	if ( !is_array($arr_in) || !count($arr_in) ) {
+		return null;
+	}
+
+	$arr_out = array();
+	foreach ( $arr_in as $in ) {
+		$arr_out[] = intval($in);
+	}
+	return $arr_out;
 }
 
 //---------------------------------------------------------

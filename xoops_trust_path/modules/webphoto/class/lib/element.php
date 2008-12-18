@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.7 2008/11/20 11:15:46 ohwada Exp $
+// $Id: element.php,v 1.8 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// build_form_checkbox_group_perms()
 // 2008-11-16 K.OHWADA
 // build_form_select_multiple()
 // 2008-11-08 K.OHWADA
@@ -71,6 +73,10 @@ class webphoto_lib_element extends webphoto_lib_error
 	var $_C_NO  = 0;
 
 	var $_THIS_URL;
+
+	var $_PERM_ALLOW_ALL = '*' ;
+	var $_PERM_DENOY_ALL = 'x' ;
+	var $_PERM_SEPARATOR = '&' ;
 
 // base on style sheet of default theme
 	var $_STYLE_CONFIRM_MSG = 'background-color: #DDFFDF; color: #136C99; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ';
@@ -392,10 +398,10 @@ function build_form_checkbox( $name, $value, $options, $del='' )
 	return $text;
 }
 
-function build_input_checkbox_yes( $name, $value )
+function build_input_checkbox_yes( $name, $value, $extra='' )
 {
 	$checked = $this->build_form_checked(  $value, $this->_C_YES );
-	$text    = $this->build_input_checkbox( $name, $this->_C_YES, $checked );
+	$text    = $this->build_input_checkbox( $name, $this->_C_YES, $checked, $extra );
 	return $text;
 }
 
@@ -418,6 +424,62 @@ function build_form_name_rand()
 {
 	$name = $this->_FORM_NAME.'_'.rand();
 	return $name;
+}
+
+//---------------------------------------------------------
+// group perms
+//---------------------------------------------------------
+function build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes=false, $del='' )
+{
+	$options  = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
+	return $this->build_form_checkbox_list( $options, $this->_C_YES, $del );
+}
+
+function build_form_checkbox_list( $options, $value, $del='' )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$str = '';
+	foreach ( $options as $opt )
+	{
+		list( $name, $val, $cap ) = $opt;
+		$str .= $this->build_input_checkbox_yes( $name, $val );
+		$str .= ' ';
+		$str .= $cap ;
+		$str .= ' ';
+		$str .= $del;
+	}
+	return $str;
+}
+
+function build_options_group_perms( $id_name, $groups, $perms, $all_yes=false )
+{
+	$arr = array();
+	foreach ( $groups as $id => $cap )
+	{
+		$name = $id_name.'['. $id .']';
+		if ( $all_yes ) {
+			$val = $this->_C_YES ;
+		} else {
+			$val = intval( in_array( $id, $perms ) );
+		}
+		$arr[ $id ] = array( $name, $val, $this->sanitize( $cap ) ) ;
+	}
+	return $arr;
+}
+
+function get_all_yes_group_perms_by_key( $name )
+{
+	$all_yes = false;
+	$value   = $this->get_row_by_key( $name, null, false );
+
+	if ( $value == $this->_PERM_ALLOW_ALL ) {
+		$all_yes = true ;
+	}
+
+	return $all_yes ;
 }
 
 //---------------------------------------------------------

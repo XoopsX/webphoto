@@ -1,5 +1,5 @@
 <?php
-// $Id: place.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: place.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public_class
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -61,6 +63,8 @@ function list_get_photo_list()
 		return false;
 	}
 
+	$place_not = _C_WEBPHOTO_PLACE_VALUE_NOT_SET ;
+
 	$arr = array();
 	foreach ( $list_rows as $row )
 	{
@@ -74,25 +78,28 @@ function list_get_photo_list()
 		if ( $place ) {
 			$title = $place_str;
 			$param = $this->_utility_class->encode_slash( $place_str );
-			$where = $this->_item_handler->build_where_public_by_place_array( $place_arr );
+			$total = $this->_public_class->get_count_by_place_array( $place_arr );
+			$photo_rows = $this->_public_class->get_rows_by_place_array_orderby(
+				$place_arr, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
 
 		} else {
 			$title = $this->get_constant('PLACE_NOT_SET');
 			$param = _C_WEBPHOTO_PLACE_STR_NOT_SET;
-			$where   = $this->_item_handler->build_where_public_by_place(
-				_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
+			$total = $this->_public_class->get_count_by_place(
+				$place_not );
+			$photo_rows = $this->_public_class->get_rows_by_place_orderby(
+				$place_not, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
+
 		}
 
-		$total = $this->_item_handler->get_count_by_where( $where );
-
-		$photo_rows = $this->_item_handler->get_rows_by_where_orderby(
-			$where, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT );
 		if ( isset($photo_rows[0]) ) {
 			$photo_row = $photo_rows[0] ;
 		}
 
-		$arr[] = $this->list_build_photo_array(
-			$title, $param, $total, $photo_row );
+		if ( $total > 0 ) {
+			$arr[] = $this->list_build_photo_array(
+				$title, $param, $total, $photo_row );
+		}
 	}
 	
 	return $arr;
@@ -120,21 +127,25 @@ function list_build_detail( $place_in )
 // if not set place
 	if ( $place == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
 		$title = $this->get_constant('PLACE_NOT_SET');
-		$where = $this->_item_handler->build_where_public_by_place(
+		$total = $this->_public_class->get_count_by_place(
 			_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
+
+		if ( $total > 0 ) {
+			$rows = $this->_public_class->get_rows_by_place_orderby(
+				_C_WEBPHOTO_PLACE_VALUE_NOT_SET, $orderby, $limit, $start );
+		}
 
 // if set place
 	} elseif ( is_array($place_arr) && count($place_arr) ) {
 		$title = $this->get_constant('PHOTO_PLACE') .' : '. $place ;
-		$where = $this->_item_handler->build_where_public_by_place_array( $place_arr );
-	}
+		$total = $this->_public_class->get_count_by_place_array(
+			$place_arr );
 
-	if ( $where ) {
-		$total = $this->_item_handler->get_count_by_where( $where );
 		if ( $total > 0 ) {
-			$rows = $this->_item_handler->get_rows_by_where_orderby(
-				$where, $orderby, $limit, $start );
+			$rows = $this->_public_class->get_rows_by_place_array_orderby(
+				$place_arr, $orderby, $limit, $start );
 		}
+
 	}
 
 	$param      = $this->list_build_detail_common( $title, $total, $rows );

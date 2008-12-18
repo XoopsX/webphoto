@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.4 2008/11/11 06:53:16 ohwada Exp $
+// $Id: cat_form.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// _build_ele_perm_read()
 // 2008-11-08 K.OHWADA
 // _build_line_category_file()
 // 2008-10-01 K.OHWADA
@@ -25,10 +27,12 @@ class webphoto_admin_cat_form extends webphoto_form_this
 {
 	var $_gicon_handler;
 
-	var $_cfg_fsize     = 0 ;
-	var $_cfg_cat_width = 0 ;
+	var $_cfg_fsize ;
+	var $_cfg_cat_width ;
+	var $_cfg_perm_cat_read ;
 
-	var $_THIS_FCT = 'catmanager';
+	var $_FORM_NAME = 'catmanager';
+	var $_THIS_FCT  = 'catmanager';
 	var $_THIS_URL;
 
 	var $_IMG_HEIGHT_LIST = 20;
@@ -47,8 +51,9 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 
 	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
 
-	$this->_cfg_fsize     = $this->_config_class->get_by_name( 'fsize' );
-	$this->_cfg_cat_width = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_fsize         = $this->_config_class->get_by_name( 'fsize' );
+	$this->_cfg_cat_width     = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
 }
@@ -65,21 +70,29 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // print form
 //---------------------------------------------------------
-function print_form( $mode, $row )
+function print_form( $row, $param )
 {
+	$mode   = $param['mode'] ;
+	$parent = $param['parent'] ;
+
+	$is_new  = false;
+	$is_edit = false;
+
 	switch ($mode)
 	{
 		case 'edit':
-			$title  = _AM_WEBPHOTO_CAT_MENU_EDIT;
-			$action = 'update';
-			$button = _EDIT;
+			$title   = _AM_WEBPHOTO_CAT_MENU_EDIT;
+			$action  = 'update';
+			$button  = _EDIT;
+			$is_edit = true ;
 			break;
 
 		case 'new':
 		default:
-			$title  = _AM_WEBPHOTO_CAT_MENU_NEW;
-			$action = 'insert';
-			$button = _ADD;
+			$title   = _AM_WEBPHOTO_CAT_MENU_NEW;
+			$action  = 'insert';
+			$button  = _ADD;
+			$is_new  = true ;
 			break;
 	}
 
@@ -87,7 +100,9 @@ function print_form( $mode, $row )
 
 	$this->set_row( $row );
 
-	echo $this->build_form_upload( 'catmanager' );
+	echo $this->_build_script();
+
+	echo $this->build_form_upload( $this->_FORM_NAME );
 	echo $this->build_html_token();
 
 	echo $this->build_input_hidden( 'fct' ,   'catmanager' );
@@ -100,17 +115,41 @@ function print_form( $mode, $row )
 	echo $this->build_table_begin();
 	echo $this->build_line_title( $title );
 
-	echo $this->build_row_text(  _WEBPHOTO_CAT_TITLE,  'cat_title' );
-	echo $this->build_line_ele(  _AM_WEBPHOTO_CAT_TH_PARENT,  $this->_build_ele_selbox_pid() );
-	echo $this->build_row_dhtml( _WEBPHOTO_CAT_DESCRIPTION,  'cat_description' );
+	echo $this->build_row_text( $this->get_constant('CAT_TITLE'),
+		'cat_title' );
+
+	echo $this->build_line_ele( _AM_WEBPHOTO_CAT_TH_PARENT, 
+		$this->_build_ele_selbox_pid() );
+
+	echo $this->build_row_dhtml( $this->get_constant('CAT_DESCRIPTION'), 
+		'cat_description' );
 
 	echo $this->_build_line_category_file();
 
-	echo $this->build_row_text(  _WEBPHOTO_CAT_WEIGHT,  'cat_weight', $this->_SIZE_WEIGHT );
-	echo $this->build_line_ele(  _WEBPHOTO_CAT_PERM_POST,  $this->_build_ele_perm_post() );
+	echo $this->build_row_text( $this->get_constant('CAT_WEIGHT'), 
+		'cat_weight', $this->_SIZE_WEIGHT );
+
+	if ( $is_new && $parent ) {
+		echo $this->build_line_ele( _AM_WEBPHOTO_CAT_PARENT_CAP , 
+			$this->_build_ele_perm_parent( $parent ) );
+	}
+
+	if ( $this->_cfg_perm_cat_read > 0 ) {
+		echo $this->build_line_ele( $this->get_constant('CAT_PERM_READ'), 
+			$this->_build_ele_perm_read() );
+	}
+
+	echo $this->build_line_ele( $this->get_constant('CAT_PERM_POST'), 
+		$this->_build_ele_perm_post() );
+
+	if ( $is_edit ) {
+		echo $this->build_line_ele( _AM_WEBPHOTO_CAT_CHILD_CAP , 
+			$this->_build_ele_perm_child() );
+	}
 
 	if ( $cfg_gmap_apikey ) {
-		echo $this->build_line_ele(  _WEBPHOTO_GMAP_ICON,  $this->_build_ele_gicon() );
+		echo $this->build_line_ele( $this->get_constant('GMAP_ICON'), 
+			$this->_build_ele_gicon() );
 	}
 
 	echo $this->build_line_ele( '',  $this->_build_ele_button( $mode ) );
@@ -235,36 +274,48 @@ function _build_ele_button( $mode )
 	return $str;
 }
 
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function _build_ele_perm_read()
+{
+	return $this->build_ele_group_perms_by_key( 'cat_perm_read' );
+}
+
 function _build_ele_perm_post()
 {
-	$perm_post = $this->get_row_by_key( 'cat_perm_post', null, false );
-	$perm_array = $this->str_to_array( $perm_post, _C_WEBPHOTO_PERM_SEPARATOR );
+	return $this->build_ele_group_perms_by_key( 'cat_perm_post');
+}
 
-	$all_name  = 'perm_post_allow_all';
-	$all_value = _C_WEBPHOTO_NO ;
-	if ( $perm_post == _C_WEBPHOTO_PERM_ALLOW_ALL ) {
-		$all_value = _C_WEBPHOTO_YES ;
+function _build_ele_perm_parent( $parent )
+{
+	$str  = sprintf( _AM_WEBPHOTO_CAT_PARENT_FMT, $this->sanitize( $parent ) );
+	return $str;
+}
+
+function _build_ele_perm_child()
+{
+	$cat_id = $this->get_row_by_key( 'cat_id' );
+	$count  = 0 ;
+
+	if ( $cat_id > 0 ) {
+		$count = count( $this->_cat_handler->getAllChildId( $cat_id ) ) ;
 	}
 
-	$text  = '';
-	$text .= $this->build_input_checkbox_yes( $all_name, $all_value );
-	$text .= _AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL;
-	$text .= ' ';
+	$str  = _AM_WEBPHOTO_CAT_CHILD_NUM ;
+	$str .= ' : '. $count ."<br />\n";
 
-	$group_objs = $this->get_xoops_group_objs();
-	foreach ( $group_objs as $obj )
-	{
-		$groupid = $obj->getVar('groupid');
-		$name  = 'perm_post['. $groupid .']';
-		$value = intval( in_array( $groupid, $perm_array ) );
-		if ( $all_value == 1 ) {
-			$value = 1;
-		}
-		$text .= $this->build_input_checkbox_yes( $name, $value );
-		$text .= $obj->getVar('name', 's');
-		$text .= ' ';
+	if ( $count > 0 ) {
+		$str .= $this->build_input_checkbox_yes( 'perm_child', _C_WEBPHOTO_YES ) ;
+		$str .= ' ' ;
+		$str .= _AM_WEBPHOTO_CAT_CHILD_PERM ;
 	}
-	return $text;
+	return $str;
+}
+
+function _build_script()
+{
+	return $this->build_js_envelop( $this->build_js_check_all() );
 }
 
 //---------------------------------------------------------
@@ -282,11 +333,11 @@ function print_list( $cat_tree_array )
 	echo '<table width="95%" class="outer" cellpadding="4" cellspacing="1">'."\n";
 
 	echo '<tr valign="middle">';
-	echo '<th>'. _WEBPHOTO_CAT_TITLE .'</th>';
-	echo '<th>'._AM_WEBPHOTO_CAT_TH_PHOTOS.'</th>';
-	echo '<th>'._AM_WEBPHOTO_CAT_TH_OPERATION.'</th>';
-	echo '<th>'._WEBPHOTO_CAT_WEIGHT.'</th>';
-	echo '<th>'._AM_WEBPHOTO_CAT_TH_IMAGE.'</th>';
+	echo '<th>'. $this->get_constant('CAT_TITLE') .'</th>';
+	echo '<th>'. _AM_WEBPHOTO_CAT_TH_PHOTOS .'</th>';
+	echo '<th>'. _AM_WEBPHOTO_CAT_TH_OPERATION .'</th>';
+	echo '<th>'. $this->get_constant('CAT_WEIGHT').'</th>';
+	echo '<th>'. _AM_WEBPHOTO_CAT_TH_IMAGE .'</th>';
 	echo '</tr>'."\n";
 
 	foreach( $cat_tree_array as $row ) {
@@ -394,7 +445,8 @@ function print_del_confirm( $cat_id )
 		'cat_id' => $cat_id ,
 	);
 
-	echo $this->build_form_confirm( $hiddens, $this->_THIS_URL, _AM_WEBPHOTO_CATDEL_WARNING, _YES, _NO );
+	echo $this->build_form_confirm( 
+		$hiddens, $this->_THIS_URL, _AM_WEBPHOTO_CATDEL_WARNING, _YES, _NO );
 
 }
 
