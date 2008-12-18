@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.plugin.php,v 1.3 2008/12/02 12:19:43 ohwada Exp $
+// $Id: whatsnew.plugin.php,v 1.4 2008/12/18 13:55:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// public.php
 // 2008-11-29 K.OHWADA
 // auto_publish.php
 // 2008-07-01 K.OHWADA
@@ -26,6 +28,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'include/constants.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php' ,      $MY_DIRNAME );
+webphoto_include_once( 'class/inc/public.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/whatsnew.php' ,    $MY_DIRNAME );
 webphoto_include_once( 'preload/whatsnew.php' ,      $MY_DIRNAME );
