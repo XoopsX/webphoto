@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.11 2008/12/18 13:23:16 ohwada Exp $
+// $Id: photo.php,v 1.12 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -448,7 +448,7 @@ function _build_file_link( $item_row, $show_arr, $file_kind )
 	$size = null;
 
 	if ( ! $this->_perm_download ) {
-		return array( $url, $link );
+		return array( $url, $link, $size );
 	}
 
 	$img       = null;
@@ -480,7 +480,7 @@ function _build_file_link( $item_row, $show_arr, $file_kind )
 			break;
 
 		default :
-			return array( $url, $link );
+			return array( $url, $link, $size );
 			break;	
 	}
 

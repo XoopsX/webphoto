@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
+// $Id: show_main.php,v 1.10 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -749,10 +749,8 @@ function is_in_array( $needle, $haystack )
 //---------------------------------------------------------
 function auto_publish()
 {
-	$publish_class =& webphoto_inc_auto_publish::getInstance();
-	$publish_class->init( $this->_DIRNAME );
+	$publish_class =& webphoto_inc_auto_publish::getSingleton( $this->_DIRNAME );
 	$publish_class->set_workdir( $this->_WORK_DIR );
-
 	$publish_class->auto_publish();
 }
 
@@ -820,7 +818,7 @@ function assign_xoops_header( $mode, $rss_param=null, $flag_gmap=false )
 		'lang_popbox_revert' => $this->get_constant('POPBOX_REVERT') ,
 	);
 
-	$header_class =& webphoto_inc_xoops_header::getInstance();
+	$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
 	$header_class->assign_for_main( $param );
 }
 

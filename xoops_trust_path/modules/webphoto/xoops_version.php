@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.4 2008/11/11 07:09:53 ohwada Exp $
+// $Id: xoops_version.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-11-08 K.OHWADA
 // workdir.php
 // 2008-08-01 K.OHWADA
@@ -38,7 +40,8 @@ webphoto_include_language( 'modinfo.php',                $MY_DIRNAME );
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-$webphoto_inc_xoops_version =& webphoto_inc_xoops_version::getInstance();
-$modversion = $webphoto_inc_xoops_version->build_modversion( $MY_DIRNAME, WEBPHOTO_TRUST_DIRNAME );
+$webphoto_inc_xoops_version =& webphoto_inc_xoops_version::getSingleton( 
+	$MY_DIRNAME, WEBPHOTO_TRUST_DIRNAME );
+$modversion = $webphoto_inc_xoops_version->build_modversion();
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.12 2008/12/18 13:23:16 ohwada Exp $
+// $Id: blocks.php,v 1.13 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -260,8 +260,7 @@ function tagcloud_show( $options )
 	$block = array() ;
 	$block['dirname'] = $this->_DIRNAME ;
 
-	$tagcloud_class =& webphoto_inc_tagcloud::getInstance();
-	$tagcloud_class->init( $this->_DIRNAME );
+	$tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $this->_DIRNAME );
 	$tagcloud_class->set_use_pathinfo(   $this->_cfg_use_pathinfo );
 	$tagcloud_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 	$tagcloud_class->set_perm_item_read( $this->_cfg_perm_item_read );
@@ -298,13 +297,11 @@ function _init( $options )
 {
 	$dirname = $this->_get_option( $options, 0, null ) ;
 
-	$this->init_handler( $dirname );
-	$this->init_xoops_config( $dirname );
+	$this->init_public( $dirname );
 	$this->_init_xoops_config_for_block( $dirname );
 	$this->auto_publish( $dirname );
 
-	$this->_catlist_class =& webphoto_inc_catlist::getInstance();
-	$this->_catlist_class->init( $dirname );
+	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
 	$this->_catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
 	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 	$this->_catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
@@ -753,9 +750,9 @@ function _get_popbox_js( $mode, $show_popbox )
 		case 'topnews_p':
 		case 'tophits_p':
 		case 'rphoto':
-			$header_class =& webphoto_inc_xoops_header::getInstance();
+			$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
 			$popbox_js = $header_class->assign_or_get_popbox_js( 
-				$this->_DIRNAME, $show_popbox, $this->_constant( 'POPBOX_REVERT' ) );
+				$show_popbox, $this->_constant( 'POPBOX_REVERT' ) );
 			break;
 
 		default:
@@ -774,8 +771,7 @@ function _get_popbox_js( $mode, $show_popbox )
 //---------------------------------------------------------
 function _init_xoops_config_for_block( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
 	$this->_cfg_use_popbox     = $config_handler->get_by_name( 'use_popbox' );

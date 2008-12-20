@@ -1,5 +1,5 @@
 <?php
-// $Id: item_cat_handler.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: item_cat_handler.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -188,8 +188,7 @@ function build_where_by_name_param( $name, $param )
 			break;
 
 		default:
-			xoops_error( "$name $param" );
-
+//			xoops_error( "$name $param" );
 			break;
 	}
 

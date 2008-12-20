@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
+// $Id: xoops_header.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-07-01 K.OHWADA
 // added $_XOOPS_MODULE_HADER
 // assign_for_block() -> assign_or_get_popbox_js()
@@ -37,21 +39,7 @@ class webphoto_inc_xoops_header
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_xoops_header()
-{
-	// dummy
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_xoops_header();
-	}
-	return $instance;
-}
-
-function _init( $dirname )
+function webphoto_inc_xoops_header( $dirname )
 {
 	$this->_DIRNAME = $dirname;
 	$this->_MODULE_URL = XOOPS_URL.'/modules/'.$dirname;
@@ -66,7 +54,15 @@ function _init( $dirname )
 	if ( defined("_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS") ) {
 		$this->_BLOCK_POPBOX_JS = (bool)_C_WEBPHOTO_PRELOAD_BLOCK_POPBOX_JS ;
 	}
+}
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_xoops_header( $dirname );
+	}
+	return $singletons[ $dirname ];
 }
 
 //--------------------------------------------------------
@@ -74,18 +70,12 @@ function _init( $dirname )
 //--------------------------------------------------------
 function assign_for_main( $param )
 {
-	$dirname = isset($param['dirname']) ? $param['dirname'] : null;
-
-	$this->_init( $dirname );
-
 	$this->_assign_xoops_module_header( 
 		$this->_build_xoops_header( $param ) );
 }
 
-function assign_or_get_popbox_js( $dirname, $flag_popbox, $lang_popbox_revert )
+function assign_or_get_popbox_js( $flag_popbox, $lang_popbox_revert )
 {
-	$this->_init( $dirname );
-
 	if ( !$flag_popbox ) {
 		return null;
 	}

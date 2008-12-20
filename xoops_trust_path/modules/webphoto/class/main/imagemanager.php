@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
+// $Id: imagemanager.php,v 1.6 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // webphoto_inc_public
 // 2008-11-29 K.OHWADA
 // _build_file_image()
@@ -55,27 +56,26 @@ function webphoto_main_imagemanager( $dirname )
 {
 	$this->webphoto_inc_public();
 	$this->init_handler( $dirname );
-	$this->init_xoops_config( $dirname );
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
 	$this->_init_xoops_module( $dirname ) ;
 	$this->_init_xoops_param() ;
 	$this->_init_xoops_config( $dirname );
+	$this->_init_xoops_group_permission( $dirname );
 
-	$perm_class =& webphoto_permission::getInstance( $dirname );
-	$this->_has_insertable = $perm_class->has_insertable();
-	$this->_has_editable   = $perm_class->has_editable();
-
-	$this->_DIRNAME = $dirname;
+	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
+	$this->_catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
+	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
+	$this->_catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
 }
 
-function &getInstance( $dirname )
+function &getSingleton( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_main_imagemanager( $dirname );
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_main_imagemanager( $dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
@@ -135,7 +135,8 @@ function main()
 		$URL = 'url' ;
 	}
 
-	$cat_tree = $this->_get_cat_tree();
+	$cat_tree = $this->_catlist_class->get_cat_all_child_tree_array( 0 );
+
 	if ( sizeof( $cat_tree ) > 0 ) {
 		$show_cat_form = true ;
 
@@ -327,16 +328,6 @@ function _build_cat_options( $cat_id, $cat_tree )
 	return $options;
 }
 
-function _get_cat_tree()
-{
-	$catlist_class =& webphoto_inc_catlist::getInstance();
-	$catlist_class->init( $this->_DIRNAME );
-	$catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
-	$catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
-	$catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
-	return $catlist_class->get_cat_all_child_tree_array( 0 );
-}
-
 //---------------------------------------------------------
 // xoops param
 //---------------------------------------------------------
@@ -368,12 +359,18 @@ function _init_xoops_param()
 
 function _init_xoops_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
-	$this->_cfg_makethumb      = $config_handler->get_by_name( 'makethumb' );
-	$this->_cfg_usesiteimg     = $config_handler->get_by_name( 'usesiteimg' );
+	$this->_cfg_uploadspath = $config_handler->get_path_by_name( 'uploadspath' );
+	$this->_cfg_makethumb   = $config_handler->get_by_name( 'makethumb' );
+	$this->_cfg_usesiteimg  = $config_handler->get_by_name( 'usesiteimg' );
+}
+
+function _init_xoops_group_permission( $dirname )
+{
+	$perm_class =& webphoto_inc_group_permission::getSingleton( $dirname );
+	$this->_has_insertable = $perm_class->has_perm('insertable');
+	$this->_has_editable   = $perm_class->has_perm('editable');
 }
 
 // --- class end ---

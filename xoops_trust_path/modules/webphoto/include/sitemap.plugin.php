@@ -1,5 +1,5 @@
 <?php
-// $Id: sitemap.plugin.php,v 1.2 2008/07/05 16:57:40 ohwada Exp $
+// $Id: sitemap.plugin.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-07-01 K.OHWADA
 // added config.php
 //---------------------------------------------------------
@@ -45,8 +47,8 @@ if( !function_exists( 'webphoto_sitemap_base' ) )
 
 function webphoto_sitemap_base( $dirname )
 {
-	$inc_class =& webphoto_inc_sitemap::getInstance();
-	return $inc_class->sitemap( $dirname );
+	$inc_class =& webphoto_inc_sitemap::getSingleton( $dirname );
+	return $inc_class->sitemap();
 }
 
 // === function end ===

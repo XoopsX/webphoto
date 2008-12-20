@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_new.php,v 1.2 2008/09/05 08:03:36 ohwada Exp $
+// $Id: comment_new.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// constants.php
 // 2008-09-01 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -30,6 +32,7 @@ if( !defined("WEBPHOTO_ROOT_PATH") ) {
 include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
+webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'preload/debug.php' );
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/handler.php' );

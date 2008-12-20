@@ -1,10 +1,16 @@
 <?php
-// $Id: catlist.php,v 1.2 2008/12/18 13:23:16 ohwada Exp $
+// $Id: catlist.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-29 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -20,10 +26,7 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 	var $_cfg_perm_cat_read  = 0 ;
 	var $_cfg_perm_item_read = 0 ;
 
-	var $_DIRNAME ;
-	var $_MODULE_URL ;
-	var $_MODULE_DIR ;
-	var $_CATS_URL;
+	var $_CATS_URL = null ;
 
 	var $_CAT_ORDER   = 'cat_weight ASC, cat_title ASC, cat_id ASC';
 	var $_PREFIX_NAME = 'prefix' ;
@@ -35,28 +38,10 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_catlist()
+function webphoto_inc_catlist( $dirname )
 {
 	$this->webphoto_inc_handler();
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_catlist();
-	}
-	return $instance;
-}
-
-//---------------------------------------------------------
-// init
-//---------------------------------------------------------
-function init( $dirname )
-{
-	$this->_DIRNAME    = $dirname;
-	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
-	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
+	$this->init_handler( $dirname );
 
 	$this->_table_cat  = $this->prefix_dirname( 'cat' ) ;
 	$this->_table_item = $this->prefix_dirname( 'item' ) ;
@@ -65,6 +50,18 @@ function init( $dirname )
 		$this->_table_cat, $this->_CAT_ID_NAME, 'cat_pid' ) ;
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_catlist( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
+//---------------------------------------------------------
+// init
+//---------------------------------------------------------
 function set_uploads_path( $path )
 {
 	$this->_CATS_URL = XOOPS_URL . $path .'/categories' ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
+// $Id: imagemanager.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // public.php
 // 2008-07-01 K.OHWADA
 // added class/xoops/base.php etc
@@ -44,15 +45,13 @@ webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/public.php' );
-webphoto_include_once( 'class/webphoto/config.php' );
-webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/main/imagemanager.php' );
 webphoto_include_language( 'main.php' );
 
 //=========================================================
 // main
 //=========================================================
-$manage =& webphoto_main_imagemanager::getInstance( WEBPHOTO_DIRNAME );
+$manage =& webphoto_main_imagemanager::getSingleton( WEBPHOTO_DIRNAME );
 
 // exit if error
 $manage->check();

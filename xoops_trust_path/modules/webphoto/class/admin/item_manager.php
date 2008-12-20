@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.7 2008/12/18 13:23:16 ohwada Exp $
+// $Id: item_manager.php,v 1.8 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -686,8 +686,8 @@ function _submit_form()
 		$form_class->print_form_playlist( 'admin_submit', $item_row );
 	}
 
-	$form_class->print_form_admin( 
-		$item_row, null, null, null, $this->build_form_param( 'admin_submit') );
+	$form_class->print_form_admin_by_item_row( 
+		$item_row, $this->build_form_param( 'admin_submit') );
 
 	xoops_cp_footer();
 	exit();
@@ -937,6 +937,7 @@ function _modify()
 // error
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
+			echo "<br />\n";
 			$this->_print_form_admin( 'admin_modify', $item_row );
 			break;
 	}
@@ -1064,6 +1065,7 @@ function _redo()
 // error
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
+			echo "<br />\n";
 			$this->_print_form_admin( 'admin_modify', $item_row );
 			break;
 	}
@@ -1572,7 +1574,7 @@ function _print_form_admin( $mode, $item_row )
 	$form_class =& webphoto_admin_item_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_admin( 
+	$form_class->print_form_admin_by_item_row( 
 		$item_row, $this->build_form_param( $mode ) );
 }
 

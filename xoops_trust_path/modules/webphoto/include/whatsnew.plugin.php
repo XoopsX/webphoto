@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.plugin.php,v 1.4 2008/12/18 13:55:10 ohwada Exp $
+// $Id: whatsnew.plugin.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -53,8 +53,8 @@ if( !function_exists( 'webphoto_whatsnew_new_base' ) )
 
 function webphoto_whatsnew_new_base( $dirname , $limit=0 , $offset=0 )
 {
-	$inc_class =& webphoto_inc_whatsnew::getInstance();
-	return $inc_class->whatsnew( $dirname , $limit , $offset );
+	$inc_class =& webphoto_inc_whatsnew::getSingleton( $dirname );
+	return $inc_class->whatsnew( $limit , $offset );
 }
 
 // === function end ===

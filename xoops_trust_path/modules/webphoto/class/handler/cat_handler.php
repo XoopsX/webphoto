@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
+// $Id: cat_handler.php,v 1.6 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -320,26 +320,26 @@ function get_perm_post_array( $row )
 	return $this->get_perm_array_by_row_name( $row, 'cat_perm_post' );
 }
 
-function check_perm_read_by_id( $id, $groups )
+function check_perm_read_by_id( $id )
 {
 	$row = $this->get_row_by_id( $id );
-	return $this->check_perm_read_by_row( $row, $groups ) ;
+	return $this->check_perm_read_by_row( $row ) ;
 }
 
-function check_perm_post_by_id( $id, $groups )
+function check_perm_post_by_id( $id )
 {
 	$row = $this->get_row_by_id( $id );
-	return $this->check_post_read_by_row( $row, $groups ) ;
+	return $this->check_post_read_by_row( $row ) ;
 }
 
-function check_perm_read_by_row( $row, $groups )
+function check_perm_read_by_row( $row )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_read', $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_read' );
 }
 
-function check_perm_post_by_row( $row, $groups )
+function check_perm_post_by_row( $row )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post', $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post' );
 }
 
 //---------------------------------------------------------

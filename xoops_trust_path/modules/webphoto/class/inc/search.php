@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
+// $Id: search.php,v 1.11 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -34,26 +34,12 @@ class webphoto_inc_search extends webphoto_inc_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_search()
+function webphoto_inc_search( $dirname )
 {
 	$this->webphoto_inc_public();
-	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_search();
-	}
-	return $instance;
-}
-
-function _init( $dirname )
-{
-	$this->init_handler( $dirname );
-	$this->init_xoops_config( $dirname );
+	$this->init_public( $dirname );
 	$this->auto_publish( $dirname );
+	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
 // preload
 	$name_image= strtoupper( '_P_'. $dirname .'_SEARCH_SHOW_IMAGE' );
@@ -67,13 +53,20 @@ function _init( $dirname )
 	}
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_search( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function search( $dirname, $query_array, $andor, $limit, $offset, $uid )
+function search( $query_array, $andor, $limit, $offset, $uid )
 {
-	$this->_init( $dirname );
-
 	$item_rows = $this->get_item_rows_for_search( $query_array, $andor, $uid, $limit, $offset );
 	if ( !is_array($item_rows) ) {
 		return array(); 

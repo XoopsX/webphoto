@@ -1,5 +1,5 @@
 <?php
-// $Id: tagcloud.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: tagcloud.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,28 +29,10 @@ class webphoto_inc_tagcloud extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_tagcloud()
+function webphoto_inc_tagcloud( $dirname )
 {
 	$this->webphoto_inc_handler();
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_tagcloud();
-	}
-	return $instance;
-}
-
-//---------------------------------------------------------
-// init
-//---------------------------------------------------------
-function init( $dirname )
-{
-	$this->_DIRNAME    = $dirname;
-	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
-	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
+	$this->init_handler( $dirname );
 
 	$this->_item_table = $this->prefix_dirname( 'item' );
 	$this->_cat_table  = $this->prefix_dirname( 'cat' );
@@ -58,6 +40,18 @@ function init( $dirname )
 	$this->_p2t_table  = $this->prefix_dirname( 'p2t' );
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_tagcloud( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
+//---------------------------------------------------------
+// init
+//---------------------------------------------------------
 function set_use_pathinfo( $val )
 {
 	$this->_cfg_use_pathinfo = (bool)$val ;
@@ -89,8 +83,7 @@ function build_tagcloud_by_rows( $rows )
 {
 	$cloud_class =& new webphoto_lib_cloud();
 
-	$uri_class   =& webphoto_inc_uri::getInstance();
-	$uri_class->init( $this->_DIRNAME );
+	$uri_class =& webphoto_inc_uri::getSingleton( $this->_DIRNAME );
 	$uri_class->set_use_pathinfo( $this->_cfg_use_pathinfo );
 
 	ksort($rows);

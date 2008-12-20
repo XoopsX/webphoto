@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.18 2008/12/18 13:23:16 ohwada Exp $
+$Id: readme_jp.txt,v 1.19 2008/12/20 06:11:27 ohwada Exp $
 
 =================================================
 Version: 0.90
-Date:   2008-12-18
+Date:   2008-12-20
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -21,8 +21,9 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=893&forum=13
 1.2 アイテムごとの閲覧権限を追加した
 
 2. バグ対策
-(1) imagemanager からの投稿するとき、ダウンロード権限が設定されない
-(2) 投稿・編集画面にて、近傍の Google アイコン が表示されない
+(1) モジュール複製時に、カテゴリ一覧が他のモジュールのものを表示する
+(2) imagemanager からの投稿するとき、ダウンロード権限が設定されない
+(3) 投稿・編集画面にて、近傍の Google アイコン が表示されない
 
 
 ● アップデート

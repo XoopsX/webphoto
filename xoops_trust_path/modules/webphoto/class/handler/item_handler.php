@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
+// $Id: item_handler.php,v 1.11 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -705,19 +705,18 @@ function build_show_exif_disp( $row )
 	return $myts->displayTarea( $row['item_exif'] , 0 , 0 , 0 , 0 , 1 );
 }
 
-function get_perm_read_array( $row )
-{
-	return $this->get_perm_array( $row['item_perm_read'] );
-}
 
-function get_perm_down_array( $row )
-{
-	return $this->get_perm_array( $row['item_perm_down'] );
-}
 
-function get_perm_array( $val )
+function build_show_icon_image( $item_row, $base_url )
 {
-	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+	$url    = null ;
+	$name   = $item_row['item_icon_name'] ;
+	$width  = $item_row['item_icon_width'] ;
+	$height = $item_row['item_icon_height'] ;
+	if ( $name ) {
+		$url = $base_url .'/'. $name ;
+	}
+	return array( $url, $width, $height ) ;
 }
 
 function get_showinfo_array( $row )
@@ -730,26 +729,27 @@ function get_codeinfo_array( $row )
 	return $this->str_to_array( $row['item_codeinfo'], $this->_INFO_SEPARATOR );
 }
 
-function check_perm_read_by_row( $row, $groups )
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function get_perm_read_array( $row )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read', $groups );
+	return $this->get_perm_array( $row['item_perm_read'] );
 }
 
-function check_perm_down_by_row( $row, $groups )
+function get_perm_down_array( $row )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down', $groups );
+	return $this->get_perm_array( $row['item_perm_down'] );
 }
 
-function build_show_icon_image( $item_row, $base_url )
+function check_perm_read_by_row( $row )
 {
-	$url    = null ;
-	$name   = $item_row['item_icon_name'] ;
-	$width  = $item_row['item_icon_width'] ;
-	$height = $item_row['item_icon_height'] ;
-	if ( $name ) {
-		$url = $base_url .'/'. $name ;
-	}
-	return array( $url, $width, $height ) ;
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read' );
+}
+
+function check_perm_down_by_row( $row )
+{
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down' );
 }
 
 //---------------------------------------------------------

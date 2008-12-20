@@ -1,10 +1,16 @@
 <?php
-// $Id: comment.inc.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: comment.inc.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -43,8 +49,8 @@ if( !function_exists( 'webphoto_comments_update_base' ) )
 
 function webphoto_comments_update_base( $dirname , $id , $comments ) 
 {
-	$inc_handler =& webphoto_inc_comment::getInstance();
-	return $inc_handler->update_photo_comments( $dirname, $id, $comments );
+	$inc_handler =& webphoto_inc_comment::getSingleton( $dirname );
+	return $inc_handler->update_photo_comments( $id, $comments );
 }
 
 function webphoto_comments_approve_base( $dirname , &$comment )

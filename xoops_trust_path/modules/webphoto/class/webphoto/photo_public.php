@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: photo_public.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -38,14 +38,12 @@ function webphoto_photo_public( $dirname )
 	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 
-	$this->_catlist_class =& webphoto_inc_catlist::getInstance();
-	$this->_catlist_class->init( $dirname );
+	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
 	$this->_catlist_class->set_uploads_path(   $cfg_uploads_path );
 	$this->_catlist_class->set_perm_item_read( $cfg_perm_item_read );
 	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 
-	$this->_tagcloud_class =& webphoto_inc_tagcloud::getInstance();
-	$this->_tagcloud_class->init( $dirname );
+	$this->_tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $dirname );
 	$this->_tagcloud_class->set_use_pathinfo(   $cfg_use_pathinfo );
 	$this->_tagcloud_class->set_perm_item_read( $cfg_perm_item_read );
 	$this->_tagcloud_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
@@ -75,6 +73,7 @@ function get_cat_all_tree_array()
 
 function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0, $flag_child=false )
 {
+	$rows        = null ; 
 	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id );
 	$this_sum    = $this->get_count_by_catid( $cat_id );
 	$total       = $this->get_count_by_catid_array( $catid_array );

@@ -1,5 +1,5 @@
 <?php
-// $Id: workdir.php,v 1.4 2008/12/05 10:38:32 ohwada Exp $
+// $Id: workdir.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-12-05 K.OHWADA
 // init()
 //---------------------------------------------------------
@@ -27,21 +29,7 @@ class webphoto_inc_workdir
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_workdir()
-{
-	// dummy
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_workdir();
-	}
-	return $instance;
-}
-
-function init( $dirname, $trust_dirname )
+function webphoto_inc_workdir( $dirname, $trust_dirname )
 {
 	$this->_DIRNAME       = $dirname;
 	$this->_TRUST_DIRNAME = $trust_dirname ;
@@ -50,6 +38,16 @@ function init( $dirname, $trust_dirname )
 		XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
 
 	$this->_FILE_WORKDIR = $this->_DIR_TRUST_UPLOADS .'/workdir.txt' ;
+}
+
+function &getSingleton( $dirname, $trust_dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = 
+			new webphoto_inc_workdir( $dirname, $trust_dirname );
+	}
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------

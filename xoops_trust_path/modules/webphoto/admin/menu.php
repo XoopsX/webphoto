@@ -1,10 +1,16 @@
 <?php
-// $Id: menu.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: menu.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -25,7 +31,7 @@ webphoto_include_language( 'modinfo.php',          $MY_DIRNAME );
 //=========================================================
 // main
 //=========================================================
-$manager =& webphoto_inc_admin_menu::getInstance();
-$adminmenu = $manager->build_menu( $MY_DIRNAME );
+$manager =& webphoto_inc_admin_menu::getSingleton( $MY_DIRNAME );
+$adminmenu = $manager->build_menu();
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.17 2008/12/18 13:23:16 ohwada Exp $
+// $Id: xoops_version.php,v 1.18 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // perm_cat_read
 // 2008-12-05 K.OHWADA
 // _init_workdir()
@@ -62,26 +63,44 @@ class webphoto_inc_xoops_version extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_xoops_version()
+function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 {
 	$this->webphoto_inc_handler();
+	$this->init_handler( $dirname );
+
+	$this->_init_xoops_module( $dirname );
+	$this->_init_config( $dirname );
+	$this->_init_group_permission( $dirname );
+	$this->_init_is_module_admin();
+	$this->_init_workdir( $dirname, $trust_dirname );
+
+	$this->_TRUST_DIRNAME = $trust_dirname ;
+
+	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
+	$this->_PATH_MOD_MEDIAS  = '/modules/'. $dirname .'/medias';
+
+	$this->_DIR_TRUST_UPLOADS 
+		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
+
+	$this->_DIR_TRUST_MOD_UPLOADS 
+		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
 }
 
-function &getInstance()
+function &getSingleton( $dirname, $trust_dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_xoops_version();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = 
+			new webphoto_inc_xoops_version( $dirname, $trust_dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-function build_modversion( $dirname, $trust_dirname )
+function build_modversion()
 {
-	$this->_init( $dirname, $trust_dirname );
 
 // probably install or update
 	if ( $this->_is_module_admin && 
@@ -95,28 +114,6 @@ function build_modversion( $dirname, $trust_dirname )
 	$arr['config'] = $this->_build_config();
 
 	return $arr;
-}
-
-function _init( $dirname, $trust_dirname )
-{
-	$this->_TRUST_DIRNAME = $trust_dirname ;
-
-	$this->init_handler( $dirname );
-	$this->_init_xoops_module( $dirname );
-	$this->_init_config( $dirname );
-	$this->_init_group_permission( $dirname );
-	$this->_init_is_module_admin();
-	$this->_init_workdir( $dirname, $trust_dirname );
-
-	$this->_PATH_UPLOADS_MOD = '/uploads/'. $dirname;
-
-	$this->_PATH_MOD_MEDIAS = '/modules/'. $dirname .'/medias';
-
-	$this->_DIR_TRUST_UPLOADS 
-		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
-
-	$this->_DIR_TRUST_MOD_UPLOADS 
-		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
 }
 
 //---------------------------------------------------------
@@ -1166,8 +1163,7 @@ function _get_cat_rows_by_pid( $pid, $limit=0, $offset=0 )
 //---------------------------------------------------------
 function _init_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_catonsubmenu = $config_handler->get_by_name('catonsubmenu');
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
@@ -1178,8 +1174,7 @@ function _init_config( $dirname )
 //---------------------------------------------------------
 function _init_group_permission( $dirname )
 {
-	$permission_handler =& webphoto_inc_group_permission::getInstance();
-	$permission_handler->init( $dirname );
+	$permission_handler =& webphoto_inc_group_permission::getSingleton( $dirname );
 
 	$this->_has_insertable = $permission_handler->has_perm( 'insertable' );
 	$this->_has_rateview   = $permission_handler->has_perm( 'rateview' );
@@ -1215,8 +1210,7 @@ function _init_is_module_admin()
 //---------------------------------------------------------
 function _init_workdir( $dirname, $trust_dirname )
 {
-	$workdir_class =& webphoto_inc_workdir::getInstance();
-	$workdir_class->init( $dirname, $trust_dirname );
+	$workdir_class =& webphoto_inc_workdir::getSingleton( $dirname, $trust_dirname );
 	$this->_config_workdir_default = $workdir_class->get_config_workdir() ;
 }
 

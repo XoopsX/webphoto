@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: admin_menu.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-10-01 K.OHWADA
 // define_sub_menu()
 // player_manager etc
@@ -21,6 +23,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_inc_admin_menu
+// caller webphoto_lib_admin_menu admin/menu.php
 //=========================================================
 class webphoto_inc_admin_menu
 {
@@ -29,18 +32,18 @@ class webphoto_inc_admin_menu
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_admin_menu()
+function webphoto_inc_admin_menu( $dirname )
 {
-	// dummy
+	$this->_DIRNAME = $dirname;
 }
 
-function &getInstance()
+function &getSingleton( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_admin_menu();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_admin_menu( $dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
@@ -124,10 +127,8 @@ function define_sub_menu()
 	return $menu;
 }
 
-function build_menu( $dirname )
+function build_menu()
 {
-	$this->_init( $dirname );
-
 	$menu = $this->define_menu();
 
 	foreach( $menu as $k => $v )
@@ -146,10 +147,8 @@ function build_menu( $dirname )
 	return $arr;
 }
 
-function build_sub_menu( $dirname )
+function build_sub_menu( )
 {
-	$this->_init( $dirname );
-
 	$menu = $this->define_sub_menu();
 
 	foreach( $menu as $k => $v )
@@ -171,11 +170,6 @@ function build_sub_menu( $dirname )
 //---------------------------------------------------------
 // langauge
 //---------------------------------------------------------
-function _init( $dirname )
-{
-	$this->_DIRNAME = $dirname;
-}
-
 function _constant( $name )
 {
 	$const_name = $this->_constant_name( $name );

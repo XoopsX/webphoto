@@ -1,15 +1,22 @@
 <?php
-// $Id: uri.php,v 1.1 2008/11/30 10:37:07 ohwada Exp $
+// $Id: uri.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-29 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_inc_uri
+// caller webphoto_uri webphoto_inc_tagcloud
 //=========================================================
 class webphoto_inc_uri
 {
@@ -33,30 +40,25 @@ class webphoto_inc_uri
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_uri()
-{
-	// dummy
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_uri();
-	}
-	return $instance;
-}
-
-//---------------------------------------------------------
-// init
-//---------------------------------------------------------
-function init( $dirname )
+function webphoto_inc_uri( $dirname )
 {
 	$this->_DIRNAME    = $dirname;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_uri( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
+//---------------------------------------------------------
+// init
+//---------------------------------------------------------
 function set_use_pathinfo( $val )
 {
 	$this->_cfg_use_pathinfo = (bool)$val;

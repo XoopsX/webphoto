@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.13 2008/12/10 19:08:56 ohwada Exp $
+// $Id: index.php,v 1.14 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-12-07 K.OHWADA
 // window.close()
 // 2008-12-06 K.OHWADA
@@ -49,11 +51,12 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_update_check_class  =& webphoto_admin_update_check::getInstance( $dirname , $trust_dirname );
-	$this->_checkconfig_class   =& webphoto_admin_checkconfigs::getInstance( $dirname , $trust_dirname );
-
-	$this->_workdir_class =& webphoto_inc_workdir::getInstance();
-	$this->_workdir_class->init( $dirname, $trust_dirname );
+	$this->_update_check_class =& webphoto_admin_update_check::getInstance(
+		$dirname , $trust_dirname );
+	$this->_checkconfig_class =& webphoto_admin_checkconfigs::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_workdir_class =& webphoto_inc_workdir::getSingleton( 
+		$dirname, $trust_dirname );
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';

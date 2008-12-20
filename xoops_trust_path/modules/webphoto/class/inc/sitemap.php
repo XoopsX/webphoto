@@ -1,5 +1,5 @@
 <?php
-// $Id: sitemap.php,v 1.2 2008/07/05 16:57:40 ohwada Exp $
+// $Id: sitemap.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-07-01 K.OHWADA
 // used use_pathinfo
 //---------------------------------------------------------
@@ -24,33 +26,28 @@ class webphoto_inc_sitemap extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_sitemap()
+function webphoto_inc_sitemap( $dirname )
 {
 	$this->webphoto_inc_handler();
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_sitemap();
-	}
-	return $instance;
-}
-
-function _init( $dirname )
-{
 	$this->init_handler( $dirname );
+
 	$this->_init_xoops_config( $dirname );
+}
+
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_sitemap( $dirname );
+	}
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function sitemap( $dirname )
+function sitemap()
 {
-	$this->_init( $dirname );
-
 	$table_cat = $this->prefix_dirname( 'cat' );
 
 	if ( $this->_cfg_use_pathinfo ) {
@@ -73,8 +70,7 @@ function sitemap( $dirname )
 //---------------------------------------------------------
 function _init_xoops_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }

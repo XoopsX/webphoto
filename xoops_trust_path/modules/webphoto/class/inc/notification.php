@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: notification.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-08-24 K.OHWADA
 // table_photo -> table_item
 // 2008-07-01 K.OHWADA
@@ -28,27 +30,30 @@ class webphoto_inc_notification extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_notification()
+function webphoto_inc_notification( $dirname )
 {
 	$this->webphoto_inc_handler();
+	$this->init_handler( $dirname );
+
+	$this->_init_xoops_config( $dirname );
+
+	$this->_INDEX_URL = $this->_MODULE_URL .'/index.php';
 }
 
-function &getInstance()
+function &getSingleton( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_notification();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_notification( $dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function notify( $dirname, $category, $id )
+function notify( $category, $id )
 {
-	$this->_init( $dirname );
-
 	$info = array();
 
 	switch ( $category )
@@ -70,14 +75,6 @@ function notify( $dirname, $category, $id )
 	}
 
 	return $info;
-}
-
-function _init( $dirname )
-{
-	$this->init_handler( $dirname );
-	$this->_init_xoops_config( $dirname );
-
-	$this->_INDEX_URL = $this->_MODULE_URL .'/index.php';
 }
 
 function _get_url( $category, $id )
@@ -116,8 +113,7 @@ function _get_cat_title( $cat_id )
 //---------------------------------------------------------
 function _init_xoops_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }

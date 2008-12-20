@@ -1,5 +1,5 @@
 <?php
-// $Id: search.inc.php,v 1.4 2008/12/18 13:55:10 ohwada Exp $
+// $Id: search.inc.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -53,8 +53,8 @@ if( !function_exists( 'webphoto_search_base' ) )
 
 function webphoto_search_base( $dirname, $query_array, $andor, $limit, $offset, $uid )
 {
-	$inc_class =& webphoto_inc_search::getInstance();
-	return $inc_class->search( $dirname, $query_array, $andor, $limit, $offset, $uid );
+	$inc_class =& webphoto_inc_search::getSingleton( $dirname );
+	return $inc_class->search( $query_array, $andor, $limit, $offset, $uid );
 }
 
 // === function end ===

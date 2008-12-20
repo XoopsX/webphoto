@@ -1,5 +1,5 @@
 <?php
-// $Id: group_permission.php,v 1.3 2008/07/06 04:41:31 ohwada Exp $
+// $Id: group_permission.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-07-01 K.OHWADA
 // webphoto_xoops_base -> xoops_gethandler()
 //---------------------------------------------------------
@@ -16,6 +18,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_inc_group_permission
+// caller webphoto_permission webphoto_inc_xoops_version
 //=========================================================
 class webphoto_inc_group_permission extends webphoto_inc_handler
 {
@@ -28,25 +31,22 @@ class webphoto_inc_group_permission extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_group_permission()
+function webphoto_inc_group_permission( $dirname )
 {
 	$this->webphoto_inc_handler();
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_group_permission();
-	}
-	return $instance;
-}
-
-function init( $dirname )
-{
 	$this->init_handler( $dirname );
+
 	$this->_init_xoops( $dirname );
-	$this->_init_cache( $dirname );
+	$this->_init_permission( $dirname );
+}
+
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_group_permission( $dirname );
+	}
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
@@ -63,36 +63,16 @@ function has_perm( $name )
 //---------------------------------------------------------
 function _has_perm_by_bit( $bit )
 {
-	if ( $this->_get_cached_perm() & $bit ) {
+	if ( $this->_cached_perms & $bit ) {
 		return true; 
 	}
 	return false;
 }
 
-function _get_cached_perm()
-{
-	if ( isset( $this->_cached_perms[ $this->_DIRNAME ][ $this->_xoops_uid ] ) ) {
-		return  $this->_cached_perms[ $this->_DIRNAME ][ $this->_xoops_uid ] ;
-	}
-	return false;
-}
-
-function _init_cache( $dirname )
-{
-// probably uid is unnecessary
-// because one process runing by same user
-
-// set if not set
-	if ( !isset( $this->_cached_perms[ $dirname ][ $this->_xoops_uid ] ) ) {
-		$this->_cached_perms[ $dirname ][ $this->_xoops_uid ]
-			= $this->_get_permission( $dirname ) ; 
-	}
-}
-
 //---------------------------------------------------------
 // xoops_group_permission
 //---------------------------------------------------------
-function _get_permission( $dirname )
+function _init_permission( $dirname )
 {
 	$perms = 0 ;
 
@@ -116,7 +96,7 @@ function _get_permission( $dirname )
 		$perms |= $row['gperm_itemid'] ;
 	}
 
-	return $perms;
+	$this->_cached_perms = $perms ;
 }
 
 function _build_where_groupid()

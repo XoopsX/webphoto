@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.8 2008/12/18 13:23:16 ohwada Exp $
+// $Id: item_form.php,v 1.9 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -70,6 +70,15 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // submit edit form
 //---------------------------------------------------------
+function print_form_admin_by_item_row( $item_row, $param )
+{
+	$cont_row     = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
+	$thumb_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
+	$middle_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
+
+	$this->print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param );
+}
+
 function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param )
 {
 	$mode          = $param['mode'];

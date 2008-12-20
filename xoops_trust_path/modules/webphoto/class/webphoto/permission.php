@@ -1,5 +1,5 @@
 <?php
-// $Id: permission.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: permission.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// extends webphoto_inc_group_permission
 // 2008-08-01 K.OHWADA
 // added has_mail() has_file()
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_permission
 //=========================================================
-class webphoto_permission
+class webphoto_permission extends webphoto_inc_group_permission
 {
 	var $_has_insertable ; 
 	var $_has_superinsert ; 
@@ -39,7 +41,22 @@ class webphoto_permission
 //---------------------------------------------------------
 function webphoto_permission( $dirname )
 {
-	$this->_init( $dirname );
+	$this->webphoto_inc_group_permission( $dirname );
+
+	$this->_has_insertable       = $this->has_perm( 'insertable' );
+	$this->_has_superinsert      = $this->has_perm( 'superinsert' );
+	$this->_has_editable         = $this->has_perm( 'editable' );
+	$this->_has_superedit        = $this->has_perm( 'superedit' );
+	$this->_has_deletable        = $this->has_perm( 'deletable' );
+	$this->_has_superdelete      = $this->has_perm( 'superdelete' );
+	$this->_has_touchothers      = $this->has_perm( 'touchothers' );
+	$this->_has_supertouchothers = $this->has_perm( 'supertouchothers' );
+	$this->_has_rateview         = $this->has_perm( 'rateview' );
+	$this->_has_ratevote         = $this->has_perm( 'ratevote' );
+	$this->_has_tellafriend      = $this->has_perm( 'tellafriend' );
+	$this->_has_tagedit          = $this->has_perm( 'tagedit' );
+	$this->_has_mail             = $this->has_perm( 'mail' );
+	$this->_has_file             = $this->has_perm( 'file' );
 }
 
 function &getInstance( $dirname )
@@ -49,27 +66,6 @@ function &getInstance( $dirname )
 		$instance = new webphoto_permission( $dirname );
 	}
 	return $instance;
-}
-
-function _init( $dirname )
-{
-	$perm_handler =& webphoto_inc_group_permission::getInstance();
-	$perm_handler->init( $dirname );
-
-	$this->_has_insertable       = $perm_handler->has_perm( 'insertable' );
-	$this->_has_superinsert      = $perm_handler->has_perm( 'superinsert' );
-	$this->_has_editable         = $perm_handler->has_perm( 'editable' );
-	$this->_has_superedit        = $perm_handler->has_perm( 'superedit' );
-	$this->_has_deletable        = $perm_handler->has_perm( 'deletable' );
-	$this->_has_superdelete      = $perm_handler->has_perm( 'superdelete' );
-	$this->_has_touchothers      = $perm_handler->has_perm( 'touchothers' );
-	$this->_has_supertouchothers = $perm_handler->has_perm( 'supertouchothers' );
-	$this->_has_rateview         = $perm_handler->has_perm( 'rateview' );
-	$this->_has_ratevote         = $perm_handler->has_perm( 'ratevote' );
-	$this->_has_tellafriend      = $perm_handler->has_perm( 'tellafriend' );
-	$this->_has_tagedit          = $perm_handler->has_perm( 'tagedit' );
-	$this->_has_mail             = $perm_handler->has_perm( 'mail' );
-	$this->_has_file             = $perm_handler->has_perm( 'file' );
 }
 
 //---------------------------------------------------------

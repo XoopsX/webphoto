@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.3 2008/11/30 13:41:19 ohwada Exp $
+// $Id: uri.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-11-29 K.OHWADA
 // webphoto_inc_uri
 //---------------------------------------------------------
@@ -30,8 +32,7 @@ class webphoto_uri extends webphoto_inc_uri
 //---------------------------------------------------------
 function webphoto_uri( $dirname )
 {
-	$this->webphoto_inc_uri();
-	$this->init( $dirname );
+	$this->webphoto_inc_uri( $dirname );
 
 	$this->_xoops_class    =& webphoto_xoops_base::getInstance();
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();

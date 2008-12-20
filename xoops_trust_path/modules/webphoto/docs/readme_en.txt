@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.18 2008/12/18 13:23:16 ohwada Exp $
+$Id: readme_en.txt,v 1.19 2008/12/20 06:11:27 ohwada Exp $
 
 =================================================
 Version: 0.90
-Date:   2008-12-18
+Date:   2008-12-20
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -24,8 +24,9 @@ when changing a category
 1.2 Added read permission each item
 
 2. Bug Fix
-(1) Not set permission to download, when submitting in imagemanager
-(2) Not show google marker in the neighborhood in submit form
+(1) In case of the module dupilication, the category list show the other module's data.
+(2) Not set permission to download, when submitting in imagemanager
+(3) Not show google marker in the neighborhood in submit form
 
 
 * Update *

@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.3 2008/11/30 10:36:34 ohwada Exp $
+// $Id: config.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-11-29 K.OHWADA
 // get_path_by_name()
 // 2008-07-01 K.OHWADA
@@ -31,24 +33,19 @@ class webphoto_inc_config
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_config()
-{
-	// dummy
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_config();
-	}
-	return $instance;
-}
-
-function init( $dirname )
+function webphoto_inc_config( $dirname )
 {
 	$this->_DIRNAME = $dirname;
-	$this->_init_cache( $dirname );
+	$this->_get_xoops_config( $dirname );
+}
+
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_config( $dirname );
+	}
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
@@ -56,8 +53,8 @@ function init( $dirname )
 //---------------------------------------------------------
 function get_by_name( $name )
 {
-	if ( isset($this->_cached_config[ $this->_DIRNAME ][ $name ]) ) {
-		return $this->_cached_config[ $this->_DIRNAME ][ $name ];
+	if ( isset($this->_cached_config[ $name ]) ) {
+		return $this->_cached_config[ $name ];
 	}
 	return false;
 }
@@ -69,14 +66,6 @@ function get_path_by_name( $name )
 		return $this->_add_slash_to_head( $path );
 	}
 	return null;
-}
-
-function _init_cache( $dirname )
-{
-	if ( !isset( $this->_cached_config[ $dirname ] ) ) {
-		$this->_cached_config[ $dirname ] 
-			= $this->_get_xoops_config( $dirname );
-	}
 }
 
 function _add_slash_to_head( $str )
@@ -103,7 +92,7 @@ function _get_xoops_config( $dirname )
 	$mid = $module->getVar( 'mid' );
 
 	$config_handler =& xoops_gethandler('config');
-	return $config_handler->getConfigsByCat( 0, $mid );
+	$this->_cached_config = $config_handler->getConfigsByCat( 0, $mid );
 }
 
 // --- class end ---

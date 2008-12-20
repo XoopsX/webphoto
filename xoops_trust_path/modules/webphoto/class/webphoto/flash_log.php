@@ -1,10 +1,16 @@
 <?php
-// $Id: flash_log.php,v 1.1 2008/11/11 06:54:01 ohwada Exp $
+// $Id: flash_log.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // http://code.jeroenwijering.com/trac/wiki/Flashvars3
@@ -25,6 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_flash_log
+// caller webphoto_main_callback webphoto_admin_item_manager
 //=========================================================
 class webphoto_flash_log
 {
@@ -154,8 +161,7 @@ function empty_log()
 //---------------------------------------------------------
 function _init_xoops_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_WORK_DIR = $config_handler->get_by_name( 'workdir' );
 }

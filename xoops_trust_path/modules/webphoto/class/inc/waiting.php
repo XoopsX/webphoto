@@ -1,5 +1,5 @@
 <?php
-// $Id: waiting.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: waiting.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
 // 2008-08-24 K.OHWADA
 // table_photo -> table_item
 //---------------------------------------------------------
@@ -23,27 +25,26 @@ class webphoto_inc_waiting extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_waiting()
+function webphoto_inc_waiting( $dirname )
 {
 	$this->webphoto_inc_handler();
+	$this->init_handler( $dirname );
 }
 
-function &getInstance()
+function &getSingleton( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_waiting();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_waiting( $dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function waiting( $dirname )
+function waiting()
 {
-	$this->init_handler( $dirname );
-
 	$ret = array();
 	$ret['adminlink']  = $this->_MODULE_URL .'/admin/index.php?fct=admission';
 	$ret['pendingnum'] = $this->_get_item_count();

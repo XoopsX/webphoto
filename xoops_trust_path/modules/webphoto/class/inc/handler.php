@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
+// $Id: handler.php,v 1.11 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -58,15 +58,6 @@ function webphoto_inc_handler()
 	$this->_db =& Database::getInstance();
 
 	$this->_init_xoops_groups();
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_handler();
-	}
-	return $instance;
 }
 
 function init_handler( $dirname )

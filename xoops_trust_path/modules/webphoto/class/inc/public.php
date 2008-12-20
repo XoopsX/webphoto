@@ -1,5 +1,5 @@
 <?php
-// $Id: public.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: public.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -30,13 +30,11 @@ function webphoto_inc_public()
 	$this->webphoto_inc_handler();
 }
 
-function &getInstance()
+function init_public( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_public();
-	}
-	return $instance;
+	$this->init_handler( $dirname );
+
+	$this->_init_xoops_config( $dirname );
 }
 
 //---------------------------------------------------------
@@ -120,7 +118,7 @@ function get_item_count_item_cat_by_name_param( $name, $param )
 	return $this->get_item_count_by_where_with_cat( $where );
 }
 
-function get_item_count_item_by_name_param_orderby( $name, $param )
+function get_item_count_item_by_name_param( $name, $param )
 {
 	$where = $this->build_where_by_name_param( $name, $param );
 	return $this->get_item_count_by_where( $where );
@@ -214,7 +212,7 @@ function build_where_by_name_param( $name, $param )
 			break;
 
 		default:
-			xoops_error( "$name $param" );
+//			xoops_error( "$name $param" );
 			break;
 	}
 
@@ -381,20 +379,17 @@ function get_cat_cached_row_by_id( $id )
 //---------------------------------------------------------
 function auto_publish( $dirname )
 {
-	$publish_class =& webphoto_inc_auto_publish::getInstance();
-	$publish_class->init( $dirname );
+	$publish_class =& webphoto_inc_auto_publish::getSingleton( $dirname );
 	$publish_class->set_workdir( $this->_cfg_workdir );
-
 	$publish_class->auto_publish();
 }
 
 //---------------------------------------------------------
 // xoops config
 //---------------------------------------------------------
-function init_xoops_config( $dirname )
+function _init_xoops_config( $dirname )
 {
-	$config_handler =& webphoto_inc_config::getInstance();
-	$config_handler->init( $dirname );
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
 	$this->_cfg_workdir        = $config_handler->get_by_name( 'workdir' );

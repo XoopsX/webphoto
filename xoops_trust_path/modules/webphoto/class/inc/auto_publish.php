@@ -1,23 +1,26 @@
 <?php
-// $Id: auto_publish.php,v 1.2 2008/11/30 13:41:19 ohwada Exp $
+// $Id: auto_publish.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-29 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2008-12-12 K.OHWADA
+// getInstance() -> getSingleton()
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_inc_auto_publish
+// caller webphoto_show_main webphoto_inc_public
 //=========================================================
 class webphoto_inc_auto_publish extends webphoto_inc_handler
 {
 	var $_table_item ;
-
-	var $_DIRNAME ;
-	var $_MODULE_URL ;
-	var $_MODULE_DIR ;
 
 	var $_FILE_AUTO_PUBLISH ;
 	var $_TIME_AUTO_PUBLISH = 3600 ; // 1 hour
@@ -26,32 +29,26 @@ class webphoto_inc_auto_publish extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_auto_publish()
+function webphoto_inc_auto_publish( $dirname )
 {
 	$this->webphoto_inc_handler();
+	$this->init_handler( $dirname );
+
+	$this->_table_item = $this->prefix_dirname( 'item' ) ;
 }
 
-function &getInstance()
+function &getSingleton( $dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_auto_publish();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_auto_publish( $dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // init
 //---------------------------------------------------------
-function init( $dirname )
-{
-	$this->_DIRNAME    = $dirname;
-	$this->_MODULE_URL = XOOPS_URL       .'/modules/'.$dirname;
-	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'.$dirname;
-
-	$this->_table_item = $this->prefix_dirname( 'item' ) ;
-}
-
 function set_workdir( $workdir )
 {
 	$this->_FILE_AUTO_PUBLISH = $workdir .'/tmp/auto_publish' ;

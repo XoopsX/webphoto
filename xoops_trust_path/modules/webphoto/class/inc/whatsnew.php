@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
+// $Id: whatsnew.php,v 1.10 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -32,26 +32,12 @@ class webphoto_inc_whatsnew extends webphoto_inc_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_whatsnew()
+function webphoto_inc_whatsnew( $dirname )
 {
 	$this->webphoto_inc_public();
-	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
-}
-
-function &getInstance()
-{
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_whatsnew();
-	}
-	return $instance;
-}
-
-function _init( $dirname )
-{
-	$this->init_handler( $dirname );
-	$this->init_xoops_config( $dirname );
+	$this->init_public( $dirname );
 	$this->auto_publish( $dirname );
+	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
 // preload
 	$name_image= strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_IMAGE' );
@@ -65,13 +51,20 @@ function _init( $dirname )
 	}
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_whatsnew( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function whatsnew( $dirname , $limit=0 , $offset=0 )
+function whatsnew( $limit=0 , $offset=0 )
 {
-	$this->_init( $dirname );
-
 	$item_rows = $this->get_item_rows_for_whatsnew( $limit, $offset );
 	if ( !is_array($item_rows) ) {
 		return array(); 

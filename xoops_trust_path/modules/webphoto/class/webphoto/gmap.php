@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.6 2008/12/18 14:05:33 ohwada Exp $
+// $Id: gmap.php,v 1.7 2008/12/20 06:11:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,6 +29,7 @@ class webphoto_gmap extends webphoto_base_this
 	var $_gicon_handler;
 	var $_item_cat_handler;
 	var $_gmap_info_class;
+	var $_catlist_class;
 
 	var $_cfg_gmap_apikey ;
 	var $_cfg_perm_cat_read ;
@@ -48,10 +49,16 @@ function webphoto_gmap( $dirname , $trust_dirname )
 
 	$this->_cfg_gmap_apikey   = $this->_config_class->get_by_name( 'gmap_apikey' );
 	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
-	$perm_item_read           = $this->_config_class->get_by_name( 'perm_item_read' );
+	$cfg_perm_item_read       = $this->_config_class->get_by_name( 'perm_item_read' );
+	$cfg_uploads_path         = $this->_config_class->get_uploads_path();
 
 	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
-	$this->_item_cat_handler->set_perm_item_read( $perm_item_read );
+	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
+
+	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
+	$this->_catlist_class->set_uploads_path(   $cfg_uploads_path );
+	$this->_catlist_class->set_perm_item_read( $cfg_perm_item_read );
+	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 
 	$this->preload_init();
 }
@@ -74,16 +81,12 @@ function build_photo_list_by_catid( $cat_id, $limit=0, $offset=0 )
 
 	$cat_id = intval($cat_id);
 	if ( $cat_id > 0 ) {
-		$catid_array = $this->_cat_handler->getAllChildId( $cat_id );
-		array_push( $catid_array , $cat_id ) ;
-
-		$rows = $this->get_rows_by_gmap_catid_array(
-			$catid_array, $limit, $offset );
+		$rows = $this->get_rows_by_gmap_catid(
+			$cat_id, $limit, $offset );
 
 	} else {
 		$rows = $this->get_rows_by_gmap_latest(
 			$limit, $offset );
-
 	}
 
 	if ( ! is_array($rows) ) { return null; }
@@ -208,16 +211,18 @@ function build_list_location( $item_row, $limit=0, $offset=0 )
 //---------------------------------------------------------
 // item_cat_handler
 //---------------------------------------------------------
+function get_rows_by_gmap_catid( $cat_id, $limit=0, $offset=0 )
+{
+	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id ) ;
+
+	return $this->get_rows_by_name_param_orderby( 
+		'gmap_catid_array', $catid_array, $this->_GMAP_ORDERBY_LATEST, $limit, $offset ) ;
+}
+
 function get_rows_by_gmap_latest( $limit=0, $offset=0 )
 {
 	return $this->get_rows_by_name_param_orderby( 
 		'gmap_latest', null, $this->_GMAP_ORDERBY_LATEST, $limit, $offset ) ;
-}
-
-function get_rows_by_gmap_catid_array( $catid_array, $limit=0, $offset=0 )
-{
-	return $this->get_rows_by_name_param_orderby( 
-		'gmap_catid_array', $catid_array, $this->_GMAP_ORDERBY_LATEST, $limit, $offset ) ;
 }
 
 function get_rows_by_gmap_area( $id, $lat, $lon, $limit=0, $offset=0 )
