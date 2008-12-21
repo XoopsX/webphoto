@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
+// $Id: modinfo.php,v 1.11 2008/12/21 20:19:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -54,8 +54,8 @@ define($constpref."BNAME_HITS_P","人気画像(画像付)");
 //define( $constpref."CFG_DESCPHOTOSPATH" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
 //define( $constpref."CFG_THUMBSPATH" , "サムネイルファイルの保存先ディレクトリ" ) ;
 //define( $constpref."CFG_DESCTHUMBSPATH" , "「画像ファイルの保存先ディレクトリ」と同じです" ) ;
-// define( $constpref."CFG_USEIMAGICK" , "画像処理にImageMagickを使う" ) ;
-// define( $constpref."CFG_DESCIMAGICK" , "使わない場合は、メイン画像の調整は機能せず、サムネイルの生成にGDを使います。<br />可能であればImageMagickの使用が最善です" ) ;
+//define( $constpref."CFG_USEIMAGICK" , "画像処理にImageMagickを使う" ) ;
+//define( $constpref."CFG_DESCIMAGICK" , "使わない場合は、メイン画像の調整は機能せず、サムネイルの生成にGDを使います。<br />可能であればImageMagickの使用が最善です" ) ;
 
 define( $constpref."CFG_IMAGINGPIPE" , "画像処理を行わせるパッケージ選択" ) ;
 define( $constpref."CFG_DESCIMAGINGPIPE" , "ほとんどのPHP環境で標準的に利用可能なのはGDですが機能的に劣ります<br />可能であればImageMagickかNetPBMの使用をお勧めします" ) ;

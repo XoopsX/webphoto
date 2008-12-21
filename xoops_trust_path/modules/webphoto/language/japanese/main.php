@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.18 2008/12/18 13:23:16 ohwada Exp $
+// $Id: main.php,v 1.19 2008/12/21 20:19:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1130,7 +1130,9 @@ define("_WEBPHOTO_FLASHVAR_VOLUME_DSC","[Playback] <br />▓╗│┌дф╞░▓шд╬▓╗╬╠дЄ└▀─ъд
 define("_WEBPHOTO_FLASHVAR_ENABLEJS_DSC","[External] <br />б╓д╧ддб╫д╬д╚днбвJavaScript д╦дшды┬╨╧├└й╕цдЄ═н╕·д╦д╣ды <br />екеєещедеєд╬д╚дн╞░║юд╣ды<br />JavaScript д╦дшды┬╨╧├└й╕цд╦д╧бве│еєе╚еэб╝еые╨б╝дфбвесе╟егеве╒ебедеыд╬еэб╝е╟еєе░д╬╞▒┤№дфбве╚еще├еп╛Ё╩єд╬╩╓┐од╩д╔дЄ┤▐др ");
 define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID_DSC","[External] <br />дтд╖дтбв╩г┐Їд╬ mediaplayers/imagerotators д╚ JavaScript д╦дшды┬╨╧├└й╕цдЄ╣╘джд╚днд╧бвд│д╬╣р╠▄д╦д╜дьд╛дьд╦┬╨д╣дыеце╦б╝епд╩ ID дЄ└▀─ъд╣ды ");
 define("_WEBPHOTO_FLASHVAR_LINK_TYPE_DSC","[External] <br />е╣епеъб╝еєдфеэе┤дфеъеєепбже▄е┐еєд╦│ф┼Ўд╡дьдыеъеєепд╬╝я╩╠дЄ└▀─ъд╣ды<br /> б╓д╩д╖б╫д╬д╚днд╧бв▓┐дтд╖д╩дд <br />д╜дь░╩│░д╧бвд╜д╬еъеєепдЄ│ф┼Ўд╞ды");
+
 //define("_WEBPHOTO_FLASHVAR_LINK_DSC","[External] <br />│░╔Ї URL дфе└ежеєеэб╝е╔▓─╟╜д╩е╒ебедеыдЄ└▀─ъд╣ды<br />д│д╬еъеєепд╧е╣епеъб╝еєдфеэе┤дфеъеєепбже▄е┐еєд╦│ф┼Ўд╡дьды<br />е╫еьедеъе╣е╚д╬д╚днд╧бвXML ╖┴╝░д╦д╞еиеєе╚еъ╦шд╦└▀─ъд╟днды");
+
 define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY_DSC","[External] <br />б╓д╧ддб╫д╬д╚днд╧бве╣епеъб╝еєдЄепеъе├епд╣дыд╚бвб╓еъеєепб╫д╦└▀─ъд╡дьд┐ WEB е┌б╝е╕д╬е╕еуеєе╫д╣ды ");
 define("_WEBPHOTO_FLASHVAR_LINKTARGET_DSC","[External] <br />еъеєепд╖д┐ежегеєе╔еж▓ш╠╠д╬╝я╬р");
 define("_WEBPHOTO_FLASHVAR_CALLBACK_DSC","[External] <br />Set this to a serverside script that can process statistics. <br />The player will send it a POST every time an item starts/stops. <br />To send callbacks automatically to Google Analytics, set this to urchin or analytics. ");
