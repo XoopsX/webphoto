@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.2 2008/12/07 15:07:39 ohwada Exp $
+// $Id: i.php,v 1.3 2008/12/29 15:25:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-29 K.OHWADA
+// item_public.php
 // 2008-12-07 K.OHWADA
 // imagemagick.php
 //---------------------------------------------------------
@@ -54,6 +56,7 @@ webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
+webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/mail_check.php' );
 webphoto_include_once( 'class/webphoto/mail_photo.php' );
 webphoto_include_once( 'class/webphoto/mail_unlink.php' );
