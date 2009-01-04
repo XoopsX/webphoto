@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.6 2008/09/04 10:28:29 ohwada Exp $
+// $Id: help.php,v 1.7 2009/01/04 06:05:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// Fatal error: Call to undefined method webphoto_inc_xoops_header::getinstance()
+// getInstance() -> getSingleton()
 // 2008-08-01 K.OHWADA
 // added main()
 //---------------------------------------------------------
@@ -190,11 +193,11 @@ function _build_perm( $perm )
 function _assign_xoops_header()
 {
 	$param = array(
-		'dirname'     => $this->_DIRNAME ,
-		'flag_css'    => true ,
+		'flag_css' => true ,
 	);
 
-	$header_class =& webphoto_inc_xoops_header::getInstance();
+// Fatal error: Call to undefined method webphoto_inc_xoops_header::getinstance()
+	$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
 	$header_class->assign_for_main( $param );
 }
 
