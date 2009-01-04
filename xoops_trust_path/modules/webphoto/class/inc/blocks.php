@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.13 2008/12/20 06:11:27 ohwada Exp $
+// $Id: blocks.php,v 1.14 2009/01/04 08:09:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// fatal error: Call to undefined method get_cat_parent_all_child_id()
 // 2008-12-12 K.OHWADA
 // webphoto_inc_public
 // 2008-11-29 K.OHWADA
@@ -705,13 +707,13 @@ function build_where_block_cat_limitation( $options )
 	if ( $cat_limitation ) {
 		if ( $cat_limit_recursive ) {
 
-			$id_array = $this->_catlist_class->get_cat_parent_all_child_id( $cat_id );
+// fatal error: Call to undefined method get_cat_parent_all_child_id()
+			$id_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_limitation );
 
-			$where = 'item_cat_id IN (' ;
-			foreach( $id_array as $id ) {
-				$where .= intval($id) . ',' ;
+			$str = $this->array_to_str( $id_array, ',' );
+			if ( $str ) {
+				$where = ' item_cat_id IN ('. $str .') ';
 			}
-			$where .= ')' ;
 
 		} else {
 			$where = 'item_cat_id='. intval($cat_limitation) ;
