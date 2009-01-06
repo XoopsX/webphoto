@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.11 2008/12/18 13:23:16 ohwada Exp $
+// $Id: photo_action.php,v 1.12 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_photo_edit_form -> webphoto_photo_misc_form
+// BUG: return to admin when delete
 // 2008-12-12 K.OHWADA
 // set_flag_row_extend()
 // 2008-12-07 K.OHWADA
@@ -31,46 +34,18 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_photo_action
 //=========================================================
-class webphoto_photo_action extends webphoto_photo_edit
+class webphoto_photo_action extends webphoto_photo_submit
 {
-	var $_redirect_class;
-	var $_embed_class ;
 	var $_show_image_class;
-
-	var $_row_create   = null ;
-	var $_row_current  = null;
-	var $_row_update   = null ;
-	var $_form_action  = null;
-	var $_is_none_type = false;
-
-	var $_special_ext = null ;
-
-	var $_redirect_time = 0 ;
-	var $_redirect_url  = null ;
-	var $_redirect_msg  = null ;
-
-	var $_REDIRECT_MSG_ERROR = 'ERROR not set message';
-
-// for submit_imagemanager
-	var $_FLAG_FETCH_ALLOW_ALL = true ;
-	var $_FLAG_FETCH_THUMB = true ;
-	var $_FLAG_ALLOW_NONE  = false ;
-	var $_FLAG_POST_COUNT  = true ;
-	var $_FLAG_NOTIFY      = true ;
-	var $_FLAG_ROW_EXTEND  = true ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_photo_action( $dirname , $trust_dirname )
 {
-	$this->webphoto_photo_edit( $dirname , $trust_dirname );
+	$this->webphoto_photo_submit( $dirname , $trust_dirname );
 
-	$this->_redirect_class   =& webphoto_photo_redirect::getInstance( $dirname, $trust_dirname );
-	$this->_embed_class      =& webphoto_embed::getInstance( $dirname, $trust_dirname );
 	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
-
-	$this->_FLAG_ALLOW_NONE = $this->_cfg_allownoimage ;
 }
 
 // for admin_photo_manage admin_catmanager
@@ -84,200 +59,19 @@ function &getInstance( $dirname , $trust_dirname )
 }
 
 //---------------------------------------------------------
-// set param 
+// modify check
 //---------------------------------------------------------
-function set_flag_fetch_allow_all( $val )
+function check_edit_perm( $item_row )
 {
-	$this->_FLAG_FETCH_ALLOW_ALL = (bool)$val ;
-}
-
-function set_flag_fetch_thumb( $val )
-{
-	$this->_FLAG_FETCH_THUMB = (bool)$val ;
-}
-
-function set_flag_allow_none( $val )
-{
-	$this->_FLAG_ALLOW_NONE = (bool)$val ;
-}
-
-function set_flag_post_count( $val )
-{
-	$this->_FLAG_POST_COUNT  = (bool)$val ;
-}
-
-function set_flag_notify( $val )
-{
-	$this->_FLAG_NOTIFY = (bool)$val ;
-}
-
-function set_flag_row_extend( $val )
-{
-	$this->_FLAG_ROW_EXTEND = (bool)$val ;
-}
-
-//---------------------------------------------------------
-// submit check 
-//---------------------------------------------------------
-function submit_check()
-{
-	$ret = $this->submit_check_exec() ;
-	if ( $ret < 0 ) {
-		$this->submit_check_redirect( $ret );
-		return false;
+	if ( $this->_is_module_admin ) {
+		return true;
 	}
 
-	return true;
-}
-
-function submit_check_redirect( $ret )
-{
-	$url = null ;
-	$msg = null ;
-
-	switch ( $ret )
-	{
-		case _C_WEBPHOTO_ERR_NO_PERM:
-			$url = XOOPS_URL .'/user.php';
-			$msg = $this->get_constant('ERR_MUSTREGFIRST') ;
-			break;
-
-		case _C_WEBPHOTO_ERR_CHECK_DIR:
-			$url = $this->_MODULE_URL ;
-			$msg = 'Directory Error';
-			if ( $this->_is_module_admin ) {
-				$msg .= '<br />'.$this->get_format_error();
-			}
-			break;
-
-		case _C_WEBPHOTO_ERR_NO_CAT_RECORD :
-			$url = $this->_MODULE_URL ;
-			$msg = $this->get_constant('ERR_MUSTADDCATFIRST') ;
-			break;
-
-		default;
-			break;
+// user can touch photos status > 0
+	if ( ( $item_row['item_uid'] == $this->_xoops_uid ) && ( $item_row['item_status'] > 0 ) ) {
+		return true;
 	}
-
-	$this->_redirect_url  = $url ;
-	$this->_redirect_msg  = $msg ;
-
-// BUG: undefined property _REDIRECT_TIME_FAILED
-	$this->_redirect_time = $this->_TIME_FAILED ;
-}
-
-function submit_check_exec()
-{
-	if ( ! $this->_has_insertable )   {
-		return _C_WEBPHOTO_ERR_NO_PERM ; 
-	}
-
-	if ( ! $this->exists_cat_record() ) { 
-		return _C_WEBPHOTO_ERR_NO_CAT_RECORD ; 
-	}
-
-	$ret1 = $this->check_dir( $this->_PHOTOS_DIR );
-	if ( $ret1 < 0 ) {
-		return $ret1; 
-	}
-
-	$ret2 = $this->check_dir( $this->_THUMBS_DIR );
-	if ( $ret2 < 0 ) {
-		return $ret2; 
-	}
-
-	$ret3 = $this->check_dir( $this->_TMP_DIR );
-	if ( $ret3 < 0 ) {
-		return $ret3; 
-	}
-
-	return 0;
-}
-
-//---------------------------------------------------------
-// submit form
-//---------------------------------------------------------
-function build_submit_default_row()
-{
-	$this->get_post_cat_id();
-
-	$this->_post_type           = $this->_post_class->get_post_get_text( 'type' );
-	$this->_item_kind           = $this->_post_class->get_post_text( 'item_kind' );
-	$this->_item_displaytype    = $this->_post_class->get_post_text( 'item_displaytype' );
-	$this->_item_external_url   = $this->_post_class->get_post_text( 'item_external_url' );
-	$this->_item_embed_type     = $this->_post_class->get_post_text( 'item_embed_type' );
-	$this->_item_playlist_type  = $this->_post_class->get_post_text( 'item_playlist_type' );
-
-// set checked
-	$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_NO );
-
-// new row
-	$item_row = $this->_item_handler->create( true );
-	$item_row['item_cat_id']         = $this->_post_item_cat_id;
-	$item_row['item_kind']           = $this->_item_kind ;
-	$item_row['item_displaytype']    = $this->_item_displaytype;
-	$item_row['item_embed_type']     = $this->_item_embed_type;
-	$item_row['item_playlist_type']  = $this->_item_playlist_type;
-	$item_row['item_datetime']       = $this->get_mysql_date_today();
-
-	return $item_row;
-}
-
-function build_submit_preview_row()
-{
-	$item_row = $this->_item_handler->create( true );
-	$item_row = $this->build_row_by_post( $item_row, false, false );
-
-	$item_row['item_cat_id'] = $this->_post_item_cat_id;
-	$item_row['item_uid']    = $this->_xoops_uid;
-
-	if ( $item_row['item_datetime'] ) {
-		$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_YES );
-	} else {
-		$item_row['item_datetime'] = $this->get_mysql_date_today();
-	}
-
-	return $item_row;
-}
-
-function is_show_extra_form()
-{
-	if ( $this->_post_item_cat_id > 0 ) {
-		return false;
-	}
-	return $this->is_upload_type();
-}
-
-function is_upload_type()
-{
-	if ( $this->is_embed_type() ) {
-		return false ;
-	}
-	if ( $this->is_external_type() ) {
-		return false ;
-	}
-	if ( $this->is_admin_playlist_type() ) {
-		return false ;
-	}
-	return true;
-}
-
-function build_form_param( $mode )
-{
-	list ( $types, $allowed_exts ) = $this->_mime_class->get_my_allowed_mimes();
-
-	$param = array(
-		'mode'            => $mode,
-		'type'            => $this->_post_type ,
-		'preview_name'    => $this->get_preview_name(),
-		'tag_name_array'  => $this->get_tag_name_array(),
-		'checkbox_array'  => $this->get_checkbox_array(),
-		'has_resize'      => $this->_has_image_resize,
-		'has_rotate'      => $this->_has_image_rotate,
-		'allowed_exts'    => $allowed_exts ,
-	);
-
-	return $param;
+	return false;
 }
 
 //---------------------------------------------------------
@@ -285,6 +79,8 @@ function build_form_param( $mode )
 //---------------------------------------------------------
 function build_modify_row_by_post( $item_row, $flag_default=false )
 {
+	$item_id = $item_row['item_id'] ;
+
 	$post_preview               = $this->_post_class->get_post_text('preview');
 	$post_submit                = $this->_post_class->get_post_text('submit' );
 	$post_time_update_checkbox  = $this->_post_class->get_post_int( 'item_time_update_checkbox' );
@@ -308,8 +104,7 @@ function build_modify_row_by_post( $item_row, $flag_default=false )
 		$this->set_checkbox_by_name( 'item_time_update_checkbox',  _C_WEBPHOTO_YES );
 		$this->set_checkbox_by_name( 'item_time_publish_checkbox', $publish_checkbox );
 		$this->set_checkbox_by_name( 'item_time_expire_checkbox',  $expire_checkbox );
-		$this->set_tag_name_array( $this->tag_handler_tag_name_array( $this->_post_photo_id ) );
-
+		$this->set_tag_name_array( $this->tag_handler_tag_name_array( $item_id ) );
 	}
 
 	if ( $post_preview || $post_submit ) {
@@ -353,7 +148,7 @@ function print_form_video_thumb( $mode, $item_row )
 		echo "<br />\n";
 	}
 
-	$form_class =& webphoto_photo_edit_form::getInstance(
+	$form_class =& webphoto_photo_misc_form::getInstance(
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_video_thumb( $mode, $item_row );
 }
@@ -374,627 +169,11 @@ function print_form_delete_confirm( $mode, $item_row )
 
 	echo "<br />\n";
 
-	$form_class =& webphoto_photo_edit_form::getInstance(
+	$form_class =& webphoto_photo_misc_form::getInstance(
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_delete_confirm( 'admin', $item_row['item_id'] );
-}
-
-//---------------------------------------------------------
-// submit
-//---------------------------------------------------------
-function submit()
-{
-	$this->get_post_param();
-	$ret1 = $this->submit_exec();
-
-	if ( $this->_is_video_thumb_form ) {
-		return _C_WEBPHOTO_RET_VIDEO_FORM ;
-	}
-
-	$ret2 = $this->build_failed_msg( $ret1 );
-	if ( !$ret2 ) {
-		return _C_WEBPHOTO_RET_ERROR ;
-	}
-
-	return _C_WEBPHOTO_RET_SUCCESS ;
-}
-
-function get_created_row()
-{
-	return $this->_row_create ;
-}
-
-function submit_exec()
-{
-	$this->clear_msg_array();
-
-	$ret1 = $this->submit_exec_check();
-	if ( $ret1 < 0 ) {
-		return $ret1 ;
-	}
-
-	$ret2 = $this->submit_exec_fetch();
-	if ( $ret2 < 0 ) {
-		return $ret2 ;
-	}
-
-	$ret3 = $this->submit_exec_fetch_check();
-	if ( $ret3 < 0 ) {
-		return $ret3 ;
-	}
-
-	$ret4 = $this->submit_exec_save();
-	if ( $ret4 < 0 ) {
-		return $ret4 ;
-	}
-
-	$this->submit_exec_notify();
-	return 0; 
-}
-
-function submit_exec_check()
-{
-// Check if cid is valid
-	if ( empty( $this->_post_item_cat_id ) ) {
-		return _C_WEBPHOTO_ERR_EMPTY_CAT ;
-	}
-
-	if ( ! $this->check_valid_catid( $this->_post_item_cat_id ) ) {
-		return _C_WEBPHOTO_ERR_INVALID_CAT ;
-	}
-
-// Check if upload file name specified
-	if ( $this->is_upload_type() && ! $this->check_xoops_upload_file( $this->_FLAG_FETCH_THUMB ) ) {
-		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
-	}
-
-	return 0; 
-}
-
-function submit_exec_fetch()
-{
-	if ( $this->is_external_type() ) {
-		$this->set_ext_when_external() ;
-		$this->set_title_when_external() ;
-
-	} elseif ( $this->is_embed_type() ) {
-		$this->set_title_when_embed() ;
-		$this->set_thumb_when_embed() ;
-
-	} elseif ( $this->is_admin_playlist_type() ) {
-		$this->set_title_when_playlist() ;
-		$this->set_player_when_playlist() ;
-
-// fetch photo
-	} else {
-		$ret11 = $this->upload_fetch_photo( $this->_FLAG_FETCH_ALLOW_ALL );
-		if ( $ret11 < 0 ) { 
-			return $ret11;	// failed
-		}
-
-// preview
-		if ( empty($this->_photo_tmp_name) && $this->is_readable_preview() ) {
-			$this->_photo_tmp_name = $this->get_preview_name() ;
-		}
-
-		$this->set_values_for_fetch_photo( $this->_photo_tmp_name );
-	}
-
-// fetch thumb middle
-	if ( $this->_FLAG_FETCH_THUMB ) {
-		$this->upload_fetch_thumb();
-		$this->upload_fetch_middle();
-	}
-
-	if ( $this->is_item_undefined_kind() ) {
-		$this->set_item_kind( $this->get_new_kind() );
-	}
-
-	$this->set_item_displaytype( $this->get_new_displaytype() );
-	$this->set_item_onclick(     $this->get_new_onclick() );
-
-	return 0; 
-}
-
-function submit_exec_fetch_check()
-{
-	$this->_is_none_type = false;
-
-	if ( $this->_photo_tmp_name ) {
-		return 0 ;
-	}
-
-// BUG: not set external type
-// external type
-	if ( $this->is_external_type() ) {
-		return 0;
-	}
-
-// embed type
-	if ( $this->is_embed_type() ) {
-		if ( $this->is_fill_item_embed_src() || $this->is_fill_item_embed_text() ) {
-			return 0;
-		} else {
-			return _C_WEBPHOTO_ERR_EMBED;
-		}
-	}
-
-// playlist type
-	if ( $this->is_admin_playlist_type() ) {
-		if ( $this->is_fill_item_playlist_feed() ) {
-			return 0;
-		} elseif ( $this->is_fill_item_playlist_dir() ) {
-			return 0;
-		} else {
-			return _C_WEBPHOTO_ERR_PLAYLIST;
-		}
-	}
-
-// check title
-	if ( !$this->is_fill_item_title() ) {
-		return _C_WEBPHOTO_ERR_NO_TITLE;
-	}
-
-// check allow no image mode
-	if ( $this->_FLAG_ALLOW_NONE ) {
-		$this->set_item_kind( _C_WEBPHOTO_ITEM_KIND_NONE );
-		return 0; 
-	}
-
-	return _C_WEBPHOTO_ERR_NO_IMAGE;
-}
-
-function submit_exec_save()
-{
-	$photo_tmp_name  = $this->_photo_tmp_name;
-	$thumb_tmp_name  = $this->_thumb_tmp_name;
-	$middle_tmp_name = $this->_middle_tmp_name;
-
-// --- insert item ---
-	$item_row = $this->build_insert_item_row();
-	$item_id = $this->_item_handler->insert( $item_row );
-	if ( !$item_id ) {
-		$this->set_error( $this->_item_handler->get_errors() );
-		return _C_WEBPHOTO_ERR_DB ;
-	}
-
-	$item_row['item_id'] = $item_id;
-
-	$this->_row_create = $item_row;
-
-	$ret14 = $this->create_photo_thumb(
-		$item_row, $photo_tmp_name, $thumb_tmp_name, $middle_tmp_name, true );
-
-	if ( $ret14 < 0 ) {
-		return $ret14;
-	}
-
-	$file_params = $this->get_file_params();
-
-// --- update item ---
-	$update_row = $this->build_update_item_row( $item_row, $file_params );
-	$ret15 = $this->_item_handler->update( $update_row );
-	if ( !$ret15 ) {
-		$this->set_error( $this->_item_handler->get_errors() );
-		return _C_WEBPHOTO_ERR_DB;
-	}
-
-	$this->_row_create = $update_row ;
-
-	if ( $this->is_admin_playlist_type() ) {
-		$ret = $this->_playlist_class->create_cache_by_item_row( $update_row );
-		if ( !$ret ) {
-			$this->set_msg_array( $this->_playlist_class->get_errors() );
-		}
-	}
-
-// --- add tag ---
-	$ret16 = $this->_tag_class->add_tags( 
-		$item_id, $this->_xoops_uid, $this->get_tag_name_array() );
-	if ( !$ret16 ) { 
-		return _C_WEBPHOTO_ERR_DB; 
-	}
-
-	return 0;
-}
-
-function submit_exec_notify()
-{
-	if ( $this->_FLAG_POST_COUNT ) {
-		$xoops_user_class =& webphoto_xoops_user::getInstance();
-		$xoops_user_class->increment_post_by_num_own( $this->_cfg_addposts );
-	}
-
-// Trigger Notification when supper insert
-	if ( $this->_FLAG_NOTIFY && $this->get_new_status() ) {
-		$this->notify_new_photo( $this->_row_create );
-	}
-
-	return 0;
-}
-
-function build_insert_item_row()
-{
-	$item_row = $this->_item_handler->create( true );
-
-	$item_row = $this->build_row_by_post( $item_row, true );
-
-	$item_row['item_uid']    = $this->_xoops_uid;
-	$item_row['item_status'] = $this->get_new_status();
-	$item_row['item_search'] = $this->build_search_for_edit( $item_row, $this->get_tag_name_array() );
-
-	return $item_row;
-}
-
-function build_update_item_row( $item_row, $file_params )
-{
-	$item_id  = $item_row['item_id'];
-
-	$file_id_array = $this->_photo_class->insert_files_from_params(
-		$item_id,  $file_params );
-
-	$playlist_cache = $this->get_playlist_cache_if_empty( $item_row );
-
-	$update_row = $this->_photo_class->build_update_item_row(
-		$item_row, $file_id_array, $playlist_cache, $this->_special_ext );
-
-// set by create_thumb_from_external
-	if ( empty( $update_row['item_external_thumb'] ) ) {
-		$update_row['item_external_thumb'] = $this->_item_external_thumb ;
-	}
-
-	return $update_row;
-}
-
-function get_new_kind()
-{
-	$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
-
-// external
-	if ( $this->is_external_type() ) {
-		if ( $this->is_image_ext( $this->_item_ext ) ) {
-			$kind = _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ;
-		} else {
-			$kind = _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL ;
-		}
-
-// upload
-	} elseif ( $this->_item_ext ) {
-		$kind = $this->_mime_class->ext_to_kind( $this->_item_ext );
-
-// embed
-	} elseif ( $this->is_embed_type() ) {
-		$kind = _C_WEBPHOTO_ITEM_KIND_EMBED ;
-
-// playlist
-	} elseif ( $this->is_admin_playlist_type() ) {
-		if ( $this->_item_playlist_feed ) {
-			$kind = _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ;
-
-		} elseif( $this->_item_playlist_dir ) {
-			$kind = _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR ;
-		}
-	}
-
-	return $kind ;
-}
-
-function get_new_displaytype()
-{
-	$str = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
-
-	if ( $this->is_image_ext( $this->_item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_IMAGE ;
-
-	} elseif ( $this->is_swfobject_ext( $this->_item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
-
-	} elseif ( $this->is_mediaplayer_ext( $this->_item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-
-	} elseif ( $this->is_embed_type() ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_EMBED ;
-
-	} elseif ( $this->is_admin_playlist_type() ) {
-		if ( $this->is_item_playlist_type_general() ) {
-			$str = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-
-		} elseif( $this->is_item_playlist_type_image() ) {
-			$str = _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR ;
-		}
-	}
-
-	return $str ;
-}
-
-function get_new_onclick()
-{
-	return $this->_photo_class->get_onclick( $this->_item_ext );
-}
-
-function get_new_status()
-{
-	return intval( $this->_has_superinsert );
-}
-
-function set_ext_when_external()
-{
-	$ext = $this->parse_ext( $this->_item_external_url ) ;
-	if ( $ext ) {
-		$this->set_item_ext( $ext );
-	}
-}
-
-function external_ext_to_kind( $ext )
-{
-	$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
-	if ( $ext ) {
-		$kind = $this->_mime_class->ext_to_kind( $ext );
-	}
-	return $kind;
-}
-
-function set_title_when_external()
-{
-	$this->overwrite_item_title_if_empty( 
-		$this->external_url_to_title() );
-}
-
-function external_url_to_title()
-{
-	return $this->strip_ext( 
-		$this->_utility_class->parse_url_to_filename( $this->_item_external_url ) );
-}
-
-function set_title_when_embed()
-{
-	$this->overwrite_item_title_if_empty( 
-		$this->embed_src_to_title() );
-}
-
-function set_thumb_when_embed()
-{
-	$this->overwrite_item_external_thumb_if_empty( 
-		$this->build_embed_thumb() );
-}
-
-function embed_src_to_title()
-{
-	$title = null;
-
-	if ( empty( $this->_item_embed_type ) ) {
-		return $title ;	// null
-	}
-
-	if ( empty( $this->_item_embed_src ) ) {
-		return $title ;	// null
-	}
-
-	$title  = $this->_item_embed_type ;
-	$title .= ' : ';
-	$title .= $this->_item_embed_src ;
-
-	return $title ;
-}
-
-function build_embed_thumb()
-{
-	return $this->_embed_class->build_thumb(
-		$this->_item_embed_type, $this->_item_embed_src );
-}
-
-function set_title_when_playlist()
-{
-	$this->overwrite_item_title_if_empty( 
-		$this->playlist_to_title() );
-}
-
-function set_player_when_playlist()
-{
-	if ( $this->is_item_playlist_type_general() ) {
-		$this->set_item_player_id( _C_WEBPHOTO_PLAYER_ID_PLAYLIST ) ;
-	}
-}
-
-function playlist_to_title()
-{
-	if ( $this->_item_playlist_dir ) {
-		$title = $this->_item_playlist_dir ;
-
-	} elseif ( $this->_item_playlist_feed ) {
-		$param = parse_url( $this->_item_playlist_feed );
-		if ( isset($param['host']) ) {
-			$title = $param['host'] ;
-		} else {
-			$title = date( "YmdHis" );
-		}
-	}
-
-	if ( $title ) {
-		$title = 'playlist: '.$title;
-	}
-
-	return $title ;
-}
-
-function get_playlist_cache_if_empty( $item_row )
-{
-	$item_id             = $item_row['item_id'] ;
-	$item_playlist_cache = $item_row['item_playlist_cache'] ;
-	$cache = null ;
-
-	if ( $this->is_admin_playlist_type() && 
-	     empty($tem_playlist_cache) ) {
-
-		$cache = $this->_playlist_class->build_name( $item_id ) ;
-	}
-
-	return $cache ;
-}
-
-//---------------------------------------------------------
-// create photo thumb 
-//---------------------------------------------------------
-function create_photo_thumb( $item_row, $photo_name, $thumb_name, $middle_name, $is_submit )
-{
-	$this->_special_ext = null ;
-
-	$item_id = $item_row['item_id'] ;
-
-	$post_rotate = $this->_post_class->get_post( 'rotate' ) ;
-	$rotate      = $this->conv_rotate( $post_rotate );
-
-	$photo_param  = $this->build_photo_param( $item_row, $photo_name, $thumb_name, $rotate );
-	$cont_param   = null;
-	$thumb_param  = null;
-	$middle_param = null;
-
-	if ( is_array($photo_param) ) {
-		$ret = $this->create_photo_param_by_param( $photo_param );
-		if ( $ret < 0 ) {
-			return $ret;
-		}
-
-		$cont_param = $photo_param ;
-
-// use rotated file if rotate
-		if ( ( $rotate > 0 ) && isset( $this->_file_params['cont']['path'] ) ) {
-			$cont_param['src_file'] = XOOPS_ROOT_PATH .'/'. $this->_file_params['cont']['path'] ;
-		}
-	}
-
-	if ( $thumb_name ) {
-		$thumb_param = $this->create_thumb_param_by_tmp( $item_id, $thumb_name );
-
-	} elseif ( $is_submit && $this->is_external_type() ) {
-		$this->prepare_external_thumb();
-
-	} elseif ( $is_submit && $this->is_embed_type() ) {
-		$this->prepare_embed_thumb() ;
-
-	} elseif ( $is_submit && $this->is_admin_playlist_type() ) {
-		$this->prepare_playlist_thumb();
-
-	} elseif ( is_array($cont_param) ) {
-		$thumb_param = $this->create_thumb_param_by_param( $cont_param );
-	}
-
-	if ( $middle_name ) {
-		$middle_param = $this->create_middle_param_by_tmp( $item_id, $middle_name );
-
-	} elseif ( is_array($cont_param) ) {
-		$middle_param = $this->create_middle_param_by_param( $cont_param );
-	}
-
-// unlink tmp file
-	if ( $photo_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $photo_name );
-	}
-	if ( $thumb_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $thumb_name );
-	}
-	if ( $middle_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $middle_name );
-	}
-
-	$this->_file_params['thumb']  = $thumb_param ;
-	$this->_file_params['middle'] = $middle_param ;
-
-	return 0;
-}
-
-function prepare_external_thumb()
-{
-// image type
-	if ( $this->is_image_ext( $this->_item_ext ) && $this->_item_external_url ) {
-		$this->set_item_external_thumb( $this->_item_external_url );
-
-	} elseif ( empty( $this->_item_ext ) ) {
-		$this->_special_ext = $this->_EXTERNAL_THUMB_EXT_DEFAULT ;
-	}
-}
-
-function prepare_embed_thumb()
-{
-	$thumb = $this->_embed_class->build_thumb( 
-		$this->_item_embed_type, $this->_item_embed_src );
-
-// plugin thumb
-	if ( $thumb ) {
-		$this->set_item_external_thumb( $thumb );
-
-	} else {
-		$this->_special_ext = $this->_EMBED_THUMB_EXT_DEFAULT ;
-	}
-}
-
-function prepare_playlist_thumb()
-{
-	$this->_special_ext = $this->_PLAYLIST_THUMB_EXT_DEFAULT ;
-}
-
-function build_photo_param( $item_row, $photo_name, $thumb_name, $rotate )
-{
-	if ( empty($photo_name) ) {
-		return null; 
-	}
-
-	$photo_param                     = array();
-	$photo_param['item_id']          = $item_row['item_id'] ;
-	$photo_param['src_ext']          = $item_row['item_ext'] ;
-	$photo_param['src_kind']         = $item_row['item_kind'] ;
-	$photo_param['src_file']         = $this->_TMP_DIR .'/'. $photo_name ;
-	$photo_param['mime']             = $this->_photo_media_type ;
-	$photo_param['video_param']      = $this->_video_param ;
-	$photo_param['flag_video_thumb'] = $thumb_name ? false : true ;
-	$photo_param['rotate']           = $rotate ;
-
-	return $photo_param;
-}
-
-function notify_new_photo( $item_row )
-{
-	$notification_class =& webphoto_notification_event::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$notification_class->notify_new_photo( 
-		$item_row['item_id'],  $item_row['item_cat_id'],  $item_row['item_title'] );
-}
-
-function is_item_playlist_type_general()
-{
-	return $this->is_playlist_type_general(
-		$this->_item_playlist_type );
-}
-
-function is_item_playlist_type_image()
-{
-	return $this->is_playlist_type_image(
-		$this->_item_playlist_type );
-}
-
-function is_playlist_type_general( $type )
-{
-	switch ( $type )
-	{
-		case _C_WEBPHOTO_PLAYLIST_TYPE_AUDIO :
-		case _C_WEBPHOTO_PLAYLIST_TYPE_VIDEO :
-		case _C_WEBPHOTO_PLAYLIST_TYPE_FLASH :
-			return true;
-	}
-
-	return false;
-}
-
-function is_playlist_type_image( $type )
-{
-	switch ( $type )
-	{
-		case _C_WEBPHOTO_PLAYLIST_TYPE_IMAGE :
-			return true;
-	}
-
-	return false;
+// BUG: return to admin when delete
+	$form_class->print_form_delete_confirm( $mode, $item_row['item_id'] );
 }
 
 //---------------------------------------------------------
@@ -1279,7 +458,7 @@ function update_photo_no_image( $item_row )
 
 function update_all_file_duration( $item_row )
 {
-	$duration = $this->get_item_duration();
+	$duration = $this->_item_duration ;
 
 	$cont_duration = 0 ; 
 	$cont_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
@@ -1527,77 +706,16 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 }
 
 //---------------------------------------------------------
-// build_redirect
+// tag class
 //---------------------------------------------------------
-function build_failed_msg( $ret )
+function tag_handler_update_tags( $item_id, $tag_name_array )
 {
-	$this->_redirect_class->set_error( $this->get_errors() );
-	$ret = $this->_redirect_class->build_failed_msg( $ret );
-
-	$this->clear_errors();
-	$this->set_error( $this->_redirect_class->get_errors() );
-	return $ret;
+	return $this->_tag_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
 }
 
-function build_redirect( $param )
+function tag_handler_tag_name_array( $item_id )
 {
-// BUG: error twice
-	$this->_redirect_class->clear_errors();
-
-	$this->_redirect_class->set_error( $this->get_errors() );
-	$ret = $this->_redirect_class->build_redirect( $param );
-
-// BUG: endless loop in submit check
-	$this->_redirect_url  = $this->_redirect_class->get_redirect_url();
-	$this->_redirect_time = $this->_redirect_class->get_redirect_time();
-	$this->_redirect_msg  = $this->_redirect_class->get_redirect_msg();
-
-	return $ret ;
-}
-
-function get_redirect_url()
-{
-	if ( $this->_redirect_url ) {
-		return $this->_redirect_url ;
-	}
-	return $this->_MODULE_URL ;
-}
-
-function get_redirect_time()
-{
-	if ( $this->_redirect_time > 0 ) {
-		return $this->_redirect_time ;
-	}
-	return $this->_TIME_FAILED ;
-}
-
-function get_redirect_msg()
-{
-	if ( $this->_redirect_msg ) {
-		return $this->_redirect_msg ;
-	}
-	return $this->_REDIRECT_MSG_ERROR ;
-}
-
-//---------------------------------------------------------
-// preview
-//---------------------------------------------------------
-function build_preview_template( $row )
-{
-	$tpl = new XoopsTpl() ;
-	$tpl->assign( 'xoops_dirname' , $this->_DIRNAME ) ;
-	$tpl->assign( 'mydirname' ,     $this->_DIRNAME ) ;
-	$tpl->assign( $this->get_photo_globals() ) ;
-	$tpl->assign( 'photo' , $row ) ;
-
-// BUG: not show description in preview
-	$tpl->assign( 'show_photo_desc' , true ) ;
-
-// BUG: not show img alt
-	$tpl->assign( $this->get_lang_array() ) ;
-
-	$template = 'db:'. $this->_DIRNAME .'_inc_photo_in_list.html';
-	return $tpl->fetch( $template ) ;
+	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
 }
 
 // --- class end ---

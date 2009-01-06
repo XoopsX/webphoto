@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_create.php,v 1.9 2008/11/30 13:41:19 ohwada Exp $
+// $Id: photo_create.php,v 1.10 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// VODEO -> VIDEO
 // 2008-11-29 K.OHWADA
 // create_thumb_icon() -> build_icon_image()
 // 2008-11-08 K.OHWADA
@@ -66,7 +68,7 @@ class webphoto_photo_create extends webphoto_base_this
 	var $_EXT_PNG       = 'png';
 	var $_ICON_NAME_DEFAULT = 'default.png';
 
-	var $_VODEO_THUMB_MAX = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
+	var $_VIDEO_THUMB_MAX = _C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX ;
 	var $_GMAP_ZOOM       = _C_WEBPHOTO_GMAP_ZOOM ;
 
 //---------------------------------------------------------
@@ -105,12 +107,7 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function video_thumb( $item_row )
 {
-//	if ( empty($name) ) {
-//		$name = $this->_post_class->get_post_text('name') ;
-//	}
-
 	$num = $this->_post_class->get_post_text('num') ;
-
 	$ret = $this->video_thumb_exec( $item_row, $num );
 	return $this->build_failed_msg( $ret );
 }
@@ -673,16 +670,6 @@ function create_thumb_middle_param( $item_id, $param )
 		}
 	}
 
-// thumb icon
-//	if ( $flag_thumb && !is_array($thumb_param) ) {
-//		$this->create_thumb_icon( $item_id, $src_ext );
-//		$thumb_param  = $this->get_thumb_param() ;
-//	}
-//	if ( $flag_middle && !is_array($middle_param) ) {
-//		$this->create_middle_icon( $item_id, $src_ext );
-//		$middle_param = $this->get_middle_param() ;
-//	}
-
 // remove temp file
 	if ( $video_tmp_file ) {
 		$this->_utility_class->unlink_file( $video_tmp_file );
@@ -806,17 +793,8 @@ function create_video_plural_thumbs( $item_id, $src_file, $src_ext )
 {
 	$count = $this->_video_class->create_plural_thumbs( $item_id, $src_file );
 	if ( $count ) {
-
-// create thumb icon
-//		$this->_image_class->copy_thumb_icon_in_dir( 
-//			$this->_TMP_DIR, 
-//			$this->_video_class->get_first_thumb_node(), 
-//			$src_ext
-//		);
-
 		$this->_flag_video_thumb_created = true;
 		return true;
-
 	}
 
 	$this->_flag_video_thumb_failed = true;
@@ -955,12 +933,6 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 		$param = $this->create_video_middle_for_update( $item_id, $src_file );
 	}
 
-// icon if fail
-//	if ( !is_array($param) ) {
-//		$this->create_thumb_icon( $item_id, $item_ext );
-//		$param = $this->get_thumb_param();
-//	}
-
 	$param['duration'] = 0 ;
 	$param['kind']     = $kind ;
 
@@ -1018,7 +990,7 @@ function unlink_current_file( $file_row, $param )
 
 function unlink_video_thumb_temp_files( $item_id )
 {
-	for ( $i = 1; $i <= $this->_VODEO_THUMB_MAX; $i ++ )
+	for ( $i = 1; $i <= $this->_VIDEO_THUMB_MAX; $i ++ )
 	{
 		$file = $this->build_video_thumb_file( $item_id, $i );
 		$this->unlink_file( $file );

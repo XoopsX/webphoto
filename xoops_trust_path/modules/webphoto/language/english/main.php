@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.22 2008/12/21 20:19:01 ohwada Exp $
+// $Id: main.php,v 1.23 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1280,6 +1280,26 @@ define("_WEBPHOTO_VOTE_RATING_10","10");
 //---------------------------------------------------------
 // edit form
 define("_WEBPHOTO_GROUP_PERM_ALL" , "All Groups" ) ;
+
+//---------------------------------------------------------
+// v1.00
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_EDITOR", "Editor");
+define("_WEBPHOTO_ITEM_DESCRIPTION_HTML",   "HTML tags");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SMILEY", "Smiley icons");
+define("_WEBPHOTO_ITEM_DESCRIPTION_XCODE",  "XOOPS codes");
+define("_WEBPHOTO_ITEM_DESCRIPTION_IMAGE",  "Images");
+define("_WEBPHOTO_ITEM_DESCRIPTION_BR",     "Linebreak");
+
+// edit form
+define("_WEBPHOTO_TITLE_EDITOR_SELECT", "Select Editor");
+define("_WEBPHOTO_CAP_DESCRIPTION_OPTION", "Options");
+define("_WEBPHOTO_CAP_HTML",   "Enable HTML tags");
+define("_WEBPHOTO_CAP_SMILEY", "Enable smiley icons");
+define("_WEBPHOTO_CAP_XCODE",  "Enable XOOPS codes");
+define("_WEBPHOTO_CAP_IMAGE",  "Enable images");
+define("_WEBPHOTO_CAP_BR",     "Enable linebreak");
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.11 2008/12/20 06:11:27 ohwada Exp $
+// $Id: item_handler.php,v 1.12 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// item_editor
 // 2008-12-12 K.OHWADA
 // check_perm_by_row_name_groups()
 // move get_rows_public() to item_cat_handler
@@ -38,9 +40,16 @@ class webphoto_item_handler extends webphoto_lib_handler
 	var $_DATETIME_DEFAULT      = _C_WEBPHOTO_DATETIME_DEFAULT ;
 	var $_SHOWINFO_DEFAULT      = _C_WEBPHOTO_SHOWINFO_DEFAULT ;
 	var $_CODEINFO_DEFAULT      = _C_WEBPHOTO_CODEINFO_DEFAULT ;
+	var $_EDITOR_FEFAULT        = _C_WEBPHOTO_EDITOR_DEFAULT ;
 	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
 	var $_PERM_READ             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
 	var $_PERM_DOWN             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
+
+	var $_DESCRIPTION_HTML_FEFAULT   = 0 ;
+	var $_DESCRIPTION_SMILEY_FEFAULT = 1 ;
+	var $_DESCRIPTION_XCODE_FEFAULT  = 1 ;
+	var $_DESCRIPTION_IMAGE_FEFAULT  = 1 ;
+	var $_DESCRIPTION_BR_FEFAULT     = 1 ;
 
 	var $_INFO_SEPARATOR        = _C_WEBPHOTO_INFO_SEPARATOR;
 
@@ -156,6 +165,12 @@ function create( $flag_new=false )
 		'item_codeinfo'        => $this->_CODEINFO_DEFAULT ,
 		'item_perm_read'       => $this->_PERM_READ,
 		'item_perm_down'       => $this->_PERM_DOWN,
+		'item_editor'          => $this->_EDITOR_FEFAULT,
+		'item_description_html'   => $this->_DESCRIPTION_HTML_FEFAULT,
+		'item_description_smiley' => $this->_DESCRIPTION_SMILEY_FEFAULT,
+		'item_description_xcode'  => $this->_DESCRIPTION_XCODE_FEFAULT,
+		'item_description_image'  => $this->_DESCRIPTION_IMAGE_FEFAULT,
+		'item_description_br'     => $this->_DESCRIPTION_BR_FEFAULT,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
@@ -241,6 +256,12 @@ function insert( $row, $force=false )
 	$sql .= 'item_codeinfo, ';
 	$sql .= 'item_page_width, ';
 	$sql .= 'item_page_height, ';
+	$sql .= 'item_editor, ';
+	$sql .= 'item_description_html, ';
+	$sql .= 'item_description_smiley, ';
+	$sql .= 'item_description_xcode, ';
+	$sql .= 'item_description_image, ';
+	$sql .= 'item_description_br, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -313,6 +334,12 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_codeinfo).', ';
 	$sql .= intval($item_page_width).', ';
 	$sql .= intval($item_page_height).', ';
+	$sql .= $this->quote($item_editor).', ';
+	$sql .= intval($item_description_html).', ';
+	$sql .= intval($item_description_smiley).', ';
+	$sql .= intval($item_description_xcode).', ';
+	$sql .= intval($item_description_image).', ';
+	$sql .= intval($item_description_br).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -399,6 +426,12 @@ function update( $row, $force=false )
 	$sql .= 'item_codeinfo='.$this->quote($item_codeinfo).', ';
 	$sql .= 'item_page_width='.intval($item_page_width).', ';
 	$sql .= 'item_page_height='.intval($item_page_height).', ';
+	$sql .= 'item_editor='.$this->quote($item_editor).', ';
+	$sql .= 'item_description_html='.intval($item_description_html).', ';
+	$sql .= 'item_description_smiley='.intval($item_description_smiley).', ';
+	$sql .= 'item_description_xcode='.intval($item_description_xcode).', ';
+	$sql .= 'item_description_image='.intval($item_description_image).', ';
+	$sql .= 'item_description_br='.intval($item_description_br).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -695,8 +728,27 @@ function build_name_text_by_kind( $num )
 
 function build_show_description_disp( $row )
 {
+	$editor = $row['item_editor'] ;
+	$text   = $row['item_description'] ;
+
+// new version (v0.10)
+	$html   = $row['item_description_html'] ;
+	$smiley = $row['item_description_smiley'] ;
+	$xcode  = $row['item_description_xcode'] ;
+	$image  = $row['item_description_image'] ;
+	$br     = $row['item_description_br'] ;
+
+// prev version (v0.90)
+	if ( empty($editor) ) {
+		$html   = 0 ;
+		$smiley = 1 ;
+		$xcode  = 1 ;
+		$image  = 1 ;
+		$br     = 1 ;
+	}
+
 	$myts =& MyTextSanitizer::getInstance();
-	return $myts->displayTarea( $row['item_description'] , 0 , 1 , 1 , 1 , 1  );
+	return $myts->displayTarea( $text, $html, $smiley, $xcode, $image, $br );
 }
 
 function build_show_exif_disp( $row )
@@ -704,8 +756,6 @@ function build_show_exif_disp( $row )
 	$myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['item_exif'] , 0 , 0 , 0 , 0 , 1 );
 }
-
-
 
 function build_show_icon_image( $item_row, $base_url )
 {

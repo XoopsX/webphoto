@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.3 2008/11/21 07:56:57 ohwada Exp $
+// $Id: item_manager.php,v 1.4 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-04 K.OHWADA
+// editor.php
 // 2008-11-16 K.OHWADA
 // show_image.php
 // 2008-11-08 K.OHWADA
@@ -41,6 +43,7 @@ webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/remote_file.php' );
+webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
@@ -58,15 +61,19 @@ webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
+webphoto_include_once( 'class/webphoto/editor_base.php' );
+webphoto_include_once( 'class/webphoto/editor.php' );
 webphoto_include_once( 'class/webphoto/mail_unlink.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
-webphoto_include_once( 'class/webphoto/photo_edit.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
 webphoto_include_once( 'class/webphoto/photo_redirect.php' );
-webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
+webphoto_include_once( 'class/webphoto/photo_misc_form.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
+webphoto_include_once( 'class/webphoto/imagemanager_submit.php' );
+webphoto_include_once( 'class/webphoto/photo_submit.php' );
+webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/flash_log.php' );
 webphoto_include_once( 'class/webphoto/flash_player.php' );

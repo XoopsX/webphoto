@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
+// $Id: item_table_manage.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// item_editor
 // 2008-11-29 K.OHWADA
 // item_icon_width
 // 2008-11-16 K.OHWADA
@@ -136,6 +138,12 @@ function _build_row_by_post()
 		'item_codeinfo'        => $this->_post_class->get_post_text(  'item_codeinfo' ),
 		'item_page_width'      => $this->_post_class->get_post_int(   'item_page_width' ),
 		'item_page_height'     => $this->_post_class->get_post_int(   'item_page_height' ),
+		'item_editor'          => $this->_post_class->get_post_text(  'item_editor' ),
+		'item_description_html'   => $this->_post_class->get_post_int( 'item_description_html' ),
+		'item_description_smiley' => $this->_post_class->get_post_int( 'item_description_smiley' ),
+		'item_description_xcode'  => $this->_post_class->get_post_int( 'item_description_xcode' ),
+		'item_description_image'  => $this->_post_class->get_post_int( 'item_description_image' ),
+		'item_description_br'     => $this->_post_class->get_post_int( 'item_description_br' ),
 
 //		'item_rating'         => $this->_post_class->get_post_float( 'item_rating' ),
 //		'item_votes'          => $this->_post_class->get_post_int(   'item_votes' ),
@@ -229,7 +237,14 @@ function _print_form( $row )
 		echo $this->build_comp_text( 'item_text_'.$i );
 	}
 
+	echo $this->build_comp_text(     'item_editor' );
 	echo $this->build_comp_textarea( 'item_description' );
+	echo $this->build_comp_text(     'item_description_html' );
+	echo $this->build_comp_text(     'item_description_smiley' );
+	echo $this->build_comp_text(     'item_description_xcode' );
+	echo $this->build_comp_text(     'item_description_image' );
+	echo $this->build_comp_text(     'item_description_br' );
+
 	echo $this->build_comp_textarea( 'item_exif' );
 
 	echo $this->build_comp_label( 'item_rating' );

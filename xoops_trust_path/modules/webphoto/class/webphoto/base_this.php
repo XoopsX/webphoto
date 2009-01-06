@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.15 2008/12/18 13:23:16 ohwada Exp $
+// $Id: base_this.php,v 1.16 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// init_preload()
 // 2008-12-12 K.OHWADA
 // $_UPLOADS_PATH
 // 2008-11-29 K.OHWADA
@@ -524,6 +526,12 @@ function get_cat_nice_path_from_id( $sel_id, $title, $funcURL, $path="" )
 //---------------------------------------------------------
 // preload class
 //---------------------------------------------------------
+function init_preload()
+{
+	$this->preload_init();
+	$this->preload_constant();
+}
+
 function preload_init()
 {
 	$this->_preload_class =& webphoto_d3_preload::getInstance();

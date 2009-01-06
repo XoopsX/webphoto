@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm.php,v 1.2 2008/08/08 04:36:09 ohwada Exp $
+// $Id: groupperm.php,v 1.3 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// _B_WEBPHOTO_GPERM_HTML
 // 2008-08-01 K.OHWADA
 // added _B_WEBPHOTO_GPERM_MAIL
 //---------------------------------------------------------
@@ -62,6 +64,7 @@ function _init()
 		_B_WEBPHOTO_GPERM_TAGEDIT     => _AM_WEBPHOTO_GPERM_TAGEDIT ,
 		_B_WEBPHOTO_GPERM_MAIL    => _AM_WEBPHOTO_GPERM_MAIL ,
 		_B_WEBPHOTO_GPERM_FILE    => _AM_WEBPHOTO_GPERM_FILE ,
+		_B_WEBPHOTO_GPERM_HTML    => _AM_WEBPHOTO_GPERM_HTML ,
 	) ;
 }
 

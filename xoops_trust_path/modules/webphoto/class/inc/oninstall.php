@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.13 2008/11/30 10:36:34 ohwada Exp $
+// $Id: oninstall.php,v 1.14 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// _item_add_column_100()
 // 2008-11-29 K.OHWADA
 // item_add_column_080()
 // 2008-11-16 K.OHWADA
@@ -547,6 +549,7 @@ function _groupperm_install()
 		_B_WEBPHOTO_GPERM_TAGEDIT ,
 		_B_WEBPHOTO_GPERM_MAIL ,
 		_B_WEBPHOTO_GPERM_FILE ,
+		_B_WEBPHOTO_GPERM_HTML ,
 	) ;
 
 	foreach( $global_perms_array as $perms_id ) 
@@ -573,6 +576,7 @@ function _item_update()
 	$this->_item_add_column_070();
 	$this->_item_add_column_080();
 	$this->_item_chang_column_080();
+	$this->_item_add_column_100();
 }
 
 function _item_add_column_050()
@@ -737,6 +741,34 @@ function _item_chang_column_080()
 
 	if ( $ret ) {
 		$this->_set_msg( 'Change item_icon_name in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_100()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_editor' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_editor VARCHAR(255) NOT NULL DEFAULT '', " ;
+	$sql .= "item_description_html   TINYINT(2) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_description_smiley TINYINT(2) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_description_xcode  TINYINT(2) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_description_image  TINYINT(2) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_description_br     TINYINT(2) NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_editor in <b>'. $this->_table_item .'</b>' );
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
 		return false;

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.13 2008/12/18 13:23:16 ohwada Exp $
+// $Id: constants.php,v 1.14 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// _C_WEBPHOTO_EDITOR_DEFAULT
 // 2008-11-29 K.OHWADA
 // _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX
 // 2008-10-08 K.OHWADA
@@ -53,6 +55,9 @@ define("_B_WEBPHOTO_GPERM_TAGEDIT",         2048 ) ;
 // v0.30
 define("_B_WEBPHOTO_GPERM_MAIL",            4096 ) ;
 define("_B_WEBPHOTO_GPERM_FILE",            8192 ) ;
+
+// v1.00
+define("_B_WEBPHOTO_GPERM_HTML",           16368 ) ;
 
 define("_C_WEBPHOTO_GPERM_NAME", "webphoto" ) ;
 
@@ -283,12 +288,16 @@ define("_C_WEBPHOTO_SMALL_CURRENT_WIDTH",  "80");
 define("_C_WEBPHOTO_SMALL_CURRENT_HEIGHT", "80");
 
 // v0.80
-define("_C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX",  "5" ) ;
+define("_C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX",  "5" ) ;
 
 // v0.90
 define("_C_WEBPHOTO_OPT_PERM_READ_ALL"     , 0 ) ;
 define("_C_WEBPHOTO_OPT_PERM_READ_NO_ITEM" , 1 ) ;
 define("_C_WEBPHOTO_OPT_PERM_READ_NO_CAT"  , 2 ) ;
+
+// v1.00
+define("_C_WEBPHOTO_EDITOR_DEFAULT" , "xoopsdhtml" ) ;
+define("_C_WEBPHOTO_EMBED_TYPE_DEFAULT" , "youtube" ) ;
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

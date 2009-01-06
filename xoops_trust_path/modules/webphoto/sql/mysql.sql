@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.12 2008/11/30 10:36:34 ohwada Exp $
+# $Id: mysql.sql,v 1.13 2009/01/06 09:41:35 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-01-04 K.OHWADA
+# item_editor
 # 2008-11-29 K.OHWADA
 # item_icon_width
 # 2008-11-16 K.OHWADA
@@ -108,6 +110,12 @@ CREATE TABLE item (
   item_embed_text  TEXT NOT NULL,
   item_icon_width  INT(11) NOT NULL DEFAULT '0',
   item_icon_height INT(11) NOT NULL DEFAULT '0',
+  item_editor  VARCHAR(255) NOT NULL DEFAULT '',
+  item_description_html   TINYINT(2) NOT NULL DEFAULT '0',
+  item_description_smiley TINYINT(2) NOT NULL DEFAULT '0',
+  item_description_xcode  TINYINT(2) NOT NULL DEFAULT '0',
+  item_description_image  TINYINT(2) NOT NULL DEFAULT '0',
+  item_description_br     TINYINT(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),

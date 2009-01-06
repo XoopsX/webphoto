@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_photo_edit_form -> webphoto_imagemanager_form
 // 2008-12-12 K.OHWADA
 // set_flag_row_extend()
 // 2008-10-01 K.OHWADA
@@ -23,7 +25,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_submit_imagemanager
 //=========================================================
-class webphoto_main_submit_imagemanager extends webphoto_photo_action
+//class webphoto_main_submit_imagemanager extends webphoto_photo_action
+class webphoto_main_submit_imagemanager extends webphoto_imagemanager_submit
 {
 	var $_THIS_CLOSE_FCT  = 'close';
 	var $_THIS_CLOSE_URL ;
@@ -36,7 +39,8 @@ class webphoto_main_submit_imagemanager extends webphoto_photo_action
 //---------------------------------------------------------
 function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 {
-	$this->webphoto_photo_action( $dirname , $trust_dirname );
+//	$this->webphoto_photo_action( $dirname , $trust_dirname );
+	$this->webphoto_imagemanager_submit( $dirname , $trust_dirname );
 
 	$this->_THIS_CLOSE_URL = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
 }
@@ -89,13 +93,6 @@ function _submit()
 
 // exit if error
 	$this->check_token_and_redirect( $this->_THIS_CLOSE_URL, $this->_TIME_FAILED );
-
-	$this->set_flag_fetch_allow_all( false );
-	$this->set_flag_fetch_thumb( false );
-	$this->set_flag_allow_none( false );
-	$this->set_flag_post_count( false );
-	$this->set_flag_notify( false );
-	$this->set_flag_row_extend( false );
 
 	$ret = $this->submit();
 	switch ( $ret )
@@ -168,7 +165,7 @@ function _print_form_imagemanager()
 		'allowed_exts'  => $this->get_normal_exts() ,
 	);
 
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$form_class =& webphoto_imagemanager_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_imagemanager( $row, $param );
 }

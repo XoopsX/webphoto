@@ -1,11 +1,64 @@
-$Id: readme_en.txt,v 1.19 2008/12/20 06:11:27 ohwada Exp $
+$Id: readme_en.txt,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+
+=================================================
+Version: 1.00
+Date:   2009-01-04
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Support FCKeditor
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=899&forum=13
+
+(1) User can choice the editor each item.
+
+2. Bug fix
+(1) fatal error in mobile
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=902&forum=13
+
+(2) fatal error in help
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=904&forum=13
+
+(3) fatal error in block
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=905&forum=13
+
+3. Database structure
+3.1 add field of table
+(1) item table : item_editor etc
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp.
+  the fields are added to the table automatically. 
+
+
+* Notice for usage *
+1. FCKeditor
+(1) Set XOOPS_ROOT_PATH /common/fckeditor 
+http://xoops.peak.ne.jp/md/mydownloads/singlefile.php?lid=93
+
+(2) check "Use HTML" in "Global Permissions"
+
+(3) It is difficult slightly to change a once chosen editor.
+You MUST rewrite "editor" column in "item table management".
+Moreover, you change "description" "HTML tags" "smiley icon" "XOOPS codes" "image" "linebreak" columns to fit the editor.
+
+
+* Notice *
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 0.90
 Date:   2008-12-20
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

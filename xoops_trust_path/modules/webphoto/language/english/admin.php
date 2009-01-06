@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.12 2008/12/18 13:23:16 ohwada Exp $
+// $Id: admin.php,v 1.13 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -488,6 +488,12 @@ define("_AM_WEBPHOTO_CAT_PARENT_FMT" , "Accede permission of parent category ( %
 define("_AM_WEBPHOTO_CAT_CHILD_CAP"  , "Child Categoris" ) ;
 define("_AM_WEBPHOTO_CAT_CHILD_NUM"  , "Number of child categoris" ) ;
 define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categoris" ) ;
+
+//---------------------------------------------------------
+// v1.00
+//---------------------------------------------------------
+// groupperm
+define( "_AM_WEBPHOTO_GPERM_HTML" , "Use HTML" ) ;
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: embed.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
+// $Id: embed.php,v 1.3 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,36 +8,32 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_lib_plugin
 // 2008-11-16 K.OHWADA
 // $class->width()
 //---------------------------------------------------------
-
-// build_embed_link( $type, $src, $width, $height )
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_embed
 //=========================================================
-class webphoto_embed extends webphoto_lib_base
+class webphoto_embed extends webphoto_lib_plugin
 {
 	var $_param = null ;
 
-	var $_EMBEDS_DIR;
-
 	var $_WIDTH_DEFAULT  = _C_WEBPHOTO_EMBED_WIDTH_DEFAULT ;
 	var $_HEIGHT_DEFAULT = _C_WEBPHOTO_EMBED_HEIGHT_DEFAULT ;
-
-	var $_CLASS_PREFIX = 'webphoto_embed_' ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_embed( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
-
-	$this->_EMBEDS_DIR = $this->_TRUST_DIR .'/plugins/embeds' ;
+	$this->webphoto_lib_plugin( $dirname, $trust_dirname );
+	$this->set_dirname( 'embeds' );
+	$this->set_prefix(  'webphoto_embed_' );
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -120,18 +116,18 @@ function build_link( $type, $src )
 
 function build_type_options( $flag_general )
 {
-	$files = $this->_utility_class->get_files_in_dir( $this->_EMBEDS_DIR, 'php', false, true );
+	$list = $this->build_list();
 
-	$options = array() ;
-	foreach ( $files as $file ) {
-		$opt_name = str_replace( '.php', '', $file );
-		if ( ( $opt_name == _C_WEBPHOTO_EMBED_NAME_GENERAL ) && !$flag_general ) {
+	$arr = array() ;
+	foreach ( $list as $type ) 
+	{
+		if ( ( $type == _C_WEBPHOTO_EMBED_NAME_GENERAL ) && !$flag_general ) {
 			continue;
 		}
-		$options[ $opt_name ] = $opt_name ;
+		$arr[ $type ] = $type ;
 	}
 
-	return $options;
+	return $arr;
 }
 
 function build_src_desc( $type, $src )
@@ -178,51 +174,6 @@ function build_thumb( $type, $src )
 	}
 
 	return $class->thumb( $src );
-}
-
-function &get_class_object( $type )
-{
-	$false = false;
-
-	if ( empty($type) ) {
-		return $false;
-	}
-
-	$this->include_once_file( $type ) ;
-
-	$class_name = $this->get_class_name( $type );
-	if ( empty($class_name) ) {
-		return $false;
-	}
-
-	$class = new $class_name();
-	return $class ;
-}
-
-function include_once_file( $type )
-{
-	$file = $this->get_file_name( $type ) ;
-	if ( $file ) {
-		include_once $file ;
-	}
-}
-
-function get_file_name( $type )
-{
-	$file = $this->_EMBEDS_DIR .'/'. $type .'.php' ;
-	if ( file_exists( $file ) ) {
-		return $file ;
-	}
-	return false;
-}
-
-function get_class_name( $type )
-{
-	$class = $this->_CLASS_PREFIX . $type ;
-	if ( class_exists( $class ) ) {
-		return $class;
-	}
-	return false;
 }
 
 // --- class end ---

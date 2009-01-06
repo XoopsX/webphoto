@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.8 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-04 K.OHWADA
+// editor.php
 // 2008-11-08 K.OHWADA
 // imagemagick.php
 // 2008-10-01 K.OHWADA
@@ -44,7 +46,6 @@ webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
-webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
 webphoto_include_once( 'class/webphoto/form_this.php' );
@@ -54,11 +55,9 @@ webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
-webphoto_include_once( 'class/webphoto/photo_edit.php' );
 webphoto_include_once( 'class/webphoto/photo_redirect.php' );
-webphoto_include_once( 'class/webphoto/photo_action.php' );
-webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
-webphoto_include_once( 'class/webphoto/notification_event.php' );
+webphoto_include_once( 'class/webphoto/imagemanager_form.php' );
+webphoto_include_once( 'class/webphoto/imagemanager_submit.php' );
 webphoto_include_once( 'class/main/submit_imagemanager.php' );
 
 //=========================================================

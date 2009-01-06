@@ -1,5 +1,5 @@
 <?php
-// $Id: video.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
+// $Id: video.php,v 1.10 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// VODEO -> VIDEO
 // 2008-11-29 K.OHWADA
 // _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX
 // 2008-11-08 K.OHWADA
@@ -42,7 +44,7 @@ class webphoto_video extends webphoto_lib_error
 	var $_FLASHS_PATH ;
 	var $_TMP_DIR ;
 
-	var $_PLURAL_MAX    = _C_WEBPHOTO_VODEO_THUMB_PLURAL_MAX ;
+	var $_PLURAL_MAX    = _C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX ;
 	var $_PLURAL_SECOND = 0;
 	var $_PLURAL_FIRST  = 0;
 	var $_PLURAL_OFFSET = 1;

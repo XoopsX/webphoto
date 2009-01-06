@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: submit_file.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_photo_edit_form -> webphoto_photo_misc_form
+// BUG : not set title & description
 // 2008-11-08 K.OHWADA
 // BUG: not create video thumb
 // 2008-10-01 K.OHWADA
@@ -256,8 +259,9 @@ function _exec_submit()
 		return $ret;
 	}
 
-	$post_title  = $this->_post_class->get_post_text( 'title' ) ;
-	$post_desc   = $this->_post_class->get_post_text( 'desc' ) ;
+// BUG : not set title & description
+	$post_title  = $this->_post_class->get_post_text( 'item_title' ) ;
+	$post_desc   = $this->_post_class->get_post_text( 'item_description' ) ;
 
 	$ext  = $this->parse_ext( $this->_post_file ) ;
 	$src_file = $this->_FILE_DIR .'/'. $this->_post_file ;
@@ -414,7 +418,7 @@ function _print_form_submit()
 		'allowed_exts' => $allowed_exts ,
 	);
 
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$form_class =& webphoto_photo_misc_form::getInstance( 
 		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
 
 	$form_class->print_form_file( $param );
@@ -427,7 +431,7 @@ function _print_form_video_thumb()
 		echo "<br />\n";
 	}
 
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$form_class =& webphoto_photo_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_video_thumb( 

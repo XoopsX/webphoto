@@ -1,5 +1,5 @@
 <?php
-// $Id: permission.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
+// $Id: permission.php,v 1.4 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// has_html()
 // 2008-12-12 K.OHWADA
 // extends webphoto_inc_group_permission
 // 2008-08-01 K.OHWADA
@@ -35,6 +37,7 @@ class webphoto_permission extends webphoto_inc_group_permission
 	var $_has_tagedit ;
 	var $_has_mail ;
 	var $_has_file ;
+	var $_has_html ;
 
 //---------------------------------------------------------
 // constructor
@@ -57,6 +60,7 @@ function webphoto_permission( $dirname )
 	$this->_has_tagedit          = $this->has_perm( 'tagedit' );
 	$this->_has_mail             = $this->has_perm( 'mail' );
 	$this->_has_file             = $this->has_perm( 'file' );
+	$this->_has_html             = $this->has_perm( 'html' );
 }
 
 function &getInstance( $dirname )
@@ -139,6 +143,11 @@ function has_mail()
 function has_file()
 {
 	return $this->_has_file ;
+}
+
+function has_html()
+{
+	return $this->_has_html ;
 }
 
 // --- class end ---

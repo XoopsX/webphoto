@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.10 2008/11/20 11:15:46 ohwada Exp $
+// $Id: submit.php,v 1.11 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_photo_misc_form
 // 2008-11-16 K.OHWADA
 //_print_form_error()
 // 2008-11-08 K.OHWADA
@@ -115,11 +117,7 @@ function print_form()
 			break;
 
 		default:
-			if ( $this->is_upload_type() ) {
-				$this->_print_form_upload();
-			} else {
-				$this->_print_form_default();
-			}
+			$this->_print_form_default();
 			break;
 	}
 }
@@ -334,16 +332,20 @@ function _print_form_preview()
 	$this->_print_form_submit( $item_row );
 }
 
-function _print_form_upload()
-{
-	$item_row = $this->build_submit_default_row();
-	$this->_print_form_embed(  $item_row );
-	$this->_print_form_submit( $item_row );
-}
-
 function _print_form_default()
 {
-	$this->_print_form_submit( $this->build_submit_default_row() );
+	$item_row = $this->build_submit_default_row();
+	$options  = $this->_editor_class->build_list_options( true );
+
+	if ( $this->is_upload_type() ) {
+		$this->_print_form_embed( $item_row );
+	}
+
+	if ( $this->is_show_form_editor( $options ) ) {
+		$this->_print_form_editor( $item_row, $options );
+	}
+
+	$this->_print_form_submit( $item_row );
 }
 
 function _print_form_submit( $item_row )
@@ -356,9 +358,20 @@ function _print_form_submit( $item_row )
 
 function _print_form_embed( $item_row )
 {
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$form_class =& webphoto_photo_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_embed( 'submit', $item_row );
+}
+
+function _print_form_editor( $item_row, $options )
+{
+	$form_class =& webphoto_photo_misc_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	$param = $this->build_form_param( 'submit' );
+	$param['options'] = $options ;
+
+	$form_class->print_form_editor( $item_row, $param );
 }
 
 // --- class end ---

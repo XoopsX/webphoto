@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.9 2008/12/20 06:11:27 ohwada Exp $
+// $Id: item_form.php,v 1.10 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// _init_editor()
 // 2008-12-12 K.OHWADA
 // build_ele_perm_read()
 // 2008-12-07 K.OHWADA
@@ -113,8 +115,9 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
 
 	$this->set_row( $item_row );
+	$this->_init_editor();
 
-	echo $this->_build_script();
+	echo $this->_build_script_admin();
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->_build_gmap_iframe();
@@ -127,7 +130,7 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	echo $this->build_input_hidden( 'fct',          $this->_THIS_FCT );
 	echo $this->build_input_hidden( 'type',         $type );
 	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_2 );
-	echo $this->_build_input_hidden_max_file_size();
+	echo $this->build_input_hidden_max_file_size();
 
 	echo $this->build_row_hidden( 'item_id' );
 	echo $this->build_row_hidden( 'item_flashvar_id' );
@@ -143,14 +146,9 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	echo $this->build_row_label( $this->get_constant('ITEM_ID'), 'item_id' );
 	echo $this->build_row_label( $this->get_constant('ITEM_FLASHVAR_ID'), 'item_flashvar_id' );
 
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXPIXEL'), 
-		$this->_build_ele_maxpixel( $has_resize ) );
-
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'), 
-		$this->_build_ele_maxsize() );
-
-	echo $this->build_line_ele( $this->get_constant('CAP_ALLOWED_EXTS'), 
-		$this->_build_ele_allowed_exts( $allowed_exts ) );
+	echo $this->build_line_maxpixel( $has_resize ) ;
+	echo $this->build_line_maxsize() ;
+	echo $this->build_line_allowed_exts( $allowed_exts ) ;
 
 	if ( $is_edit ) {
 		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_CREATE'),
@@ -165,9 +163,6 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 		echo $this->build_line_ele( $this->get_constant('ITEM_TIME_EXPIRE'),
 			$this->_build_ele_time_expire() ) ;
 
-//		echo $this->build_line_ele( $this->get_constant('CAP_VALIDPHOTO'), 
-//			$this->_build_ele_valid() ) ;
-
 		echo $this->build_line_ele( $this->get_constant('ITEM_STATUS'),
 			$this->_build_ele_status() ) ;
 
@@ -180,11 +175,8 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 
 	}
 
-	echo $this->build_line_ele( 
-		$this->get_constant('CATEGORY'), $this->_build_ele_category() );
-
-	echo $this->build_line_ele(
-		$this->get_constant('ITEM_TITLE'), $this->_build_ele_title() );
+	echo $this->build_line_category() ;
+	echo $this->build_line_item_title() ;
 
 	if ( $this->_is_in_array( 'item_datetime' ) ) {
 		echo $this->build_line_ele( $this->get_constant( 'item_datetime' ), 
@@ -209,7 +201,24 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 
 	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_WIDTH'),  'item_page_width' );
 	echo $this->build_row_text(  $this->get_constant('ITEM_PAGE_HEIGHT'), 'item_page_height' );
-	echo $this->build_row_dhtml( $this->get_constant('ITEM_DESCRIPTION'), 'item_description' );
+
+	echo $this->build_line_ele( $this->get_constant('ITEM_EDITOR'), 
+		$this->_build_ele_editor() );
+
+	echo $this->build_line_ele(
+		$this->get_constant('ITEM_DESCRIPTION'), $this->_editor_desc );
+
+	if ( $this->_editor_show ) {
+		echo $this->build_line_ele(
+			$this->get_constant('CAP_DESCRIPTION_OPTION'), $this->_build_ele_description_options() );
+
+	} else {
+		$this->set_row_hidden_buffer( 'item_description_html' ) ;
+		$this->set_row_hidden_buffer( 'item_description_smiley' ) ;
+		$this->set_row_hidden_buffer( 'item_description_xcode' ) ;
+		$this->set_row_hidden_buffer( 'item_description_image' ) ;
+		$this->set_row_hidden_buffer( 'item_description_br' ) ;
+	}
 
 	if ( $is_edit ) {
 		echo $this->build_row_textarea( $this->get_constant('ITEM_EXIF'), 
@@ -531,9 +540,11 @@ function _build_ele_votes()
 	return $str;
 }
 
-function _build_script()
+function _build_script_admin()
 {
-	return $this->build_js_envelop( $this->build_js_check_all() );
+	$str  = $this->build_js_envelop( $this->build_js_check_all() );
+	$str .= $this->_editor_js ;
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -541,6 +552,8 @@ function _build_script()
 //---------------------------------------------------------
 function print_form_playlist( $mode, $item_row )
 {
+	$editor_form = $this->_post_class->get_post_int('editor_form');
+
 	switch ($mode)
 	{
 		case 'admin_submit':
@@ -558,6 +571,9 @@ function print_form_playlist( $mode, $item_row )
 	echo $this->build_input_hidden( 'fct',   $fct );
 	echo $this->build_input_hidden( 'op',   'submit_form' );
 	echo $this->build_input_hidden( 'type', 'playlist' );
+	echo $this->build_input_hidden( 'editor_form', $editor_form );
+
+	echo $this->build_row_hidden( 'item_editor' );
 
 	echo $this->build_table_begin();
 	echo $this->build_line_title( _AM_WEBPHOTO_PLAYLIST_ADD );
@@ -578,7 +594,7 @@ function print_form_playlist( $mode, $item_row )
 
 function _build_ele_playlist_kind()
 {
-	$value   = $this->_get_embed_type( false );
+	$value   = $this->get_item_embed_type( false );
 	$options = $this->_item_handler->get_kind_options( 'playlist' );
 
 	return $this->build_form_select( 'item_kind', $value, $options, 1 );

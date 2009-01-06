@@ -1,5 +1,5 @@
 <?php
-// $Id: form_this.php,v 1.9 2008/12/18 13:23:16 ohwada Exp $
+// $Id: form_this.php,v 1.10 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// build_line_category() etc
 // 2008-12-12 K.OHWADA
 // $_UPLOADS_PATH
 // 2008-11-29 K.OHWADA
@@ -40,6 +42,17 @@ class webphoto_form_this extends webphoto_lib_form
 	var $_gicon_handler;
 	var $_config_class;
 	var $_preload_class;
+	var $_perm_class ;
+
+	var $_cfg_gmap_apikey ;
+	var $_cfg_width ;
+	var $_cfg_height ;
+	var $_cfg_fsize ;
+	var $_cfg_makethumb ;
+	var $_cfg_file_size ;
+	var $_cfg_perm_item_read ;
+
+	var $_has_deletable ;
 
 	var $_is_japanese    = false;
 	var $_checkbox_array = array();
@@ -75,6 +88,18 @@ class webphoto_form_this extends webphoto_lib_form
 
 	var $_TAGS_SIZE = 80;
 
+	var $_EMBED_TYPE_DEFAULT = _C_WEBPHOTO_EMBED_TYPE_DEFAULT ;
+	var $_EDITOR_DEFAULT     = _C_WEBPHOTO_EDITOR_DEFAULT ;
+	var $_PHOTO_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
+	var $_THUMB_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
+	var $_MIDDLE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
+
+	var $_THIS_IMAGEMANEGER_FCT = 'submit_imagemanager';
+	var $_THIS_SUBMIT_FCT = 'submit';
+	var $_THIS_EDIT_FCT   = 'edit';
+	var $_THIS_ADMIN_FCT  = 'item_manager';
+	var $_THIS_FILE_FCT   = 'submit_file';
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -86,6 +111,17 @@ function webphoto_form_this( $dirname , $trust_dirname )
 	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
 	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
 	$this->_cat_handler  =& webphoto_cat_handler::getInstance(   $dirname );
+	$this->_perm_class   =& webphoto_permission::getInstance( $dirname );
+
+	$this->_cfg_gmap_apikey    = $this->_config_class->get_by_name( 'gmap_apikey' );
+	$this->_cfg_width          = $this->_config_class->get_by_name( 'width' );
+	$this->_cfg_height         = $this->_config_class->get_by_name( 'height' );
+	$this->_cfg_fsize          = $this->_config_class->get_by_name( 'fsize' );
+	$this->_cfg_makethumb      = $this->_config_class->get_by_name( 'makethumb' );
+	$this->_cfg_file_size      = $this->_config_class->get_by_name( 'file_size' );
+	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' );
+
+	$this->_has_deletable = $this->_perm_class->has_deletable();
 
 	$this->_UPLOADS_PATH = $this->_config_class->get_uploads_path();
 	$this->_MEDIAS_PATH  = $this->_config_class->get_medias_path();
@@ -136,6 +172,163 @@ function &getInstance( $dirname, $trust_dirname )
 function get_config_by_name( $name )
 {
 	return $this->_config_class->get_by_name( $name );
+}
+
+//---------------------------------------------------------
+// photo form
+//---------------------------------------------------------
+function build_input_hidden_max_file_size()
+{
+	return $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
+}
+
+function build_line_maxpixel( $has_resize )
+{
+	return $this->build_line_ele( 
+		$this->get_constant('CAP_MAXPIXEL'), 
+		$this->_build_ele_maxpixel( $has_resize ) );
+}
+
+function _build_ele_maxpixel( $has_resize )
+{
+	$text = $this->_cfg_width .' x '. $this->_cfg_height ."<br />\n" ;
+
+	if ( $has_resize ) {
+		$text .= $this->get_constant('DSC_PIXCEL_RESIZE');
+	} else {
+		$text .= $this->get_constant('DSC_PIXCEL_REJECT');
+	}
+
+	return $text;
+}
+
+function build_line_maxsize()
+{
+	return $this->build_line_ele( 
+		$this->get_constant('CAP_MAXSIZE'), 
+		$this->_build_ele_maxsize() );
+}
+
+function _build_ele_maxsize()
+{
+	$size_desc = '';
+	if( ! ini_get( 'file_uploads' ) ) {
+		$size_desc = ' &nbsp; <b>"file_uploads" off</b>';
+	}
+
+	$text  = $this->format_filesize( $this->_cfg_fsize );
+	$text .= $size_desc;
+
+	return $text;
+}
+
+function build_line_allowed_exts( $allowed_exts )
+{
+	return $this->build_line_ele( 
+		$this->get_constant('CAP_ALLOWED_EXTS'), 
+		$this->_build_ele_allowed_exts( $allowed_exts ) );
+}
+
+function _build_ele_allowed_exts( $allowed_exts )
+{
+	$text = implode( ' ', $allowed_exts );
+	return $text;
+}
+
+function build_line_category()
+{
+	return $this->build_line_ele( 
+		$this->get_constant('CATEGORY') , 
+		$this->_build_ele_category() );
+}
+
+function _build_ele_category()
+{
+	$name  = 'item_cat_id';
+	$value = $this->get_row_by_key( $name );
+	return $this->_cat_handler->build_selbox_with_perm_post( $value, $name );
+}
+
+function build_line_item_title()
+{
+	return $this->build_line_ele( 
+		$this->get_constant('ITEM_TITLE'), 
+		$this->_build_ele_title() );
+}
+
+function _build_ele_title( $size=50 )
+{
+	$value = $this->get_row_by_key( 'item_title' );
+	$ele  = $this->build_input_text( 'item_title', $value, $size );
+	$ele .= "<br />\n";
+	$ele .= $this->get_constant('DSC_TITLE_BLANK');
+	return $ele;
+}
+
+function build_line_photo_file( $cont_row )
+{
+	return $this->build_line_ele( 
+		$this->get_constant('CAP_PHOTO_SELECT'), 
+		$this->_build_ele_photo_file( $cont_row ) );
+}
+
+function _build_ele_photo_file( $cont_row )
+{
+	$url  = $this->build_file_url_size( $cont_row ) ;
+
+	$ele  = $this->build_form_file( $this->_PHOTO_FIELD_NAME );
+	$ele .= "<br />\n";
+
+	if ( $url ) {
+		$ele .= $this->build_link_blank( $url );
+	}
+
+	return $ele;
+}
+
+function build_file_url_size( $file_row )
+{
+	list( $url, $width, $height ) =
+		$this->_file_handler->build_show_file_image( $file_row, true ) ;
+
+	return $url;
+}
+
+function build_link_blank( $url )
+{
+	if ( empty($url) ) {
+		return '';
+	}
+
+	$url_s = $this->sanitize( $url );
+	$str   = '<a href="'. $url_s .'" target="_blank">'. $url_s .'</a>'."<br />\n";
+	return $str;
+}
+
+function build_photo_delete_button( $name )
+{
+	if ( $this->_has_deletable ) {
+		return $this->build_input_submit( $name, _DELETE );
+	}
+	return null;
+}
+
+function get_item_editor( $flag=true )
+{
+	$value = $this->get_row_by_key( 'item_editor' );
+	if ( $flag && empty($value) ) {
+		$value = $this->_EDITOR_DEFAULT;
+	}
+	return $value;
+}
+
+function get_item_embed_type( $flag )
+{
+	$value = $this->get_row_by_key( 'item_embed_type' );
+	if ( $flag && empty($value) ) {
+		$value = $this->_EMBED_TYPE_DEFAULT;
+	}
+	return $value;
 }
 
 //---------------------------------------------------------
@@ -282,6 +475,12 @@ END_OF_TEXT;
 //---------------------------------------------------------
 // preload class
 //---------------------------------------------------------
+function init_preload()
+{
+	$this->preload_init();
+	$this->preload_constant();
+}
+
 function preload_init()
 {
 	$this->_preload_class =& webphoto_d3_preload::getInstance();

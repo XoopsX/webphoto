@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.7 2008/11/11 06:53:16 ohwada Exp $
+// $Id: edit.php,v 1.8 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-04 K.OHWADA
+// editor.php
 // 2008-11-08 K.OHWADA
 // imagemagick.php
 // 2008-10-10 K.OHWADA
@@ -54,14 +56,18 @@ webphoto_include_once( 'class/webphoto/upload.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
+webphoto_include_once( 'class/webphoto/editor_base.php' );
+webphoto_include_once( 'class/webphoto/editor.php' );
 webphoto_include_once( 'class/webphoto/mail_unlink.php' );
 webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/photo_build.php' );
 webphoto_include_once( 'class/webphoto/photo_delete.php' );
-webphoto_include_once( 'class/webphoto/photo_edit.php' );
 webphoto_include_once( 'class/webphoto/photo_redirect.php' );
+webphoto_include_once( 'class/webphoto/imagemanager_submit.php' );
+webphoto_include_once( 'class/webphoto/photo_submit.php' );
 webphoto_include_once( 'class/webphoto/photo_action.php' );
 webphoto_include_once( 'class/webphoto/photo_edit_form.php' );
+webphoto_include_once( 'class/webphoto/photo_misc_form.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );
 webphoto_include_once( 'class/main/edit.php' );
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.19 2008/12/21 20:19:01 ohwada Exp $
+// $Id: main.php,v 1.20 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1280,6 +1280,26 @@ define("_WEBPHOTO_VOTE_RATING_10","10");
 //---------------------------------------------------------
 // edit form
 define("_WEBPHOTO_GROUP_PERM_ALL" , "全てのグループ" ) ;
+
+//---------------------------------------------------------
+// v1.00
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_EDITOR", "エディタ");
+define("_WEBPHOTO_ITEM_DESCRIPTION_HTML",   "HTMLタグ");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SMILEY", "スマイリーアイコン");
+define("_WEBPHOTO_ITEM_DESCRIPTION_XCODE",  "XOOPSコード");
+define("_WEBPHOTO_ITEM_DESCRIPTION_IMAGE",  "画像");
+define("_WEBPHOTO_ITEM_DESCRIPTION_BR",     "改行");
+
+// edit form
+define("_WEBPHOTO_TITLE_EDITOR_SELECT", "エディタを選択する");
+define("_WEBPHOTO_CAP_DESCRIPTION_OPTION", "オプション");
+define("_WEBPHOTO_CAP_HTML",   "HTMLタグを有効にする");
+define("_WEBPHOTO_CAP_SMILEY", "スマイリーアイコンを有効にする");
+define("_WEBPHOTO_CAP_XCODE",  "XOOPSコードを有効にする");
+define("_WEBPHOTO_CAP_IMAGE",  "画像を有効にする");
+define("_WEBPHOTO_CAP_BR",     "改行を有効にする");
 
 // === define end ===
 }

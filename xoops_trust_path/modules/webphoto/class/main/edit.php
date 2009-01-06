@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.19 2008/11/20 11:15:46 ohwada Exp $
+// $Id: edit.php,v 1.20 2009/01/06 09:41:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// webphoto_photo_misc_form
 // 2008-11-16 K.OHWADA
 // _print_form_error()
 // get_cached_file_row_by_kind()
@@ -458,7 +460,9 @@ function _print_form_error()
 
 function _print_form_modify()
 {
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$edit_form_class =& webphoto_photo_edit_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$misc_form_class =& webphoto_photo_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$item_row  = $this->build_modify_row_by_post( $this->_row_current, true );
@@ -476,11 +480,11 @@ function _print_form_modify()
 		echo "</a><br /><br />\n";
 	}
 
-	$form_class->print_form_common( 
+	$edit_form_class->print_form_common( 
 		$item_row, $this->build_form_param( 'edit' ) );
 
 	if ( $this->is_video_kind( $kind ) ) {
-		$form_class->print_form_redo( 'edit', $item_row, $flash_row );
+		$misc_form_class->print_form_redo( 'edit', $item_row, $flash_row );
 	}
 
 	if ( $this->_is_module_admin ) {

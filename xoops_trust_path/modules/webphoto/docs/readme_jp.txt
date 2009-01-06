@@ -1,11 +1,65 @@
-$Id: readme_jp.txt,v 1.19 2008/12/20 06:11:27 ohwada Exp $
+$Id: readme_jp.txt,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+
+=================================================
+Version: 1.00
+Date:   2009-01-04
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. FCKeditor 対応
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=899&forum=13
+
+(1) 記事ごとに エディタが選択できます。
+
+2. バグ対策
+(1) 携帯アクセスにて、fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=902&forum=13
+
+(2) ヘルプにて、fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=904&forum=13
+
+(3) ブロック表示にて、fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=905&forum=13
+
+3. データベース構造
+3.1 テーブルの項目追加
+(1) item テーブル: item_editor など
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+  自動的にテーブルに項目が追加されます。
+
+
+● 使用上の注意
+1. FCKeditor
+(1) XOOPS_ROOT_PATH /common/fckeditor を設置する
+http://xoops.peak.ne.jp/md/mydownloads/singlefile.php?lid=93
+
+(2) 「各グループの権限」にて「HTML投稿可」にする
+
+(3) 一度選択したエディタを変更することは、ちょっと面倒です。
+「アイテムテーブル管理」にて「エディタ」欄を書き換える。
+さらに、「写真説明文」「HTMLタグ」「スマイリーアイコン」「XOOPSコード」「画像」「改行」欄を
+エディタに合うように変更する。
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
 
 =================================================
 Version: 0.90
 Date:   2008-12-20
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
