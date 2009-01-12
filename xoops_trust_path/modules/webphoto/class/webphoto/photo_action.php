@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_action.php,v 1.12 2009/01/06 09:41:35 ohwada Exp $
+// $Id: photo_action.php,v 1.13 2009/01/12 08:08:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-12 K.OHWADA
+// Fatal error: Call to undefined method webphoto_main_edit::get_file_params()
 // 2009-01-04 K.OHWADA
 // webphoto_photo_edit_form -> webphoto_photo_misc_form
 // BUG: return to admin when delete
@@ -253,7 +255,8 @@ function modify_exec( $item_row )
 		return $ret12; 
 	}
 
-	$file_params = $this->get_file_params();
+// Fatal error: Call to undefined method webphoto_main_edit::get_file_params()
+	$file_params = $this->_file_params;
 
 	if ( is_array($file_params) ) {
 		$file_id_array = $this->update_files_from_params( $item_row, $file_params );
