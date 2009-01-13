@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
+// $Id: catmanager.php,v 1.7 2009/01/13 12:02:03 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-13 K.OHWADA
+// Fatal error: Call to undefined method webphoto_cat_handler::get_all_child_id()
 // 2008-12-12 K.OHWADA
 // get_group_perms_str_by_post()
 // 2008-11-08 K.OHWADA
@@ -361,7 +363,9 @@ function _update()
 
 	// Check if new pid was a child of cid
 	if ( $post_pid != 0 ) {
-		$children   = $this->_cat_handler->get_all_child_id( $post_catid ) ;
+
+// Fatal error: Call to undefined method webphoto_cat_handler::get_all_child_id()
+		$children   = $this->_cat_handler->getAllChildId( $post_catid ) ;
 		$children[] = $post_catid ;
 
 		foreach( $children as $child ) 
@@ -461,7 +465,7 @@ function _delete()
 	$post_catid = $this->_post_class->get_post_int('cat_id');
 
 	//get all categories under the specified category
-	$children = $this->_cat_handler->get_all_child_id( $post_catid ) ;
+	$children = $this->_cat_handler->getAllChildId( $post_catid ) ;
 
 	foreach( $children as $ch_id ) 
 	{
@@ -502,10 +506,12 @@ function _delete_photos_by_catid( $cat_id )
 	}
 
 	foreach ( $item_rows as $row ) {
-		$this->_delete_class->delete_photo( $row['item_id'] ) ;
+
+// Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
+		$this->_delete_class->delete_photo_by_item_row( $row ) ;
+
 	}
 }
-
 
 //---------------------------------------------------------
 // weight
