@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: submit.php,v 1.2 2009/01/24 08:30:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -594,7 +594,7 @@ function conv_rotate( $rotate )
 //---------------------------------------------------------
 function create_docomo_param( $photo_param, $cont_param )
 {
-	return $docomo_param = $this->_factory_create_class->create_docomo_param( $cont_param );
+	return $this->_factory_create_class->create_docomo_param( $photo_param, $cont_param );
 }
 
 function create_flash_param( $photo_param )
