@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: pdf.php,v 1.2 2009/01/24 08:55:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -153,7 +153,7 @@ function pdf_to_text( $pdf_file, $txt_file )
 	}
 
 	$this->_xpdf_class->pdf_to_text( $pdf_file, $txt_file );
-	if ( $this->_flag_chmod ) {
+	if ( $this->_flag_chmod && is_file($txt_file) ) {
 		chmod( $txt_file, 0777 );
 	}
 }

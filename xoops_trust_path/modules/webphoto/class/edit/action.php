@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: action.php,v 1.2 2009/01/24 08:55:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -123,7 +123,7 @@ function print_form_delete_confirm( $mode, $item_row )
 
 	echo "<br />\n";
 
-	$form_class =& webphoto_photo_misc_form::getInstance(
+	$form_class =& webphoto_edit_misc_form::getInstance(
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 // BUG: return to admin when delete
