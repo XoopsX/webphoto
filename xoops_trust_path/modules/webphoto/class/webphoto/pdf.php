@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf.php,v 1.2 2009/01/24 08:55:26 ohwada Exp $
+// $Id: pdf.php,v 1.3 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,7 +12,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_pdf
 // wrapper for webphoto_lib_xpdf
 //=========================================================
-class webphoto_pdf
+class webphoto_pdf extends webphoto_lib_error
 {
 	var $_config_class;
 	var $_multibyte_class;
@@ -35,6 +35,8 @@ class webphoto_pdf
 //---------------------------------------------------------
 function webphoto_pdf( $dirname )
 {
+	$this->webphoto_lib_error();
+
 	$this->_config_class      =& webphoto_config::getInstance( $dirname );
 	$this->_xpdf_class        =& webphoto_lib_xpdf::getInstance();
 	$this->_imagemagick_class =& webphoto_lib_imagemagick::getInstance();
@@ -62,13 +64,13 @@ function &getInstance( $dirname )
 function create_image( $item_id, $src_file )
 {
 	if ( empty($src_file) ) {
-		return null;
+		return null ;
 	}
 	if ( ! is_file($src_file) ) {
-		return null;
+		return null ;
 	}
 	if ( ! $this->_cfg_use_xpdf ) {
-		return null;
+		return null ;
 	}
 
 	if ( isset( $this->_cached[ $item_id ] ) ) {
@@ -78,7 +80,11 @@ function create_image( $item_id, $src_file )
 	}
 
 	if ( ! is_file($created_file) ) {
-		return null;
+		$arr = array(
+			'flag'   => false ,
+			'errors' => $this->get_errors(),
+		);
+		return $arr ;
 	}
 
 	$this->_cached[ $item_id ] = $created_file ;
@@ -105,6 +111,7 @@ function create_jpeg( $item_id, $pdf_file )
 	$ppm_file = $this->_xpdf_class->pdf_to_ppm( $pdf_file, $root );
 
 	if ( !is_file($ppm_file) ) {
+		$this->set_error( $this->_xpdf_class->get_msg_array() );
 		return false;
 	}
 
@@ -122,28 +129,40 @@ function create_jpeg( $item_id, $pdf_file )
 //---------------------------------------------------------
 function get_text_content( $pdf_file )
 {
+	$this->_content = null;
+
 	if ( empty($pdf_file) ) {
-		return false;
+		return 0 ;	// no action
 	}
 	if ( ! is_file($pdf_file) ) {
-		return false;
+		return 0 ;	// no action
 	}
 	if ( !$this->_cfg_use_xpdf ) {
-		return false;
+		return 0 ;	// no action
 	}
 
 	$txt_file = $this->_TMP_DIR .'/'. uniqid('tmp_') .'.'. $this->_TEXT_EXT ;
-	$this->pdf_to_text( $pdf_file, $txt_file );
-	if ( !is_file($txt_file) ) {
-		return false;
+	$ret = $this->pdf_to_text( $pdf_file, $txt_file );
+	if ( !$ret ) {
+		$arr = array(
+			'flag'   => false ,
+			'errors' => $this->get_errors(),
+		);
+		return $arr;
 	}
 
 	$text = file_get_contents( $txt_file );
 	$text = $this->_multibyte_class->convert_from_utf8( $text );
 	$text = $this->_multibyte_class->build_plane_text(  $text );
+	$this->_content = $text;
 
 	unlink($txt_file);
-	return $text;
+
+	$arr = array(
+		'flag'    => true ,
+		'content' => $text ,
+	);
+	return $arr;
 }
 
 function pdf_to_text( $pdf_file, $txt_file )
@@ -152,10 +171,16 @@ function pdf_to_text( $pdf_file, $txt_file )
 		return false;
 	}
 
-	$this->_xpdf_class->pdf_to_text( $pdf_file, $txt_file );
-	if ( $this->_flag_chmod && is_file($txt_file) ) {
-		chmod( $txt_file, 0777 );
+	$ret = $this->_xpdf_class->pdf_to_text( $pdf_file, $txt_file );
+	if ( $ret && is_file($txt_file) ) {
+		if ( $this->_flag_chmod ) {
+			chmod( $txt_file, 0777 );
+		}
+		return true;
 	}
+
+	$this->set_error( $this->_xpdf_class->get_msg_array() );
+	return false;
 }
 
 // --- class end ---

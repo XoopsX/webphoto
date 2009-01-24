@@ -1,5 +1,5 @@
 <?php
-// $Id: msg.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: msg.php,v 1.3 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -70,7 +70,7 @@ function set_msg( $msg, $flag_highlight=false )
 		$arr = $this->str_to_array( $msg, "\n" );
 		if ( $flag_highlight ) {
 			$arr2 = array();
-			foreach ( $arr1 as $m ) {
+			foreach ( $arr as $m ) {
 				$arr2[] = $this->highlight( $m );
 			}
 			$arr = $arr2;

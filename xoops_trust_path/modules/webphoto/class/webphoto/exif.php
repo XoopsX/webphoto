@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: exif.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -16,8 +16,6 @@ class webphoto_exif
 {
 	var $_exif_class;
 	var $_utility_class;
-
-	var $_row = null ;
 
 	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
 
@@ -45,11 +43,10 @@ function &getInstance()
 function build_row_exif( $row, $file )
 {
 	$flag = 1 ;
-	$this->_row = $row;
 
 	$info = $this->_exif_class->read_file( $file );
 	if ( !is_array($info) ) {
-		return 0 ; // no action
+		return null ; // no action
 	}
 
 	$datetime  = $this->exif_to_mysql_datetime( $info ) ;
@@ -74,8 +71,11 @@ function build_row_exif( $row, $file )
 		$flag = 2 ;
 	}
 
-	$this->_row = $row;
-	return $flag ;
+	$arr = array(
+		'flag' => $flag,
+		'row'  => $row,
+	);
+	return $arr ;
 }
 
 function exif_to_mysql_datetime( $exif )

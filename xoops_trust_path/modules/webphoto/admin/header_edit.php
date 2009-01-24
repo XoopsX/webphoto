@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.2 2009/01/24 08:30:57 ohwada Exp $
+// $Id: header_edit.php,v 1.3 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -134,7 +134,6 @@ webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );
-webphoto_include_once( 'class/edit/file_build.php' );
 webphoto_include_once( 'class/edit/search_build.php' );
 webphoto_include_once( 'class/edit/factory_create.php' );
 webphoto_include_once( 'class/edit/external_build.php' );

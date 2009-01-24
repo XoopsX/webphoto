@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: ffmpeg.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -130,11 +130,7 @@ function create_jpeg( $id, $file )
 	if ( $count ) {
 		$path = $this->_TMP_DIR .'/'. $this->build_thumb_name( $id, $this->_SINGLE_FIRST, false );
 	} else {
-		$errors = $this->_ffmpeg_class->get_errors();
-		$this->set_error( $errors );
-		if ( $this->_DEBUG ) {
-			print_r( $errors );
-		}
+		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
 	}
 
 	return $path ;
@@ -192,7 +188,11 @@ function create_plural_images( $id, $file )
 //---------------------------------------------------------
 function create_flash( $file_in, $file_out, $extra )
 {
-	return $this->_ffmpeg_class->create_flash( $file_in, $file_out, $extra );
+	$ret = $this->_ffmpeg_class->create_flash( $file_in, $file_out, $extra );
+	if ( !$ret ) {
+		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
+	}
+	return $ret;
 }
 
 //---------------------------------------------------------

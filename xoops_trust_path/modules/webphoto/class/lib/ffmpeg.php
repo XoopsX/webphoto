@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: ffmpeg.php,v 1.6 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,7 +29,7 @@ class webphoto_lib_ffmpeg
 	var $_offset   = 0;
 	var $_flag_chmod = false;
 
-	var $_errors = array();
+	var $_msg_array = array();
 
 	var $_CMD_INFO          = 'ffmpeg -i %s';
 	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
@@ -111,17 +111,22 @@ function set_debug( $val )
 //---------------------------------------------------------
 function get_duration_size( $file )
 {
+	$this->clear_msg_array();
+
 	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_INFO, $file );
 
 	$outputs = null;
-	exec( "$cmd 2>&1", $outputs );
+	exec( "$cmd 2>&1", $ret_array );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
 		print_r( $outputs );
 		echo "<br />\n";
 	}
 
-	if ( !is_array($outputs) ) {
+	$this->set_msg( $cmd );
+	$this->set_msg( $ret_array );
+
+	if ( !is_array($ret_array) ) {
 		return false;
 	}
 
@@ -129,7 +134,7 @@ function get_duration_size( $file )
 	$width    = 0;
 	$height   = 0;
 
-	foreach( $outputs as $line )
+	foreach( $ret_array as $line )
 	{
 		if ( preg_match( "/duration.*(\d+):(\d+):(\d+)/i", $line, $match ) ) {
 			$duration = intval($match[1])*3600 + intval($match[2])*60 + intval($match[3]);
@@ -138,11 +143,6 @@ function get_duration_size( $file )
 			$width  = intval($match[1]);
 			$height = intval($match[2]);
 		}
-	}
-
-	if ( empty($duration) ) {
-		$this->_set_error( $cmd );
-		$this->_set_error( $outputs );
 	}
 
 	$arr = array(
@@ -158,7 +158,7 @@ function get_duration_size( $file )
 //---------------------------------------------------------
 function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 {
-	$this->_clear_error();
+	$this->clear_msg_array();
 
 	$count = 0;
 	for ( $i=0; $i<$max; $i++ ) 
@@ -169,25 +169,25 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 
 		$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_THUMBS, $sec, $file_in, $file_out );
 
-		$outputs = null;
-		exec( "$cmd 2>&1", $outputs );
+		$ret_array = null;
+		exec( "$cmd 2>&1", $ret_array );
 		if ( $this->_DEBUG ) {
 			echo $cmd."<br />\n";
-			print_r( $outputs );
+			print_r( $ret_array );
 			echo "<br />\n";
 		}
+
+		$this->set_msg( $cmd );
+		$this->set_msg( $ret_array );
 
 		if ( is_file($file_out) && filesize( $file_out ) ) {
 			if ( $this->_flag_chmod ) {
 				chmod( $file_out, 0777 );
 			}
 			$count ++;
-		} else {
-			$this->_set_error( $cmd );
-			$this->_set_error( $outputs );
 		}
-
 	}
+
 	return $count ;
 }
 
@@ -202,7 +202,7 @@ function build_thumb_name( $num )
 //---------------------------------------------------------
 function create_flash( $file_in, $file_out, $extra=null )
 {
-	$this->_clear_error();
+	$this->clear_msg_array();
 
 // return input file is flash video
 	if ( $this->parse_ext( $file_in ) == $this->_EXT_FLV ) {
@@ -212,12 +212,15 @@ function create_flash( $file_in, $file_out, $extra=null )
 	$cmd = $this->_CMD_PATH . sprintf( 
 		$this->_CMD_CREATE_FLASH, $file_in, $extra, $file_out );
 
-	$outputs = null;
-	exec( "$cmd 2>&1", $outputs );
+	$ret_array = null;
+	exec( "$cmd 2>&1", $ret_array );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
-		print_r( $outputs );
+		print_r( $ret_array );
 	}
+
+	$this->set_msg( $cmd );
+	$this->set_msg( $ret_array );
 
 	if ( is_file($file_out) && filesize( $file_out ) ) {
 		if ( $this->_flag_chmod ) {
@@ -226,38 +229,12 @@ function create_flash( $file_in, $file_out, $extra=null )
 		return true ;
 	}
 
-	$this->_set_error( $cmd );
-	$this->_set_error( $outputs );
 	return false ;
 }
 
 function parse_ext( $file )
 {
 	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
-}
-
-//---------------------------------------------------------
-// error 
-//---------------------------------------------------------
-function _clear_error()
-{
-	$this->_errors = array();
-}
-
-function _set_error( $outputs )
-{
-	if ( is_array($outputs) ) {
-		foreach( $outputs as $line ) {
-			$this->_errors[] = $line ;
-		}
-	} else {
-		$this->_errors[] = $outputs ;
-	}
-}
-
-function get_errors()
-{
-	return $this->_errors;
 }
 
 //---------------------------------------------------------
@@ -284,6 +261,30 @@ function version( $path )
 	}
 
 	return array( $ret, $str );
+}
+
+//---------------------------------------------------------
+// msg
+//---------------------------------------------------------
+function clear_msg_array()
+{
+	$this->_msg_array = array();
+}
+
+function get_msg_array()
+{
+	return $this->_msg_array;
+}
+
+function set_msg( $ret_array )
+{
+	if ( is_array($ret_array) ) {
+		foreach( $ret_array as $line ) {
+			$this->_msg_array[] = $line ;
+		}
+	} else {
+		$this->_msg_array[] = $ret_array ;
+	}
 }
 
 // --- class end ---

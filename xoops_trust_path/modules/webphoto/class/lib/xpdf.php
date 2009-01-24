@@ -1,5 +1,5 @@
 <?php
-// $Id: xpdf.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: xpdf.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -23,8 +23,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_xpdf
 {
-	var $_cmd_path = null;
-	var $_DEBUG    = false;
+	var $_cmd_path  = null;
+	var $_msg_array = array();
+	var $_DEBUG     = false;
 
 //---------------------------------------------------------
 // constructor
@@ -58,10 +59,9 @@ function set_debug( $val )
 
 function pdf_to_ppm( $pdf, $root, $first=1, $last=1, $dpi=100 )
 {
+	$this->clear_msg_array();
 	$src = $root.'-000001.ppm';
-
-//	$option = '-f '.$first.' -l '.$last.' -r '.$dpi;
-	$option = '-l '.$last.' -r '.$dpi;
+	$option = '-f '.$first.' -l '.$last.' -r '.$dpi;
 
 	$ret = $this->pdftoppm( $pdf, $root, $option );
 	if ( $ret == 0 ) {
@@ -72,7 +72,9 @@ function pdf_to_ppm( $pdf, $root, $first=1, $last=1, $dpi=100 )
 
 function pdf_to_text( $pdf, $txt, $enc='UTF-8' )
 {
+	$this->clear_msg_array();
 	$option = '-enc '.$enc;
+
 	$ret = $this->pdftotext( $pdf, $txt, $option );
 	if ( $ret == 0 ) {
 		return true ;
@@ -83,20 +85,24 @@ function pdf_to_text( $pdf, $txt, $enc='UTF-8' )
 function pdftoppm( $pdf, $root, $option='' )
 {
 	$cmd = $this->_cmd_path .'pdftoppm '.$option.' '.$pdf.' '.$root ;
-	exec( $cmd, $ret_array, $ret_code ) ;
+	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
 	}
+	$this->set_msg( $cmd );
+	$this->set_msg( $ret_array );
 	return $ret_code;
 }
 
 function pdftotext( $pdf, $txt, $option='' )
 {
 	$cmd = $this->_cmd_path .'pdftotext '.$option.' '.$pdf.' '.$txt ;
-	exec( $cmd, $ret_array, $ret_code ) ;
+	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
 	}
+	$this->set_msg( $cmd );
+	$this->set_msg( $ret_array );
 	return $ret_code;
 }
 
@@ -117,6 +123,30 @@ function version( $path )
 	}
 
 	return array( $ret, $msg );
+}
+
+//---------------------------------------------------------
+// msg
+//---------------------------------------------------------
+function clear_msg_array()
+{
+	$this->_msg_array = array();
+}
+
+function get_msg_array()
+{
+	return $this->_msg_array;
+}
+
+function set_msg( $ret_array )
+{
+	if ( is_array($ret_array) ) {
+		foreach( $ret_array as $line ) {
+			$this->_msg_array[] = $line ;
+		}
+	} else {
+		$this->_msg_array[] = $ret_array ;
+	}
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: factory_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,8 +22,8 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_item_build_class;
 	var $_icon_build_class;
 	var $_search_build_class;
-	var $_file_build_class;
 	var $_ext_class;
+	var $_exif_class;
 	var $_msg_main_class;
 	var $_msg_sub_class;
 
@@ -41,10 +41,13 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_flag_resized = false;
 	var $_flag_video_image_created = false ;
 	var $_flag_video_image_failed  = false ;
-	var $_flag_flash_created = false ;
-	var $_flag_flash_failed  = false ;
-	var $_flag_pdf_created   = false ;
-	var $_flag_pdf_failed    = false ;
+	var $_flag_image_ext_created   = false;
+	var $_flag_image_ext_failed    = false;
+	var $_flag_flash_created       = false ;
+	var $_flag_flash_failed        = false ;
+	var $_flag_pdf_created         = false ;
+	var $_flag_pdf_failed          = false ;
+
 	var $_image_tmp_file     = null ;
 
 	var $_cont_param  = null ;
@@ -74,9 +77,8 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 		$dirname , $trust_dirname );
 	$this->_video_middle_thumb_create_class =& webphoto_edit_video_middle_thumb_create::getInstance( 
 		$dirname , $trust_dirname );
-	$this->_file_build_class =& webphoto_edit_file_build::getInstance( 
-		$dirname , $trust_dirname );
 	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
+	$this->_exif_class   =& webphoto_exif::getInstance();
 
 	$this->_msg_main_class = new webphoto_lib_msg();
 	$this->_msg_sub_class  = new webphoto_lib_msg();
@@ -284,8 +286,9 @@ function get_main_msg()
 //---------------------------------------------------------
 function build_item_row_from_file( $row, $src_file )
 {
-	$row = $this->build_row_ext_kind(      $row, $src_file );
-	$row = $this->build_row_exif_duration( $row, $src_file );
+	$row = $this->build_row_ext_kind( $row, $src_file );
+	$row = $this->build_row_exif(     $row, $src_file );
+	$row = $this->build_row_duration( $row, $src_file );
 	$row = $this->build_row_status_onclick( $row );
 	$row = $this->build_row_search( $row );
 	return $row;
@@ -298,7 +301,8 @@ function build_item_row_photo( $row, $photo_name, $media_name )
 // ext kind exif duration
 	$row = $this->build_row_ext_kind(    $row, $photo_name );
 	$row = $this->build_row_title_media( $row, $media_name );
-	$row = $this->build_row_exif_duration( $row, $file );
+	$row = $this->build_row_exif(     $row, $file );
+	$row = $this->build_row_duration( $row, $file );
 	return $row;
 }
 
@@ -458,9 +462,9 @@ function create_image_for_middle_thumb( $photo_param, $pdf_param, $flag_video )
 		$image_param['file_pdf'] = $pdf_param['file'] ;
 	}
 
-	$img_param = $this->create_image_ext( $image_param ) ;
-	if ( is_array($img_param) ) {
-		return $img_param ;
+	$extra_param = $this->create_image_ext( $image_param ) ;
+	if ( is_array($extra_param) ) {
+		return    $extra_param ;
 	}
 
 // return orinal if not create
@@ -471,11 +475,16 @@ function create_image_ext( $param )
 {
 	$this->_image_tmp_file = null ;
 
-	$image_param = $this->_ext_class->create_image( $param );
-	if ( is_array($image_param) ) {
-		$this->_image_tmp_file = $image_param['src_file'] ;
+	$extra_param = $this->_ext_class->create_image( $param );
+	if ( isset( $extra_param['src_file'] ) ) {
+		$this->_flag_image_ext_created = true ;
+		$this->_image_tmp_file = $extra_param['src_file'] ;
 		$this->_msg_sub_class->set_msg( 'create image ' . $param['src_ext'] ) ;
-		return $image_param ;
+		return $extra_param ;
+
+	} elseif ( isset( $extra_param['errors'] ) ) {
+		$this->_flag_image_ext_failed = true;
+		$this->set_error( $extra_param['errors'] ) ;
 	}
 
 	return null ;
@@ -484,6 +493,16 @@ function create_image_ext( $param )
 function get_image_tmp_file()
 {
 	return $this->_image_tmp_file ;
+}
+
+function get_flag_image_ext_created()
+{
+	return $this->_flag_image_ext_created ;
+}
+
+function get_flag_image_ext_failed()
+{
+	return $this->_flag_image_ext_failed ;
 }
 
 //---------------------------------------------------------
@@ -514,17 +533,18 @@ function create_flash_param( $param )
 	$this->_flag_flash_created = $this->_flash_create_class->get_flag_created() ;
 	$this->_flag_flash_failed  = $this->_flash_create_class->get_flag_failed() ;
 	$this->_msg_sub_class->set_msg( $this->_flash_create_class->get_msg_array() ) ;
+	$this->set_error( $this->_flash_create_class->get_errors() ) ;
 	return $flash_param ;
 }
 
 function get_flag_flash_created()
 {
-	return $this->_flag_pdf_created ;
+	return $this->_flag_flash_created ;
 }
 
 function get_flag_flash_failed()
 {
-	return $this->_flag_pdf_failed ;
+	return $this->_flag_flash_failed ;
 }
 
 //---------------------------------------------------------
@@ -582,11 +602,41 @@ function video_thumb( $row )
 //---------------------------------------------------------
 // file extention
 //---------------------------------------------------------
-function build_row_exif_duration( $row, $src_file )
+function build_row_exif( $row, $src_file )
 {
-	$row = $this->_file_build_class->build_exif_duration( 
-		$row, $src_file );
-	$this->_msg_sub_class->set_msg( $this->_file_build_class->get_msg_array() ) ;
+	if ( ! $this->is_image_kind( $row['item_kind'] ) ) {
+		return $row ;
+	}
+
+	$extra_param = $this->_exif_class->build_row_exif( $row, $src_file );
+	if ( isset( $extra_param['row'] ) ) {
+		$row =  $extra_param['row'] ;
+	}
+	if ( isset( $extra_param['flag'] ) ) {
+		$flag = $extra_param['flag'] ;
+		if ( $flag == 2 ) {
+			$this->_msg_sub_class->set_msg( 'get exif' ) ;
+		} else {
+			$this->_msg_sub_class->set_msg( 'no exif' )  ;
+		}
+	} 
+
+	return $row ;
+}
+
+function build_row_duration( $row, $src_file )
+{
+	$param = $row ;
+	$param['src_file'] = $src_file ;
+
+	$extra_param = $this->_ext_class->get_duration_size( $param );
+	if ( is_array($extra_param) ) {
+		$this->set_msg( 'get duration' ) ;
+		$row['item_duration'] = $extra_param['duration'] ;
+		$row['item_width']    = $extra_param['width'] ;
+		$row['item_height']   = $extra_param['height'] ;
+	}
+
 	return $row ;
 }
 
@@ -595,8 +645,20 @@ function build_row_content( $row, $file_id_array )
 	$file_cont = $this->get_file_full_by_key( $file_id_array, 'cont_id' ) ;
 	$file_pdf  = $this->get_file_full_by_key( $file_id_array, 'pdf_id' ) ;
 
-	$row = $this->_file_build_class->build_content( $row, $file_cont, $file_pdf ); 
-	$this->_msg_sub_class->set_msg( $this->_file_build_class->get_msg_array() ) ;
+	$param = $row ;
+	$param['src_ext']   = $row['item_ext'] ;
+	$param['file_cont'] = $file_cont ;
+	$param['file_pdf']  = $file_pdf  ;
+
+	$extra_param = $this->_ext_class->get_text_content( $param );
+	if ( isset( $extra_param['content'] ) ) {
+		$row['item_content'] = $extra_param['content'] ;
+		$this->_msg_sub_class->set_msg( 'get content' )  ;
+
+	} elseif ( isset( $extra_param['errors'] ) ) {
+		$this->set_error( $extra_param['errors'] );
+	}
+
 	return $row ;
 }
 

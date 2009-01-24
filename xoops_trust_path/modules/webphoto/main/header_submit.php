@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.3 2009/01/24 09:05:15 ohwada Exp $
+// $Id: header_submit.php,v 1.4 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -117,7 +117,6 @@ webphoto_include_once( 'class/edit/external_build.php' );
 webphoto_include_once( 'class/edit/embed_build.php' );
 webphoto_include_once( 'class/edit/playlist_build.php' );
 webphoto_include_once( 'class/edit/search_build.php' );
-webphoto_include_once( 'class/edit/file_build.php' );
 webphoto_include_once( 'class/edit/redirect.php' );
 webphoto_include_once( 'class/edit/item_delete.php' );
 webphoto_include_once( 'class/edit/mail_unlink.php' );

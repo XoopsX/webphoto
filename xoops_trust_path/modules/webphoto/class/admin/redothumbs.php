@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
+// $Id: redothumbs.php,v 1.8 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -493,15 +493,19 @@ function _update_exif( $item_id )
 	$cont_path = $cont_row['file_path'];
 	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
+	$flag = null;
 	$item_row = $this->_item_handler->get_row_by_id( $item_id );
 
-	$flag = $this->_exif_class->build_row_exif( $item_row, $cont_file );
-	if (( $flag == 0 )||( $flag == 1 )) {
-		return true ;	// no action
+	$param = $this->_exif_class->build_row_exif( $item_row, $cont_file );
+	if ( isset( $param['row'] ) ) {
+		$item_row = $param['row'] ;
 	}
-
-	$this->set_msg_array( ' get exif, ' ) ;
-	$item_row = $this->_exif_class->get_row();
+	if ( isset( $param['flag'] ) ) {
+		$flag = $param['flag'] ;
+	}
+	if ( $flag != 2 ) {
+		retrun true;	// no action
+	}
 
 	return $this->_update_item_by_row( $item_row );
 }

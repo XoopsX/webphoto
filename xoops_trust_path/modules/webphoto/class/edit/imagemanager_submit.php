@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -407,6 +407,7 @@ function build_redirect( $param )
 // BUG: error twice
 	$this->_redirect_class->clear_errors();
 
+	$this->_redirect_class->set_msg_array( $this->get_msg_array() );
 	$this->_redirect_class->set_error( $this->get_errors() );
 	$ret = $this->_redirect_class->build_redirect( $param );
 

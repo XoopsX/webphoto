@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: flash_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -123,6 +123,7 @@ function create_flash( $item_id, $src_file, $src_ext )
 	} else {
 		$this->set_flag_failed() ;
 		$this->set_msg( 'fail to create flash', true ) ;
+		$this->set_error( $this->_ffmpeg_class->get_errors() );
 	}
 
 	return $flash_param ;

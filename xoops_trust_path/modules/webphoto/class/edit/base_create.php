@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: base_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -45,7 +45,8 @@ function webphoto_edit_base_create( $dirname )
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 
 // each msg box
-	$this->_msg_class = new webphoto_lib_msg();
+	$this->_msg_class   = new webphoto_lib_msg();
+	$this->_error_class = new webphoto_lib_error();
 
 	$this->_TMP_DIR       = $this->_config_class->get_work_dir( 'tmp' );
 	$this->_UPLOADS_PATH  = $this->_config_class->get_uploads_path();
@@ -240,6 +241,24 @@ function get_msg_array()
 function set_msg( $msg, $flag_highlight=false )
 {
 	return $this->_msg_class->set_msg( $msg, $flag_highlight ) ;
+}
+
+//---------------------------------------------------------
+// error class
+//---------------------------------------------------------
+function clear_errors()
+{
+	$this->_error_class->clear_errors() ;
+}
+
+function get_errors()
+{
+	return $this->_error_class->get_errors() ;
+}
+
+function set_error( $msg )
+{
+	return $this->_error_class->set_error( $msg ) ;
 }
 
 //---------------------------------------------------------

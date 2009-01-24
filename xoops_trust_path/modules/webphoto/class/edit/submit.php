@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.2 2009/01/24 08:30:57 ohwada Exp $
+// $Id: submit.php,v 1.3 2009/01/24 15:33:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -376,6 +376,7 @@ function submit_exec()
 		$this->unlink_uploaded_files();
 	}
 
+	$this->set_factory_error();
 	$this->submit_exec_tag_save( $item_row );
 	$this->submit_exec_post_count();
 	$this->submit_exec_notify( $item_row );
@@ -620,6 +621,9 @@ function create_image_for_middle_thumb( $photo_param, $pdf_param, $flag_video )
 	$img_param = $this->_factory_create_class->create_image_for_middle_thumb( 
 		$photo_param, $pdf_param, $flag_video );
 	$this->_image_tmp_file = $this->_factory_create_class->get_image_tmp_file();
+	if ( $this->_factory_create_class->get_flag_image_ext_failed() ) {
+		$this->set_msg_array( 'cannot create image ext' ) ;
+	}
 	return $img_param ; 
 }
 
@@ -633,6 +637,13 @@ function create_video_plural_images( $param )
 		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
 	}
 	return $ret;
+}
+
+function set_factory_error()
+{
+	if ( $this->_is_module_admin && error_reporting() ) {
+		$this->set_msg_array( $this->_factory_create_class->get_errors() );
+	}
 }
 
 //---------------------------------------------------------
