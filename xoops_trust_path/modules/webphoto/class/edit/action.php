@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.2 2009/01/24 08:55:26 ohwada Exp $
+// $Id: action.php,v 1.3 2009/01/24 09:05:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -41,6 +41,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_action extends webphoto_edit_submit
 {
+	var $_delete_class;
 	var $_show_image_class;
 
 //---------------------------------------------------------
@@ -50,6 +51,7 @@ function webphoto_edit_action( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
+	$this->_delete_class     =& webphoto_edit_item_delete::getInstance( $dirname );
 	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
 }
 
@@ -356,9 +358,7 @@ function delete_exec( $item_row )
 		return _C_WEBPHOTO_ERR_NO_PERM;
 	}
 
-	$delete_class =& webphoto_photo_delete::getInstance( $this->_DIRNAME );
-
-	$ret = $delete_class->delete_photo_by_item_row( $item_row );
+	$ret = $this->_delete_class->delete_photo_by_item_row( $item_row );
 	if ( !$ret ) {
 		$this->set_error( $delete_class->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;

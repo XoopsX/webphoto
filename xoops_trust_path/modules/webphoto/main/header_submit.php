@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.2 2009/01/24 08:30:57 ohwada Exp $
+// $Id: header_submit.php,v 1.3 2009/01/24 09:05:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -120,6 +120,7 @@ webphoto_include_once( 'class/edit/search_build.php' );
 webphoto_include_once( 'class/edit/file_build.php' );
 webphoto_include_once( 'class/edit/redirect.php' );
 webphoto_include_once( 'class/edit/item_delete.php' );
+webphoto_include_once( 'class/edit/mail_unlink.php' );
 webphoto_include_once( 'class/edit/imagemanager_submit.php' );
 
 webphoto_include_language( 'modinfo.php' );
