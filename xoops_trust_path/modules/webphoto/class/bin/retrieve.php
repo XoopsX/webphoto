@@ -1,10 +1,16 @@
 <?php
-// $Id: retrieve.php,v 1.2 2008/08/27 03:58:02 ohwada Exp $
+// $Id: retrieve.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// webphoto_mail_retrieve -> webphoto_edit_mail_retrieve
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -30,7 +36,7 @@ function webphoto_bin_retrieve( $dirname , $trust_dirname )
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 
-	$this->_retrieve_class =& webphoto_mail_retrieve::getInstance( $dirname , $trust_dirname );
+	$this->_retrieve_class =& webphoto_edit_mail_retrieve::getInstance( $dirname , $trust_dirname );
 	$this->_retrieve_class->set_flag_force_db( true );
 	$this->_retrieve_class->set_flag_print_first_msg( true );
 
@@ -63,7 +69,9 @@ function main()
 		return false;
 	}
 
+	$flag_print = false ;
 	if ( $this->_flag_print || $this->_DEBUG_BIN_RETRIVE ) {
+		$flag_print = true;
 		$this->_retrieve_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
 	}
 
@@ -71,6 +79,10 @@ function main()
 
 	$this->_retrieve_class->retrieve();
 	$count = $this->_retrieve_class->get_mail_count();
+
+	if ( $flag_print ) {
+		echo $this->_retrieve_class->get_msg();
+	}
 
 	$this->print_write_data( $this->get_html_footer() );
 

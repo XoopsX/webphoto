@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: mail_register.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_base_this -> webphoto_edit_base
 // 2008-08-24 K.OHWADA
 // added print_user_form()
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_mail_register
 //=========================================================
-class webphoto_main_mail_register extends webphoto_base_this
+class webphoto_main_mail_register extends webphoto_edit_base
 {
 	var $_user_handler;
 	var $_parse_class;
@@ -44,7 +46,7 @@ class webphoto_main_mail_register extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_main_mail_register( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
 	$this->_user_handler     =& webphoto_user_handler::getInstance( $dirname );
 	$this->_parse_class      =& webphoto_lib_mail_parse::getInstance();
@@ -299,7 +301,8 @@ function print_form()
 		'mode' => $mode,
 	);
 
-	$form =& webphoto_mail_register_form::getInstance( $this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form =& webphoto_edit_mail_register_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	if ( $this->_check_user_form() ) {
 		$form->print_user_form( $row );

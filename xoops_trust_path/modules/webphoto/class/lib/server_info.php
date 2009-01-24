@@ -1,20 +1,21 @@
 <?php
-// $Id: server_info.php,v 1.1 2008/11/21 07:56:57 ohwada Exp $
+// $Id: server_info.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// 2009-01-10 K.OHWADA
+// move "program version"
+//---------------------------------------------------------
+
 //=========================================================
 // class webphoto_lib_server_info
 //=========================================================
 class webphoto_lib_server_info
 {
-	var $_NETPBM_PIPES = array(
-		 "jpegtopnm" , "giftopnm" , "pngtopnm" , 
-		 "pnmtojpeg" , "pnmtopng" , "ppmquant" , 
-		 "ppmtogif"  , "pnmscale" , "pnmflip" ) ;
 
 //---------------------------------------------------------
 // constructor
@@ -149,94 +150,6 @@ function build_func_load( $func )
 		$str = $this->font_red( 'not loaded' );
 	}
 	return $str;
-}
-
-//---------------------------------------------------------
-// program version
-//---------------------------------------------------------
-function build_php_gd_version()
-{
-	$ret = false;
-
-	$str = "<b>GD</b><br />\n";
-	if ( function_exists( 'gd_info' ) ) {
-		$ret = true ;
-		$gd_info = gd_info() ;
-		$str .= 'GD Version: '. $gd_info['GD Version'] ."<br />\n" ;
-
-	} else {
-		$str .= $this->font_red( 'not loaded' ) ."<br />\n";
-	}
-
-	return array( $ret, $str );
-}
-
-function build_imagemagick_version( $path )
-{
-	$ret = false;
-	$ret_array = array() ;
-
-	$str  = "<b>ImageMagick</b><br />\n";
-	$str .= "Path: ". $path ."<br />\n" ;
-
-	exec( "{$path}convert --help" , $ret_array ) ;
-	if( count( $ret_array ) > 0 ) {
-		$ret = true ;
-		$str .= $ret_array[0]. "<br />\n";
-
-	} else {
-		$msg  = "Error: {$path}convert can't be executed" ;
-		$str .= $this->font_red( $msg ). "<br />\n";
-	}
-
-	return array( $ret, $str );
-}
-
-function build_netpbm_version( $path )
-{
-	$str  = "<b>NetPBM</b><br />\n";
-	$str .= "Path: ". $path ."<br />\n" ;
-
-	foreach( $this->_NETPBM_PIPES as $pipe ) 
-	{
-		$ret_array = array() ;
-		exec( "{$path}$pipe --version 2>&1" , $ret_array ) ;
-		if( count( $ret_array ) > 0 ) {
-			$str .= $ret_array[0]. "<br />\n";
-
-		} else {
-			$msg = "Error: {$path}$pipe can't be executed" ;
-			$str .= $this->font_red( $msg ). "<br />\n";
-		}
-	}
-
-	return $str;
-}
-
-function build_ffmpeg_version( $path )
-{
-	$ret = false;
-	$ret_array = array() ;
-
-	$str  = "<b>FFmpeg</b><br />\n";
-	$str .= "Path: $path <br />\n" ;
-
-	exec( "{$path}ffmpeg -version 2>&1" , $ret_array ) ;
-	if ( is_array($ret_array) && count($ret_array) ) {
-		foreach ( $ret_array as $line ) {
-			if ( preg_match('/version/i', $line ) ) {
-				$str .= $line ."<br />\n";
-				$ret  = true;
-			}
-		}
-	}
-
-	if ( !$ret ) {
-		$msg  = "Error: {$path}ffmpeg can't be executed" ;
-		$str .= $this->font_red( $msg ) ."<br />\n";
-	}
-
-	return array( $ret, $str );
 }
 
 //---------------------------------------------------------

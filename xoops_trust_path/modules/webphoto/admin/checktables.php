@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: checktables.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-10 K.OHWADA
+// remove gicon_table.php
 // 2008-10-01 K.OHWADA
 // player_handler.php
 // 2008-08-01 K.OHWADA
@@ -21,7 +23,6 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
-webphoto_include_once( 'class/handler/gicon_table.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/tag_handler.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.14 2008/12/20 06:11:27 ohwada Exp $
+// $Id: index.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// _PDFS_DIR
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-12-07 K.OHWADA
@@ -111,10 +113,12 @@ function _print_check()
 	echo $this->_make_dir( $this->_PHOTOS_DIR );
 	echo $this->_make_dir( $this->_THUMBS_DIR );
 	echo $this->_make_dir( $this->_MIDDLES_DIR );
+	echo $this->_make_dir( $this->_FLASHS_DIR );
+	echo $this->_make_dir( $this->_DOCOMOS_DIR );
+	echo $this->_make_dir( $this->_PDFS_DIR );
 	echo $this->_make_dir( $this->_CATS_DIR );
 	echo $this->_make_dir( $this->_GICONS_DIR );
 	echo $this->_make_dir( $this->_GSHADOWS_DIR );
-	echo $this->_make_dir( $this->_FLASHS_DIR );
 	echo $this->_make_dir( $this->_QRS_DIR );
 	echo $this->_make_dir( $this->_PLAYLISTS_DIR );
 	echo $this->_make_dir( $this->_LOGOS_DIR );

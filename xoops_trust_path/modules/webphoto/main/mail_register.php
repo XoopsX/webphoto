@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_register.php,v 1.1 2008/08/08 04:38:27 ohwada Exp $
+// $Id: mail_register.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2008-01-10 K.OHWADA
+// class/edit/xxx
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,9 +23,13 @@ webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/mail_parse.php' );
+webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
-webphoto_include_once( 'class/webphoto/form_this.php' );
-webphoto_include_once( 'class/webphoto/mail_register_form.php' );
+webphoto_include_once( 'class/webphoto/mime.php' );
+webphoto_include_once( 'class/edit/base.php' );
+webphoto_include_once( 'class/edit/form.php' );
+webphoto_include_once( 'class/edit/icon_build.php' );
+webphoto_include_once( 'class/edit/mail_register_form.php' );
 webphoto_include_once( 'class/main/mail_register.php' );
 
 //=========================================================

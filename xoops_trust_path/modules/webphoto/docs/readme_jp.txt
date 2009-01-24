@@ -1,11 +1,118 @@
-$Id: readme_jp.txt,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+$Id: readme_jp.txt,v 1.21 2009/01/24 07:10:39 ohwada Exp $
+
+○ 【バグ】 Webphoto モジュール 1.00 編集画面で”ｓ編集”すると真っ白
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=909&forum=13
+// Fatal error: Call to undefined method webphoto_main_edit::get_file_params()
+
+○ 【バグ】 Webphoto モジュール 1.00 カテゴリー管理にて編集すると真っ白になります。
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=910&forum=13
+// Fatal error: Call to undefined method webphoto_cat_handler::get_all_child_id()
+
+○ バグ
+fLash player に色付き にて、 fatal error
+
+□ 表示
+exif を 500文字で制限
+
+□ 検索
+キーワード ハイライト
+happy_search（従来から）
+webphoto モジュール内
+
+□ 動画
+(3) サムネイルにファイル種別を示すアイコンを追加
+
+□ PDFファイル
+(1) PDFからサムネイル
+(2) PDFからテキストを抜き出し、検索の対象に加える
+(3) サムネイルにファイル種別を示すアイコンを追加
+(4) テキスト文 欄
+(5) キーワード ハイライト
+
+=================================================
+Version: 1.10
+Date:   2009-01-23
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 表示
+(1) exif を 500バイトで制限する
+
+2. 検索
+(1) モジュール内検索のとき、説明文中のキーワードをハイライトする
+(2) happy_search から検索しても、同様。
+
+3. アイコン付きサムネイル
+(1) 動画などからサムネイルを生成するときに、ファイル種別を示すアイコンを追加する
+(2) 「画像処理を行わせるパッケージ選択」にて、「ImmageMagick」を選択したときに有効
+
+4. プラグイン
+ファイル種別に対応したプラグインを追加した
+- audio
+- html
+- pdf
+- txt
+- video
+
+5. テキスト・ファイル (txt)
+(1) テキスト・ファイルからテキスト(文字列)を抽出し「テキスト文」欄に表示する
+(2) 「テキスト文」を 500バイトで制限する
+(3) 「テキスト文」を検索の対象にする
+
+6. PDF ファイル (pdf)
+(1) xpdf が必要です
+http://www.foolabs.com/xpdf/
+(2) PDF からサムネイルを生成する
+(3) PDF からテキストを抽出し「テキスト文」欄に表示する
+
+7. バグ対策
+(1) 編集にて fetal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=909&forum=13
+
+(2) カテゴリー管理にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=910&forum=13
+
+8. データベース構造
+テーブルの項目追加
+(1) item テーブル: item_content など
+
+9. プログラム構造
+(1) class ディレクトリの下に edit ディレクトリを追加した
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+  自動的にテーブルに項目が追加されます。
+
+
+● 使用上の注意
+1. テキスト・ファイル
+文字コードの自動認識をしていますが、うまくいかないこともあります。
+文字化けする場合は「テキスト文」欄に直接 入力してください。
+
+2. PDF ファイル
+xpdf ではテキスト(文字列)が全て抽出されないことがあります。
+抽出される場合とされない場合の違いが分かりません。
+ご存知の方はご一報を。
+
+
+● 注意
+今回のバージョンでは、プログラム構造を大きく変更しました。
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
 
 =================================================
 Version: 1.00
 Date:   2009-01-04
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.11 2009/01/06 09:41:35 ohwada Exp $
+// $Id: submit.php,v 1.12 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_photo_action -> webphoto_edit_submit
 // 2009-01-04 K.OHWADA
 // webphoto_photo_misc_form
 // 2008-11-16 K.OHWADA
@@ -36,7 +38,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_submit
 //=========================================================
-class webphoto_main_submit extends webphoto_photo_action
+class webphoto_main_submit extends webphoto_edit_submit
 {
 	var $_THIS_FCT = 'submit';
 	var $_THIS_URL = null;
@@ -50,7 +52,7 @@ class webphoto_main_submit extends webphoto_photo_action
 //---------------------------------------------------------
 function webphoto_main_submit( $dirname , $trust_dirname )
 {
-	$this->webphoto_photo_action( $dirname , $trust_dirname );
+	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 
@@ -160,7 +162,7 @@ function _submit()
 		return _C_WEBPHOTO_RET_ERROR ;
 	}
 
-	$ret = $this->submit();
+	$ret = $this->submit_main();
 	switch ( $ret )
 	{
 
@@ -193,7 +195,7 @@ function _build_redirect_param( $is_failed, $cat_id )
 {
 	$param = array(
 		'is_failed'   => $is_failed ,
-		'is_pending'  => !$this->get_new_status() ,
+		'is_pending'  => ! $this->_has_superinsert ,
 		'url_success' => $this->_build_redirect_url_success( $cat_id ) ,
 		'url_pending' => $this->build_uri_operate( 'latest' ) , 
 		'url_failed'  => $this->_THIS_URL , 
@@ -219,7 +221,7 @@ function _video()
 	$this->_check_token_and_redirect();
 	$item_row = $this->_get_item_row_or_redirect();
 
-	$ret = $this->_photo_class->video_thumb( $item_row );
+	$ret = $this->video_thumb( $item_row );
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
 		$this->_build_redirect_param( !$ret, $item_row['item_cat_id'] ) );
@@ -247,7 +249,7 @@ function _get_item_row_or_redirect()
 function _build_preview_info( $item_row )
 {
 	if ( $this->is_readable_new_photo() ) {
-		$image_info = $this->_preview_new();
+		$image_info = $this->_preview_new( $item_row );
 
 	} elseif ( $this->is_readable_preview() ) {
 		// old preview
@@ -276,7 +278,7 @@ function _print_preview_submit( $item_row, $image_info )
 	echo $this->build_preview_template( $show2 );
 }
 
-function _preview_new()
+function _preview_new( $item_row )
 {
 // BUG: Fatal error in upload.php
 	$ret = $this->upload_fetch_photo( true );
@@ -286,7 +288,6 @@ function _preview_new()
 	}
 
 	$photo_tmp_name = $this->_photo_tmp_name;
-	$this->set_values_for_fetch_photo( $photo_tmp_name );
 
 // overwrite preview name
 	$this->set_preview_name( str_replace( 
@@ -294,19 +295,19 @@ function _preview_new()
 		_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
 		$photo_tmp_name ) );
 
-	return $this->_image_class->create_preview_new(
+	return $this->create_preview_new(
 		$this->get_preview_name(), $photo_tmp_name );
 
 }
 
 function _preview_old()
 {
-	return $this->_image_class->build_preview( $this->get_preview_name() ) ;
+	return $this->build_preview( $this->get_preview_name() ) ;
 }
 
 function _preview_no_image()
 {
-	return $this->_image_class->build_no_image_preview();
+	return $this->build_no_image_preview();
 }
 
 //---------------------------------------------------------
@@ -319,13 +320,14 @@ function _print_form_video()
 
 function _print_form_error()
 {
-	echo $this->error_in_box( $this->get_format_error() );
+	$err = $this->get_format_error( $flag_sanitize=false, $flag_highlight=false );
+	echo $this->error_in_box( $err );
 	$this->_print_form_preview() ;
 }
 
 function _print_form_preview()
 {
-	$item_row = $this->build_submit_preview_row() ;
+	$item_row = $this->create_item_row_preview() ;
 	list( $item_row, $image_info ) =
 		$this->_build_preview_info( $item_row );
 	$this->_print_preview_submit( $item_row, $image_info );
@@ -334,14 +336,14 @@ function _print_form_preview()
 
 function _print_form_default()
 {
-	$item_row = $this->build_submit_default_row();
+	$item_row = $this->create_item_row_default();
 	$options  = $this->_editor_class->build_list_options( true );
 
-	if ( $this->is_upload_type() ) {
+	if ( $this->is_show_form_embed() ) {
 		$this->_print_form_embed( $item_row );
 	}
 
-	if ( $this->is_show_form_editor( $options ) ) {
+	if ( $this->is_show_form_editor_option( $options ) ) {
 		$this->_print_form_editor( $item_row, $options );
 	}
 
@@ -350,7 +352,7 @@ function _print_form_default()
 
 function _print_form_submit( $item_row )
 {
-	$form_class =& webphoto_photo_edit_form::getInstance( 
+	$form_class =& webphoto_edit_photo_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_common( 
 		$item_row, $this->build_form_param( 'submit' ) );
@@ -358,14 +360,14 @@ function _print_form_submit( $item_row )
 
 function _print_form_embed( $item_row )
 {
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_embed( 'submit', $item_row );
 }
 
 function _print_form_editor( $item_row, $options )
 {
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$param = $this->build_form_param( 'submit' );

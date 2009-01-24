@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.18 2008/12/18 13:23:16 ohwada Exp $
+// $Id: show_photo.php,v 1.19 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// build_show_content() build_show_exif()
 // 2008-12-12 K.OHWADA
 // check_perm() -> check_perm_down_by_row()
 // 2008-12-07 K.OHWADA
@@ -68,6 +70,8 @@ class webphoto_show_photo extends webphoto_base_this
 
 	var $_WINDOW_MERGIN = 16;
 	var $_MAX_SUMMARY   = 100;
+	var $_MAX_CONTENT   = 500;
+	var $_MAX_EXIF      = 500;
 	var $_SUMMARY_TAIL  = ' ...';
 	var $_RATING_DECIMALS    = 2;
 	var $_FILESIZE_PRECISION = 1;
@@ -83,6 +87,7 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
 	$this->_image_class =& webphoto_show_image::getInstance( $dirname );
+	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
 	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
@@ -90,12 +95,6 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_highlight_class =& webphoto_lib_highlight::getInstance();
 	$this->_highlight_class->set_replace_callback( 'webphoto_highlighter_by_class' );
 	$this->_highlight_class->set_class( 'webphoto_highlight' );
-
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-	$this->_multibyte_class->set_ja_kuten(   _WEBPHOTO_JA_KUTEN );
-	$this->_multibyte_class->set_ja_dokuten( _WEBPHOTO_JA_DOKUTEN );
-	$this->_multibyte_class->set_ja_period(  _WEBPHOTO_JA_PERIOD );
-	$this->_multibyte_class->set_ja_comma(   _WEBPHOTO_JA_COMMA );
 
 	$this->_cfg_newdays      = $this->get_config_by_name('newdays');
 	$this->_cfg_popular      = $this->get_config_by_name('popular');
@@ -144,6 +143,11 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	list($desc_disp, $summary) = $this->build_show_desc_summary( 
 		$row, $this->_flag_highlight, $this->_keyword_array ) ;
 
+	$cont_disp = $this->build_show_content( 
+		$row, $this->_flag_highlight, $this->_keyword_array ) ;
+
+	$exif_disp = $this->build_show_exif( $row ) ;
+
 	$datetime_disp = $this->mysql_datetime_to_str( $item_datetime );
 
 	$show_arr['photo_id']            = $item_id ;
@@ -154,13 +158,15 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$show_arr['place_urlencode']     = $this->rawurlencode_uri_encode_str( $item_place ) ;
 	$show_arr['equipment_urlencode'] = $this->rawurlencode_uri_encode_str( $item_equipment ) ;
 	$show_arr['description_disp']    = $desc_disp ;
+	$show_arr['content_disp']        = $cont_disp ;
 	$show_arr['summary']             = $summary ;
-	$show_arr['cont_exif_disp']      = $this->_item_handler->build_show_exif_disp( $row ) ;
+	$show_arr['exif_disp']           = $exif_disp ;
 	$show_arr['tags']                = $this->build_show_tags_from_tag_name_array( $tag_name_array ) ;
 	$show_arr['is_owner']            = $this->is_photo_owner( $item_uid ) ;
 	$show_arr['is_video']            = $this->is_video_kind( $item_kind ) ;
 	$show_arr['perm_download']       = $this->perm_download( $row ) ;
 	$show_arr['can_download']        = $this->can_download( $row ) ;
+	$show_arr['duration_disp']       = $this->format_time( $item_duration ) ;
 
 	$show_desc = false;
 	foreach ( $this->_SHOW_DESC_ARRAY as $key ) 
@@ -283,6 +289,28 @@ function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=nu
 	}
 
 	return array($desc, $summary);
+}
+
+function build_show_content( $row, $flag_highlight=false, $keyword_array=null )
+{
+	$str = $this->_multibyte_class->build_summary_with_search( 
+		$row['item_content'], $keyword_array, $this->_MAX_CONTENT );
+
+	if ( $flag_highlight ) {
+		$str = $this->_highlight_class->build_highlight_keyword_array( $str, $keyword_array );
+	}
+
+	return $str ;
+}
+
+function build_show_exif( $row )
+{
+	$str = $row['item_exif'] ;
+	if ( strlen($str) > $this->_MAX_EXIF ) {
+		$str  = $this->_multibyte_class->shorten( $row['item_exif'], $this->_MAX_EXIF, '' );
+		$str .= "\n ... ";
+	}
+	return nl2br( $str ) ;
 }
 
 function build_show_rank( $rating )

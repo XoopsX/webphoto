@@ -1,5 +1,5 @@
 <?php
-// $Id: photomanager.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photomanager.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_photo_delete -> webphoto_edit_item_delete 
 // 2008-10-01 K.OHWADA
 // delete_photo -> delete_photo_by_item_id
 // 2008-08-24 K.OHWADA
@@ -19,9 +21,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_photomanager
 //=========================================================
-class webphoto_admin_photomanager extends webphoto_base_this
+class webphoto_admin_photomanager extends webphoto_edit_base
 {
-	var $_build_class;
+	var $_search_class;
 	var $_delete_class;
 
 	var $_get_perpage;
@@ -44,10 +46,10 @@ class webphoto_admin_photomanager extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_admin_photomanager( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_build_class =& webphoto_photo_build::getInstance( $dirname );
-	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
+	$this->_search_class =& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname );
+	$this->_delete_class =& webphoto_edit_item_delete::getInstance( $dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -241,7 +243,7 @@ function _update()
 			$row['item_time_update'] = $post_time_update;
 		}
 
-		$row['item_search']  = $this->_build_class->build_search_with_tag( $row );
+		$row['item_search']  = $this->_search_class->build_with_tag( $row );
 
 		$this->_item_handler->update( $row );
 	}

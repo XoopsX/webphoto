@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
+// $Id: search.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// set_keyword_array()
 // 2008-12-12 K.OHWADA
 // public_class
 // 2008-08-24 K.OHWADA
@@ -79,9 +81,14 @@ function list_build_detail( $query_in )
 	$rows  = $photo_param['rows'];
 	$error = $photo_param['error'];
 
-	$query_param = $this->_search_class->get_query_param();
-	$query = $query_param['search_query'];
+	$query_param  = $this->_search_class->get_query_param();
+	$query        = $query_param['search_query'];
+	$query_array  = $query_param['search_query_array'];
+
 	$this->set_param_out( $query );
+
+	$this->set_flag_highlight( true );
+	$this->set_keyword_array( $query_array );
 
 	$init_param = $this->list_build_init_param( true );
 	$param      = $this->list_build_detail_common( _SR_SEARCH, $total, $rows );

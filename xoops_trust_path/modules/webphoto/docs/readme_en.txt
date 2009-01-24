@@ -1,11 +1,93 @@
-$Id: readme_en.txt,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+$Id: readme_en.txt,v 1.21 2009/01/24 07:10:39 ohwada Exp $
+
+=================================================
+Version: 1.10
+Date:   2009-01-23
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. View
+(1) limit 'exif' by 500 bytes.
+
+2. Search
+(1) highlight keyword in the description when module search.
+(2) it is same when search in happy_search.
+
+3. Thumbnail with Icon
+(1) add the icon which shows file kind in the thumbnail,
+when create the thumbnail from the media as the video.
+(2) enable this when the admin select "ImageMagick" in "Package treating images"
+
+4. plugin
+add plugins supported file kind
+- audio
+- html
+- pdf
+- txt
+- video
+
+5. Text file (txt)
+(1) extract the text content from the text file, 
+and show it in 'text content' field.
+(2) limit 'text content' by 500 bytes.
+(3) search in 'text content'
+
+6. PDF file (pdf)
+(1) require 'xpdf'
+http://www.foolabs.com/xpdf/
+(2) create the thumbnail from PDF file
+(3) extract the text content from the PDF file, 
+and show it in 'text content' field.
+
+7. Bug fix
+(1) fetal error in edit photo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=909&forum=13
+
+(2) fatal error in category management
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=910&forum=13
+
+8. Database structure
+add field of table
+(1) item table : item_content etc
+
+9. Program structure
+(1) added 'edit' directory under 'class' directory.
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp.
+  the fields are added to the table automatically. 
+
+
+* Notice for usage *
+1. Text file 
+the character encoding is detected automatically.
+but it does not sometimes work out.
+you should enter the text in 'text content', if character garbage
+
+2. PDF file
+In xpdf, all texts (character string) are not sometimes extracted.
+I do not know the difference when do or not extracte .
+please teach me.
+
+
+* Notice *
+In this version, I changed program structure substantially.
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 1.00
 Date:   2009-01-04
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

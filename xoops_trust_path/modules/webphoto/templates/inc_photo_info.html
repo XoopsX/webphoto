@@ -1,4 +1,4 @@
-<{* $Id: inc_photo_info.html,v 1.5 2008/12/10 19:08:57 ohwada Exp $ *}>
+<{* $Id: inc_photo_info.html,v 1.6 2009/01/24 07:10:40 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -11,8 +11,12 @@
 <{* PHOTO"S SUBJECT *}>
 <a name="<{$photo.photo_id}>"></a>
 
-<{if $use_pathinfo }>
+<{if $use_pathinfo && $search_merged_urlencode }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/keywords=<{$search_merged_urlencode}>/">
+<{elseif $use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+<{elseif $search_merged_urlencode }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>&amp;keywords=<{$search_merged_urlencode}>">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
 <{/if}>
@@ -106,8 +110,8 @@
 <{/if}>
 
 <{* DURATION *}>
-<{if $photo.cont_duration_disp != '' }>
-  <{$photo.cont_duration_disp}>
+<{if $photo.duration_disp != '' }>
+  <{$photo.duration_disp}>
 <{/if}>
 
 <br />
@@ -232,10 +236,19 @@
 
 <{* 6TH LINE OF INFORMATION *}>
 
-<{* EXIF *}>
-<{if $show_photo_exif && $photo.is_owner && ($photo.cont_exif_disp != '') }>
+<{* CONTENT *}>
+<{if $show_photo_desc && ($photo.content_disp != '')}>
   <div class="webphoto_description">
-  <{$photo.cont_exif_disp}> <br />
+  <{$photo.content_disp}> <br />
+  </div>
+<{/if}>
+
+<{* 7TH LINE OF INFORMATION *}>
+
+<{* EXIF *}>
+<{if $show_photo_exif && $photo.is_owner && ($photo.exif_disp != '') }>
+  <div class="webphoto_description">
+  <{$photo.exif_disp}> <br />
   </div>
 <{/if}>
 

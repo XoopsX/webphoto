@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.9 2009/01/06 09:41:35 ohwada Exp $
+// $Id: header.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// multibyte.php
 // 2009-01-04 K.OHWADA
 // plugin.php
 // 2008-12-12 K.OHWADA
@@ -54,6 +56,7 @@ webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_select.php' );
 webphoto_include_once( 'class/d3/preload.php' );
 webphoto_include_once( 'class/lib/error.php' );
+webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/handler.php' );
 webphoto_include_once( 'class/lib/tree_handler.php' );
 webphoto_include_once( 'class/lib/post.php' );
@@ -83,8 +86,8 @@ webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
+webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
-webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );

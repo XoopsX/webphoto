@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.18 2008/12/20 06:11:27 ohwada Exp $
+// $Id: xoops_version.php,v 1.19 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// xpdfpath
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // perm_cat_read
@@ -526,6 +528,28 @@ function _build_config()
 		'name'			=> 'ffmpegpath' ,
 		'title'			=> $this->_constant_name( 'CFG_FFMPEGPATH' ) ,
 		'description'	=> $this->_constant_name( 'CFG_DESCFFMPEGPATH' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'use_xpdf' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_XPDF' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> 0 ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'xpdfpath' ,
+		'title'			=> $this->_constant_name( 'CFG_XPDFPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_XPDFPATH_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> '' ,

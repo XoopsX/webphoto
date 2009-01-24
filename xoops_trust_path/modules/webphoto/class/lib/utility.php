@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.9 2008/11/30 10:36:34 ohwada Exp $
+// $Id: utility.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// build_random_file_name()
 // 2008-11-29 K.OHWADA
 // check_file_time()
 // 2008-11-08 K.OHWADA
@@ -37,6 +39,11 @@ class webphoto_lib_utility
 
 	var $_HTML_SLASH = '&#047;' ;
 	var $_HTML_COLON = '&#058;' ;
+
+	var $_ASCII_LOWER_A = 97; 
+	var $_ASCII_LOWER_Z = 122;
+
+	var $_C_YES = 1;
 
 // base on style sheet of default theme
 	var $_STYLE_ERROR_MSG = 'background-color: #FFCCCC; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ';
@@ -232,6 +239,40 @@ function parse_time( $time )
 	$min  = intval(( $time - 3600 * $hour ) / 60 ) ;
 	$sec  = $time - 3600 * $hour - 60 * $min ;
 	return array( $hour, $min, $sec );
+}
+
+//---------------------------------------------------------
+// file name
+//---------------------------------------------------------
+function build_random_file_name( $id, $ext, $extra=null )
+{
+	$str  = $this->build_random_file_node( $id, $extra );
+	$str .= '.'.$ext;
+	return $str;
+}
+
+function build_random_file_node( $id, $extra=null )
+{
+	$alphabet = $this->build_random_alphabet();
+	$str  = $alphabet;
+	$str .= $this->build_format_id( $id );
+	if ( $extra ) {
+		$str .= $extra;
+	}
+	$str .= uniqid( $alphabet );
+	return $str;
+}
+
+function build_random_alphabet()
+{
+// one lower alphabet ( a - z )
+	$str = chr( rand( $this->_ASCII_LOWER_A, $this->_ASCII_LOWER_Z ) );
+	return $str;
+}
+
+function build_format_id( $id, $format='%05d' )
+{
+	return sprintf( $format, $id );
 }
 
 //---------------------------------------------------------
@@ -504,6 +545,40 @@ function decode_slash( $str )
 function decode_colon( $str )
 {
 	return str_replace( $this->_HTML_COLON, ':', $str );
+}
+
+//---------------------------------------------------------
+// group perms
+//---------------------------------------------------------
+function convert_group_perms_array_to_str( $perms, $glue='&' )
+{
+	$arr = $this->arrenge_group_perms_array( $perms );
+	return $this->array_to_perm( $arr, $glue );
+}
+
+function arrenge_group_perms_array( $perms )
+{
+	if ( !is_array($perms) || !count($perms) ) {
+		return null ;
+	}
+
+	$arr = array();
+	foreach( $perms as $k => $v ) {
+		if ( $v == $this->_C_YES ) {
+			$arr[] = intval($k) ;
+		}
+	}
+
+	return $arr ;
+}
+
+function array_to_perm( $arr, $glue )
+{
+	$val = $this->array_to_str( $arr, $glue );
+	if ( $val ) {
+		$val = $glue . $val . $glue ;
+	}
+	return $val;
 }
 
 //---------------------------------------------------------

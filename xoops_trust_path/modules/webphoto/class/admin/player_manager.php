@@ -1,5 +1,5 @@
 <?php
-// $Id: player_manager.php,v 1.2 2008/11/19 10:26:00 ohwada Exp $
+// $Id: player_manager.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// $_STYLE_NOT_SET
 // 2008-11-16 K.OHWADA
 // load_movie() -> build_movie()
 //---------------------------------------------------------
@@ -27,6 +29,8 @@ class webphoto_admin_player_manager extends webphoto_base_this
 	var $_player_id    = 0 ;
 	var $_player_title = null;
 
+ 	var $_STYLE_NOT_SET = -1 ;
+ 
 	var $_THIS_FCT = 'player_manager';
 	var $_THIS_URL;
 
@@ -200,12 +204,17 @@ function _print_player_table( $mode, $player_row )
 	$form =& webphoto_admin_player_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$style = $this->_post_class->get_get_text('style');
+	$style = $this->_post_class->get_get_int( 'style', $this->_STYLE_NOT_SET );
 
 	$player_id = $player_row['player_id'] ;
 
 	$item_id  = 0 ;
 	$item_row = $this->_get_item_row();
+
+// set style if specify
+	if ( $style != $this->_STYLE_NOT_SET ) {
+		$player_row['player_style'] = $style ;
+	}
 
 	$movie = null;
 
@@ -222,7 +231,6 @@ function _print_player_table( $mode, $player_row )
 			'player_row'     => $player_row , 
 			'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
 			'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
-			'player_style'   => $style ,
 		);
 
 		$movie = $this->_player_class->build_movie( $param_movie );
@@ -232,9 +240,10 @@ function _print_player_table( $mode, $player_row )
 
 	$param_form = array(
 		'mode'     => $mode ,
-		'style'    => $style ,
 		'item_id'  => $item_id ,
 	);
+
+
 
 // PLAYER TABLE
 	echo $form->build_script_color_pickup();

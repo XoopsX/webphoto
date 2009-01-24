@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
+// $Id: cat_form.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
 // 2008-12-12 K.OHWADA
 // _build_ele_perm_read()
 // 2008-11-08 K.OHWADA
@@ -23,7 +25,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_cat_form
 //=========================================================
-class webphoto_admin_cat_form extends webphoto_form_this
+class webphoto_admin_cat_form extends webphoto_edit_form
 {
 	var $_gicon_handler;
 
@@ -47,7 +49,7 @@ class webphoto_admin_cat_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_cat_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
 	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
 

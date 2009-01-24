@@ -1,10 +1,16 @@
 <?php
-// $Id: imagemagick.php,v 1.2 2008/11/11 12:52:46 ohwada Exp $
+// $Id: imagemagick.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// version()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -60,11 +66,7 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rorate=0 )
 	}
 
 	if ( $option ) {
-		$cmd = $this->_cmd_path .'convert '. $option .' '. $src .' '.$dst;
-		exec( $cmd ) ;
-		if ( $this->_DEBUG ) {
-			echo $cmd."<br />\n";
-		}
+		$this->convert( $src, $dst, $option );
 		return true;
 	}
 
@@ -73,8 +75,50 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rorate=0 )
 
 function add_watermark( $src, $dst, $mark )
 {
-	$cmd = $this->_cmd_path .'composite -compose plus '. $mark .' '. $src .'' . $dst;
+	$option = '-compose plus ';
+	$this->composite( $src, $dst, $mark, $option );
+}
+
+function add_icon( $src, $dst, $icon )
+{
+	$option = ' -gravity southeast ';
+	$this->composite( $src, $dst, $icon, $option );
+}
+
+function convert( $src, $dst, $option='' )
+{
+	$cmd = $this->_cmd_path .'convert '. $option .' '. $src .' '.$dst ;
 	exec( $cmd ) ;
+	if ( $this->_DEBUG ) {
+		echo $cmd."<br />\n";
+	}
+}
+
+function composite( $src, $dst, $change, $option='' )
+{
+	$cmd = $this->_cmd_path .'composite '. $option .' '. $change .' '. $src .' '. $dst ;
+	exec( $cmd ) ;
+	if ( $this->_DEBUG ) {
+		echo $cmd."<br />\n";
+	}
+}
+
+//---------------------------------------------------------
+// version
+//---------------------------------------------------------
+function version( $path )
+{
+	$cmd = "{$path}convert --help";
+	exec( $cmd , $ret_array ) ;
+	if( count( $ret_array ) > 0 ) {
+		$ret = true ;
+		$str = $ret_array[0]. "<br />\n";
+
+	} else {
+		$ret = false ;
+		$str = "Error: {$path}convert can't be executed" ;
+	}
+	return array( $ret, $str );
 }
 
 // --- class end ---

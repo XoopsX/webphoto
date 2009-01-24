@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.14 2008/12/18 13:23:16 ohwada Exp $
+// $Id: base.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// build_random_file_name()
 // 2008-12-12 K.OHWADA
 // array_to_perm()
 // 2008-11-29 K.OHWADA
@@ -36,6 +38,7 @@ class webphoto_lib_base extends webphoto_lib_error
 	var $_utility_class;
 	var $_language_class;
 	var $_xoops_class;
+	var $_msg_class;
 
 // xoops param
 	var $_xoops_language  = null ;
@@ -81,8 +84,11 @@ function webphoto_lib_base( $dirname, $trust_dirname )
 {
 	$this->webphoto_lib_error();
 
-	$this->_xoops_class    =& webphoto_xoops_base::getInstance();
-	$this->_utility_class  =& webphoto_lib_utility::getInstance();
+	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
+	$this->_utility_class =& webphoto_lib_utility::getInstance();
+
+// each msg box
+	$this->_msg_class = new webphoto_lib_msg();
 
 	$this->_DIRNAME    = $dirname ;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
@@ -200,11 +206,7 @@ function build_admin_msg( $msg, $flag_highlight=false, $flag_br=false )
 //---------------------------------------------------------
 function array_to_perm( $arr, $glue )
 {
-	$val = $this->array_to_str( $arr, $glue );
-	if ( $val ) {
-		$val = $glue . $val . $glue ;
-	}
-	return $val;
+	return $this->_utility_class->array_to_perm( $arr, $glue );
 }
 
 function str_to_array( $str, $pattern )
@@ -292,6 +294,21 @@ function build_error_msg( $msg, $title='', $flag_sanitize=true )
 	return $this->_utility_class->build_error_msg( $msg, $title, $flag_sanitize );
 }
 
+function build_random_file_name( $id, $ext, $extra=null )
+{
+	return $this->_utility_class->build_random_file_name( $id, $ext, $extra );
+}
+
+function build_random_file_node( $id, $extra=null )
+{
+	return $this->_utility_class->build_random_file_node( $id, $extra );
+}
+
+function parse_url_to_filename( $url )
+{
+	return $this->_utility_class->parse_url_to_filename( $url );
+}
+
 //---------------------------------------------------------
 // sanitize
 //---------------------------------------------------------
@@ -335,66 +352,11 @@ function sanitize_array_int( $arr_in )
 }
 
 //---------------------------------------------------------
-// msg
+// msg class
 //---------------------------------------------------------
-function has_msg_array()
-{
-	if ( count($this->_msg_array) ) {
-		return true;
-	}
-	return false;
-}
-
-function clear_msg_array()
-{
-	$this->_msg_array = array();
-}
-
-function get_msg_array()
-{
-	return $this->_msg_array;
-}
-
-function get_format_msg_array( $flag_sanitize=true, $flag_highlight=true, $flag_br=true )
-{
-	$val = '';
-	foreach (  $this->_msg_array as $msg )
-	{
-		if ( $flag_sanitize ) {
-			$msg = $this->sanitize($msg);
-		}
-		$val .= $msg ;
-		if ( $flag_br ) {
-			$val .= "<br />\n";
-		}
-	}
-
-	if ( $flag_highlight ) {
-		$val = $this->highlight($val);
-	}
-	return $val;
-}
-
-function set_msg_array( $msg )
-{
-// array type
-	if ( is_array($msg) ) {
-		foreach ( $msg as $m ) {
-			$this->_msg_array[] = $m;
-		}
-
-// string type
-	} else {
-		$arr = explode("\n", $msg);
-		foreach ( $arr as $m ) {
-			$this->_msg_array[] = $m;
-		}
-	}
-}
-
 function build_set_msg( $msg, $flag_highlight=false, $flag_br=false )
 {
-	$this->set_msg_array(
+	$this->set_msg(
 		$this->build_msg( $msg, $flag_highlight, $flag_br ) );
 }
 
@@ -403,9 +365,17 @@ function set_msg_level( $val )
 	$this->_msg_level = intval( $val );
 }
 
-function build_msg_level( $level, $msg, $flag_highlight=false, $flag_br=false )
+function check_msg_level( $level )
 {
 	if (( $this->_msg_level > 0 )&&( $this->_msg_level >= $level )) {
+		return true ;
+	}
+	return false ;
+}
+
+function build_msg_level( $level, $msg, $flag_highlight=false, $flag_br=false )
+{
+	if ( $this->check_msg_level( $level ) ) {
 		return $this->build_msg( $msg, $flag_highlight, $flag_br );
 	}
 	return null;
@@ -430,6 +400,39 @@ function set_error_in_head_with_admin_info( $msg )
 	if ( $this->_is_module_admin ) {
 		$this->set_error( $arr );
 	}
+}
+
+//---------------------------------------------------------
+// msg class
+//---------------------------------------------------------
+function clear_msg_array()
+{
+	$this->_msg_class->clear_msg_array() ;
+}
+
+function get_msg_array()
+{
+	return $this->_msg_class->get_msg_array() ;
+}
+
+function has_msg_array()
+{
+	return $this->_msg_class->has_msg_array() ;
+}
+
+function set_msg_array( $msg, $flag_highlight=false )
+{
+	return $this->_msg_class->set_msg( $msg, $flag_highlight ) ;
+}
+
+function set_msg( $msg, $flag_highlight=false )
+{
+	return $this->_msg_class->set_msg( $msg, $flag_highlight ) ;
+}
+
+function get_format_msg_array( $flag_sanitize=true, $flag_highlight=true, $flag_br=true )
+{
+	return $this->_msg_class->get_format_msg_array( $flag_sanitize, $flag_highlight, $flag_br ) ;
 }
 
 //---------------------------------------------------------

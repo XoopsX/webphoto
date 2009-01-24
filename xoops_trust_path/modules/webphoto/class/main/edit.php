@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+// $Id: edit.php,v 1.21 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_photo_action -> webphoto_edit_action
 // 2009-01-04 K.OHWADA
 // webphoto_photo_misc_form
 // 2008-11-16 K.OHWADA
@@ -38,7 +40,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_edit
 //=========================================================
-class webphoto_main_edit extends webphoto_photo_action
+class webphoto_main_edit extends webphoto_edit_action
 {
 	var $_THIS_FCT  = 'edit' ;
 	var $_THIS_URL  = null ;
@@ -52,7 +54,7 @@ class webphoto_main_edit extends webphoto_photo_action
 //---------------------------------------------------------
 function webphoto_main_edit( $dirname , $trust_dirname )
 {
-	$this->webphoto_photo_action( $dirname , $trust_dirname );
+	$this->webphoto_edit_action( $dirname , $trust_dirname );
 
 	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 
@@ -358,7 +360,7 @@ function _video()
 
 	$this->_check_token_and_redirect( $item_id );
 
-	$ret = $this->_photo_class->video_thumb( $item_row );
+	$ret = $this->video_thumb( $item_row );
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
 		$this->_build_redirect_param( !$ret, $item_id ) );
@@ -455,17 +457,25 @@ function _print_form_video()
 function _print_form_error()
 {
 	echo $this->error_in_box( $this->get_format_error() );
-	$this->_print_form_modify();
+	$this->_print_form_modify( $flag_default=false );
 }
 
-function _print_form_modify()
+function _print_form_modify( $flag_default=true )
 {
-	$edit_form_class =& webphoto_photo_edit_form::getInstance( 
+	$edit_form_class =& webphoto_edit_photo_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$misc_form_class =& webphoto_photo_misc_form::getInstance( 
+	$misc_form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$item_row  = $this->build_modify_row_by_post( $this->_row_current, true );
+	$item_row = $this->_row_current ;
+
+	if ( $flag_default ) {
+		$this->set_param_modify_default( $item_row );
+
+	} else {
+		$item_row = $this->build_item_row_modify_post( $item_row );
+	}
+
 	$flash_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 
 	$item_id   = $item_row['item_id'] ;

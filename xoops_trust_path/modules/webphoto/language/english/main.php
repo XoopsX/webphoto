@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.23 2009/01/06 09:41:35 ohwada Exp $
+// $Id: main.php,v 1.24 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -973,7 +973,7 @@ define("_WEBPHOTO_PLAYER_FRONTCOLOR","Front Color");
 define("_WEBPHOTO_PLAYER_LIGHTCOLOR","Light Color");
 
 // FlashVar table
-define("_WEBPHOTO_FLASHVAR_TABLE","FlashVra Table");
+define("_WEBPHOTO_FLASHVAR_TABLE","FlashVar Table");
 define("_WEBPHOTO_FLASHVAR_ID","FlashVar ID");
 define("_WEBPHOTO_FLASHVAR_TIME_CREATE" , "Create Time" ) ;
 define("_WEBPHOTO_FLASHVAR_TIME_UPDATE" , "Update Time" ) ;
@@ -1300,6 +1300,14 @@ define("_WEBPHOTO_CAP_SMILEY", "Enable smiley icons");
 define("_WEBPHOTO_CAP_XCODE",  "Enable XOOPS codes");
 define("_WEBPHOTO_CAP_IMAGE",  "Enable images");
 define("_WEBPHOTO_CAP_BR",     "Enable linebreak");
+
+//---------------------------------------------------------
+// v1.10
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_WIDTH",  "Width of Image");
+define("_WEBPHOTO_ITEM_HEIGHT", "Height of Image");
+define("_WEBPHOTO_ITEM_CONTENT", "Text Content");
 
 // === define end ===
 }

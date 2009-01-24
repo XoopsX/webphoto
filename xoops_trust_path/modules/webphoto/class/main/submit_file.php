@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
+// $Id: submit_file.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_edit_factory_create
 // 2009-01-04 K.OHWADA
 // webphoto_photo_edit_form -> webphoto_photo_misc_form
 // BUG : not set title & description
@@ -24,9 +26,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_submit_file
 //=========================================================
-class webphoto_main_submit_file extends webphoto_base_this
+class webphoto_main_submit_file extends webphoto_edit_base
 {
-	var $_photo_class;
+	var $_factory_create_class;
 	var $_notification_class;
 	var $_xoops_user_class;
 	var $_redirect_class;
@@ -52,16 +54,19 @@ class webphoto_main_submit_file extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_main_submit_file( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_photo_class        =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
-	$this->_xoops_user_class   =& webphoto_xoops_user::getInstance();
-	$this->_redirect_class     =& webphoto_photo_redirect::getInstance( $dirname, $trust_dirname );
-	$this->_notification_class =& webphoto_notification_event::getInstance( $dirname , $trust_dirname );
+	$this->_xoops_user_class =& webphoto_xoops_user::getInstance();
+	$this->_redirect_class   =& webphoto_edit_redirect::getInstance( 
+		$dirname, $trust_dirname );
+	$this->_notification_class =& webphoto_notification_event::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_factory_create_class  =& webphoto_edit_factory_create::getInstance( 
+		$dirname , $trust_dirname );
 
 	$this->_cfg_file_size = intval( $this->get_config_by_name( 'file_size' ) );
 	$this->_has_file      = $this->_perm_class->has_file();
-	$this->_has_resize    = $this->_photo_class->has_resize();
+	$this->_has_resize    = $this->_factory_create_class->has_image_resize();
 
 	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 }
@@ -231,7 +236,7 @@ function _check_submit()
 		return _C_WEBPHOTO_ERR_FILEREAD ;
 	}
 
-	if ( ! $this->_photo_class->is_my_allow_ext( $ext ) ) {
+	if ( ! $this->is_my_allow_ext( $ext ) ) {
 		return _C_WEBPHOTO_ERR_EXT ;
 	}
 
@@ -263,55 +268,56 @@ function _exec_submit()
 	$post_title  = $this->_post_class->get_post_text( 'item_title' ) ;
 	$post_desc   = $this->_post_class->get_post_text( 'item_description' ) ;
 
-	$ext  = $this->parse_ext( $this->_post_file ) ;
 	$src_file = $this->_FILE_DIR .'/'. $this->_post_file ;
 
 	$node = $this->_utility_class->strip_ext( $this->_post_file );
 
 	$title = empty( $post_title ) ? addslashes( $node ) : $post_title ;
 
+	$item_row = $this->_item_handler->create( true );
+	$item_row['item_cat_id']      = $this->_post_item_cat_id ;
+	$item_row['item_uid']         = $this->_xoops_uid ;
+	$item_row['item_title']       = $title ;
+	$item_row['item_description'] = $post_desc ;
+	$item_row['item_status']      = _C_WEBPHOTO_STATUS_APPROVED ;
+
 	$param = array(
-		'src_file'         => $src_file ,
-		'cat_id'           => $this->_post_item_cat_id ,
-		'uid'              => $this->_xoops_uid ,
-		'title'            => $title ,
-		'description'      => $post_desc ,
-		'status'           => _C_WEBPHOTO_STATUS_APPROVED ,
-		'mode_video_thumb' => _C_WEBPHOTO_VIDEO_THUMB_PLURAL ,
+		'src_file'          => $src_file ,
+		'flag_video_plural' => true ,
 	);
 
-	$ret = $this->_photo_class->create_from_file( $param );
-	$row = $this->_photo_class->get_row() ;
+	$ret      = $this->_factory_create_class->create_item_from_param( $item_row, $param );
+	$item_row = $this->_factory_create_class->get_item_row() ;
 
 	if ( $ret < 0 ) {
 		$this->_move_file( $src_file );
-		$this->set_error( $this->_photo_class->get_errors() );
+		$this->set_error( $this->_factory_create_class->get_errors() );
 		return $ret;
 	}
 
-	if ( ! is_array($row) ) {
+	if ( ! is_array($item_row) ) {
 		$this->_move_file( $src_file );
 		return _C_WEBPHOTO_ERR_CREATE_PHOTO;
 	}
 
 	$this->unlink_file( $src_file );
 
-	$item_id = $row['item_id'];
-	$this->_created_row = $row ;
+	$item_id = $item_row['item_id'];
+	$this->_created_row = $item_row ;
 
-	if ( $this->_photo_class->get_resized() ) {
+	if ( $this->_factory_create_class->get_resized() ) {
 		$this->set_msg_array( $this->get_constant('SUBMIT_RESIZED') ) ;
 	}
 
-	if ( $this->_photo_class->get_video_flash_failed() ) {
+	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
 		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
 	}
 
-	if ( $this->_photo_class->get_video_thumb_failed() ) {
+	if ( $this->_factory_create_class->get_flag_video_image_failed() ) {
 		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
 	}
 
-	if ( $this->_photo_class->get_video_thumb_created() ) {
+	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
 		$this->_is_video_thumb_form = true;
 	}
 
@@ -320,7 +326,7 @@ function _exec_submit()
 
 // Trigger Notification when supper insert
 	$this->_notification_class->notify_new_photo( 
-		$item_id, $this->_post_item_cat_id, $title );
+		$item_id, $item_row['item_cat_id'], $item_row['item_title'] );
 
 	return 0;
 }
@@ -357,7 +363,7 @@ function _video()
 	}
 
 // BUG: not create video thumb
-	$ret = $this->_photo_class->video_thumb( $item_row );
+	$ret = $this->_factory_create_class->video_thumb( $item_row );
 
 	$redirect_param = array(
 		'is_failed'   => ! $ret ,
@@ -411,14 +417,14 @@ function get_redirect_msg()
 //---------------------------------------------------------
 function _print_form_submit()
 {
-	list ( $types, $allowed_exts ) = $this->_photo_class->get_my_allowed_mimes();
+	list ( $types, $allowed_exts ) = $this->get_my_allowed_mimes();
 
 	$param = array(
 		'has_resize'   => $this->_has_resize,
 		'allowed_exts' => $allowed_exts ,
 	);
 
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
 
 	$form_class->print_form_file( $param );
@@ -431,7 +437,7 @@ function _print_form_video_thumb()
 		echo "<br />\n";
 	}
 
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_video_thumb( 

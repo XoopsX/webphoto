@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.5 2008/11/21 07:56:57 ohwada Exp $
+// $Id: index.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2000-01-10 K.OHWADA
+// xpdf.php
 // 2008-11-16 K.OHWADA
 // server_info.php
 // 2008-11-08 K.OHWADA
@@ -26,6 +28,11 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 webphoto_include_once( 'admin/header.php' );
 webphoto_include_once( 'class/inc/workdir.php' );
 webphoto_include_once( 'class/lib/server_info.php' );
+webphoto_include_once( 'class/lib/gd.php' );
+webphoto_include_once( 'class/lib/imagemagick.php' );
+webphoto_include_once( 'class/lib/netpbm.php' );
+webphoto_include_once( 'class/lib/ffmpeg.php' );
+webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/photo_handler.php' );
 webphoto_include_once( 'class/admin/checkconfigs.php' );

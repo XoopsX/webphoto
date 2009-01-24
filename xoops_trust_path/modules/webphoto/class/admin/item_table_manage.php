@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
+// $Id: item_table_manage.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// item_content etc
 // 2009-01-04 K.OHWADA
 // item_editor
 // 2008-11-29 K.OHWADA
@@ -27,7 +29,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_item_table_manage extends webphoto_lib_manage
 {
-	var $_build_class;
+	var $_search_class;
 	var $_delete_class;
 
 	var $_URL_SIZE = 80;
@@ -44,8 +46,8 @@ function webphoto_admin_item_table_manage( $dirname , $trust_dirname )
 	$this->set_manage_list_column_array(
 		array( 'item_title', 'item_uid' ) );
 
-	$this->_build_class   =& webphoto_photo_build::getInstance( $dirname );
-	$this->_delete_class  =& webphoto_photo_delete::getInstance( $dirname );
+	$this->_search_class  =& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname );
+	$this->_delete_class  =& webphoto_edit_item_delete::getInstance( $dirname );
 
 }
 
@@ -71,15 +73,18 @@ function main()
 //=========================================================
 function _build_row_add()
 {
-	$row = $this->_build_row_by_post();
-	$row['item_search'] = $this->_build_class->build_search( $row );
-	return $row;
+	return $this->_build_row_common();
 }
 
 function _build_row_edit()
 {
+	return $this->_build_row_common();
+}
+
+function _build_row_common()
+{
 	$row = $this->_build_row_by_post();
-	$row['item_search'] = $this->_build_class->build_search( $row );
+	$row['item_search'] = $this->_search_class->build_with_tag( $row );
 	return $row;
 }
 
@@ -105,6 +110,9 @@ function _build_row_by_post()
 		'item_title'           => $this->_post_class->get_post_text(  'item_title' ),
 		'item_place'           => $this->_post_class->get_post_text(  'item_place' ),
 		'item_equipment'       => $this->_post_class->get_post_text(  'item_equipment' ),
+		'item_duration'        => $this->_post_class->get_post_int(   'item_duration' ),
+		'item_width'           => $this->_post_class->get_post_int(   'item_width' ),
+		'item_height'          => $this->_post_class->get_post_int(   'item_height' ),
 		'item_siteurl'         => $this->_post_class->get_post_text(  'item_siteurl' ),
 		'item_artist'          => $this->_post_class->get_post_text(  'item_artist' ),
 		'item_album'           => $this->_post_class->get_post_text(  'item_album' ),
@@ -139,6 +147,7 @@ function _build_row_by_post()
 		'item_page_width'      => $this->_post_class->get_post_int(   'item_page_width' ),
 		'item_page_height'     => $this->_post_class->get_post_int(   'item_page_height' ),
 		'item_editor'          => $this->_post_class->get_post_text(  'item_editor' ),
+		'item_content'         => $this->_post_class->get_post_text(  'item_content' ),
 		'item_description_html'   => $this->_post_class->get_post_int( 'item_description_html' ),
 		'item_description_smiley' => $this->_post_class->get_post_int( 'item_description_smiley' ),
 		'item_description_xcode'  => $this->_post_class->get_post_int( 'item_description_xcode' ),
@@ -200,6 +209,8 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_place' );
 	echo $this->build_comp_text( 'item_equipment' );
 	echo $this->build_comp_text( 'item_duration' );
+	echo $this->build_comp_text( 'item_width' );
+	echo $this->build_comp_text( 'item_height' );
 	echo $this->build_comp_text( 'item_siteurl' );
 	echo $this->build_comp_text( 'item_artist' );
 	echo $this->build_comp_text( 'item_album' );
@@ -246,6 +257,7 @@ function _print_form( $row )
 	echo $this->build_comp_text(     'item_description_br' );
 
 	echo $this->build_comp_textarea( 'item_exif' );
+	echo $this->build_comp_textarea( 'item_content' );
 
 	echo $this->build_comp_label( 'item_rating' );
 	echo $this->build_comp_label( 'item_votes' );

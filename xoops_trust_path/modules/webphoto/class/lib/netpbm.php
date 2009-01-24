@@ -1,10 +1,16 @@
 <?php
-// $Id: netpbm.php,v 1.2 2008/11/11 12:52:46 ohwada Exp $
+// $Id: netpbm.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// version()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,6 +22,11 @@ class webphoto_lib_netpbm
 {
 	var $_cmd_path = null;
 	var $_DEBUG    = false ;
+
+	var $_NETPBM_PIPES = array(
+		 "jpegtopnm" , "giftopnm" , "pngtopnm" , 
+		 "pnmtojpeg" , "pnmtopng" , "ppmquant" , 
+		 "ppmtogif"  , "pnmscale" , "pnmflip" ) ;
 
 //---------------------------------------------------------
 // constructor
@@ -132,6 +143,30 @@ function build_cmd_rotate( $angle )
 {
 	$cmd = $this->_cmd_path .'pnmflip -r'. $angle  .' ';
 	return $cmd;
+}
+
+//---------------------------------------------------------
+// version
+//---------------------------------------------------------
+function version( $path )
+{
+	$arr = array();
+	foreach( $this->_NETPBM_PIPES as $pipe ) 
+	{
+		$ret_array = array() ;
+		exec( "{$path}$pipe --version 2>&1" , $ret_array ) ;
+		if( count( $ret_array ) > 0 ) {
+			$ret = true;
+			$str = $ret_array[0] ;
+
+		} else {
+			$ret = false;
+			$str = "Error: {$path}$pipe can't be executed" ;
+		}
+		$arr[] = array( $ret, $str );
+	}
+
+	return $arr ;
 }
 
 // --- class end ---

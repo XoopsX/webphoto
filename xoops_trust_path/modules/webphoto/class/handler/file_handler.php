@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.4 2008/12/10 19:41:19 ohwada Exp $
+// $Id: file_handler.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// build_row_by_param( $row, $param )
 // 2008-12-07 K.OHWADA
 // not need '/' in build_show_file_image()
 // 2008-11-29 K.OHWADA
@@ -173,6 +175,40 @@ function delete_by_itemid( $item_id )
 	$sql  = 'DELETE FROM '. $this->_table;
 	$sql .= ' WHERE file_item_id='. intval($item_id);
 	return $this->query( $sql );
+}
+
+//---------------------------------------------------------
+// build
+//---------------------------------------------------------
+function build_row_by_param( $row, $param )
+{
+	$item_id     = isset($param['item_id'])     ? intval($param['item_id'])     : 0 ;
+	$width       = isset($param['width'])       ? intval($param['width'])       : 0 ;
+	$height      = isset($param['height'])      ? intval($param['height'])      : 0 ;
+	$duration    = isset($param['duration'])    ? intval($param['duration'])    : 0 ;
+	$time_update = isset($param['time_update']) ? intval($param['time_update']) : 0 ;
+
+	$row['file_url']       = $param['url'] ;
+	$row['file_path']      = $param['path'] ;
+	$row['file_name']      = $param['name'] ;
+	$row['file_ext']       = $param['ext'] ;
+	$row['file_mime']      = $param['mime'] ;
+	$row['file_medium']    = $param['medium'] ;
+	$row['file_size']      = $param['size'] ;
+	$row['file_kind']      = $param['kind'] ;
+	$row['file_width']     = $width ;
+	$row['file_height']    = $height ;
+	$row['file_duration']  = $duration ;
+
+	if ( $item_id > 0 ) {
+		$row['file_item_id'] = $item_id ;
+	}
+
+	if ( $time_update > 0 ) {
+		$row['file_time_update'] = $time_update ;
+	}
+
+	return $row ;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: giconmanager.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-10 K.OHWADA
+// gicon_create.php
 // 2008-11-08 K.OHWADA
 // imagemagick.php
 //---------------------------------------------------------
@@ -28,9 +30,10 @@ webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/webphoto/upload.php' );
-webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
+webphoto_include_once( 'class/edit/base_create.php' );
+webphoto_include_once( 'class/edit/gicon_create.php' );
 webphoto_include_once( 'class/admin/gicon_form.php' );
 webphoto_include_once( 'class/admin/giconmanager.php' );
 

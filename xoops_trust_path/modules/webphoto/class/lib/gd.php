@@ -1,10 +1,16 @@
 <?php
-// $Id: gd.php,v 1.1 2008/11/11 06:54:17 ohwada Exp $
+// $Id: gd.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// version()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -244,6 +250,23 @@ function can_truecolor()
 		return true;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// version
+//---------------------------------------------------------
+function version()
+{
+	if ( function_exists( 'gd_info' ) ) {
+		$ret = true ;
+		$gd_info = gd_info() ;
+		$str = 'GD Version: '. $gd_info['GD Version'] ;
+
+	} else {
+		$ret = false;
+		$str = 'not loaded';
+	}
+	return array( $ret, $str );
 }
 
 // --- class end ---

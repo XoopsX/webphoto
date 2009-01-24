@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.3 2008/12/29 15:25:02 ohwada Exp $
+// $Id: i.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-12-29 K.OHWADA
+// imode.php
 // 2008-12-29 K.OHWADA
 // item_public.php
 // 2008-12-07 K.OHWADA
@@ -35,32 +37,11 @@ include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'main/header.php' );
-webphoto_include_once( 'class/lib/gtickets.php' );
-webphoto_include_once( 'class/lib/element.php' );
-webphoto_include_once( 'class/lib/gd.php' );
-webphoto_include_once( 'class/lib/imagemagick.php' );
-webphoto_include_once( 'class/lib/netpbm.php' );
-webphoto_include_once( 'class/lib/image_cmd.php' );
-webphoto_include_once( 'class/lib/exif.php' );
-webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/lib/mail_pop.php' );
 webphoto_include_once( 'class/lib/mail_parse.php' );
 webphoto_include_once( 'class/lib/user_agent.php' );
-webphoto_include_once( 'class/handler/cat_photo_handler.php' );
-webphoto_include_once( 'class/handler/mime_handler.php' );
-webphoto_include_once( 'class/handler/syno_handler.php' );
-webphoto_include_once( 'class/handler/user_handler.php' );
-webphoto_include_once( 'class/handler/maillog_handler.php' );
-webphoto_include_once( 'class/webphoto/image_create.php' );
-webphoto_include_once( 'class/webphoto/photo_build.php' );
-webphoto_include_once( 'class/webphoto/mime.php' );
-webphoto_include_once( 'class/webphoto/video.php' );
-webphoto_include_once( 'class/webphoto/photo_create.php' );
 webphoto_include_once( 'class/webphoto/item_public.php' );
-webphoto_include_once( 'class/webphoto/mail_check.php' );
-webphoto_include_once( 'class/webphoto/mail_photo.php' );
-webphoto_include_once( 'class/webphoto/mail_unlink.php' );
-webphoto_include_once( 'class/webphoto/mail_retrieve.php' );
+webphoto_include_once( 'class/webphoto/imode.php' );
 webphoto_include_once( 'class/main/i.php' );
 
 webphoto_include_language( 'extra.php' );

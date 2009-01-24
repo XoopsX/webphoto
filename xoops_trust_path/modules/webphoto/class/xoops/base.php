@@ -1,15 +1,15 @@
 <?php
-// $Id: base.php,v 1.4 2008/11/30 10:36:34 ohwada Exp $
+// $Id: base.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-// user_to_server_time( $time )
-
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// user_to_server_time()
 // 2008-11-16 K.OHWADA
 // get_cached_groups()
 // 2008-10-01 K.OHWADA
@@ -296,8 +296,12 @@ function get_member_user_list( $limit=0, $start=0 )
 //---------------------------------------------------------
 // timestamp
 //---------------------------------------------------------
-function user_to_server_time( $time )
+function user_to_server_time( $time, $default=0 )
 {
+	if ( $time <= 0 ) {
+		return $default ;
+	}
+
 	global $xoopsConfig, $xoopsUser;
 	if ($xoopsUser) {
 		$timeoffset = $xoopsUser->getVar("timezone_offset");

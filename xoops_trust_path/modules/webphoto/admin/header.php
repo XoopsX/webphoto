@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
+// $Id: header.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-10 K.OHWADA
+// class/edit/xxx
 // 2008-12-12 K.OHWADA
 // catlist.php
 // 2008-11-29 K.OHWADA
@@ -43,6 +45,7 @@ webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/preload.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/error.php' );
+webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/post.php' );
 webphoto_include_once( 'class/lib/pathinfo.php' );
 webphoto_include_once( 'class/lib/handler.php' );
@@ -60,8 +63,12 @@ webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
+webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
-webphoto_include_once( 'class/webphoto/form_this.php' );
+webphoto_include_once( 'class/webphoto/mime.php' );
+webphoto_include_once( 'class/edit/icon_build.php' );
+webphoto_include_once( 'class/edit/base.php' );
+webphoto_include_once( 'class/edit/form.php' );
 
 webphoto_include_language( 'modinfo.php' );
 webphoto_include_language( 'main.php' );

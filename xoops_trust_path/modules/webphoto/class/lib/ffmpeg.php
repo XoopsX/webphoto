@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.4 2008/08/26 16:36:47 ohwada Exp $
+// $Id: ffmpeg.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// version()
 // 2008-08-24 K.OHWADA
 // flag_chmod
 //---------------------------------------------------------
@@ -256,6 +258,32 @@ function _set_error( $outputs )
 function get_errors()
 {
 	return $this->_errors;
+}
+
+//---------------------------------------------------------
+// version
+//---------------------------------------------------------
+function version( $path )
+{
+	$ret = false;
+	$str = '';
+
+	$cmd = "{$path}ffmpeg -version 2>&1";
+	exec( $cmd , $ret_array ) ;
+	if ( is_array($ret_array) && count($ret_array) ) {
+		foreach ( $ret_array as $line ) {
+			if ( preg_match('/version/i', $line ) ) {
+				$str .= $line ."<br />\n";
+				$ret  = true;
+			}
+		}
+	}
+
+	if ( !$ret ) {
+		$str = "Error: {$path}ffmpeg can't be executed" ;
+	}
+
+	return array( $ret, $str );
 }
 
 // --- class end ---

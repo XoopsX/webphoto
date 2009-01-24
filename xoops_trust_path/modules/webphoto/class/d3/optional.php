@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.4 2008/08/25 19:28:05 ohwada Exp $
+// $Id: optional.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// _C_ -> _P_
 // 2008-08-24 K.OHWADA
 // set_langauge
 // 2008-07-01 K.OHWADA
@@ -56,7 +58,7 @@ function init( $dirname , $trust_dirname )
 	$this->_DIRNAME    = $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH  .'/modules/'. $dirname;
 
-	$constpref = strtoupper( '_C_' . $dirname. '_' ) ;
+	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_include_by_const_name( $constpref.'DEBUG_INCLUDE' );
 	$this->set_debug_error_by_const_name(   $constpref.'DEBUG_ERROR' );
 }

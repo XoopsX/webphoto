@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.10 2008/12/18 13:23:16 ohwada Exp $
+// $Id: modinfo.php,v 1.11 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -321,6 +321,13 @@ define($constpref."CFG_PERM_ITEM_READ_DSC" , "Enable with the setting of Item ta
 define($constpref."OPT_PERM_READ_ALL"     , "Show ALL" ) ;
 define($constpref."OPT_PERM_READ_NO_ITEM" , "Not show Items" ) ;
 define($constpref."OPT_PERM_READ_NO_CAT"  , "Not show Categories and Items" ) ;
+
+//---------------------------------------------------------
+// v1.10
+//---------------------------------------------------------
+define($constpref."CFG_USE_XPDF"  , "Use xpdf" ) ;
+define($constpref."CFG_XPDFPATH"  , "Path to xpdf" ) ;
+define($constpref."CFG_XPDFPATH_DSC" , "Alhough the full path to 'pdftoppm' should be written, leave it blank in most environments.<br />This configuration is significant only when using xpdf" ) ;
 
 }
 // === define begin ===

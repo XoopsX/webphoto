@@ -1,13 +1,17 @@
 <?php
-// $Id: multibyte.php,v 1.3 2008/06/26 14:06:41 ohwada Exp $
+// $Id: multibyte.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// 2009-01-10 K.OHWADA
+// build_summary_with_search()
 // 2008-06-26 K.OHWADA
 // fatal error in rss
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -432,8 +436,18 @@ function shorten( $str, $max, $tail=' ...' )
 //---------------------------------------------------------
 function build_summary( $str, $max, $tail=' ...', $is_japanese=false )
 {
+	$str = $this->build_plane_text( $str, $is_japanese );
+	$str = $this->str_replace_return_code($str);
+	$str = $this->str_replace_continuous_space_code($str);
+	$str = $this->str_set_empty_if_only_space($str);
+	$str = $this->shorten($str, $max, $tail);
+	return $str;
+}
+
+function build_plane_text( $str, $is_japanese=false )
+{
 	if ( $is_japanese || $this->_is_japanese ) {
-		$str = $this->m_mb_convert_kana( $str, "s" );
+		$str = $this->convert_space_zen_to_han( $str );
 		$str = $this->str_add_space_after_punctuation_ja( $str );
 	}
 
@@ -441,11 +455,8 @@ function build_summary( $str, $max, $tail=' ...', $is_japanese=false )
 	$str = strip_tags($str);
 	$str = $this->str_replace_control_code($str);
 	$str = $this->str_replace_tab_code($str);
-	$str = $this->str_replace_return_code($str);
 	$str = $this->str_replace_html_space_code($str);
 	$str = $this->str_replace_continuous_space_code($str);
-	$str = $this->str_set_empty_if_only_space($str);
-	$str = $this->shorten($str, $max, $tail);
 	return $str;
 }
 
@@ -514,6 +525,39 @@ function str_replace_space_code( $str, $replace=' ' )
 function str_replace_continuous_space_code( $str, $replace=' ' )
 {
 	return preg_replace("/[\x20]+/", $replace, $str);
+}
+
+//---------------------------------------------------------
+// summary
+//---------------------------------------------------------
+function build_summary_with_search( $text, $words, $l=255, $tail=' ...' )
+{
+	if ( !is_array($words) ) {
+		$words = array();
+	}
+
+	$ret = '';
+	$q_word = str_replace(' ', '|', preg_quote(join(' ', $words), '/') );
+
+	if ( preg_match( "/$q_word/i", $text, $match ) ) {
+		$ret = ltrim(preg_replace('/\s+/', ' ', $text));
+		list($pre, $aft) = preg_split("/$q_word/i", $ret, 2);
+		$m = intval($l/2);
+		$ret  = (strlen($pre) > $m)? $tail : '';
+		$ret .= $this->sub_str( $pre, max(strlen($pre)-$m+1,0), $m );
+		$ret .= $match[0];
+		$m = $l-strlen($ret);
+		$ret .= $this->sub_str( $aft, 0, min(strlen($aft),$m) );
+		if (strlen($aft) > $m) {
+			$ret .= $tail ;
+		}
+	}
+
+	if ( !$ret ) {
+		$ret = $this->sub_str( $text, 0, $l );
+	}
+
+	return $ret;
 }
 
 //---------------------------------------------------------

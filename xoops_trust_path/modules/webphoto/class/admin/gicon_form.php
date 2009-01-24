@@ -1,5 +1,5 @@
 <?php
-// $Id: gicon_form.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: gicon_form.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
 // 2008-11-08 K.OHWADA
 // _C_WEBPHOTO_UPLOAD_FIELD_GICON
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_gicon_form
 //=========================================================
-class webphoto_admin_gicon_form extends webphoto_form_this
+class webphoto_admin_gicon_form extends webphoto_edit_form
 {
 	var $_gicon_handler;
 
@@ -37,7 +39,7 @@ class webphoto_admin_gicon_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_gicon_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
 	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
 

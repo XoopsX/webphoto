@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.14 2009/01/06 09:41:35 ohwada Exp $
+// $Id: oninstall.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// _item_add_column_110()
 // 2009-01-04 K.OHWADA
 // _item_add_column_100()
 // 2008-11-29 K.OHWADA
@@ -577,6 +579,7 @@ function _item_update()
 	$this->_item_add_column_080();
 	$this->_item_chang_column_080();
 	$this->_item_add_column_100();
+	$this->_item_add_column_110();
 }
 
 function _item_add_column_050()
@@ -769,6 +772,31 @@ function _item_add_column_100()
 
 	if ( $ret ) {
 		$this->_set_msg( 'Add item_editor in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_110()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_content' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_width  INT(11) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_height INT(11) NOT NULL DEFAULT '0', " ;
+	$sql .= "item_content TEXT NOT NULL " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_content in <b>'. $this->_table_item .'</b>' );
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
 		return false;

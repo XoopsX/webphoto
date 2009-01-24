@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.4 2008/08/27 07:13:15 ohwada Exp $
+// $Id: maillog_manager.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_edit_mail_photo -> webphoto_edit_mail_photo
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -53,9 +55,9 @@ function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
 	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_photo_class   =& webphoto_mail_photo::getInstance( $dirname , $trust_dirname );
-	$this->_form_class    =& webphoto_form_this::getInstance( $dirname , $trust_dirname );
-	$this->_unlink_class  =& webphoto_mail_unlink::getInstance( $dirname );
+	$this->_form_class    =& webphoto_edit_form::getInstance( $dirname , $trust_dirname );
+	$this->_photo_class   =& webphoto_edit_mail_photo::getInstance( $dirname , $trust_dirname );
+	$this->_unlink_class  =& webphoto_edit_mail_unlink::getInstance( $dirname );
 
 	$this->_photo_class->set_mail_groups( XOOPS_GROUP_ADMIN );
 	$this->_photo_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );

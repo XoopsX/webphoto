@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
+// $Id: admin_menu.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// comment photo_table_manage
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-10-01 K.OHWADA
@@ -117,12 +119,13 @@ function define_sub_menu()
 	$menu[10]['fct']   = 'user_table_manage';
 	$menu[11]['title'] = 'MAILLOG_TABLE_MANAGE' ;
 	$menu[11]['fct']   = 'maillog_table_manage';
-	$menu[12]['title'] = 'PHOTO_TABLE_MANAGE' ;
-	$menu[12]['fct']   = 'photo_table_manage';
-	$menu[13]['title'] = 'PLAYER_TABLE_MANAGE' ;
-	$menu[13]['fct']   = 'player_table_manage';
-	$menu[14]['title'] = 'FLASHVAR_TABLE_MANAGE' ;
-	$menu[14]['fct']   = 'flashvar_table_manage';
+	$menu[12]['title'] = 'PLAYER_TABLE_MANAGE' ;
+	$menu[12]['fct']   = 'player_table_manage';
+	$menu[13]['title'] = 'FLASHVAR_TABLE_MANAGE' ;
+	$menu[13]['fct']   = 'flashvar_table_manage';
+
+//	$menu[20]['title'] = 'PHOTO_TABLE_MANAGE' ;
+//	$menu[20]['fct']   = 'photo_table_manage';
 
 	return $menu;
 }

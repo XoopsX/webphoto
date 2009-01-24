@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.10 2008/12/21 20:19:01 ohwada Exp $
+// $Id: modinfo.php,v 1.11 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -322,6 +322,13 @@ define($constpref."CFG_PERM_ITEM_READ_DSC" , "アイテム・テーブルの設�
 define($constpref."OPT_PERM_READ_ALL"     , "全て表示する" ) ;
 define($constpref."OPT_PERM_READ_NO_ITEM" , "アイテムを非表示にする" ) ;
 define($constpref."OPT_PERM_READ_NO_CAT"  , "カテゴリとアイテムを非表示にする" ) ;
+
+//---------------------------------------------------------
+// v1.10
+//---------------------------------------------------------
+define($constpref."CFG_USE_XPDF"  , "xpdf を使用する" ) ;
+define($constpref."CFG_XPDFPATH"  , "xpdf の実行パス" ) ;
+define($constpref."CFG_XPDFPATH_DSC" , "pdftoppm などの存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「xpdf を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
 
 }
 // === define begin ===

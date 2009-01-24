@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.20 2009/01/06 09:41:35 ohwada Exp $
+// $Id: main.php,v 1.21 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1300,6 +1300,14 @@ define("_WEBPHOTO_CAP_SMILEY", "スマイリーアイコンを有効にする");
 define("_WEBPHOTO_CAP_XCODE",  "XOOPSコードを有効にする");
 define("_WEBPHOTO_CAP_IMAGE",  "画像を有効にする");
 define("_WEBPHOTO_CAP_BR",     "改行を有効にする");
+
+//---------------------------------------------------------
+// v1.10
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_WIDTH",  "画像の横幅");
+define("_WEBPHOTO_ITEM_HEIGHT", "画像の高さ");
+define("_WEBPHOTO_ITEM_CONTENT", "テキスト文");
 
 // === define end ===
 }

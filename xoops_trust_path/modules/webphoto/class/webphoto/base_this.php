@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.16 2009/01/06 09:41:35 ohwada Exp $
+// $Id: base_this.php,v 1.17 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-04 K.OHWADA
+// move print_msg_level_admin() etc to webphoto_edit_base
 // 2009-01-04 K.OHWADA
 // init_preload()
 // 2008-12-12 K.OHWADA
@@ -61,6 +63,8 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_cfg_uploads_path ;
 	var $_is_japanese = false;
 
+	var $_flag_force_db = false;
+
 	var $_UPLOADS_PATH ;
 	var $_MEDIAS_PATH ;
 	var $_WORK_DIR ;
@@ -75,6 +79,15 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_MIDDLES_PATH;
 	var $_MIDDLES_DIR;
 	var $_MIDDLESS_URL;
+	var $_FLASHS_PATH;
+	var $_FLASHS_DIR;
+	var $_FLASHS_URL;
+	var $_DOCOMOS_PATH;
+	var $_DOCOMOS_DIR;
+	var $_DOCOMOS_URL;
+	var $_PDFS_PATH;
+	var $_PDFS_DIR;
+	var $_PDFS_URL;
 	var $_CATS_PATH;
 	var $_CATS_DIR;
 	var $_CATS_URL;
@@ -84,9 +97,6 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_GSHADOWS_PATH;
 	var $_GSHADOWS_DIR;
 	var $_GSHADOWS_URL;
-	var $_FLASHS_PATH;
-	var $_FLASHS_DIR;
-	var $_FLASHS_URL;
 	var $_QRS_DIR;
 	var $_QRS_URL;
 	var $_PLAYLISTS_DIR;
@@ -99,6 +109,9 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_ICONS_URL;
 	var $_ROOT_EXTS_DIR;
 	var $_ROOT_EXTS_URL;
+
+	var $_EXT_PNG = 'png';
+	var $_ICON_NAME_DEFAULT = 'default.png';
 
 	var $_C_YES = 1;
 
@@ -126,10 +139,12 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_PATH     = $this->_UPLOADS_PATH.'/photos' ;
 	$this->_THUMBS_PATH     = $this->_UPLOADS_PATH.'/thumbs' ;
 	$this->_MIDDLES_PATH    = $this->_UPLOADS_PATH.'/middles' ;
+	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
+	$this->_DOCOMOS_PATH    = $this->_UPLOADS_PATH.'/docomos' ;
+	$this->_PDFS_PATH       = $this->_UPLOADS_PATH.'/pdfs' ;
 	$this->_CATS_PATH       = $this->_UPLOADS_PATH.'/categories' ;
 	$this->_GICONS_PATH     = $this->_UPLOADS_PATH.'/gicons' ;
 	$this->_GSHADOWS_PATH   = $this->_UPLOADS_PATH.'/gshadows' ;
-	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
 	$qrs_path               = $this->_UPLOADS_PATH.'/qrs' ;
 	$playlists_path         = $this->_UPLOADS_PATH.'/playlists' ;
 	$logos_path             = $this->_UPLOADS_PATH.'/logos' ;
@@ -138,10 +153,12 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_DIR     = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR     = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_DIR    = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
+	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
+	$this->_DOCOMOS_DIR    = XOOPS_ROOT_PATH . $this->_DOCOMOS_PATH ;
+	$this->_PDFS_DIR       = XOOPS_ROOT_PATH . $this->_PDFS_PATH ;
 	$this->_CATS_DIR       = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
 	$this->_GICONS_DIR     = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_DIR   = XOOPS_ROOT_PATH . $this->_GSHADOWS_PATH ;
-	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
 	$this->_QRS_DIR        = XOOPS_ROOT_PATH . $qrs_path ;
 	$this->_PLAYLISTS_DIR  = XOOPS_ROOT_PATH . $playlists_path ;
 	$this->_LOGOS_DIR      = XOOPS_ROOT_PATH . $logos_path ;
@@ -150,10 +167,12 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_URL    = XOOPS_URL . $this->_MIDDLES_PATH ;
+	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
+	$this->_DOCOMOS_URL    = XOOPS_URL . $this->_DOCOMOS_PATH ;
+	$this->_PDFS_URL       = XOOPS_URL . $this->_PDFS_PATH ;
 	$this->_CATS_URL       = XOOPS_URL . $this->_CATS_PATH ;
 	$this->_GICONS_URL     = XOOPS_URL . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;
-	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
 	$this->_QRS_URL        = XOOPS_URL . $qrs_path ;
 	$this->_PLAYLISTS_URL  = XOOPS_URL . $playlists_path ;
 
@@ -234,7 +253,7 @@ function get_config_by_name( $name )
 // check dir
 //---------------------------------------------------------
 // BUG : wrong judgment in check_dir
-function check_dir( $dir )
+function XXXcheck_dir( $dir )
 {
 	if ( $dir && is_dir( $dir ) && is_writable( $dir ) && is_readable( $dir ) ) {
 		return 0;
@@ -265,36 +284,8 @@ function build_check_waiting()
 //---------------------------------------------------------
 function get_group_perms_str_by_post( $name )
 {
-	$arr = $this->get_group_perms_array_by_post( $name );
-	return $this->convert_group_perms_array_to_perm( $arr );
-}
-
-function convert_group_perms_array_to_perm( $arr )
-{
-	return $this->array_to_perm( 
-		$this->sanitize_array_int( $arr ), $this->_PERM_SEPARATOR );
-}
-
-function get_group_perms_array_by_post( $name )
-{
-	$perms = $this->_post_class->get_post( $name );
-	return $this->arrenge_group_perms_array( $perms );
-}
-
-function arrenge_group_perms_array( $perms )
-{
-	if ( !is_array($perms) || !count($perms) ) {
-		return null ;
-	}
-
-	$arr = array();
-	foreach( $perms as $k => $v ) {
-		if ( $v == $this->_C_YES ) {
-			$arr[] = $k;
-		}
-	}
-
-	return $arr ;
+	$arr = $this->_post_class->get_post( $name );
+	return $this->_utility_class->convert_group_perms_array_to_str( $arr );
 }
 
 //---------------------------------------------------------
@@ -330,19 +321,54 @@ function is_video_docomo_ext( $ext )
 	return $this->_kind_class->is_video_docomo_ext( $ext ) ;
 }
 
-function is_undefined_kind( $kind )
+function is_flash_ext( $ext )
 {
-	return $this->_kind_class->is_undefined_kind( $kind ) ;
+	return $this->_kind_class->is_flash_ext( $ext ) ;
 }
 
-function is_image_kind( $kind )
+function is_pdf_ext( $ext )
 {
-	return $this->_kind_class->is_image_kind( $kind ) ;
+	return $this->_kind_class->is_pdf_ext( $ext ) ;
 }
 
 function is_video_audio_kind( $kind )
 {
 	return $this->_kind_class->is_video_audio_kind( $kind ) ;
+}
+
+function is_external_kind( $kind )
+{
+	return $this->_kind_class->is_external_kind( $kind ) ;
+}
+
+function is_playlist_kind( $kind )
+{
+	return $this->_kind_class->is_playlist_kind( $kind ) ;
+}
+
+function is_external_embed_playlist_kind( $kind )
+{
+	return $this->_kind_class->is_external_embed_playlist_kind( $kind ) ;
+}
+
+function is_undefined_kind( $kind )
+{
+	return $this->_kind_class->is_undefined_kind( $kind ) ;
+}
+
+function is_none_kind( $kind )
+{
+	return $this->_kind_class->is_none_kind( $kind ) ;
+}
+
+function is_general_kind( $kind )
+{
+	return $this->_kind_class->is_general_kind( $kind ) ;
+}
+
+function is_image_kind( $kind )
+{
+	return $this->_kind_class->is_image_kind( $kind ) ;
 }
 
 function is_video_kind( $kind )
@@ -355,9 +381,19 @@ function is_audio_kind( $kind )
 	return $this->_kind_class->is_audio_kind( $kind ) ;
 }
 
-function is_playlist_kind( $kind )
+function is_embed_kind( $kind )
 {
-	return $this->_kind_class->is_playlist_kind( $kind ) ;
+	return $this->_kind_class->is_embed_kind( $kind ) ;
+}
+
+function is_external_general_kind( $kind )
+{
+	return $this->_kind_class->is_external_general_kind( $kind ) ;
+}
+
+function is_external_image_kind( $kind )
+{
+	return $this->_kind_class->is_embed_kind( $kind ) ;
 }
 
 function is_playlist_feed_kind( $kind )
@@ -368,40 +404,6 @@ function is_playlist_feed_kind( $kind )
 function is_playlist_dir_kind( $kind )
 {
 	return $this->_kind_class->is_playlist_dir_kind( $kind ) ;
-}
-
-function is_external_type_general( $type )
-{
-	return $this->_kind_class->is_external_type_general( $type ) ;
-}
-
-//---------------------------------------------------------
-// exif
-//---------------------------------------------------------
-function exif_to_mysql_datetime( $exif )
-{
-	$datetime     = $exif['datetime'];
-	$datetime_gnu = $exif['datetime_gnu'];
-
-	if ( $datetime_gnu ) {
-		return $datetime_gnu;
-	}
-
-	$time = $this->_utility_class->str_to_time( $datetime );
-	if ( $time <= 0 ) { return false; }
-
-	return $this->_utility_class->time_to_mysql_datetime( $time );
-}
-
-//---------------------------------------------------------
-// file
-//---------------------------------------------------------
-function unlink_path( $path )
-{
-	$file = XOOPS_ROOT_PATH . $path;
-	if ( $path && $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
-		unlink( $file );
-	}
 }
 
 //---------------------------------------------------------
@@ -597,19 +599,6 @@ function is_photo_owner( $uid )
 		return true;
 	}
 	return false;
-}
-
-//---------------------------------------------------------
-// timestamp
-//---------------------------------------------------------
-function get_server_time_by_post( $key, $default=0 )
-{
-	$time = $this->_post_class->get_post_time( $key, $default );
-	if ( $time > 0 ) {
-		return $this->user_to_server_time( $time );
-	} else {
-		return $default ;
-	}
 }
 
 // --- class end ---

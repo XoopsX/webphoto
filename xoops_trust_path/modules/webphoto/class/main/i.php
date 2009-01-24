@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.8 2008/12/29 15:25:01 ohwada Exp $
+// $Id: i.php,v 1.9 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_show_photo -> webphoto_imode 
 // 2008-12-29 K.OHWADA
 // Fatal error: Call to undefined method get_row()
 // 2008-12-12 K.OHWADA
@@ -26,59 +28,21 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_i
 //=========================================================
-class webphoto_main_i extends webphoto_show_photo
+class webphoto_main_i extends webphoto_imode
 {
-	var $_agent_class;
-	var $_retrieve_class;
-	var $_pagenavi_class;
-	var $_multibyte_class;
-	var $_photo_public_class;
-	var $_item_public_class;
-
-	var $_xoops_sitename;
-	var $_item_ecnode_type_array;
-
-	var $_MOBILE_TEMPLATE = null;
-
-	var $_MOBILE_CHARSET_INTERNAL = _CHARSET ;
-	var $_MOBILE_CHARSET_OUTPUT   = _CHARSET ;
-
-	var $_MOBILE_LATEST_LIMIT   = 1;
-	var $_MOBILE_RANDOM_LIMIT   = 1;
-	var $_MOBILE_RANDOM_ORDERBY = 'rand()';
-	var $_MOBILE_LIST_LIMIT     = 10;
-	var $_MOBILE_LIST_ORDERBY   = 'item_time_update DESC, item_id DESC';
-	var $_MOBILE_NAVI_WINDOWS   = 4;
-
-// preload
-	var $_ARRAY_MOBILE_TEXT = null;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_main_i( $dirname , $trust_dirname )
 {
-	$this->webphoto_show_photo( $dirname , $trust_dirname );
-
-	$this->_agent_class        =& webphoto_lib_user_agent::getInstance();
-	$this->_retrieve_class     =& webphoto_mail_retrieve::getInstance( $dirname , $trust_dirname );
-	$this->_pagenavi_class     =& webphoto_lib_pagenavi::getInstance();
-	$this->_multibyte_class    =& webphoto_lib_multibyte::getInstance();
-	$this->_photo_public_class =& webphoto_photo_public::getInstance( $dirname );
-	$this->_item_public_class  =& webphoto_item_public::getInstance( $dirname, $trust_dirname );
-
-	$this->_set_charset_output();
-	$this->_set_mobile_carrier_array();
-
-	$this->_MOBILE_TEMPLATE = 'db:'. $dirname .'_main_i.html';
-
-	$this->_xoops_sitename = $this->_xoops_class->get_config_by_name( 'sitename' ) ;
+	$this->webphoto_imode( $dirname , $trust_dirname );
 
 // preload
 	$this->preload_init();
 	$this->preload_constant();
 
-	$this->_encode_type_array = $this->_get_encode_type_array();
+	$this->_encode_type_array = $this->get_encode_type_array();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -90,63 +54,16 @@ function &getInstance( $dirname , $trust_dirname )
 	return $instance;
 }
 
-function _set_charset_output()
-{
-	if ( defined("_WEBPHOTO_CHARSET_MOBILE") ) { 
-		if ( constant("_WEBPHOTO_CHARSET_MOBILE") ) {
-			$this->_MOBILE_CHARSET_OUTPUT = _WEBPHOTO_CHARSET_MOBILE;
-		}
-	}
-}
-
-function _set_mobile_carrier_array()
-{
-	if ( function_exists('webphoto_mobile_carrier_array') ) { 
-		$arr = webphoto_mobile_carrier_array();
-		if ( isset($arr) ) {
-			$this->_agent_class->set_mobile_carrier_array( $arr );
-		}
-	}
-}
-
-function _get_encode_type_array()
-{
-	$encode_type_array = $this->_item_handler->get_encode_type_array();
-
-	$arr = array( 'uname' );
-
-	foreach( $encode_type_array as $name ) {
-		$arr[] = str_replace( 'item_', '', $name );
-	}
-
-	if ( is_array($this->_ARRAY_MOBILE_TEXT) ) {
-		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
-		{
-			$name_i = 'text_'. $i ;
-			if ( in_array( 'item_'.$name_i, $this->_ARRAY_MOBILE_TEXT ) ) {
-				$arr[] = $name_i ;
-			}
-		}
-	}
-
-	return $arr;
-}
-
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
 function main()
 {
-	$this->http_output('pass');
-	header( 'Content-Type:text/html; charset='.$this->_MOBILE_CHARSET_OUTPUT );
+	$this->output_header();
 
 	$op = $this->_post_class->get_get_text('op');
 	switch ( $op )
 	{
-		case 'post':
-			$this->_post();
-			break;
-
 		case 'judge':
 			$this->_judge();
 			break;
@@ -159,118 +76,14 @@ function main()
 }
 
 //---------------------------------------------------------
-// post
-//---------------------------------------------------------
-function _post()
-{
-	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
-
-	$text  = $this->build_html_head( $this->sanitize($title), $this->_MOBILE_CHARSET_OUTPUT );
-	$text .= $this->build_html_body_begin();
-	$text .= $this->_post_exec();
-	$text .= $this->_build_goto();
-	$text .= $this->build_html_body_end();
-
-	echo $this->conv( $text );
-}
-
-function _post_exec()
-{
-	$text = '';
-
-	if ( ! $this->_check_perm() ) {
-		$text .= _NOPERM ;
-		return $text ;
-	}
-
-	$text .= $this->get_constant('TITLE_MAIL_POST')."<br>\n";
-	ob_start();
-
-	if ( $this->_is_module_admin ) {
-		$level = _C_WEBPHOTO_MSG_LEVEL_ADMIN ;
-	} else {
-		$level = _C_WEBPHOTO_MSG_LEVEL_NON ;
-	}
-
-	$this->_retrieve_class->set_msg_level( $level );
-	$this->_retrieve_class->set_flag_force_db( true );
-
-	$ret   = $this->_retrieve_class->retrieve();
-	$count = $this->_retrieve_class->get_mail_count();
-	switch ( $ret )
-	{
-		case _C_WEBPHOTO_RETRIEVE_CODE_ACCESS_TIME :
-			$text .= $this->_build_retry() ;
-			break;
-
-		case _C_WEBPHOTO_RETRIEVE_CODE_NOT_RETRIEVE :
-		case _C_WEBPHOTO_RETRIEVE_CODE_NO_NEW :
-			$text .= $this->get_constant('TEXT_MAIL_NO_NEW') ;
-			break;
-
-		default:
-			$text .= sprintf( $this->get_constant('TEXT_MAIL_RETRIEVED_FMT'), $count );
-			break;
-	}
-
-	if ( $this->_is_module_admin ) {
-		$text .= "<br /><br />\n";
-		$text .= "--- <br />\n";
-		$text .= ob_get_contents();
-		$text .= "<br />\n";
-		$text .= "--- <br />\n";
-	}
-
-	ob_end_clean();
-
-	return $text;
-}
-
-function _check_perm()
-{
-	if (  $this->_retrieve_class->is_set_mail() &&
-	    ( $this->_retrieve_class->has_mail() || 
-	      $this->_agent_class->parse_mobile_carrier() )) {
-		return true ;
-	}
-
-	return false;
-}
-
-function _build_retry()
-{
-	$url = $this->_MODULE_URL . '/i.php?op=post';
-	$text  = $this->get_constant('TEXT_MAIL_ACCESS_TIME') ;
-	$text .= "<br>\n";
-	$text .= $this->get_constant('TEXT_MAIL_RETRY') ;
-	$text .= "<br>\n";
-	$text .= '<a href="'. $url .'">';
-	$text .= $this->get_constant('TITLE_MAIL_POST') ;
-	$text .= "</a><br>\n";
-	return $text;
-}
-
-function _build_goto()
-{
-	$url = $this->_MODULE_URL . '/i.php?op=latest';
-	$text  = "<br><br>\n";
-	$text .= '<a href="'. $url .'">';
-	$text .= $this->sanitize( $this->_MODULE_NAME ) ;
-	$text .= "</a><br>\n";
-	return $text;
-}
-
-//---------------------------------------------------------
 // judge modle from user agent
 //---------------------------------------------------------
 function _judge()
 {
-	$title = $this->_MODULE_NAME .' - '. $this->_xoops_sitename ;
-
-	$text  = $this->build_html_head( $this->sanitize($title), $this->_MOBILE_CHARSET_OUTPUT );
+	$text  = $this->build_html_head( $this->_TITLE_S, $this->_MOBILE_CHARSET_OUTPUT );
 	$text .= $this->build_html_body_begin();
 	$text .= $this->_judge_exec();
-	$text .= $this->_build_goto();
+	$text .= $this->build_goto();
 	$text .= $this->build_html_body_end();
 
 	echo $this->conv( $text );
@@ -342,7 +155,7 @@ function _show_exec()
 		'charset'       => $this->_MOBILE_CHARSET_OUTPUT,
 		'size'          => $size,
 		'show_photo'    => $show_photo ,
-		'show_post'     => $this->_check_perm() ,
+		'show_post'     => $this->check_perm() ,
 		'token'         => $this->get_token() ,
 
 		'cfg_thumb_width'  => $this->get_config_by_name('thumb_width') ,
@@ -394,7 +207,6 @@ function _get_photo( $op, $id )
 	if ( is_array($item_row) ) {
 		$photo = $this->build_show_conv( $item_row );
 	}
-
 	return $photo;
 }
 
@@ -442,21 +254,6 @@ function build_show_conv_from_rows( $item_rows )
 		$arr[] = $this->build_show_conv( $item_row ) ;
 	}
 	return $arr;
-}
-
-
-//---------------------------------------------------------
-// multibyte
-//---------------------------------------------------------
-function http_output( $encoding )
-{
-	return $this->_multibyte_class->m_mb_http_output( $encoding );
-}
-
-function conv( $str )
-{
-	return $this->_multibyte_class->convert_encoding( 
-		$str, $this->_MOBILE_CHARSET_OUTPUT, $this->_MOBILE_CHARSET_INTERNAL );
 }
 
 // --- class end ---

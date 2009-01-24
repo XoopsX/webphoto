@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.4 2008/08/25 21:20:41 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_mail_retrieve -> webphoto_edit_mail_retrieve
 // 2008-08-24 K.OHWADA
 // preload
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_mail_retrieve
 //=========================================================
-class webphoto_main_mail_retrieve extends webphoto_mail_retrieve
+class webphoto_main_mail_retrieve extends webphoto_edit_mail_retrieve
 {
 	var $_TIME_FAIL     = 5;
 	var $_REDIRECT_THIS_URL;
@@ -29,7 +31,7 @@ class webphoto_main_mail_retrieve extends webphoto_mail_retrieve
 //---------------------------------------------------------
 function webphoto_main_mail_retrieve( $dirname , $trust_dirname )
 {
-	$this->webphoto_mail_retrieve( $dirname , $trust_dirname );
+	$this->webphoto_edit_mail_retrieve( $dirname , $trust_dirname );
 
 // preload
 	$this->preload_init();

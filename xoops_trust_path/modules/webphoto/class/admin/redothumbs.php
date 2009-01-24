@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: redothumbs.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// _exist_thumb_icon()
 // 2008-11-08 K.OHWADA
 // cmd_modify_photo() -> resize_photo()
 // BUG: Fatal error: Call to undefined method webphoto_photo_delete::delete_photo()
@@ -28,11 +30,13 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_redothumbs
 //=========================================================
-class webphoto_admin_redothumbs extends webphoto_base_this
+class webphoto_admin_redothumbs extends webphoto_edit_base
 {
-	var $_image_class;
 	var $_delete_class;
 	var $_exif_class;
+	var $_icon_build_class;
+	var $_cont_create_class;
+	var $_middle_thumb_create_class;
 
 	var $_post_forceredo ;
 	var $_post_removerec ;
@@ -62,11 +66,17 @@ class webphoto_admin_redothumbs extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_image_class  =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
-	$this->_delete_class =& webphoto_photo_delete::getInstance( $dirname );
-	$this->_exif_class   =& webphoto_lib_exif::getInstance();
+	$this->_exif_class   =& webphoto_exif::getInstance();
+	$this->_delete_class =& webphoto_edit_item_delete::getInstance( $dirname );
+
+	$this->_cont_create_class =& webphoto_edit_cont_create::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( 
+		$dirname , $trust_dirname );
 
 	$this->_cfg_makethumb    = $this->get_config_by_name('makethumb');
 	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
@@ -182,7 +192,7 @@ function _check()
 function _remove_tmp_files()
 {
 // Clear tempolary files
-	$removed_tmp_num = $this->_image_class->clear_tmp_files_in_tmp_dir();
+	$removed_tmp_num = $this->clear_tmp_files_in_tmp_dir();
 	if( $removed_tmp_num > 0 ) {
 		printf( "<br />"._AM_WEBPHOTO_FMT_NUMBEROFREMOVEDTMPS."<br />\n" , $removed_tmp_num ) ;
 	}
@@ -291,7 +301,7 @@ function _item_exec( $item_row )
 
 	// Check if the file is not image
 	if ( ! $is_image ) {
-		$this->_update_non_image_type( $item_id, $thumb_row, $item_ext );
+		$this->_update_non_image_type( $item_row, $thumb_row );
 		return;
 	}
 
@@ -427,52 +437,43 @@ function _update_cont_filesize( $cont_row )
 	return $row_update ;
 }
 
-function _update_non_image_type( $item_id, $thumb_row, $item_ext )
+function _update_non_image_type( $item_row, $thumb_row )
 {
+	$this->set_msg_array( ' non-image type ' ) ;
+
+	if ( $this->_exist_thumb_icon( $item_row, $thumb_row ) ) {
+		$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
+		return true;
+	}
+
+	$item_row = $this->_icon_build_class->build_row_icon( $item_row );
+	return $this->_update_item_by_row( $item_row );
+}
+
+function _exist_thumb_icon( $item_row, $thumb_row )
+{
+	$item_external_thumb = $item_row['item_external_thumb'] ;
+	$item_icon_name      = $item_row['item_icon_name'] ;
+
 	$thumb_file = null;
 	if ( is_array($thumb_row) ) {
 		$thumb_path = $thumb_row['file_path'];
 		$thumb_file = XOOPS_ROOT_PATH . $thumb_path;
 	}
 
-	$this->set_msg_array( ' non-image type ' ) ;
+	$icon_file = $this->_ROOT_EXTS_DIR .'/'. $item_icon_name ;
 
 	if ( $thumb_file && $this->check_file( $thumb_file ) ) {
-		$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
-
-	} else {
-		$ret1 = $this->_image_class->create_thumb_icon( $item_id, $item_ext );
-		$thumb_param = $this->_image_class->get_thumb_param();
-
-		if ( $ret1 == _C_WEBPHOTO_IMAGE_READFAULT ) {
-			$this->set_msg_array( _AM_WEBPHOTO_FAILEDREADING ) ;
-
-		} elseif ( $ret1 == _C_WEBPHOTO_IMAGE_SKIPPED ) {
-			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
-
-		} else {
-			if ( is_array($thumb_row) ) {
-				$ret2 = $this->_update_file_by_param( $thumb_row, $thumb_param ) ;
-				if ( !$ret2 ) {
-					return false;
-				}
-				$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
-
-			} else {
-				$newid = $this->_insert_file_by_param( $item_id, $thumb_param );
-				if ( !$newid ) {
-					return false;
-				}
-				$ret3 = $this->_update_item_thumbid( $item_id, $newid );
-				if ( !$ret3 ) {
-					return false;
-				}
-				$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
-			}
-		}
+		return true;
+	}
+	if ( $item_icon_name && $this->check_file( $icon_file ) ) {
+		return true;
+	}
+	if ( $item_external_thumb ) {
+		return true;
 	}
 
-	return true ;
+	return false;
 }
 
 function _check_update_exif( $item_exif )
@@ -492,40 +493,17 @@ function _update_exif( $item_id )
 	$cont_path = $cont_row['file_path'];
 	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
-	$exif_info = $this->_exif_class->read_file( $cont_file );
-	if ( !is_array($exif_info) ) {
+	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+
+	$flag = $this->_exif_class->build_row_exif( $item_row, $cont_file );
+	if (( $flag == 0 )||( $flag == 1 )) {
 		return true ;	// no action
 	}
 
-	$param = array() ;
+	$this->set_msg_array( ' get exif, ' ) ;
+	$item_row = $this->_exif_class->get_row();
 
-	$datetime  = $this->exif_to_mysql_datetime( $exif_info );
-	$equipment = $exif_info['equipment'] ;
-	$latitude  = $exif_info['latitude'] ;
-	$longitude = $exif_info['longitude'] ;
-	$exif      = $exif_info['all_data'] ;
-	if ( $datetime ) {
-		$param['item_datetime'] = $datetime ;
-	}
-	if ( $equipment ) {
-		$param['item_equipment'] = $equipment ;
-	}
-	if ( ( $latitude > 0 )&&( $longitude > 0 ) ) {
-		$param['item_gmap_latitude']  = $latitude ;
-		$param['item_gmap_longitude'] = $longitude ;
-		$param['item_gmap_zoom']      = $this->_GMAP_ZOOM ;
-	}
-	if ( $exif ) {
-		$this->set_msg_array( ' redo exif, ' );
-		$param['item_exif'] = $exif ;
-	}
-
-	$ret = $this->_update_item_by_param( $item_id, $param );
-	if ( !$ret ) {
-		return false;
-	}
-
-	return true ;
+	return $this->_update_item_by_row( $item_row );
 }
 
 function _get_cont_imagesize( $cont_row )
@@ -601,7 +579,7 @@ function _update_cont_resize()
 	$this->unlink_file( $tmp_file ) ;
 
 	$this->rename_file( $cont_file , $tmp_file ) ;
-	$this->_image_class->resize_photo( $tmp_file , $cont_file );
+	$this->_cont_ceate_class->resize_image( $tmp_file , $cont_file );
 
 	$this->unlink_file( $tmp_file ) ;
 
@@ -703,9 +681,13 @@ function _create_update_thumb( $item_id, $cont_file, $cont_ext )
 {
 	$thumb_row = $this->_get_thumb_row() ;
 
-	$ret1 = $this->_image_class->create_thumb_from_image_file( 
-		$cont_file, $item_id, $cont_ext );
-	$thumb_param = $this->_image_class->get_thumb_param();
+	$param = array(
+		'item_id'  => $item_id ,
+		'src_file' => $cont_file ,
+		'src_ext'  => $cont_ext ,
+	);
+
+	$thumb_param = $this->_middle_thumb_create_class->create_thumb_param( $param );
 
 // update recoed
 	if ( is_array($thumb_row) ) {
@@ -726,7 +708,7 @@ function _create_update_thumb( $item_id, $cont_file, $cont_ext )
 		}
 	}
 
-	return $ret1 ;
+	return _C_WEBPHOTO_IMAGE_CREATED ;
 }
 
 function check_file( $file )
@@ -787,10 +769,14 @@ function _update_item_thumbid( $item_id, $thumb_id )
 
 function _update_item_by_param( $item_id, $param )
 {
-	$row = $this->_item_handler->get_row_by_id( $item_id );
-	$row_update = array_merge( $row, $param );
+	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = array_merge( $item_row, $param );
+	return $this->_update_item_by_row( $item_row );
+}
 
-	$ret = $this->_item_handler->update( $row_update );
+function _update_item_by_row( $item_row )
+{
+	$ret = $this->_item_handler->update( $item_row );
 	if ( !$ret ) {
 		$errors = $this->_item_handler->get_errors() ;
 		$this->build_set_msg( 'DB Error' , true , true ) ;

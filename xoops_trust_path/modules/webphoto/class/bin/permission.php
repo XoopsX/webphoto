@@ -1,10 +1,16 @@
 <?php
-// $Id: permission.php,v 1.1 2008/08/25 19:30:22 ohwada Exp $
+// $Id: permission.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// has_html()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -28,6 +34,7 @@ class webphoto_permission
 	var $_has_tagedit          = true ;
 	var $_has_mail             = true ;
 	var $_has_file             = true ;
+	var $_has_html             = true ;
 
 //---------------------------------------------------------
 // constructor
@@ -117,6 +124,11 @@ function has_mail()
 function has_file()
 {
 	return $this->_has_file ;
+}
+
+function has_html()
+{
+	return $this->_has_html ;
 }
 
 // --- class end ---

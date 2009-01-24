@@ -1,5 +1,5 @@
 <?php
-// $Id: auto_publish.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
+// $Id: auto_publish.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// tmp -> log
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 //---------------------------------------------------------
@@ -51,7 +53,7 @@ function &getSingleton( $dirname )
 //---------------------------------------------------------
 function set_workdir( $workdir )
 {
-	$this->_FILE_AUTO_PUBLISH = $workdir .'/tmp/auto_publish' ;
+	$this->_FILE_AUTO_PUBLISH = $workdir .'/log/auto_publish' ;
 }
 
 //---------------------------------------------------------

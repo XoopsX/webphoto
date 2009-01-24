@@ -1,10 +1,16 @@
 <?php
-// $Id: maillog_table_manage.php,v 1.1 2008/08/08 04:39:14 ohwada Exp $
+// $Id: maillog_table_manage.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// webphoto_mail_unlink -> webphoto_edit_mail_unlink
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -27,7 +33,7 @@ function webphoto_admin_maillog_table_manage( $dirname , $trust_dirname )
 	$this->set_manage_list_column_array(
 		array( 'maillog_from', 'maillog_subject' ) );
 
-	$this->_unlink_class =& webphoto_mail_unlink::getInstance( $dirname );
+	$this->_unlink_class =& webphoto_edit_mail_unlink::getInstance( $dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

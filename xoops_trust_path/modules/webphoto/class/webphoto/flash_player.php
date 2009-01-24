@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.5 2008/11/30 14:32:40 ohwada Exp $
+// $Id: flash_player.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// is_color_style()
+// BUG : not define set_variable_buffer_color()
 // 2008-11-29 K.OHWADA
 // BUG: not show external swf 
 // 2008-11-16 K.OHWADA
@@ -109,16 +112,11 @@ function build_movie( $param )
 		return false ;
 	}
 
-	$item_row       = $param['item_row']; 
-	$player_row     = $param['player_row']; 
-	$playlist_style = isset($param['playlist_style']) ? $param['playlist_style'] : null ;
+	$item_row   = $param['item_row']; 
+	$player_row = $param['player_row']; 
 
 	if ( ! is_array($item_row) ) {
 		return false ;
-	}
-
-	if ( empty($player_style) ) {
-		$player_style = $player_row['player_style'] ;
 	}
 
 	$param_movie = $param ;
@@ -247,14 +245,14 @@ function set_variables_in_buffer( $param )
 	$embed_src     = $item_row['item_embed_src'];
 
 	$player_title  = $player_row['player_title'];
-	$screencolor   = $player_row['player_screencolor'];
-	$backcolor     = $player_row['player_backcolor'];
-	$frontcolor    = $player_row['player_frontcolor'];
-	$lightcolor    = $player_row['player_lightcolor'];
 	$width         = $player_row['player_width'];
 	$height        = $player_row['player_height'];
 	$displaywidth  = $player_row['player_displaywidth'];
 	$displayheight = $player_row['player_displayheight'];
+	$player_screencolor = $player_row['player_screencolor'];
+	$player_backcolor   = $player_row['player_backcolor'];
+	$player_frontcolor  = $player_row['player_frontcolor'];
+	$player_lightcolor  = $player_row['player_lightcolor'];
 
 	$image_show        = $flashvar_row['flashvar_image_show'];
 	$searchbar         = $flashvar_row['flashvar_searchbar'];
@@ -312,18 +310,28 @@ function set_variables_in_buffer( $param )
 		$displayheight  = $flashvar_displayheight;
 	}
 
+// color
+	$screencolor = null ;
+	$backcolor   = null ;
+	$frontcolor  = null ;
+	$lightcolor  = null ;
+
+	if ( $this->is_color_style( $player_style ) ) {
+		$screencolor = $player_screencolor ;
+		$backcolor   = $player_backcolor  ;
+		$frontcolor  = $player_frontcolor ;
+		$lightcolor  = $player_lightcolor ;
+	}
+
 	if ( $flashvar_screencolor ) {
 		$screencolor = $flashvar_screencolor ;
 	}
-
 	if ( $flashvar_backcolor ) {
 		$backcolor = $flashvar_backcolor ;
 	}
-
 	if ( $flashvar_frontcolor ) {
 		$frontcolor = $flashvar_frontcolor ;
 	}
-
 	if ( $flashvar_lightcolor ) {
 		$lightcolor = $flashvar_lightcolor ;
 	}
@@ -578,6 +586,11 @@ function set_variable_buffer( $name, $value, $flag_urlencode=false )
 	$this->_variable_buffers[ $name ] = array( $value, $flag_urlencode ) ;
 }
 
+function set_variable_buffer_color( $name, $value )
+{
+	$this->_variable_buffers[ $name ] = array( $this->convert_color( $value ), false ) ;
+}
+
 function get_variable_buffers()
 {
 	return $this->_variable_buffers ;
@@ -756,6 +769,17 @@ function convert_color( $str )
 {
 	$ret= '0x'.str_replace ( '#', '', $str );
 	return $ret ;
+}
+
+function is_color_style( $style )
+{
+	if ( $style == _C_WEBPHOTO_PLAYER_STYLE_PLAYER ) {
+		return true;
+	}
+	if ( $style == _C_WEBPHOTO_PLAYER_STYLE_PAGE ) {
+		return true;
+	}
+	return false;
 }
 
 function get_width_height( $player_row, $flashvar_row )

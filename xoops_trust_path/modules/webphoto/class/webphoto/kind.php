@@ -1,10 +1,16 @@
 <?php
-// $Id: kind.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
+// $Id: kind.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// is_general_kind() etc
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +24,9 @@ class webphoto_kind
 	var $_MEDIAPLAYER_AUDIO_EXTS ;
 	var $_MEDIAPLAYER_VIDEO_EXTS ;
 	var $_VIDEO_DOCOMO_EXTS ;
+
+	var $_FLASH_EXTS = array( 'flv' );
+	var $_PDF_EXTS   = array( 'pdf' );
 
 //---------------------------------------------------------
 // constructor
@@ -48,22 +57,6 @@ function get_image_exts()
 	return $this->_IMAGE_EXTS ;
 }
 
-function is_image_ext( $ext )
-{
-	if ( in_array( strtolower( $ext ) , $this->_IMAGE_EXTS ) ) {
-		return true;
-	}
-	return false;
-}
-
-function is_swfobject_ext( $ext )
-{
-	if ( in_array( strtolower( $ext ) , $this->_SWFOBJECT_EXTS ) ) {
-		return true;
-	}
-	return false;
-}
-
 function is_mediaplayer_ext( $ext )
 {
 	if ( $this->is_mediaplayer_audio_ext( $ext ) ) {
@@ -75,25 +68,44 @@ function is_mediaplayer_ext( $ext )
 	return false;
 }
 
+function is_image_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_IMAGE_EXTS );
+}
+
+function is_swfobject_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_SWFOBJECT_EXTS );
+}
+
 function is_mediaplayer_audio_ext( $ext )
 {
-	if ( in_array( strtolower( $ext ) , $this->_MEDIAPLAYER_AUDIO_EXTS ) ) {
-		return true;
-	}
-	return false;
+	return $this->is_ext_in_array( $ext, $this->_MEDIAPLAYER_AUDIO_EXTS );
 }
 
 function is_mediaplayer_video_ext( $ext )
 {
-	if ( in_array( strtolower( $ext ) , $this->_MEDIAPLAYER_VIDEO_EXTS ) ) {
-		return true;
-	}
-	return false;
+	return $this->is_ext_in_array( $ext, $this->_MEDIAPLAYER_VIDEO_EXTS );
 }
 
 function is_video_docomo_ext( $ext )
 {
-	if ( in_array( strtolower( $ext ) , $this->_VIDEO_DOCOMO_EXTS ) ) {
+	return $this->is_ext_in_array( $ext, $this->_VIDEO_DOCOMO_EXTS );
+}
+
+function is_flash_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_FLASH_EXTS );
+}
+
+function is_pdf_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_PDF_EXTS );
+}
+
+function is_ext_in_array( $ext, $arr )
+{
+	if ( in_array( strtolower( $ext ) , $arr ) ) {
 		return true;
 	}
 	return false ;
@@ -123,41 +135,26 @@ function is_video_audio_kind( $kind )
 	return false;
 }
 
-function is_undefined_kind( $kind )
+function is_external_embed_playlist_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_UNDEFINED ) {
+	if ( $this->is_external_kind( $kind ) ) {
+		return true;
+	}
+	if ( $this->is_embed_kind( $kind ) ) {
+		return true;
+	}
+	if ( $this->is_playlist_kind( $kind ) ) {
 		return true;
 	}
 	return false;
 }
 
-function is_image_kind( $kind )
+function is_external_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_IMAGE ) {
+	if ( $this->is_external_general_kind( $kind ) ) {
 		return true;
 	}
-	return false;
-}
-
-function is_video_kind( $kind )
-{
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_VIDEO ) {
-		return true;
-	}
-	return false;
-}
-
-function is_audio_kind( $kind )
-{
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_AUDIO ) {
-		return true;
-	}
-	return false;
-}
-
-function is_external_image_kind( $kind )
-{
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ) {
+	if ( $this->is_external_image_kind( $kind ) ) {
 		return true;
 	}
 	return false;
@@ -174,28 +171,64 @@ function is_playlist_kind( $kind )
 	return false;
 }
 
+function is_undefined_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_UNDEFINED );
+}
+
+function is_none_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_NONE );
+}
+
+function is_general_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_GENERAL );
+}
+
+function is_image_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_IMAGE );
+}
+
+function is_video_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_VIDEO );
+}
+
+function is_audio_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_AUDIO );
+}
+
+function is_embed_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_EMBED );
+}
+
+function is_external_general_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL );
+}
+
+function is_external_image_kind( $kind )
+{
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE );
+}
+
 function is_playlist_feed_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ) {
-		return true;
-	}
-	return false;
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED );
 }
 
 function is_playlist_dir_kind( $kind )
 {
-	if ( $kind == _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR ) {
-		return true;
-	}
-	return false;
+	return $this->_is_kind( $kind, _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR );
 }
 
-//---------------------------------------------------------
-// type
-//---------------------------------------------------------
-function is_external_type_general( $type )
+function _is_kind( $kind, $const )
 {
-	if ( $type == _C_WEBPHOTO_EXTERNAL_TYPE_GENERAL ) {
+	if ( $kind == $const ) {
 		return true;
 	}
 	return false;

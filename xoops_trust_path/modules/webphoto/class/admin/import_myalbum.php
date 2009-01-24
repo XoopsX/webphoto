@@ -1,5 +1,5 @@
 <?php
-// $Id: import_myalbum.php,v 1.4 2008/08/25 21:17:23 ohwada Exp $
+// $Id: import_myalbum.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_import -> webphoto_edit_import
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -19,7 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_import_myalbum
 //=========================================================
-class webphoto_admin_import_myalbum extends webphoto_import
+class webphoto_admin_import_myalbum extends webphoto_edit_import
 {
 	var $_form_class;
 
@@ -30,7 +32,7 @@ class webphoto_admin_import_myalbum extends webphoto_import
 //---------------------------------------------------------
 function webphoto_admin_import_myalbum( $dirname , $trust_dirname )
 {
-	$this->webphoto_import( $dirname , $trust_dirname );
+	$this->webphoto_edit_import( $dirname , $trust_dirname );
 
 	$this->_form_class =& webphoto_admin_import_form::getInstance( $dirname , $trust_dirname );
 }

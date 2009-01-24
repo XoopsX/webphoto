@@ -1,5 +1,5 @@
 <?php
-// $Id: batch.php,v 1.4 2008/08/08 04:36:09 ohwada Exp $
+// $Id: batch.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_photo_create -> webphoto_edit_factory_create
 // 2008-08-01 K.OHWADA
 // use webphoto_photo_create
 // 2008-07-01 K.OHWADA
@@ -20,9 +22,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_batch
 //=========================================================
-class webphoto_admin_batch extends webphoto_base_this
+class webphoto_admin_batch extends webphoto_edit_base
 {
-	var $_photo_class;
+	var $_factory_create_class;
 
 	var $_post_catid;
 	var $_post_desc;
@@ -39,11 +41,12 @@ class webphoto_admin_batch extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_admin_batch( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_photo_class =& webphoto_photo_create::getInstance( $dirname , $trust_dirname );
-	$this->_photo_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
-	$this->_photo_class->set_flag_print_first_msg( true );
+	$this->_factory_create_class =& webphoto_edit_factory_create::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_factory_create_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
+	$this->_factory_create_class->set_flag_print_first_msg( true );
 
 	$this->_ADMIN_BATCH_PHP = $this->_MODULE_URL .'/admin/index.php?fct=batch';
 }
@@ -153,7 +156,13 @@ function _exec_submit()
 
 	$dir = $post_dir;
 
-	if ( empty( $dir ) || ! is_dir( $dir ) ) {
+	if ( empty( $dir ) ) {
+		$this->set_error( _AM_WEBPHOTO_MES_INVALIDDIRECTORY );
+		$this->set_error( $post_dir );
+		return false ;
+	}
+
+	if ( ! is_dir( $dir ) ) {
 		$dir = $this->add_slash_to_head( $dir );
 		$prefix = XOOPS_ROOT_PATH ;
 		while( strlen( $prefix ) > 0 ) {
@@ -163,11 +172,13 @@ function _exec_submit()
 			}
 			$prefix = substr( $prefix , 0 , strrpos( $prefix , '/' ) ) ;
 		}
-		if( ! is_dir( $dir ) ) {
-			$this->set_error( _AM_WEBPHOTO_MES_INVALIDDIRECTORY );
-			$this->set_error( $post_dir );
-			return false ;
-		}
+
+	}
+
+	if ( ! is_dir( $dir ) ) {
+		$this->set_error( _AM_WEBPHOTO_MES_INVALIDDIRECTORY );
+		$this->set_error( $post_dir );
+		return false ;
 	}
 
 	$dir = $this->strip_slash_from_tail( $dir );
@@ -186,6 +197,17 @@ function _exec_submit()
 	}
 	sort( $file_names ) ;
 
+	$item_row = $this->_item_handler->create( true );
+	$item_row['item_cat_id']      = $this->_post_catid ;
+	$item_row['item_uid']         = $this->_post_uid ;
+	$item_row['item_time_update'] = $this->_time_update ;
+	$item_row['item_description'] = $this->_post_desc ;
+	$item_row['item_status']      = _C_WEBPHOTO_STATUS_APPROVED ;
+
+	$param = array(
+		'flag_video_single' => true ,
+	);
+
 	$filecount = 1 ;
 	foreach( $file_names as $file_name ) 
 	{
@@ -201,14 +223,19 @@ function _exec_submit()
 			continue;
 		}
 
-		if ( ! $this->_photo_class->is_my_allow_ext( $ext ) ) {
+		if ( ! $this->is_my_allow_ext( $ext ) ) {
 			echo ' Skip : not allow ext : '. $this->sanitize($file_name) ."<br />\n" ;
 			continue;
 		}
 
 		$title = empty( $post_title ) ? addslashes( $node ) : $post_title.' - '.$filecount ;
 
-		$this->_exec_each_file( $src_file, $title );
+		$item_row['item_title'] = $title ;
+		$param['src_file']      = $src_file ;
+
+		$this->_factory_create_class->create_item_from_param( $item_row, $param );
+		echo $this->_factory_create_class->get_main_msg();
+		echo "<br />\n";
 
 		$filecount ++ ;
 	}
@@ -225,23 +252,6 @@ function _exec_submit()
 	echo "<b>". $msg ."</b><br />\n";
 
 	return $this->return_code();
-}
-
-function _exec_each_file( $src_file, $title )
-{
-	$param = array(
-		'src_file'    => $src_file ,
-		'title'       => $title ,
-		'cat_id'      => $this->_post_catid ,
-		'uid'         => $this->_post_uid ,
-		'time_update' => $this->_time_update ,
-		'description' => $this->_post_desc ,
-		'status'      => _C_WEBPHOTO_STATUS_APPROVED ,
-	);
-
-	$this->_photo_class->create_from_file( $param );
-	echo "<br />\n";
-
 }
 
 //---------------------------------------------------------

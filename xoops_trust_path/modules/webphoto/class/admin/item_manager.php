@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.9 2009/01/06 09:41:35 ohwada Exp $
+// $Id: item_manager.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_photo_action -> webphoto_edit_action
 // 2009-01-04 K.OHWADA
 // webphoto_photo_misc_form
 // 2008-12-12 K.OHWADA
@@ -29,7 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_item_manager
 //=========================================================
-class webphoto_admin_item_manager extends webphoto_photo_action
+class webphoto_admin_item_manager extends webphoto_edit_action
 {
 	var $_vote_handler;
 	var $_player_handler;
@@ -58,7 +60,7 @@ class webphoto_admin_item_manager extends webphoto_photo_action
 //---------------------------------------------------------
 function webphoto_admin_item_manager( $dirname , $trust_dirname )
 {
-	$this->webphoto_photo_action( $dirname , $trust_dirname );
+	$this->webphoto_edit_action( $dirname , $trust_dirname );
 	$this->set_flag_admin( true );
 
 	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
@@ -660,13 +662,12 @@ function _submit_form()
 	xoops_cp_header();
 	echo $this->_build_bread_crumb();
 
-	$item_row = $this->build_submit_default_row();
-
+	$item_row = $this->create_item_row_default();
 	$param   = $this->build_form_param( $mode );
 	$options = $this->_editor_class->build_list_options( true );
 
-	if ( $this->is_show_extra_form() ) {
-		$this->_print_form_embed(    $mode, $item_row );
+	if ( $this->is_show_form_embed_playlisy_admin( $item_row ) ) {
+		$this->_print_form_embed( $mode, $item_row );
 		$this->_print_form_playlist( $mode, $item_row );
 	}
 
@@ -703,7 +704,8 @@ function _modify_form()
 	xoops_cp_header();
 	echo $this->_build_bread_crumb();
 
-	$item_row    = $this->build_modify_row_by_post( $item_row, true ) ;
+	$this->set_param_modify_default( $item_row );
+
 	$item_id     = $item_row['item_id'] ;
 	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$kind        = $item_row['item_kind'] ;
@@ -728,7 +730,7 @@ function _modify_form()
 	$options = $this->_editor_class->build_list_options( true );
 
 // for future
-//	if ( $this->is_show_form_editor_admin( $options ) ) {
+//	if ( $this->is_show_admin_form_editor( $options ) ) {
 //		$param_editor = $param ;
 //		$param_editor['options'] = $options ;
 //		$this->_print_form_editor( $item_row, $param_editor );
@@ -825,7 +827,7 @@ function _submit()
 {
 	$this->_check_token_and_redirect();
 
-	$ret = $this->submit( 'admin' );
+	$ret = $this->submit_main();
 
 // success
 	if ( $ret == _C_WEBPHOTO_RET_SUCCESS )
@@ -854,7 +856,8 @@ function _submit()
 // error
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
-			$this->_print_form_admin_with_mode( 'admin_submit', $this->build_submit_preview_row() );
+			$this->_print_form_admin_with_mode( 
+				'admin_submit', $this->create_item_row_submit_preview() );
 			break;
 	}
 
@@ -1019,7 +1022,8 @@ function _video()
 
 	$mode = $this->_post_class->get_post_text('mode');
 
-	$ret = $this->_photo_class->video_thumb( $item_row );
+// create video thumb
+	$ret = $this->video_thumb( $item_row );
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
 		$this->_build_redirect_param( $mode, $item_id, !$ret ) ) ;
@@ -1602,7 +1606,7 @@ function _print_form_playlist( $mode, $item_row )
 
 function _print_form_embed( $mode, $item_row )
 {
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_embed( $mode, $item_row );
@@ -1610,7 +1614,7 @@ function _print_form_embed( $mode, $item_row )
 
 function _print_form_editor( $item_row, $param_editor )
 {
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_editor( $item_row, $param_editor );
@@ -1618,7 +1622,7 @@ function _print_form_editor( $item_row, $param_editor )
 
 function _print_form_redo( $mode, $item_row, $flash_row )
 {
-	$form_class =& webphoto_photo_misc_form::getInstance( 
+	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_redo( 'admin', $item_row, $flash_row );

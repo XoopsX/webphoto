@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.5 2008/08/25 20:35:07 ohwada Exp $
+// $Id: import.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_import -> webphoto_edit_import
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-08-01 K.OHWADA
@@ -22,7 +24,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_import
 //=========================================================
-class webphoto_admin_import extends webphoto_import
+class webphoto_admin_import extends webphoto_edit_import
 {
 	var $_image_handler;
 	var $_groupperm_class;
@@ -44,7 +46,7 @@ class webphoto_admin_import extends webphoto_import
 //---------------------------------------------------------
 function webphoto_admin_import( $dirname , $trust_dirname )
 {
-	$this->webphoto_import( $dirname , $trust_dirname );
+	$this->webphoto_edit_import( $dirname , $trust_dirname );
 
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$CONST_DEBUG_SQL = $constpref.'DEBUG_SQL';
@@ -187,6 +189,10 @@ function _import_image_photos( $src_cid, $new_cid )
 		return false;
 	}
 
+	$item_row = $this->_item_handler->create();
+	$item_row['item_cat_id'] = $new_cid ;
+	$item_row['item_uid']    = $this->_xoops_uid ;
+
 	$import_count = 0 ;
 	foreach( $image_rows as $image_row )
 	{
@@ -194,7 +200,7 @@ function _import_image_photos( $src_cid, $new_cid )
 		$image_name = $image_row['image_name'];
 		$tmp_file   = $this->_TMP_DIR .'/'. $image_name ;
 
-		echo $image_id.' '.$this->sanitize($image_name).' : ';
+		echo $image_id.' '.$this->sanitize($image_name).' -> ';
 
 		$ret = $this->_import_image_read_src( $image_row, $tmp_file, $imgcat_storetype );
 		if ( !$ret ) {
@@ -202,7 +208,7 @@ function _import_image_photos( $src_cid, $new_cid )
 			continue;
 		}
 
-		$this->_import_image_each_photo( $image_row, $tmp_file, $new_cid );
+		$this->_import_image_each_photo( $item_row, $image_row, $tmp_file );
 		echo "<br />\n" ;
 
 		$import_count ++ ;
@@ -240,22 +246,21 @@ function _import_image_read_src( $image_row, $tmp_file, $imgcat_storetype )
 	return true;
 }
 
-function _import_image_each_photo( $row, $tmp_file, $cat_id )
+function _import_image_each_photo( $item_row, $image_row, $tmp_file )
 {
-	$created = $row['image_created'] ;
+	$created = $image_row['image_created'] ;
+
+	$item_row['item_title']       = $image_row['image_nicename'] ;
+	$item_row['item_status']      = $image_row['image_display'] ;
+	$item_row['item_time_create'] = $created ;
+	$item_row['item_time_update'] = $created ;
 
 	$param = array(
-		'src_file'    => $tmp_file ,
-		'title'       => $row['image_nicename'] ,
-		'cat_id'      => $cat_id ,
-		'uid'         => $this->_xoops_uid ,
-		'time_create' => $created ,
-		'time_update' => $created ,
-		'description' => '' ,
-		'status'      => $row['image_display'] ,
+		'src_file' => $tmp_file ,
 	);
 
-	$this->_photo_class->create_from_file( $param );
+	$this->_factory_create_class->create_item_from_param( $item_row, $param );
+	echo $this->_factory_create_class->get_main_msg();
 
 // remove tmp file
 	$this->unlink_file( $tmp_file );
@@ -314,9 +319,9 @@ function _import_myalbum_photos( $src_cid, $new_cid )
 		$ext   = $myalbum_row['ext'];
 		$file  = $this->_myalbum_photos_dir .'/'. $lid .'.'. $ext ;
 
-		echo 'photo : '.$lid.' '.$this->sanitize($ext).' '.$this->sanitize($title).' : ' ;
+		echo 'photo : '.$lid.' '.$this->sanitize($ext).' '.$this->sanitize($title).' -> ' ;
 
-		if ( ! $this->_photo_class->is_my_allow_ext( $ext ) ) {
+		if ( ! $this->is_my_allow_ext( $ext ) ) {
 			echo " <b>Skip : not allow ext</b> <br />\n" ;
 			continue;
 		}
@@ -393,7 +398,7 @@ function _import_webphoto()
 function _init_webphoto( $src_dirname )
 {
 	$module_class =& webphoto_xoops_module::getInstance();
-	$config_class =& webphoto_inc_config::getInstance();
+	$config_class =& webphoto_inc_config::getSingleton( $src_dirname );
 
 	$mid = $module_class->get_mid_by_dirname( $src_dirname );
 	if ( !$mid ) {
@@ -402,8 +407,6 @@ function _init_webphoto( $src_dirname )
 
 	$this->_webphoto_dirname = $src_dirname;
 	$this->_webphoto_mid     = $mid;
-
-	$config_class->init( $src_dirname );
 
 	$this->_webphoto_photos_path = $config_class->get_by_name( 'photospath' );
 	$this->_webphoto_thumbs_path = $config_class->get_by_name( 'thumbspath' );
@@ -444,7 +447,7 @@ function _import_webphoto_photos( $src_cid, $new_cid )
 		$src_id  = $webphoto_item_row['item_id'];
 		$title_s = $this->sanitize( $webphoto_item_row['item_title'] );
 
-		echo "photo : $src_id $title_s ";
+		echo "photo : $src_id $title_s -> ";
 
 		$newid = $this->_add_photo_from_webphoto( $new_cid, $webphoto_item_row );
 		echo "<br />\n";
@@ -478,6 +481,8 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 
 	$item_id             = $newid ;
 	$item_row['item_id'] = $item_id;
+
+	echo $this->_factory_create_class->build_msg_photo_title( $item_id );
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{

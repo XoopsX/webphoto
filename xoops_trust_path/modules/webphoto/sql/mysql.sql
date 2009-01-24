@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.13 2009/01/06 09:41:35 ohwada Exp $
+# $Id: mysql.sql,v 1.14 2009/01/24 07:10:39 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-01-10 K.OHWADA
+# item_content
 # 2009-01-04 K.OHWADA
 # item_editor
 # 2008-11-29 K.OHWADA
@@ -116,6 +118,9 @@ CREATE TABLE item (
   item_description_xcode  TINYINT(2) NOT NULL DEFAULT '0',
   item_description_image  TINYINT(2) NOT NULL DEFAULT '0',
   item_description_br     TINYINT(2) NOT NULL DEFAULT '0',
+  item_width  INT(11) NOT NULL DEFAULT '0',
+  item_height INT(11) NOT NULL DEFAULT '0',
+  item_content TEXT NOT NULL,
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),

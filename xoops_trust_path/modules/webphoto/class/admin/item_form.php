@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.10 2009/01/06 09:41:35 ohwada Exp $
+// $Id: item_form.php,v 1.11 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
+// post variable form_playlist
 // 2009-01-04 K.OHWADA
 // _init_editor()
 // 2008-12-12 K.OHWADA
@@ -28,7 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_item_form
 //=========================================================
-class webphoto_admin_item_form extends webphoto_photo_edit_form
+class webphoto_admin_item_form extends webphoto_edit_photo_form
 {
 	var $_sort_class ;
 
@@ -46,7 +49,7 @@ class webphoto_admin_item_form extends webphoto_photo_edit_form
 //---------------------------------------------------------
 function webphoto_admin_item_form( $dirname, $trust_dirname )
 {
-	$this->webphoto_photo_edit_form( $dirname, $trust_dirname );
+	$this->webphoto_edit_photo_form( $dirname, $trust_dirname );
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
@@ -88,9 +91,7 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 	$has_resize    = $param['has_resize'];
 	$has_rotate    = $param['has_rotate'];
 	$allowed_exts  = $param['allowed_exts'];
-	$type          = isset($param['type']) ? $param['type'] : null ;
 
-	$this->_param_type = $type;
 	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
 
 	$this->_set_checkbox( $param['checkbox_array'] );
@@ -128,7 +129,6 @@ function print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param
 
 	echo $this->build_input_hidden( 'op',           $op );
 	echo $this->build_input_hidden( 'fct',          $this->_THIS_FCT );
-	echo $this->build_input_hidden( 'type',         $type );
 	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_2 );
 	echo $this->build_input_hidden_max_file_size();
 
@@ -374,10 +374,6 @@ function _is_admin_upload_type()
 function _is_playlist_type()
 {
 	$kind = $this->get_row_by_key( 'item_kind' );
-
-	if ( $this->_param_type == 'playlist' ) {
-		return true;
-	}
 	if ( $this->_is_playlist_feed_kind() ) {
 		return true;
 	}
@@ -552,7 +548,8 @@ function _build_script_admin()
 //---------------------------------------------------------
 function print_form_playlist( $mode, $item_row )
 {
-	$editor_form = $this->_post_class->get_post_int('editor_form');
+	$form_embed  = $this->_post_class->get_post_int('form_embed');
+	$form_editor = $this->_post_class->get_post_int('form_editor');
 
 	switch ($mode)
 	{
@@ -570,8 +567,9 @@ function print_form_playlist( $mode, $item_row )
 
 	echo $this->build_input_hidden( 'fct',   $fct );
 	echo $this->build_input_hidden( 'op',   'submit_form' );
-	echo $this->build_input_hidden( 'type', 'playlist' );
-	echo $this->build_input_hidden( 'editor_form', $editor_form );
+	echo $this->build_input_hidden( 'form_playlist', 1 );
+	echo $this->build_input_hidden( 'form_embed',    $form_embed );
+	echo $this->build_input_hidden( 'form_editor',   $form_editor );
 
 	echo $this->build_row_hidden( 'item_editor' );
 

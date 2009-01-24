@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.12 2009/01/06 09:41:35 ohwada Exp $
+// $Id: item_handler.php,v 1.13 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// item_content etc
 // 2009-01-04 K.OHWADA
 // item_editor
 // 2008-12-12 K.OHWADA
@@ -56,13 +58,13 @@ class webphoto_item_handler extends webphoto_lib_handler
 	var $_BUILD_SEARCH_ARRAY = array(
 		'item_title', 'item_place', 'item_equipment', 
 		'item_artist', 'item_album', 'item_label',
-		'item_datetime', 'item_ext', 'item_description' );
+		'item_datetime', 'item_ext', 'item_description', 'item_content' );
 
 	var $_TEXT_ARRAY = array(
-		'item_siteurl', 'item_icon_name', 
+		'item_siteurl', 'item_icon_name', 'item_content',
 		'item_external_url', 'item_external_thumb', 'item_external_middle', 
 		'item_playlist_feed', 'item_playlist_dir', 'item_playlist_cache', 
-		'item_embed_type', 'item_embed_src' ); 
+		'item_embed_type', 'item_embed_src' );
 
 	var $_ENCODE_ARRAY = array(
 		'item_title', 'item_place', 'item_equipment', 
@@ -135,6 +137,8 @@ function create( $flag_new=false )
 		'item_description'     => '',
 		'item_search'          => '',
 		'item_duration'        => 0,
+		'item_width'           => 0,
+		'item_height'          => 0,
 		'item_siteurl'         => '',
 		'item_artist'          => '',
 		'item_album'           => '',
@@ -158,6 +162,7 @@ function create( $flag_new=false )
 		'item_playlist_type'   => 0,
 		'item_page_width'      => 0,
 		'item_page_height'     => 0,
+		'item_content'         => '',
 		'item_kind'            => $this->_KIND_FEFAULT ,
 		'item_datetime'        => $this->_DATETIME_DEFAULT ,
 		'item_playlist_time'   => $this->_PLAYLIST_TIME_DEFUALT,
@@ -230,6 +235,8 @@ function insert( $row, $force=false )
 	$sql .= 'item_exif, ';
 	$sql .= 'item_description, ';
 	$sql .= 'item_duration, ';
+	$sql .= 'item_width, ';
+	$sql .= 'item_height, ';
 	$sql .= 'item_displaytype, ';
 	$sql .= 'item_onclick, ';
 	$sql .= 'item_views, ';
@@ -262,6 +269,7 @@ function insert( $row, $force=false )
 	$sql .= 'item_description_xcode, ';
 	$sql .= 'item_description_image, ';
 	$sql .= 'item_description_br, ';
+	$sql .= 'item_content, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -308,6 +316,8 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_exif).', ';
 	$sql .= $this->quote($item_description).', ';
 	$sql .= intval($item_duration).', ';
+	$sql .= intval($item_width).', ';
+	$sql .= intval($item_height).', ';
 	$sql .= intval($item_displaytype).', ';
 	$sql .= intval($item_onclick).', ';
 	$sql .= intval($item_views).', ';
@@ -340,6 +350,7 @@ function insert( $row, $force=false )
 	$sql .= intval($item_description_xcode).', ';
 	$sql .= intval($item_description_image).', ';
 	$sql .= intval($item_description_br).', ';
+	$sql .= $this->quote($item_content).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -400,6 +411,8 @@ function update( $row, $force=false )
 	$sql .= 'item_exif='.$this->quote($item_exif).', ';
 	$sql .= 'item_description='.$this->quote($item_description).', ';
 	$sql .= 'item_duration='.intval($item_duration).', ';
+	$sql .= 'item_width='.intval($item_width).', ';
+	$sql .= 'item_height='.intval($item_height).', ';
 	$sql .= 'item_displaytype='.intval($item_displaytype).', ';
 	$sql .= 'item_onclick='.intval($item_onclick).', ';
 	$sql .= 'item_views='.intval($item_views).', ';
@@ -432,6 +445,7 @@ function update( $row, $force=false )
 	$sql .= 'item_description_xcode='.intval($item_description_xcode).', ';
 	$sql .= 'item_description_image='.intval($item_description_image).', ';
 	$sql .= 'item_description_br='.intval($item_description_br).', ';
+	$sql .= 'item_content='.$this->quote($item_content).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{

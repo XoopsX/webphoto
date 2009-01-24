@@ -1,17 +1,24 @@
 <?php
-// $Id: player_form.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: player_form.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
+// $param['style'] -> $row['player_style']
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_admin_player_form
 //=========================================================
-class webphoto_admin_player_form extends webphoto_form_this
+class webphoto_admin_player_form extends webphoto_edit_form
 {
 	var $_player_handler;
 
@@ -27,7 +34,7 @@ class webphoto_admin_player_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_player_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 	$this->set_path_color_pickup( $this->_MODULE_URL.'/libs' );
 
 	$this->_player_handler  =& webphoto_player_handler::getInstance( $dirname );
@@ -49,9 +56,9 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function print_form( $row, $param )
 {
-	$mode    = $param['mode'] ;
-	$item_id = $param['item_id'] ;
-	$style   = $param['style'] ;
+	$mode         = $param['mode'] ;
+	$item_id      = $param['item_id'] ;
+	$player_style = $row['player_style'] ;
 
 	switch ( $mode )
 	{
@@ -91,12 +98,13 @@ function print_form( $row, $param )
 
 	echo $this->build_row_label( _WEBPHOTO_PLAYER_ID, 'player_id' );
 
-	echo $this->build_line_ele( _WEBPHOTO_PLAYER_STYLE, $this->_build_ele_style( $op_form, $style ) );
+	echo $this->build_line_ele( _WEBPHOTO_PLAYER_STYLE, 
+		$this->_build_ele_style( $op_form, $player_style ) );
 
 	echo $this->build_row_text( _WEBPHOTO_PLAYER_TITLE, 'player_title', $this->_SIZE_TITLE );
 
 // color
-	if ( $this->_is_color_style( $style ) ) {
+	if ( $this->_is_color_style( $player_style ) ) {
 		echo $this->_build_line_color( 'player_screencolor' );
 		echo $this->_build_line_color( 'player_backcolor' );
 		echo $this->_build_line_color( 'player_frontcolor' );

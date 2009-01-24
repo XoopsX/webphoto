@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.7 2009/01/13 12:02:03 ohwada Exp $
+// $Id: catmanager.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-14 K.OHWADA
+// webphoto_photo_delete -> webphoto_edit_item_delete
 // 2009-01-13 K.OHWADA
 // Fatal error: Call to undefined method webphoto_cat_handler::get_all_child_id()
 // 2008-12-12 K.OHWADA
@@ -56,7 +58,7 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_delete_class    =& webphoto_photo_delete::getInstance( $dirname );
+	$this->_delete_class    =& webphoto_edit_item_delete::getInstance( $dirname );
 	$this->_upload_class    =& webphoto_upload::getInstance( $dirname , $trust_dirname );
 	$this->_image_cmd_class =& webphoto_lib_image_cmd::getInstance();
 

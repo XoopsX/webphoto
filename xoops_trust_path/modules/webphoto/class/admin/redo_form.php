@@ -1,5 +1,5 @@
 <?php
-// $Id: redo_form.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: redo_form.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
 // 2008-07-01 K.OHWADA
 // added _build_ele_exif()
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_redo_form
 //=========================================================
-class webphoto_admin_redo_form extends webphoto_form_this
+class webphoto_admin_redo_form extends webphoto_edit_form
 {
 
 //---------------------------------------------------------
@@ -25,7 +27,7 @@ class webphoto_admin_redo_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_redo_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

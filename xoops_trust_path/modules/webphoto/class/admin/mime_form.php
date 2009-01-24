@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_form.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
+// $Id: mime_form.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
 // 2008-12-12 K.OHWADA
 // build_ele_group_perms_by_key()
 // 2008-07-01 K.OHWADA
@@ -19,7 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_mime_form
 //=========================================================
-class webphoto_admin_mime_form extends webphoto_form_this
+class webphoto_admin_mime_form extends webphoto_edit_form
 {
 	var $_mime_handler;
 
@@ -28,7 +30,7 @@ class webphoto_admin_mime_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_mime_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
 	$this->_mime_handler =& webphoto_mime_handler::getInstance( $dirname );
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.7 2009/01/06 09:41:35 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_imagemanager_submit -> webphoto_edit_imagemanager_submit
 // 2009-01-04 K.OHWADA
 // webphoto_photo_edit_form -> webphoto_imagemanager_form
 // 2008-12-12 K.OHWADA
@@ -25,8 +27,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_submit_imagemanager
 //=========================================================
-//class webphoto_main_submit_imagemanager extends webphoto_photo_action
-class webphoto_main_submit_imagemanager extends webphoto_imagemanager_submit
+class webphoto_main_submit_imagemanager extends webphoto_edit_imagemanager_submit
 {
 	var $_THIS_CLOSE_FCT  = 'close';
 	var $_THIS_CLOSE_URL ;
@@ -39,8 +40,7 @@ class webphoto_main_submit_imagemanager extends webphoto_imagemanager_submit
 //---------------------------------------------------------
 function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 {
-//	$this->webphoto_photo_action( $dirname , $trust_dirname );
-	$this->webphoto_imagemanager_submit( $dirname , $trust_dirname );
+	$this->webphoto_edit_imagemanager_submit( $dirname , $trust_dirname );
 
 	$this->_THIS_CLOSE_URL = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
 }
@@ -59,8 +59,6 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function main()
 {
-	$this->get_post_param();
-
 	$ret = $this->submit_check();
 	if ( !$ret ) {
 		redirect_header( 
@@ -71,7 +69,7 @@ function main()
 		exit();
 	}
 
-	$op = $this->_post_class->get_post_text( 'op' );
+	$op = $this->get_post_text( 'op' );
 	switch ( $op ) 
 	{
 		case 'submit':
@@ -85,6 +83,24 @@ function main()
 }
 
 //---------------------------------------------------------
+// create item row
+//---------------------------------------------------------
+function _create_item_row_default()
+{
+	$row = $this->_item_handler->create( true );
+	$row['item_cat_id'] = $this->get_post_cat_id() ;
+	return $row ;
+}
+
+function _create_item_row_by_post()
+{
+	$row = $this->_item_handler->create( true );
+	$row['item_cat_id'] = $this->get_post_cat_id() ;
+	$row['item_title']  = $this->get_post_text( 'item_title' ) ;
+	return $row ;
+}
+
+//---------------------------------------------------------
 // submit
 //---------------------------------------------------------
 function _submit()
@@ -94,18 +110,10 @@ function _submit()
 // exit if error
 	$this->check_token_and_redirect( $this->_THIS_CLOSE_URL, $this->_TIME_FAILED );
 
-	$ret = $this->submit();
-	switch ( $ret )
-	{
-
-// success
-		case _C_WEBPHOTO_RET_SUCCESS :
-			break;
-
-// error
-		case _C_WEBPHOTO_RET_ERROR :
-			$is_failed = true;
-			break;
+	$ret1 = $this->_submit_exec();
+	$ret2 = $this->build_failed_msg( $ret1 );
+	if ( !$ret2 ) {
+		$is_failed = true;
 	}
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
@@ -113,6 +121,73 @@ function _submit()
 
 	redirect_header( $url, $time, $msg );
 	exit();
+}
+
+function _submit_exec()
+{
+	$this->clear_msg_array();
+
+	$item_row = $this->_create_item_row_by_post();
+
+	$ret = $this->submit_exec_check( $item_row );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$ret = $this->_submit_exec_fetch( $item_row );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$item_row    = $this->_row_fetch ;
+	$photo_name  = $this->_photo_tmp_name ;
+
+// --- insert item ---
+	$item_row = $this->build_item_row_submit_insert( $item_row );
+	$item_id  = $this->_item_handler->insert( $item_row );
+	if ( !$item_id ) {
+		$this->set_error( $this->_item_handler->get_errors() );
+		return _C_WEBPHOTO_ERR_DB ;
+	}
+
+	$item_row['item_id'] = $item_id;
+	$this->_row_create = $item_row;
+
+// --- insert files
+	$ret = $this->_insert_media_files( $item_row, $photo_name );
+	if ( $ret < 0 ) {
+		return $ret;
+	}
+
+// --- update item ---
+	$item_row = $this->build_item_row_submit_update( $item_row);
+	$ret = $this->_item_handler->update( $item_row );
+	if ( !$ret ) {
+		$this->set_error( $this->_item_handler->get_errors() );
+		return _C_WEBPHOTO_ERR_DB;
+	}
+	$this->_row_create = $item_row;
+
+	$this->unlink_uploaded_files();
+}
+
+function _submit_exec_fetch( $item_row )
+{
+	$this->_row_fetch = $item_row ;
+
+// Check if upload file name specified
+	if ( ! $this->check_xoops_upload_file( $flag_thumb=false ) ) {
+		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
+	}
+
+	$ret = $this->submit_exec_fetch_photo( $item_row );
+	if ( $ret < 0 ) { 
+		return $ret;	// failed
+	}
+	if ( empty($this->_photo_tmp_name) ) {
+		return _C_WEBPHOTO_ERR_NO_IMAGE;
+	}
+	return 0;
 }
 
 function _build_redirect_param( $is_failed )
@@ -124,6 +199,48 @@ function _build_redirect_param( $is_failed )
 		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
 	);
 	return $param ;
+}
+
+//---------------------------------------------------------
+// media files 
+//---------------------------------------------------------
+function _insert_media_files( $item_row )
+{
+	$ret = $this->_create_media_file_params( $item_row );
+	if ( $ret < 0 ) {
+		return $ret;
+	}
+
+// --- insert file ---
+	$this->_file_id_array = $this->insert_media_files_from_params( $item_row );
+	return 0;
+}
+
+function _create_media_file_params( $item_row )
+{
+	$this->init_photo_create();
+	$photo_param = $this->build_photo_param( $item_row );
+
+	list( $ret, $cont_param ) = $this->create_cont_param( $photo_param );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$thumb_param  = null;
+	$middle_param = null;
+
+	if ( is_array($cont_param) ) {
+		$thumb_param  = $this->create_thumb_param_by_photo(  $photo_param );
+		$middle_param = $this->create_middle_param_by_photo( $photo_param );
+	}
+
+	$this->_media_file_params = array(
+		'cont'   => $cont_param ,
+		'thumb'  => $thumb_param ,
+		'middle' => $middle_param ,
+	);
+
+	return 0;
 }
 
 //---------------------------------------------------------
@@ -158,14 +275,14 @@ function _print_footer()
 //---------------------------------------------------------
 function _print_form_imagemanager()
 {
-	$row = $this->build_submit_default_row() ;
+	$row = $this->_create_item_row_default() ;
 
 	$param = array(
 		'has_resize'    => $this->_has_image_resize,
 		'allowed_exts'  => $this->get_normal_exts() ,
 	);
 
-	$form_class =& webphoto_imagemanager_form::getInstance( 
+	$form_class =& webphoto_edit_imagemanager_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$form_class->print_form_imagemanager( $row, $param );
 }

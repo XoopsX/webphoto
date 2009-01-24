@@ -1,10 +1,16 @@
 <?php
-// $Id: header_file.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: header_file.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// msg.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -25,6 +31,7 @@ webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/lib/error.php' );
+webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/handler.php' );
 webphoto_include_once( 'class/lib/tree_handler.php' );
 webphoto_include_once( 'class/lib/utility.php' );

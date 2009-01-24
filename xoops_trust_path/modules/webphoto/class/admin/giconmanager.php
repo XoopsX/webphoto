@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: giconmanager.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// webphoto_edit_gicon_create
 // 2008-11-08 K.OHWADA
 // _rename_image() -> _resize_image()
 // _C_WEBPHOTO_UPLOAD_FIELD_GICON
@@ -23,14 +25,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_giconmanager
 //=========================================================
-class webphoto_admin_giconmanager extends webphoto_base_this
+class webphoto_admin_giconmanager extends webphoto_edit_base
 {
 	var $_gicon_handler;
 	var $_upload_class;
-	var $_image_class;
 	var $_mime_class;
-
-	var $_cfg_gicon_width = 0;
+	var $_gicon_create_class;
 
 	var $_post_gicon_id;
 	var $_post_delgicon;
@@ -40,7 +40,6 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 	var $_THIS_FCT = 'giconmanager';
 	var $_THIS_URL;
 
-	var $_INFO_Y_DEFAULT = 3;
 	var $_ERR_ALLOW_EXTS = null;
 
 	var $_IMAGE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_GICON ;
@@ -54,14 +53,12 @@ class webphoto_admin_giconmanager extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_admin_giconmanager( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
 	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
 	$this->_upload_class  =& webphoto_upload::getInstance( $dirname , $trust_dirname );
-	$this->_image_class   =& webphoto_image_create::getInstance( $dirname , $trust_dirname );
 	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
-
-	$this->_cfg_gicon_width = $this->_config_class->get_by_name( 'gicon_width' );
+	$this->_gicon_create_class =& webphoto_edit_gicon_create::getInstance( $dirname );
 
 	$this->_ERR_ALLOW_EXTS = 'allowed file type is '. implode( ',' , $this->get_normal_exts() ) ;
 
@@ -318,22 +315,7 @@ function _update_common( $row, $image_tmp_name, $shadow_tmp_name )
 
 // create image if upload
 	if ( $image_tmp_name ) {
-		$image_info = $this->_resize_image( $gicon_id, $image_tmp_name, $this->_GICONS_PATH );
-
-		if ( is_array($image_info) && $image_info['is_image'] ) {
-			$image_width  = $image_info['width'] ;
-			$image_height = $image_info['height'] ;
-
-			$row['gicon_image_path']   = $image_info['path'] ;
-			$row['gicon_image_name']   = $image_info['name'] ;
-			$row['gicon_image_ext']    = $image_info['ext'] ;
-			$row['gicon_image_width']  = $image_width ;
-			$row['gicon_image_height'] = $image_height ;
-			$row['gicon_anchor_x']     = $image_width / 2;
-			$row['gicon_anchor_y']     = $image_height ;
-			$row['gicon_info_x']       = $image_width / 2;
-			$row['gicon_info_y']       = $this->_INFO_Y_DEFAULT ;
-		}
+		$row = $this->_gicon_create_class->create_main_row( $row, $image_tmp_name );
 
 		if ( empty($title) ) {
 			$title = $this->_media_name;
@@ -342,15 +324,7 @@ function _update_common( $row, $image_tmp_name, $shadow_tmp_name )
 
 // create shadow if upload
 	if ( $shadow_tmp_name ) {
-		$shadow_info = $this->_resize_image( $gicon_id, $shadow_tmp_name, $this->_GSHADOWS_PATH );
-
-		if ( is_array($shadow_info) && $shadow_info['is_image'] ) {
-			$row['gicon_shadow_path']   = $shadow_info['path'] ;
-			$row['gicon_shadow_name']   = $shadow_info['name'] ;
-			$row['gicon_shadow_ext']    = $shadow_info['ext'] ;
-			$row['gicon_shadow_width']  = $shadow_info['width'] ;
-			$row['gicon_shadow_height'] = $shadow_info['height'] ;
-		}
+		$row = $this->_gicon_create_class->create_shadow_row( $row, $shadow_tmp_name );
 	}
 
 	if ( $title ) {
@@ -366,44 +340,6 @@ function _update_common( $row, $image_tmp_name, $shadow_tmp_name )
 	}
 
 	return 0;
-}
-
-function _resize_image( $gicon_id, $tmp_name, $base_path )
-{
-	$width    = 0;
-	$height   = 0;
-	$is_image = false;
-
-	$ext        = $this->parse_ext( $tmp_name );
-	$tmp_file   = $this->_TMP_DIR   .'/'. $tmp_name;
-	$gicon_name = $this->_image_class->build_photo_name( $gicon_id, $ext );
-	$gicon_path = $base_path .'/'. $gicon_name ;
-	$gicon_file = XOOPS_ROOT_PATH . $gicon_path ;
-	$gicon_url  = XOOPS_URL       . $gicon_path ;
-
-	$ret = $this->_image_class->cmd_resize_rotate( 
-		$tmp_file, $gicon_file, $this->_cfg_gicon_width, $this->_cfg_gicon_width );
-
-	if ( $this->is_normal_ext( $ext ) ) {
-		$size = GetImageSize( $gicon_file ) ;
-		if ( is_array($size) ) {
-			$width    = $size[0];
-			$height   = $size[1];
-			$is_image = true;
-		}
-	}
-
-	$arr = array(
-		'url'      => $gicon_url ,
-		'path'     => $gicon_path ,
-		'name'     => $gicon_name ,
-		'ext'      => $ext ,
-		'width'    => $width ,
-		'height'   => $height ,
-		'is_image' => $is_image ,
-	);
-
-	return $arr;
 }
 
 //---------------------------------------------------------

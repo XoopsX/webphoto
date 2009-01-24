@@ -1,19 +1,15 @@
 <?php
-// $Id: image_cmd.php,v 1.6 2008/11/11 06:53:16 ohwada Exp $
+// $Id: image_cmd.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
-
-//=========================================================
-// class webphoto_lib_image_cmd
-//=========================================================
-
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// add_icon()
 // 2008-11-08 K.OHWADA
 // webphoto_lib_gd etc
 // 2008-08-24 K.OHWADA
@@ -26,6 +22,11 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // supported gif functions of GD
 //---------------------------------------------------------
 
+if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//=========================================================
+// class webphoto_lib_image_cmd
+//=========================================================
 class webphoto_lib_image_cmd
 {
 	var $_gd_class;
@@ -252,6 +253,23 @@ function require_resize( $src_file, $max_width, $max_height )
 		return true;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// add icon
+//---------------------------------------------------------
+function add_icon( $src_file, $dst_file, $icon_file )
+{
+	if ( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) {
+		$this->_imagemagick_class->add_icon( $src_file, $dst_file, $icon_file ); 
+	}
+}
+
+function convert( $src_file, $dst_file, $option=null )
+{
+	if ( $this->_cfg_imagingpipe == $this->_PIPEID_IMAGICK ) {
+		$this->_imagemagick_class->convert( $src_file, $dst_file, $option ); 
+	}
 }
 
 //---------------------------------------------------------

@@ -1,17 +1,23 @@
 <?php
-// $Id: batch_form.php,v 1.1 2008/06/21 12:22:20 ohwada Exp $
+// $Id: batch_form.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-01-10 K.OHWADA
+// webphoto_form_this -> webphoto_edit_form
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_admin_batch_form
 //=========================================================
-class webphoto_admin_batch_form extends webphoto_form_this
+class webphoto_admin_batch_form extends webphoto_edit_form
 {
 
 //---------------------------------------------------------
@@ -19,7 +25,7 @@ class webphoto_admin_batch_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_batch_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

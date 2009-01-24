@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.6 2008/11/30 10:36:34 ohwada Exp $
+// $Id: photo_form.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// _check_deadlink()
 // 2008-11-29 K.OHWADA
 // _WEBPHOTO_DSC_SET_TIME_UPDATE -> _WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE
 // 2008-11-16 K.OHWADA
@@ -24,7 +26,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_photo_form
 //=========================================================
-class webphoto_admin_photo_form extends webphoto_form_this
+class webphoto_admin_photo_form extends webphoto_edit_form
 {
 	var $_show_class;
 	var $_cat_selbox_class;
@@ -49,7 +51,7 @@ class webphoto_admin_photo_form extends webphoto_form_this
 //---------------------------------------------------------
 function webphoto_admin_photo_form( $dirname , $trust_dirname )
 {
-	$this->webphoto_form_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_form( $dirname , $trust_dirname );
 	$this->init_pagenavi();
 
 	$this->_cat_selbox_class =& webphoto_cat_selbox::getInstance();
@@ -320,12 +322,29 @@ function _build_edit_button( $id )
 
 function _build_deadlink_button( $row )
 {
-	$button = '';
-	if ( !$this->exists_photo( $row ) ) {
-		$button = $this->build_img_deadlink();
+	if ( $this->_check_deadlink( $row ) ) {
+		return $this->build_img_deadlink();
 	}
+	return null ;
+}
 
-	return $button;
+function _check_deadlink( $row )
+{
+// exist main photo
+	if ( $this->exists_photo( $row ) ) {
+		return false ;
+	}
+// others without main photo
+	if ( $row['item_external_url'] ) {
+		return false ;
+	}
+	if ( $row['item_embed_type'] ) {
+		return false ;
+	}
+	if ( $row['item_playlist_type'] ) {
+		return false ;
+	}
+	return true ;
 }
 
 //---------------------------------------------------------

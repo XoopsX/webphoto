@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.9 2008/12/10 19:08:56 ohwada Exp $
+// $Id: checkconfigs.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// xpdf version
 // 2008-12-07 K.OHWADA
 // _check_qr_code()
 // 2008-11-16 K.OHWADA
@@ -46,7 +48,7 @@ function webphoto_admin_checkconfigs( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_server_class  =& webphoto_lib_server_info::getInstance();
+	$this->_server_class =& webphoto_lib_server_info::getInstance();
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -118,20 +120,29 @@ function _check_pathinfo_link()
 
 function _check_program()
 {
+	$gd_class          =& webphoto_lib_gd::getInstance();
+	$imagemagick_class =& webphoto_lib_imagemagick::getInstance();
+	$netpbm_class      =& webphoto_lib_netpbm::getInstance();
+	$ffmpeg_class      =& webphoto_lib_ffmpeg::getInstance();
+	$xpdf_class        =& webphoto_lib_xpdf::getInstance();
+
 	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
 	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
+	$cfg_use_xpdf    = $this->get_config_by_name('use_xpdf');
 	$cfg_imagickpath = $this->_config_class->get_dir_by_name('imagickpath');
 	$cfg_netpbmpath  = $this->_config_class->get_dir_by_name('netpbmpath');
 	$cfg_ffmpegpath  = $this->_config_class->get_dir_by_name('ffmpegpath');
+	$cfg_xpdfpath    = $this->_config_class->get_dir_by_name('xpdfpath');
 
 	echo "<h4>"._AM_WEBPHOTO_H4_CONFIG."</h4>\n" ;
 
 	echo "<b>"._AM_WEBPHOTO_PIPEFORIMAGES." : </b><br /><br />\n" ;
 
-	list( $ret, $msg ) = $this->_server_class->build_php_gd_version();
-	echo $msg ;
+	echo "<b>GD</b><br />\n";
+	list( $ret, $msg ) = $gd_class->version();
+	$this->_print_ret_msg( $ret , $msg );
+	echo "<br />\n";
 	if ( $ret ) {
-		echo "<br />\n";
 		echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=checkgd2" target="_blank">';
 		echo _AM_WEBPHOTO_LNK_CHECKGD2;
 		echo '</a><br />'."\n";
@@ -144,25 +155,48 @@ function _check_program()
 
 	if (( $cfg_imagingpipe == _C_WEBPHOTO_PIPEID_IMAGICK ) ||
 	      $cfg_imagickpath ) {
-		list( $ret, $msg ) = $this->_server_class->build_imagemagick_version( $cfg_imagickpath );
-		echo $msg ;
+		echo "<b>ImageMagick</b><br />\n";
+		echo "Path: ". $cfg_imagickpath ."<br />\n" ;
+		list( $ret, $msg ) = $imagemagick_class->version( $cfg_imagickpath );
+		$this->_print_ret_msg( $ret , $msg );
 		echo "<br />\n";
 	}
 
 	if (( $cfg_imagingpipe == _C_WEBPHOTO_PIPEID_NETPBM ) ||
 		  $cfg_netpbmpath ) {
-  		$msg = $this->_server_class->build_netpbm_version( $cfg_netpbmpath );
-		echo $msg ;
+		echo "<b>NetPBM</b><br />\n";
+		echo "Path: ". $cfg_netpbmpath ."<br />\n" ;
+		$arr = $netpbm_class->version( $cfg_netpbmpath );
+		if ( is_array($arr) ) {
+			foreach ( $arr as $ret_msg )
+			{
+				list( $ret, $msg ) = $ret_msg ;
+				$this->_print_ret_msg( $ret , $msg );
+			}
+		}
 		echo "<br />\n";
 	}
 
 	if ( $cfg_use_ffmpeg || $cfg_ffmpegpath ) {
-		list( $ret, $msg ) = $this->_server_class->build_ffmpeg_version( $cfg_ffmpegpath );
-		echo $msg ;
+		echo "<b>FFmpeg</b><br />\n";
+		echo "Path: $cfg_ffmpegpath <br />\n" ;
+		list( $ret, $msg ) = $ffmpeg_class->version( $cfg_ffmpegpath );
+		$this->_print_ret_msg( $ret , $msg );
 		echo "<br />\n";
 
 	} else {
 		echo "<b>FFmpeg</b> : not use <br /><br />\n";
+	}
+
+	if ( $cfg_use_xpdf || $cfg_xpdfpath ) {
+		echo "<b>xpdf</b><br />\n";
+		echo "Path: ". $cfg_xpdfpath ."<br />\n" ;
+		list( $ret, $msg ) = $xpdf_class->version( $cfg_xpdfpath );
+		$this->_print_ret_msg( $ret , $msg );
+		echo "<br />\n";
+
+	} else {
+		echo "<b>xpdf</b> : not use <br /><br />\n";
 	}
 }
 
@@ -271,6 +305,15 @@ function _check_full_path( $full_path, $flag_root_path=false )
 	return $ret_code ;
 }
 
+function _print_ret_msg( $ret , $msg )
+{
+	if ( !$ret ) {
+		$msg = $this->_font_red( $msg );
+	}
+	echo $msg ;
+	echo "<br />\n";
+}
+
 function _print_on_off( $val, $flag_red=false )
 {
 	echo $this->_server_class->build_on_off( $val, $flag_red )."<br />\n" ;
@@ -278,12 +321,17 @@ function _print_on_off( $val, $flag_red=false )
 
 function _print_red( $str )
 {
-	echo $this->_server_class->font_red( $str )."<br />\n" ;
+	echo $this->_font_red( $str )."<br />\n" ;
 }
 
 function _print_green( $str )
 {
 	echo $this->_server_class->font_green( $str )."<br />\n" ;
+}
+
+function _font_red( $str )
+{
+	return $this->_server_class->font_red( $str ) ;
 }
 
 // --- class end ---
