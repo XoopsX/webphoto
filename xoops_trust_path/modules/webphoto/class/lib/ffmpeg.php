@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.6 2009/01/24 15:33:44 ohwada Exp $
+// $Id: ffmpeg.php,v 1.7 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -115,11 +115,11 @@ function get_duration_size( $file )
 
 	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_INFO, $file );
 
-	$outputs = null;
+	$ret_array = null;
 	exec( "$cmd 2>&1", $ret_array );
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
-		print_r( $outputs );
+		print_r( $ret_array );
 		echo "<br />\n";
 	}
 

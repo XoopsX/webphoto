@@ -1,5 +1,5 @@
 <?php
-// $Id: i_post.php,v 1.1 2009/01/24 07:12:23 ohwada Exp $
+// $Id: i_post.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,6 +24,8 @@ webphoto_include_once( 'class/edit/mail_photo.php' );
 webphoto_include_once( 'class/edit/mail_unlink.php' );
 webphoto_include_once( 'class/edit/mail_retrieve.php' );
 webphoto_include_once( 'class/main/i_post.php' );
+
+webphoto_include_language( 'extra.php' );
 
 //=========================================================
 // main

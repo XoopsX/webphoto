@@ -1,5 +1,5 @@
 <?php
-// $Id: cont_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: cont_create.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -14,7 +14,6 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_edit_cont_create extends webphoto_edit_base_create
 {
 	var $_image_create_class;
-	var $_mime_class;
 
 	var $_cfg_width ;
 	var $_cfg_height ;
@@ -32,7 +31,6 @@ function webphoto_edit_cont_create( $dirname )
 	$this->webphoto_edit_base_create( $dirname );
 
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
-	$this->_mime_class =& webphoto_mime::getInstance( $dirname );
 
 	$this->_cfg_width  = $this->get_config_by_name( 'width' ) ;
 	$this->_cfg_height = $this->get_config_by_name( 'height' ) ;
@@ -150,19 +148,6 @@ function create_image( $param )
 		$path, $name, $src_ext, _C_WEBPHOTO_FILE_KIND_CONT );
 
 	return $ret;
-}
-
-//---------------------------------------------------------
-// mime class
-//---------------------------------------------------------
-function ext_to_mime( $ext )
-{
-	return $this->_mime_class->ext_to_mime( $ext );
-}
-
-function mime_to_medium( $mime )
-{
-	return $this->_mime_class->mime_to_medium( $mime );
 }
 
 //---------------------------------------------------------

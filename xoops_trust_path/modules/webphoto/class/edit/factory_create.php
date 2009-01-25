@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
+// $Id: factory_create.php,v 1.3 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -289,7 +289,12 @@ function build_item_row_from_file( $row, $src_file )
 	$row = $this->build_row_ext_kind( $row, $src_file );
 	$row = $this->build_row_exif(     $row, $src_file );
 	$row = $this->build_row_duration( $row, $src_file );
-	$row = $this->build_row_status_onclick( $row );
+	$row = $this->build_row_onclick( $row );
+	$row = $this->build_row_status( $row );
+	$row = $this->build_row_uid( $row );
+	$row = $this->build_row_displaytype( $row );
+	$row = $this->build_row_icon_if_empty( $row );
+	$row = $this->build_row_title_if_empty( $row );
 	$row = $this->build_row_search( $row );
 	return $row;
 }
@@ -309,7 +314,11 @@ function build_item_row_photo( $row, $photo_name, $media_name )
 function build_item_row_submit_insert( $row, $tag_name_array=null )
 {
 // status onclick search
-	$row = $this->build_row_status_onclick( $row );
+	$row = $this->build_row_onclick( $row );
+	$row = $this->build_row_status( $row );
+	$row = $this->build_row_uid( $row );
+	$row = $this->build_row_displaytype( $row );
+	$row = $this->build_row_title_if_empty( $row );
 	$row = $this->build_row_search( $row, $tag_name_array );
 	return $row;
 }
@@ -350,11 +359,6 @@ function build_row_modify_by_post( $row, $flag_status=true )
 	return $this->_item_build_class->build_row_modify_by_post( $row, $flag_status );
 }
 
-function build_row_status_onclick( $row )
-{
-	return $this->_item_build_class->build_row_status_onclick( $row );
-}
-
 function build_row_files( $row, $file_id_array )
 {
 	return $this->_item_build_class->build_row_files( $row, $file_id_array );
@@ -362,11 +366,32 @@ function build_row_files( $row, $file_id_array )
 
 function build_row_ext_kind( $row, $file )
 {
-	$ext  = $this->parse_ext( $file );
-	$kind = $this->ext_to_kind( $ext );
-	$row['item_ext']  = $ext ;
-	$row['item_kind'] = $kind ;
-	return $row;
+	return $this->_item_build_class->build_row_ext_kind_from_file( $row, $file );
+}
+
+function build_row_onclick( $row )
+{
+	return $this->_item_build_class->build_row_onclick( $row );
+}
+
+function build_row_status( $row )
+{
+	return $this->_item_build_class->build_row_status_if_empty( $row );
+}
+
+function build_row_uid( $row )
+{
+	return $this->_item_build_class->build_row_uid_if_empty( $row );
+}
+
+function build_row_displaytype( $row )
+{
+	return $this->_item_build_class->build_row_displaytype_if_empty( $row );
+}
+
+function build_row_title_if_empty( $row )
+{
+	return $this->_item_build_class->build_row_title_if_empty( $row );
 }
 
 function build_row_title_media( $row, $media_name )
@@ -628,10 +653,11 @@ function build_row_duration( $row, $src_file )
 {
 	$param = $row ;
 	$param['src_file'] = $src_file ;
+	$param['src_ext']  = $row['item_ext'] ;
 
 	$extra_param = $this->_ext_class->get_duration_size( $param );
 	if ( is_array($extra_param) ) {
-		$this->set_msg( 'get duration' ) ;
+		$this->_msg_sub_class->set_msg( 'get duration' ) ;
 		$row['item_duration'] = $extra_param['duration'] ;
 		$row['item_width']    = $extra_param['width'] ;
 		$row['item_height']   = $extra_param['height'] ;

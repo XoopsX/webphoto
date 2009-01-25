@@ -1,5 +1,5 @@
 <?php
-// $Id: imode.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: imode.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -130,12 +130,15 @@ function output_header()
 
 function check_perm()
 {
-	if (  $this->_is_set_mail &&
-	    ( $this->_has_mail || 
-	      $this->_agent_class->parse_mobile_carrier() )) {
+	if ( ! $this->_is_set_mail ) {
+		return false;
+	}
+	if ( $this->_has_mail ) {
 		return true ;
 	}
-
+	if ( $this->_agent_class->parse_mobile_carrier() ) {
+		return true ;
+	}
 	return false;
 }
 

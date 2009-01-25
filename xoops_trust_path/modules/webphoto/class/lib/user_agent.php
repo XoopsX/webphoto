@@ -1,5 +1,5 @@
 <?php
-// $Id: user_agent.php,v 1.2 2008/09/04 00:46:47 ohwada Exp $
+// $Id: user_agent.php,v 1.3 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-10 K.OHWADA
+// change parse_mobile_carrier()
 // 2008-09-01 K.OHWADA
 // added parse_browser()
 //---------------------------------------------------------
@@ -100,22 +102,16 @@ function get_user_agent()
 //---------------------------------------------------------
 // parse mobile
 //---------------------------------------------------------
-function parse_mobile_carrier( $ua=null )
+function parse_mobile_carrier( $agent=null )
 {
-	if ( empty($ua) ) {
-		$ua = $this->get_user_agent() ;
+	if ( empty($agent) ) {
+		$agent = $this->get_user_agent() ;
 	}
-
-	if ( empty($ua) ) {
+	if ( empty($agent) ) {
 		return null;	// undefined
 	}
 
 	if ( !is_array($this->_MOBILE_CARRIER_ARRAY) || !count($this->_MOBILE_CARRIER_ARRAY) ) {
-		return null;
-	}
-
-	$agent = $this->get_user_agent();
-	if ( empty($agent) ) {
 		return null;
 	}
 

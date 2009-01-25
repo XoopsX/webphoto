@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: item_build.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,15 +11,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_edit_item_build
 //=========================================================
-class webphoto_edit_item_build
+class webphoto_edit_item_build extends webphoto_edit_base_create
 {
 	var $_xoops_class;
 	var $_post_class;
-	var $_utility_class;
-	var $_kind_class;
 	var $_item_handler;
 	var $_perm_class;
-	var $_config_class;
 
 	var $_xoops_uid;
 	var $_cfg_perm_item_read ;
@@ -34,18 +31,18 @@ class webphoto_edit_item_build
 //---------------------------------------------------------
 function webphoto_edit_item_build( $dirname )
 {
+	$this->webphoto_edit_base_create( $dirname );
+
 	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
 	$this->_post_class    =& webphoto_lib_post::getInstance();
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
-	$this->_kind_class    =& webphoto_kind::getInstance();
 	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
 	$this->_perm_class    =& webphoto_permission::getInstance( $dirname );
-	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 
 	$this->_xoops_uid          = $this->_xoops_class->get_my_user_uid() ;
-	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' );
 	$this->_has_superinsert    = $this->_perm_class->has_superinsert();
 	$this->_has_html           = $this->_perm_class->has_html();
+	$this->_cfg_perm_item_read = $this->get_config_by_name( 'perm_item_read' );
+
 }
 
 function &getInstance( $dirname )
@@ -265,58 +262,6 @@ function get_server_time_by_post( $key )
 }
 
 //---------------------------------------------------------
-// status onclick 
-//---------------------------------------------------------
-function build_row_status_onclick( $row, $flag_title=true )
-{
-	$row['item_status']  = $this->get_new_status();
-	$row['item_onclick'] = $this->get_new_onclick( $row ) ;
-	$row['item_uid']     = $this->_xoops_uid;
-
-	if ( empty($row['item_displaytype']) ) {
-		 $row['item_displaytype'] = $this->get_new_displaytype( $row ) ;
-	}
-	if ( $flag_title && empty($row['item_title']) ) {
-		$row['item_title'] = $this->_NO_TITLE;
-	}
-
-	return $row;
-}
-
-function get_new_status()
-{
-	return intval( $this->_has_superinsert );
-}
-
-function get_new_onclick( $row )
-{
-	$item_ext = $row['item_ext'];
-
-	$ret = _C_WEBPHOTO_ONCLICK_PAGE ;
-	if ( $this->is_image_ext( $item_ext ) ) {
-		$ret = _C_WEBPHOTO_ONCLICK_POPUP ;
-	}
-	return $ret ;
-}
-
-function get_new_displaytype( $row )
-{
-	$item_ext = $row['item_ext'] ;
-
-	$str = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
-	if ( $this->is_image_ext( $item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_IMAGE ;
-
-	} elseif ( $this->is_swfobject_ext( $item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
-
-	} elseif ( $this->is_mediaplayer_ext( $item_ext ) ) {
-		$str = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-	}
-	return $str ;
-}
-
-//---------------------------------------------------------
 // files 
 //---------------------------------------------------------
 function build_row_files( $row, $file_id_array )
@@ -361,6 +306,104 @@ function build_row_files( $row, $file_id_array )
 	}
 
 	return $row ;
+}
+
+//---------------------------------------------------------
+// ext kind 
+//---------------------------------------------------------
+function build_row_ext_kind_from_file( $row, $file )
+{
+	$ext  = $this->parse_ext( $file );
+	$kind = $this->ext_to_kind( $ext );
+	$row['item_ext']  = $ext ;
+	$row['item_kind'] = $kind ;
+	return $row;
+}
+
+//---------------------------------------------------------
+// onclick 
+//---------------------------------------------------------
+function build_row_onclick( $row )
+{
+	$row['item_onclick'] = $this->get_new_onclick( $row ) ;
+	return $row;
+}
+
+function get_new_onclick( $row )
+{
+	$item_ext = $row['item_ext'];
+
+	$ret = _C_WEBPHOTO_ONCLICK_PAGE ;
+	if ( $this->is_image_ext( $item_ext ) ) {
+		$ret = _C_WEBPHOTO_ONCLICK_POPUP ;
+	}
+	return $ret ;
+}
+
+//---------------------------------------------------------
+// status 
+//---------------------------------------------------------
+function build_row_status_if_empty( $row )
+{
+	if( empty( $row['item_status'] ) ) {
+		$row['item_status'] = $this->get_new_status();
+	}
+	return $row;
+}
+
+function get_new_status()
+{
+	return intval( $this->_has_superinsert );
+}
+
+//---------------------------------------------------------
+// uid 
+//---------------------------------------------------------
+function build_row_uid_if_empty( $row )
+{
+	if( empty( $row['item_uid'] ) ) {
+		$row['item_uid'] = $this->_xoops_uid;
+	}
+	return $row;
+}
+
+//---------------------------------------------------------
+// displaytype 
+//---------------------------------------------------------
+function build_row_displaytype_if_empty( $row )
+{
+	if ( empty($row['item_displaytype']) ) {
+		 $row['item_displaytype'] = $this->get_new_displaytype( $row ) ;
+	}
+	return $row;
+}
+
+function get_new_displaytype( $row )
+{
+	$item_ext = $row['item_ext'] ;
+
+	$str = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
+	if ( $this->is_image_ext( $item_ext ) ) {
+		$str = _C_WEBPHOTO_DISPLAYTYPE_IMAGE ;
+
+	} elseif ( $this->is_swfobject_ext( $item_ext ) ) {
+		$str = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+
+	} elseif ( $this->is_mediaplayer_ext( $item_ext ) ) {
+		$str = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+	}
+	return $str ;
+}
+
+//---------------------------------------------------------
+// title 
+//---------------------------------------------------------
+function build_row_title_if_empty( $row )
+{
+	if ( empty($row['item_title']) ) {
+		$row['item_title'] = $this->_NO_TITLE;
+	}
+	return $row;
 }
 
 //---------------------------------------------------------

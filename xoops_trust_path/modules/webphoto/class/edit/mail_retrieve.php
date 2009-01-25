@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -180,10 +180,19 @@ function mail_pop()
 	$ret = $this->_pop_class->recv_mails();
 	if ( $ret == -1 ) {
 		$errors = $this->_pop_class->get_errors();
-		$msg = $this->array_to_str( $errors, "\n" );
-		$msg = nl2br( $this->sanitize($msg) );
+		$err = $this->array_to_str( $errors, "\n" );
+		$err = nl2br( $this->sanitize($err) );
 		$this->set_msg_level_admin( 'POP Error', true, true );
-		$this->set_msg_level_admin( $msg, false, true );
+		$this->set_msg_level_admin( $err, false, true );
+
+		if ( error_reporting() ) {
+			$msgs = $this->_pop_class->get_msgs();
+			$msg  = $this->array_to_str( $msgs, "\n" );
+			$msg  = "-----\n". $msg ."-----\n";
+			$msg  = nl2br( $this->sanitize($msg) );
+			$this->set_msg_level_admin( $msg );
+		}
+
 		$this->set_msg_level_user( $this->get_constant('TEXT_MAIL_NOT_RETRIEVE'), true );
 		return _C_WEBPHOTO_RETRIEVE_CODE_NOT_RETRIEVE ;
 	}

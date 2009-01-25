@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
+// $Id: base_create.php,v 1.3 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -17,6 +17,7 @@ class webphoto_edit_base_create
 	var $_utility_class;
 	var $_msg_class;
 	var $_kind_class;
+	var $_mime_class;
 
 	var $_flag_created = false ;
 	var $_flag_failed  = false ;
@@ -43,6 +44,7 @@ function webphoto_edit_base_create( $dirname )
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 	$this->_kind_class    =& webphoto_kind::getInstance();
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
+	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
 
 // each msg box
 	$this->_msg_class   = new webphoto_lib_msg();

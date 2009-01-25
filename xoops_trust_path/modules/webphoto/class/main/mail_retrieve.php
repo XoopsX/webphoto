@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.6 2009/01/25 10:25:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -99,6 +99,7 @@ function submit()
 	}
 
 	$this->retrieve();
+	echo $this->get_msg();
 
 	$this->print_goto_index();
 }
