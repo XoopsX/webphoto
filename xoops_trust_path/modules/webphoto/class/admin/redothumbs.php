@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.8 2009/01/24 15:33:44 ohwada Exp $
+// $Id: redothumbs.php,v 1.9 2009/01/25 06:26:25 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -504,7 +504,7 @@ function _update_exif( $item_id )
 		$flag = $param['flag'] ;
 	}
 	if ( $flag != 2 ) {
-		retrun true;	// no action
+		return true;	// no action
 	}
 
 	return $this->_update_item_by_row( $item_row );
