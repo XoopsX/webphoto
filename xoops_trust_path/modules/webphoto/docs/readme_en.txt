@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.21 2009/01/24 07:10:39 ohwada Exp $
+$Id: readme_en.txt,v 1.22 2009/01/25 14:03:53 ohwada Exp $
 
 =================================================
 Version: 1.10
-Date:   2009-01-23
+Date:   2009-01-25
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net

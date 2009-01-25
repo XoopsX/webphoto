@@ -1,37 +1,8 @@
-$Id: readme_jp.txt,v 1.21 2009/01/24 07:10:39 ohwada Exp $
-
-○ 【バグ】 Webphoto モジュール 1.00 編集画面で”ｓ編集”すると真っ白
-http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=909&forum=13
-// Fatal error: Call to undefined method webphoto_main_edit::get_file_params()
-
-○ 【バグ】 Webphoto モジュール 1.00 カテゴリー管理にて編集すると真っ白になります。
-http://linux.ohwada.jp/modules/newbb/viewtopic.php?viewmode=flat&topic_id=910&forum=13
-// Fatal error: Call to undefined method webphoto_cat_handler::get_all_child_id()
-
-○ バグ
-fLash player に色付き にて、 fatal error
-
-□ 表示
-exif を 500文字で制限
-
-□ 検索
-キーワード ハイライト
-happy_search（従来から）
-webphoto モジュール内
-
-□ 動画
-(3) サムネイルにファイル種別を示すアイコンを追加
-
-□ PDFファイル
-(1) PDFからサムネイル
-(2) PDFからテキストを抜き出し、検索の対象に加える
-(3) サムネイルにファイル種別を示すアイコンを追加
-(4) テキスト文 欄
-(5) キーワード ハイライト
+$Id: readme_jp.txt,v 1.22 2009/01/25 14:03:53 ohwada Exp $
 
 =================================================
 Version: 1.10
-Date:   2009-01-23
+Date:   2009-01-25
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
