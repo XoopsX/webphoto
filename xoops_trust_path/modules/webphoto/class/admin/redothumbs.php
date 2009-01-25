@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.9 2009/01/25 06:26:25 ohwada Exp $
+// $Id: redothumbs.php,v 1.10 2009/01/25 06:46:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -43,10 +43,11 @@ class webphoto_admin_redothumbs extends webphoto_edit_base
 	var $_post_resize    ;
 	var $_post_exif      ;
 
-	var $_cfg_makethumb    = false ;
-	var $_cfg_allownoimage = false ;
-	var $_cfg_width        = 0 ;
-	var $_cfg_height       = 0 ;
+	var $_cfg_makethumb    ;
+	var $_cfg_allownoimage ;
+	var $_cfg_width        ;
+	var $_cfg_height       ;
+	var $_cfg_use_pathinfo ;
 
 	var $_item_row ;
 
@@ -82,6 +83,7 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
 	$this->_cfg_width        = $this->get_config_by_name('width');
 	$this->_cfg_height       = $this->get_config_by_name('height');
+	$this->_cfg_use_pathinfo = $this->get_config_by_name('use_pathinfo');
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 }
@@ -213,12 +215,8 @@ function _submit( $param )
 
 	foreach ( $item_rows as $item_row )
 	{
-		$item_id = $item_row['item_id'] ;
-
 		$counter ++ ;
 		$this->set_msg_array( ( $counter + $post_start - 1 ) . ') ' ) ;
-		$this->set_msg_array( sprintf( _AM_WEBPHOTO_FMT_CHECKING , $item_id ) ) ;
-
 		$this->_item_exec( $item_row );
 		$this->set_msg_array( "<br />\n" ) ;
 	}
@@ -228,6 +226,8 @@ function _submit( $param )
 
 function _item_exec( $item_row )
 {
+	$this->set_msg_array( $this->_build_msg_title( $item_row ) ) ;
+
 	$this->_item_row = $item_row ;
 
 	$item_id   = $item_row['item_id'] ;
@@ -374,6 +374,26 @@ function _item_exec( $item_row )
 	return ;
 }
 
+function _build_msg_title( $item_row )
+{
+	$item_id    = $item_row['item_id'] ;
+	$item_title = $item_row['item_title'] ;
+
+	if ( $this->_cfg_use_pathinfo ) {
+		$url = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
+	} else {
+		$url = $this->_MODULE_URL .'/index.php?fct=photo&amp;p='. $item_id ;
+	}
+
+	$msg  = ' checking ';
+	$msg .= ' <a href="'. $url .'" target="_blank">';
+	$msg .= $item_id;
+	$msg .= ' : ';
+	$msg .= $this->sanitize( $item_title );
+	$msg .= '</a> ';
+	return $msg ;
+}
+
 function _check_remove_all_files( $cont_row )
 {
 	if ( !is_array($cont_row) ) {
@@ -507,6 +527,7 @@ function _update_exif( $item_id )
 		return true;	// no action
 	}
 
+	$this->set_msg_array( ' get exif ' ) ;
 	return $this->_update_item_by_row( $item_row );
 }
 
