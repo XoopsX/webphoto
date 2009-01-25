@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
+// $Id: item_manager.php,v 1.11 2009/01/25 07:02:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -999,11 +999,9 @@ function _delete_all()
 {
 	$this->_check_token_and_redirect();
 
-	$delete_class =& webphoto_photo_delete::getInstance( $this->_DIRNAME );
-
 	$post_ids = $this->_post_class->get_post('ids');
 	foreach( $post_ids as $id ) {
-		$delete_class->delete_photo_by_item_id( $id ) ;
+		$this->_delete_class->delete_photo_by_item_id( $id ) ;
 	}
 
 	redirect_header( $this->_THIS_URL , 
