@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.11 2009/01/25 07:02:24 ohwada Exp $
+// $Id: item_manager.php,v 1.12 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// _print_form_admin_with_mode() -> _print_form_admin()
 // 2009-01-10 K.OHWADA
 // webphoto_photo_action -> webphoto_edit_action
 // 2009-01-04 K.OHWADA
@@ -34,7 +36,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_item_manager extends webphoto_edit_action
 {
 	var $_vote_handler;
-	var $_player_handler;
 	var $_flashvar_handler;
 	var $_playlist_class;
 	var $_flash_class;
@@ -64,10 +65,9 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->set_flag_admin( true );
 
 	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
-	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname );
+	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname );
 	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
@@ -663,21 +663,20 @@ function _submit_form()
 	echo $this->_build_bread_crumb();
 
 	$item_row = $this->create_item_row_default();
-	$param   = $this->build_form_param( $mode );
-	$options = $this->_editor_class->build_list_options( true );
+	$options  = $this->_editor_class->build_list_options( true );
 
 	if ( $this->is_show_form_embed_playlisy_admin( $item_row ) ) {
-		$this->_print_form_embed( $mode, $item_row );
+		$this->_print_form_embed(    $mode, $item_row );
 		$this->_print_form_playlist( $mode, $item_row );
 	}
 
 	if ( $this->is_show_form_editor( $options ) ) {
-		$param_editor = $param ;
+		$param_editor = $this->build_form_param( $mode );
 		$param_editor['options'] = $options ;
 		$this->_print_form_editor( $item_row, $param_editor );
 	}
 
-	$this->_print_form_admin_by_item_row( $item_row, $param );
+	$this->_print_form_admin( $mode, $item_row );
 
 	xoops_cp_footer();
 	exit();
@@ -710,11 +709,8 @@ function _modify_form()
 	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$kind        = $item_row['item_kind'] ;
 
-	$cont_row     = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
-	$thumb_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
-	$middle_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
 	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
-	$flashvar_row = $this->_flashvar_handler->get_row_by_id( $flashvar_id ) ;
+	$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
 
 	$table_url = $this->_MODULE_URL .'/admin/index.php?fct=item_table_manage&amp;op=form&amp;id='. $item_id ;
 
@@ -726,7 +722,6 @@ function _modify_form()
 	echo $this->get_admin_title( 'ITEM_TABLE_MANAGE' ).' : '. $item_id ;
 	echo "</a><br /><br />\n";
 
-	$param   = $this->build_form_param( $mode );
 	$options = $this->_editor_class->build_list_options( true );
 
 // for future
@@ -736,8 +731,7 @@ function _modify_form()
 //		$this->_print_form_editor( $item_row, $param_editor );
 //	}
 
-	$this->_print_form_admin( 
-		$item_row, $cont_row, $thumb_row, $middle_row, $param );
+	$this->_print_form_admin( $mode, $item_row );
 
 	if ( is_array($flashvar_row) ) {
 		$this->_print_form_flashvar( 'admin_item_modify', $flashvar_row );
@@ -755,7 +749,7 @@ function _modify_form()
 	}
 
 	if ( is_array($flashvar_row) ) {
-		$this->_show_flash_player( $item_row, $cont_row, $thumb_row, $middle_row, $flash_row, $flashvar_row );
+		$this->_show_flash_player( $item_row );
 	}
 
 	xoops_cp_footer();
@@ -774,23 +768,9 @@ function _get_item_row_or_redirect()
 	return $item_row ;
 }
 
-function _show_flash_player( $item_row, $cont_row, $thumb_row, $middle_row, $flash_row, $flashvar_row )
+function _show_flash_player( $item_row )
 {
-	$player_id      = $item_row['item_player_id'] ;
-	$playlist_cache = $item_row['item_playlist_cache'] ;
-
-	$param = array(
-		'item_row'       => $item_row , 
-		'cont_row'       => $cont_row , 
-		'thumb_row'      => $thumb_row , 
-		'middle_row'     => $middle_row , 
-		'flash_row'      => $flash_row ,
-		'player_row'     => $this->_player_handler->get_row_by_id_or_default( $player_id ) , 
-		'flashvar_row'   => $flashvar_row , 
-		'playlist_cache' => $playlist_cache ,
-	);
-
-	$movie = $this->_flash_class->build_movie( $param );
+	$movie = $this->_flash_class->build_movie_by_item_row( $item_row );
 
 	echo "<br />\n";
 	echo '<div align="center">'."\n";
@@ -856,7 +836,7 @@ function _submit()
 // error
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
-			$this->_print_form_admin_with_mode( 
+			$this->_print_form_admin( 
 				'admin_submit', $this->create_item_row_submit_preview() );
 			break;
 	}
@@ -939,7 +919,7 @@ function _modify()
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
 			echo "<br />\n";
-			$this->_print_form_admin_with_mode( 'admin_modify', $item_row );
+			$this->_print_form_admin( 'admin_modify', $item_row );
 			break;
 	}
 
@@ -1066,7 +1046,7 @@ function _redo()
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
 			echo "<br />\n";
-			$this->_print_form_admin_with_mode( 'admin_modify', $item_row );
+			$this->_print_form_admin( 'admin_modify', $item_row );
 			break;
 	}
 
@@ -1569,29 +1549,13 @@ function _refresh_cache()
 //---------------------------------------------------------
 // form
 //---------------------------------------------------------
-function _print_form_admin_with_mode( $mode, $item_row )
+function _print_form_admin( $mode, $item_row )
 {
 	$form_class =& webphoto_admin_item_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$form_class->print_form_admin_by_item_row( 
 		$item_row, $this->build_form_param( $mode ) );
-}
-
-function _print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param )
-{
-	$form_class =& webphoto_admin_item_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$form_class->print_form_admin( $item_row, $cont_row, $thumb_row, $middle_row, $param );
-}
-
-function _print_form_admin_by_item_row( $item_row, $param )
-{
-	$form_class =& webphoto_admin_item_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$form_class->print_form_admin_by_item_row( $item_row, $param );
 }
 
 function _print_form_playlist( $mode, $item_row )

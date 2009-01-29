@@ -1,22 +1,10 @@
 <?php
-// $Id: blocks.php,v 1.5 2009/01/29 04:26:55 ohwada Exp $
+// $Id: weblinks.inc.php,v 1.1 2009/01/29 04:28:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2008-04-02 K.OHWADA
-//=========================================================
-
-//---------------------------------------------------------
-// change log
 // 2009-01-25 K.OHWADA
-// webphoto_include_once_preload_trust()
-// 2008-12-12 K.OHWADA
-// public.php
-// 2008-11-29 K.OHWADA
-// auto_publish.php etc
-// 2008-07-01 K.OHWADA
-// use webphoto_include_once_trust()
-//---------------------------------------------------------
+//=========================================================
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -51,7 +39,7 @@ webphoto_include_once( 'class/inc/public.php',       $MY_DIRNAME );
 webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/uri.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/blocks.php',       $MY_DIRNAME );
-webphoto_include_once( 'blocks/functions.php',       $MY_DIRNAME );
+webphoto_include_once( 'class/inc/weblinks.php',     $MY_DIRNAME );
 
 webphoto_include_language( 'blocks.php', $MY_DIRNAME );
 

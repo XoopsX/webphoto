@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: multibyte.php,v 1.5 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,6 +7,9 @@
 //=========================================================
 
 //---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// str_replace_continuous_return_code()
 // 2009-01-10 K.OHWADA
 // build_summary_with_search()
 // 2008-06-26 K.OHWADA
@@ -455,8 +458,11 @@ function build_plane_text( $str, $is_japanese=false )
 	$str = strip_tags($str);
 	$str = $this->str_replace_control_code($str);
 	$str = $this->str_replace_tab_code($str);
+	$str = $this->str_replace_return_to_nl_code( $str );
 	$str = $this->str_replace_html_space_code($str);
 	$str = $this->str_replace_continuous_space_code($str);
+	$str = $this->str_replace_space_return_code($str);
+	$str = $this->str_replace_continuous_return_code( $str );
 	return $str;
 }
 
@@ -510,6 +516,22 @@ function str_replace_return_code( $str, $replace=' ' )
 	$str = preg_replace("/\n/", $replace, $str);
 	$str = preg_replace("/\r/", $replace, $str);
 	return $str;
+}
+
+function str_replace_return_to_nl_code( $str, $replace="\n" )
+{
+	$str = preg_replace("/\r/", $replace, $str);
+	return $str;
+}
+
+function str_replace_continuous_return_code( $str, $replace="\n" )
+{
+	return preg_replace("/[\n|\r]+/", $replace, $str);
+}
+
+function str_replace_space_return_code( $str, $replace="\n" )
+{
+	return preg_replace("/[\x20][\n|\r]/", $replace, $str);
 }
 
 function str_replace_html_space_code( $str, $replace=' ' )

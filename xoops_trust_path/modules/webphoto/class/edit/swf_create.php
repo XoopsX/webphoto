@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf_create.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
+// $Id: swf_create.php,v 1.1 2009/01/29 04:28:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,23 +9,23 @@
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
-// class webphoto_edit_pdf_create
+// class webphoto_edit_swf_create
 //=========================================================
-class webphoto_edit_pdf_create extends webphoto_edit_base_create
+class webphoto_edit_swf_create extends webphoto_edit_base_create
 {
 	var $_ext_class ;
 
-	var $_SUB_DIR_PDFS = 'pdfs';
-	var $_EXT_PDF      = 'pdf';
+	var $_SUB_DIR_SWFS = 'swfs';
+	var $_EXT_SWF      = 'swf';
 
-	var $_PDF_EXT    = 'pdf';
-	var $_PDF_MIME   = 'application/pdf';
-	var $_PDF_MEDIUM = '';
+	var $_SWF_EXT    = 'swf';
+	var $_SWF_MIME   = 'application/x-shockwave-flash';
+	var $_SWF_MEDIUM = '';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_pdf_create( $dirname , $trust_dirname )
+function webphoto_edit_swf_create( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base_create( $dirname );
 
@@ -36,13 +36,13 @@ function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_pdf_create( $dirname , $trust_dirname );
+		$instance = new webphoto_edit_swf_create( $dirname , $trust_dirname );
 	}
 	return $instance;
 }
 
 //---------------------------------------------------------
-// create pdf
+// create swf
 //---------------------------------------------------------
 function create_param( $param )
 {
@@ -57,27 +57,27 @@ function create_param( $param )
 		return null ;
 	}
 
-// return input file is pdf 
-	if ( $this->is_pdf_ext( $src_ext ) ) {
+// return input file is swf 
+	if ( $this->is_swf_ext( $src_ext ) ) {
 		return null ;
 	}
 
-	$pdf_param = $this->create_pdf( $item_id, $src_file, $src_ext ) ;
-	if ( !is_array($pdf_param) ) {
+	$swf_param = $this->create_swf( $item_id, $src_file, $src_ext ) ;
+	if ( !is_array($swf_param) ) {
 		return null;
 	}
 
-	return $pdf_param ;
+	return $swf_param ;
 }
 
-function create_pdf( $item_id, $src_file, $src_ext )
+function create_swf( $item_id, $src_file, $src_ext )
 {
 	$this->_flag_created = false ;
 	$this->_flag_failed  = false ;
 
-	$pdf_param = null ;
+	$swf_param = null ;
 
-	$name_param =$this->build_random_name_param( $item_id, $this->_EXT_PDF, $this->_SUB_DIR_PDFS );
+	$name_param =$this->build_random_name_param( $item_id, $this->_EXT_SWF, $this->_SUB_DIR_SWFS );
 	$name  = $name_param['name'] ;
 	$path  = $name_param['path'] ;
 	$file  = $name_param['file'] ;
@@ -86,34 +86,34 @@ function create_pdf( $item_id, $src_file, $src_ext )
 	$param = array(
 		'src_file' => $src_file ,
 		'src_ext'  => $src_ext ,
-		'pdf_file' => $file ,
+		'swf_file' => $file ,
 	);
 
-	$ret = $this->_ext_class->create_pdf( $param ) ;
+	$ret = $this->_ext_class->create_swf( $param ) ;
 
 // created
 	if ( $ret == 1 ) {
 		$this->set_flag_created() ;
-		$this->set_msg( 'create pdf' );
-		$pdf_param = array(
+		$this->set_msg( 'create swf' );
+		$swf_param = array(
 			'url'    => $url ,
 			'file'   => $file ,
 			'path'   => $path ,
 			'name'   => $name ,
-			'ext'    => $this->_PDF_EXT ,
-			'mime'   => $this->_PDF_MIME ,
-			'medium' => $this->_PDF_MEDIUM ,
+			'ext'    => $this->_SWF_EXT ,
+			'mime'   => $this->_SWF_MIME ,
+			'medium' => $this->_SWF_MEDIUM ,
 			'size'   => filesize( $file ) ,
-			'kind'   => _C_WEBPHOTO_FILE_KIND_PDF ,
+			'kind'   => _C_WEBPHOTO_FILE_KIND_SWF ,
 		);
 
 // failed
 	} elseif ( $ret == -1 ) {
 		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create pdf', true ) ;
+		$this->set_msg( 'fail to create swf', true ) ;
 	}
 
-	return $pdf_param ;
+	return $swf_param ;
 }
 
 // --- class end ---

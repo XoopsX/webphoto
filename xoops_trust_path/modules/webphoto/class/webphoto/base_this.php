@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.17 2009/01/24 07:10:39 ohwada Exp $
+// $Id: base_this.php,v 1.18 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// _SWFS_PATH
 // 2009-01-04 K.OHWADA
 // move print_msg_level_admin() etc to webphoto_edit_base
 // 2009-01-04 K.OHWADA
@@ -142,6 +144,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
 	$this->_DOCOMOS_PATH    = $this->_UPLOADS_PATH.'/docomos' ;
 	$this->_PDFS_PATH       = $this->_UPLOADS_PATH.'/pdfs' ;
+	$this->_SWFS_PATH       = $this->_UPLOADS_PATH.'/swfs' ;
 	$this->_CATS_PATH       = $this->_UPLOADS_PATH.'/categories' ;
 	$this->_GICONS_PATH     = $this->_UPLOADS_PATH.'/gicons' ;
 	$this->_GSHADOWS_PATH   = $this->_UPLOADS_PATH.'/gshadows' ;
@@ -156,6 +159,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
 	$this->_DOCOMOS_DIR    = XOOPS_ROOT_PATH . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_DIR       = XOOPS_ROOT_PATH . $this->_PDFS_PATH ;
+	$this->_SWFS_DIR       = XOOPS_ROOT_PATH . $this->_SWFS_PATH ;
 	$this->_CATS_DIR       = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
 	$this->_GICONS_DIR     = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_DIR   = XOOPS_ROOT_PATH . $this->_GSHADOWS_PATH ;
@@ -170,6 +174,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
 	$this->_DOCOMOS_URL    = XOOPS_URL . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_URL       = XOOPS_URL . $this->_PDFS_PATH ;
+	$this->_SWFS_URL       = XOOPS_URL . $this->_SWFS_PATH ;
 	$this->_CATS_URL       = XOOPS_URL . $this->_CATS_PATH ;
 	$this->_GICONS_URL     = XOOPS_URL . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;

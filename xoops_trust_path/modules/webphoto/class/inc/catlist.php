@@ -1,5 +1,5 @@
 <?php
-// $Id: catlist.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
+// $Id: catlist.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// get_cat_titles()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 //---------------------------------------------------------
@@ -23,8 +25,9 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 	var $_table_cat ;
 	var $_table_item ;
 
-	var $_cfg_perm_cat_read  = 0 ;
-	var $_cfg_perm_item_read = 0 ;
+	var $_cfg_uploadspath ;
+	var $_cfg_perm_cat_read ;
+	var $_cfg_perm_item_read ;
 
 	var $_CATS_URL = null ;
 
@@ -42,12 +45,15 @@ function webphoto_inc_catlist( $dirname )
 {
 	$this->webphoto_inc_handler();
 	$this->init_handler( $dirname );
+	$this->_init_xoops_config( $dirname );
 
 	$this->_table_cat  = $this->prefix_dirname( 'cat' ) ;
 	$this->_table_item = $this->prefix_dirname( 'item' ) ;
 
 	$this->_xoops_tree_handler = new XoopsTree( 
 		$this->_table_cat, $this->_CAT_ID_NAME, 'cat_pid' ) ;
+
+	$this->_CATS_URL = XOOPS_URL . $this->_cfg_uploadspath .'/categories' ;
 }
 
 function &getSingleton( $dirname )
@@ -57,24 +63,6 @@ function &getSingleton( $dirname )
 		$singletons[ $dirname ] = new webphoto_inc_catlist( $dirname );
 	}
 	return $singletons[ $dirname ];
-}
-
-//---------------------------------------------------------
-// init
-//---------------------------------------------------------
-function set_uploads_path( $path )
-{
-	$this->_CATS_URL = XOOPS_URL . $path .'/categories' ;
-}
-
-function set_perm_cat_read( $val )
-{
-	$this->_cfg_perm_cat_read = intval($val) ;
-}
-
-function set_perm_item_read( $val )
-{
-	$this->_cfg_perm_item_read = intval($val) ;
 }
 
 //---------------------------------------------------------
@@ -212,6 +200,21 @@ function _get_photo_count_by_cat_row( $cat_row )
 //---------------------------------------------------------
 // cat tree
 //---------------------------------------------------------
+// webphoto_inc_weblinks
+function get_cat_titles()
+{
+	$rows = $this->get_cat_all_tree_array();
+	if ( !is_array($rows) || !count($rows) ) {
+		return null;
+	}
+
+	$arr = array();
+	foreach ( $rows as $row ) {
+		$arr[ $row['cat_id'] ] = $row['cat_title'];
+	}
+	return $arr;
+}
+
 function get_cat_all_tree_array()
 {
 	$name_perm = '';
@@ -449,6 +452,18 @@ function _get_item_count_by_catid_array( $catid_array )
 	$where .= ' 0 )';
 
 	return $this->get_item_count_by_where( $where ) ;
+}
+
+//---------------------------------------------------------
+// xoops_config
+//---------------------------------------------------------
+function _init_xoops_config( $dirname )
+{
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
+
+	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
+	$this->_cfg_perm_cat_read  = $config_handler->get_by_name( 'perm_cat_read' );
+	$this->_cfg_perm_item_read = $config_handler->get_by_name( 'perm_item_read' );
 }
 
 // --- class end ---

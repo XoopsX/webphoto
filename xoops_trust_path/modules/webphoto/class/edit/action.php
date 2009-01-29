@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.3 2009/01/24 09:05:15 ohwada Exp $
+// $Id: action.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// add search in update_photo_no_image()
 // 2009-01-13 K.OHWADA
 // webphoto_photo_action -> webphoto_edit_action
 // search with text content
@@ -281,8 +283,9 @@ function update_photo_no_image( $item_row )
 	$this->update_all_file_duration( $item_row );
 
 // --- update item
-//	$row_update = $this->build_item_row_modify_post( $item_row );
-
+// search
+	$item_row = $this->_factory_create_class->build_item_row_modify_update( 
+		$item_row, null, $this->_tag_name_array ) ;
 	$ret = $this->_item_handler->update( $item_row );
 	if ( !$ret ) {
 		$this->set_error( $this->_item_handler->get_errors() );

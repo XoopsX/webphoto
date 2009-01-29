@@ -1,10 +1,16 @@
 <?php
-// $Id: factory_create.php,v 1.3 2009/01/25 10:25:27 ohwada Exp $
+// $Id: factory_create.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// webphoto_edit_swf_create
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +24,7 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_flash_create_class;
 	var $_docomo_create_class;
 	var $_pdf_create_class;
+	var $_swf_create_class;
 	var $_video_middle_thumb_create_class;
 	var $_item_build_class;
 	var $_icon_build_class;
@@ -47,6 +54,8 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_flag_flash_failed        = false ;
 	var $_flag_pdf_created         = false ;
 	var $_flag_pdf_failed          = false ;
+	var $_flag_swf_created         = false ;
+	var $_flag_swf_failed          = false ;
 
 	var $_image_tmp_file     = null ;
 
@@ -75,10 +84,12 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 
 	$this->_pdf_create_class   =& webphoto_edit_pdf_create::getInstance( 
 		$dirname , $trust_dirname );
+	$this->_swf_create_class   =& webphoto_edit_swf_create::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_video_middle_thumb_create_class =& webphoto_edit_video_middle_thumb_create::getInstance( 
 		$dirname , $trust_dirname );
-	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
-	$this->_exif_class   =& webphoto_exif::getInstance();
+	$this->_ext_class  =& webphoto_ext::getInstance( $dirname , $trust_dirname );
+	$this->_exif_class =& webphoto_exif::getInstance();
 
 	$this->_msg_main_class = new webphoto_lib_msg();
 	$this->_msg_sub_class  = new webphoto_lib_msg();
@@ -171,6 +182,7 @@ function create_files_from_param( $item_row, $param )
 	$flash_param  = null ;
 	$docomo_param = null ;
 	$pdf_param    = null ;
+	$swf_param    = null ;
 
 	$photo_param = $item_row ;
 	$photo_param['src_file'] = $src_file ;
@@ -185,6 +197,7 @@ function create_files_from_param( $item_row, $param )
 		$docomo_param = $this->create_docomo_param( $photo_param, $cont_param ) ;
 		$flash_param  = $this->create_flash_param(  $photo_param ) ;
 		$pdf_param    = $this->create_pdf_param(    $photo_param ) ;
+		$swf_param    = $this->create_swf_param(    $photo_param ) ;
 
 		$middle_thumb_param = $this->create_image_for_middle_thumb( 
 			$photo_param, $pdf_param, $flag_video_single );
@@ -204,6 +217,7 @@ function create_files_from_param( $item_row, $param )
 		'flash'  => $flash_param ,
 		'docomo' => $docomo_param ,
 		'pdf'    => $pdf_param ,
+		'swf'    => $swf_param ,
 	);
 
 	$file_id_array = $this->insert_files_from_params( 
@@ -599,6 +613,32 @@ function get_flag_pdf_failed()
 }
 
 //---------------------------------------------------------
+// create swf
+//---------------------------------------------------------
+function create_swf_param( $param )
+{
+	if ( ! $this->is_general_kind( $param['src_kind'] ) ) {
+		return null;
+	}
+
+	$swf_param = $this->_swf_create_class->create_param( $param );
+	$this->_flag_swf_created = $this->_swf_create_class->get_flag_created() ;
+	$this->_flag_swf_failed  = $this->_swf_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_swf_create_class->get_msg_array() ) ;
+	return $swf_param ;
+}
+
+function get_flag_swf_created()
+{
+	return $this->_flag_swf_created ;
+}
+
+function get_flag_swf_failed()
+{
+	return $this->_flag_swf_failed ;
+}
+
+//---------------------------------------------------------
 // vodeo images
 //---------------------------------------------------------
 function create_video_plural_images( $param )
@@ -745,6 +785,7 @@ function insert_files_from_params( $item_id, $params )
 		'flash_id'  => $this->insert_file_by_params( $item_id, $params, 'flash' ) ,
 		'docomo_id' => $this->insert_file_by_params( $item_id, $params, 'docomo' ) ,
 		'pdf_id'    => $this->insert_file_by_params( $item_id, $params, 'pdf' ) ,
+		'swf_id'    => $this->insert_file_by_params( $item_id, $params, 'swf' ) ,
 	);
 	return $arr ;
 }
@@ -761,6 +802,9 @@ function update_files_from_params( $row, $params )
 		'middle_id' => $this->update_file_by_params( $row, $params, 'middle' ) ,
 		'flash_id'  => $this->update_file_by_params( $row, $params, 'flash' ) ,
 		'docomo_id' => $this->update_file_by_params( $row, $params, 'docomo' ) ,
+		'pdf_id'    => $this->update_file_by_params( $row, $params, 'pdf' ) ,
+		'swf_id'    => $this->update_file_by_params( $row, $params, 'swf' ) ,
+
 	);
 	return $arr ;
 }

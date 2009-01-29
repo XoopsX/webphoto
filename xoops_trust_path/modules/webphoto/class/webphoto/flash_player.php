@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: flash_player.php,v 1.7 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// build_movie_by_item_row()
 // 2009-01-10 K.OHWADA
 // is_color_style()
 // BUG : not define set_variable_buffer_color()
@@ -32,11 +34,17 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // http://code.jeroenwijering.com/trac/wiki/Flashvars3
 //---------------------------------------------------------
 
-class webphoto_flash_player extends webphoto_lib_base
+class webphoto_flash_player
 {
 	var $_config_class;
+	var $_item_handler;
+	var $_file_handler;
+	var $_player_handler;
+	var $_flashvar_handler;
 
-	var $_cfg_use_callback ;
+	var $_is_module_admin;
+	var $_xoops_groups;
+	var $_cfg_use_callback;
 
 // result
 	var $_report = null;
@@ -52,6 +60,9 @@ class webphoto_flash_player extends webphoto_lib_base
 	var $_width       = 0;
 	var $_height      = 0;
 
+	var $_DIRNAME;
+	var $_MODULE_URL;
+	var $_MODULE_DIR;
 	var $_PLAYLISTS_DIR ;
 	var $_PLAYLISTS_URL ;
 	var $_LOGOS_DIR ;
@@ -73,11 +84,22 @@ class webphoto_flash_player extends webphoto_lib_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_flash_player( $dirname, $trust_dirname )
+function webphoto_flash_player( $dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->_DIRNAME    = $dirname ;
+	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
+	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
-	$this->_config_class =& webphoto_config::getInstance( $dirname );
+	$this->_xoops_class      =& webphoto_xoops_base::getInstance();
+	$this->_utility_class    =& webphoto_lib_utility::getInstance();
+	$this->_config_class     =& webphoto_config::getInstance( $dirname );
+	$this->_item_handler     =& webphoto_item_handler::getInstance( $dirname );
+	$this->_file_handler     =& webphoto_file_handler::getInstance( $dirname );
+	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
+
+	$this->_is_module_admin   = $this->_xoops_class->get_my_user_is_module_admin();
+	$this->_xoops_groups      = $this->_xoops_class->get_my_user_groups();
 
 	$uploads_path             = $this->_config_class->get_uploads_path();
 	$this->_cfg_use_callback  = $this->_config_class->get_by_name( 'use_callback' );
@@ -94,11 +116,11 @@ function webphoto_flash_player( $dirname, $trust_dirname )
 
 }
 
-function &getInstance( $dirname, $trust_dirname )
+function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_flash_player( $dirname, $trust_dirname );
+		$instance = new webphoto_flash_player( $dirname );
 	}
 	return $instance;
 }
@@ -106,6 +128,18 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
+function build_movie_by_item_row( $item_row, $player_row=null )
+{
+	$param = $this->build_movie_param_by_item_row( $item_row, $player_row );
+	return $this->build_movie( $param );
+}
+
+function build_code_embed_by_item_row( $item_row )
+{
+	$param = $this->build_movie_param_by_item_row( $item_row );
+	return $this->build_code_embed( $param );
+}
+
 function build_movie( $param )
 {
 	if ( ! is_array($param) ) {
@@ -159,7 +193,7 @@ function build_code_embed( $param )
 
 	$item_row       = $param['item_row']; 
 	$cont_row       = $param['cont_row']; 
-	$flash_row      = $param['flash_row']; 
+	$swf_row        = $param['swf_row']; 
 	$player_row     = $param['player_row']; 
 	$flashvar_row   = $param['flashvar_row'];
 
@@ -174,7 +208,7 @@ function build_code_embed( $param )
 	$config_url = $this->_MODULE_URL.'/index.php?fct=flash_config&item_id='.$item_id;
 
 	list( $player_sel, $flashplayer ) = 
-		$this->get_player( $item_row, $cont_row );
+		$this->get_player( $item_row, $cont_row, $swf_row );
 
 	if ( $player_sel == 0 ) {
 		return false ;
@@ -192,6 +226,58 @@ function build_code_embed( $param )
 //---------------------------------------------------------
 // private
 //---------------------------------------------------------
+function build_movie_param_by_item_row( $item_row, $player_row=null )
+{
+	if ( ! is_array($item_row) ) {
+		return false ;
+	}
+
+	$flashvar_row = null;
+
+	$flashvar_id    = $item_row['item_flashvar_id'] ;
+	$player_id      = $item_row['item_player_id'] ;
+	$playlist_cache = $item_row['item_playlist_cache'] ;
+
+	$cont_row     = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
+	$thumb_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
+	$middle_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
+	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
+	$swf_row      = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF ) ;
+
+	if ( $flashvar_id > 0 ) {
+		$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
+	}
+
+// default if not specify
+	if ( ! is_array($flashvar_row) ) {
+		$flashvar_row = $this->_flashvar_handler->create() ;
+	}
+
+// default if not specify
+	if ( ! is_array($player_row) ) {
+		if ( $player_id > 0 ) {
+			$player_row = $this->_player_handler->get_cached_row_by_id( $player_id ) ; 
+		}
+		if ( ! is_array($player_row) ) {
+			$player_row = $this->_player_handler->create();
+		}
+	}
+
+	$param = array(
+		'item_row'       => $item_row , 
+		'cont_row'       => $cont_row , 
+		'thumb_row'      => $thumb_row , 
+		'middle_row'     => $middle_row , 
+		'flash_row'      => $flash_row ,
+		'swf_row'        => $swf_row ,
+		'flashvar_row'   => $flashvar_row , 
+		'player_row'     => $player_row , 
+		'playlist_cache' => $playlist_cache ,
+	);
+	
+	return $param ;
+}
+
 function build_movie_js( $param )
 {
 	$ret = $this->set_variables_in_buffer( $param );
@@ -228,10 +314,10 @@ function set_variables_in_buffer( $param )
 	$thumb_row      = $param['thumb_row']; 
 	$middle_row     = $param['middle_row']; 
 	$flash_row      = $param['flash_row']; 
+	$swf_row        = $param['swf_row']; 
 	$player_row     = $param['player_row']; 
 	$flashvar_row   = $param['flashvar_row'];
 	$playlist_cache = $param['playlist_cache'] ; 
-	$player_style   = $param['player_style'] ; 
 
 	$item_id       = $item_row['item_id'];
 	$item_title    = $item_row['item_title'];
@@ -244,11 +330,12 @@ function set_variables_in_buffer( $param )
 	$embed_type    = $item_row['item_embed_type'];
 	$embed_src     = $item_row['item_embed_src'];
 
-	$player_title  = $player_row['player_title'];
 	$width         = $player_row['player_width'];
 	$height        = $player_row['player_height'];
 	$displaywidth  = $player_row['player_displaywidth'];
 	$displayheight = $player_row['player_displayheight'];
+	$player_title       = $player_row['player_title'];
+	$player_style       = $player_row['player_style'] ; 
 	$player_screencolor = $player_row['player_screencolor'];
 	$player_backcolor   = $player_row['player_backcolor'];
 	$player_frontcolor  = $player_row['player_frontcolor'];
@@ -300,6 +387,7 @@ function set_variables_in_buffer( $param )
 
 	$file_cont_url  = $this->get_file_url( $cont_row ) ;
 	$file_flash_url = $this->get_file_url( $flash_row ) ;
+	$file_swf_url   = $this->get_file_url( $swf_row ) ;
 
 // overwrite by flashvar
 	list( $width, $height ) = 
@@ -355,7 +443,7 @@ function set_variables_in_buffer( $param )
 	$this->_player_style = $player_style ;
 
 	list( $player_sel, $flashplayer ) =
-		$this->get_player( $item_row, $cont_row ) ;
+		$this->get_player( $item_row, $cont_row, $swf_row ) ;
 
 	switch ( $player_sel )
 	{
@@ -395,6 +483,11 @@ function set_variables_in_buffer( $param )
 		$src_url   = $file_flash_url;
 		$flag_type = false ;
 
+// flash swf
+	} elseif ( $file_swf_url ) {
+		$src_url   = $file_swf_url;
+		$flag_type = false ;
+
 // external
 	} elseif ( $external_url ) {
 		$src_url = $external_url ;
@@ -429,7 +522,7 @@ function set_variables_in_buffer( $param )
 	if ( $flag_file && $movie_file ) {
 		$this->set_variable_buffer( 'file', $movie_file, true );
 	}
-
+	
 	if ( ( $image_show == 1 ) && $flag_image && $movie_image ) {
 		$this->set_variable_buffer( 'image', $movie_image, true );
 	}
@@ -662,7 +755,7 @@ function get_file_url( $file_row )
 }
 
 // BUG: not show external swf 
-function get_player( $item_row, $cont_row )
+function get_player( $item_row, $cont_row, $swf_row )
 {
 	$sel    = 0 ;
 	$player = null;
@@ -671,24 +764,32 @@ function get_player( $item_row, $cont_row )
 	$displaytype   = $item_row['item_displaytype'];
 	$external_url  = $item_row['item_external_url'];
 	$file_cont_url = $this->get_file_url( $cont_row ) ;
+	$file_swf_url  = $this->get_file_url( $swf_row ) ;
 
-	if ( $file_cont_url ) {
+	if (  $external_url ) {
+		$file = $external_url ;
+	} elseif (  $file_swf_url ) {
+		$file = $file_swf_url ;
+	} elseif ( $file_cont_url ) {
 		$file = $file_cont_url ;
-	} elseif ( $external_url ) {
-		$file = $external_url;
 	}
 
-	if ( ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) && $file ) {
-		$sel    = $displaytype ;
-		$player = $file ;
+	switch ( $displaytype )
+	{
+		case _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT :
+			$sel    = $displaytype ;
+			$player = $file ;
+			break;
 
-	} elseif ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ) {
-		$sel    = $displaytype ;
-		$player = $this->_MODULE_URL.'/libs/mediaplayer.swf';
+		case  _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
+			$sel    = $displaytype ;
+			$player = $this->_MODULE_URL.'/libs/mediaplayer.swf';
+			break;
 
-	} elseif ( $displaytype == _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR ) {
-		$sel    = $displaytype ;
-		$player = $this->_MODULE_URL.'/libs/imagerotator.swf';
+		case _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR :
+			$sel    = $displaytype ;
+			$player = $this->_MODULE_URL.'/libs/imagerotator.swf';
+			break;
 	}
 
 	return array( $sel, $player );
@@ -972,6 +1073,26 @@ $str = '
 ';
 
 	return $str;
+}
+
+//---------------------------------------------------------
+// file handler
+//---------------------------------------------------------
+function get_cached_file_row_by_kind( $row, $kind )
+{
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( $row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_cached_row_by_id( $file_id );
+	}
+	return null;
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function parse_ext( $file )
+{
+	return $this->_utility_class->parse_ext( $file );
 }
 
 // --- class end ---

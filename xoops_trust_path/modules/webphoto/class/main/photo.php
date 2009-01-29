@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.12 2008/12/20 06:11:27 ohwada Exp $
+// $Id: photo.php,v 1.13 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// build_movie() -> build_movie_by_item_row()
 // 2008-12-12 K.OHWADA
 // webphoto_item_public
 // 2008-12-07 K.OHWADA
@@ -31,9 +33,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_photo extends webphoto_show_main
 {
-	var $_player_handler;
-	var $_flashvar_handler;
-	var $_playlist_class;
 	var $_flash_class;
 	var $_embed_class;
 	var $_d3_comment_view_class;
@@ -61,10 +60,7 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 	$this->webphoto_show_main( $dirname , $trust_dirname );
 	$this->set_flag_highlight( true );
 
-	$this->_player_handler    =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler  =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_playlist_class    =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
-	$this->_flash_class       =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_flash_class       =& webphoto_flash_player::getInstance( $dirname );
 	$this->_embed_class       =& webphoto_embed::getInstance( $dirname, $trust_dirname );
 	$this->_item_public_class =& webphoto_item_public::getInstance( $dirname, $trust_dirname );
 
@@ -267,8 +263,6 @@ function _build_photo_show_photo( $row )
 function _build_flash_player( $item_row, $show_arr )
 {
 	$item_id     = $item_row['item_id'] ;
-	$player_id   = $item_row['item_player_id'] ;
-	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$displaytype = $item_row['item_displaytype'] ;
 	$uid         = $item_row['item_uid'] ;
 
@@ -288,19 +282,8 @@ function _build_flash_player( $item_row, $show_arr )
 		$this->_item_handler->countup_views( $item_id, true );
 	}
 
-	$param = array(
-		'item_row'       => $item_row , 
-		'cont_row'       => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) , 
-		'thumb_row'      => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) , 
-		'middle_row'     => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) , 
-		'flash_row'      => $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ,
-		'player_row'     => $this->_player_handler->get_row_by_id_or_default(   $player_id ) , 
-		'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
-		'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
-	);
-
-	$flash              = $this->_flash_class->build_movie( $param );
-	list( $embed, $js ) = $this->_flash_class->build_code_embed( $param );
+	$flash              = $this->_flash_class->build_movie_by_item_row(     $item_row );
+	list( $embed, $js ) = $this->_flash_class->build_code_embed_by_item_row( $item_row );
 
 	$arr = array(
 		'displaytype_flash' => $flag ,
@@ -378,6 +361,12 @@ function _build_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 	list( $flash_url, $flash_link, $flash_size ) =
 		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
 
+	list( $pdf_url, $pdf_link, $pdf_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_PDF );
+
+	list( $swf_url, $swf_link, $swf_size ) =
+		$this->_build_file_link( $item_row, $show_arr, _C_WEBPHOTO_FILE_KIND_SWF );
+
 	list( $site_url, $site_link ) =
 		$this->_build_site_link( $item_id, $siteurl, $embed_arr );
 
@@ -401,6 +390,8 @@ function _build_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 	$show_code_thumb    = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_THUMB   , $thumb_url ) ;
 	$show_code_middle   = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_MIDDLE  , $middle_url ) ;
 	$show_code_flash    = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_FLASH   , $flash_url ) ;
+	$show_code_pdf      = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_PDF     , $pdf_url ) ;
+	$show_code_swf      = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_SWF     , $swf_url ) ;
 	$show_code_page     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_PAGE    , true ) ;
 	$show_code_site     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_SITE    , $site_link );
 	$show_code_play     = $this->_has_code_parm( _C_WEBPHOTO_CODEINFO_PLAY    , $play_url );
@@ -413,6 +404,8 @@ function _build_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 		'show_code_thumb'      => $show_code_thumb ,
 		'show_code_middle'     => $show_code_middle ,
 		'show_code_flash'      => $show_code_flash ,
+		'show_code_pdf'        => $show_code_pdf ,
+		'show_code_swf'        => $show_code_swf ,
 		'show_code_page'       => $show_code_page ,
 		'show_code_site'       => $show_code_site ,
 		'show_code_play'       => $show_code_play ,
@@ -430,6 +423,12 @@ function _build_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 		'code_flash_url_s'     => $this->sanitize( $flash_url ) ,
 		'code_flash_link'      => $flash_link ,
 		'code_flash_size'      => $flash_size ,
+		'code_pdf_url_s'       => $this->sanitize( $pdf_url ) ,
+		'code_pdf_link'        => $pdf_link ,
+		'code_pdf_size'        => $pdf_size ,
+		'code_swf_url_s'       => $this->sanitize( $swf_url ) ,
+		'code_swf_link'        => $swf_link ,
+		'code_swf_size'        => $swf_size ,
 		'code_page_url'        => $this->build_uri_photo( $item_id ) ,
 		'code_site_url_s'      => $this->sanitize( $site_url ) ,
 		'code_site_link'       => $site_link ,
@@ -477,6 +476,14 @@ function _build_file_link( $item_row, $show_arr, $file_kind )
 
 		case _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO :
 			$lang_const = 'ITEM_CODEINFO_DOCOMO' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_PDF :
+			$lang_const = 'ITEM_CODEINFO_PDF' ;
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_SWF :
+			$lang_const = 'ITEM_CODEINFO_SWF' ;
 			break;
 
 		default :

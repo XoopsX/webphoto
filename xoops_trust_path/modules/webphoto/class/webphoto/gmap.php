@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.7 2008/12/20 06:11:27 ohwada Exp $
+// $Id: gmap.php,v 1.8 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// remove catlist->set_perm_cat_read()
 // 2008-12-12 K.OHWADA
 // webphoto_item_cat_handler
 // 2008-11-29 K.OHWADA
@@ -56,9 +58,6 @@ function webphoto_gmap( $dirname , $trust_dirname )
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 
 	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_catlist_class->set_uploads_path(   $cfg_uploads_path );
-	$this->_catlist_class->set_perm_item_read( $cfg_perm_item_read );
-	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 
 	$this->preload_init();
 }

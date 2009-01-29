@@ -1,10 +1,16 @@
 <?php
-// $Id: ext.php,v 1.1 2009/01/24 07:13:12 ohwada Exp $
+// $Id: ext.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// create_swf()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -85,6 +91,32 @@ function create_pdf( $param )
 
 		$ret = $class->create_pdf( $param );
 		if ( $ret && is_file($pdf_file) ) {
+			return 1 ;	// created
+		}
+		return -1 ;	// failed	
+	}
+
+	return 0 ;	// no action
+}
+
+function create_swf( $param )
+{
+	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+	$swf_file = isset($param['swf_file']) ? $param['swf_file'] : null ;
+
+	$list = $this->get_cached_list();
+	foreach ( $list as $type )
+	{
+		$class =& $this->get_cached_class_object( $type );
+		if ( ! is_object($class) ) {
+			continue;
+		}
+		if ( ! $class->is_ext( $src_ext ) ) {
+			continue;
+		}
+
+		$ret = $class->create_swf( $param );
+		if ( $ret && is_file($swf_file) ) {
 			return 1 ;	// created
 		}
 		return -1 ;	// failed	

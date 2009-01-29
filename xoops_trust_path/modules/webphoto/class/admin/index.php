@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
+// $Id: index.php,v 1.16 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// _SWFS_DIR
 // 2009-01-10 K.OHWADA
 // _PDFS_DIR
 // 2008-12-12 K.OHWADA
@@ -116,6 +118,7 @@ function _print_check()
 	echo $this->_make_dir( $this->_FLASHS_DIR );
 	echo $this->_make_dir( $this->_DOCOMOS_DIR );
 	echo $this->_make_dir( $this->_PDFS_DIR );
+	echo $this->_make_dir( $this->_SWFS_DIR );
 	echo $this->_make_dir( $this->_CATS_DIR );
 	echo $this->_make_dir( $this->_GICONS_DIR );
 	echo $this->_make_dir( $this->_GSHADOWS_DIR );

@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_public.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: photo_public.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// remove catlist->set_perm_cat_read()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -39,9 +45,6 @@ function webphoto_photo_public( $dirname )
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 
 	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_catlist_class->set_uploads_path(   $cfg_uploads_path );
-	$this->_catlist_class->set_perm_item_read( $cfg_perm_item_read );
-	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 
 	$this->_tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $dirname );
 	$this->_tagcloud_class->set_use_pathinfo(   $cfg_use_pathinfo );

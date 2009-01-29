@@ -1,10 +1,16 @@
 <?php
-// $Id: item_build.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
+// $Id: item_build.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// item_content
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -71,6 +77,7 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	$row['item_title']            = $this->get_post_text(  'item_title' ) ;
 	$row['item_duration']         = $this->get_post_int(   'item_duration' );
 	$row['item_exif']             = $this->get_post_text(  'item_exif' );
+	$row['item_content']          = $this->get_post_text(  'item_content' );
 	$row['item_embed_type']       = $this->get_post_text(  'item_embed_type' );
 	$row['item_embed_src']        = $this->get_post_text(  'item_embed_src' );
 	$row['item_embed_text']       = $this->get_post_text(  'item_embed_text' );
@@ -276,6 +283,7 @@ function build_row_files( $row, $file_id_array )
 	$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
 	$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
 	$pdf_id    = $this->get_array_value_by_key( $file_id_array, 'pdf_id' );
+	$swf_id    = $this->get_array_value_by_key( $file_id_array, 'swf_id' );
 
 	if ( $cont_id > 0 ) {
 		$row[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
@@ -295,6 +303,11 @@ function build_row_files( $row, $file_id_array )
 	if ( $flash_id > 0 ) {
 		$row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = $flash_id;
 		$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+	}
+
+	if ( $swf_id > 0 ) {
+		$row[ _C_WEBPHOTO_ITEM_FILE_SWF ] = $swf_id;
+		$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
 	}
 
 	if ( $docomo_id > 0 ) {

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.13 2009/01/24 07:10:39 ohwada Exp $
+// $Id: item_handler.php,v 1.14 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// _C_WEBPHOTO_CODEINFO_SWF
 // 2009-01-10 K.OHWADA
 // item_content etc
 // 2009-01-04 K.OHWADA
@@ -970,6 +972,8 @@ function get_codeinfo_options()
 		_C_WEBPHOTO_CODEINFO_MIDDLE => _WEBPHOTO_ITEM_CODEINFO_MIDDLE ,
 		_C_WEBPHOTO_CODEINFO_FLASH  => _WEBPHOTO_ITEM_CODEINFO_FLASH ,
 //		_C_WEBPHOTO_CODEINFO_DOCOMO => _WEBPHOTO_ITEM_CODEINFO_DOCOMO ,
+		_C_WEBPHOTO_CODEINFO_PDF    => _WEBPHOTO_ITEM_CODEINFO_PDF ,
+		_C_WEBPHOTO_CODEINFO_SWF    => _WEBPHOTO_ITEM_CODEINFO_SWF ,
 		_C_WEBPHOTO_CODEINFO_PAGE   => _WEBPHOTO_ITEM_CODEINFO_PAGE ,
 		_C_WEBPHOTO_CODEINFO_SITE   => _WEBPHOTO_ITEM_CODEINFO_SITE ,
 		_C_WEBPHOTO_CODEINFO_PLAY   => _WEBPHOTO_ITEM_CODEINFO_PLAY ,

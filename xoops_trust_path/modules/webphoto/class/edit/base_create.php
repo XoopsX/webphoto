@@ -1,10 +1,16 @@
 <?php
-// $Id: base_create.php,v 1.3 2009/01/25 10:25:27 ohwada Exp $
+// $Id: base_create.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// is_swf_ext()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -169,6 +175,11 @@ function is_video_docomo_ext( $ext )
 function is_pdf_ext( $ext )
 {
 	return $this->_kind_class->is_flash_ext( $ext ) ;
+}
+
+function is_swf_ext( $ext )
+{
+	return $this->_kind_class->is_swf_ext( $ext ) ;
 }
 
 function is_general_kind( $kind )

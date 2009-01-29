@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.21 2009/01/24 07:10:39 ohwada Exp $
+// $Id: main.php,v 1.22 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -850,8 +850,8 @@ define("_WEBPHOTO_ITEM_FILE_ID_2" ,  "ファイル番号：サムネイル" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_3" ,  "ファイル番号：ミドル" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "ファイル番号：Flash ビデオ" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "ファイル番号：ドコモ ビデオ" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "file6" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "file7" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "ファイル番号：PDF" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "ファイル番号：Flash swf" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
@@ -890,8 +890,8 @@ define("_WEBPHOTO_FILE_KIND_2" ,  "サムネイル" ) ;
 define("_WEBPHOTO_FILE_KIND_3" ,  "ミドル" ) ;
 define("_WEBPHOTO_FILE_KIND_4" ,  "Flash ビデオ" ) ;
 define("_WEBPHOTO_FILE_KIND_5" ,  "ドコモ ビデオ" ) ;
-define("_WEBPHOTO_FILE_KIND_6" ,  "file6" ) ;
-define("_WEBPHOTO_FILE_KIND_7" ,  "file7" ) ;
+define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
+define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
 define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
 define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
@@ -1308,6 +1308,17 @@ define("_WEBPHOTO_CAP_BR",     "改行を有効にする");
 define("_WEBPHOTO_ITEM_WIDTH",  "画像の横幅");
 define("_WEBPHOTO_ITEM_HEIGHT", "画像の高さ");
 define("_WEBPHOTO_ITEM_CONTENT", "テキスト文");
+
+//---------------------------------------------------------
+// v1.20
+//---------------------------------------------------------
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_PDF","PDF");
+define("_WEBPHOTO_ITEM_CODEINFO_SWF","フラッシュ");
+
+// form
+define("_WEBPHOTO_ERR_PDF", "PDF を生成できなかった");
+define("_WEBPHOTO_ERR_SWF", "フラッシュ を生成できなかった");
 
 // === define end ===
 }

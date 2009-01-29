@@ -1,5 +1,5 @@
 <?php
-// $Id: kind.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
+// $Id: kind.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// is_swf_ext()
 // 2009-01-10 K.OHWADA
 // is_general_kind() etc
 //---------------------------------------------------------
@@ -27,6 +29,7 @@ class webphoto_kind
 
 	var $_FLASH_EXTS = array( 'flv' );
 	var $_PDF_EXTS   = array( 'pdf' );
+	var $_SWF_EXTS   = array( 'swf' );
 
 //---------------------------------------------------------
 // constructor
@@ -101,6 +104,11 @@ function is_flash_ext( $ext )
 function is_pdf_ext( $ext )
 {
 	return $this->is_ext_in_array( $ext, $this->_PDF_EXTS );
+}
+
+function is_swf_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_SWF_EXTS );
 }
 
 function is_ext_in_array( $ext, $arr )

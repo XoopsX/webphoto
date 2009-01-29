@@ -1,10 +1,16 @@
 <?php
-// $Id: header_submit.php,v 1.4 2009/01/24 15:33:44 ohwada Exp $
+// $Id: header_submit.php,v 1.5 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// jodconverter.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -57,6 +63,7 @@ webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
+webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 
 webphoto_include_once( 'class/handler/item_handler.php' );
@@ -90,6 +97,7 @@ webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/exif.php' );
 webphoto_include_once( 'class/webphoto/ffmpeg.php' );
 webphoto_include_once( 'class/webphoto/pdf.php' );
+webphoto_include_once( 'class/webphoto/jodconverter.php' );
 webphoto_include_once( 'class/webphoto/upload.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
@@ -111,6 +119,7 @@ webphoto_include_once( 'class/edit/middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );
+webphoto_include_once( 'class/edit/swf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/factory_create.php' );
 webphoto_include_once( 'class/edit/external_build.php' );
@@ -125,6 +134,7 @@ webphoto_include_once( 'class/edit/imagemanager_submit.php' );
 webphoto_include_language( 'modinfo.php' );
 webphoto_include_language( 'main.php' );
 
+webphoto_include_once_preload_trust();
 webphoto_include_once_preload();
 
 ?>

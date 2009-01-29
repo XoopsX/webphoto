@@ -1,10 +1,16 @@
 <?php
-// $Id: pdf.php,v 1.3 2009/01/24 15:33:44 ohwada Exp $
+// $Id: pdf.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// icon_name in create_image()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -61,7 +67,7 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // create image
 //---------------------------------------------------------
-function create_image( $item_id, $src_file )
+function create_image( $item_id, $src_file, $icon_name=null )
 {
 	if ( empty($src_file) ) {
 		return null ;
@@ -89,12 +95,16 @@ function create_image( $item_id, $src_file )
 
 	$this->_cached[ $item_id ] = $created_file ;
 
+	if( empty($icon_name) ) {
+		$icon_name = $this->_PDF_EXT ;
+	}
+
 	$arr = array(
 		'flag'      => true ,
 		'item_id'   => $item_id ,
 		'src_file'  => $created_file ,
 		'src_ext'   => $this->_JPEG_EXT ,
-		'icon_name' => $this->_PDF_EXT ,
+		'icon_name' => $icon_name ,
 	);
 	return $arr;
 }

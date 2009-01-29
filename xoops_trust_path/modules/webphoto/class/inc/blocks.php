@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.14 2009/01/04 08:09:47 ohwada Exp $
+// $Id: blocks.php,v 1.15 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// remove catlist->set_perm_cat_read()
 // 2009-01-04 K.OHWADA
 // fatal error: Call to undefined method get_cat_parent_all_child_id()
 // 2008-12-12 K.OHWADA
@@ -43,7 +45,6 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_cfg_thumb_height   = 0 ;
 	var $_cfg_cat_main_width = 0 ;
 	var $_cfg_cat_sub_width  = 0 ;
-	var $_cfg_uploadspath    = null ;
 
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
@@ -304,9 +305,6 @@ function _init( $options )
 	$this->auto_publish( $dirname );
 
 	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
-	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
-	$this->_catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
 }
 
 function _top_show_common( $mode , $options )
@@ -775,7 +773,6 @@ function _init_xoops_config_for_block( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
 	$this->_cfg_use_popbox     = $config_handler->get_by_name( 'use_popbox' );
 	$this->_cfg_thumb_width    = $config_handler->get_by_name( 'thumb_width' );
 	$this->_cfg_thumb_height   = $config_handler->get_by_name( 'thumb_height' );

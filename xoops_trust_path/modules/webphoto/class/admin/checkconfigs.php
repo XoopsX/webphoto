@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
+// $Id: checkconfigs.php,v 1.11 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// webphoto_jodconverter
 // 2009-01-10 K.OHWADA
 // xpdf version
 // 2008-12-07 K.OHWADA
@@ -120,11 +122,12 @@ function _check_pathinfo_link()
 
 function _check_program()
 {
-	$gd_class          =& webphoto_lib_gd::getInstance();
-	$imagemagick_class =& webphoto_lib_imagemagick::getInstance();
-	$netpbm_class      =& webphoto_lib_netpbm::getInstance();
-	$ffmpeg_class      =& webphoto_lib_ffmpeg::getInstance();
-	$xpdf_class        =& webphoto_lib_xpdf::getInstance();
+	$gd_class           =& webphoto_lib_gd::getInstance();
+	$imagemagick_class  =& webphoto_lib_imagemagick::getInstance();
+	$netpbm_class       =& webphoto_lib_netpbm::getInstance();
+	$ffmpeg_class       =& webphoto_lib_ffmpeg::getInstance();
+	$xpdf_class         =& webphoto_lib_xpdf::getInstance();
+	$jodconverter_class =& webphoto_jodconverter::getInstance( $this->_DIRNAME );
 
 	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
 	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
@@ -198,6 +201,18 @@ function _check_program()
 	} else {
 		echo "<b>xpdf</b> : not use <br /><br />\n";
 	}
+
+	if ( $jodconverter_class->use_jod() ) {
+		echo "<b>jodconverter</b><br />\n";
+		echo "Java Path: ". $jodconverter_class->java_path() ."<br />\n" ;
+		list( $ret, $msg ) = $jodconverter_class->version();
+		$this->_print_ret_msg( $ret , $msg );
+		echo "<br />\n";
+
+	} else {
+		echo "<b>jodconverter</b> : not use <br /><br />\n";
+	}
+
 }
 
 function _check_qr_code()

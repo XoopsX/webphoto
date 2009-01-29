@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: photo_form.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// item_content
 // 2009-01-10 K.OHWADA
 // webphoto_photo_edit_form -> webphoto_edit_photo_form
 // is_embed_kind()
@@ -144,10 +146,14 @@ function print_form_common( $item_row, $param )
 
 	$is_submit    = false ;
 	$is_edit      = false ;
-	$show_siteurl = true;
+	$show_siteurl = true ;
 	$cont_row     = null ;
 	$thumb_row    = null ;
 	$middle_row   = null ;
+	$flash_row    = null ;
+	$docomo_row   = null ;
+	$pdf_row      = null ;
+	$swf_row      = null ;
 
 	switch ($mode)
 	{
@@ -172,6 +178,12 @@ function print_form_common( $item_row, $param )
 		$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 		$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 		$middle_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+		$flash_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
+		$pdf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_PDF );
+		$swf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF );
+
+// for futue
+//		$docomo_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
 	}
 
 	$this->set_td_left_width( $this->_TD_LEFT_WIDTH );
@@ -310,11 +322,39 @@ function print_form_common( $item_row, $param )
 		$this->set_row_hidden_buffer( 'item_exif' ) ;
 	}
 
+	if ( $is_edit ) {
+		echo $this->build_row_textarea( $this->get_constant('ITEM_CONTENT'), 
+			'item_content' );
+
+	} else {
+		$this->set_row_hidden_buffer( 'item_content' ) ;
+	}
+
 	echo $this->build_line_ele( $this->get_constant('CAP_THUMB_SELECT'), 
 		$this->_build_ele_thumb_file_external( $thumb_row ) );
 
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
+
+	if ( $flash_row ) {
+		echo $this->build_line_ele( $this->get_constant('FILE_KIND_4'), 
+			$this->_build_ele_file( $flash_row ) );
+	}
+
+	if ( $docomo_row ) {
+		echo $this->build_line_ele( $this->get_constant('FILE_KIND_5'), 
+			$this->_build_ele_file( $docomo_row ) );
+	}
+
+	if ( $pdf_row ) {
+		echo $this->build_line_ele( $this->get_constant('FILE_KIND_6'), 
+			$this->_build_ele_file( $pdf_row ) );
+	}
+
+	if ( $swf_row ) {
+		echo $this->build_line_ele( $this->get_constant('FILE_KIND_7'), 
+			$this->_build_ele_file( $swf_row ) );
+	}
 
 	if ( $this->_cfg_perm_item_read > 0 ) {
 		echo $this->build_line_ele(
@@ -586,6 +626,16 @@ function _build_file_link( $name, $field, $file_row )
 		$ele  = $this->build_link_blank( $value );
 	}
 
+	return $ele;
+}
+
+function _build_ele_file( $file_row )
+{
+	$url = $this->build_file_url_size( $file_row ) ;
+	$ele = '';
+	if ( $url ) {
+		$ele = $this->build_link_blank( $url );
+	}
 	return $ele;
 }
 

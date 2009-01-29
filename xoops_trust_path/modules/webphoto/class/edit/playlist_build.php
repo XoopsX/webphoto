@@ -1,19 +1,27 @@
 <?php
-// $Id: playlist_build.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: playlist_build.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// not use webphoto_edit_base()
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_edit_playlist_build
 //=========================================================
-class webphoto_edit_playlist_build extends webphoto_edit_base
+class webphoto_edit_playlist_build extends webphoto_lib_error
 {
 	var $_playlist_class ;
+	var $_icon_build_class;
+	var $_msg_class;
 
 	var $_item_row = null;
 
@@ -22,19 +30,19 @@ class webphoto_edit_playlist_build extends webphoto_edit_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_playlist_build( $dirname , $trust_dirname )
+function webphoto_edit_playlist_build( $dirname )
 {
-	$this->webphoto_edit_base( $dirname , $trust_dirname );
+	$this->webphoto_lib_error();
 
-	$this->_playlist_class  =& webphoto_playlist::getInstance( $dirname , $trust_dirname );
-
+	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname );
+	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_playlist_build( $dirname , $trust_dirname );
+		$instance = new webphoto_edit_playlist_build( $dirname );
 	}
 	return $instance;
 }
@@ -94,14 +102,14 @@ function build( $row )
 			break;
 	}
 
-	$row = $this->build_item_row_icon_if_empty( $row, $this->_THUMB_EXT_DEFAULT );
+	$row = $this->build_row_icon_if_empty( $row, $this->_THUMB_EXT_DEFAULT );
 
 // playlist cache
 	$row['item_playlist_cache'] = $this->_playlist_class->build_name( $item_id ) ;
 
 	$ret = $this->_playlist_class->create_cache_by_item_row( $row );
 	if ( !$ret ) {
-		$this->set_msg_array( $this->_playlist_class->get_errors() );
+		$this->set_error( $this->_playlist_class->get_errors() );
 	}
 
 	$this->_item_row = $row ;
@@ -112,6 +120,8 @@ function build_title( $row )
 {
 	$playlist_dir  = $row['item_playlist_dir'];
 	$playlist_feed = $row['item_playlist_feed'];
+
+	$title = null ;
 
 	if ( $playlist_dir ) {
 		$title = $playlist_dir ;
@@ -135,6 +145,14 @@ function build_title( $row )
 function get_item_row()
 {
 	return $this->_item_row ;
+}
+
+//---------------------------------------------------------
+// icon
+//---------------------------------------------------------
+function build_row_icon_if_empty( $row, $ext=null )
+{
+	return $this->_icon_build_class->build_row_icon_if_empty( $row, $ext );
 }
 
 // --- class end ---

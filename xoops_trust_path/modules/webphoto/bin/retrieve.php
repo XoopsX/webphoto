@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: retrieve.php,v 1.7 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-01-25 K.OHWADA
+// jodconverter.php
 // 2009-01-10 K.OHWADA
 // factory_create.php
 // 2008-12-05 K.OHWADA
@@ -71,6 +73,7 @@ webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
+webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/mail_parse.php' );
 webphoto_include_once( 'class/lib/mail_pop.php' );
@@ -106,6 +109,7 @@ webphoto_include_once( 'class/webphoto/exif.php' );
 webphoto_include_once( 'class/webphoto/ffmpeg.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/pdf.php' );
+webphoto_include_once( 'class/webphoto/jodconverter.php' );
 webphoto_include_once( 'class/webphoto/upload.php' );
 webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );

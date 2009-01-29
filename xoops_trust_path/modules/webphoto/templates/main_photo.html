@@ -1,4 +1,4 @@
-<{* $Id: main_photo.html,v 1.12 2008/11/21 07:56:57 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.13 2009/01/29 04:26:55 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -196,6 +196,24 @@
       <{$photo.code_flash_size}>
     </td><td class="webphoto_td_code_right">
       <input name="webphoto_flash_link" type="text" value="<{$photo.code_flash_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
+    </td></tr>
+  <{/if}>
+  <{if $photo.show_code_pdf }>
+    <tr><td class="webphoto_td_code_left">
+      <{$photo.code_pdf_link}>
+    </td><td class="webphoto_td_code_middle">
+      <{$photo.code_pdf_size}>
+    </td><td class="webphoto_td_code_right">
+      <input name="webphoto_pdf_link" type="text" value="<{$photo.code_pdf_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
+    </td></tr>
+  <{/if}>
+    <{if $photo.show_code_swf }>
+    <tr><td class="webphoto_td_code_left">
+      <{$photo.code_swf_link}>
+    </td><td class="webphoto_td_code_middle">
+      <{$photo.code_swf_size}>
+    </td><td class="webphoto_td_code_right">
+      <input name="webphoto_swf_link" type="text" value="<{$photo.code_swf_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
     </td></tr>
   <{/if}>
   <{if $photo.show_code_thumb }>

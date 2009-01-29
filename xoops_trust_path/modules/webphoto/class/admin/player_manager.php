@@ -1,5 +1,5 @@
 <?php
-// $Id: player_manager.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
+// $Id: player_manager.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// build_movie_by_item_row();
 // 2009-01-10 K.OHWADA
 // $_STYLE_NOT_SET
 // 2008-11-16 K.OHWADA
@@ -205,35 +207,20 @@ function _print_player_table( $mode, $player_row )
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$style = $this->_post_class->get_get_int( 'style', $this->_STYLE_NOT_SET );
+	if ( $style != $this->_STYLE_NOT_SET ) {
+		$player_row['player_style'] = $style ;
+	}
 
 	$player_id = $player_row['player_id'] ;
 
 	$item_id  = 0 ;
 	$item_row = $this->_get_item_row();
 
-// set style if specify
-	if ( $style != $this->_STYLE_NOT_SET ) {
-		$player_row['player_style'] = $style ;
-	}
-
 	$movie = null;
 
 	if ( is_array($item_row) ) {
-		$item_id     = $item_row['item_id'];
-		$flashvar_id = $item_row['item_flashvar_id'] ;
-
-		$param_movie = array(
-			'item_row'       => $item_row , 
-			'cont_row'       => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) , 
-			'thumb_row'      => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) , 
-			'middle_row'     => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) , 
-			'flash_row'      => $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ,
-			'player_row'     => $player_row , 
-			'flashvar_row'   => $this->_flashvar_handler->get_row_by_id_or_default( $flashvar_id ) , 
-			'playlist_cache' => $this->_playlist_class->refresh_cache_by_item_row( $item_row ) ,
-		);
-
-		$movie = $this->_player_class->build_movie( $param_movie );
+		$item_id = $item_row['item_id'];
+		$movie   = $this->_player_class->build_movie_by_item_row( $item_row, $player_row );
 	}
 
 	$op = $mode.'_form';

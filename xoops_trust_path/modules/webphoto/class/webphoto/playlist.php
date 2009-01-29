@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: playlist.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// webphoto_lib_base -> webphoto_lib_error
+// not use get_constant()
 // 2008-11-16 K.OHWADA
 // refresh_cache_by_item_row()
 //---------------------------------------------------------
@@ -21,7 +24,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // http://code.jeroenwijering.com/trac/wiki/Playlists3
 //---------------------------------------------------------
 
-class webphoto_playlist extends webphoto_lib_base
+class webphoto_playlist extends webphoto_lib_error
 {
 	var $_config_class;
 	var $_item_handler;
@@ -30,10 +33,12 @@ class webphoto_playlist extends webphoto_lib_base
 	var $_remote_class;
 	var $_multibyte_class;
 
+	var $_flag_chmod = true;
+
+// result
 	var $_report = null;
 
-	var $_DIRNAME       = null;
-	var $_TRUST_DIRNAME = null;
+	var $_DIRNAME;
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
 
@@ -46,15 +51,27 @@ class webphoto_playlist extends webphoto_lib_base
 	var $_MEDIAPLAYER_EXTS ;
 	var $_CAPTION_EXTS = array('xml');
 
-	var $_ASCII_LOWER_A = 97; 
-	var $_ASCII_LOWER_Z = 122;
+	var $_XML_EXT = 'xml' ;
+
+	var $_lang_status_report  = "Status Report";
+	var $_lang_status_fetched = "This webfeed has been fetched and cached.";
+	var $_lang_status_created = "A new playlist has been cached";
+	var $_lang_err_cache      = "[ERROR] creating cache file";
+	var $_lang_err_nodir      = "The media directory does not exist";
+	var $_lang_err_emptydir   = "The media directory is empty";
+	var $_lang_err_write      = "Can not write the cache file";
+	var $_lang_err_fetch      = "Failed to fetch the web feed. <br />Please confirm the web feed location and refresh the cache.";
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_playlist( $dirname, $trust_dirname )
+function webphoto_playlist( $dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_lib_error();
+
+	$this->_DIRNAME    = $dirname ;
+	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
+	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
 	$this->_config_class    =& webphoto_config::getInstance( $dirname );
 	$this->_item_handler    =& webphoto_item_handler::getInstance( $dirname );
@@ -76,11 +93,11 @@ function webphoto_playlist( $dirname, $trust_dirname )
 	$this->_SWFOBJECT_EXTS = explode( '|', _C_WEBPHOTO_SWFOBJECT_EXTS ) ;
 }
 
-function &getInstance( $dirname, $trust_dirname )
+function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_playlist( $dirname, $trust_dirname );
+		$instance = new webphoto_playlist( $dirname );
 	}
 	return $instance;
 }
@@ -109,12 +126,7 @@ function refresh_cache_by_item_row( $item_row )
 //---------------------------------------------------------
 function build_name( $item_id )
 {
-	$alphabet = chr( rand( $this->_ASCII_LOWER_A, $this->_ASCII_LOWER_Z ) );
-	$str  = $alphabet;
-	$str .= sprintf( "%05d", $item_id );
-	$str .= uniqid( $alphabet );
-	$str .= '.xml';
-	return $str;
+	return $this->build_random_file_name( $item_id, $this->_XML_EXT );
 }
 
 //---------------------------------------------------------
@@ -174,7 +186,7 @@ function get_report()
 {
 	$msg = null ;
 	if ( $this->_report ) {
-		$msg  = $this->get_constant('PLAYLIST_FETCHED') .'<br />' ;
+		$msg  = $this->_lang_status_report.'<br />' ;
 		$msg .= $this->_report ;
 	}
 	return $msg ;
@@ -193,19 +205,19 @@ function _fetch_feed( $row )
 	}
 
 // Fetch
-	$data = $this->_remote_class->read_file( $feed );
+	$data = $this->read_remote_file( $feed );
 
 	if ( $data ) {
 		$ret = $this->_write_cache( $cache, $data );
 		if ( $ret ) {
-			$this->_report = $this->get_constant('PLAYLIST_STATUS_FETCHED') ;
+			$this->_report = $this->_lang_status_fetched ;
 			return true;	// fetched
 		}
 
 // not fetch
 	} else {
 		$this->set_error( 
-			$this->_build_error( 'PLAYLIST_ERR_FETCH', $feed ) ) ;
+			$this->_build_error( $this->_lang_err_fetch, $feed ) ) ;
 	}
 
 	return false;
@@ -215,21 +227,21 @@ function _write_cache( $cache, $data )
 {
 	$file = $this->_PLAYLIST_DIR.'/'.$cache;
 
-	$byte = $this->_utility_class->write_file( $file, $data, 'w', true );
+	$byte = $this->write_file( $file, $data );
 	if ( $byte > 0 ) {
 		return true;
 	}
 
 	$this->set_error( 
-		$this->_build_error( 'PLAYLIST_ERR_WRITE', $cache ) ) ;
+		$this->_build_error( $this->_lang_err_write, $cache ) ) ;
 
 	return false ;
 }
 
-function _build_error( $name, $param )
+function _build_error( $error, $param )
 {
-	$msg  = $this->get_constant('PLAYLIST_ERR_CACHE') .'<br />';
-	$msg .= $this->get_constant( $name ) .'<br />';
+	$msg  = $_lang_err_cache .'<br />';
+	$msg .= $error .'<br />';
 	$msg .= $param ;
 	return $msg ; 
 }
@@ -257,20 +269,20 @@ function _create_list( $row )
 
 	if ( !file_exists($media_dir) || !is_dir($media_dir) ) {
 		$this->set_error( 
-			$this->_build_error( 'PLAYLIST_ERR_NODIR' , $media_dir ) ) ;
+			$this->_build_error( $this->_lang_err_nodir , $media_dir ) ) ;
 		return false;
 	}
 
-	$files = $this->_utility_class->get_files_in_dir( $media_dir, null, false, true );
+	$files = $this->get_files_in_dir( $media_dir, null, false, true );
 	if ( !is_array($files) || !count($files) ) {
 		$this->set_error( 
-			$this->_build_error( 'PLAYLIST_ERR_EMPTYDIR' , $cache ) ) ;
+			$this->_build_error( $this->_lang_err_nodir , $cache ) ) ;
 		return false;
 	}
 
 	foreach ( $files as $file ) 
 	{
-		$name = $this->_utility_class->strip_ext( $file );
+		$name = $this->strip_ext( $file );
 
 		list( $item, $image, $caption )
 			= $this->_parse_entry( $file, $type );
@@ -288,7 +300,7 @@ function _create_list( $row )
 
 	if ( !is_array($params) || !count($params) ) {
 		$this->set_error( 
-			$this->_build_error( 'PLAYLIST_ERR_EMPTYDIR' , $cache ) ) ;
+			$this->_build_error( $this->_lang_err_emptydir , $cache ) ) ;
 		return false;
 	}
 
@@ -296,7 +308,7 @@ function _create_list( $row )
 
 	$ret = $this->_write_cache( $cache, $data );
 	if ( $ret ) {
-		$this->_report  = $this->get_constant('PLAYLIST_STATUS_CREATED') .'<br />';
+		$this->_report  = $this->_lang_status_created .'<br />';
 		$this->_report .= $cache;
 		return true;	// created
 	}
@@ -306,7 +318,7 @@ function _create_list( $row )
 
 function _parse_entry( $file, $type )
 {
-	$file_ext = strtolower( $this->_utility_class->parse_ext( $file ) );
+	$file_ext = strtolower( $this->parse_ext( $file ) );
 
 	$item    = false;
 	$image   = false;
@@ -390,7 +402,7 @@ function _build_playlist_xml( $media_url, $row, $params )
 		$title = null;
 		if ( isset(  $param['item'] ) ) {
 			$item  = $param['item'] ;
-			$title = $this->_utf8( $this->_utility_class->strip_ext( $item ) );
+			$title = $this->_utf8( $this->strip_ext( $item ) );
 		}
 		if ( isset(  $param['image'] ) ) {
 			$image = $param['image'] ;
@@ -424,21 +436,6 @@ function _build_playlist_xml( $media_url, $row, $params )
 	$data .= '</playlist>'."\n";
 
 	return $data;
-}
-
-function _xml($str)
-{
-	return $this->_xml_class->xml_text($str);
-}
-
-function _xml_url($str)
-{
-	return $this->_xml_class->xml_url($str);
-}
-
-function _utf8($str)
-{
-	return $this->_multibyte_class->convert_to_utf8($str);
 }
 
 //---------------------------------------------------------
@@ -495,6 +492,64 @@ function delete( $item_id )
 		}
 	}
 }
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function parse_ext( $file )
+{
+	return $this->_utility_class->parse_ext( $file );
+}
+
+function strip_ext( $file )
+{
+	return $this->_utility_class->strip_ext( $file );
+}
+
+function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false )
+{
+	return $this->_utility_class->get_files_in_dir( $path, $ext, $flag_dir, $flag_sort, $id_as_key );
+}
+
+function write_file( $file, $data, $mode='w' )
+{
+	return $this->_utility_class->write_file( $file, $data, $mode, $this->_flag_chmod );
+}
+
+function build_random_file_name( $id, $ext, $extra=null )
+{
+	return $this->_utility_class->build_random_file_name( $id, $ext, $extra );
+}
+
+//---------------------------------------------------------
+// remote
+//---------------------------------------------------------
+function read_remote_file( $url )
+{
+	return $this->_remote_class->read_file( $url );
+}
+
+//---------------------------------------------------------
+// xml
+//---------------------------------------------------------
+function _xml($str)
+{
+	return $this->_xml_class->xml_text($str);
+}
+
+function _xml_url($str)
+{
+	return $this->_xml_class->xml_url($str);
+}
+
+//---------------------------------------------------------
+// multibyte
+//---------------------------------------------------------
+function _utf8($str)
+{
+	return $this->_multibyte_class->convert_to_utf8($str);
+}
+
 
 // --- class end ---
 }

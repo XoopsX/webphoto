@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.24 2009/01/24 07:10:39 ohwada Exp $
+// $Id: main.php,v 1.25 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -850,8 +850,8 @@ define("_WEBPHOTO_ITEM_FILE_ID_2" ,  "File ID: Thumbnail" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_3" ,  "File ID: MIddle" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "File ID: Flash Video" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "File ID: Docomo Video" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "file6" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "file7" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "File ID: PDF" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "File ID: Flash swf" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
@@ -890,8 +890,8 @@ define("_WEBPHOTO_FILE_KIND_2" ,  "Thumbnail" ) ;
 define("_WEBPHOTO_FILE_KIND_3" ,  "MIddle" ) ;
 define("_WEBPHOTO_FILE_KIND_4" ,  "Flash Video" ) ;
 define("_WEBPHOTO_FILE_KIND_5" ,  "Docomo Video" ) ;
-define("_WEBPHOTO_FILE_KIND_6" ,  "file6" ) ;
-define("_WEBPHOTO_FILE_KIND_7" ,  "file7" ) ;
+define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
+define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
 define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
 define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
@@ -1308,6 +1308,17 @@ define("_WEBPHOTO_CAP_BR",     "Enable linebreak");
 define("_WEBPHOTO_ITEM_WIDTH",  "Width of Image");
 define("_WEBPHOTO_ITEM_HEIGHT", "Height of Image");
 define("_WEBPHOTO_ITEM_CONTENT", "Text Content");
+
+//---------------------------------------------------------
+// v1.20
+//---------------------------------------------------------
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_PDF","PDF");
+define("_WEBPHOTO_ITEM_CODEINFO_SWF","Flash swf");
+
+// form
+define("_WEBPHOTO_ERR_PDF", "Cannot create PDF");
+define("_WEBPHOTO_ERR_SWF", "Cannot create Flash swf");
 
 // === define end ===
 }

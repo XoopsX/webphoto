@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
+// $Id: header.php,v 1.11 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// webphoto_include_once_preload_trust()
 // 2009-01-10 K.OHWADA
 // multibyte.php
 // 2009-01-04 K.OHWADA
@@ -106,6 +108,7 @@ webphoto_include_once( 'class/webphoto/show_list.php' );
 webphoto_include_language( 'modinfo.php' );
 webphoto_include_language( 'main.php' );
 
+webphoto_include_once_preload_trust();
 webphoto_include_once_preload();
 
 ?>

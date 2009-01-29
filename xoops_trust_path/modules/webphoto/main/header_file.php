@@ -1,5 +1,5 @@
 <?php
-// $Id: header_file.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: header_file.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// webphoto_include_once_preload_trust()
 // 2009-01-10 K.OHWADA
 // msg.php
 //---------------------------------------------------------
@@ -30,6 +32,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/d3/language.php' );
+webphoto_include_once( 'class/d3/preload.php' );
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/handler.php' );
@@ -47,5 +50,8 @@ webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/file_read.php' );
 
 webphoto_include_language( 'main.php' );
+
+webphoto_include_once_preload_trust();
+webphoto_include_once_preload();
 
 ?>
