@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.7 2009/01/29 04:26:55 ohwada Exp $
+// $Id: retrieve.php,v 1.8 2009/01/31 20:15:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -131,6 +131,7 @@ webphoto_include_once( 'class/edit/middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );
+webphoto_include_once( 'class/edit/swf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/factory_create.php' );
 webphoto_include_once( 'class/edit/search_build.php' );
