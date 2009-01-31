@@ -1,11 +1,84 @@
-$Id: readme_jp.txt,v 1.22 2009/01/25 14:03:53 ohwada Exp $
+$Id: readme_jp.txt,v 1.23 2009/01/31 20:37:32 ohwada Exp $
+
+=================================================
+Version: 1.20
+Date:   2009-02-01
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. カテゴリ毎に GoogleMap を設置する
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=912
+
+2. ブロックに GoogleMap を設置する
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=913&forum=13
+
+3. Weblinks のアルバムの選択に Webphoto を追加した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=911
+
+4. 登録画面
+(1) 「テキスト文」を編集可能にした
+(2) 下記のファイルを表示した
+- Flash 動画 (flv)
+- Docomo 動画 (3gp)
+- PDF (pdf)
+- Flash (swf)
+
+5. Word (doc)
+(1) jodconverter, xpdf, imagemagick が必要です
+- http://www.artofsolving.com/opensource/jodconverter
+- http://www.foolabs.com/xpdf/
+- http://www.imagemagick.org/script/index.php
+(2) Word から PDF を生成する
+(3) Word からサムネイルを生成する
+(4) Word からテキストを抽出し「テキスト文」欄に表示する
+
+6. Excel (xls)
+(1) jodconverter, xpdf, imagemagick が必要です
+(2) Excel から PDF を生成する
+(3) Excel からサムネイルを生成する
+(4) Excel からテキストを抽出し「テキスト文」欄に表示する
+
+7. PowerPoint (ppt)
+(1) jodconverter, xpdf, imagemagick が必要です
+(2) PowerPoint から PDF を生成する
+(3) PowerPoint からフラッシュ (swf) を生成する
+(4) PowerPoint からサムネイルを生成する
+(5) PowerPoint からテキストを抽出し「テキスト文」欄に表示する
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
+
+● 使用上の注意
+1. jodconverter
+(1) preload ファイルをリネームする
+XOOPS_TRUST_PATH/modules/webphoto/preload/_jodconverter.php (アンダーバーあり)
+ -> _jodconverter.php (アンダーバーあり)
+
+(2) 環境に合わせて、パスを設定する
+-----
+define("_C_WEBPHOTO_JAVA_PATH", "/usr/bin/" ) ;
+define("_C_WEBPHOTO_JODCONVERTER_JAR", "/usr/local/java/jodconverter-2.2.1/lib/jodconverter-cli-2.2.1.jar" ) ;
+-----
+
+
+● 注意
+大きな問題はないはずですが、小さな問題はあると思います。
+何か問題が出ても、自分でなんとか出来る人のみお使いください。
+バグ報告やバグ解決などは歓迎します。
+
 
 =================================================
 Version: 1.10
 Date:   2009-01-25
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
@@ -1149,7 +1222,7 @@ Warning [Xoops]: Smarty error: unable to read resource: "db:_inc_gmap_js.html" i
 2. xoops 2.0.18
 上記に加えて
 (1) preload ファイルをリネームする
-XOOPS_TRUUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
+XOOPS_TRUST_PATH/modules/webphoto/preload/_constants.php (アンダーバーあり)
  -> constants.php (アンダーバーなし)
 
 (2) _C_WEBPHOTO_PRELOAD_XOOPS_2018 を有効にする

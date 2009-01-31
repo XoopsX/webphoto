@@ -1,11 +1,85 @@
-$Id: readme_en.txt,v 1.22 2009/01/25 14:03:53 ohwada Exp $
+$Id: readme_en.txt,v 1.23 2009/01/31 20:37:32 ohwada Exp $
+
+=================================================
+Version: 1.20
+Date:   2009-02-01
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. added GoogleMap in category
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=912
+
+2. added GoogleMap in block
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=913&forum=13
+
+3. Added Webphoto to the album select of Weblinks.
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=911
+
+4. Edit form
+(1) you can edit "content"
+(2) show the following files
+- Flash video (flv)
+- Docomo video (3gp)
+- PDF (pdf)
+- Flash (swf)
+
+5. Word file (doc)
+(1) require jodconverter, xpdf, imagemagick
+- http://www.artofsolving.com/opensource/jodconverter
+- http://www.foolabs.com/xpdf/
+- http://www.imagemagick.org/script/index.php
+(2) create PDF file from Word
+(3) create the thumbnail from Word
+(4) extract the text content from Word
+
+6. Excel file (xls)
+(1) require jodconverter, xpdf, imagemagick
+(2) create PDF file from Excel
+(3) create the thumbnail from Excel
+(4) extract the text content from Excel
+
+7. PowerPoint file (ppt)
+(1) require jodconverter, xpdf, imagemagick
+(2) create PDF file from PowerPoint
+(2) create Flash file (swf) from PowerPoint
+(3) create the thumbnail from PowerPoint
+(4) extract the text content from PowerPoint
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+  Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp.
+
+
+* Notice for usage *
+1. jodconverter
+(1) rename preload file.
+XOOPS_TRUUST_PATH/modules/webphoto/preload/_jodconverter.php (with undebar)
+ -> jodconverter.php (without undebar)
+
+(2) set path according to your enviroment
+-----
+define("_C_WEBPHOTO_JAVA_PATH", "/usr/bin/" ) ;
+define("_C_WEBPHOTO_JODCONVERTER_JAR", "/usr/local/java/jodconverter-2.2.1/lib/jodconverter-cli-2.2.1.jar" ) ;
+-----
+
+
+* Notice *
+In this version, I changed program structure substantially.
+Although there are no big problem, but I think that there are any small problem. 
+Even if some problems come out, only those who can do somehow personally need to use. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 1.10
 Date:   2009-01-25
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
