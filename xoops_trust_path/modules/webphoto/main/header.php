@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.11 2009/01/29 04:26:55 ohwada Exp $
+// $Id: header.php,v 1.12 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2009-01-25 K.OHWADA
-// webphoto_include_once_preload_trust()
+// gmap_api.php
 // 2009-01-10 K.OHWADA
 // multibyte.php
 // 2009-01-04 K.OHWADA
@@ -44,6 +44,7 @@ include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 define("QRCODE_DATA_PATH", WEBPHOTO_TRUST_PATH.'/class/qrcode/qrcode_data' );
 
 webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'include/gmap_api.php' );
 webphoto_include_once( 'class/qrcode/qrcode_img.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/handler.php' );
@@ -54,6 +55,7 @@ webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/inc/auto_publish.php' );
 webphoto_include_once( 'class/inc/uri.php' );
+webphoto_include_once( 'class/inc/gmap_info.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_select.php' );
 webphoto_include_once( 'class/d3/preload.php' );
@@ -84,6 +86,7 @@ webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/flashvar_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );
+webphoto_include_once( 'class/webphoto/xoops_header.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
@@ -91,7 +94,6 @@ webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
-webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
 webphoto_include_once( 'class/webphoto/photo_public.php' );

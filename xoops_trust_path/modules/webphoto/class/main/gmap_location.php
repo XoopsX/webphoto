@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.3 2008/08/25 19:28:05 ohwada Exp $
+// $Id: gmap_location.php,v 1.4 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// get_gmap_center()
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 // 2008-07-01 K.OHWADA
@@ -73,36 +75,27 @@ function main()
 function _assign_template( $cfg_gmap_apikey )
 {
 	$get_photo_id = $this->_post_class->get_get_int('photo_id');
-
-	$cfg_gmap_latitude  = $this->get_config_by_name( 'gmap_latitude' );
-	$cfg_gmap_longitude = $this->get_config_by_name( 'gmap_longitude' );
-	$cfg_gmap_zoom      = $this->get_config_by_name( 'gmap_zoom' );
+	$get_cat_id   = $this->_post_class->get_get_int('cat_id');
 
 	$flag_set_location = false;
-
 	$show_gmap = false;
 	$gmap_list = null;
 
-	if ( ( $cfg_gmap_latitude != 0 )  ||
-	     ( $cfg_gmap_longitude != 0 ) ||
-	     ( $cfg_gmap_zoom != 0 ) ) 
-	{
-		$flag_set_location = true;
-		$gmap_latitude     = $cfg_gmap_latitude;
-		$gmap_longitude    = $cfg_gmap_longitude;
-		$gmap_zoom         = $cfg_gmap_zoom;
-	}
+	list( $code, $latitude, $longitude, $zoom ) =
+		$this->_gmap_class->get_gmap_center( $get_photo_id, $get_cat_id );
 
-	if ( $get_photo_id > 0 ) {
-		$row = $this->_item_handler->get_row_by_id( $get_photo_id );
-		if ( is_array($row) && $this->_gmap_class->exist_gmap( $row ) ) { 
-			$flag_set_location = true;
-			$gmap_latitude     = $row['item_gmap_latitude'];
-			$gmap_longitude    = $row['item_gmap_longitude'];
-			$gmap_zoom         = $row['item_gmap_zoom'];
+	if ( $code > 0 ) {
+		$flag_set_location = true;
+		$gmap_latitude     = $latitude;
+		$gmap_longitude    = $longitude;
+		$gmap_zoom         = $zoom;
+
+// if item
+		if ( $code == 2 ) {
+			$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
 
 			list( $show_gmap, $gmap_list ) 
-				= $this->_build_list_location( $row );
+				= $this->_build_list_location( $item_row );
 		}
 	}
 

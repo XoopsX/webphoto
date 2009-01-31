@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: header_edit.php,v 1.5 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -47,6 +47,7 @@ webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/inc/uri.php' );
+webphoto_include_once( 'class/inc/gmap_info.php' );
 webphoto_include_once( 'class/lib/pagenavi.php' );
 webphoto_include_once( 'class/inc/admin_menu.php' );
 
@@ -103,7 +104,6 @@ webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
-webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.10 2008/12/20 06:11:27 ohwada Exp $
+// $Id: show_main.php,v 1.11 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// webphoto_inc_xoops_header -> webphoto_xoops_header
+// get_gmap_center()
 // 2008-12-12 K.OHWADA
 // webphoto_photo_public
 // 2008-12-07 K.OHWADA
@@ -128,7 +131,8 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_gmap_class       =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
 	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
 	$this->_public_class     =& webphoto_photo_public::getInstance( $dirname );
-
+	$this->_header_class     =& webphoto_xoops_header::getInstance( $dirname );
+	
 	$this->_notification_select_class =& webphoto_d3_notification_select::getInstance();
 	$this->_notification_select_class->init( $dirname ); 
 
@@ -508,9 +512,8 @@ function build_gmap( $cat_id=0, $limit )
 	$show  = false;
 	$icons = null;
 
-	$cfg_gmap_latitude  = $this->_config_class->get_by_name('gmap_latitude');
-	$cfg_gmap_longitude = $this->_config_class->get_by_name('gmap_longitude');
-	$cfg_gmap_zoom      = $this->_config_class->get_by_name('gmap_zoom');
+	list( $code, $latitude, $longitude, $zoom ) =
+		$this->_gmap_class->get_gmap_center( 0, $cat_id );
 
 	$photos = $this->_gmap_class->build_photo_list_by_catid( $cat_id, $limit );
 	if ( is_array($photos) && count($photos) ) {
@@ -522,9 +525,9 @@ function build_gmap( $cat_id=0, $limit )
 		'show_gmap'         => $show ,
 		'gmap_photos'       => $photos ,
 		'gmap_icons'        => $icons ,
-		'gmap_latitude'     => $cfg_gmap_latitude,
-		'gmap_longitude'    => $cfg_gmap_longitude,
-		'gmap_zoom'         => $cfg_gmap_zoom,
+		'gmap_latitude'     => $latitude,
+		'gmap_longitude'    => $longitude,
+		'gmap_zoom'         => $zoom,
 		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
 	);
 	return $arr;
@@ -818,8 +821,7 @@ function assign_xoops_header( $mode, $rss_param=null, $flag_gmap=false )
 		'lang_popbox_revert' => $this->get_constant('POPBOX_REVERT') ,
 	);
 
-	$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
-	$header_class->assign_for_main( $param );
+	$this->_header_class->assign_for_main( $param );
 }
 
 // --- class end ---

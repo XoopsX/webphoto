@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.5 2009/01/29 04:26:55 ohwada Exp $
+// $Id: header_submit.php,v 1.6 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,7 @@ include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'include/gmap_api.php' );
 
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/xoops/user.php' );
@@ -88,7 +89,6 @@ webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
-webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );

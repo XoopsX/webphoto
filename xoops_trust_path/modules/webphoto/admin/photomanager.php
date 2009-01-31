@@ -1,5 +1,5 @@
 <?php
-// $Id: photomanager.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: photomanager.php,v 1.5 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// remove gmap.php
 // 2008-01-10 K.OHWADA
 // class/edit/xxx
 // 2008-11-16 K.OHWADA
@@ -32,8 +34,6 @@ webphoto_include_once( 'class/handler/p2t_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/webphoto/cat_selbox.php' );
-webphoto_include_once( 'class/webphoto/gmap_info.php' );
-webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );

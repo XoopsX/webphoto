@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.1 2009/01/29 04:28:09 ohwada Exp $
+// $Id: jodconverter.php,v 1.2 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,12 +22,13 @@ class webphoto_jodconverter extends webphoto_lib_error
 	var $_use_jod    = false;
 	var $_java_path  = '';
 	var $_flag_chmod = true;
+	var $_junk_words = null;
 
 	var $_TMP_DIR;
 	var $_TEXT_EXT = 'txt';
 	var $_HTML_EXT = 'html';
 
-	var $_JUNK_WORDS = array(
+	var $_JUNK_WORDS_ENG = array(
 		'Slide', 'First', 'Last', 'Back', 'Continue', 'Graphics', 'Text', 'page', 
 		'Overview', 'Sheet'
 	); 
@@ -54,6 +55,14 @@ function webphoto_jodconverter( $dirname )
 	if ( defined("_C_WEBPHOTO_JODCONVERTER_JAR" ) ) {
 		$this->_jod_class->set_jodconverter_jar( _C_WEBPHOTO_JODCONVERTER_JAR );
 		$this->_use_jod = true;
+	}
+
+// junk words
+	$arr = $this->str_to_array( _WEBPHOTO_JODCONVERTER_JUNK_WORDS, '|' );
+	if ( is_array($arr) ) {
+		$this->_junk_words = array_merge( $this->_JUNK_WORDS_ENG, $arr );
+	} else {
+		$this->_junk_words = $this->_JUNK_WORDS_ENG ;
 	}
 }
 
@@ -152,7 +161,7 @@ function get_text_content_for_xls_ppt( $src_file )
 	$html_file = $dir .'/'. $node .'.'. $this->_HTML_EXT ;
 	$this->_jod_class->convert( $src_file, $html_file );
 
-	$file_arr = $this->_utility_class->get_files_in_dir( $dir, $this->_HTML_EXT, false, true );
+	$file_arr = $this->get_files_in_dir( $dir, $this->_HTML_EXT, false, true );
 	if ( !is_array($file_arr) ) {
 		$arr = array(
 			'flag'   => false ,
@@ -187,7 +196,7 @@ function get_text_content_for_xls_ppt( $src_file )
 
 // remove tmp dir
 	if ( $flag_dir ) {
-		$file_arr = $this->_utility_class->get_files_in_dir( $dir );
+		$file_arr = $this->get_files_in_dir( $dir );
 		if ( is_array($file_arr) ) {
 			foreach ( $file_arr as $file ) 
 			{
@@ -208,13 +217,12 @@ function get_text_content_for_xls_ppt( $src_file )
 	}
 
 	$text = $this->_multibyte_class->convert_from_utf8( $text );
+	$text = $this->_multibyte_class->build_plane_text(  $text );
 
 // remove junk word
-	foreach ( $this->_JUNK_WORDS as $word ) {
-		$text = str_replace( $word, '', $text );
+	foreach ( $this->_junk_words as $word ) {
+		$text = str_replace( ' '.$word.' ', ' ', $text );
 	}
-
-	$text = $this->_multibyte_class->build_plane_text( $text );
 
 	$arr = array(
 		'flag'    => true ,
@@ -229,7 +237,7 @@ function get_text_content_for_xls_ppt( $src_file )
 function convert_single( $src_file, $dst_file )
 {
 	if ( !$this->_use_jod ) {
-		return false;
+		return 0 ;	// no action
 	}
 
 	$ret = $this->_jod_class->convert( $src_file, $dst_file );
@@ -237,11 +245,11 @@ function convert_single( $src_file, $dst_file )
 		if ( $this->_flag_chmod ) {
 			chmod( $dst_file, 0777 );
 		}
-		return true;
+		return 1 ;	// suceess
 	}
 
 	$this->set_error( $this->_jod_class->get_msg_array() );
-	return false;
+	return -1 ;	// fail
 }
 
 //---------------------------------------------------------
@@ -260,6 +268,19 @@ function java_path()
 function version()
 {
 	return $this->_jod_class->version();
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function str_to_array( $str, $pattern )
+{
+	return $this->_utility_class->str_to_array( $str, $pattern );
+}
+
+function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false )
+{
+	return $this->_utility_class->get_files_in_dir( $path, $ext, $flag_dir, $flag_sort, $id_as_key );
 }
 
 // --- class end ---

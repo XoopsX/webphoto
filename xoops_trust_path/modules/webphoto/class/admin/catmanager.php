@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
+// $Id: catmanager.php,v 1.9 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// cat_gmap_latitude
 // 2009-01-14 K.OHWADA
 // webphoto_photo_delete -> webphoto_edit_item_delete
 // 2009-01-13 K.OHWADA
@@ -29,7 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_catmanager
 //=========================================================
-class webphoto_admin_catmanager extends webphoto_base_this
+class webphoto_admin_catmanager extends webphoto_edit_base
 {
 	var $_delete_class;
 	var $_upload_class;
@@ -56,7 +58,7 @@ class webphoto_admin_catmanager extends webphoto_base_this
 //---------------------------------------------------------
 function webphoto_admin_catmanager( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
 	$this->_delete_class    =& webphoto_edit_item_delete::getInstance( $dirname );
 	$this->_upload_class    =& webphoto_upload::getInstance( $dirname , $trust_dirname );
@@ -134,10 +136,10 @@ function main()
 
 function _get_action()
 {
-	$action  = $this->_post_class->get_post_text('action');
-	$confirm = $this->_post_class->get_post_text('del_confirm');
-	$delcat  = $this->_post_class->get_post_text('delcat');
-	$cat_id  = $this->_post_class->get_post_int('cat_id');
+	$action  = $this->get_post_text('action');
+	$confirm = $this->get_post_text('del_confirm');
+	$delcat  = $this->get_post_text('delcat');
+	$cat_id  = $this->get_post_int('cat_id');
 
 	$ret = '';
 	if( $confirm ) {
@@ -173,8 +175,8 @@ function _get_disp()
 //---------------------------------------------------------
 function _insert()
 {
-	$post_pid   = $this->_post_class->get_post_int('cat_pid');
-	$post_title = $this->_post_class->get_post_text('cat_title');
+	$post_pid   = $this->get_post_int('cat_pid');
+	$post_title = $this->get_post_text('cat_title');
 
 	$error = null;
 
@@ -229,12 +231,15 @@ function _build_row( $row )
 
 function _build_row_by_post( $row )
 {
-	$row['cat_pid']         = $this->_post_class->get_post_int('cat_pid');
-	$row['cat_gicon_id']    = $this->_post_class->get_post_int('cat_gicon_id');
-	$row['cat_weight']      = $this->_post_class->get_post_int('cat_weight');
-	$row['cat_title']       = $this->_post_class->get_post_text('cat_title');
-	$row['cat_description'] = $this->_post_class->get_post_text('cat_description');
-	$row['cat_perm_post']   = $this->get_group_perms_str_by_post('cat_perm_post_ids');
+	$row['cat_pid']            = $this->get_post_int('cat_pid');
+	$row['cat_gicon_id']       = $this->get_post_int('cat_gicon_id');
+	$row['cat_weight']         = $this->get_post_int('cat_weight');
+	$row['cat_title']          = $this->get_post_text('cat_title');
+	$row['cat_description']    = $this->get_post_text('cat_description');
+	$row['cat_perm_post']      = $this->get_group_perms_str_by_post('cat_perm_post_ids');
+	$row['cat_gmap_latitude']  = $this->get_post_float( 'cat_gmap_latitude' );
+	$row['cat_gmap_longitude'] = $this->get_post_float( 'cat_gmap_longitude' );
+	$row['cat_gmap_zoom']      = $this->get_post_int(   'cat_gmap_zoom' );
 
 	if ( $this->_cfg_perm_cat_read > 0 ) {
 		$row['cat_perm_read'] = $this->get_group_perms_str_by_post('cat_perm_read_ids');
@@ -245,7 +250,7 @@ function _build_row_by_post( $row )
 
 function _build_img_path_by_post()
 {
-	$img_path = $this->_post_class->get_post_text('cat_img_path');
+	$img_path = $this->get_post_text('cat_img_path');
 
 	if ( $this->check_http_null( $img_path ) ) {
 		return '';
@@ -260,7 +265,7 @@ function _build_img_name( $row )
 {
 // set img
 	$fetch_img_name = $this->_fetch_image();
-	$post_img_name  = $this->_post_class->get_post_text('cat_img_name');
+	$post_img_name  = $this->get_post_text('cat_img_name');
 	$post_img_path  = $this->_build_img_path_by_post();
 
 	if ( $fetch_img_name ) {
@@ -360,8 +365,8 @@ function _update()
 		exit() ;
 	}
 
-	$post_catid = $this->_post_class->get_post_int('cat_id');
-	$post_pid   = $this->_post_class->get_post_int('cat_pid');
+	$post_catid = $this->get_post_int('cat_id');
+	$post_pid   = $this->get_post_int('cat_pid');
 
 	// Check if new pid was a child of cid
 	if ( $post_pid != 0 ) {
@@ -415,7 +420,7 @@ function _update()
 
 function _update_child( $cat_id, $row_update )
 {
-	$post_perm_child = $this->_post_class->get_post_int('perm_child');
+	$post_perm_child = $this->get_post_int('perm_child');
 
 	if ( $post_perm_child != _C_WEBPHOTO_YES ) {
 		return true;	// no action
@@ -464,7 +469,7 @@ function _delete()
 	}
 
 	// Delete
-	$post_catid = $this->_post_class->get_post_int('cat_id');
+	$post_catid = $this->get_post_int('cat_id');
 
 	//get all categories under the specified category
 	$children = $this->_cat_handler->getAllChildId( $post_catid ) ;
@@ -525,8 +530,8 @@ function _weight()
 		exit();
 	}
 
-	$weight_arr    = $this->_post_class->get_post('weight');
-	$oldweight_arr = $this->_post_class->get_post('oldweight');
+	$weight_arr    = $this->get_post('weight');
+	$oldweight_arr = $this->get_post('oldweight');
 
 	foreach( $weight_arr as $id => $weight ) 
 	{
@@ -653,7 +658,7 @@ function _print_del_confirm()
 	echo $this->build_bread_crumb( $this->get_admin_title( 'CATMANAGER' ), $this->_THIS_URL );
 	echo $this->build_admin_title( 'CATMANAGER' );
 
-	$get_catid = $this->_post_class->get_post_int('cat_id');
+	$get_catid = $this->get_post_int('cat_id');
 
 	$row = $this->_cat_handler->get_row_by_id( $get_catid );
 	if ( !is_array($row ) ) {

@@ -1,10 +1,16 @@
 <?php
-// $Id: tagcloud.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: tagcloud.php,v 1.3 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-01-25 K.OHWADA
+// _init_config( $dirname )
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -34,6 +40,8 @@ function webphoto_inc_tagcloud( $dirname )
 	$this->webphoto_inc_handler();
 	$this->init_handler( $dirname );
 
+	$this->_init_config( $dirname );
+
 	$this->_item_table = $this->prefix_dirname( 'item' );
 	$this->_cat_table  = $this->prefix_dirname( 'cat' );
 	$this->_tag_table  = $this->prefix_dirname( 'tag' );
@@ -47,24 +55,6 @@ function &getSingleton( $dirname )
 		$singletons[ $dirname ] = new webphoto_inc_tagcloud( $dirname );
 	}
 	return $singletons[ $dirname ];
-}
-
-//---------------------------------------------------------
-// init
-//---------------------------------------------------------
-function set_use_pathinfo( $val )
-{
-	$this->_cfg_use_pathinfo = (bool)$val ;
-}
-
-function set_perm_cat_read( $val )
-{
-	$this->_cfg_perm_cat_read = intval($val) ;
-}
-
-function set_perm_item_read( $val )
-{
-	$this->_cfg_perm_item_read = intval($val) ;
 }
 
 //---------------------------------------------------------
@@ -249,6 +239,18 @@ function _get_tag_rows_with_count( $key, $limit=0, $offset=0 )
 	$sql .= ' GROUP BY t.tag_id ';
 	$sql .= ' ORDER BY photo_count DESC';
 	return $this->get_rows_by_sql( $sql, $limit, $offset, $key );
+}
+
+//---------------------------------------------------------
+// config
+//---------------------------------------------------------
+function _init_config( $dirname )
+{
+	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
+
+	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
+	$this->_cfg_perm_cat_read  = $config_handler->get_by_name( 'perm_cat_read' );
+	$this->_cfg_perm_item_read = $config_handler->get_by_name( 'perm_item_read' );
 }
 
 // --- class end ---

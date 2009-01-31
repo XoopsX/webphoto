@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.15 2009/01/29 04:26:55 ohwada Exp $
+// $Id: blocks.php,v 1.16 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2009-01-25 K.OHWADA
-// remove catlist->set_perm_cat_read()
+// webphoto_inc_gmap_block
 // 2009-01-04 K.OHWADA
 // fatal error: Call to undefined method get_cat_parent_all_child_id()
 // 2008-12-12 K.OHWADA
@@ -39,12 +39,20 @@ class webphoto_inc_blocks extends webphoto_inc_public
 {
 	var $_multibyte_class ;
 	var $_catlist_class ;
+	var $_header_class;
+	var $_tagcloud_class ;
+	var $_gmap_block_class ;
+	var $_gmap_info_class  ;
 
 	var $_cfg_use_popbox     = false;
 	var $_cfg_thumb_width    = 0 ;
 	var $_cfg_thumb_height   = 0 ;
 	var $_cfg_cat_main_width = 0 ;
 	var $_cfg_cat_sub_width  = 0 ;
+	var $_cfg_gmap_apikey    = null ;
+	var $_cfg_gmap_latitude  = 0 ;
+	var $_cfg_gmap_longitude = 0 ;
+	var $_cfg_gmap_zoom      = 0 ;
 
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
@@ -94,6 +102,21 @@ function &getInstance()
 	return $instance;
 }
 
+function _init( $options )
+{
+	$dirname = $this->_get_option( $options, 0, null ) ;
+
+	$this->init_public( $dirname );
+	$this->_init_xoops_config_for_block( $dirname );
+	$this->auto_publish( $dirname );
+
+	$this->_header_class     =& webphoto_inc_xoops_header::getSingleton( $dirname );
+	$this->_catlist_class    =& webphoto_inc_catlist::getSingleton( $dirname );
+	$this->_tagcloud_class   =& webphoto_inc_tagcloud::getSingleton( $dirname );
+	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
+	$this->_gmap_info_class  =& webphoto_inc_gmap_info::getSingleton( $dirname );
+}
+
 //---------------------------------------------------------
 // topnews
 //
@@ -105,6 +128,15 @@ function &getInstance()
 //   4 : title_max_length (20)
 //   5 : cols (1)
 //   6 : cache_time (0)
+
+// [10] google map mode (0)
+//       when 0, not show
+//       when 1, use config latitude/longitude/zoom
+//       when 2, use following value
+// [11] google map latitude  (0)
+// [12] google map longitude (0)
+// [13] google map zoom      (0)
+// [14] google map height  (300) px
 //---------------------------------------------------------
 function topnews_show( $options )
 {
@@ -121,7 +153,13 @@ function topnews_p_show( $options )
 function topnews_edit( $options )
 {
 	$this->_init( $options );
-	return $this->_top_edit_common( $options ) ;
+	return $this->_top_edit_common( 'topnews', $options ) ;
+}
+
+function topnews_p_edit( $options )
+{
+	$this->_init( $options );
+	return $this->_top_edit_common( 'topnews_p', $options ) ;
 }
 
 //---------------------------------------------------------
@@ -142,7 +180,13 @@ function tophits_p_show( $options )
 function tophits_edit( $options )
 {
 	$this->_init( $options );
-	return $this->_top_edit_common( $options ) ;
+	return $this->_top_edit_common('tophits', $options ) ;
+}
+
+function tophits_p_edit( $options )
+{
+	$this->_init( $options );
+	return $this->_top_edit_common( 'tophits_p', $options ) ;
 }
 
 //---------------------------------------------------------
@@ -157,7 +201,7 @@ function rphoto_show( $options )
 function rphoto_edit( $options )
 {
 	$this->_init( $options );
-	return $this->_top_edit_common( $options ) ;
+	return $this->_top_edit_common( 'rphoto', $options ) ;
 }
 
 //---------------------------------------------------------
@@ -261,14 +305,8 @@ function tagcloud_show( $options )
 	$limit = $this->_get_option_int(  $options, 1 ) ;
 
 	$block = array() ;
-	$block['dirname'] = $this->_DIRNAME ;
-
-	$tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $this->_DIRNAME );
-	$tagcloud_class->set_use_pathinfo(   $this->_cfg_use_pathinfo );
-	$tagcloud_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
-	$tagcloud_class->set_perm_item_read( $this->_cfg_perm_item_read );
-
-	$block['tagcloud'] = $tagcloud_class->build_tagcloud( $limit );
+	$block['dirname']  = $this->_DIRNAME ;
+	$block['tagcloud'] = $this->_tagcloud_class->build_tagcloud( $limit );
 
 	return $this->_assign_block( 'tagcloud', $block ) ;
 }
@@ -294,19 +332,8 @@ function tagcloud_edit( $options )
 }
 
 //---------------------------------------------------------
-// common
+// show common
 //---------------------------------------------------------
-function _init( $options )
-{
-	$dirname = $this->_get_option( $options, 0, null ) ;
-
-	$this->init_public( $dirname );
-	$this->_init_xoops_config_for_block( $dirname );
-	$this->auto_publish( $dirname );
-
-	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-}
-
 function _top_show_common( $mode , $options )
 {
 	$cache_time        = $this->_get_option_int(  $options, 6 ) ;
@@ -384,17 +411,27 @@ function _build_block( $mode , $options )
 	}
 
 	$block['photo_num'] = $count - 1 ;
+
+	list( $show_gmap, $gmap ) =
+		$this->_build_gmap_block( $mode, $block['photo'], $options );
+
+	$block['show_gmap'] = $show_gmap ;
+	$block['gmap']      = $gmap ;
+
 	return $block ;
 }
 
-function _top_edit_common( $options )
+//---------------------------------------------------------
+// edit common
+//---------------------------------------------------------
+function _top_edit_common( $mode, $options )
 {
-	$photos_num          = $this->_get_option_int(  $options, 1, 5 ) ;
-	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
-	$cat_limit_recursive = $this->_get_option_int(  $options, 3, 0 ) ;
-	$title_max_length    = $this->_get_option_int(  $options, 4, 20 ) ;
-	$cols                = $this->_get_option_cols( $options, 5 ) ;
-	$cache_time          = $this->_get_option_int(  $options, 6 ) ;
+	$photos_num          = $this->_get_option_int(   $options, 1, 5 ) ;
+	$cat_limitation      = $this->_get_option_int(   $options, 2, 0 ) ;
+	$cat_limit_recursive = $this->_get_option_int(   $options, 3, 0 ) ;
+	$title_max_length    = $this->_get_option_int(   $options, 4, 20 ) ;
+	$cols                = $this->_get_option_cols(  $options, 5 ) ;
+	$cache_time          = $this->_get_option_int(   $options, 6 ) ;
 
 	$catselbox = $this->_get_catselbox( $cat_limitation , 1 , 'options[2]' ) ;
 
@@ -427,7 +464,48 @@ function _top_edit_common( $options )
 	$ret .= $this->_constant( 'TEXT_CACHETIME' );
 	$ret .= '</td><td>'."\n";
 	$ret .= $this->build_form_select( 'options[6]', $cache_time, $this->_CACHE_OPTIONS );
-	$ret .= '</td></tr></table>'."\n";
+	$ret .= "</td></tr>\n";
+
+	if ( $this->_check_gmap( $mode ) ) {
+		$ret .= $this->_top_edit_gmap( $options ) ;
+	}
+
+	$ret .= '</table>'."\n";
+
+	return $ret;
+}
+
+function _top_edit_gmap( $options )
+{
+	$gmap_mode           = $this->_get_option_int(   $options, 7 );
+	$gmap_latitude       = $this->_get_option_float( $options, 8 );
+	$gmap_longitude      = $this->_get_option_float( $options, 9 );
+	$gmap_zoom           = $this->_get_option_int(   $options, 10 );
+	$gmap_height         = $this->_get_option_int(   $options, 11 );
+
+	$ret  = '<tr><td>'."\n";
+	$ret .= $this->_constant('GMAP_MODE') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[7]" value="'. $gmap_mode .'" />'."\n";
+	$ret .= $this->_constant('GMAP_MODE_DSC') ;
+	$ret .= "</td></tr>\n<tr><td>";
+	$ret .= $this->_constant('GMAP_LATITUDE') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[8]" value="'. $gmap_latitude .'" />'."\n";
+	$ret .= "</td></tr>\n<tr><td>";
+	$ret .= $this->_constant('GMAP_LONGITUDE') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[9]" value="'. $gmap_longitude .'" />'."\n";
+	$ret .= "</td></tr>\n<tr><td>";
+	$ret .= $this->_constant('GMAP_ZOOM') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[10]" value="'. $gmap_zoom .'" />'."\n";
+	$ret .= "</td></tr>\n<tr><td>";
+	$ret .= $this->_constant('GMAP_HEIGHT') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[11]" value="'. $gmap_height .'" />'."\n";
+	$ret .= $this->_constant('PIXEL') ;
+	$ret .= '</td></tr>'."\n";
 
 	return $ret;
 }
@@ -488,6 +566,12 @@ function _get_option_int( $options, $num, $default=0 )
 {
 	$val = $this->_get_option( $options, $num, $default );
 	return intval( $val );
+}
+
+function _get_option_float( $options, $num, $default=0 )
+{
+	$val = $this->_get_option( $options, $num, $default );
+	return floatval( $val );
 }
 
 function _get_option_cols( $options, $num )
@@ -647,6 +731,89 @@ function _adjust_image_size( $width, $height, $max_width, $max_height )
 }
 
 //---------------------------------------------------------
+// gmap
+//---------------------------------------------------------
+function _build_gmap_block( $mode, $photos, $options )
+{
+	if ( ! $this->_check_gmap( $mode ) ) {
+		return array( false, null );	
+	}
+
+	$gmap_mode  = $this->_get_option_int(   $options, 7 );
+	$latitude   = $this->_get_option_float( $options, 8 );
+	$longitude  = $this->_get_option_float( $options, 9 );
+	$zoom       = $this->_get_option_int(   $options, 10 );
+	$height     = $this->_get_option_int(   $options, 11 );
+
+	$photo_arr = array();
+	foreach( $photos as $photo ) 
+	{
+		if ( ! $this->_exist_gmap( $photo ) ) {
+			continue;
+		}
+
+		$temp = $photo;
+		$temp['gmap_latitude']  = $photo['item_gmap_latitude'] ;
+		$temp['gmap_longitude'] = $photo['item_gmap_longitude'] ;
+		$temp['gmap_info']      = $this->_gmap_info_class->build_info( $photo );
+		$photo_arr[] = $temp;
+	}
+
+	if ( !is_array($photo_arr) || !count($photo_arr) ) {
+		return array( false, null );
+	}
+
+// google map
+	$param = array(
+		'block_mode'        => $mode ,
+		'photos'            => $photo_arr ,
+		'apikey'            => $this->_cfg_gmap_apikey ,
+		'default_latitude'  => $this->_cfg_gmap_latitude ,
+		'default_longitude' => $this->_cfg_gmap_longitude ,
+		'default_zoom'      => $this->_cfg_gmap_zoom ,
+		'gmap_mode'         => $gmap_mode ,
+		'option_latitude'   => $latitude ,
+		'option_longitude'  => $longitude ,
+		'option_zoom'       => $zoom ,
+		'height'            => $height ,
+	);
+
+	return $this->_gmap_block_class->build_gmap( $param );
+}
+
+function _exist_gmap( $photo )
+{
+	if ( $photo['item_gmap_latitude'] != 0 ) {
+		return true;
+	}
+	if ( $photo['item_gmap_longitude'] != 0 ) {
+		return true;
+	}
+	if ( $photo['item_gmap_zoom'] != 0 ) {
+		return true;
+	}
+	return false ;
+}
+
+function _check_gmap( $mode )
+{
+	switch( $mode )
+	{
+		case 'topnews_p':
+		case 'tophits_p':
+		case 'rphoto':
+			return true;
+			break;
+
+		case 'tophits':
+		case 'topnews':
+		default:
+			break;
+	}
+	return false ;
+}
+
+//---------------------------------------------------------
 // langauge
 //---------------------------------------------------------
 function _constant( $name )
@@ -740,30 +907,38 @@ function _get_catselbox( $preset_id=0, $none=0, $sel_name='', $onchange='' )
 //---------------------------------------------------------
 // xoops header class
 //---------------------------------------------------------
-function _get_popbox_js( $mode, $show_popbox )
+function _get_popbox_js( $mode, $flag_popbox )
 {
-	$show_popbox_js = false ;
-	$popbox_js      = null ;
+	$show      = false ;
+	$popbox_js = null ;
 
 	switch( $mode )
 	{
 		case 'topnews_p':
 		case 'tophits_p':
 		case 'rphoto':
-			$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
-			$popbox_js = $header_class->assign_or_get_popbox_js( 
-				$show_popbox, $this->_constant( 'POPBOX_REVERT' ) );
 			break;
 
+		case 'tophits':
+		case 'topnews':
 		default:
+			return array( $show, $popbox_js );
 			break;
 	}
 
-	if ( $popbox_js ) {
-		$show_popbox_js = true;
+	if ( ! $flag_popbox ) {
+		return array( $show, $popbox_js );
 	}
 
-	return array( $show_popbox_js , $popbox_js );
+	$popbox_js = $this->_header_class->assign_or_get_popbox_js( 
+		$this->_constant( 'POPBOX_REVERT' ) );
+
+	if ( empty($popbox_js) ) {
+		return array( $show, $popbox_js );
+	}
+
+	$show = true;
+	return array( $show , $popbox_js );
 }
 
 //---------------------------------------------------------
@@ -778,6 +953,10 @@ function _init_xoops_config_for_block( $dirname )
 	$this->_cfg_thumb_height   = $config_handler->get_by_name( 'thumb_height' );
 	$this->_cfg_cat_main_width = $config_handler->get_by_name( 'cat_main_width' );
 	$this->_cfg_cat_sub_width  = $config_handler->get_by_name( 'cat_sub_width' );
+	$this->_cfg_gmap_apikey    = $config_handler->get_by_name( 'gmap_apikey' );
+	$this->_cfg_gmap_latitude  = $config_handler->get_by_name( 'gmap_latitude' );
+	$this->_cfg_gmap_longitude = $config_handler->get_by_name( 'gmap_longitude' );
+	$this->_cfg_gmap_zoom      = $config_handler->get_by_name( 'gmap_zoom' );
 }
 
 // --- class end ---

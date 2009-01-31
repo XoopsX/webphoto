@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
+// $Id: photo_public.php,v 1.4 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -44,12 +44,8 @@ function webphoto_photo_public( $dirname )
 	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 
-	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-
+	$this->_catlist_class  =& webphoto_inc_catlist::getSingleton( $dirname );
 	$this->_tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $dirname );
-	$this->_tagcloud_class->set_use_pathinfo(   $cfg_use_pathinfo );
-	$this->_tagcloud_class->set_perm_item_read( $cfg_perm_item_read );
-	$this->_tagcloud_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 }
 
 function &getInstance( $dirname )

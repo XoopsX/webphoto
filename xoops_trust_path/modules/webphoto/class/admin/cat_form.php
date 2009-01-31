@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: cat_form.php,v 1.7 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
+// _build_gmap_iframe()
 // 2008-12-12 K.OHWADA
 // _build_ele_perm_read()
 // 2008-11-08 K.OHWADA
@@ -41,6 +42,8 @@ class webphoto_admin_cat_form extends webphoto_edit_form
 	var $_IMG_HEIGHT_FORM = 50;
 	var $_SIZE_IMGPATH    = 80;
 	var $_SIZE_WEIGHT     = 5;
+	var $_GMAP_WIDTH      = '100%';
+	var $_GMAP_HEIGHT     = '650px';
 
 	var $_CAT_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
 
@@ -104,6 +107,10 @@ function print_form( $row, $param )
 
 	echo $this->_build_script();
 
+	if ( $cfg_gmap_apikey ) {
+		echo $this->_build_gmap_iframe();
+	}
+
 	echo $this->build_form_upload( $this->_FORM_NAME );
 	echo $this->build_html_token();
 
@@ -150,6 +157,15 @@ function print_form( $row, $param )
 	}
 
 	if ( $cfg_gmap_apikey ) {
+		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_LATITUDE'),
+			'cat_gmap_latitude',  'webphoto_gmap_latitude'  );
+
+		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_LONGITUDE'),
+			'cat_gmap_longitude', 'webphoto_gmap_longitude' );
+
+		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_ZOOM'),
+			'cat_gmap_zoom',      'webphoto_gmap_zoom'      );
+
 		echo $this->build_line_ele( $this->get_constant('GMAP_ICON'), 
 			$this->_build_ele_gicon() );
 	}
@@ -273,6 +289,21 @@ function _build_ele_button( $mode )
 		$str .= ' ';
 	}
 	$str .= $this->build_input_reset(  'reset',  _CANCEL );
+	return $str;
+}
+
+function _build_gmap_iframe()
+{
+	$cat_id = $this->get_row_by_key( 'cat_id' );
+
+	$src = $this->_MODULE_URL .'/index.php?fct=gmap_location';
+	if ( $cat_id ) {
+		$src .= '&amp;cat_id='.intval($cat_id);
+	}
+
+	$str  = '<iframe src="'. $src .'" width="'. $this->_GMAP_WIDTH .'" height="'. $this->_GMAP_HEIGHT .'" frameborder="0" scrolling="yes" >' ;
+	$str .= $this->get_constant('IFRAME_NOT_SUPPORT') ;
+	$str .= '</iframe>';
 	return $str;
 }
 

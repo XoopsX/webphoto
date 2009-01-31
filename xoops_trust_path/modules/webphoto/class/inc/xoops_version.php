@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.19 2009/01/24 07:10:39 ohwada Exp $
+// $Id: xoops_version.php,v 1.20 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// _build_blocks_top_options()
 // 2009-01-10 K.OHWADA
 // xpdfpath
 // 2008-12-12 K.OHWADA
@@ -344,8 +346,8 @@ function _build_blocks()
 	$arr[1]['description'] = "Shows recently added photos";
 	$arr[1]['show_func'] = "b_webphoto_topnews_show";
 	$arr[1]['edit_func'] = "b_webphoto_topnews_edit";
-	$arr[1]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0' ;
-	$arr[1]['template'] = '' ;
+	$arr[1]['options']   = $this->_build_blocks_top_options() ;
+	$arr[1]['template']  = '' ;
 	$arr[1]['can_clone'] = true ;
 
 	$arr[2]['file'] = "blocks.php";
@@ -353,26 +355,26 @@ function _build_blocks()
 	$arr[2]['description'] = "Shows most viewed photos";
 	$arr[2]['show_func'] = "b_webphoto_tophits_show";
 	$arr[2]['edit_func'] = "b_webphoto_tophits_edit";
-	$arr[2]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
-	$arr[2]['template'] = '' ;
+	$arr[2]['options']   = $this->_build_blocks_top_p_options() ;
+	$arr[2]['template']  = '' ;
 	$arr[2]['can_clone'] = true ;
 
 	$arr[3]['file'] = "blocks.php";
 	$arr[3]['name'] = $this->_constant( 'BNAME_RECENT_P' ) .' ('.$this->_DIRNAME.')' ;
 	$arr[3]['description'] = "Shows recently added photos";
 	$arr[3]['show_func'] = "b_webphoto_topnews_p_show";
-	$arr[3]['edit_func'] = "b_webphoto_topnews_edit";
-	$arr[3]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
-	$arr[3]['template'] = '' ;
+	$arr[3]['edit_func'] = "b_webphoto_topnews_p_edit";
+	$arr[3]['options']   = $this->_build_blocks_top_options() ;
+	$arr[3]['template']  = '' ;
 	$arr[3]['can_clone'] = true ;
 
 	$arr[4]['file'] = "blocks.php";
 	$arr[4]['name'] = $this->_constant( 'BNAME_HITS_P' ) .' ('.$this->_DIRNAME.')' ;
 	$arr[4]['description'] = "Shows most viewed photos";
 	$arr[4]['show_func'] = "b_webphoto_tophits_p_show";
-	$arr[4]['edit_func'] = "b_webphoto_tophits_edit";
-	$arr[4]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
-	$arr[4]['template'] = '' ;
+	$arr[4]['edit_func'] = "b_webphoto_tophits_p_edit";
+	$arr[4]['options']   = $this->_build_blocks_top_p_options() ;
+	$arr[4]['template']  = '' ;
 	$arr[4]['can_clone'] = true ;
 
 	$arr[5]['file'] = "blocks.php";
@@ -380,8 +382,8 @@ function _build_blocks()
 	$arr[5]['description'] = "Shows a random photo";
 	$arr[5]['show_func'] = "b_webphoto_rphoto_show";
 	$arr[5]['edit_func'] = "b_webphoto_rphoto_edit";
-	$arr[5]['options'] = $this->_DIRNAME.'|5|0|1|20|1|0';
-	$arr[5]['template'] = '' ;
+	$arr[5]['options']   = $this->_build_blocks_top_p_options() ;
+	$arr[5]['template']  = '' ;
 	$arr[5]['can_clone'] = true ;
 
 	$arr[6]['file'] = "blocks.php";
@@ -408,6 +410,18 @@ function _build_blocks()
 	}
 
 	return $arr;
+}
+
+function _build_blocks_top_options()
+{
+	$str = $this->_DIRNAME.'|5|0|1|20|1|0' ;
+	return $str ;
+}
+
+function _build_blocks_top_p_options()
+{
+	$str = $this->_DIRNAME.'|5|0|1|20|1|0|1|0|0|0|300' ;
+	return $str ;
 }
 
 //---------------------------------------------------------

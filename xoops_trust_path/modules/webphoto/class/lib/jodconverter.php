@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.1 2009/01/29 04:28:09 ohwada Exp $
+// $Id: jodconverter.php,v 1.2 2009/01/31 19:12:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -106,7 +106,7 @@ function get_version_jodconverter()
 	if ( is_file( $this->_jodconverter_jar ) ) {
 		$ret  = true ;
 		$msg  = " jodconverter version ";
-		$msg .= $this->parse_jodconverter_version() ;
+		$msg .= $this->parse_version_jodconverter() ;
 
 	} else {
 		$msg = "Error: cannot find ". $this->_jodconverter_jar ;

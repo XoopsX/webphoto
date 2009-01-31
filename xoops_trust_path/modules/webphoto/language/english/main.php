@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.25 2009/01/29 04:26:55 ohwada Exp $
+// $Id: main.php,v 1.26 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1319,6 +1319,9 @@ define("_WEBPHOTO_ITEM_CODEINFO_SWF","Flash swf");
 // form
 define("_WEBPHOTO_ERR_PDF", "Cannot create PDF");
 define("_WEBPHOTO_ERR_SWF", "Cannot create Flash swf");
+
+// jodconverter
+define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "");
 
 // === define end ===
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.8 2009/01/29 04:26:55 ohwada Exp $
+// $Id: gmap.php,v 1.9 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,8 @@
 //---------------------------------------------------------
 // change log
 // 2009-01-25 K.OHWADA
-// remove catlist->set_perm_cat_read()
+// webphoto_gmap_info -> webphoto_inc_gmap_info
+// get_gmap_center()
 // 2008-12-12 K.OHWADA
 // webphoto_item_cat_handler
 // 2008-11-29 K.OHWADA
@@ -33,8 +34,11 @@ class webphoto_gmap extends webphoto_base_this
 	var $_gmap_info_class;
 	var $_catlist_class;
 
-	var $_cfg_gmap_apikey ;
 	var $_cfg_perm_cat_read ;
+	var $_cfg_gmap_apikey ;
+	var $_cfg_gmap_latitude  ;
+	var $_cfg_gmap_longitude ;
+	var $_cfg_gmap_zoom      ;
 
 	var $_GMAP_ORDERBY_ASC    = 'item_id ASC';
 	var $_GMAP_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
@@ -47,12 +51,14 @@ function webphoto_gmap( $dirname , $trust_dirname )
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
 	$this->_gicon_handler   =& webphoto_gicon_handler::getInstance($dirname);
-	$this->_gmap_info_class =& webphoto_gmap_info::getInstance( $dirname , $trust_dirname );
+	$this->_gmap_info_class =& webphoto_inc_gmap_info::getSingleton( $dirname );
 
-	$this->_cfg_gmap_apikey   = $this->_config_class->get_by_name( 'gmap_apikey' );
-	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
-	$cfg_perm_item_read       = $this->_config_class->get_by_name( 'perm_item_read' );
-	$cfg_uploads_path         = $this->_config_class->get_uploads_path();
+	$cfg_perm_item_read        = $this->get_config_by_name( 'perm_item_read' );
+	$this->_cfg_perm_cat_read  = $this->get_config_by_name( 'perm_cat_read' );
+	$this->_cfg_gmap_apikey    = $this->get_config_by_name( 'gmap_apikey' );
+	$this->_cfg_gmap_latitude  = $this->get_config_by_name( 'gmap_latitude' );
+	$this->_cfg_gmap_longitude = $this->get_config_by_name( 'gmap_longitude' );
+	$this->_cfg_gmap_zoom      = $this->get_config_by_name( 'gmap_zoom' );
 
 	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
@@ -167,7 +173,7 @@ function _build_cat_gicon_id( $item_row )
 function build_show( $item_row )
 {
 	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
-	if ( ! $this->exist_gmap( $item_row ) ) { return null; } 
+	if ( ! $this->exist_gmap_item( $item_row ) ) { return null; } 
 
 	return $this->_build_show_from_single_row( $item_row );
 }
@@ -175,14 +181,82 @@ function build_show( $item_row )
 //---------------------------------------------------------
 // gmap location
 //---------------------------------------------------------
-function exist_gmap( $item_row )
+function get_gmap_center( $item_id=0, $cat_id=0 )
 {
-	if ( ( $item_row['item_gmap_latitude']  != 0 ) || 
-	     ( $item_row['item_gmap_longitude'] != 0 ) || 
-	     ( $item_row['item_gmap_zoom']      != 0 ) ) {
-		return true;
+	$code       = 0 ;
+	$latitude   = 0 ;
+	$longitude  = 0 ;
+	$zoom       = 0 ;
+
+// config
+	if ( $this->exist_gmap_cfg() ) {
+		$code       = 1 ;
+		$latitude   = $this->_cfg_gmap_latitude;
+		$longitude  = $this->_cfg_gmap_longitude;
+		$zoom       = $this->_cfg_gmap_zoom;
 	}
-	return false;
+
+// item
+	if ( $item_id > 0 ) {
+		$row = $this->_item_handler->get_cached_row_by_id( $item_id );
+		if ( is_array($row) && $this->exist_gmap_item( $row ) ) { 
+			$code       = 2 ;
+			$latitude   = $row['item_gmap_latitude'];
+			$longitude  = $row['item_gmap_longitude'];
+			$zoom       = $row['item_gmap_zoom'];
+		}
+
+// cat
+	} elseif ( $cat_id > 0 ) {
+		$row = $this->_cat_handler->get_cached_row_by_id( $cat_id );
+		if ( is_array($row) && $this->exist_gmap_cat( $row ) ) { 
+			$code       = 3 ;
+			$latitude   = $row['cat_gmap_latitude'];
+			$longitude  = $row['cat_gmap_longitude'];
+			$zoom       = $row['cat_gmap_zoom'];
+		}
+	}
+
+	return array( $code, $latitude, $longitude, $zoom );
+}
+
+function exist_gmap_cfg()
+{
+	return $this->_exist_gmap( 
+		$this->_cfg_gmap_latitude , 
+		$this->_cfg_gmap_longitude , 
+		$this->_cfg_gmap_zoom );
+}
+
+function exist_gmap_item( $item_row )
+{
+	return $this->_exist_gmap( 
+		$item_row['item_gmap_latitude'] , 
+		$item_row['item_gmap_longitude'] , 
+		$item_row['item_gmap_zoom'] );
+	
+}
+
+function exist_gmap_cat( $cat_row )
+{
+	return $this->_exist_gmap( 
+		$cat_row['cat_gmap_latitude'] , 
+		$cat_row['cat_gmap_longitude'] , 
+		$cat_row['cat_gmap_zoom'] );
+}
+
+function _exist_gmap( $latitude, $longitude, $zoom )
+{
+	if ( $latitude == 0 ) {
+		return false;
+	}
+	if ( $longitude == 0 ) {
+		return false;
+	}
+	if ( $zoom == 0 ) {
+		return false;
+	}
+	return true;
 }
 
 function build_list_location( $item_row, $limit=0, $offset=0 )

@@ -1,5 +1,5 @@
 <?php
-// $Id: ext_base.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
+// $Id: ext_base.php,v 1.3 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -93,7 +93,7 @@ function create_image( $param )
 //---------------------------------------------------------
 function create_pdf( $param )
 {
-	return false;
+	return 0 ;	// no action
 }
 
 //---------------------------------------------------------
@@ -101,7 +101,7 @@ function create_pdf( $param )
 //---------------------------------------------------------
 function create_swf( $param )
 {
-	return false;
+	return 0 ;	// no action
 }
 
 //---------------------------------------------------------

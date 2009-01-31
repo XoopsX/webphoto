@@ -1,5 +1,5 @@
 <?php
-// $Id: ext.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
+// $Id: ext.php,v 1.3 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -89,11 +89,7 @@ function create_pdf( $param )
 			continue;
 		}
 
-		$ret = $class->create_pdf( $param );
-		if ( $ret && is_file($pdf_file) ) {
-			return 1 ;	// created
-		}
-		return -1 ;	// failed	
+		return $class->create_pdf( $param );
 	}
 
 	return 0 ;	// no action
@@ -115,11 +111,7 @@ function create_swf( $param )
 			continue;
 		}
 
-		$ret = $class->create_swf( $param );
-		if ( $ret && is_file($swf_file) ) {
-			return 1 ;	// created
-		}
-		return -1 ;	// failed	
+		return $class->create_swf( $param );
 	}
 
 	return 0 ;	// no action

@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.22 2009/01/29 04:26:55 ohwada Exp $
+// $Id: main.php,v 1.23 2009/01/31 19:12:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1320,6 +1320,9 @@ define("_WEBPHOTO_ITEM_CODEINFO_SWF","フラッシュ");
 // form
 define("_WEBPHOTO_ERR_PDF", "PDF を生成できなかった");
 define("_WEBPHOTO_ERR_SWF", "フラッシュ を生成できなかった");
+
+// jodconverter
+define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "最初のページ|最後のページ|ページ|戻る|次へ|テキスト|図|目次|表");
 
 // === define end ===
 }
