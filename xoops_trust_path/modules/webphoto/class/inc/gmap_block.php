@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_block.php,v 1.1 2009/01/31 19:14:12 ohwada Exp $
+// $Id: gmap_block.php,v 1.2 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -19,7 +19,7 @@ class webphoto_inc_gmap_block
 
 	var $_TIMEOUT = 1000;	// 1000 msec
 	var $_GMAP_CONTROL      = 1 ;
-	var $_GMAP_TYPE_CONTROL = 1 ;
+	var $_GMAP_TYPE_CONTROL = 0 ;
 
 //---------------------------------------------------------
 // constructor
@@ -107,7 +107,7 @@ function build_center( $param )
 
 // set option value
 	if ( $gmap_mode == 2 ) {
-		$latitude  = $param['option_laitude'];
+		$latitude  = $param['option_latitude'];
 		$longitude = $param['option_longitude'];
 		$zoom      = $param['option_zoom'];
 	}

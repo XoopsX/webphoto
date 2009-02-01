@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.5 2009/01/31 19:12:50 ohwada Exp $
+// $Id: blocks.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -55,7 +55,9 @@ define($constpref."TEXT_TAGCLOUD_LIMIT", "タグの表示する数");
 //---------------------------------------------------------
 // google map
 define($constpref."GMAP_MODE","GoogleMap モード");
-define($constpref."GMAP_MODE_DSC","0:非表示, 1:デフォルト, 2:下記の設定値");
+define($constpref."GMAP_MODE_NONE","非表示");
+define($constpref."GMAP_MODE_DEFAULT","デフォルト");
+define($constpref."GMAP_MODE_SET","下記の設定値");
 define($constpref."GMAP_LATITUDE","緯度");
 define($constpref."GMAP_LONGITUDE","経度");
 define($constpref."GMAP_ZOOM","ズーム");

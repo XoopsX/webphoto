@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.20 2009/01/31 19:12:49 ohwada Exp $
+// $Id: xoops_version.php,v 1.21 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -355,7 +355,7 @@ function _build_blocks()
 	$arr[2]['description'] = "Shows most viewed photos";
 	$arr[2]['show_func'] = "b_webphoto_tophits_show";
 	$arr[2]['edit_func'] = "b_webphoto_tophits_edit";
-	$arr[2]['options']   = $this->_build_blocks_top_p_options() ;
+	$arr[2]['options']   = $this->_build_blocks_top_options() ;
 	$arr[2]['template']  = '' ;
 	$arr[2]['can_clone'] = true ;
 
@@ -364,7 +364,7 @@ function _build_blocks()
 	$arr[3]['description'] = "Shows recently added photos";
 	$arr[3]['show_func'] = "b_webphoto_topnews_p_show";
 	$arr[3]['edit_func'] = "b_webphoto_topnews_p_edit";
-	$arr[3]['options']   = $this->_build_blocks_top_options() ;
+	$arr[3]['options']   = $this->_build_blocks_top_p_options() ;
 	$arr[3]['template']  = '' ;
 	$arr[3]['can_clone'] = true ;
 

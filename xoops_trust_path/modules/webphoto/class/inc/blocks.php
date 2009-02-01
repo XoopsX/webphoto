@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.17 2009/02/01 09:04:29 ohwada Exp $
+// $Id: blocks.php,v 1.18 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -54,6 +54,8 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_cfg_gmap_longitude = 0 ;
 	var $_cfg_gmap_zoom      = 0 ;
 
+	var $_block_id = 0;
+
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
 
@@ -63,6 +65,10 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_TOP_CATLIST_DELMITA = '<br />';
 	var $_SHOW_SUBCAT_IMG     = true;
 	var $_lang_catlist_total  = 'Total:';
+	var $_lang_iframe_not_support = 'Do not use iframe in your web browser';
+
+	var $_GMAP_WIDTH      = '100%';
+	var $_GMAP_HEIGHT     = '650px';
 
 //---------------------------------------------------------
 // constructor
@@ -115,6 +121,8 @@ function _init( $options )
 	$this->_tagcloud_class   =& webphoto_inc_tagcloud::getSingleton( $dirname );
 	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
 	$this->_gmap_info_class  =& webphoto_inc_gmap_info::getSingleton( $dirname );
+
+	$this->_block_id = isset($_GET['bid']) ? intval($_GET['bid']) : 0 ;
 }
 
 //---------------------------------------------------------
@@ -480,37 +488,81 @@ function _top_edit_common( $mode, $options )
 
 function _top_edit_gmap( $options )
 {
-	$gmap_mode           = $this->_get_option_int(   $options, 7 );
-	$gmap_latitude       = $this->_get_option_float( $options, 8 );
-	$gmap_longitude      = $this->_get_option_float( $options, 9 );
-	$gmap_zoom           = $this->_get_option_int(   $options, 10 );
-	$gmap_height         = $this->_get_option_int(   $options, 11 );
+	$gmap_latitude  = $this->_get_option_float( $options, 8 );
+	$gmap_longitude = $this->_get_option_float( $options, 9 );
+	$gmap_zoom      = $this->_get_option_int(   $options, 10 );
+	$gmap_height    = $this->_get_option_int(   $options, 11 );
 
-	$ret  = '<tr><td>'."\n";
-	$ret .= $this->_constant('GMAP_MODE') ;
-	$ret .= "</td><td>";
-	$ret .= '<input type="text" name="options[7]" value="'. $gmap_mode .'" />'."\n";
-	$ret .= $this->_constant('GMAP_MODE_DSC') ;
-	$ret .= "</td></tr>\n<tr><td>";
+	$ret  = $this->_top_edit_gmap_mode( $options );
+	$ret .= "<tr><td>";
 	$ret .= $this->_constant('GMAP_LATITUDE') ;
 	$ret .= "</td><td>";
-	$ret .= '<input type="text" name="options[8]" value="'. $gmap_latitude .'" />'."\n";
+	$ret .= '<input type="text" name="options[8]" id="webphoto_gmap_latitude" value="'. $gmap_latitude .'" />'."\n";
 	$ret .= "</td></tr>\n<tr><td>";
 	$ret .= $this->_constant('GMAP_LONGITUDE') ;
 	$ret .= "</td><td>";
-	$ret .= '<input type="text" name="options[9]" value="'. $gmap_longitude .'" />'."\n";
+	$ret .= '<input type="text" name="options[9]" id="webphoto_gmap_longitude" value="'. $gmap_longitude .'" />'."\n";
 	$ret .= "</td></tr>\n<tr><td>";
 	$ret .= $this->_constant('GMAP_ZOOM') ;
 	$ret .= "</td><td>";
-	$ret .= '<input type="text" name="options[10]" value="'. $gmap_zoom .'" />'."\n";
+	$ret .= '<input type="text" name="options[10]" id="webphoto_gmap_zoom" value="'. $gmap_zoom .'" />'."\n";
 	$ret .= "</td></tr>\n<tr><td>";
 	$ret .= $this->_constant('GMAP_HEIGHT') ;
 	$ret .= "</td><td>";
 	$ret .= '<input type="text" name="options[11]" value="'. $gmap_height .'" />'."\n";
 	$ret .= $this->_constant('PIXEL') ;
-	$ret .= '</td></tr>'."\n";
+	$ret .= "</td></tr>\n";
+	$ret .= '<tr><td colspan="2">'."\n";
+	$ret .= $this->_build_gmap_iframe( 8 );
+	$ret .= "</td></tr>\n";
 
 	return $ret;
+}
+
+function _top_edit_gmap_mode( $options )
+{
+	$gmap_mode = $this->_get_option_int(   $options, 7 );
+
+	$checked_0 = '' ;
+	$checked_1 = '' ;
+	$checked_2 = '' ;
+
+	switch ( $gmap_mode ) 
+	{
+		case 1 :
+			$checked_1 = $this->_CHECKED ;
+			break;
+
+		case 2 :
+			$checked_2 = $this->_CHECKED ;
+			break;
+
+		case 0 :
+		default :
+			$checked_0 = $this->_CHECKED ;
+			break;
+	}
+
+	$ret  = '<tr><td>'."\n";
+	$ret .= $this->_constant('GMAP_MODE') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="radio" name="options[7]" value="0" '. $checked_0 .' />'."\n";
+	$ret .= $this->_constant('GMAP_MODE_NONE') ;
+	$ret .= '<input type="radio" name="options[7]" value="1" '. $checked_1 .' />'."\n";
+	$ret .= $this->_constant('GMAP_MODE_DEFAULT') ;
+	$ret .= '<input type="radio" name="options[7]" value="2" '. $checked_2 .' />'."\n";
+	$ret .= $this->_constant('GMAP_MODE_SET') ;
+	$ret .= "</td></tr>\n";
+	return $ret;
+}
+
+function _build_gmap_iframe( $num )
+{
+	$src = $this->_MODULE_URL .'/index.php?fct=gmap_location&amp;block_id='. intval($this->_block_id) .'&amp;option_num='. intval($num);
+	$str  = '<iframe src="'. $src .'" width="'. $this->_GMAP_WIDTH .'" height="'. $this->_GMAP_HEIGHT .'" frameborder="0" scrolling="yes" >' ;
+	$str .= $this->_lang_iframe_not_support ;
+	$str .= '</iframe>';
+	return $str;
 }
 
 function build_form_radio( $name, $value, $options, $del="\n" )
@@ -810,6 +862,10 @@ function _exist_gmap( $photo )
 
 function _check_gmap( $mode )
 {
+	if ( ! $this->_cfg_gmap_apikey ) {
+		return false;
+	}
+
 	switch( $mode )
 	{
 		case 'topnews_p':

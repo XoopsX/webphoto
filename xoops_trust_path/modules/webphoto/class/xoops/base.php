@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: base.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// get_block_options_by_bid()
 // 2009-01-10 K.OHWADA
 // user_to_server_time()
 // 2008-11-16 K.OHWADA
@@ -291,6 +293,25 @@ function get_member_user_list( $limit=0, $start=0 )
 
 	$member_handler =& xoops_gethandler('member');
 	return $member_handler->getUserList( $criteria );
+}
+
+//--------------------------------------------------------
+// xoops block handler
+//--------------------------------------------------------
+function get_block_options_by_bid( $bid )
+{
+	$obj = $this->get_block_by_bid( $bid );
+	if ( is_object($obj) ) {
+		$options = explode( '|', $obj->getVar('options') );
+		return $options ;
+	}
+	return null;
+}
+
+function get_block_by_bid( $bid )
+{
+	$block_handler =& xoops_gethandler('block');
+	return $block_handler->get( $bid );
 }
 
 //---------------------------------------------------------

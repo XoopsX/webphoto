@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.5 2009/01/31 19:12:50 ohwada Exp $
+// $Id: blocks.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -54,7 +54,9 @@ define($constpref."TEXT_TAGCLOUD_LIMIT", "Number of tags");
 //---------------------------------------------------------
 // google map
 define($constpref."GMAP_MODE","GoogleMap Mode");
-define($constpref."GMAP_MODE_DSC","0:Not show, 1:Default, 2:Following value");
+define($constpref."GMAP_MODE_NONE","Not show");
+define($constpref."GMAP_MODE_DEFAULT","Default");
+define($constpref."GMAP_MODE_SET","Following value");
 define($constpref."GMAP_LATITUDE","Latitude");
 define($constpref."GMAP_LONGITUDE","Longitude");
 define($constpref."GMAP_ZOOM","Zoom");

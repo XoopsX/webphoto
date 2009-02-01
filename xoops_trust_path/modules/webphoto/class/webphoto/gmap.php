@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.9 2009/01/31 19:12:50 ohwada Exp $
+// $Id: gmap.php,v 1.10 2009/02/01 11:02:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -222,7 +222,7 @@ function get_gmap_center( $item_id=0, $cat_id=0 )
 
 function exist_gmap_cfg()
 {
-	return $this->_exist_gmap( 
+	return $this->exist_gmap( 
 		$this->_cfg_gmap_latitude , 
 		$this->_cfg_gmap_longitude , 
 		$this->_cfg_gmap_zoom );
@@ -230,7 +230,7 @@ function exist_gmap_cfg()
 
 function exist_gmap_item( $item_row )
 {
-	return $this->_exist_gmap( 
+	return $this->exist_gmap( 
 		$item_row['item_gmap_latitude'] , 
 		$item_row['item_gmap_longitude'] , 
 		$item_row['item_gmap_zoom'] );
@@ -239,13 +239,13 @@ function exist_gmap_item( $item_row )
 
 function exist_gmap_cat( $cat_row )
 {
-	return $this->_exist_gmap( 
+	return $this->exist_gmap( 
 		$cat_row['cat_gmap_latitude'] , 
 		$cat_row['cat_gmap_longitude'] , 
 		$cat_row['cat_gmap_zoom'] );
 }
 
-function _exist_gmap( $latitude, $longitude, $zoom )
+function exist_gmap( $latitude, $longitude, $zoom )
 {
 	if ( $latitude == 0 ) {
 		return false;
