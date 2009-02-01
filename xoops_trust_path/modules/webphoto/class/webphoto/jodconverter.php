@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.4 2009/02/01 13:53:23 ohwada Exp $
+// $Id: jodconverter.php,v 1.5 2009/02/01 13:56:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -229,7 +229,8 @@ function get_text_content_for_xls_ppt( $src_file )
 
 function remove_junk( $text )
 {
-	foreach ( $this->_junk_words as $word ) {
+	foreach ( $this->_junk_words as $word ) 
+	{
 		$text = str_replace( '>'.$word.'<', '> <', $text );
 		$text = str_replace( '>'.$word.' ', '>  ', $text );
 		$text = str_replace( ' '.$word.'<', '  <', $text );
