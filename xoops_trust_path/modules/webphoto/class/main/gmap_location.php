@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.4 2009/01/31 19:12:49 ohwada Exp $
+// $Id: gmap_location.php,v 1.5 2009/02/01 11:10:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -74,29 +74,23 @@ function main()
 
 function _assign_template( $cfg_gmap_apikey )
 {
-	$get_photo_id = $this->_post_class->get_get_int('photo_id');
-	$get_cat_id   = $this->_post_class->get_get_int('cat_id');
-
-	$flag_set_location = false;
+	$flag_location = false;
 	$show_gmap = false;
 	$gmap_list = null;
 
-	list( $code, $latitude, $longitude, $zoom ) =
-		$this->_gmap_class->get_gmap_center( $get_photo_id, $get_cat_id );
-
+	list( $code, $latitude, $longitude, $zoom ) = $this->_get_center() ;
 	if ( $code > 0 ) {
-		$flag_set_location = true;
-		$gmap_latitude     = $latitude;
-		$gmap_longitude    = $longitude;
-		$gmap_zoom         = $zoom;
+		$flag_location  = true;
+		$gmap_latitude  = $latitude;
+		$gmap_longitude = $longitude;
+		$gmap_zoom      = $zoom;
+	}
 
-// if item
-		if ( $code == 2 ) {
-			$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
-
-			list( $show_gmap, $gmap_list ) 
-				= $this->_build_list_location( $item_row );
-		}
+// when item
+	if ( $code == 2 ) {
+		$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
+		list( $show_gmap, $gmap_list ) 
+			= $this->_build_list_location( $item_row );
 	}
 
 	$this->_http_output( 'pass' );
@@ -110,7 +104,7 @@ function _assign_template( $cfg_gmap_apikey )
 	$tpl->assign('gmap_height',        $this->_GMAP_HEIGHT );
 	$tpl->assign('gmap_apikey',        $cfg_gmap_apikey );
 
-	if ( $flag_set_location ) {
+	if ( $flag_location ) {
 		$tpl->assign('gmap_latitude',   $gmap_latitude );
 		$tpl->assign('gmap_longitude',  $gmap_longitude );
 		$tpl->assign('gmap_zoom',       $gmap_zoom );
@@ -135,6 +129,30 @@ function _assign_template( $cfg_gmap_apikey )
 	$tpl->assign('lang_search',           $this->_constant('SR_SEARCH') );
 
 	$tpl->display( $this->_TEMPLATE );
+}
+
+function _get_center()
+{
+	$get_photo_id   = $this->_post_class->get_get_int('photo_id');
+	$get_cat_id     = $this->_post_class->get_get_int('cat_id');
+	$get_block_id   = $this->_post_class->get_get_int('block_id');
+	$get_option_num = $this->_post_class->get_get_int('option_num');
+
+// when block
+	if ( $get_block_id > 0 ) {
+		$options = $this->_xoops_class->get_block_options_by_bid( $get_block_id );
+		if ( is_array($options) ) {
+			$latitude  = floatval($options[ $get_option_num ]) ;
+			$longitude = floatval($options[ $get_option_num + 1 ]) ;
+			$zoom      = intval(  $options[ $get_option_num + 2 ]) ;
+			if ( $this->_gmap_class->exist_gmap( $latitude, $longitude, $zoom ) ) {
+				$code = 4 ;	// block
+				return array( $code, $latitude, $longitude, $zoom ) ;
+			}
+		}
+	}
+
+	return $this->_gmap_class->get_gmap_center( $get_photo_id, $get_cat_id );
 }
 
 function _build_list_location( $row )
