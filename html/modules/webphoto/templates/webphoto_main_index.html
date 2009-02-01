@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_index.html,v 1.4 2008/10/30 13:09:40 ohwada Exp $ *}>
+<{* $Id: webphoto_main_index.html,v 1.5 2009/02/01 08:59:49 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -382,7 +382,7 @@
       <{include file="db:`$mydirname`_inc_photo_in_table.html"}>
     </td>
 <{* -- close table column -- *}>
-    <{if $smarty.foreach.webphoto_list.iteration is div by $cfg_colsoftableview}>
+    <{if ($smarty.foreach.webphoto_list.iteration is div by $cfg_colsoftableview) || $smarty.foreach.webphoto_list.last}>
       </tr>
     <{/if}>
 <{* -- close table photo -- *}>
