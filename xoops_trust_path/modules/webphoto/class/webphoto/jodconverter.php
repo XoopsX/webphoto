@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.3 2009/02/01 13:49:52 ohwada Exp $
+// $Id: jodconverter.php,v 1.4 2009/02/01 13:53:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -236,7 +236,7 @@ function remove_junk( $text )
 		$text = str_replace( ' '.$word.' ', '   ', $text );
 		$text = preg_replace( "/[\n|\r]".preg_quote($word)." /i", ' ', $text );
 	}
-	return $textN ;
+	return $text ;
 }
 
 //---------------------------------------------------------
