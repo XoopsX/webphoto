@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.2 2009/01/31 19:12:50 ohwada Exp $
+// $Id: jodconverter.php,v 1.3 2009/02/01 13:49:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,7 +29,7 @@ class webphoto_jodconverter extends webphoto_lib_error
 	var $_HTML_EXT = 'html';
 
 	var $_JUNK_WORDS_ENG = array(
-		'Slide', 'First', 'Last', 'Back', 'Continue', 'Graphics', 'Text', 'page', 
+		'Slide', 'First page', 'Last page', 'Back', 'Continue', 'Graphics', 'Text', 
 		'Overview', 'Sheet'
 	); 
 
@@ -217,18 +217,26 @@ function get_text_content_for_xls_ppt( $src_file )
 	}
 
 	$text = $this->_multibyte_class->convert_from_utf8( $text );
-	$text = $this->_multibyte_class->build_plane_text(  $text );
-
-// remove junk word
-	foreach ( $this->_junk_words as $word ) {
-		$text = str_replace( ' '.$word.' ', ' ', $text );
-	}
+	$text = $this->remove_junk( $text );
+	$text = $this->_multibyte_class->build_plane_text( $text );
 
 	$arr = array(
 		'flag'    => true ,
 		'content' => $text ,
 	);
 	return $arr;
+}
+
+function remove_junk( $text )
+{
+	foreach ( $this->_junk_words as $word ) {
+		$text = str_replace( '>'.$word.'<', '> <', $text );
+		$text = str_replace( '>'.$word.' ', '>  ', $text );
+		$text = str_replace( ' '.$word.'<', '  <', $text );
+		$text = str_replace( ' '.$word.' ', '   ', $text );
+		$text = preg_replace( "/[\n|\r]".preg_quote($word)." /i", ' ', $text );
+	}
+	return $textN ;
 }
 
 //---------------------------------------------------------
