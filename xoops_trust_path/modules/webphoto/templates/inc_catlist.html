@@ -1,10 +1,15 @@
-<{* $Id: inc_catlist.html,v 1.3 2008/11/30 10:36:34 ohwada Exp $ *}>
+<{* $Id: inc_catlist.html,v 1.4 2009/02/01 09:04:29 ohwada Exp $ *}>
 
 <table width="100%" border="0" cellspacing="5" cellpadding="0" align="center">
-<tr>
 
 <{* --- main category --- *}>
-<{foreach from=$catlist.cats item=cat key=count}>
+<{foreach from=$catlist.cats item=cat key=count name=cat_list}>
+<{* -- table line start -- *}>
+  <{if $smarty.foreach.cat_list.iteration mod $catlist.cols == 1}>
+    <tr>
+  <{/if}>
+
+<{* -- table column image -- *}>
   <td valign="top" align="right" >
 
   <{if $catlist.use_pathinfo }>
@@ -26,6 +31,8 @@
   </a>
 
   </td>
+
+<{* -- table column title -- *}>
   <td valign="top" align="left" width="<{$catlist.width}>%">
 
     <{if $catlist.use_pathinfo }>
@@ -75,11 +82,12 @@
 <{* --- sub category end --- *}>
 
   </td>
-  <{if ($count+1) is div by $catlist.cols }>
-    </tr><tr>
+
+<{* -- table line end -- *}>
+  <{if ($smarty.foreach.cat_list.iteration is div by $catlist.cols) || $smarty.foreach.cat_list.last}>
+    </tr>
   <{/if}>
 <{/foreach}>
 <{* --- main category end --- *}>
 
-</tr>
 </table>

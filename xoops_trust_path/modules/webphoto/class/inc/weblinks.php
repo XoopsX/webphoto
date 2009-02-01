@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.1 2009/01/29 04:28:09 ohwada Exp $
+// $Id: weblinks.php,v 1.2 2009/02/01 09:04:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -95,8 +95,10 @@ function photos( $opts )
 	foreach ( $block['photo'] as $photo )
 	{
 		$ret[] = array(
-			'href'        => $this->build_href( $photo, $href_base, $use_pathinfo ) ,
+			'href'        => $this->build_href_photo( $photo, $href_base, $use_pathinfo ) ,
+			'cat_href'    => $this->build_href_cat(   $photo, $href_base, $use_pathinfo ) ,
 			'title'       => $photo['title_s'] ,
+			'cat_title'   => $photo['cat_title_s'] ,
 			'img_src'     => $photo['img_thumb_src_s'] ,
 			'img_attribs' => $this->build_attribs( $photo, $attribs_default ) ,
 		);
@@ -105,12 +107,26 @@ function photos( $opts )
 	return $ret ;
 }
 
-function build_href( $photo, $href_base, $use_pathinfo )
+function build_href_photo( $photo, $href_base, $use_pathinfo )
 {
+	$photo_id = $photo['photo_id'];
+
 	if ( $use_pathinfo ) {
-		$href = $href_base .'/photo/'. $photo['photo_id'] ;
+		$href = $href_base .'/photo/'. $photo_id .'/';
 	} else {
-		$href = $href_base. '?fct=photo&amp;photo_id'. $photo['photo_id'] ;
+		$href = $href_base. '?fct=photo&amp;p='. $photo_id ;
+	}
+	return $href;
+}
+
+function build_href_cat( $photo, $href_base, $use_pathinfo )
+{
+	$cat_id = $photo['item_cat_id'];
+
+	if ( $use_pathinfo ) {
+		$href = $href_base .'/category/'. $cat_id .'/' ;
+	} else {
+		$href = $href_base. '?fct=category&amp;p='. $cat_id ;
 	}
 	return $href;
 }

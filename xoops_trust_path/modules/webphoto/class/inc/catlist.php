@@ -1,5 +1,5 @@
 <?php
-// $Id: catlist.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: catlist.php,v 1.5 2009/02/01 09:04:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -229,11 +229,18 @@ function get_cat_all_tree_array()
 function get_cat_parent_all_child_id_by_id( $cat_id )
 {
 	$cat_row = $this->_get_cat_row_by_id( $cat_id ) ;
-	return $this->get_cat_parent_all_child_id_by_row( $cat_row );
+	if ( is_array($cat_row) ) {
+		return $this->get_cat_parent_all_child_id_by_row( $cat_row );
+	}
+	return null;
 }
 
 function get_cat_parent_all_child_id_by_row( $cat_row )
 {
+	if ( ! is_array($cat_row) ) {
+		return null ;
+	}
+
 	$cat_id = $cat_row[ $this->_CAT_ID_NAME ] ;
 
 	$name_perm = '';
@@ -381,7 +388,7 @@ function _get_cat_rows_by_pid_order_perm( $pid, $order, $name_perm=null, $limit=
 function _get_cat_rows_by_pid_order( $pid, $order, $limit=0, $offset=0 )
 {
 	$sql  = 'SELECT * FROM '. $this->_table_cat ;
-	$sql .= ' WHERE cat_pid='. $pid;
+	$sql .= ' WHERE cat_pid='. intval($pid);
 	$sql .= ' ORDER BY '.$order;
 
 	return $this->get_rows_by_sql( $sql, $limit, $offset ) ;

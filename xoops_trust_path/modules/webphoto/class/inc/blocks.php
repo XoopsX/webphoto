@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.16 2009/01/31 19:12:49 ohwada Exp $
+// $Id: blocks.php,v 1.17 2009/02/01 09:04:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -399,12 +399,15 @@ function _build_block( $mode , $options )
 
 	foreach ( $item_rows as $item_row )
 	{
+		$cat_title = $this->_build_cat_title( $item_row );
+
 		$arr = array_merge( $item_row, $this->_build_imgsrc( $item_row ) );
 
 		$arr['photo_id']      = $item_row['item_id'] ;
 		$arr['onclick']       = $item_row['item_onclick'] ;
 		$arr['title_s']       = $this->sanitize( $item_row['item_title'] ) ;
 		$arr['title_short_s'] = $this->_build_short_title( $item_row['item_title'], $title_max_length ) ;
+		$arr['cat_title_s']   = $this->sanitize( $cat_title ) ;
 		$arr['hits_suffix']   = $this->_build_hits_suffix( $item_row['item_hits'] ) ;
 
 		$block['photo'][ $count ++ ] = $arr ;
@@ -691,6 +694,16 @@ function _is_src_image_kind( $kind )
 	return false;
 }
 
+function _build_cat_title( $item_row )
+{
+	$cat_id  = $item_row['item_cat_id'];
+	$cat_row = $this->get_cat_row_by_id( $cat_id );
+	if ( isset( $cat_row['cat_title'] ) ) {
+		return  $cat_row['cat_title'] ;
+	}
+	return null;
+}
+
 function _build_short_title( $str, $max )
 {
 	if ( $max == 0 ) {
@@ -869,7 +882,7 @@ function build_where_block_cat_limitation( $options )
 
 // Category limitation
 	$where = '' ;
-	if ( $cat_limitation ) {
+	if ( $cat_limitation > 0 ) {
 		if ( $cat_limit_recursive ) {
 
 // fatal error: Call to undefined method get_cat_parent_all_child_id()

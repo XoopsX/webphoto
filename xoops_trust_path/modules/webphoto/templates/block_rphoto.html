@@ -1,4 +1,4 @@
-<{* $Id: block_rphoto.html,v 1.9 2009/01/31 19:12:50 ohwada Exp $ *}>
+<{* $Id: block_rphoto.html,v 1.10 2009/02/01 09:04:29 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -13,14 +13,12 @@
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
 
 <{* count begins from 1 *}>
-<{foreach item=photo key=count from=$block.photo}>
+<{foreach item=photo key=count from=$block.photo name=photo_list}>
 
 <{* -- open table row -- *}>
   <{if $block.cols == 1}>
     <tr>
-  <{elseif ( $count mod $block.cols ) == 1 }>
-    <tr>
-  <{elseif $count == 1 }>
+  <{elseif $smarty.foreach.photo_list.iteration mod $block.cols == 1}>
     <tr>
   <{/if}>
 
@@ -64,9 +62,9 @@
 <{* -- close table row -- *}>
   <{if $block.cols == 1}>
     </tr>
-  <{elseif $count is div by $block.cols }>
+  <{elseif $smarty.foreach.photo_list.iteration is div by $block.cols}>
     </tr>
-  <{elseif $count == $block.photo_num }>
+  <{elseif $smarty.foreach.photo_list.last}>
     </tr>
   <{/if}>
 

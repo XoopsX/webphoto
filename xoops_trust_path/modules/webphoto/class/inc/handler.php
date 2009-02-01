@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.11 2008/12/20 06:11:27 ohwada Exp $
+// $Id: handler.php,v 1.12 2009/02/01 09:04:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-01-25 K.OHWADA
+// debug_print_backtrace()
 // 2008-12-12 K.OHWADA
 // check_perm_by_row_name_groups()
 // 2008-11-29 K.OHWADA
@@ -48,7 +50,7 @@ class webphoto_inc_handler
 	var $_PERM_SEPARATOR = '&' ;
 
 	var $_DEBUG_SQL   = false;
-	var $_DEBUG_ERROR = false;
+	var $_DEBUG_ERROR = 0 ;
 
 //---------------------------------------------------------
 // constructor
@@ -301,15 +303,23 @@ function query( $sql, $limit=0, $offset=0, $force=false )
 		return $this->queryF( $sql, $limit, $offset );
 	}
 
+	$sql_full = $sql .': limit='. $limit .' :offset='. $offset ;
+
 	if ( $this->_DEBUG_SQL ) {
-		echo $this->sanitize( $sql ) .': limit='. $limit .' :offset='. $offset. "<br />\n";
+		echo $this->sanitize( $sql_full )."<br />\n";
 	}
 
 	$res = $this->_db->query( $sql, intval($limit), intval($offset) );
 	if ( !$res  ) {
 		$this->_db_error = $this->_db->error();
+		if ( ! $this->_DEBUG_SQL ) {
+			echo $this->sanitize( $sql_full )."<br />\n";
+		}
 		if ( $this->_DEBUG_ERROR ) {
 			echo $this->highlight( $this->_db_error )."<br />\n";
+		}
+		if ( $this->_DEBUG_ERROR > 1 ) {
+			debug_print_backtrace() ;
 		}
 	}
 
@@ -632,7 +642,7 @@ function set_debug_sql( $val )
 
 function set_debug_error( $val )
 {
-	$this->_DEBUG_ERROR = (bool)$val;
+	$this->_DEBUG_ERROR = intval($val);
 }
 
 //---------------------------------------------------------
