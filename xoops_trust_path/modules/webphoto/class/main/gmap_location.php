@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.5 2009/02/01 11:10:04 ohwada Exp $
+// $Id: gmap_location.php,v 1.6 2009/02/01 23:58:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -74,6 +74,7 @@ function main()
 
 function _assign_template( $cfg_gmap_apikey )
 {
+
 	$flag_location = false;
 	$show_gmap = false;
 	$gmap_list = null;
@@ -88,9 +89,7 @@ function _assign_template( $cfg_gmap_apikey )
 
 // when item
 	if ( $code == 2 ) {
-		$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
-		list( $show_gmap, $gmap_list ) 
-			= $this->_build_list_location( $item_row );
+		list( $show_gmap, $gmap_list ) = $this->_build_list_location();
 	}
 
 	$this->_http_output( 'pass' );
@@ -155,12 +154,19 @@ function _get_center()
 	return $this->_gmap_class->get_gmap_center( $get_photo_id, $get_cat_id );
 }
 
-function _build_list_location( $row )
+function _build_list_location()
 {
+	$get_photo_id = $this->_post_class->get_get_int('photo_id');
+
 	$show_gmap = false;
 	$gmap_list = null;
 
-	$list = $this->_gmap_class->build_list_location( $row );
+	$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
+	if ( !is_array($item_row) || !count($item_row) ) {
+		return array( $show_gmap, $gmap_list );
+	}
+
+	$list = $this->_gmap_class->build_list_location( $item_row );
 	if ( !is_array($list) || !count($list) ) {
 		return array( $show_gmap, $gmap_list );
 	}

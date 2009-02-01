@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.1 2009/01/31 19:14:12 ohwada Exp $
+// $Id: gmap_info.php,v 1.2 2009/02/01 23:58:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -198,6 +198,46 @@ function check_normal_ext( $param )
 }
 
 //---------------------------------------------------------
+// uri
+//---------------------------------------------------------
+function build_uri_photo( $item_id )
+{
+	return $this->build_uri( 'photo', intval($item_id) );
+}
+
+function build_uri_user( $uid )
+{
+	return $this->build_uri( 'user', intval($uid) );
+}
+
+function build_uri_search( $query )
+{
+	return $this->build_uri( 'search', rawurlencode($query) );
+}
+
+function build_uri( $fct, $param )
+{
+	if ( $this->_cfg_use_pathinfo ) {
+		$str = $this->_MODULE_URL .'/index.php/'. $fct .'/'. $param .'/';
+	} else {
+		$str = $this->_MODULE_URL .'/index.php?'. $fct .'photo&amp;p='. $param ;
+	}
+	return $str;
+}
+
+function build_uri_edit( $item_id )
+{
+	$str = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id='. $item_id ;
+	return $str;
+}
+
+function build_img_edit()
+{
+	$str = '<img src="'. $this->_ICONS_URL.'/edit.png" width="18" height="15" border="0" alt="' . $this->_lang_title_edit .'" title="'. $this->_lang_title_edit .'" />';
+	return $str ;
+}
+
+//---------------------------------------------------------
 // utility
 //---------------------------------------------------------
 function sanitize( $str )
@@ -216,38 +256,6 @@ function is_ext_in_array( $ext, $arr )
 		return true;
 	}
 	return false ;
-}
-
-function build_uri_photo( $item_id )
-{
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
-	} else {
-		$str = $this->_MODULE_URL .'/index.php?fct=photo&amp;photo_id='. $item_id ;
-	}
-	return $str;
-}
-
-function build_uri_user( $uid )
-{
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = $this->_MODULE_URL .'/index.php/user/'. $uid .'/';
-	} else {
-		$str = $this->_MODULE_URL .'/index.php?fct=user&amp;uid='. $uid ;
-	}
-	return $str;
-}
-
-function build_uri_edit( $item_id )
-{
-	$str = $this->_MODULE_URL.'/index.php?fct=edit&amp;photo_id='. $item_id ;
-	return $str;
-}
-
-function build_img_edit()
-{
-	$str = '<img src="'. $this->_ICONS_URL.'/edit.png" width="18" height="15" border="0" alt="' . $this->_lang_title_edit .'" title="'. $this->_lang_title_edit .'" />';
-	return $str ;
 }
 
 //---------------------------------------------------------
