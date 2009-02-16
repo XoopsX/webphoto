@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.7 2009/01/04 06:05:34 ohwada Exp $
+// $Id: help.php,v 1.8 2009/02/16 13:02:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-16 K.OHWADA
+// Fatal error: Call to undefined method webphoto_inc_xoops_header::assign_for_main()
 // 2009-01-04 K.OHWADA
 // Fatal error: Call to undefined method webphoto_inc_xoops_header::getinstance()
 // getInstance() -> getSingleton()
@@ -196,8 +198,8 @@ function _assign_xoops_header()
 		'flag_css' => true ,
 	);
 
-// Fatal error: Call to undefined method webphoto_inc_xoops_header::getinstance()
-	$header_class =& webphoto_inc_xoops_header::getSingleton( $this->_DIRNAME );
+// Fatal error: Call to undefined method webphoto_inc_xoops_header::assign_for_main() 
+	$header_class =& webphoto_xoops_header::getInstance( $this->_DIRNAME );
 	$header_class->assign_for_main( $param );
 }
 
