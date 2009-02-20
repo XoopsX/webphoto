@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.6 2008/12/20 06:11:27 ohwada Exp $
+// $Id: imagemanager.php,v 1.7 2009/02/20 01:25:36 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-20 K.OHWADA
+// Fatal error: Call to undefined method: webphoto_inc_catlist->set_uploads_path()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // webphoto_inc_public
@@ -64,9 +66,6 @@ function webphoto_main_imagemanager( $dirname )
 	$this->_init_xoops_group_permission( $dirname );
 
 	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_catlist_class->set_uploads_path(   $this->_cfg_uploadspath );
-	$this->_catlist_class->set_perm_cat_read(  $this->_cfg_perm_cat_read );
-	$this->_catlist_class->set_perm_item_read( $this->_cfg_perm_item_read );
 }
 
 function &getSingleton( $dirname )
