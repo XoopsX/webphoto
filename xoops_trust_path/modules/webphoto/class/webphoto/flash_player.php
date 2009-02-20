@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.7 2009/01/29 04:26:55 ohwada Exp $
+// $Id: flash_player.php,v 1.8 2009/02/20 01:34:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-20 K.OHWADA
+// item_page_width
 // 2009-01-25 K.OHWADA
 // build_movie_by_item_row()
 // 2009-01-10 K.OHWADA
@@ -215,7 +217,7 @@ function build_code_embed( $param )
 	}
 
 	list( $width, $height ) = 
-		$this->get_width_height( $player_row, $flashvar_row ) ;
+		$this->get_width_height( $item_row, $player_row, $flashvar_row ) ;
 
 	$embed   = $this->build_embed(   $item_id, $flashplayer, $width, $height, $config_url );
 	$embedjs = $this->build_embedjs( $item_id, $flashplayer, $width, $height, $config_url );
@@ -391,7 +393,7 @@ function set_variables_in_buffer( $param )
 
 // overwrite by flashvar
 	list( $width, $height ) = 
-		$this->get_width_height( $player_row, $flashvar_row ) ;
+		$this->get_width_height( $item_row, $player_row, $flashvar_row ) ;
 
 	if (( $flashvar_displaywidth > 0 )&&( $flashvar_displayheight > 0 )) {
 		$displaywidth   = $flashvar_displaywidth;
@@ -883,12 +885,20 @@ function is_color_style( $style )
 	return false;
 }
 
-function get_width_height( $player_row, $flashvar_row )
+function get_width_height( $item_row, $player_row, $flashvar_row )
 {
 	$width           = $player_row['player_width'];
 	$height          = $player_row['player_height'];
 	$flashvar_width  = $flashvar_row['flashvar_width'];
 	$flashvar_height = $flashvar_row['flashvar_height'];
+	$item_width      = $item_row['item_page_width'];
+	$item_height     = $item_row['item_page_height'];
+
+// overwrite by item
+	if (( $item_width > 0 )&&( $item_height > 0 )) {
+		$width   = $item_width;
+		$height  = $item_height;
+	}
 
 // overwrite by flashvar
 	if (( $flashvar_width > 0 )&&( $flashvar_height > 0 )) {
