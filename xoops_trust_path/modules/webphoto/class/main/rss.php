@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
+// $Id: rss.php,v 1.7 2009/02/20 01:29:51 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-20 K.OHWADA
+// georss
 // 2008-12-12 K.OHWADA
 // webphoto_photo_public
 // 2008-12-09 K.OHWADA
@@ -215,6 +217,20 @@ function build_items()
 		$pubdate   = date('r', $row['item_time_update'] ) ;
 		list( $content, $summary, $desc ) = $this->_build_description( $row, $thumb_row );
 
+// georss
+		$geo_lat      = '';
+		$geo_long     = '';
+		$georss_point = '';
+
+		if (( $row['item_gmap_latitude']  != 0 )||
+		    ( $row['item_gmap_longitude'] != 0 )||
+		    ( $row['item_gmap_zoom']      != 0 )) {
+			$geo_lat  = $row['item_gmap_latitude'] ;
+			$geo_long = $row['item_gmap_longitude'];
+			$georss_point = $geo_lat.' '.$geo_long;
+		}
+
+// mediarss
 		$media_title_xml        = '';
 		$media_description      = '';
 		$media_content_url      = '';
@@ -233,7 +249,7 @@ function build_items()
 
 		if ( is_array($cont_row) ) {
 
-			list( $media_content_url, $media_content_height, $media_content_width ) =
+			list( $media_content_url, $media_content_width, $media_content_height ) =
 				$this->_build_file_image( $cont_row ) ;
 
 			$media_title_xml        = $title_xml ;
@@ -248,7 +264,7 @@ function build_items()
 
 				if ( is_array($thumb_row) ) {
 
-					list( $media_thumbnail_url, $media_thumbnail_height, $media_thumbnail_width ) =
+					list( $media_thumbnail_url, $media_thumbnail_width, $media_thumbnail_height ) =
 						$this->_build_file_image( $thumb_row ) ;
 
 					$media_thumbnail_large_url    = $media_content_url ;
@@ -269,6 +285,9 @@ function build_items()
 			'category'     => $this->xml_text( $cat_row['cat_title'] ),
 			'pubdate'      => $this->xml_text( $pubdate ), 
 			'description'  => $this->xml_text( $desc ),
+			'geo_lat'      => $geo_lat ,
+			'geo_long'     => $geo_long ,
+			'georss_point' => $georss_point ,
 			'media_title'            => $media_title_xml ,
 			'media_description'      => $this->xml_text( $media_description ) ,
 			'media_content_url'      => $this->xml_url( $media_content_url ),
