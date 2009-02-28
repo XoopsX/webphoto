@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.7 2009/02/20 01:29:51 ohwada Exp $
+// $Id: rss.php,v 1.8 2009/02/28 00:56:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2009-02-20 K.OHWADA
+// 2009-02-28 K.OHWADA
+// use_pathinfo
 // georss
 // 2008-12-12 K.OHWADA
 // webphoto_photo_public
@@ -44,6 +45,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_rss extends webphoto_lib_rss
 {
+	var $_config_class;
 	var $_item_handler;
 	var $_file_handler;
 	var $_cat_handler;
@@ -53,6 +55,8 @@ class webphoto_main_rss extends webphoto_lib_rss
 	var $_search_class;
 	var $_utility_class;
 	var $_public_class;
+
+	var $_cfg_use_pathinfo ;
 
 	var $_mode  = null;
 	var $_param = null;
@@ -82,6 +86,7 @@ function webphoto_main_rss( $dirname, $trust_dirname )
 	$this->_item_handler   =& webphoto_item_handler::getInstance( $dirname );
 	$this->_file_handler   =& webphoto_file_handler::getInstance( $dirname );
 	$this->_cat_handler    =& webphoto_cat_handler::getInstance(   $dirname );
+	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
 	$this->_search_class   =& webphoto_lib_search::getInstance();
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
@@ -98,6 +103,7 @@ function webphoto_main_rss( $dirname, $trust_dirname )
 	$this->_multibyte_class->set_ja_period(  _WEBPHOTO_JA_PERIOD );
 	$this->_multibyte_class->set_ja_comma(   _WEBPHOTO_JA_COMMA );
 
+	$this->_cfg_use_pathinfo = $this->_config_class->get_by_name( 'use_pathinfo' );
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -353,7 +359,12 @@ function _build_context( $row )
 
 function _build_link( $row )
 {
-	$link = $this->_MODULE_URL .'/index.php/photo/'. $row['item_id'] .'/';
+	$item_id = $row['item_id'] ;
+	if ( $this->_cfg_use_pathinfo ) {
+		$link = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
+	} else {
+		$link = $this->_MODULE_URL .'/index.php?fct=photo&p='. $item_id ;
+	}
 	return $link;
 }
 
