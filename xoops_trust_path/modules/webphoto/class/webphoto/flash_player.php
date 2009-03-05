@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.8 2009/02/20 01:34:54 ohwada Exp $
+// $Id: flash_player.php,v 1.9 2009/03/05 15:45:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -82,6 +82,9 @@ class webphoto_flash_player
 
 	var $_CODEBASE = 'http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0';
 	var $_CLASSID  = 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000';
+
+// show black if change the font size in web brawser
+	var $_SCREENCOLOR_DEFAULT = '#ffffff' ;	// white
 
 //---------------------------------------------------------
 // constructor
@@ -401,7 +404,7 @@ function set_variables_in_buffer( $param )
 	}
 
 // color
-	$screencolor = null ;
+	$screencolor = $this->_SCREENCOLOR_DEFAULT ;
 	$backcolor   = null ;
 	$frontcolor  = null ;
 	$lightcolor  = null ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: player_manager.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: player_manager.php,v 1.5 2009/03/05 15:45:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-20 K.OHWADA
+// BUG: not set player_screencolor
 // 2009-01-25 K.OHWADA
 // build_movie_by_item_row();
 // 2009-01-10 K.OHWADA
@@ -265,17 +267,14 @@ function _print_movie( $op, $item_id, $player_id, $style, $movie )
 	$selbox = $this->_build_item_selbox( $op, $item_id, $player_id, $style );
 
 	echo "<br />\n";
-	echo '<div class="item"><div class="itemHead">';
-	echo '<h3 style="margin:0px; padding:0px">'._AM_WEBPHOTO_PLAYER_PREVIEW.'</h3>'."\n";
-	echo '</div>'."\n";
-	echo '<div class="itemBody" style="margin: 0px; padding: 5px">';
+	echo '<h3>'._AM_WEBPHOTO_PLAYER_PREVIEW.'</h3>'."\n";
+	echo "<br />\n";
 	echo $movie;   
 	echo "<br />\n";
 	echo _AM_WEBPHOTO_PLAYER_PREVIEW_LINK.' &nbsp; ';
 	echo $selbox;
 	echo "<br />\n";
 	echo _AM_WEBPHOTO_PLAYER_PREVIEW_DSC;
-	echo '</div>'."\n";
 }
 
 function _get_item_row()
@@ -386,7 +385,7 @@ function _submit()
 function _build_row_by_post( $row )
 {
 	$row['player_title']         = $this->_player_title ;
-	$row['player_bgcolor']       = $this->_post_class->get_post_text( 'player_bgcolor' );
+	$row['player_screencolor']   = $this->_post_class->get_post_text( 'player_screencolor' );
 	$row['player_backcolor']     = $this->_post_class->get_post_text( 'player_backcolor' );
 	$row['player_frontcolor']    = $this->_post_class->get_post_text( 'player_frontcolor' );
 	$row['player_lightcolor']    = $this->_post_class->get_post_text( 'player_lightcolor' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.12 2009/01/29 04:26:55 ohwada Exp $
+// $Id: item_manager.php,v 1.13 2009/03/05 15:45:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-02-20 K.OHWADA
+// Fatal error: Call to undefined method create_item_row_submit_preview()
 // 2009-01-25 K.OHWADA
 // _print_form_admin_with_mode() -> _print_form_admin()
 // 2009-01-10 K.OHWADA
@@ -837,7 +839,7 @@ function _submit()
 		case _C_WEBPHOTO_RET_ERROR :
 			echo $this->get_format_error();
 			$this->_print_form_admin( 
-				'admin_submit', $this->create_item_row_submit_preview() );
+				'admin_submit', $this->create_item_row_preview() );
 			break;
 	}
 
