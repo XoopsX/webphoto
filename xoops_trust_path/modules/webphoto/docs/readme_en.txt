@@ -1,4 +1,30 @@
-$Id: readme_en.txt,v 1.23 2009/01/31 20:37:32 ohwada Exp $
+$Id: readme_en.txt,v 1.24 2009/03/05 15:56:55 ohwada Exp $
+
+=================================================
+Version: 1.21
+Date:   2009-03-05
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. highlight the search keyword in detail page
+2. valid "page width" and "page height" in showing flash
+3. support Georss in RSS output
+
+4. Bug fix
+(1) Fatal error in help
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
+
+(2) Fatal error in imagemanager
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=923
+
+(3) not valid "Use pathinfo" in RSS output
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=927
+
 
 =================================================
 Version: 1.20

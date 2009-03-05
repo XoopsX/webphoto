@@ -1,11 +1,34 @@
-$Id: readme_jp.txt,v 1.23 2009/01/31 20:37:32 ohwada Exp $
+$Id: readme_jp.txt,v 1.24 2009/03/05 15:56:55 ohwada Exp $
+
+=================================================
+Version: 1.21
+Date:   2009-03-05
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 詳細表示にて、検索キーワードをハイライトした
+2. flash 表示にて 「ページ横幅」「ページ高さ」を有効にした
+3. RSS 出力にて、Georss に対応した
+
+4. バグ対策
+(1) へルプにて、Fatal error 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
+
+(2) イメージマネジャーにて、Fatal error 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=923
+
+(3) RSS出力 にて「pathinfo を使用する」が反映されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=927
+
 
 =================================================
 Version: 1.20
 Date:   2009-02-01
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
