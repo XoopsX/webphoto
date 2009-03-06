@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.13 2009/01/06 09:41:35 ohwada Exp $
+// $Id: admin.php,v 1.14 2009/03/06 04:06:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -494,6 +494,13 @@ define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categoris" ) 
 //---------------------------------------------------------
 // groupperm
 define( "_AM_WEBPHOTO_GPERM_HTML" , "Use HTML" ) ;
+
+//---------------------------------------------------------
+// v1.21
+//---------------------------------------------------------
+define( "_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
+define( "_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
+define( "_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
 
 // === define end ===
 }

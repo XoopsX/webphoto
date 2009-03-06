@@ -1,10 +1,16 @@
 <?php
-// $Id: xml.php,v 1.1 2008/10/30 00:25:51 ohwada Exp $
+// $Id: xml.php,v 1.2 2009/03/06 04:11:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-01 K.OHWADA
+// sanitize()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -139,6 +145,14 @@ function replace_return_code( $str, $replace=' ' )
 	$str = preg_replace("/\n/", $replace, $str);
 	$str = preg_replace("/\r/", $replace, $str);
 	return $str;
+}
+
+//---------------------------------------------------------
+// sanitize
+//---------------------------------------------------------
+function sanitize( $str )
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
 }
 
 // --- class end ---

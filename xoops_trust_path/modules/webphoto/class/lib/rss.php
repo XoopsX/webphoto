@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.4 2008/12/09 10:04:48 ohwada Exp $
+// $Id: rss.php,v 1.5 2009/03/06 04:11:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-01 K.OHWADA
+// view_rss()
 // 2008-12-09 K.OHWADA
 // $cache_id in clear_compiled_tpl()
 // 2008-10-01 K.OHWADA
@@ -205,14 +207,83 @@ function build_items()
 //---------------------------------------------------------
 // clear template
 //---------------------------------------------------------
-function clear_compiled_tpl( $cache_id=null )
+function clear_compiled_tpl_for_admin( $cache_id=null, $flag_msg=false )
 {
 	if ( $this->_is_module_admin ) {
 		$tpl = new XoopsTpl();
 		$tpl->clear_compiled_tpl( $this->_template );
 		$tpl->clear_cache( $this->_template, $cache_id );
-		echo "template cleared : ". $this->_template ;
+		if ( $flag_msg ) {
+			echo "template cleared : ". $this->_template ;
+		}
 	}
+}
+
+function clear_compiled_tpl( $cache_id=null )
+{
+	$tpl = new XoopsTpl();
+	$tpl->clear_compiled_tpl( $this->_template );
+	$tpl->clear_cache( $this->_template, $cache_id );
+}
+
+//---------------------------------------------------------
+// head
+//---------------------------------------------------------
+function view_rss()
+{
+	$this->http_output('pass');
+
+	echo $this->build_header_content_type();
+	echo $this->build_html_head();
+	echo $this->build_html_body_begin();
+	echo $this->build_view_rss();
+	echo "<br /><hr />\n";
+	echo $this->build_close_button();
+	echo $this->build_html_body_end();
+}
+
+function build_header_content_type()
+{
+	header( 'Content-Type:text/html; charset=UTF-8' );
+}
+
+function build_html_head( $title=null )
+{
+	if ( empty($title) ) {
+		$title = $this->utf8( $this->_xoops_sitename .' - '. $this->_MODULE_NAME ) ;
+	}
+
+	$str  = '<html><head>'."\n";
+	$str .= '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'."\n";
+	$str .= '<title>'. $this->sanitize( $title ) .'</title>'."\n";
+	$str .= '</head>'."\n";
+	return $str;
+}
+
+function build_html_body_begin()
+{
+	$str = '<body>'."\n";
+	return $str;
+}
+
+function build_html_body_end()
+{
+	$str = '</body></html>'."\n";
+	return $str;
+}
+
+function build_close_button()
+{
+	$str = '<input class="formButton" value="'. $this->utf8( _CLOSE ) .'" type="button" onclick="javascript:window.close();" />';
+	return $str;
+}
+
+function build_view_rss( $cache_id=null )
+{
+	$tpl = new XoopsTpl();
+	$this->assign_tpl( $tpl );
+	$str = $tpl->fetch( $this->_template, $cache_id );
+	return nl2br( $this->sanitize( $str ) );
 }
 
 //---------------------------------------------------------
