@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.18 2009/01/29 04:26:55 ohwada Exp $
+// $Id: base_this.php,v 1.19 2009/03/06 03:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-01 K.OHWADA
+// remove check_dir()
 // 2009-01-25 K.OHWADA
 // _SWFS_PATH
 // 2009-01-04 K.OHWADA
@@ -252,19 +254,6 @@ function get_config_array()
 function get_config_by_name( $name )
 {
 	return $this->_config_class->get_by_name( $name );
-}
-
-//---------------------------------------------------------
-// check dir
-//---------------------------------------------------------
-// BUG : wrong judgment in check_dir
-function XXXcheck_dir( $dir )
-{
-	if ( $dir && is_dir( $dir ) && is_writable( $dir ) && is_readable( $dir ) ) {
-		return 0;
-	}
-	$this->set_error( 'dir error : '.$dir );
-	return _C_WEBPHOTO_ERR_CHECK_DIR ;
 }
 
 //---------------------------------------------------------

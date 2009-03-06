@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.6 2008/12/18 13:23:16 ohwada Exp $
+// $Id: rss.php,v 1.7 2009/03/06 03:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-01 K.OHWADA
+// class/webphoto/rss.php
 // 2008-12-12 K.OHWADA
 // photo_public.php
 // 2008-12-09 K.OHWADA
@@ -61,6 +63,7 @@ webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
 webphoto_include_once( 'class/webphoto/photo_public.php' );
+webphoto_include_once( 'class/webphoto/rss.php' );
 webphoto_include_once( 'class/main/rss.php' );
 
 webphoto_include_language( 'main.php' );

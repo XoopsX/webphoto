@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: admin_menu.php,v 1.7 2009/03/06 03:54:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-01 K.OHWADA
+// rss_manager
 // 2009-01-10 K.OHWADA
 // comment photo_table_manage
 // 2008-12-12 K.OHWADA
@@ -87,10 +89,12 @@ function define_menu()
 // added for webphoto
 	$menu[13]['title'] = 'IMPORT_MYALBUM' ;
 	$menu[13]['fct']   = 'import_myalbum';
-	$menu[14]['title'] = 'CHECKTABLES' ;
-	$menu[14]['fct']   = 'checktables';
-	$menu[15]['title'] = 'UPDATE' ;
-	$menu[15]['fct']   = 'update';
+	$menu[14]['title'] = 'RSS_MANAGER' ;
+	$menu[14]['fct']   = 'rss_manager';
+	$menu[15]['title'] = 'CHECKTABLES' ;
+	$menu[15]['fct']   = 'checktables';
+	$menu[16]['title'] = 'UPDATE' ;
+	$menu[16]['fct']   = 'update';
 
 	return $menu;
 }

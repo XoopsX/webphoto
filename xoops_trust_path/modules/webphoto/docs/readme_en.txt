@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.24 2009/03/05 15:56:55 ohwada Exp $
+$Id: readme_en.txt,v 1.25 2009/03/06 03:54:16 ohwada Exp $
 
 =================================================
 Version: 1.21
@@ -14,8 +14,9 @@ This is the album module which manages photos and videos.
 1. highlight the search keyword in detail page
 2. valid "page width" and "page height" in showing flash
 3. support Georss in RSS output
+4. add RSS Manager
 
-4. Bug fix
+5. Bug fix
 (1) Fatal error in help
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
 
