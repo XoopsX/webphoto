@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: optional.php,v 1.6 2009/03/07 07:39:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-01 K.OHWADA
+// include_language_compatible()
 // 2009-01-10 K.OHWADA
 // _C_ -> _P_
 // 2008-08-24 K.OHWADA
@@ -200,11 +202,13 @@ function include_language( $file )
 	if ( file_exists( $file_root_lang ) ) {
 		$this->debug_msg_include_file( $file_root_lang );
 		include $file_root_lang;
+		$this->include_language_compatible( $file );
 		return true;
 
 	} elseif( file_exists( $file_trust_lang ) ) {
 		$this->debug_msg_include_file( $file_trust_lang );
 		include $file_trust_lang;
+		$this->include_language_compatible( $file );
 		return true;
 
 	} elseif ( file_exists( $file_root_eng ) ) {
@@ -220,6 +224,23 @@ function include_language( $file )
 
 	$this->debug_msg_error( 'CANNOT include '. $file .' in '. $this->_DIRNAME ) ;
 	return false;
+}
+
+function include_language_compatible( $file )
+{
+	$file_trust_comp = $this->_TRUST_DIR  .'/language/compatible/'.$file;
+	$file_root_comp  = $this->_MODULE_DIR .'/language/compatible/'.$file;
+
+	if ( file_exists( $file_root_comp ) ) {
+		$this->debug_msg_include_file( $file_root_comp );
+		include $file_root_comp;
+
+	} elseif( file_exists( $file_trust_comp ) ) {
+		$this->debug_msg_include_file( $file_trust_comp );
+		include $file_trust_comp;
+	}
+
+	return true;
 }
 
 function debug_msg_include_file( $file, $debug=true )
