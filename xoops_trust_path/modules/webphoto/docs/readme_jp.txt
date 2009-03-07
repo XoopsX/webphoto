@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.25 2009/03/06 03:54:16 ohwada Exp $
+$Id: readme_jp.txt,v 1.26 2009/03/07 07:58:55 ohwada Exp $
 
 =================================================
 Version: 1.21
@@ -15,8 +15,9 @@ Email:  webmaster@ohwada.jp
 2. flash 表示にて 「ページ横幅」「ページ高さ」を有効にした
 3. RSS 出力にて、Georss に対応した
 4. RSS 管理を新設した
+5. フランス語を追加した
 
-5. バグ対策
+6. バグ対策
 (1) へルプにて、Fatal error 
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
 
