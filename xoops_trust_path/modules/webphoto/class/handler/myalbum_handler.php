@@ -1,10 +1,16 @@
 <?php
-// $Id: myalbum_handler.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: myalbum_handler.php,v 1.2 2009/03/15 12:38:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-15 K.OHWADA
+// BUG: wrong table name
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,7 +24,6 @@ class webphoto_myalbum_handler extends webphoto_lib_handler
 	var $_text_table;
 	var $_votedata_table;
 
-	var $_MYALBUM_DIRNAME = 'myalbum';
 	var $_MYALBUM_MID = 0;
 
 //---------------------------------------------------------
@@ -48,11 +53,20 @@ function init( $myalbum_dirname )
 		return false;
 	}
 
+// BUG: wrong table name
+	$number = '' ;
+	preg_match( '/^\D+(\d*)$/', $myalbum_dirname, $matches );
+	if ( isset($matches[1]) && ($matches[1] !== '') ) {
+		$number = intval($matches[1]);
+	}
+
+	$table  = 'myalbum'.$number;
+
 	$this->_MYALBUM_MID    = $module->getVar('mid');
-	$this->_cat_table      = $this->db_prefix( $myalbum_dirname.'_cat' );
-	$this->_photos_table   = $this->db_prefix( $myalbum_dirname.'_photos' );
-	$this->_text_table     = $this->db_prefix( $myalbum_dirname.'_text' );
-	$this->_votedata_table = $this->db_prefix( $myalbum_dirname.'_votedata' );
+	$this->_cat_table      = $this->db_prefix( $table.'_cat' );
+	$this->_photos_table   = $this->db_prefix( $table.'_photos' );
+	$this->_text_table     = $this->db_prefix( $table.'_text' );
+	$this->_votedata_table = $this->db_prefix( $table.'_votedata' );
 
 	return $this->_MYALBUM_MID;
 }
