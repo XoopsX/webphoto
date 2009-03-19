@@ -1,10 +1,16 @@
 <?php
-// $Id: public.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: public.php,v 1.3 2009/03/19 13:43:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-19 K.OHWADA
+// FLAG_IMAGEMANAGER_IMAGE_ONLY
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,6 +27,7 @@ class webphoto_inc_public extends webphoto_inc_handler
 	var $_cat_cached = array();
 
 	var $_ITEM_ORDERBY = 'item_time_update DESC, item_id DESC';
+	var $_FLAG_IMAGEMANAGER_IMAGE_ONLY = false;
 
 //---------------------------------------------------------
 // constructor
@@ -252,9 +259,11 @@ function build_where_for_imagemanager_catid( $cat_id )
 function build_where_for_imagemanager_image()
 {
 	$where  = $this->build_where_public_with_item() ;
-	$where .= ' AND item_kind='.intval( _C_WEBPHOTO_ITEM_KIND_IMAGE ) ;
 	$where .= ' AND item_file_id_1 > 0' ;
 	$where .= ' AND item_file_id_2 > 0' ;
+	if ( $this->_FLAG_IMAGEMANAGER_IMAGE_ONLY ) {
+		$where .= ' AND item_kind='.intval( _C_WEBPHOTO_ITEM_KIND_IMAGE ) ;
+	}
 	return $where ;
 }
 

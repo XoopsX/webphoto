@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.7 2009/02/20 01:25:36 ohwada Exp $
+// $Id: imagemanager.php,v 1.8 2009/03/19 13:43:25 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-19 K.OHWADA
+// strip_slash_from_head()
 // 2009-02-20 K.OHWADA
 // Fatal error: Call to undefined method: webphoto_inc_catlist->set_uploads_path()
 // 2008-12-12 K.OHWADA
@@ -172,10 +174,10 @@ function main()
 				continue;
 			}
 
-			list( $cont_url, $cont_width, $cont_height ) =
+			list( $cont_src_url, $cont_tag_url, $cont_width, $cont_height ) =
 				$this->_build_file_image( $cont_row ) ;
 
-			list( $thumb_url, $thumb_width, $thumb_height ) =
+			list( $thumb_src_url, $thumb_tag_url, $thumb_width, $thumb_height ) =
 				$this->_build_file_image( $thumb_row ) ;
 
 			$item_id    = $item_row['item_id'];
@@ -184,12 +186,12 @@ function main()
 			$item_kind  = $item_row['item_kind'];
 			$cont_ext   = $cont_row['file_ext'];
 
-			$xcodel  = "[{$URL}={$cont_url}][{$IMG} align=left]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcodec  = "[{$URL}={$cont_url}][{$IMG}]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcoder  = "[{$URL}={$cont_url}][{$IMG} align=right]{$thumb_url}[/{$IMG}][/{$URL}]";
-			$xcodebl = "[{$IMG} align=left]{$cont_url}[/{$IMG}]";
-			$xcodebc = "[{$IMG}]{$cont_url}[/{$IMG}]";
-			$xcodebr = "[{$IMG} align=right]{$cont_url}[/{$IMG}]";
+			$xcodel  = "[{$URL}={$cont_tag_url}][{$IMG} align=left]{$thumb_tag_url}[/{$IMG}][/{$URL}]";
+			$xcodec  = "[{$URL}={$cont_tag_url}][{$IMG}]{$thumb_tag_url}[/{$IMG}][/{$URL}]";
+			$xcoder  = "[{$URL}={$cont_tag_url}][{$IMG} align=right]{$thumb_tag_url}[/{$IMG}][/{$URL}]";
+			$xcodebl = "[{$IMG} align=left]{$cont_tag_url}[/{$IMG}]";
+			$xcodebc = "[{$IMG}]{$cont_tag_url}[/{$IMG}]";
+			$xcodebr = "[{$IMG} align=right]{$cont_tag_url}[/{$IMG}]";
 
 			$photos[] = array(
 				'photo_id'     => $item_id ,
@@ -199,7 +201,7 @@ function main()
 				'thumb_width'  => $thumb_width ,
 				'thumb_height' => $thumb_height ,
 				'nicename'     => $this->sanitize( $item_title ) ,
-				'src'          => $thumb_url ,
+				'src'          => $thumb_src_url ,
 				'can_edit'     => $this->_build_can_edit( $item_uid ) ,
 				'xcodel'       => $xcodel ,
 				'xcodec'       => $xcodec ,
@@ -260,20 +262,29 @@ function _build_file_image( $file_row )
 		return array( $url, $width, $height );
 	}
 
-	$url    = $file_row['file_url'] ;
-	$path   = $file_row['file_path'] ;
-	$width  = $file_row['file_width'] ;
-	$height = $file_row['file_height'] ;
+	$url      = $file_row['file_url'] ;
+	$path     = $file_row['file_path'] ;
+	$width    = $file_row['file_width'] ;
+	$height   = $file_row['file_height'] ;
+	$tag_path = $this->_strip_slash_from_head( $path );
 
-	if ( $this->_cfg_usesiteimg && $path ) {
-		$url  = $path ;
-	} elseif ( $this->_cfg_usesiteimg ) {
-		$url = str_replace( XOOPS_URL.'/' , '', $url );
-	} elseif ( $path ) {
-		$url = XOOPS_URL .'/'. $path ;
+	if ( $path ) {
+		$src  = XOOPS_URL . $path ;
+	} elseif ( $url ) {
+		$src = $url;
+	} else {
+		$src = '' ;
 	}
 
-	return array( $url, $width, $height );
+	if ( $this->_cfg_usesiteimg && $tag_path ) {
+		$tag  = $tag_path ;
+	} elseif ( $this->_cfg_usesiteimg && url ) {
+		$tag = str_replace( XOOPS_URL.'/' , '', $url );
+	} elseif ( $path ) {
+		$tag = $src ;
+	}
+
+	return array( $src, $tag, $width, $height );
 }
 
 function _build_can_edit( $item_uid )
@@ -288,6 +299,17 @@ function _build_can_edit( $item_uid )
 		return true;
 	}
 	return false ;
+}
+
+function _strip_slash_from_head( $str )
+{
+// ord : the ASCII value of the first character of string
+// 0x2f slash
+
+	if( ord( $str ) == 0x2f ) {
+		$str = substr($str, 1);
+	}
+	return $str;
 }
 
 //---------------------------------------------------------
