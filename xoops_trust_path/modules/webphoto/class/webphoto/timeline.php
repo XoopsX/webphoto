@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.2 2009/03/20 11:13:53 ohwada Exp $
+// $Id: timeline.php,v 1.3 2009/03/20 13:44:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -61,7 +61,10 @@ function fetch_timeline( $mode, $unit, $date, $photos )
 	$events = array();
 
 	foreach ( $photos as $photo ) {
-		$events[] = $this->build_event( $photo );
+		$event = $this->build_event( $photo );
+		if ( is_array($event) ) {
+			$events[] = $event ;
+		}
 	}
 
 	switch ( $mode )
@@ -91,7 +94,10 @@ function fetch_timeline( $mode, $unit, $date, $photos )
 
 function build_event( $photo )
 {
-//	$icon = "http://localhost/xoops_jpex_13/modules/webphoto/index.php?fct=image&file_kind=2&width=80&item_id=".$photo['id'] ;
+	$start = $this->build_start( $photo );
+	if ( empty($start) ) {
+		return false;
+	}
 
 	$icon = $photo['small_url_s'];
 
@@ -103,7 +109,7 @@ function build_event( $photo )
 	}
 
 	$arr = array(
-		'start' => $this->build_start( $photo ) ,
+		'start' => $start ,
 		'title' => $photo['title'] ,
 		'link'  => $photo['photo_uri'],
 		'image' => $image ,
@@ -115,16 +121,18 @@ function build_event( $photo )
 
 function build_start( $photo )
 {
-	if ( $photo['datetime_disp'] ) {
-		$time = $this->_utility_class->str_to_time( $photo['datetime_disp'] ) ;
-		if ( $time > 0 ) {
-			$start = date( 'r', $time );
-		} else {
-			$start = $photo['datetime_disp'] ;
-		}
-	} else {
-		$start = date( 'r', $photo['time_create'] );
+	$time = 0 ;
+	if ( $photo['datetime_unix'] > 0 ) {
+		$time = $photo['datetime_unix'] ;
+	} elseif ( $photo['time_create'] > 0 ) {
+		$time = $photo['time_create'] ;
 	}
+
+	$start = false;
+	if ( $time > 0 ) {
+		$start = date( 'r', $time );
+	}
+
 	return $start;
 }
 

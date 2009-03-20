@@ -1,10 +1,12 @@
 <?php
-// $Id: utility.php,v 1.10 2009/01/24 07:10:39 ohwada Exp $
+// $Id: utility.php,v 1.11 2009/03/20 13:44:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+// mysql_datetime_to_unixtime( $datetime )
 
 //---------------------------------------------------------
 // change log
@@ -608,6 +610,54 @@ function get_mysql_date_today()
 function time_to_mysql_datetime( $time )
 {
 	return date( $this->_MYSQL_FMT_DATETIME, $time );
+}
+
+function mysql_datetime_to_unixtime( $datetime )
+{
+	if ( empty($datetime) ) {
+		return false ;
+	}
+
+// yyyy-mm-dd hh:mm:ss
+	preg_match( "/(\d+)\-(\d+)\-(\d+)\s+(\d+):(\d+):(\d+)/", $datetime, $match );
+
+	$year = 0;
+	$mon  = 0;
+	$day  = 0;
+	$hour = 0;
+	$min  = 0;
+	$sec  = 0;
+
+	if ( isset( $match[1] ) ) {
+		$year = intval( $match[1] );
+	}
+	if ( isset( $match[2] ) ) {
+		$mon = intval( $match[2] );
+	}
+	if ( isset( $match[3] ) ) {
+		$day = intval( $match[3] );
+	}
+	if ( isset( $match[4] ) ) {
+		$hour = intval( $match[4] );
+	}
+	if ( isset( $match[5] ) ) {
+		$min = intval( $match[5] );
+	}
+	if ( isset( $match[6] ) ) {
+		$sec = intval( $match[6] );
+	}
+
+	if ( $year == 0 ) {
+		return false ;
+	}
+	if ( $mon == 0 ) {
+		 $mon = 1;
+	}
+	if ( $day == 0 ) {
+		 $day = 1;
+	}
+
+	return mktime( $hour, $min, $sec, $mon, $day, $year );
 }
 
 function mysql_datetime_to_day_or_month_or_year( $datetime )
