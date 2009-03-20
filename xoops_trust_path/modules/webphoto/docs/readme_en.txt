@@ -1,4 +1,54 @@
-$Id: readme_en.txt,v 1.26 2009/03/07 07:58:55 ohwada Exp $
+$Id: readme_en.txt,v 1.27 2009/03/20 04:18:09 ohwada Exp $
+
+=================================================
+Version: 1.30
+Date:   2009-03-20
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. the user can insert the non-image file like pdf in content by imagemanager
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
+
+2. rotate the image in preview
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
+
+3. support timeline
+(1) show timeline using timeline module
+(2) add the small image for timeline
+
+4. bug fix
+(1) cannot import from myalbum-P 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=932
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) and execute "Update" in webphoto's admin cp
+  for creating the small images.
+
+
+6. Bug fix
+(1) Fatal error in help
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
+
+(2) Fatal error in imagemanager
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=923
+
+(3) not valid "Use pathinfo" in RSS output
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=927
+
+
+* Special Thanks *
+Special thanks to MIT Simile Project.
+- http://code.google.com/p/simile-widgets/wiki/Timeline
+
 
 =================================================
 Version: 1.21

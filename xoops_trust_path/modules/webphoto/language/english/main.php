@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.26 2009/01/31 19:12:50 ohwada Exp $
+// $Id: main.php,v 1.27 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1322,6 +1322,20 @@ define("_WEBPHOTO_ERR_SWF", "Cannot create Flash swf");
 
 // jodconverter
 define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "");
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_MAP",  "GoogleMap");
+define("_WEBPHOTO_TITLE_TIMELINE",  "Timeline");
+define("_WEBPHOTO_TIMELINE_ON",  "Show timeline");
+define("_WEBPHOTO_TIMELINE_OFF", "Hide timeline");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");
+
+// edit form
+define("_WEBPHOTO_CAP_SMALL_SELECT", "Select the small image");
 
 // === define end ===
 }

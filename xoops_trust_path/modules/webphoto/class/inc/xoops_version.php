@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.21 2009/02/01 11:02:38 ohwada Exp $
+// $Id: xoops_version.php,v 1.22 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// timeline_dirname
 // 2009-01-25 K.OHWADA
 // _build_blocks_top_options()
 // 2009-01-10 K.OHWADA
@@ -559,7 +561,6 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
-// for webphoto
 	$arr[] = array(
 		'name'			=> 'xpdfpath' ,
 		'title'			=> $this->_constant_name( 'CFG_XPDFPATH' ) ,
@@ -621,26 +622,6 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
-	$arr[] = array(
-		'name'			=> 'allownoimage' ,
-		'title'			=> $this->_constant_name( 'CFG_ALLOWNOIMAGE' ) ,
-		'description'	=> '' ,
-		'formtype'		=> 'yesno' ,
-		'valuetype'		=> 'int' ,
-		'default'		=> '1' ,
-		'options'		=> array()
-	) ;
-
-	$arr[] = array(
-		'name'			=> 'makethumb' ,
-		'title'			=> $this->_constant_name( 'CFG_MAKETHUMB' ) ,
-		'description'	=> $this->_constant_name( 'CFG_DESCMAKETHUMB' ) ,
-		'formtype'		=> 'yesno' ,
-		'valuetype'		=> 'int' ,
-		'default'		=> '1' ,
-		'options'		=> array()
-	) ;
-
 // thumbsize -> thumb_width thumb_height
 	$arr[] = array(
 		'name'			=> 'thumb_width' ,
@@ -659,6 +640,47 @@ function _build_config()
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '140' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'small_width' ,
+		'title'			=> $this->_constant_name( 'CFG_SMALL_WIDTH' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '70' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'small_height' ,
+		'title'			=> $this->_constant_name( 'CFG_SMALL_HEIGHT' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '70' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'allownoimage' ,
+		'title'			=> $this->_constant_name( 'CFG_ALLOWNOIMAGE' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '1' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'makethumb' ,
+		'title'			=> $this->_constant_name( 'CFG_MAKETHUMB' ) ,
+		'description'	=> $this->_constant_name( 'CFG_DESCMAKETHUMB' ) ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '1' ,
 		'options'		=> array()
 	) ;
 
@@ -1073,6 +1095,16 @@ function _build_config()
 			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
 			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
 		)
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'timeline_dirname' ,
+		'title'			=> $this->_constant_name( 'CFG_TIMELINE_DIRNAME' ) ,
+		'description'	=> $this->_constant_name( 'CFG_TIMELINE_DIRNAME_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> 'timeline' ,
+		'options'		=> array()
 	) ;
 
 	return $arr;

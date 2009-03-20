@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.12 2009/01/31 19:12:50 ohwada Exp $
+// $Id: header.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// timeline.php
 // 2009-01-25 K.OHWADA
 // gmap_api.php
 // 2009-01-10 K.OHWADA
@@ -106,6 +108,7 @@ webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/show_main.php' );
 webphoto_include_once( 'class/webphoto/show_list.php' );
+webphoto_include_once( 'class/webphoto/timeline.php' );
 
 webphoto_include_language( 'modinfo.php' );
 webphoto_include_language( 'main.php' );

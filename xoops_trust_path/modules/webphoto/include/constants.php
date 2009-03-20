@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.16 2009/01/29 04:26:55 ohwada Exp $
+// $Id: constants.php,v 1.17 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -107,6 +107,9 @@ define("_C_WEBPHOTO_FILE_KIND_PDF"           , 6 ) ;
 // v1.20
 define("_C_WEBPHOTO_FILE_KIND_SWF"           , 7 ) ;
 
+// v1.30
+define("_C_WEBPHOTO_FILE_KIND_SMALL"         , 8 ) ;
+
 define("_C_WEBPHOTO_ITEM_FILE_CONT"          , 'item_file_id_1' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_THUMB"         , 'item_file_id_2' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_MIDDLE"        , 'item_file_id_3' ) ;
@@ -118,6 +121,9 @@ define("_C_WEBPHOTO_ITEM_FILE_PDF"           , 'item_file_id_6' ) ;
 
 // v1.20
 define("_C_WEBPHOTO_ITEM_FILE_SWF"           , 'item_file_id_7' ) ;
+
+// v1.30
+define("_C_WEBPHOTO_ITEM_FILE_SMALL"         , 'item_file_id_8' ) ;
 
 define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
@@ -154,6 +160,10 @@ define("_C_WEBPHOTO_UPLOADER_UPLOAD"            , 14 ) ;
 
 define("_C_WEBPHOTO_UPLOADER_PREFIX"      , "tmp_" ) ;
 define("_C_WEBPHOTO_UPLOADER_PREFIX_PREV" , "tmp_prev_" ) ;
+
+// v1.30
+define("_C_WEBPHOTO_UPLOADER_PREFIX_ROT" ,  "tmp_rot_" ) ;
+
 define("_C_WEBPHOTO_VIDEO_THUMB_PREFIX"   , "tmp_video_" ) ;
 
 define("_C_WEBPHOTO_STATUS_WAITING" ,  0 ) ;
@@ -273,11 +283,14 @@ define("_C_WEBPHOTO_UPLOAD_FIELD_GICON",    "file_gicon");
 define("_C_WEBPHOTO_UPLOAD_FIELD_GSHADOW",  "file_gshadow");
 define("_C_WEBPHOTO_UPLOAD_FIELD_PLOGO",    "file_plogo");
 
+// v1.30
+define("_C_WEBPHOTO_UPLOAD_FIELD_SMALL",    "file_small");
+
 // v0.70
 define("_C_WEBPHOTO_EMBED_NAME_GENERAL",  "general" ) ;
 define("_C_WEBPHOTO_INFO_SEPARATOR" , "|" ) ;
 
-define("_C_WEBPHOTO_CODEINFO_DEFAULT", "1|2|3|4|6|7|101|102|103|104|105");
+define("_C_WEBPHOTO_CODEINFO_DEFAULT", "1|2|3|4|6|7|8|101|102|103|104|105");
 define("_C_WEBPHOTO_CODEINFO_CONT",   "1");
 define("_C_WEBPHOTO_CODEINFO_THUMB",  "2");
 define("_C_WEBPHOTO_CODEINFO_MIDDLE", "3");
@@ -287,6 +300,9 @@ define("_C_WEBPHOTO_CODEINFO_DOCOMO", "5");
 // v1.20
 define("_C_WEBPHOTO_CODEINFO_PDF",    "6");
 define("_C_WEBPHOTO_CODEINFO_SWF",    "7");
+
+// v1.30
+define("_C_WEBPHOTO_CODEINFO_SMALL",  "8");
 
 define("_C_WEBPHOTO_CODEINFO_PAGE",   "101");
 define("_C_WEBPHOTO_CODEINFO_SITE",   "102");

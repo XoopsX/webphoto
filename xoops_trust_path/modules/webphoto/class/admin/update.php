@@ -1,10 +1,16 @@
 <?php
-// $Id: update.php,v 1.6 2008/11/01 23:53:08 ohwada Exp $
+// $Id: update.php,v 1.7 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-15 K.OHWADA
+// v1.30
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -47,18 +53,23 @@ function main()
 
 	$op = $this->_post_class->get_post_text('op');
 
-	$url_040 = $this->_update_check_class->get_url_040();
-	$url_050 = $this->_update_check_class->get_url_050();
+	$url_040 = $this->_update_check_class->get_url('040');
+	$url_050 = $this->_update_check_class->get_url('050');
+	$url_130 = $this->_update_check_class->get_url('130');
 
 	echo $this->_update_check_class->build_msg();
 	echo "<br />\n";
 
-	echo ' - <a href="'. $url_040 .'">';
-	echo "Update v0.30 to v0.40";
+	echo ' - <a href="'. $url_130 .'">';
+	echo "Update v1.20 to v1.30";
 	echo "</a><br /><br />\n";
 
 	echo ' - <a href="'. $url_050 .'">';
 	echo "Update v0.40 to v0.50";
+	echo "</a><br /><br />\n";
+
+	echo ' - <a href="'. $url_040 .'">';
+	echo "Update v0.30 to v0.40";
 	echo "</a><br /><br />\n";
 
 	xoops_cp_footer();

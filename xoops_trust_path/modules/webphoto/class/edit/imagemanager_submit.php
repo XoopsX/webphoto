@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// create_small_param_by_photo()
 // 2009-01-10 K.OHWADA
 // webphoto_imagemanager_submit -> webphoto_edit_imagemanager_submit
 //---------------------------------------------------------
@@ -32,8 +34,8 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 	var $_has_image_rotate   = false;
 
 // post
-	var $_post_item_id          = 0;
-	var $_item_cat_id           = 0;
+	var $_post_item_id   = 0;
+	var $_item_cat_id    = 0;
 	var $_preview_name   = null;
 	var $_tag_name_array = null;
 
@@ -45,6 +47,8 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 	var $_thumb_media_type  = null;
 	var $_middle_tmp_name   = null;
 	var $_middle_media_type = null;
+	var $_small_tmp_name    = null;
+	var $_small_media_type = null;
 	var $_image_tmp_file    = null;
 
 	var $_photo_param         = null ;
@@ -66,6 +70,7 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
+	var $_SMALL_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_SMALL ;
 
 // for submit_imagemanager
 	var $_FLAG_FETCH_ALLOW_ALL = false ;
@@ -303,12 +308,24 @@ function unlink_uploaded_files()
 {
 	if ( $this->_photo_tmp_name ) {
 		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_photo_tmp_name );
+
+		$rot_name = str_replace( 
+			_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
+			_C_WEBPHOTO_UPLOADER_PREFIX_ROT , 
+			$this->_photo_tmp_name 
+		) ;
+		if ( $rot_name ) {
+			$this->unlink_file( $this->_TMP_DIR .'/'. $rot_name );
+		}
 	}
 	if ( $this->_thumb_tmp_name ) {
 		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_thumb_tmp_name );
 	}
 	if ( $this->_middle_tmp_name ) {
 		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_middle_tmp_name );
+	}
+	if ( $this->_small_tmp_name ) {
+		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_small_tmp_name );
 	}
 	if ( $this->_image_tmp_file ) {
 		$this->unlink_file( $this->_image_tmp_file );
@@ -324,10 +341,10 @@ function init_photo_create()
 	$this->_factory_create_class->set_flag_print_first_msg( $this->_MSG_FIRST );
 }
 
-function build_photo_param( $item_row, $rotate=0 )
+function build_photo_param( $item_row )
 {
 	return $this->_factory_create_class->build_photo_param(
-		$item_row, $this->_photo_tmp_name, $this->_photo_media_type, $rotate );
+		$item_row, $this->_photo_tmp_name, $this->_photo_media_type );
 }
 
 function create_cont_param( $photo_param )
@@ -387,6 +404,26 @@ function create_middle_param_by_tmp( $item_row, $tmp_name )
 	}
 	$param = $this->_factory_create_class->build_middle_thumb_param( $item_row, $tmp_name );
 	return   $this->_factory_create_class->create_middle_param( $param );
+}
+
+//---------------------------------------------------------
+// create small
+//---------------------------------------------------------
+function create_small_param_by_photo( $param )
+{
+	if ( ! is_array( $param ) ) {
+		return null;
+	}
+	return $this->_factory_create_class->create_small_param( $param );
+}
+
+function create_small_param_by_tmp( $item_row, $tmp_name )
+{
+	if ( empty($tmp_name) ) {
+		return null;
+	}
+	$param = $this->_factory_create_class->build_middle_thumb_param( $item_row, $tmp_name );
+	return   $this->_factory_create_class->create_small_param( $param );
 }
 
 //---------------------------------------------------------
@@ -499,6 +536,21 @@ function upload_fetch_middle()
 	if ( $ret == 1 ) {
 		$this->_middle_tmp_name   = $this->_upload_class->get_tmp_name();
 		$this->_middle_media_type = $this->_upload_class->get_uploader_media_type();
+	}
+}
+
+function upload_fetch_small()
+{
+	$this->_small_tmp_name   = null;
+	$this->_small_media_type = null;
+
+	$ret = $this->_upload_class->fetch_image( $this->_SMALL_FIELD_NAME );
+	if ( $ret < 0 ) {
+		$this->set_error( $this->_upload_class->get_errors() );
+	}
+	if ( $ret == 1 ) {
+		$this->_small_tmp_name   = $this->_upload_class->get_tmp_name();
+		$this->_small_media_type = $this->_upload_class->get_uploader_media_type();
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: file_handler.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// get_count_by_kind()
 // 2009-01-10 K.OHWADA
 // build_row_by_param( $row, $param )
 // 2008-12-07 K.OHWADA
@@ -175,6 +177,24 @@ function delete_by_itemid( $item_id )
 	$sql  = 'DELETE FROM '. $this->_table;
 	$sql .= ' WHERE file_item_id='. intval($item_id);
 	return $this->query( $sql );
+}
+
+//---------------------------------------------------------
+// get
+//---------------------------------------------------------
+function get_count_by_kind( $kind )
+{
+	$sql  = 'SELECT COUNT(*) FROM '.$this->_table;
+	$sql .= ' WHERE file_kind='.intval($kind);
+	return $this->get_count_by_sql( $sql );
+}
+
+function get_rows_by_kind( $kind, $limit=0, $offset=0 )
+{
+	$sql  = 'SELECT * FROM '.$this->_table;
+	$sql .= ' WHERE file_kind='.intval($kind);
+	$sql .= ' ORDER BY file_id ASC';
+	return $this->get_rows_by_sql( $sql, $limit, $offset );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.13 2009/03/06 04:06:47 ohwada Exp $
+// $Id: modinfo.php,v 1.14 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -333,6 +333,14 @@ define($constpref."CFG_XPDFPATH_DSC" , "pdftoppm ¤Ê¤É¤ÎÂ¸ºß¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê¤ò¥Õ¥
 // v1.21
 //---------------------------------------------------------
 define($constpref."ADMENU_RSS_MANAGER", "RSS ´ÉÍý");
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+define($constpref."CFG_SMALL_WIDTH" ,  "¥¿¥¤¥à¥é¥¤¥ó¤Ç¤Î²èÁü¤ÎÉý" ) ;
+define($constpref."CFG_SMALL_HEIGHT" , "¥¿¥¤¥à¥é¥¤¥ó¤Ç¤Î²èÁü¤Î¹â¤µ" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME", "timeline ¥â¥¸¥å¡¼¥ë¤Î¥Ç¥£¥ì¥¯¥È¥êÌ¾" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME_DSC", "¥¿¥¤¥à¥é¥¤¥óµ¡Ç½¤ò»ÈÍÑ¤¹¤ë¤È¤­¤Ë»ØÄê¤¹¤ë" ) ;
 
 }
 // === define begin ===

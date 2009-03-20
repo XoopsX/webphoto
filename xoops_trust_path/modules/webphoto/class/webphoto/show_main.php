@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.11 2009/01/31 19:12:50 ohwada Exp $
+// $Id: show_main.php,v 1.12 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// webphoto_timeline
 // 2009-01-25 K.OHWADA
 // webphoto_inc_xoops_header -> webphoto_xoops_header
 // get_gmap_center()
@@ -45,6 +47,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_sort_class;
 	var $_rate_check_class;
 	var $_public_class ;
+	var $_timeline_class ;
 
 	var $_sort_name;
 
@@ -59,10 +62,13 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_get_page;
 	var $_get_viewtype = null;
 
-	var $_cfg_gmap_apikey    = null ;
-	var $_cfg_use_pathinfo   = false ;
-	var $_cfg_cat_main_width = 0 ;
-	var $_cfg_cat_sub_width  = 0 ;
+	var $_cfg_gmap_apikey    ;
+	var $_cfg_use_pathinfo   ;
+	var $_cfg_cat_main_width ;
+	var $_cfg_cat_sub_width  ;
+
+	var $_mode  = null;
+	var $_init_timeline ;
 
 	var $_SORT_ARRAY = array();
 
@@ -74,6 +80,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_ACTION_DEFAULT  = 'latest';
 	var $_MAX_TAG_CLOUD   = 100;
 	var $_MAX_GMAPS       = 100;
+	var $_MAX_TIMELINE    = 100;
 
 	var $_TOP_CATLIST_COLS    = 3;
 	var $_TOP_CATLIST_DELMITA = '<br />';
@@ -100,21 +107,29 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_SHOW_CAT_MAIN_IMG = true;
 	var $_SHOW_CAT_SUB_IMG  = true;
 
-	var $_ARRAY_DENY_CATLIST      = array();	
-	var $_ARRAY_DENY_TAGCLOUD     = array();
-	var $_ARRAY_DENY_GMAP         = array();
+	var $_ARRAY_DENY_MENU         = array( 'map','timeline' );
+	var $_ARRAY_DENY_SEARCH       = array( 'map','timeline' );
+	var $_ARRAY_DENY_CATLIST      = array( 'map','timeline' );
+	var $_ARRAY_DENY_TAGCLOUD     = array( 'map','timeline' );
+	var $_ARRAY_DENY_GMAP         = array( 'timeline' );
+	var $_ARRAY_DENY_TIMELINE     = array( 'map' );
 	var $_ARRAY_DENY_DESC         = array();
 	var $_ARRAY_DENY_NOTIFICATION = array();
-	var $_ARRAY_DENY_NAVI         = array( 'random' );	// except random
-	var $_ARRAY_DENY_NAVI_SORT    = array( 'random' );
+	var $_ARRAY_DENY_NAVI         = array( 'map','timeline','random' );	// except random
+	var $_ARRAY_DENY_NAVI_SORT    = array( 'map','timeline','random' );
+	var $_ARRAY_DENY_QR           = array( 'map','timeline' );
 
+	var $_ARRAY_ALLOW_MENU         = '*' ;	// all
+	var $_ARRAY_ALLOW_SEARCH       = '*' ;	// all
 	var $_ARRAY_ALLOW_CATLIST      = '*' ;	// all
 	var $_ARRAY_ALLOW_TAGCLOUD     = '*' ;	// all
 	var $_ARRAY_ALLOW_GMAP         = '*' ;	// all
+	var $_ARRAY_ALLOW_TIMELINE     = '*' ;	// all
 	var $_ARRAY_ALLOW_DESC         = array( 'latest' );
 	var $_ARRAY_ALLOW_NOTIFICATION = array( 'latest' );
 	var $_ARRAY_ALLOW_NAVI         = '*';	// all
 	var $_ARRAY_ALLOW_NAVI_SORT    = '*';	// all
+	var $_ARRAY_ALLOW_QR           = '*';	// all
 
 	var $_ARRAY_CHECKSORT_NAVI     = array();
 
@@ -132,7 +147,8 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
 	$this->_public_class     =& webphoto_photo_public::getInstance( $dirname );
 	$this->_header_class     =& webphoto_xoops_header::getInstance( $dirname );
-	
+	$this->_pathinfo_class   =& webphoto_lib_pathinfo::getInstance();
+
 	$this->_notification_select_class =& webphoto_d3_notification_select::getInstance();
 	$this->_notification_select_class->init( $dirname ); 
 
@@ -140,18 +156,17 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_pagenavi_class->set_mark_id_prev( '<b>'. $this->get_constant('NAVI_PREVIOUS') .'</b>' );
 	$this->_pagenavi_class->set_mark_id_next( '<b>'. $this->get_constant('NAVI_NEXT') .'</b>' );
 
-	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
-
-	$cfg_newphotos             = $this->get_config_by_name('newphotos');
-	$cfg_viewcattype           = $this->get_config_by_name('viewcattype');
-	$cfg_sort                  = $this->get_config_by_name('sort');
-	$cfg_use_popbox            = $this->get_config_by_name('use_popbox');
-	$cfg_perm_cat_read         = $this->get_config_by_name('perm_cat_read');
-	$cfg_perm_item_read        = $this->get_config_by_name('perm_item_read');
-	$this->_cfg_gmap_apikey    = $this->get_config_by_name('gmap_apikey');
-	$this->_cfg_use_pathinfo   = $this->get_config_by_name('use_pathinfo');
-	$this->_cfg_cat_main_width = $this->get_config_by_name('cat_main_width');
-	$this->_cfg_cat_sub_width  = $this->get_config_by_name('cat_sub_width');
+	$cfg_newphotos               = $this->get_config_by_name('newphotos');
+	$cfg_viewcattype             = $this->get_config_by_name('viewcattype');
+	$cfg_sort                    = $this->get_config_by_name('sort');
+	$cfg_use_popbox              = $this->get_config_by_name('use_popbox');
+	$cfg_perm_cat_read           = $this->get_config_by_name('perm_cat_read');
+	$cfg_perm_item_read          = $this->get_config_by_name('perm_item_read');
+	$cfg_timeline_dirname        = $this->get_config_by_name('timeline_dirname');
+	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
+	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
+	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width    = $this->get_config_by_name('cat_sub_width');
 
 	$this->_MAX_PHOTOS         = $cfg_newphotos;
 	$this->_VIEWTYPE_DEFAULT   = $cfg_viewcattype;
@@ -159,6 +174,9 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class->set_photo_sort_default( $cfg_sort );
+
+	$this->_timeline_class =& webphoto_timeline::getInstance();
+	$this->_init_timeline = $this->_timeline_class->init( $cfg_timeline_dirname );
 
 // separator
 	if ( $this->_cfg_use_pathinfo ) {
@@ -199,6 +217,11 @@ function _preload_photo_sort_array()
 			$this->_sort_class->set_photo_sort_array( $arr );
 		}
 	}
+}
+
+function set_mode( $val )
+{
+	$this->_mode = $val;
 }
 
 //---------------------------------------------------------
@@ -509,6 +532,7 @@ function pagenavi_calc_end( $start, $limit, $total )
 //---------------------------------------------------------
 function build_gmap( $cat_id=0, $limit )
 {
+	$mode  = $this->_mode; 
 	$show  = false;
 	$icons = null;
 
@@ -522,15 +546,96 @@ function build_gmap( $cat_id=0, $limit )
 	}
 
 	$arr = array(
-		'show_gmap'         => $show ,
-		'gmap_photos'       => $photos ,
-		'gmap_icons'        => $icons ,
-		'gmap_latitude'     => $latitude,
-		'gmap_longitude'    => $longitude,
-		'gmap_zoom'         => $zoom,
+		'show_gmap'      => $show ,
+		'gmap_photos'    => $photos ,
+		'gmap_icons'     => $icons ,
+		'gmap_latitude'  => $latitude,
+		'gmap_longitude' => $longitude,
+		'gmap_zoom'      => $zoom,
+		'gmap_class'     => $this->get_gmap_class( $mode ) ,
 		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
 	);
 	return $arr;
+}
+
+function get_gmap_class( $mode )
+{
+	$ret = 'webphoto_gmap_normal';
+	switch ( $mode )
+	{
+		case 'map':
+			$ret = 'webphoto_gmap_large';
+			break;
+	}
+	return $ret;
+}
+
+//---------------------------------------------------------
+// timeline class
+//---------------------------------------------------------
+function build_timeline( $unit, $photos )
+{
+	$mode    = $this->_mode; 
+	$show    = false ;
+	$js      = null ;
+	$element = null;
+
+	if ( $this->_init_timeline ) {
+		$tl_mode   = $this->get_timeline_mode( $mode );
+		$param     = $this->_timeline_class->fetch_timeline( 
+			'painter' , $unit, $photos );
+		$js      = $param['timeline_js'] ;
+		$element = $param['timeline_element'] ;
+		$show    = true ;
+	}
+
+	$arr = array(
+		'show_timeline'      => $show ,
+		'show_timeline_unit' => $this->get_show_timeline_unit( $mode ) ,
+		'timeline_js'        => $js ,
+		'timeline_element'   => $element ,
+		'timeline_class'     => $this->get_timeline_class( $mode ) ,
+	);
+	return $arr;
+}
+
+function get_timeline_class( $mode )
+{
+	$ret = 'webphoto_timeline_normal';
+	switch ( $mode )
+	{
+		case 'timeline':
+			$ret = 'webphoto_timeline_large';
+			break;
+	}
+	return $ret;
+}
+
+function get_timeline_mode( $mode )
+{
+	return 'painter';
+
+// not use
+	$ret = 'simple';
+	switch ( $mode )
+	{
+		case 'timeline':
+			$ret = 'painter';
+			break;
+	}
+	return $ret;
+}
+
+function get_show_timeline_unit( $mode )
+{
+	$ret = false;
+	switch ( $mode )
+	{
+		case 'timeline':
+			$ret = true;
+			break;
+	}
+	return $ret;
 }
 
 //---------------------------------------------------------
@@ -608,9 +713,72 @@ function get_photo_sort_name_by_pathinfo()
 //---------------------------------------------------------
 // build param
 //---------------------------------------------------------
-function add_box_list( $param )
+function add_show_js_windows( $param )
 {
-	$param['box_list'] = $this->build_box_list( $param );
+	$use_box_js    = isset($param['use_box_js'])    ? (bool)$param['use_box_js']    : false ;
+	$show_gmap     = isset($param['show_gmap'])     ? (bool)$param['show_gmap']     : false ;
+	$show_timeline = isset($param['show_timeline']) ? (bool)$param['show_timeline'] : false ;
+
+	$show_js_window  = false;
+	$show_js_boxlist = false;
+	$show_js_load    = false;
+	$show_js_unload  = false;
+	$js_load         = null;
+
+	if ( $use_box_js && $show_gmap && $show_timeline ) {
+		$show_js_window  = true;
+		$show_js_boxlist = true;
+		$show_js_load    = true;
+		$show_js_unload  = true;
+		$js_load = 'webphoto_box_gmap_timeline_init';
+
+	} elseif ( $use_box_js && $show_gmap ) {
+		$show_js_window  = true;
+		$show_js_boxlist = true;
+		$show_js_load    = true;
+		$show_js_unload  = true;
+		$js_load = 'webphoto_box_gmap_init';
+
+	} elseif ( $use_box_js && $show_timeline ) {
+		$show_js_window  = true;
+		$show_js_boxlist = true;
+		$show_js_load    = true;
+		$js_load = 'webphoto_box_timeline_init';
+
+	} elseif ( $show_gmap && $show_timeline ) {
+		$show_js_window  = true;
+		$show_js_load    = true;
+		$show_js_unload  = true;
+		$js_load = 'webphoto_gmap_timeline_init';
+
+	} elseif ( $use_box_js ) {
+		$show_js_window  = true;
+		$show_js_boxlist = true;
+		$js_load = 'webphoto_box_init';
+
+	} elseif ( $show_gmap ) {
+		$show_js_window  = true;
+		$show_js_load    = true;
+		$show_js_unload  = true;
+		$js_load = 'webphoto_gmap_init';
+
+	} elseif ( $show_timeline ) {
+		$show_js_window  = true;
+		$show_js_load    = true;
+		$js_load = 'webphoto_timeline_init';
+	}
+
+	$boxlist = $this->build_box_list( $param );
+	$param['box_list']   = $boxlist;
+	$param['js_boxlist'] = $boxlist;
+
+	$param['show_js_window']  = $show_js_window;
+	$param['show_js_boxlist'] = $show_js_boxlist;
+	$param['show_js_load']    = $show_js_load;
+	$param['show_js_unload']  = $show_js_unload;
+	$param['js_load']         = $js_load;
+	$param['js_unload']       = 'GUnload';
+
 	return $param;
 }
 
@@ -626,6 +794,9 @@ function build_box_list( $param )
 		}
 		if ( isset($param['show_gmap']) && $param['show_gmap'] ) {
 			$arr[] = 'webphoto_box_gmap';
+		}
+		if ( isset($param['show_timeline']) && $param['show_timeline'] ) {
+			$arr[] = 'webphoto_box_timeline';
 		}
 		if ( isset($param['show_photo']) && $param['show_photo'] ) {
 			$arr[] = 'webphoto_box_photo';
@@ -649,7 +820,30 @@ function build_init_param( $mode, $show_photo_desc=false )
 		'lang_thereare'   => $this->build_lang_thereare( $total_all ) ,
 	);
 
-	return array_merge( $arr, $this->build_get_param( $mode ) );
+	return array_merge( $arr, $this->build_init_show( $mode ), $this->build_get_param( $mode ) );
+}
+
+function build_init_show( $mode )
+{
+	$arr = array(
+		'show_menu'          => $this->check_show_menu(   $mode ) ,
+		'show_search'        => $this->check_show_search( $mode ) ,
+		'show_qr'            => $this->check_show_qr(     $mode ) ,
+		'show_menu_map'      => $this->get_show_menu_map() ,
+		'show_menu_timeline' => $this->get_show_menu_timeline() ,
+	);
+	return $arr;
+}
+
+function get_show_menu_map()
+{
+	$ret = empty( $this->_cfg_gmap_apikey ) ? false : true ;
+	return $ret;
+}
+
+function get_show_menu_timeline()
+{
+	return $this->_init_timeline;
 }
 
 function build_lang_thereare( $total_all )
@@ -678,6 +872,16 @@ function build_param_viewtype( $mode )
 //---------------------------------------------------------
 // check show
 //---------------------------------------------------------
+function check_show_menu( $mode )
+{
+	return $this->check_show_common( $mode, 'menu' );
+}
+
+function check_show_search( $mode )
+{
+	return $this->check_show_common( $mode, 'search' );
+}
+
 function check_show_catlist( $mode )
 {
 	return $this->check_show_common( $mode, 'catlist' );
@@ -691,6 +895,11 @@ function check_show_tagcloud( $mode )
 function check_show_gmap( $mode )
 {
 	return $this->check_show_common( $mode, 'gmap' );
+}
+
+function check_show_timeline( $mode )
+{
+	return $this->check_show_common( $mode, 'timeline' );
 }
 
 function check_show_notification( $mode )
@@ -715,6 +924,11 @@ function check_show_navi( $mode, $sort )
 function check_show_navi_sort( $sort )
 {
 	return $this->check_show_common( $sort, 'navi_sort' );
+}
+
+function check_show_qr( $mode )
+{
+	return $this->check_show_common( $mode, 'qr' );
 }
 
 function check_show_common( $mode, $name )

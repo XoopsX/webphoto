@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
+// $Id: tag.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// add_box_list() -> add_show_js_windows()
 // 2008-12-12 K.OHWADA
 // public_class
 // 2008-08-24 K.OHWADA
@@ -61,7 +63,7 @@ function list_build_list()
 	$param2 = $this->_get_tagcloud_param();
 
 	$ret = array_merge( $param1, $param2 );
-	return $this->add_box_list( $ret );
+	return $this->add_show_js_windows( $ret );
 }
 
 // overwrite
@@ -130,12 +132,9 @@ function list_build_detail( $tag_in )
 	$rows    = null ;
 	$limit   = $this->_MAX_PHOTOS;
 	$start   = $this->pagenavi_calc_start( $limit );
-
-//	$orderby = $this->convert_orderby_join( $this->get_orderby_by_post() );
 	$orderby = $this->get_orderby_by_post() ;
 
-	$tag_name = $this->decode_uri_str( $tag_in );
-
+	$tag_name   = $this->decode_uri_str( $tag_in );
 	$init_param = $this->list_build_init_param( true );
 
 	$title = $this->get_constant('TITLE_TAGS') .' : '. $tag_name ;
@@ -153,7 +152,7 @@ function list_build_detail( $tag_in )
 	$this->list_assign_xoops_header();
 
 	$ret = array_merge( $param, $init_param, $tagcloud_param, $navi_param );
-	return $this->add_box_list( $ret );
+	return $this->add_show_js_windows( $ret );
 }
 
 // --- class end ---

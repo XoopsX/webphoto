@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.12 2009/03/06 04:06:47 ohwada Exp $
+// $Id: modinfo.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -333,6 +333,14 @@ define($constpref."CFG_XPDFPATH_DSC" , "Alhough the full path to 'pdftoppm' shou
 // v1.21
 //---------------------------------------------------------
 define($constpref."ADMENU_RSS_MANAGER", "RSS Manager");
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+define($constpref."CFG_SMALL_WIDTH" ,  "Image Width in timeline" ) ;
+define($constpref."CFG_SMALL_HEIGHT" , "Image Height in timeline" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME", "timeline dirname" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME_DSC", "Set dirname of timeline module" ) ;
 
 }
 // === define begin ===

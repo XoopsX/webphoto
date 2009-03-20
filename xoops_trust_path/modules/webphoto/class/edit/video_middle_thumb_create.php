@@ -1,10 +1,16 @@
 <?php
-// $Id: video_middle_thumb_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: video_middle_thumb_create.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-15 K.OHWADA
+// create_small_param()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -166,8 +172,9 @@ function update_video_middle_thumb( $item_row, $num )
 
 	$item_id = $item_row['item_id'] ;
 
-	$thumb_id    = 0 ;
-	$middle_id   = 0 ;
+	$thumb_id   = 0 ;
+	$middle_id  = 0 ;
+	$small_id   = 0 ;
 
 // created thumb
 	$src_file = $this->build_video_thumb_file( $item_id, $num );
@@ -176,6 +183,8 @@ function update_video_middle_thumb( $item_row, $num )
 			$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_THUMB );
 		$middle_id = $this->create_update_video_thumb_common(
 			$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+		$small_id = $this->create_update_video_thumb_common(
+			$item_row, $src_file, _C_WEBPHOTO_FILE_KIND_SMALL );
 
 		if ( $thumb_id > 0 ) {
 			$this->_flag_created = true ;
@@ -191,6 +200,7 @@ function update_video_middle_thumb( $item_row, $num )
 	$file_id_array = array(
 		'thumb_id'  => $thumb_id ,
 		'middle_id' => $middle_id ,
+		'small_id'  => $small_id ,
 	);
 
 	return $file_id_array;
@@ -233,6 +243,9 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 
 	} elseif ( $kind == _C_WEBPHOTO_FILE_KIND_MIDDLE ) {
 		$param = $this->_middle_thumb_create_class->create_middle_param( $param );
+
+	} elseif ( $kind == _C_WEBPHOTO_FILE_KIND_SMALL ) {
+		$param = $this->_middle_thumb_create_class->create_small_param( $param );
 	}
 
 	$param['duration'] = 0 ;

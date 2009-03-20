@@ -1,4 +1,4 @@
-<{* $Id: main_index.html,v 1.5 2009/02/01 09:04:29 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.6 2009/03/20 04:18:09 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -47,40 +47,29 @@
 <{/if}>
 <{* === gmap js end === *}>
 
-<{if $show_gmap && $use_box_js }>
-<script type="text/javascript">
-//<![CDATA[
-
-  var webphoto_box_list = "<{$box_list}>";
-
-  window.onload   = webphoto_box_gmap_init;
-  window.onunload = GUnload;
-
-//]]>
-</script>
-
-<{elseif $show_gmap }>
-<script type="text/javascript">
-//<![CDATA[
-
-  window.onload   = webphoto_gmap_load_marks;
-  window.onunload = GUnload;
-
-//]]>
-</script>
-
-<{elseif $use_box_js }>
-<script type="text/javascript">
-//<![CDATA[
-
-  var webphoto_box_list = "<{$box_list}>";
-
-  window.onload   = webphoto_box_init;
-
-//]]>
-</script>
-
+<{* === timeline js === *}>
+<{if $show_timeline }>
+  <{$timeline_js }>
 <{/if}>
+<{* === timeline js end === *}>
+
+<{* === windows js === *}>
+<{if $show_js_window }>
+<script type="text/javascript">
+//<![CDATA[
+<{if $show_js_boxlist }>
+  var webphoto_box_list = "<{$js_boxlist}>";
+<{/if}>
+<{if $show_js_load }>
+  window.onload   = <{$js_load}>;
+<{/if}>
+<{if $show_js_unload }>
+  window.onunload = <{$js_unload}>;
+<{/if}>
+//]]>
+</script>
+<{/if}>
+<{* === windows js end === *}>
 
 <div class="webphoto_page_title">
   <{$xoops_modulename}>
@@ -93,10 +82,14 @@
 <{/if}>
 
 <{* === menue === *}>
-<{include file="db:`$mydirname`_inc_menu.html" }>
+<{if $show_menu }>
+  <{include file="db:`$mydirname`_inc_menu.html" }>
+<{/if}>
 
 <{* === search form === *}>
-<{include file="db:`$mydirname`_inc_search.html" }>
+<{if $show_search }>
+  <{include file="db:`$mydirname`_inc_search.html" }>
+<{/if}>
 
 <{* === tag cloud === *}>
 <{if $show_tagcloud }>
@@ -137,6 +130,34 @@
   </div>
 <{/if}>
 
+<{* === timeline === *}>
+<{if $show_timeline }>
+  <div id="webphoto_box_timeline_b">
+  <a href="javascript:webphoto_box_timeline_off()">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
+  <{$lang_timeline_off}></a> <br />
+  <div id="<{$timeline_element}>" class="<{$timeline_class}>">Loading ...</div>
+
+  <{if $show_timeline_unit }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=year">
+    YEAR</a> |
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=month">
+    MONTH</a> |
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=week">
+    WEEK</a> 
+    <br />
+  <{/if}>
+  </div>
+
+  <div id="webphoto_box_timeline_a" style="display:none">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_plus.png" width="16" height="16" border="0" alt="minus" />
+  <a href="javascript:webphoto_box_timeline_on()">
+  <{$lang_timeline_on}></a> </a>
+  </div>
+
+  <br />
+<{/if}>
+
 <{* === gmap === *}>
 <{if $show_gmap }>
   <div id="webphoto_box_gmap_b">
@@ -145,7 +166,7 @@
   <{$lang_gmap_off}></a> <br />
   <{$lang_gmap_desc}><br />
   <div id="webphoto_gmap_not_compatible" class="webphoto_error"></div>
-  <div id="webphoto_gmap_map" class="webphoto_gmap_map">Loading ...</div>
+  <div id="webphoto_gmap_map" class="<{$gmap_class}>">Loading ...</div>
   </div>
 
   <div id="webphoto_box_gmap_a" style="display:none">
@@ -406,11 +427,15 @@
 <{/if}>
 <{* === photo footer end === *}>
 
-<div align="center">
-<img src="<{$qrs_url}>/qr_index.png" border="0" alt="qr_index" /><br />
-<a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
-</div>
+<{* === QR === *}>
+<{if $show_qr }>
+  <div align="center">
+  <img src="<{$qrs_url}>/qr_index.png" border="0" alt="qr_index" /><br />
+  <a href="mailto:<{$mobile_email}>?subject=webphoto_url&amp;body=<{$mobile_url}>"><{$lang_mobile_mailto}></a><br />
+  </div>
+<{/if}>
 
+<{* === notification === *}>
 <{if $show_notification_select }>
   <div align="center">
     <{include file="db:`$mydirname`_inc_notification_select.html"}>

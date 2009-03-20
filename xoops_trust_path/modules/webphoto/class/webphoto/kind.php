@@ -1,5 +1,5 @@
 <?php
-// $Id: kind.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: kind.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// change is_ext_in_array()
 // 2009-01-25 K.OHWADA
 // is_swf_ext()
 // 2009-01-10 K.OHWADA
@@ -113,7 +115,7 @@ function is_swf_ext( $ext )
 
 function is_ext_in_array( $ext, $arr )
 {
-	if ( in_array( strtolower( $ext ) , $arr ) ) {
+	if ( $ext && in_array( strtolower( $ext ) , $arr ) ) {
 		return true;
 	}
 	return false ;

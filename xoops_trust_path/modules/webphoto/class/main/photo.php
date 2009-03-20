@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.13 2009/01/29 04:26:55 ohwada Exp $
+// $Id: photo.php,v 1.14 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// add_box_list() -> add_show_js_windows()
 // 2009-01-25 K.OHWADA
 // build_movie() -> build_movie_by_item_row()
 // 2008-12-12 K.OHWADA
@@ -58,6 +60,7 @@ class webphoto_main_photo extends webphoto_show_main
 function webphoto_main_photo( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_main( $dirname , $trust_dirname );
+	$this->set_mode( 'photo' );
 	$this->set_flag_highlight( true );
 
 	$this->_flash_class       =& webphoto_flash_player::getInstance( $dirname );
@@ -235,10 +238,11 @@ function main()
 		'mobile_qr_image' => $this->build_mobile_filename( $photo_id ) ,
 	);
 
-	$ret = array_merge( $arr, $gmap_param, $tags_param, $noti_param );
-	return $this->add_box_list( $ret );
+	$ret = array_merge( 
+		$arr, $gmap_param, $tags_param, $noti_param, 
+		$this->build_init_show( $this->_mode ) );
+	return $this->add_show_js_windows( $ret );
 }
-
 
 //---------------------------------------------------------
 // show main

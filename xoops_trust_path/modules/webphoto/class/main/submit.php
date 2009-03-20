@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.12 2009/01/24 07:10:39 ohwada Exp $
+// $Id: submit.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// change _preview_new()
 // 2009-01-10 K.OHWADA
 // webphoto_photo_action -> webphoto_edit_submit
 // 2009-01-04 K.OHWADA
@@ -287,22 +289,13 @@ function _preview_new( $item_row )
 		return $this->_preview_no_image();
 	}
 
-	$photo_tmp_name = $this->_photo_tmp_name;
-
-// overwrite preview name
-	$this->set_preview_name( str_replace( 
-		_C_WEBPHOTO_UPLOADER_PREFIX , 
-		_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
-		$photo_tmp_name ) );
-
-	return $this->create_preview_new(
-		$this->get_preview_name(), $photo_tmp_name );
+	return $this->create_preview_new( $this->_photo_tmp_name );
 
 }
 
 function _preview_old()
 {
-	return $this->build_preview( $this->get_preview_name() ) ;
+	return $this->build_preview( $this->_preview_name ) ;
 }
 
 function _preview_no_image()

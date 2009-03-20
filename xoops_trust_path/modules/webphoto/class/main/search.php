@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: search.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// add_box_list() -> add_show_js_windows()
 // 2009-01-10 K.OHWADA
 // set_keyword_array()
 // 2008-12-12 K.OHWADA
@@ -102,7 +104,7 @@ function list_build_detail( $query_in )
 	);
 
 	$ret = array_merge( $arr, $param, $init_param, $navi_param, $query_param );
-	return $this->add_box_list( $ret );
+	return $this->add_show_js_windows( $ret );
 }
 
 function _get_photos( $query, $orderby, $limit, $start )

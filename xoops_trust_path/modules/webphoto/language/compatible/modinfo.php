@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.1 2009/03/07 07:37:16 ohwada Exp $
+// $Id: modinfo.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,19 @@ if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+if( !defined($constpref."CFG_SMALL_WIDTH") ) 
+{
+
+define($constpref."CFG_SMALL_WIDTH" ,  "Image Width in timeline" ) ;
+define($constpref."CFG_SMALL_HEIGHT" , "Image Height in timeline" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME", "timeline dirname" ) ;
+define($constpref."CFG_TIMELINE_DIRNAME_DSC", "Set dirname of timeline module" ) ;
+
+}
 
 //---------------------------------------------------------
 // modinfo for French

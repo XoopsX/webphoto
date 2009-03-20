@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: factory_create.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// create_small_param()
 // 2009-01-25 K.OHWADA
 // webphoto_edit_swf_create
 //---------------------------------------------------------
@@ -208,12 +210,14 @@ function create_files_from_param( $item_row, $param )
 
 		$thumb_param  = $this->create_thumb_param(  $middle_thumb_param );
 		$middle_param = $this->create_middle_param( $middle_thumb_param );
+		$small_param  = $this->create_small_param(  $middle_thumb_param );
 	}
 
 	$file_params = array(
 		'cont'   => $cont_param ,
 		'thumb'  => $thumb_param ,
 		'middle' => $middle_param ,
+		'small'  => $small_param ,
 		'flash'  => $flash_param ,
 		'docomo' => $docomo_param ,
 		'pdf'    => $pdf_param ,
@@ -419,7 +423,7 @@ function build_row_title_media( $row, $media_name )
 //---------------------------------------------------------
 // create cont
 //---------------------------------------------------------
-function build_photo_param( $row, $photo_name, $mime, $rotate=0 )
+function build_photo_param( $row, $photo_name, $mime )
 {
 	if ( empty($photo_name) ) {
 		return null; 
@@ -430,7 +434,6 @@ function build_photo_param( $row, $photo_name, $mime, $rotate=0 )
 	$param['src_kind'] = $row['item_kind'] ;
 	$param['src_file'] = $this->_TMP_DIR .'/'. $photo_name ;
 	$param['src_mime'] = $mime ;
-	$param['rotate']   = $rotate ;
 
 	return $param ;
 }
@@ -445,6 +448,11 @@ function create_cont_param( $param )
 	$this->_flag_resized = $this->_cont_create_class->get_flag_resized();
 	$this->_msg_sub_class->set_msg(  $this->_cont_create_class->get_msg_array() ) ;
 	return 0 ;
+}
+
+function rotate_image( $src_file, $dst_file, $rotate )
+{
+	return $this->_cont_create_class->rotate_image( $src_file, $dst_file, $rotate );
 }
 
 function get_cont_param()
@@ -482,6 +490,13 @@ function create_thumb_param( $param )
 function create_middle_param( $param )
 {
 	$ret = $this->_middle_thumb_create_class->create_middle_param( $param );
+	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
+	return $ret ;
+}
+
+function create_small_param( $param )
+{
+	$ret = $this->_middle_thumb_create_class->create_small_param( $param );
 	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
 	return $ret ;
 }
@@ -782,6 +797,7 @@ function insert_files_from_params( $item_id, $params )
 		'cont_id'   => $this->insert_file_by_params( $item_id, $params, 'cont' ) ,
 		'thumb_id'  => $this->insert_file_by_params( $item_id, $params, 'thumb' ) ,
 		'middle_id' => $this->insert_file_by_params( $item_id, $params, 'middle' ) ,
+		'small_id'  => $this->insert_file_by_params( $item_id, $params, 'small' ) ,
 		'flash_id'  => $this->insert_file_by_params( $item_id, $params, 'flash' ) ,
 		'docomo_id' => $this->insert_file_by_params( $item_id, $params, 'docomo' ) ,
 		'pdf_id'    => $this->insert_file_by_params( $item_id, $params, 'pdf' ) ,
@@ -800,6 +816,7 @@ function update_files_from_params( $row, $params )
 		'cont_id'   => $this->update_file_by_params( $row, $params, 'cont' ) ,
 		'thumb_id'  => $this->update_file_by_params( $row, $params, 'thumb' ) ,
 		'middle_id' => $this->update_file_by_params( $row, $params, 'middle' ) ,
+		'small_id'  => $this->update_file_by_params( $row, $params, 'small' ) ,
 		'flash_id'  => $this->update_file_by_params( $row, $params, 'flash' ) ,
 		'docomo_id' => $this->update_file_by_params( $row, $params, 'docomo' ) ,
 		'pdf_id'    => $this->update_file_by_params( $row, $params, 'pdf' ) ,

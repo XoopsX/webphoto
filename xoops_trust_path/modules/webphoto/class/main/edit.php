@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.21 2009/01/24 07:10:39 ohwada Exp $
+// $Id: edit.php,v 1.22 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// small_delete()
 // 2009-01-10 K.OHWADA
 // webphoto_photo_action -> webphoto_edit_action
 // 2009-01-04 K.OHWADA
@@ -107,6 +109,10 @@ function check_action()
 
 		case 'middle_delete':
 			$this->_middle_delete();
+			exit();
+
+		case 'small_delete':
+			$this->_small_delete();
 			exit();
 
 		case 'flash_delete':
@@ -236,6 +242,7 @@ function _get_action()
 	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
 	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
 	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
+	$post_small_delete  = $this->_post_class->get_post_text('file_small_delete' );
 	$post_flash_delete  = $this->_post_class->get_post_text('flash_delete' );
 
 	if ( $post_conf_delete ) {
@@ -244,6 +251,8 @@ function _get_action()
 		return 'thumb_delete';
 	} elseif ( $post_middle_delete ) {
 		return 'middle_delete';
+	} elseif ( $post_small_delete ) {
+		return 'small_delete';
 	} elseif ( $post_flash_delete ) {
 		return 'flash_delete';
 	} elseif ( $post_op ) {
@@ -412,38 +421,35 @@ function _check_delete_perm_or_redirect()
 //---------------------------------------------------------
 function _thumb_delete()
 {
-	$item_row = $this->_row_current;
-	$item_id  = $item_row['item_id'] ;
-
-	$this->_check_token_and_redirect( $item_id );
-
-	$url_redirect = $this->_build_edit_url( $item_id );
-
+	list($item_row, $url_redirect) = $this->_delete_common();
 	$this->thumb_delete( $item_row, $url_redirect );
 }
 
 function _middle_delete()
 {
-	$item_row = $this->_row_current;
-	$item_id  = $item_row['item_id'] ;
-
-	$this->_check_token_and_redirect( $item_id );
-
-	$url_redirect = $this->_build_edit_url( $item_id );
-
+	list($item_row, $url_redirect) = $this->_delete_common();
 	$this->middle_delete( $item_row, $url_redirect );
+}
+
+function _small_delete()
+{
+	list($item_row, $url_redirect) = $this->_delete_common();
+	$this->small_delete( $item_row, $url_redirect );
 }
 
 function _flash_delete()
 {
+	list($item_row, $url_redirect) = $this->_delete_common();
+	$this->video_flash_delete( $item_row, $url_redirect );
+}
+
+function _delete_common()
+{
 	$item_row = $this->_row_current;
 	$item_id  = $item_row['item_id'] ;
-
 	$this->_check_token_and_redirect( $item_id );
-
 	$url_redirect = $this->_build_edit_url( $item_id );
-
-	$this->video_flash_delete( $item_row, $url_redirect );
+	return array( $item_row, $url_redirect );
 }
 
 //---------------------------------------------------------

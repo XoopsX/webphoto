@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: uri.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// flag_amp_sanitize in build_full_uri_mode_param()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 //---------------------------------------------------------
@@ -84,13 +86,18 @@ function build_tag( $tag )
 		'tag', $this->rawurlencode_encode_str( $tag ) );
 }
 
-function build_full_uri_mode_param( $mode, $param )
+function build_full_uri_mode_param( $mode, $param, $flag_amp_sanitize=true )
 {
+	$amp = '&' ;
+	if ( $flag_amp_sanitize ) {
+		$amp = '&amp;' ;
+	}
+
 	$str = $this->build_full_uri_mode( $mode ) ;
 	if ( $this->_cfg_use_pathinfo ) {
 		$str .= '/'. $param .'/' ; 
 	} else {
-		$str .= '&amp;'. $this->_PARAM_NAME .'='. $param ;
+		$str .= $amp . $this->_PARAM_NAME .'='. $param ;
 	}
 	return $str;
 }

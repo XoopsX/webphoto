@@ -1,5 +1,5 @@
 <?php
-// $Id: show_image.php,v 1.3 2008/12/10 19:08:56 ohwada Exp $
+// $Id: show_image.php,v 1.4 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// small_url
 // 2008-12-07 K.OHWADA
 // build_img_tag_by_item_row()
 // 2008-11-29 K.OHWADA
@@ -137,15 +139,18 @@ function build_image_by_item_row( $item_row, $default )
 	$cont_row   = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
 	$thumb_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_THUMB );
 	$middle_row = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE );
+	$small_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_SMALL );
 
 	$param = array(
 		'item_row'       => $item_row ,
 		'cont_row'       => $cont_row ,
 		'thumb_row'      => $thumb_row ,
 		'middle_row'     => $middle_row ,
+		'small_row'      => $small_row ,
 		'photo_default'  => $default ,
 		'thumb_default'  => $default ,
 		'middle_default' => $default ,
+		'small_default'  => $default ,
 	);
 
 	return $this->build_image_by_param( $param );
@@ -161,9 +166,11 @@ function build_image_by_param( $param )
 	$cont_row       = $param['cont_row'] ;
 	$thumb_row      = $param['thumb_row'] ;
 	$middle_row     = $param['middle_row'] ;
+	$small_row      = $param['small_row'] ;
 	$photo_default  = $param['photo_default'] ;
 	$thumb_default  = $param['thumb_default'] ;
 	$middle_default = $param['middle_default'] ;
+	$small_default  = $param['small_default'] ;
 
 	if ( ! is_array($item_row) ) {
 		return false;
@@ -200,6 +207,9 @@ function build_image_by_param( $param )
 
 	list( $middle_url, $middle_width, $middle_height ) =
 		$this->build_show_file_image( $middle_row ) ;
+
+	list( $small_url, $small_width, $small_height ) =
+		$this->build_show_file_image( $small_row ) ;
 
 // link file
 	if ( $cont_url ) {
@@ -304,6 +314,9 @@ function build_image_by_param( $param )
 		'middle_url'        => $middle_url ,
 		'middle_width'      => $middle_width ,
 		'middle_height'     => $middle_height ,
+		'small_url'         => $small_url ,
+		'small_width'       => $small_width ,
+		'small_height'      => $small_height ,
 		'icon_url'          => $icon_url ,
 		'icon_width'        => $icon_width ,
 		'icon_height'       => $icon_height ,

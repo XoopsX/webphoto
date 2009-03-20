@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.20 2009/02/20 01:36:55 ohwada Exp $
+// $Id: show_photo.php,v 1.21 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// small_url
 // 2009-02-20 K.OHWADA
 // change set_keyword_array_by_get()
 // 2009-01-10 K.OHWADA
@@ -169,6 +171,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$show_arr['perm_download']       = $this->perm_download( $row ) ;
 	$show_arr['can_download']        = $this->can_download( $row ) ;
 	$show_arr['duration_disp']       = $this->format_time( $item_duration ) ;
+	$show_arr['photo_uri']           = $this->build_uri_photo( $item_id, false ) ;
 
 	$show_desc = false;
 	foreach ( $this->_SHOW_DESC_ARRAY as $key ) 
@@ -448,15 +451,18 @@ function build_show_imgsrc( $item_row, $show_arr )
 	$cont_row   = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 	$thumb_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
 	$middle_row = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
+	$small_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_SMALL ) ;
 
 	$param = array(
 		'item_row'       => $item_row ,
 		'cont_row'       => $cont_row ,
 		'thumb_row'      => $thumb_row ,
 		'middle_row'     => $middle_row ,
+		'small_row'      => $small_row ,
 		'photo_default'  => true ,
 		'thumb_default'  => true ,
 		'middle_default' => true ,
+		'small_default'  => true ,
 	);
 
 	$param_image = $this->_image_class->build_image_by_param( $param );
@@ -468,6 +474,7 @@ function build_show_imgsrc( $item_row, $show_arr )
 	$arr['cont_url_s']        = $this->sanitize( $param_image['cont_url'] ) ;
 	$arr['thumb_url_s']       = $this->sanitize( $param_image['thumb_url'] ) ;
 	$arr['middle_url_s']      = $this->sanitize( $param_image['middle_url'] ) ;
+	$arr['small_url_s']       = $this->sanitize( $param_image['small_url'] ) ;
 	$arr['media_url_s']       = $this->sanitize( $param_image['media_url'] ) ;
 	$arr['img_photo_src_s']   = $this->sanitize( $param_image['img_photo_src'] ) ;
 	$arr['img_middle_src_s']  = $this->sanitize( $param_image['img_middle_src'] ) ;

@@ -1,13 +1,18 @@
 <?php
-// $Id: submit.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: submit.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
 
+// set_preview_rotate_name( $val )
+//	$this->rotate_tmp_image( $photo_name, $this->_rotate_angle, true );
+
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// create_small_param_by_photo()
 // 2009-01-25 K.OHWADA
 // create_swf_param()
 // 2009-01-10 K.OHWADA
@@ -38,6 +43,8 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 // post
 	var $_checkbox_array = array();
 	var $_form_action    = null;
+	var $_post_rotate    = null;
+	var $_rotate_angle   = 0;
 
 	var $_is_video_thumb_form = false;
 
@@ -102,6 +109,9 @@ function get_post_param()
 	$this->_post_form_editor   = $this->get_post_int( 'form_editor' );
 
 	$this->_preview_name = $this->get_post_text( 'preview_name' ) ;
+
+	$this->_post_rotate  = $this->_post_class->get_post( 'rotate' ) ;
+	$this->_rotate_angle = $this->conv_rotate( $this->_post_rotate );
 
 	$this->set_checkbox_by_post( 'item_time_update_checkbox' );
 	$this->set_checkbox_by_post( 'item_datetime_checkbox' );
@@ -292,6 +302,7 @@ function build_form_param( $mode )
 
 	$param = array(
 		'mode'            => $mode,
+		'rotate'          => $this->_post_rotate,
 		'preview_name'    => $this->_preview_name,
 		'tag_name_array'  => $this->_tag_name_array,
 		'checkbox_array'  => $this->_checkbox_array,
@@ -343,6 +354,7 @@ function submit_exec()
 	$photo_name  = $this->_photo_tmp_name ;
 	$middle_name = $this->_middle_tmp_name ;
 	$thumb_name  = $this->_thumb_tmp_name ;
+	$small_name  = $this->_small_tmp_name ;
 
 // --- insert item ---
 	$item_row = $this->build_item_row_submit_insert( $item_row );
@@ -356,11 +368,11 @@ function submit_exec()
 	$this->_row_create = $item_row;
 
 // uploaded photo
-	if ( $photo_name || $middle_name || $thumb_name ) {
+	if ( $photo_name || $middle_name || $thumb_name || $small_name ) {
 
 // --- insert files
 		$ret = $this->insert_media_files( 
-			$item_row, $photo_name, $middle_name, $thumb_name );
+			$item_row, $photo_name, $middle_name, $thumb_name, $small_name );
 		if ( $ret < 0 ) {
 			return $ret;
 		}
@@ -421,6 +433,7 @@ function submit_exec_fetch( $row )
 // fetch thumb middle
 	$this->upload_fetch_thumb();
 	$this->upload_fetch_middle();
+	$this->upload_fetch_small();
 
 // upload
 	if ( $this->_photo_tmp_name ) {
@@ -501,12 +514,14 @@ function create_media_file_params( $item_row, $is_submit=true )
 	$photo_name  = $this->_photo_tmp_name ;
 	$thumb_name  = $this->_thumb_tmp_name ;
 	$middle_name = $this->_middle_tmp_name ;
+	$small_name  = $this->_small_tmp_name ;
 
 	$item_id   = $item_row['item_id'] ;
 	$item_kind = $item_row['item_kind'] ;
 
 	$thumb_param  = null;
 	$middle_param = null;
+	$small_param  = null;
 	$flash_param  = null ;
 	$docomo_param = null ;
 	$pdf_param    = null ;
@@ -515,11 +530,13 @@ function create_media_file_params( $item_row, $is_submit=true )
 
 	$this->init_photo_create();
 
-// -- cont 
-	$post_rotate = $this->_post_class->get_post( 'rotate' ) ;
-	$rotate      = $this->conv_rotate( $post_rotate );
+// -- photo tmp
+// rotate tmp file
+	$this->rotate_tmp_image( $photo_name, $this->_rotate_angle, true );
 
-	$photo_param = $this->build_photo_param( $item_row, $photo_name, $rotate );
+// -- cont 
+// resize cont file
+	$photo_param = $this->build_photo_param( $item_row );
 
 	list( $ret, $cont_param ) = $this->create_cont_param( $photo_param );
 	if ( $ret < 0 ) {
@@ -557,10 +574,19 @@ function create_media_file_params( $item_row, $is_submit=true )
 		$middle_param = $this->create_middle_param_by_photo( $middle_thumb_param );
 	}
 
+// -- middle 
+	if ( $small_name ) {
+		$small_param = $this->create_small_param_by_tmp( $item_row, $small_name );
+
+	} elseif ( is_array($cont_param) ) {
+		$small_param = $this->create_small_param_by_photo( $middle_thumb_param );
+	}
+
 	$this->_media_file_params = array(
 		'cont'   => $cont_param ,
 		'thumb'  => $thumb_param ,
 		'middle' => $middle_param ,
+		'small'  => $small_param ,
 		'flash'  => $flash_param ,
 		'docomo' => $docomo_param ,
 		'pdf'    => $pdf_param ,
@@ -592,6 +618,37 @@ function conv_rotate( $rotate )
 			break ;
 	}
 	return $rot;
+}
+
+function rotate_tmp_image( $src_name, $rotate, $flag_rename=false )
+{
+	if ( empty($src_name) || empty($rotate) ) {
+		return $src_name;	// no action
+	}
+
+	$dst_name = str_replace( 
+		_C_WEBPHOTO_UPLOADER_PREFIX , 
+		_C_WEBPHOTO_UPLOADER_PREFIX_ROT , 
+		$src_name 
+	) ;
+
+	$src_file = $this->_TMP_DIR .'/'. $src_name;
+	$dst_file = $this->_TMP_DIR .'/'. $dst_name ;
+	$name     = $src_name ;
+
+	$this->_factory_create_class->rotate_image( $src_file, $dst_file, $rotate );
+
+	if ( is_file($dst_file) ) {
+		if ( $flag_rename ) {
+			unlink( $src_file );
+			rename( $dst_file , $src_file ) ;
+
+		} else {
+			$name = $dst_name ;
+		}
+	}
+
+	return $name ;
 }
 
 //---------------------------------------------------------
@@ -685,25 +742,35 @@ function print_form_video_thumb( $mode, $item_row )
 //---------------------------------------------------------
 // preview 
 //---------------------------------------------------------
-function create_preview_new( $preview_name, $photo_tmp_name )
+function create_preview_new( $photo_name )
 {
-	$src_path = $this->_TMP_DIR .'/'. $photo_tmp_name;
-	$dst_path = $this->_TMP_DIR .'/'. $preview_name;
-	rename( $src_path , $dst_path ) ;
+	$preview_name = str_replace( 
+		_C_WEBPHOTO_UPLOADER_PREFIX , 
+		_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
+		$photo_name 
+	) ;
+
+	$this->set_preview_name( $preview_name );
+
+	$src_file = $this->_TMP_DIR .'/'. $photo_name;
+	$dst_file = $this->_TMP_DIR .'/'. $preview_name;
+	rename( $src_file , $dst_file ) ;
 
 	return $this->build_preview( $preview_name ) ;
 }
 
 function build_preview( $preview_name )
 {
+	$rotate_name = $this->rotate_tmp_image( $preview_name, $this->_rotate_angle );
+
 	$thumb_width     = 0;
 	$thumb_height    = 0;
 	$is_normal_image = false;
 
-	$ext = $this->parse_ext( $preview_name );
+	$ext = $this->parse_ext( $rotate_name );
 
-	$path_photo = $this->_TMP_DIR .'/'. $preview_name;
-	$media_url  = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. rawurlencode( $preview_name ) ;
+	$path_photo = $this->_TMP_DIR .'/'. $rotate_name ;
+	$media_url  = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. rawurlencode( $rotate_name ) ;
 	$img_thumb_src = $media_url;
 
 // image type

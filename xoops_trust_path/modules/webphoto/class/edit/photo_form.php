@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
+// $Id: photo_form.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// _build_ele_small_file()
 // 2009-01-25 K.OHWADA
 // item_content
 // 2009-01-10 K.OHWADA
@@ -134,6 +136,7 @@ function print_form_common( $item_row, $param )
 	$this->init_preload();
 
 	$mode          = $param['mode'];
+	$rotate        = $param['rotate'];
 	$preview_name  = $param['preview_name'];
 	$has_resize    = $param['has_resize'];
 	$has_rotate    = $param['has_rotate'];
@@ -150,6 +153,7 @@ function print_form_common( $item_row, $param )
 	$cont_row     = null ;
 	$thumb_row    = null ;
 	$middle_row   = null ;
+	$small_row    = null ;
 	$flash_row    = null ;
 	$docomo_row   = null ;
 	$pdf_row      = null ;
@@ -178,6 +182,7 @@ function print_form_common( $item_row, $param )
 		$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 		$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 		$middle_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+		$small_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SMALL );
 		$flash_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
 		$pdf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_PDF );
 		$swf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF );
@@ -195,7 +200,7 @@ function print_form_common( $item_row, $param )
 
 	echo $this->build_input_hidden( 'op',           $op );
 	echo $this->build_input_hidden( 'fct',          $fct );
-	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_2 );
+	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_4 );
 	echo $this->build_input_hidden_max_file_size();
 
 	echo $this->build_input_hidden( 'item_id',  $item_row['item_id'] );
@@ -266,7 +271,7 @@ function print_form_common( $item_row, $param )
 
 		if ( $has_rotate ) {
 			echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), 
-				$this->_build_ele_rotate() );
+				$this->_build_ele_rotate( $rotate ) );
 		}
 	}
 
@@ -335,6 +340,9 @@ function print_form_common( $item_row, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_SMALL_SELECT'), 
+		$this->_build_ele_small_file( $small_row ) );
 
 	if ( $flash_row ) {
 		echo $this->build_line_ele( $this->get_constant('FILE_KIND_4'), 
@@ -502,7 +510,7 @@ function _build_ele_duration( $cont_row, $size=50 )
 	return $ele;
 }
 
-function _build_ele_rotate()
+function _build_ele_rotate( $rotate )
 {
 	$arr = array(
 		'rot0'   => $this->get_constant('RADIO_ROTATE0') ,
@@ -511,7 +519,7 @@ function _build_ele_rotate()
 		'rot270' => $this->_build_ele_img_rot( '270' ),
 	);
 
-	return $this->build_form_radio( 'rotate', 'rot0', array_flip($arr), ' &nbsp; ' );
+	return $this->build_form_radio( 'rotate', $rotate, array_flip($arr), ' &nbsp; ' );
 }
 
 function _build_ele_img_rot( $rot )
@@ -588,16 +596,26 @@ function _build_ele_middle_file_external( $middle_row )
 	return $ele;
 }
 
+function _build_ele_small_file( $small_row )
+{
+	$ele = $this->_build_file_row( $this->_SMALL_FIELD_NAME, $small_row );
+
+	if ( $this->_cfg_makethumb ) {
+		$ele .= $this->get_constant('DSC_THUMB_SELECT') ."<br />\n";
+	}
+
+	$ele .= $this->_build_file_link_row( $this->_SMALL_FIELD_NAME, $small_row );
+
+	return $ele;
+}
+
 function _build_file_external( $name, $field, $file_row )
 {
-	$url   = $this->build_file_url_size( $file_row ) ;
-	$value = $this->get_row_by_key( $name );
-
-	$ele  = '';
-	$ele .= $this->build_form_file( $field );
-	$ele .= "<br /><br />\n";
+	$ele = $this->_build_file_row( $field, $file_row );
 
 	if ( empty($url) ) {
+		$value = $this->get_row_by_key( $name );
+
 		$ele .= $this->get_constant('OR')." ";
 		$ele .= $this->get_constant( $name )."<br />\n";
 		$ele .= $this->build_input_text( $name, $value, $this->_URL_SIZE );
@@ -607,12 +625,31 @@ function _build_file_external( $name, $field, $file_row )
 	return $ele;
 }
 
+function _build_file_row( $field, $file_row )
+{
+	$url  = $this->build_file_url_size( $file_row ) ;
+	$ele  = $this->build_form_file( $field );
+	$ele .= "<br /><br />\n";
+	return $ele;
+}
+
 function _build_file_link( $name, $field, $file_row )
 {
-	$url = $this->build_file_url_size( $file_row ) ;
-
 // BUG: sanitize twice
 	$value = $this->get_row_by_key( $name, null, false );
+
+	$ele = $this->_build_file_link_row( $field, $file_row );
+
+	if ( empty($ele) && $value ) {
+		$ele  = $this->build_link_blank( $value );
+	}
+
+	return $ele;
+}
+
+function _build_file_link_row( $field, $file_row )
+{
+	$url = $this->build_file_url_size( $file_row ) ;
 
 	$ele = '';
 
@@ -621,9 +658,6 @@ function _build_file_link( $name, $field, $file_row )
 		if ( $field ) {
 			$ele .= $this->build_photo_delete_button( $field.'_delete' );
 		}
-
-	} elseif ( $value ) {
-		$ele  = $this->build_link_blank( $value );
 	}
 
 	return $ele;

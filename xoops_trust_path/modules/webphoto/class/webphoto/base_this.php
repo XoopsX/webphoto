@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.19 2009/03/06 03:54:16 ohwada Exp $
+// $Id: base_this.php,v 1.20 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// _SMALLS_PATH;
 // 2009-03-01 K.OHWADA
 // remove check_dir()
 // 2009-01-25 K.OHWADA
@@ -83,6 +85,9 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_MIDDLES_PATH;
 	var $_MIDDLES_DIR;
 	var $_MIDDLESS_URL;
+	var $_SMALLS_PATH;
+	var $_SMALLS_DIR;
+	var $_SMALLS_URL;
 	var $_FLASHS_PATH;
 	var $_FLASHS_DIR;
 	var $_FLASHS_URL;
@@ -143,6 +148,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_PATH     = $this->_UPLOADS_PATH.'/photos' ;
 	$this->_THUMBS_PATH     = $this->_UPLOADS_PATH.'/thumbs' ;
 	$this->_MIDDLES_PATH    = $this->_UPLOADS_PATH.'/middles' ;
+	$this->_SMALLS_PATH     = $this->_UPLOADS_PATH.'/smalls' ;
 	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
 	$this->_DOCOMOS_PATH    = $this->_UPLOADS_PATH.'/docomos' ;
 	$this->_PDFS_PATH       = $this->_UPLOADS_PATH.'/pdfs' ;
@@ -158,6 +164,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_DIR     = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR     = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_DIR    = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
+	$this->_SMALLS_DIR     = XOOPS_ROOT_PATH . $this->_SMALLS_PATH ;
 	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
 	$this->_DOCOMOS_DIR    = XOOPS_ROOT_PATH . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_DIR       = XOOPS_ROOT_PATH . $this->_PDFS_PATH ;
@@ -173,6 +180,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
 	$this->_MIDDLES_URL    = XOOPS_URL . $this->_MIDDLES_PATH ;
+	$this->_SMALLS_URL     = XOOPS_URL . $this->_SMALLS_PATH ;
 	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
 	$this->_DOCOMOS_URL    = XOOPS_URL . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_URL       = XOOPS_URL . $this->_PDFS_PATH ;
@@ -422,9 +430,9 @@ function build_uri_operate( $op )
 	return $this->_uri_class->build_operate( $op );
 }
 
-function build_uri_photo( $id )
+function build_uri_photo( $id, $flag_amp_sanitize=true )
 {
-	return $this->_uri_class->build_photo( $id );
+	return $this->_uri_class->build_photo( $id, $flag_amp_sanitize );
 }
 
 function build_uri_category( $id, $param=null )

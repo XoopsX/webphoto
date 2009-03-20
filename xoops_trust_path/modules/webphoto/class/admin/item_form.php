@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.12 2009/01/29 04:26:55 ohwada Exp $
+// $Id: item_form.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// _build_ele_small_file()
 // 2009-01-25 K.OHWADA
 // print_form_admin() -> print_form_admin_by_files()
 // item_content
@@ -83,6 +85,7 @@ function print_form_admin_by_item_row( $item_row, $param )
 	$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
 	$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
 	$middle_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
+	$small_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SMALL ) ; 
 	$flash_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
 	$pdf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_PDF );
 	$swf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF );
@@ -96,6 +99,7 @@ function print_form_admin_by_item_row( $item_row, $param )
 		'cont_row'   => $cont_row , 
 		'thumb_row'  => $thumb_row , 
 		'middle_row' => $middle_row , 
+		'small_row'  => $small_row , 
 		'flash_row'  => $flash_row ,
 		'docomo_row' => $docomo_row ,
 		'pdf_row'    => $pdf_row ,
@@ -110,6 +114,7 @@ function print_form_admin_by_files( $files, $param )
 	$cont_row      = $files['cont_row']; 
 	$thumb_row     = $files['thumb_row']; 
 	$middle_row    = $files['middle_row']; 
+	$small_row     = $files['small_row']; 
 	$flash_row     = $files['flash_row']; 
 	$docomo_row    = $files['docomo_row']; 
 	$pdf_row       = $files['pdf_row']; 
@@ -158,7 +163,7 @@ function print_form_admin_by_files( $files, $param )
 
 	echo $this->build_input_hidden( 'op',           $op );
 	echo $this->build_input_hidden( 'fct',          $this->_THIS_FCT );
-	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_2 );
+	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_4 );
 	echo $this->build_input_hidden_max_file_size();
 
 	echo $this->build_row_hidden( 'item_id' );
@@ -365,6 +370,9 @@ function print_form_admin_by_files( $files, $param )
 
 	echo $this->build_line_ele( $this->get_constant('CAP_MIDDLE_SELECT'), 
 		$this->_build_ele_middle_file_external( $middle_row ) );
+
+	echo $this->build_line_ele( $this->get_constant('CAP_SMALL_SELECT'), 
+		$this->_build_ele_small_file( $small_row ) );
 
 	if ( $flash_row ) {
 		echo $this->build_line_ele( $this->get_constant('FILE_KIND_4'), 

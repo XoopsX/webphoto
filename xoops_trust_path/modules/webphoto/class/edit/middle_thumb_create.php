@@ -1,10 +1,16 @@
 <?php
-// $Id: middle_thumb_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: middle_thumb_create.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-15 K.OHWADA
+// create_small_param()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -20,11 +26,14 @@ class webphoto_edit_middle_thumb_create extends webphoto_edit_base_create
 	var $_cfg_middle_height ;
 	var $_cfg_thumb_width ;
 	var $_cfg_thumb_height ;
+	var $_cfg_small_width ;
+	var $_cfg_small_height ;
 
 	var $_icon_tmp_file = null ;
 
 	var $_SUB_DIR_MIDDLES = 'middles';
 	var $_SUB_DIR_THUMBS  = 'thumbs';
+	var $_SUB_DIR_SMALLS  = 'smalls';
 	var $_BORDER_OPTION = ' -border 1 ';
 
 //---------------------------------------------------------
@@ -41,6 +50,8 @@ function webphoto_edit_middle_thumb_create( $dirname )
 	$this->_cfg_middle_height = $this->get_config_by_name( 'middle_height' ) ;
 	$this->_cfg_thumb_width   = $this->get_config_by_name( 'thumb_width' ) ;
 	$this->_cfg_thumb_height  = $this->get_config_by_name( 'thumb_height' ) ;
+	$this->_cfg_small_width   = $this->get_config_by_name( 'small_width' ) ;
+	$this->_cfg_small_height  = $this->get_config_by_name( 'small_height' ) ;
 
 }
 
@@ -85,7 +96,7 @@ function create_middle_image( $param )
 }
 
 //---------------------------------------------------------
-// create thmub image
+// create thumb image
 //---------------------------------------------------------
 function create_thumb_param( $param )
 {
@@ -111,6 +122,37 @@ function create_thumb_image( $param )
 	$param['file_kind']  = _C_WEBPHOTO_FILE_KIND_THUMB ;
 	$param['max_width']  = $this->_cfg_thumb_width ;
 	$param['max_height'] = $this->_cfg_thumb_height ;
+
+	return $this->create_image_common( $param );
+}
+
+//---------------------------------------------------------
+// create small image
+//---------------------------------------------------------
+function create_small_param( $param )
+{
+	$this->clear_msg_array();
+
+	$param = $this->add_src_ext( $param );
+	if ( ! $this->check_perm( $param ) ) {
+		return null ;
+	}
+
+	$small_param = $this->create_small_image( $param );
+	if ( is_array($small_param) ) {
+		$this->set_msg( 'create small' );
+	} else {
+		$this->set_msg( 'fail to create small', true ) ;
+	}
+	return $small_param ;
+}
+
+function create_small_image( $param )
+{
+	$param['sub_dir']    = $this->_SUB_DIR_SMALLS ;
+	$param['file_kind']  = _C_WEBPHOTO_FILE_KIND_SMALL ;
+	$param['max_width']  = $this->_cfg_small_width ;
+	$param['max_height'] = $this->_cfg_small_height ;
 
 	return $this->create_image_common( $param );
 }

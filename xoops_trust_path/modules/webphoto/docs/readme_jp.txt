@@ -1,4 +1,43 @@
-$Id: readme_jp.txt,v 1.26 2009/03/07 07:58:55 ohwada Exp $
+$Id: readme_jp.txt,v 1.27 2009/03/20 04:18:09 ohwada Exp $
+
+=================================================
+Version: 1.30
+Date:   2009-03-20
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. イメージマネージャ統合にて画像以外を貼り付ける
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
+
+2. プレビューにて画像の回転を行う
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
+
+3. タイムラインに対応した
+(1) timeline モジュールを使用してタイムラインを表示する
+(2) タイムライン用にスモール画像を追加した
+
+4. バグ対策
+(1) myalbum-P からのインポートできないr 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=932
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) 次に、Webphoto の管理者画面にて「アップデート」を実行する。
+  タイムライン用にスモール画像を生成します。
+
+
+● 謝辞
+MIT Simile Project の方々に、感謝します。
+- http://code.google.com/p/simile-widgets/wiki/Timeline
+
 
 =================================================
 Version: 1.21

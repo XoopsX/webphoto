@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: form.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// _SMALL_FIELD_NAME
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
 // 2009-01-04 K.OHWADA
@@ -61,6 +63,7 @@ class webphoto_edit_form extends webphoto_lib_form
 
 	var $_FILED_COUNTER_1  = 1;
 	var $_FILED_COUNTER_2  = 2;
+	var $_FILED_COUNTER_4  = 4;
 
 	var $_UPLOADS_PATH ;
 	var $_MEDIAS_PATH ;
@@ -95,6 +98,7 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_PHOTO_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
+	var $_SMALL_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_SMALL ;
 
 	var $_THIS_IMAGEMANEGER_FCT = 'submit_imagemanager';
 	var $_THIS_SUBMIT_FCT = 'submit';

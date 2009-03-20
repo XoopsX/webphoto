@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.23 2009/01/31 19:12:50 ohwada Exp $
+// $Id: main.php,v 1.24 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -852,7 +852,7 @@ define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "ファイル番号：Flash ビデオ" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "ファイル番号：ドコモ ビデオ" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "ファイル番号：PDF" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "ファイル番号：Flash swf" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "ファイル番号：スモール" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
 define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
@@ -1322,6 +1322,21 @@ define("_WEBPHOTO_ERR_SWF", "フラッシュ を生成できなかった");
 
 // jodconverter
 define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "最初のページ|最後のページ|ページ|戻る|次へ|テキスト|図|目次|表");
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_MAP",  "マップ表示");
+define("_WEBPHOTO_TITLE_TIMELINE",  "タイムライン表示");
+define("_WEBPHOTO_TIMELINE_ON",  "タイムラインを表示する");
+define("_WEBPHOTO_TIMELINE_OFF", "タイムラインを表示しない");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_SMALL","スモール画像");
+
+// edit form
+define("_WEBPHOTO_CAP_SMALL_SELECT", "スモール画像の選択");
+
 
 // === define end ===
 }

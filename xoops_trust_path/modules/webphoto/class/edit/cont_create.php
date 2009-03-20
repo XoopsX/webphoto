@@ -1,10 +1,16 @@
 <?php
-// $Id: cont_create.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
+// $Id: cont_create.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-03-15 K.OHWADA
+// rotate_image()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -129,7 +135,6 @@ function create_image( $param )
 	$item_id  = $param['item_id'] ;
 	$src_file = $param['src_file'];
 	$src_ext  = $param['src_ext'];
-	$rotate   = isset($param['rotate']) ? intval($param['rotate']) : 0 ;
 
 	$this->_cont_param = null;
 
@@ -139,7 +144,7 @@ function create_image( $param )
 	$file  = $name_param['file'] ;
 	$url   = $name_param['url']  ;
 
-	$ret = $this->resize_image( $src_file, $file, $rotate );
+	$ret = $this->resize_image( $src_file, $file );
 	if ( $ret < 0 ) {
 		return $ret; 
 	}
@@ -154,10 +159,17 @@ function create_image( $param )
 // image_create_class
 //---------------------------------------------------------
 // admin/redothumb.php
-function resize_image( $src_file, $dst_file, $rotate=0 )
+function resize_image( $src_file, $dst_file )
 {
-	$ret = $this->_image_create_class->cmd_resize_rotate( 
-		$src_file, $dst_file, $this->_cfg_width, $this->_cfg_height, $rotate );
+	return $this->_image_create_class->cmd_resize_rotate( 
+		$src_file, $dst_file, $this->_cfg_width, $this->_cfg_height );
+}
+
+// edit/submit.php
+function rotate_image( $src_file, $dst_file, $rotate )
+{
+	return $this->_image_create_class->cmd_resize_rotate( 
+		$src_file, $dst_file, 0, 0, $rotate );
 }
 
 function has_resize()

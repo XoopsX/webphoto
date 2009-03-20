@@ -1,10 +1,28 @@
 <?php
-// $Id: main.php,v 1.1 2009/03/07 07:37:16 ohwada Exp $
+// $Id: main.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_TITLE_MAP") ) 
+{
+define("_WEBPHOTO_TITLE_MAP",  "GoogleMap");
+define("_WEBPHOTO_TITLE_TIMELINE",  "Timeline");
+define("_WEBPHOTO_TIMELINE_ON",  "Show timeline");
+define("_WEBPHOTO_TIMELINE_OFF", "Hide timeline");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");
+
+// edit form
+define("_WEBPHOTO_CAP_SMALL_SELECT", "Select the small image");
+
+}
 
 //---------------------------------------------------------
 // main for Portugues.do.Brasil

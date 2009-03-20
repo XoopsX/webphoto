@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
+// $Id: item_build.php,v 1.4 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// _C_WEBPHOTO_ITEM_FILE_SMALL
 // 2009-01-25 K.OHWADA
 // item_content
 //---------------------------------------------------------
@@ -280,6 +282,7 @@ function build_row_files( $row, $file_id_array )
 	$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
 	$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
 	$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
+	$small_id  = $this->get_array_value_by_key( $file_id_array, 'small_id' );
 	$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
 	$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
 	$pdf_id    = $this->get_array_value_by_key( $file_id_array, 'pdf_id' );
@@ -298,6 +301,10 @@ function build_row_files( $row, $file_id_array )
 
 	if ( $middle_id > 0 ) {
 		$row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
+	}
+
+	if ( $small_id > 0 ) {
+		$row[ _C_WEBPHOTO_ITEM_FILE_SMALL ] = $small_id;
 	}
 
 	if ( $flash_id > 0 ) {

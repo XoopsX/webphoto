@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: action.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// small_delete()
 // 2009-01-25 K.OHWADA
 // add search in update_photo_no_image()
 // 2009-01-13 K.OHWADA
@@ -200,13 +202,15 @@ function modify_exec( $item_row )
 
 	$this->upload_fetch_thumb();
 	$this->upload_fetch_middle();
+	$this->upload_fetch_small();
 
 	$photo_name  = $this->_photo_tmp_name;
 	$thumb_name  = $this->_thumb_tmp_name;
 	$middle_name = $this->_middle_tmp_name;
+	$small_name  = $this->_small_tmp_name;
 
 // no upload
-	if ( empty($photo_name) && empty($thumb_name) && empty($middle_name) ) {
+	if ( empty($photo_name) && empty($thumb_name) && empty($middle_name) && empty($small_name) ) {
 		return $this->update_photo_no_image( $item_row );
 	}
 
@@ -516,6 +520,12 @@ function middle_delete( $item_row, $url_redirect )
 {
 	$this->file_delete_common( 
 		$item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE, $url_redirect, true );
+}
+
+function small_delete( $item_row, $url_redirect )
+{
+	$this->file_delete_common( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_SMALL, $url_redirect, true );
 }
 
 function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirect )

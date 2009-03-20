@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
+// $Id: uri.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// flag_amp_sanitize in build_photo()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-11-29 K.OHWADA
@@ -136,9 +138,9 @@ function build_photo_pagenavi()
 	return $str;
 }
 
-function build_photo( $id )
+function build_photo( $id, $flag_amp_sanitize=true )
 {
-	return $this->build_full_uri_mode_param( 'photo', intval($id) );
+	return $this->build_full_uri_mode_param( 'photo', intval($id), $flag_amp_sanitize );
 }
 
 function build_category( $id, $param=null )
