@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.12 2009/03/20 04:18:09 ohwada Exp $
+// $Id: show_main.php,v 1.13 2009/03/20 11:13:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -573,7 +573,7 @@ function get_gmap_class( $mode )
 //---------------------------------------------------------
 // timeline class
 //---------------------------------------------------------
-function build_timeline( $unit, $photos )
+function build_timeline( $unit, $date, $photos )
 {
 	$mode    = $this->_mode; 
 	$show    = false ;
@@ -583,7 +583,7 @@ function build_timeline( $unit, $photos )
 	if ( $this->_init_timeline ) {
 		$tl_mode   = $this->get_timeline_mode( $mode );
 		$param     = $this->_timeline_class->fetch_timeline( 
-			'painter' , $unit, $photos );
+			'painter' , $unit, $date, $photos );
 		$js      = $param['timeline_js'] ;
 		$element = $param['timeline_element'] ;
 		$show    = true ;

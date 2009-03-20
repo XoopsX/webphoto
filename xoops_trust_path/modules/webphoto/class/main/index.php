@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: index.php,v 1.6 2009/03/20 11:13:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -62,6 +62,7 @@ function main()
 	$start = $this->pagenavi_calc_start( $limit );
 	$total = $this->_public_class->get_count();
 	$unit  = $this->_post_class->get_get_text('unit');
+	$date  = $this->_post_class->get_get_text('date');
 
 	if ( $total > 0 ) {
 		$show_photo = true;
@@ -85,7 +86,7 @@ function main()
 	$gmap_param = $this->_build_gmap_param();
 	$show_gmap  = $gmap_param['show_gmap'];
 
-	$timeline_param = $this->_build_timeline_param( $unit, $timeline_photos );
+	$timeline_param = $this->_build_timeline_param( $unit, $date, $timeline_photos );
 
 	$this->assign_xoops_header( $mode, null, $show_gmap );
 
@@ -226,10 +227,10 @@ function _build_gmap_param()
 //---------------------------------------------------------
 // timeline
 //---------------------------------------------------------
-function _build_timeline_param( $unit, $photos )
+function _build_timeline_param( $unit, $date, $photos )
 {
 	if ( $this->check_show_timeline( $this->_mode ) ) {
-		return $this->build_timeline( $unit, $photos );
+		return $this->build_timeline( $unit, $date, $photos );
 	}
 
 	$arr = array(

@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.1 2009/03/20 04:18:58 ohwada Exp $
+// $Id: timeline.php,v 1.2 2009/03/20 11:13:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -55,7 +55,7 @@ function init( $timeline_dirname )
 	return true;
 }
 
-function fetch_timeline( $mode, $unit, $photos )
+function fetch_timeline( $mode, $unit, $date, $photos )
 {
 	$ID     = 0;
 	$events = array();
@@ -69,6 +69,7 @@ function fetch_timeline( $mode, $unit, $photos )
 		case 'painter':
 			$this->_timeline_class->init_painter_events();
 			$this->_timeline_class->set_band_unit( $unit );
+			$this->_timeline_class->set_center_date( $date );
 			$param = $this->_timeline_class->build_painter_events( $ID, $events );
 			$js    = $this->_timeline_class->fetch_painter_events( $param );
 			break;
