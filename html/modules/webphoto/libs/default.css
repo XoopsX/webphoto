@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.6 2008/11/20 11:31:36 ohwada Exp $ */
+/* $Id: default.css,v 1.7 2009/03/20 06:13:53 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -305,11 +305,20 @@ div.webphoto_close
 }
 
 /* gmap */
-div.webphoto_gmap_map
+div.webphoto_gmap_normal
 {
 	border:  1px solid #808080;	/* gray */
 	width:   98%;
 	height:  300px;
+	margin:  5px;
+	padding: 5px;
+}
+
+div.webphoto_gmap_large
+{
+	border:  1px solid #808080;	/* gray */
+	width:   98%;
+	height:  600px;
 	margin:  5px;
 	padding: 5px;
 }
@@ -327,6 +336,25 @@ div.webphoto_gmap_map
 #webphoto_gmap_list
 {
 	font-size: 80%; 
+}
+
+/* timeline */
+div.webphoto_timeline_normal
+{
+	border:  1px solid #808080;	/* gray */
+	width:   98%;
+	height:  300px;
+	margin:  5px;
+	padding: 5px;
+}
+
+div.webphoto_timeline_large
+{
+	border:  1px solid #808080;	/* gray */
+	width:   98%;
+	height:  600px;
+	margin:  5px;
+	padding: 5px;
 }
 
 /* === help === */
