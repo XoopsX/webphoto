@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
+// $Id: show_list.php,v 1.7 2009/03/20 10:37:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -121,8 +121,10 @@ function list_build_list_default()
 
 function list_build_list_common( $show_photo_desc=false, $title=null )
 {
+	$mode = $this->_mode;
+
 	if ( empty($title) ) {
-		$const = 'title_'. $this->_mode .'_list';
+		$const = 'title_'. $mode .'_list';
 		$title = $this->get_constant( $const );
 	}
 
