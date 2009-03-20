@@ -1,4 +1,15 @@
-<{* $Id: main_index.html,v 1.6 2009/03/20 04:18:09 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.7 2009/03/20 10:22:14 ohwada Exp $ *}>
+
+<script type="text/javascript">
+//<![CDATA[
+function webphoto_timeline_zoom( link, op, unit )
+{
+	var date  = timeline_get_center_date();
+	link.href = '<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=' + op + '&unit=' + unit + '&date=' + encodeURIComponent(date) ;
+	return true;
+}
+//]]>
+</script>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -139,11 +150,11 @@
   <div id="<{$timeline_element}>" class="<{$timeline_class}>">Loading ...</div>
 
   <{if $show_timeline_unit }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=year">
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','year')">
     YEAR</a> |
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=month">
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','month')">
     MONTH</a> |
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=<{$op}>&amp;unit=week">
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','week')">
     WEEK</a> 
     <br />
   <{/if}>
