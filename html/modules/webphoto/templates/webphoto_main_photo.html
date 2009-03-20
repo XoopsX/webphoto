@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.14 2009/01/31 19:30:33 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.15 2009/03/20 04:36:26 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -22,29 +22,23 @@
 <{/if}>
 <{* === gmap js end === *}>
 
-<{if $show_gmap && $use_box_js }>
+<{* === windows js === *}>
+<{if $show_js_window }>
 <script type="text/javascript">
 //<![CDATA[
-
-  var webphoto_box_list = "<{$box_list}>";
-
-  window.onload   = webphoto_box_gmap_init;
-  window.onunload = GUnload;
-
-//]]>
-</script>
-
-<{elseif $show_gmap }>
-<script type="text/javascript">
-//<![CDATA[
-
-  window.onload   = webphoto_gmap_load_marks;
-  window.onunload = GUnload;
-
-//]]>
-</script>
-
+<{if $show_js_boxlist }>
+  var webphoto_box_list = "<{$js_boxlist}>";
 <{/if}>
+<{if $show_js_load }>
+  window.onload   = <{$js_load}>;
+<{/if}>
+<{if $show_js_unload }>
+  window.onunload = <{$js_unload}>;
+<{/if}>
+//]]>
+</script>
+<{/if}>
+<{* === windows js end === *}>
 
 <div class="webphoto_page_title">
   <{$sub_title}> <{$photo.title_s}>
