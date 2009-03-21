@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.2 2009/03/21 12:27:14 ohwada Exp $
+// $Id: timeline.php,v 1.3 2009/03/21 12:44:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -69,13 +69,11 @@ function init( $timeline_dirname )
 
 function fetch_timeline( $mode, $unit, $date, $photos )
 {
-echo " fetch_timeline( $mode, $unit, $date, $photos ) ";
 	$ID     = 0;
 	$events = array();
 
 	if ( empty($unit) ) {
 		$unit = $this->_UNIT_DEFAULT;
-echo " $unit ";		
 	}
 
 	if ( empty($date) ) {
