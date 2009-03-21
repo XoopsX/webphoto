@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.28 2009/03/21 12:27:14 ohwada Exp $
+// $Id: main.php,v 1.29 2009/03/21 16:02:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1336,6 +1336,7 @@ define("_WEBPHOTO_TIMELINE_SCALE_WEEK",   "One Week") ;
 define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "One Month") ;
 define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "One Year") ;
 define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "10 Years") ;
+define("_WEBPHOTO_TIMELINE_CAUTION_IE", "In InternetExpolar, you cannot see it sometimes.<br />Please try in other browsers such as Firfox, Opera, Safari.");
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");
