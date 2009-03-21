@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
+// $Id: header.php,v 1.14 2009/03/21 07:52:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -58,6 +58,7 @@ webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/inc/auto_publish.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/inc/gmap_info.php' );
+webphoto_include_once( 'class/inc/timeline.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_select.php' );
 webphoto_include_once( 'class/d3/preload.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.22 2009/03/20 13:44:48 ohwada Exp $
+// $Id: show_photo.php,v 1.23 2009/03/21 07:52:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -247,13 +247,36 @@ function build_photo_show( $row )
 	list( $is_newphoto, $is_updatedphoto )
 		= $this->build_show_is_new_updated( $item_time_update, $item_status );
 
+	$cat_title = null ;
+	$cat_text1 = null ;
+	$cat_text2 = null ;
+	$cat_text3 = null ;
+	$cat_text4 = null ;
+	$cat_text5 = null ;
+
+	$cat_row = $this->_cat_handler->get_cached_row_by_id( $item_cat_id );
+	if ( is_array($cat_row) ) {
+		$cat_title = $cat_row['cat_title'] ;
+		$cat_text1 = $cat_row['cat_text1'] ;
+		$cat_text2 = $cat_row['cat_text2'] ;
+		$cat_text3 = $cat_row['cat_text3'] ;
+		$cat_text4 = $cat_row['cat_text4'] ;
+		$cat_text5 = $cat_row['cat_text5'] ;
+	}
+
 	$arr2 = array(
-		'cat_title_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_title', true ),
-		'cat_text1_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text1', true ),
-		'cat_text2_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text2', true ),
-		'cat_text3_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text3', true ),
-		'cat_text4_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text4', true ),
-		'cat_text5_s'      => $this->get_cached_cat_value_by_id( $item_cat_id, 'cat_text5', true ),
+		'cat_title'        => $cat_title ,
+		'cat_text1'        => $cat_text1 ,
+		'cat_text2'        => $cat_text2 ,
+		'cat_text3'        => $cat_text3 ,
+		'cat_text4'        => $cat_text4 ,
+		'cat_text5'        => $cat_text5 ,
+		'cat_title_s'      => $this->sanitize( $cat_title ),
+		'cat_text1_s'      => $this->sanitize( $cat_text1 ),
+		'cat_text2_s'      => $this->sanitize( $cat_text2 ),
+		'cat_text3_s'      => $this->sanitize( $cat_text3 ),
+		'cat_text4_s'      => $this->sanitize( $cat_text4 ),
+		'cat_text5_s'      => $this->sanitize( $cat_text5 ),
 
 		'info_votes'       => $this->build_show_info_vote( $item_rating, $item_votes ) ,
 		'rank'             => $this->build_show_rank( $item_rating ) ,

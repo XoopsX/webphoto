@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.13 2009/03/20 11:13:53 ohwada Exp $
+// $Id: show_main.php,v 1.14 2009/03/21 07:52:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -66,6 +66,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_cfg_use_pathinfo   ;
 	var $_cfg_cat_main_width ;
 	var $_cfg_cat_sub_width  ;
+	var $_cfg_timeline_dirname ;
 
 	var $_mode  = null;
 	var $_init_timeline ;
@@ -162,11 +163,12 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$cfg_use_popbox              = $this->get_config_by_name('use_popbox');
 	$cfg_perm_cat_read           = $this->get_config_by_name('perm_cat_read');
 	$cfg_perm_item_read          = $this->get_config_by_name('perm_item_read');
-	$cfg_timeline_dirname        = $this->get_config_by_name('timeline_dirname');
+	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
 	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
 	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
 	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
 	$this->_cfg_cat_sub_width    = $this->get_config_by_name('cat_sub_width');
+	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
 
 	$this->_MAX_PHOTOS         = $cfg_newphotos;
 	$this->_VIEWTYPE_DEFAULT   = $cfg_viewcattype;
@@ -174,9 +176,6 @@ function webphoto_show_main( $dirname, $trust_dirname )
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class->set_photo_sort_default( $cfg_sort );
-
-	$this->_timeline_class =& webphoto_timeline::getInstance();
-	$this->_init_timeline = $this->_timeline_class->init( $cfg_timeline_dirname );
 
 // separator
 	if ( $this->_cfg_use_pathinfo ) {
@@ -206,6 +205,9 @@ function init_preload()
 	$this->preload_error( $this->_DEBUG_PRELOAD );
 	$this->preload_constant();
 	$this->_preload_photo_sort_array();
+
+	$this->_timeline_class =& webphoto_timeline::getInstance( $this->_DIRNAME );
+	$this->_init_timeline = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
 }
 
 function _preload_photo_sort_array()

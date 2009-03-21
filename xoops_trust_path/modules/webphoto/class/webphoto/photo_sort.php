@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_sort.php,v 1.3 2008/10/30 00:22:49 ohwada Exp $
+// $Id: photo_sort.php,v 1.4 2009/03/21 07:52:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-03-15 K.OHWADA
+// timeline
 // 2008-10-01 K.OHWADA
 // photo_sort_array_admin()
 // 2008-08-24 K.OHWADA
@@ -72,6 +74,8 @@ function mode_to_sort_array_default()
 		'popular'  => 'hitsd' ,
 		'highrate' => 'ratingd' ,
 		'random'   => 'random' ,
+		'map'      => 'random' ,
+		'timeline' => 'random' ,
 	);
 	return $arr;
 }
