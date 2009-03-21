@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.14 2009/03/20 04:18:09 ohwada Exp $
+// $Id: modinfo.php,v 1.15 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -341,6 +341,12 @@ define($constpref."CFG_SMALL_WIDTH" ,  "タイムラインでの画像の幅" ) ;
 define($constpref."CFG_SMALL_HEIGHT" , "タイムラインでの画像の高さ" ) ;
 define($constpref."CFG_TIMELINE_DIRNAME", "timeline モジュールのディレクトリ名" ) ;
 define($constpref."CFG_TIMELINE_DIRNAME_DSC", "タイムライン機能を使用するときに指定する" ) ;
+define($constpref."CFG_TIMELINE_SCALE", "タイムラインの時間幅") ;
+define($constpref."CFG_TIMELINE_SCALE_DSC", "約 600px の横幅に表示する時間" ) ;
+define($constpref."OPT_TIMELINE_SCALE_WEEK",   "１週間") ;
+define($constpref."OPT_TIMELINE_SCALE_MONTH",  "１ヶ月") ;
+define($constpref."OPT_TIMELINE_SCALE_YEAR",   "１年") ;
+define($constpref."OPT_TIMELINE_SCALE_DECADE", "１０年") ;
 
 }
 // === define begin ===

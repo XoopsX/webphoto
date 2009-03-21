@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
+// $Id: modinfo.php,v 1.3 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -36,6 +36,12 @@ define($constpref."CFG_SMALL_WIDTH" ,  "Image Width in timeline" ) ;
 define($constpref."CFG_SMALL_HEIGHT" , "Image Height in timeline" ) ;
 define($constpref."CFG_TIMELINE_DIRNAME", "timeline dirname" ) ;
 define($constpref."CFG_TIMELINE_DIRNAME_DSC", "Set dirname of timeline module" ) ;
+define($constpref."CFG_TIMELINE_SCALE", "Timeline scale") ;
+define($constpref."CFG_TIMELINE_SCALE_DSC", "Time scale in about 600px width" ) ;
+define($constpref."OPT_TIMELINE_SCALE_WEEK",   "one week") ;
+define($constpref."OPT_TIMELINE_SCALE_MONTH",  "one month") ;
+define($constpref."OPT_TIMELINE_SCALE_YEAR",   "one year") ;
+define($constpref."OPT_TIMELINE_SCALE_DECADE", "10 years") ;
 
 }
 

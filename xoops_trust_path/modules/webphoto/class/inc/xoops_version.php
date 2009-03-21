@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.22 2009/03/20 04:18:09 ohwada Exp $
+// $Id: xoops_version.php,v 1.23 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1105,6 +1105,21 @@ function _build_config()
 		'valuetype'		=> 'text' ,
 		'default'		=> 'timeline' ,
 		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'timeline_scale' ,
+		'title'			=> $this->_constant_name( 'CFG_TIMELINE_SCALE' ) ,
+		'description'	=> $this->_constant_name( 'CFG_TIMELINE_SCALE_DSC' ) ,
+		'formtype'		=> 'select' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> 'month' ,
+		'options'		=> array(
+			$this->_constant( 'OPT_TIMELINE_SCALE_WEEK'   ) => 'week',
+			$this->_constant( 'OPT_TIMELINE_SCALE_MONTH'  ) => 'month',
+			$this->_constant( 'OPT_TIMELINE_SCALE_YEAR'   ) => 'year',
+			$this->_constant( 'OPT_TIMELINE_SCALE_DECADE' ) => 'decade',
+		)
 	) ;
 
 	return $arr;

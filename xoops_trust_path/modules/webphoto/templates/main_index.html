@@ -1,4 +1,4 @@
-<{* $Id: main_index.html,v 1.7 2009/03/20 10:22:14 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.8 2009/03/21 12:27:14 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -150,12 +150,14 @@ function webphoto_timeline_zoom( link, op, unit )
   <div id="<{$timeline_element}>" class="<{$timeline_class}>">Loading ...</div>
 
   <{if $show_timeline_unit }>
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','decade')">
+    <{$lang_timeline_scale_decade}></a> |
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','year')">
-    YEAR</a> |
+    <{$lang_timeline_scale_year}></a> |
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','month')">
-    MONTH</a> |
+    <{$lang_timeline_scale_month}></a> |
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','week')">
-    WEEK</a> 
+    <{$lang_timeline_scale_week}></a> 
     <br />
   <{/if}>
   </div>

@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.1 2009/03/21 07:54:11 ohwada Exp $
+// $Id: timeline.php,v 1.2 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -18,6 +18,7 @@ class webphoto_inc_timeline
 	var $_timeline_class ;
 
 	var $_cfg_use_pathinfo;
+	var $_cfg_timeline_scale;
 
 	var $_DIRNAME    ;
 	var $_MODULE_URL ;
@@ -40,7 +41,10 @@ function webphoto_inc_timeline( $dirname )
 
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name( 'use_pathinfo' );
+	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
+	$this->_cfg_timeline_scale = $config_handler->get_by_name( 'timeline_scale' );
+
+	$this->_UNIT_DEFAULT = $this->_cfg_timeline_scale ;
 }
 
 //---------------------------------------------------------
@@ -65,11 +69,13 @@ function init( $timeline_dirname )
 
 function fetch_timeline( $mode, $unit, $date, $photos )
 {
+echo " fetch_timeline( $mode, $unit, $date, $photos ) ";
 	$ID     = 0;
 	$events = array();
 
 	if ( empty($unit) ) {
 		$unit = $this->_UNIT_DEFAULT;
+echo " $unit ";		
 	}
 
 	if ( empty($date) ) {

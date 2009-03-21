@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.24 2009/03/20 04:18:09 ohwada Exp $
+// $Id: main.php,v 1.25 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1327,16 +1327,21 @@ define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "最初のページ|最後のページ|ページ|戻
 // v1.30
 //---------------------------------------------------------
 define("_WEBPHOTO_TITLE_MAP",  "マップ表示");
+
+// timeline
 define("_WEBPHOTO_TITLE_TIMELINE",  "タイムライン表示");
 define("_WEBPHOTO_TIMELINE_ON",  "タイムラインを表示する");
 define("_WEBPHOTO_TIMELINE_OFF", "タイムラインを表示しない");
+define("_WEBPHOTO_TIMELINE_SCALE_WEEK",   "１週間") ;
+define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "１ヶ月") ;
+define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "１年") ;
+define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "１０年") ;
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","スモール画像");
 
 // edit form
 define("_WEBPHOTO_CAP_SMALL_SELECT", "スモール画像の選択");
-
 
 // === define end ===
 }

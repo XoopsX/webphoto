@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.27 2009/03/20 04:18:09 ohwada Exp $
+// $Id: main.php,v 1.28 2009/03/21 12:27:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1327,9 +1327,15 @@ define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "");
 // v1.30
 //---------------------------------------------------------
 define("_WEBPHOTO_TITLE_MAP",  "GoogleMap");
+
+// timeline
 define("_WEBPHOTO_TITLE_TIMELINE",  "Timeline");
 define("_WEBPHOTO_TIMELINE_ON",  "Show timeline");
 define("_WEBPHOTO_TIMELINE_OFF", "Hide timeline");
+define("_WEBPHOTO_TIMELINE_SCALE_WEEK",   "One Week") ;
+define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "One Month") ;
+define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "One Year") ;
+define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "10 Years") ;
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");
