@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.26 2009/03/21 16:02:47 ohwada Exp $
+// $Id: main.php,v 1.27 2009/03/22 01:11:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1328,6 +1328,7 @@ define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "最初のページ|最後のペー�
 // v1.30
 //---------------------------------------------------------
 define("_WEBPHOTO_TITLE_MAP",  "マップ表示");
+define("_WEBPHOTO_MAP_LARGE", "大きなマップを表示する");
 
 // timeline
 define("_WEBPHOTO_TITLE_TIMELINE",  "タイムライン表示");
@@ -1337,7 +1338,8 @@ define("_WEBPHOTO_TIMELINE_SCALE_WEEK",   "１週間") ;
 define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "１ヶ月") ;
 define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "１年") ;
 define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "１０年") ;
-define("_WEBPHOTO_TIMELINE_CAUTION_IE", "InternetExpolar では表示できないことがあります。<br />Firfox, Opera, Safari など他のブラウザにてお試しください。");
+define("_WEBPHOTO_TIMELINE_LARGE", "大きなタイムラインを表示する");
+define("_WEBPHOTO_TIMELINE_CAUTION_IE", "InternetExpolar では表示できないことがあります。 Firfox, Opera, Safari など他のブラウザにてお試しください。");
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","スモール画像");

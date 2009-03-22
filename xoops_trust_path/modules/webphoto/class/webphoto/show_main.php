@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.14 2009/03/21 07:52:26 ohwada Exp $
+// $Id: show_main.php,v 1.15 2009/03/22 01:11:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -163,7 +163,6 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$cfg_use_popbox              = $this->get_config_by_name('use_popbox');
 	$cfg_perm_cat_read           = $this->get_config_by_name('perm_cat_read');
 	$cfg_perm_item_read          = $this->get_config_by_name('perm_item_read');
-	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
 	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
 	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
 	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
@@ -548,13 +547,14 @@ function build_gmap( $cat_id=0, $limit )
 	}
 
 	$arr = array(
-		'show_gmap'      => $show ,
-		'gmap_photos'    => $photos ,
-		'gmap_icons'     => $icons ,
-		'gmap_latitude'  => $latitude,
-		'gmap_longitude' => $longitude,
-		'gmap_zoom'      => $zoom,
-		'gmap_class'     => $this->get_gmap_class( $mode ) ,
+		'show_gmap'       => $show ,
+		'gmap_photos'     => $photos ,
+		'gmap_icons'      => $icons ,
+		'gmap_latitude'   => $latitude,
+		'gmap_longitude'  => $longitude,
+		'gmap_zoom'       => $zoom,
+		'gmap_class'      => $this->get_gmap_class( $mode ) ,
+		'show_map_large'  => ! $this->is_map_mode( $mode ) ,
 		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
 	);
 	return $arr;
@@ -562,14 +562,18 @@ function build_gmap( $cat_id=0, $limit )
 
 function get_gmap_class( $mode )
 {
-	$ret = 'webphoto_gmap_normal';
-	switch ( $mode )
-	{
-		case 'map':
-			$ret = 'webphoto_gmap_large';
-			break;
+	if ( $this->is_map_mode( $mode ) ) {
+		return 'webphoto_gmap_large';
 	}
-	return $ret;
+	return 'webphoto_gmap_normal';
+}
+
+function is_map_mode( $mode )
+{
+	if ( $mode == 'map' ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------
@@ -583,7 +587,6 @@ function build_timeline( $unit, $date, $photos )
 	$element = null;
 
 	if ( $this->_init_timeline ) {
-		$tl_mode   = $this->get_timeline_mode( $mode );
 		$param     = $this->_timeline_class->fetch_timeline( 
 			'painter' , $unit, $date, $photos );
 		$js      = $param['timeline_js'] ;
@@ -591,53 +594,33 @@ function build_timeline( $unit, $date, $photos )
 		$show    = true ;
 	}
 
+	$is_timeline_mode = $this->is_timeline_mode( $mode );
+
 	$arr = array(
-		'show_timeline'      => $show ,
-		'show_timeline_unit' => $this->get_show_timeline_unit( $mode ) ,
-		'timeline_js'        => $js ,
-		'timeline_element'   => $element ,
-		'timeline_class'     => $this->get_timeline_class( $mode ) ,
+		'show_timeline'       => $show ,
+		'show_timeline_large' => ! $is_timeline_mode ,
+		'show_timeline_unit'  => $is_timeline_mode ,
+		'timeline_class'      => $this->get_timeline_class( $mode ) ,
+		'timeline_js'         => $js ,
+		'timeline_element'    => $element ,
 	);
 	return $arr;
 }
 
 function get_timeline_class( $mode )
 {
-	$ret = 'webphoto_timeline_normal';
-	switch ( $mode )
-	{
-		case 'timeline':
-			$ret = 'webphoto_timeline_large';
-			break;
+	if ( $this->is_timeline_mode( $mode ) ) {
+		return 'webphoto_timeline_large';
 	}
-	return $ret;
+	return 'webphoto_timeline_normal';
 }
 
-function get_timeline_mode( $mode )
+function is_timeline_mode( $mode )
 {
-	return 'painter';
-
-// not use
-	$ret = 'simple';
-	switch ( $mode )
-	{
-		case 'timeline':
-			$ret = 'painter';
-			break;
+	if ( $mode == 'timeline' ) {
+		return true;
 	}
-	return $ret;
-}
-
-function get_show_timeline_unit( $mode )
-{
-	$ret = false;
-	switch ( $mode )
-	{
-		case 'timeline':
-			$ret = true;
-			break;
-	}
-	return $ret;
+	return false;
 }
 
 //---------------------------------------------------------
