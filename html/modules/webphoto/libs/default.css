@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.7 2009/03/20 06:13:53 ohwada Exp $ */
+/* $Id: default.css,v 1.8 2009/03/22 01:47:52 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -323,6 +323,11 @@ div.webphoto_gmap_large
 	padding: 5px;
 }
 
+div.webphoto_gmap_navi
+{
+	text-align: right;
+}
+
 #webphoto_gmap_current_location
 {
 	font-size: 80%; 
@@ -355,6 +360,16 @@ div.webphoto_timeline_large
 	height:  600px;
 	margin:  5px;
 	padding: 5px;
+}
+
+div.webphoto_timeline_navi
+{
+	text-align: right;
+}
+
+div.webphoto_timeline_caution
+{
+	font-size: 90%; 
 }
 
 /* === help === */
