@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_index.html,v 1.9 2009/03/21 16:09:33 ohwada Exp $ *}>
+<{* $Id: webphoto_main_index.html,v 1.10 2009/03/22 01:25:41 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -147,9 +147,20 @@ function webphoto_timeline_zoom( link, op, unit )
   <a href="javascript:webphoto_box_timeline_off()">
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
   <{$lang_timeline_off}></a> <br />
-  <div id="<{$timeline_element}>" class="<{$timeline_class}>">Loading ...</div>
+
+  <{if $show_timeline_large }>
+    <div class="webphoto_timeline_navi">
+    <{if $use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">
+    <{/if}>
+    <{$lang_timeline_large}></a> 
+    </div>
+  <{/if}>
 
   <{if $show_timeline_unit }>
+    <div class="webphoto_timeline_navi">
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','decade')">
     <{$lang_timeline_scale_decade}></a> |
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','year')">
@@ -158,10 +169,15 @@ function webphoto_timeline_zoom( link, op, unit )
     <{$lang_timeline_scale_month}></a> |
     <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$op}>','week')">
     <{$lang_timeline_scale_week}></a> 
-    <br />
+    </div>
   <{/if}>
 
-  <{$lang_timeline_caution_ie}><br />
+  <div id="<{$timeline_element}>" class="<{$timeline_class}>">Loading ...</div>
+
+  <div class="webphoto_timeline_caution">
+  <{$lang_timeline_caution_ie}>
+  </div>
+
   </div>
 
   <div id="webphoto_box_timeline_a" style="display:none">
@@ -180,8 +196,20 @@ function webphoto_timeline_zoom( link, op, unit )
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
   <{$lang_gmap_off}></a> <br />
   <{$lang_gmap_desc}><br />
-  <div id="webphoto_gmap_not_compatible" class="webphoto_error"></div>
+
+  <{if $show_map_large }>
+    <div class="webphoto_gmap_navi">
+    <{if $use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/map/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map">
+    <{/if}>
+    <{$lang_map_large}></a> 
+    </div>
+  <{/if}>
+
   <div id="webphoto_gmap_map" class="<{$gmap_class}>">Loading ...</div>
+  <div id="webphoto_gmap_not_compatible" class="webphoto_error"></div>
   </div>
 
   <div id="webphoto_box_gmap_a" style="display:none">
