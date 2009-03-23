@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
+// $Id: item_form.php,v 1.14 2009/03/23 12:42:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -121,6 +121,7 @@ function print_form_admin_by_files( $files, $param )
 	$swf_row       = $files['swf_row']; 
 
 	$mode          = $param['mode'];
+	$rotate        = $param['rotate'];
 	$preview_name  = $param['preview_name'];
 	$has_resize    = $param['has_resize'];
 	$has_rotate    = $param['has_rotate'];
@@ -361,7 +362,7 @@ function print_form_admin_by_files( $files, $param )
 
 		if ( $has_rotate ) {
 			echo $this->build_line_ele( $this->get_constant('RADIO_ROTATETITLE'), 
-				$this->_build_ele_rotate() );
+				$this->_build_ele_rotate( $rotate ) );
 		}
 	}
 

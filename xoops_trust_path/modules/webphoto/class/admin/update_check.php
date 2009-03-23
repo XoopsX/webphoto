@@ -1,5 +1,5 @@
 <?php
-// $Id: update_check.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
+// $Id: update_check.php,v 1.4 2009/03/23 12:42:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -96,8 +96,10 @@ function check_050()
 
 function check_130()
 {
-	$count = $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL );
-	if ( $count == 0 ) {
+	if ( $this->_item_handler->get_count_all() == 0 ) {
+		return false;
+	}
+	if ( $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL ) == 0 ) {
 		return true;
 	}
 	return false;

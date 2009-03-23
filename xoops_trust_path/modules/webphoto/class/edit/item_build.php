@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.4 2009/03/20 04:18:09 ohwada Exp $
+// $Id: item_build.php,v 1.5 2009/03/23 12:42:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2009-03-15 K.OHWADA
 // _C_WEBPHOTO_ITEM_FILE_SMALL
+// BUG: flash player becomes default in the user edit
 // 2009-01-25 K.OHWADA
 // item_content
 //---------------------------------------------------------
@@ -89,7 +90,6 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	$row['item_gmap_latitude']    = $this->get_post_float( 'item_gmap_latitude' );
 	$row['item_gmap_longitude']   = $this->get_post_float( 'item_gmap_longitude' );
 	$row['item_gmap_zoom']        = $this->get_post_int(   'item_gmap_zoom' );
-	$row['item_player_id']        = $this->get_post_int(   'item_player_id' );
 	$row['item_page_width']       = $this->get_post_int(   'item_page_width' );
 	$row['item_page_height']      = $this->get_post_int(   'item_page_height' );
 	$row['item_equipment']        = $this->get_post_text( 'item_equipment' ) ;
@@ -125,6 +125,9 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 		$row['item_kind']          = $this->get_post_int(   'item_kind' );
 		$row['item_displaytype']   = $this->get_post_int(   'item_displaytype' );
 		$row['item_onclick']       = $this->get_post_int(   'item_onclick' );
+
+// BUG: flash player becomes default in the user edit
+		$row['item_player_id']     = $this->get_post_int(   'item_player_id' );
 
 // playlist
 		$row['item_playlist_type'] = $this->get_post_int(  'item_playlist_type' );

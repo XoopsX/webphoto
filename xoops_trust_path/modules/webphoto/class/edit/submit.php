@@ -1,13 +1,10 @@
 <?php
-// $Id: submit.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: submit.php,v 1.6 2009/03/23 12:42:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
-
-// set_preview_rotate_name( $val )
-//	$this->rotate_tmp_image( $photo_name, $this->_rotate_angle, true );
 
 //---------------------------------------------------------
 // change log

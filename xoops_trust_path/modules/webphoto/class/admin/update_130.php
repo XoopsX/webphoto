@@ -1,5 +1,5 @@
 <?php
-// $Id: update_130.php,v 1.1 2009/03/20 04:18:58 ohwada Exp $
+// $Id: update_130.php,v 1.2 2009/03/23 12:42:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -76,9 +76,13 @@ function main()
 		echo $this->build_admin_menu();
 		echo $this->build_admin_title( 'UPDATE' );
 
-		$count = $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL );
-		echo 'There are '. $count .' small images'."<br />\n";
-		if ( $count > 0 ) {
+		$item_count  = $this->_item_handler->get_count_all();
+		$small_count = $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL );
+		echo 'There are '. $item_count .' items and '. $small_count .' small images';
+		echo "<br /><br />\n";
+		if ( $item_count == 0 ) {
+			$msg = 'You dont need update.';
+		} elseif ( $small_count > 0 ) {
 			$msg = 'Probably, you dont need update.';
 		} else {
 			$msg = _AM_WEBPHOTO_MUST_UPDATE ;
