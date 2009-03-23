@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.27 2009/03/20 04:18:09 ohwada Exp $
+$Id: readme_en.txt,v 1.28 2009/03/23 13:36:45 ohwada Exp $
 
 =================================================
 Version: 1.30
@@ -24,6 +24,9 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
 4. bug fix
 (1) cannot import from myalbum-P 
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=932
+
+(2) flash player becomes default in the user edit
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
 
 
 * Update *

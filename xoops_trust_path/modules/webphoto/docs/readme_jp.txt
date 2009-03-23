@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.27 2009/03/20 04:18:09 ohwada Exp $
+$Id: readme_jp.txt,v 1.28 2009/03/23 13:36:45 ohwada Exp $
 
 =================================================
 Version: 1.30
@@ -24,6 +24,9 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
 4. バグ対策
 (1) myalbum-P からのインポートできないr 
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=932
+
+(2) ユーザ編集画面にて player が default になる
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=936
 
 
 ● アップデート
