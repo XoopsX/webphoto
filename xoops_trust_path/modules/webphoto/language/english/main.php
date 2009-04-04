@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.30 2009/03/22 01:11:39 ohwada Exp $
+// $Id: main.php,v 1.31 2009/04/04 20:27:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,7 +22,7 @@ define("_WEBPHOTO_NOMATCH_PHOTO","No photo matches your request");
 
 define("_WEBPHOTO_ICON_NEW","New");
 define("_WEBPHOTO_ICON_UPDATE","Updated");
-define("_WEBPHOTO_ICON_POPULAR","Popluar");
+define("_WEBPHOTO_ICON_POPULAR","Popular");
 define("_WEBPHOTO_ICON_LASTUPDATE","Last Update");
 define("_WEBPHOTO_ICON_HITS","Hits");
 define("_WEBPHOTO_ICON_COMMENTS","Comments");
@@ -481,8 +481,8 @@ define("_WEBPHOTO_GICON_SHADOW_NAME" , "Shadow Name" ) ;
 define("_WEBPHOTO_GICON_SHADOW_EXT" ,  "Shadow Extention" ) ;
 define("_WEBPHOTO_GICON_IMAGE_WIDTH" ,  "Image Width" ) ;
 define("_WEBPHOTO_GICON_IMAGE_HEIGHT" , "Image Height" ) ;
-define("_WEBPHOTO_GICON_SHADOW_WIDTH" ,  "Shadow Height" ) ;
-define("_WEBPHOTO_GICON_SHADOW_HEIGHT" , "Shadow Y Size" ) ;
+define("_WEBPHOTO_GICON_SHADOW_WIDTH" ,  "Shadow Width" ) ;
+define("_WEBPHOTO_GICON_SHADOW_HEIGHT" , "Shadow Height" ) ;
 define("_WEBPHOTO_GICON_ANCHOR_X" , "Anchor X Size" ) ;
 define("_WEBPHOTO_GICON_ANCHOR_Y" , "Anchor Y Size" ) ;
 define("_WEBPHOTO_GICON_INFO_X" , "WindowInfo X Size" ) ;
@@ -708,7 +708,7 @@ define("_WEBPHOTO_JA_COMMA",   "");
 define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL", "Select thumbnail of video");
 define("_WEBPHOTO_TITLE_VIDEO_REDO","Re-create Flash and Thumbnail from uploaded video");
 define("_WEBPHOTO_CAP_REDO_THUMB","Create Thumbnail");
-define("_WEBPHOTO_CAP_REDO_FLASH","Cretae Flash Video");
+define("_WEBPHOTO_CAP_REDO_FLASH","Create Flash Video");
 define("_WEBPHOTO_ERR_VIDEO_FLASH", "Cannot create Flash video");
 define("_WEBPHOTO_ERR_VIDEO_THUMB", "Substituted with the icon, because cannot create Thumbnail for video");
 define("_WEBPHOTO_BUTTON_SELECT", "Select");
@@ -727,7 +727,7 @@ define("_WEBPHOTO_USER_TABLE" , "User Aux Table" ) ;
 define("_WEBPHOTO_USER_ID" ,          "User Aux ID" ) ;
 define("_WEBPHOTO_USER_TIME_CREATE" , "Create Time" ) ;
 define("_WEBPHOTO_USER_TIME_UPDATE" , "Update Time" ) ;
-define("_WEBPHOTO_USER_UID" , "Uesr ID" ) ;
+define("_WEBPHOTO_USER_UID" , "User ID" ) ;
 define("_WEBPHOTO_USER_CAT_ID" , "Category ID" ) ;
 define("_WEBPHOTO_USER_EMAIL" , "Email Address" ) ;
 define("_WEBPHOTO_USER_TEXT1" ,  "text1" ) ;
@@ -1122,7 +1122,7 @@ define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","[Playback] <br />Set this to true in 
 define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","[Playback]  [mediaplayer] <br />Sets the number of seconds a video should be buffered before the players starts playback.<br />Set this small for fast connections or short videos and big for slow connections.  ");
 define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","[Playback] [mediaplayer] <br />Captions should be in TimedText format. <br />When using a playlist, you can assign captions for every entry. ");
 define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","[Playback] [mediaplayer] <br />If you play an MP4 file, set here the location of an FLV fallback. <br />It'll automatically be picked by older flash player. ");
-define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />Set this to true to automatically rpeat playback of all files. <br />Set this to list to playback an entire playlist once. ");
+define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />Set this to true to automatically repeat playback of all files. <br />Set this to list to playback an entire playlist once. ");
 define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","[Playback] <br />Sets the number of seconds an image is played back. ");
 define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","[Playback] <br />Set this to true to playback a playlist in random order. ");
 define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","[Playback] [mediaplayer] <br />Set this to false to turn of the smoothing of video. <br />Quality will decrease, but performance will increase. <br />Good for HD files and slower computers. ");
@@ -1225,7 +1225,7 @@ define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "Page Height");
 define("_WEBPHOTO_ITEM_EMBED_TEXT",  "Embed");
 
 // item option
-define("_WEBPHOTO_ITEM_CODEINFO_CONT","Meida");
+define("_WEBPHOTO_ITEM_CODEINFO_CONT","Media");
 define("_WEBPHOTO_ITEM_CODEINFO_THUMB","Thumbnail Image");
 define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","Middle Image");
 define("_WEBPHOTO_ITEM_CODEINFO_FLASH","Flash Video");
@@ -1338,7 +1338,7 @@ define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "One Month") ;
 define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "One Year") ;
 define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "10 Years") ;
 define("_WEBPHOTO_TIMELINE_LARGE", "Show large timeline");
-define("_WEBPHOTO_TIMELINE_CAUTION_IE", "In InternetExpolar, you cannot see it sometimes. Please try in other browsers such as Firfox, Opera, Safari.");
+define("_WEBPHOTO_TIMELINE_CAUTION_IE", "In InternetExplore, you cannot see it sometimes. Please try in other browsers such as Firfox, Opera, Safari.");
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");

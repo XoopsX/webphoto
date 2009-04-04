@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.5 2009/03/22 01:11:39 ohwada Exp $
+// $Id: main.php,v 1.6 2009/04/04 20:27:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -23,7 +23,7 @@ define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "One Month") ;
 define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "One Year") ;
 define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "10 Years") ;
 define("_WEBPHOTO_TIMELINE_LARGE", "Show large timeline");
-define("_WEBPHOTO_TIMELINE_CAUTION_IE", "In InternetExpolar, you cannot see it sometimes. Please try in other browsers such as Firfox, Opera, Safari.");
+define("_WEBPHOTO_TIMELINE_CAUTION_IE", "In InternetExplore, you cannot see it sometimes. Please try in other browsers such as Firfox, Opera, Safari.");
 
 // item option
 define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Small image");
@@ -234,7 +234,7 @@ define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","[Playback] <br />Set this to true in 
 define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","[Playback]  [mediaplayer] <br />Sets the number of seconds a video should be buffered before the players starts playback.<br />Set this small for fast connections or short videos and big for slow connections.  ");
 define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","[Playback] [mediaplayer] <br />Captions should be in TimedText format. <br />When using a playlist, you can assign captions for every entry. ");
 define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","[Playback] [mediaplayer] <br />If you play an MP4 file, set here the location of an FLV fallback. <br />It'll automatically be picked by older flash player. ");
-define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />Set this to true to automatically rpeat playback of all files. <br />Set this to list to playback an entire playlist once. ");
+define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />Set this to true to automatically repeat playback of all files. <br />Set this to list to playback an entire playlist once. ");
 define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","[Playback] <br />Sets the number of seconds an image is played back. ");
 define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","[Playback] <br />Set this to true to playback a playlist in random order. ");
 define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","[Playback] [mediaplayer] <br />Set this to false to turn of the smoothing of video. <br />Quality will decrease, but performance will increase. <br />Good for HD files and slower computers. ");
@@ -337,7 +337,7 @@ define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "Page Height");
 define("_WEBPHOTO_ITEM_EMBED_TEXT",  "Embed");
 
 // item option
-define("_WEBPHOTO_ITEM_CODEINFO_CONT","Meida");
+define("_WEBPHOTO_ITEM_CODEINFO_CONT","Media");
 define("_WEBPHOTO_ITEM_CODEINFO_THUMB","Thumbnail Image");
 define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","Middle Image");
 define("_WEBPHOTO_ITEM_CODEINFO_FLASH","Flash Video");

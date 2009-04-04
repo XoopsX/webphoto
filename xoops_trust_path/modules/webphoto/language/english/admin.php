@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.14 2009/03/06 04:06:47 ohwada Exp $
+// $Id: admin.php,v 1.15 2009/04/04 20:27:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -483,11 +483,11 @@ define("_AM_WEBPHOTO_QR_CHECK_INFO" , "Debug Info" ) ;
 // v0.90
 //---------------------------------------------------------
 // cat form
-define("_AM_WEBPHOTO_CAT_PARENT_CAP" , "Pemission of Parent Category" ) ;
-define("_AM_WEBPHOTO_CAT_PARENT_FMT" , "Accede permission of parent category ( %s )" ) ;
-define("_AM_WEBPHOTO_CAT_CHILD_CAP"  , "Child Categoris" ) ;
-define("_AM_WEBPHOTO_CAT_CHILD_NUM"  , "Number of child categoris" ) ;
-define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categoris" ) ;
+define("_AM_WEBPHOTO_CAT_PARENT_CAP" , "Permission of Parent Category" ) ;
+define("_AM_WEBPHOTO_CAT_PARENT_FMT" , "Succeed to the permission of parent category ( %s )" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_CAP"  , "Child Categories" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_NUM"  , "Number of child categories" ) ;
+define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categories" ) ;
 
 //---------------------------------------------------------
 // v1.00

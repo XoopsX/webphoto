@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.3 2009/03/21 12:27:14 ohwada Exp $
+// $Id: modinfo.php,v 1.4 2009/04/04 20:27:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -76,11 +76,11 @@ define($constpref."CFG_LOGO_WIDTH" ,  "Player Logo Width and Height" ) ;
 define($constpref."CFG_USE_CALLBACK", "Use callback log");
 define($constpref."CFG_USE_CALLBACK_DSC", "loggin Flash Player events by callback.");
 
-define($constpref."ADMENU_ITEM_MANAGER", "Item Managemnet");
-define($constpref."ADMENU_PLAYER_MANAGER", "Player Managemnet");
-define($constpref."ADMENU_FLASHVAR_MANAGER", "Flashvar Managemnet");
-define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "Player Table Managemnet");
-define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "Flashvar Table Managemnet");
+define($constpref."ADMENU_ITEM_MANAGER", "Item Management");
+define($constpref."ADMENU_PLAYER_MANAGER", "Player Management");
+define($constpref."ADMENU_FLASHVAR_MANAGER", "Flashvar Management");
+define($constpref."ADMENU_PLAYER_TABLE_MANAGE", "Player Table Management");
+define($constpref."ADMENU_FLASHVAR_TABLE_MANAGE", "Flashvar Table Management");
 
 //---------------------------------------------------------
 // v0.60
@@ -104,7 +104,7 @@ define($constpref."BNAME_TAGCLOUD" , "Tag Cloud" ) ;
 //---------------------------------------------------------
 define($constpref."CFG_PERM_CAT_READ"      , "Permission of Category" ) ;
 define($constpref."CFG_PERM_CAT_READ_DSC"  , "Enable with the setting of Category table" ) ;
-define($constpref."CFG_PERM_ITEM_READ"     , "Permission od Item" ) ;
+define($constpref."CFG_PERM_ITEM_READ"     , "Permission of Item" ) ;
 define($constpref."CFG_PERM_ITEM_READ_DSC" , "Enable with the setting of Item table" ) ;
 define($constpref."OPT_PERM_READ_ALL"     , "Show ALL" ) ;
 define($constpref."OPT_PERM_READ_NO_ITEM" , "Not show Items" ) ;
