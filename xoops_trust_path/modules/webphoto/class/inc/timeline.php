@@ -1,10 +1,16 @@
 <?php
-// $Id: timeline.php,v 1.3 2009/03/21 12:44:57 ohwada Exp $
+// $Id: timeline.php,v 1.4 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-15 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-10 K.OHWADA
+// check_exist()
+//---------------------------------------------------------
 
 // === class begin ===
 if( !class_exists('webphoto_inc_timeline') ) 
@@ -19,6 +25,11 @@ class webphoto_inc_timeline
 
 	var $_cfg_use_pathinfo;
 	var $_cfg_timeline_scale;
+
+	var $_show_onload   = false;
+	var $_show_onresize = false;
+	var $_show_timeout  = false;
+	var $_timeout = 1000;	// 1 sec
 
 	var $_DIRNAME    ;
 	var $_MODULE_URL ;
@@ -47,10 +58,30 @@ function webphoto_inc_timeline( $dirname )
 	$this->_UNIT_DEFAULT = $this->_cfg_timeline_scale ;
 }
 
+function &getSingleton( $dirname )
+{
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_timeline( $dirname );
+	}
+	return $singletons[ $dirname ];
+}
+
 //---------------------------------------------------------
 // timeline
 //---------------------------------------------------------
 function init( $timeline_dirname )
+{
+	$check = $this->check_exist( $timeline_dirname );
+	if ( ! $check ) {
+		return false;
+	}
+
+	$this->_timeline_class =& timeline_compo_timeline::getSingleton( $timeline_dirname );
+	return true;
+}
+
+function check_exist( $timeline_dirname )
 {
 	$file = XOOPS_ROOT_PATH.'/modules/'. $timeline_dirname .'/include/api_timeline.php' ;
 	if ( !file_exists($file) ) {
@@ -59,12 +90,7 @@ function init( $timeline_dirname )
 
 	include_once $file ;
 
-	if ( !class_exists( 'timeline_compo_timeline' ) ) {
-		return false;
-	}
-
-	$this->_timeline_class =& timeline_compo_timeline::getSingleton( $timeline_dirname );
-	return true;
+	return class_exists( 'timeline_compo_timeline' );
 }
 
 function fetch_timeline( $mode, $unit, $date, $photos )
@@ -161,13 +187,21 @@ function build_link( $photo )
 function build_image( $photo )
 {
 // no sanitize
-	return $photo['thumb_url'] ;
+	if ( $photo['thumb_url'] ) {
+		return $photo['thumb_url'] ;
+	}
+	return $this->build_icon( $photo );
 }
 
 function build_icon( $photo )
 {
 // no sanitize
+	if ( $photo['small_url'] ) {
 		return $photo['small_url'] ;
+	} elseif ( $photo['icon_url'] ) {
+		return $photo['icon_url'] ;
+	}
+	return null;
 }
 
 //---------------------------------------------------------
@@ -178,6 +212,10 @@ function build_painter_events( $id, $unit, $date, $events )
 	$this->_timeline_class->init_painter_events();
 	$this->_timeline_class->set_band_unit( $unit );
 	$this->_timeline_class->set_center_date( $date );
+	$this->_timeline_class->set_show_onload(   $this->_show_onload );
+	$this->_timeline_class->set_show_onresize( $this->_show_onresize );
+	$this->_timeline_class->set_show_timeout(  $this->_show_timeout );
+	$this->_timeline_class->set_timeout( $this->_timeout );
 	$param = $this->_timeline_class->build_painter_events( $id, $events );
 	$js    = $this->_timeline_class->fetch_painter_events( $param );
 	return array( $param['element'], $js );
@@ -238,6 +276,29 @@ function is_ext_in_array( $ext, $arr )
 		return true;
 	}
 	return false ;
+}
+
+//---------------------------------------------------------
+// set param
+//---------------------------------------------------------
+function set_show_onload( $val )
+{
+	$this->_show_onload = (bool)$val ;
+}
+
+function set_show_onresize( $val )
+{
+	$this->_show_onresize = (bool)$val ;
+}
+
+function set_show_timeout( $val )
+{
+	$this->_show_timeout = (bool)$val ;
+}
+
+function set_timeout( $val )
+{
+	$this->_timeout = intval($val) ;
 }
 
 // --- class end ---

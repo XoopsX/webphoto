@@ -1,4 +1,4 @@
-<{* $Id: inc_catlist.html,v 1.4 2009/02/01 09:04:29 ohwada Exp $ *}>
+<{* $Id: inc_catlist.html,v 1.5 2009/04/11 14:23:35 ohwada Exp $ *}>
 
 <table width="100%" border="0" cellspacing="5" cellpadding="0" align="center">
 
@@ -12,7 +12,7 @@
 <{* -- table column image -- *}>
   <td valign="top" align="right" >
 
-  <{if $catlist.use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;cat_id=<{$cat.cat_id}>">
@@ -35,7 +35,7 @@
 <{* -- table column title -- *}>
   <td valign="top" align="left" width="<{$catlist.width}>%">
 
-    <{if $catlist.use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$cat.cat_id}>/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$cat.cat_id}>">
@@ -50,7 +50,7 @@
     <{if $catlist.show_sub }>    
     <{foreach from=$cat.subcategories item=subcat}>
 
-      <{if $catlist.use_pathinfo }>
+      <{if $cfg_use_pathinfo }>
         <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$subcat.cat_id}>/">
       <{else}>
         <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$subcat.cat_id}>">

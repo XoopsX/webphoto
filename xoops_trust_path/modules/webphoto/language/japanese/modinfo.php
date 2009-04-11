@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.15 2009/03/21 12:27:14 ohwada Exp $
+// $Id: modinfo.php,v 1.16 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -347,6 +347,18 @@ define($constpref."OPT_TIMELINE_SCALE_WEEK",   "１週間") ;
 define($constpref."OPT_TIMELINE_SCALE_MONTH",  "１ヶ月") ;
 define($constpref."OPT_TIMELINE_SCALE_YEAR",   "１年") ;
 define($constpref."OPT_TIMELINE_SCALE_DECADE", "１０年") ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+// timeline
+define($constpref."CFG_TIMELINE_LATEST", "タイムラインの新しい方から表示する写真の数");
+define($constpref."CFG_TIMELINE_RANDOM", "タイムラインのランダムに表示する写真の数");
+define($constpref."BNAME_TIMELINE" , "タイムライン" ) ;
+
+// map, tag
+define($constpref."CFG_GMAP_PHOTOS", "マップに表示する写真の数");
+define($constpref."CFG_TAGS", "タグクラウドに表示するタグの数");
 
 }
 // === define begin ===

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
+// $Id: photo.php,v 1.4 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// remove get_photo_globals()
 // 2008-12-12 K.OHWADA
 // item_public.php
 // 2008-11-16 K.OHWADA
@@ -38,14 +40,11 @@ $manage->check_edittag();
 $xoopsOption['template_main'] = WEBPHOTO_DIRNAME.'_main_photo.html' ;
 include XOOPS_ROOT_PATH . '/header.php' ;
 
-$xoopsTpl->assign( $manage->get_photo_show_globals() ) ;
-$xoopsTpl->assign( $manage->get_lang_array() ) ;
 $xoopsTpl->assign( $manage->main() ) ;
 
 // subsutitute XOOPS_ROOT_PATH.'/include/comment_view.php';
 $manage->comment_view();
 
-$xoopsTpl->assign( $manage->get_footer_param() ) ;
 include XOOPS_ROOT_PATH .'/footer.php' ;
 exit();
 

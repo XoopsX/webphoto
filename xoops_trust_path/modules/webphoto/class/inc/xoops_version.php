@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.23 2009/03/21 12:27:14 ohwada Exp $
+// $Id: xoops_version.php,v 1.24 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// b_webphoto_timeline_show
 // 2009-03-15 K.OHWADA
 // timeline_dirname
 // 2009-01-25 K.OHWADA
@@ -406,6 +408,15 @@ function _build_blocks()
 	$arr[7]['template'] = '' ;
 	$arr[7]['can_clone'] = true ;
 
+	$arr[8]['file'] = "blocks.php";
+	$arr[8]['name'] = $this->_constant( 'BNAME_TIMELINE' ) .' ('.$this->_DIRNAME.')' ;
+	$arr[8]['description'] = "Shows timeline";
+	$arr[8]['show_func'] = "b_webphoto_timeline_show";
+	$arr[8]['edit_func'] = "b_webphoto_timeline_edit";
+	$arr[8]['options'] = $this->_DIRNAME.'|10|100|300';
+	$arr[8]['template'] = '' ;
+	$arr[8]['can_clone'] = true ;
+
 // keep block's options
 	if( ! defined( 'XOOPS_CUBE_LEGACY' ) && substr( XOOPS_VERSION , 6 , 3 ) < 2.1 && ! empty( $_POST['fct'] ) && ! empty( $_POST['op'] ) && $_POST['fct'] == 'modulesadmin' && $_POST['op'] == 'update_ok' && $_POST['dirname'] == $this->_DIRNAME ) {
 		$arr = $this->_blocks_keep_option( $arr );
@@ -760,6 +771,17 @@ function _build_config()
 		'options'		=> array()
 	) ;
 
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'tags' ,
+		'title'			=> $this->_constant_name( 'CFG_TAGS' ) ,
+//		'description'	=> $this->_constant_name( 'CFG_TAGS_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '100' ,
+		'options'		=> array()
+	) ;
+
 // defaultorder -> sort
 	$arr[] = array(
 		'name'			=> 'sort' ,
@@ -904,6 +926,16 @@ function _build_config()
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '2' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'gmap_photos' ,
+		'title'			=> $this->_constant_name( 'CFG_GMAP_PHOTOS' ) ,
+//		'description'	=> $this->_constant_name( 'CFG_GMAP_PHOTOS_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '100' ,
 		'options'		=> array()
 	) ;
 
@@ -1104,6 +1136,26 @@ function _build_config()
 		'formtype'		=> 'text' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> 'timeline' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'timeline_latest' ,
+		'title'			=> $this->_constant_name( 'CFG_TIMELINE_LATEST' ) ,
+//		'description'	=> $this->_constant_name( 'CFG_TIMELINE_LATEST_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '10' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'timeline_random' ,
+		'title'			=> $this->_constant_name( 'CFG_TIMELINE_RANDOM' ) ,
+//		'description'	=> $this->_constant_name( 'CFG_TIMELINE_RANDOM_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '100' ,
 		'options'		=> array()
 	) ;
 

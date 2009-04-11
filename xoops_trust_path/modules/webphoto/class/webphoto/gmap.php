@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.10 2009/02/01 11:02:38 ohwada Exp $
+// $Id: gmap.php,v 1.11 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// function array_merge_unique()
 // 2009-01-25 K.OHWADA
 // webphoto_gmap_info -> webphoto_inc_gmap_info
 // get_gmap_center()
@@ -42,6 +44,7 @@ class webphoto_gmap extends webphoto_base_this
 
 	var $_GMAP_ORDERBY_ASC    = 'item_id ASC';
 	var $_GMAP_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
+	var $_GMAP_KEY_NAME = 'item_id' ;
 
 //---------------------------------------------------------
 // constructor
@@ -80,25 +83,6 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // index
 //---------------------------------------------------------
-function build_photo_list_by_catid( $cat_id, $limit=0, $offset=0 )
-{
-	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
-
-	$cat_id = intval($cat_id);
-	if ( $cat_id > 0 ) {
-		$rows = $this->get_rows_by_gmap_catid(
-			$cat_id, $limit, $offset );
-
-	} else {
-		$rows = $this->get_rows_by_gmap_latest(
-			$limit, $offset );
-	}
-
-	if ( ! is_array($rows) ) { return null; }
-
-	return $this->_build_show_from_rows( $rows );
-}
-
 function build_icon_list( $limit=0, $offset=0 )
 {
 	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
@@ -109,8 +93,16 @@ function build_icon_list( $limit=0, $offset=0 )
 	return $rows;
 }
 
-function _build_show_from_rows( $item_rows )
+function build_show_from_rows( $item_rows )
 {
+	if ( empty( $this->_cfg_gmap_apikey ) ) {
+		return null; 
+	}
+
+	if ( !is_array($item_rows) || !count($item_rows) ) {
+		return null;
+	}
+
 	$arr = array();
 	foreach ( $item_rows as $item_row ) {
 		$arr[] = $this->_build_show_from_single_row( $item_row );
@@ -259,63 +251,43 @@ function exist_gmap( $latitude, $longitude, $zoom )
 	return true;
 }
 
-function build_list_location( $item_row, $limit=0, $offset=0 )
+function build_list_location( $item_rows )
 {
-	$id  = $item_row['item_id'];
-	$lat = $item_row['item_gmap_latitude'];
-	$lon = $item_row['item_gmap_longitude'];
-
-	$gmap_rows = $this->get_rows_by_gmap_area( $id, $lat, $lon );
-	if ( ! is_array($gmap_rows) ) {
-		return null; 
-	}
-
 	$arr = array();
-	foreach ( $gmap_rows as $gmap_row )
+	foreach ( $item_rows as $item_row )
 	{
-		$row             = $gmap_row;
-		$row['info']     = $this->_build_gmap_info( $gmap_row );
-		$row['gicon_id'] = $this->_build_icon_id(   $gmap_row );
+		$row             = $item_row;
+		$row['info']     = $this->_build_gmap_info( $item_row );
+		$row['gicon_id'] = $this->_build_icon_id(   $item_row );
 		$arr[] = $row;
 	}
 	return $arr;
 }
 
 //---------------------------------------------------------
-// item_cat_handler
+// utility
 //---------------------------------------------------------
-function get_rows_by_gmap_catid( $cat_id, $limit=0, $offset=0 )
+function array_merge_unique( $arr1, $arr2 )
 {
-	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id ) ;
+	$arr_ret = null;
+	if ( is_array($arr1) && count($arr1)  ) {
+		$arr_ret = $arr1 ;
 
-	return $this->get_rows_by_name_param_orderby( 
-		'gmap_catid_array', $catid_array, $this->_GMAP_ORDERBY_LATEST, $limit, $offset ) ;
-}
+		if ( is_array($arr2) && count($arr2) ) {
+			foreach ( $arr2 as $a ) 
+			{
+				$key_val = $a[ $this->_GMAP_KEY_NAME ] ;
+				if ( ! isset( $arr_ret[ $key_val ] ) && $this->exist_gmap_item( $a ) ) {
+					$arr_ret[ $this->_GMAP_KEY_NAME ] = $a ;
+				}
+			}
+		}
 
-function get_rows_by_gmap_latest( $limit=0, $offset=0 )
-{
-	return $this->get_rows_by_name_param_orderby( 
-		'gmap_latest', null, $this->_GMAP_ORDERBY_LATEST, $limit, $offset ) ;
-}
-
-function get_rows_by_gmap_area( $id, $lat, $lon, $limit=0, $offset=0 )
-{
-	return $this->get_rows_by_name_param_orderby( 
-		'gmap_area', array( $id, $lat, $lon ), $this->_GMAP_ORDERBY_ASC, $limit, $offset ) ;
-}
-
-function get_rows_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0 )
-{
-	if ( $this->_cfg_perm_cat_read ) {
-		return $this->_item_cat_handler->get_rows_item_cat_by_name_param_orderby( 
-			$name, $param, 
-			$this->_item_cat_handler->convert_item_field( $orderby ), 
-			$limit, $offset );
-
-	} else {
-		return $this->_item_cat_handler->get_rows_item_by_name_param_orderby( 
-			$name, $param, $orderby, $limit, $offset );
+	} elseif ( is_array($arr2) && count($arr2) ) {
+		$arr_ret = $arr2;
 	}
+
+	return $arr_ret;
 }
 
 //---------------------------------------------------------

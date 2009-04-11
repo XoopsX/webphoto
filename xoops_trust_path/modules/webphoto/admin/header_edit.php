@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.5 2009/01/31 19:12:49 ohwada Exp $
+// $Id: header_edit.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// small_create.php
 // 2008-01-25 K.OHWADA
 // jodconverter.php
 // 2008-01-10 K.OHWADA
@@ -46,8 +48,10 @@ webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/tagcloud.php' );
+webphoto_include_once( 'class/inc/timeline.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/inc/gmap_info.php' );
+
 webphoto_include_once( 'class/lib/pagenavi.php' );
 webphoto_include_once( 'class/inc/admin_menu.php' );
 
@@ -120,6 +124,8 @@ webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
 webphoto_include_once( 'class/webphoto/ext_base.php' );
 webphoto_include_once( 'class/webphoto/ext.php' );
+webphoto_include_once( 'class/webphoto/photo_public.php' );
+webphoto_include_once( 'class/webphoto/page.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/notification_event.php' );
@@ -134,6 +140,7 @@ webphoto_include_once( 'class/edit/item_build.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/cont_create.php' );
 webphoto_include_once( 'class/edit/middle_thumb_create.php' );
+webphoto_include_once( 'class/edit/small_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );

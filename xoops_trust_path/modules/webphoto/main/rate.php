@@ -1,10 +1,16 @@
 <?php
-// $Id: rate.php,v 1.1 2008/06/21 12:22:15 ohwada Exp $
+// $Id: rate.php,v 1.2 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-10 K.OHWADA
+// remove get_photo_globals()
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -25,9 +31,7 @@ $manage->rate();
 $xoopsOption['template_main'] = WEBPHOTO_DIRNAME.'_main_rate.html' ;
 include XOOPS_ROOT_PATH . "/header.php" ;
 
-$xoopsTpl->assign( $manage->get_photo_globals() ) ;
-$xoopsTpl->assign( $manage->get_lang_array() ) ;
-$xoopsTpl->assign( $manage->get_photo() ) ;
+$xoopsTpl->assign( $manage->main() ) ;
 
 include( XOOPS_ROOT_PATH . "/footer.php" ) ;
 exit();

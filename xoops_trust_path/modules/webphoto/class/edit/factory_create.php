@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: factory_create.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,11 +8,15 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// webphoto_edit_small_create
 // 2009-03-15 K.OHWADA
 // create_small_param()
 // 2009-01-25 K.OHWADA
 // webphoto_edit_swf_create
 //---------------------------------------------------------
+
+//	$this->_small_create_class  =& webphoto_edit_small_create::getInstance( $dirname );
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,6 +27,7 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 {
 	var $_cont_create_class;
 	var $_middle_thumb_create_class;
+	var $_small_create_class;
 	var $_flash_create_class;
 	var $_docomo_create_class;
 	var $_pdf_create_class;
@@ -82,6 +87,7 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 	$this->_icon_build_class    =& webphoto_edit_icon_build::getInstance( $dirname );
 	$this->_search_build_class  =& webphoto_edit_search_build::getInstance( $dirname );
 	$this->_item_build_class    =& webphoto_edit_item_build::getInstance( $dirname );
+	$this->_small_create_class  =& webphoto_edit_small_create::getInstance( $dirname );
 	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( $dirname );
 
 	$this->_pdf_create_class   =& webphoto_edit_pdf_create::getInstance( 
@@ -346,9 +352,15 @@ function build_item_row_submit_update( $row, $file_id_array, $tag_name_array=nul
 // files content icon search
 	$row = $this->build_row_content( $row, $file_id_array );
 	$row = $this->build_row_files(   $row, $file_id_array );
-	$row = $this->build_row_icon_if_empty( $row );
+	$row = $this->build_row_icon_if_empty(  $row );
 	$row = $this->build_row_search( $row, $tag_name_array );
 	return $row;
+}
+
+function build_item_row_submit_small( $row )
+{
+// small
+	return $this->build_row_small_if_empty( $row );
 }
 
 function build_item_row_modify_post( $row, $checkbox )
@@ -494,10 +506,20 @@ function create_middle_param( $param )
 	return $ret ;
 }
 
+//---------------------------------------------------------
+// small image
+//---------------------------------------------------------
+function create_small_param_from_external_icon( $row )
+{
+	$param = $this->_small_create_class->create_small_param_from_external_icon( $row ) ;
+	$this->_msg_sub_class->set_msg( $this->_small_create_class->get_msg_array() ) ;
+	return $ret ;
+}
+
 function create_small_param( $param )
 {
-	$ret = $this->_middle_thumb_create_class->create_small_param( $param );
-	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
+	$ret = $this->_small_create_class->create_small_param( $param );
+	$this->_msg_sub_class->set_msg( $this->_small_create_class->get_msg_array() ) ;
 	return $ret ;
 }
 

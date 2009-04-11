@@ -1,5 +1,5 @@
 <?php
-// $Id: place.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
+// $Id: place.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// _get_gmap_param()
 // 2009-03-15 K.OHWADA
 // add_box_list() -> add_show_js_windows()
 // 2008-12-12 K.OHWADA
@@ -27,6 +29,14 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_place extends webphoto_show_list
 {
 	var $_search_class;
+
+	var $_list_rows = array();
+
+	var $_GMAP_OFFSET   = 0 ;
+	var $_GMAP_KEY      = true ;
+
+	var $_GMAP_RSS = null ;
+	var $_GMAP_SHOW      = true ;
 
 //---------------------------------------------------------
 // constructor
@@ -55,6 +65,18 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // list
 //---------------------------------------------------------
+// overwrite
+function list_build_list()
+{
+	$this->assign_xoops_header( $this->_mode, $this->_GMAP_RSS, $this->_GMAP_SHOW );
+
+	$param1 = $this->list_build_list_common();
+	$param2 = $this->_get_gmap_param( $this->_list_rows );
+
+	$ret = array_merge( $param1, $param2 );
+	return $this->add_show_js_windows( $ret );
+}
+
 // overwrite
 function list_get_photo_list()
 {
@@ -101,10 +123,16 @@ function list_get_photo_list()
 		if ( $total > 0 ) {
 			$arr[] = $this->list_build_photo_array(
 				$title, $param, $total, $photo_row );
+			$this->_list_rows[ $photo_row['item_id'] ] = $photo_row ;
 		}
 	}
 	
 	return $arr;
+}
+
+function _get_gmap_param( $rows )
+{
+	return $this->build_gmap_param( $rows );
 }
 
 //---------------------------------------------------------
@@ -152,10 +180,11 @@ function list_build_detail( $place_in )
 
 	$param      = $this->list_build_detail_common( $title, $total, $rows );
 	$navi_param = $this->list_build_navi( $total, $limit );
+	$gmap_param = $this->_get_gmap_param( $rows );
 
-	$this->list_assign_xoops_header();
+	$this->list_assign_xoops_header( $this->_GMAP_RSS, $this->_GMAP_SHOW );
 
-	$ret = array_merge( $param, $init_param, $navi_param );
+	$ret = array_merge( $param, $init_param, $navi_param, $gmap_param );
 	return $this->add_show_js_windows( $ret );
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: middle_thumb_create.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
+// $Id: middle_thumb_create.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// build_icon_file()
 // 2009-03-15 K.OHWADA
 // create_small_param()
 //---------------------------------------------------------
@@ -224,7 +226,7 @@ function create_image_common( $param )
 
 function add_icon( $thumb_file, $src_ext, $icon_name )
 {
-	$icon_file = $this->_ROOT_EXTS_DIR .'/'. $icon_name .'.'. $this->_EXT_PNG ;
+	$icon_file = $this->build_icon_file( $icon_name, true );
 	if ( ! is_file($icon_file) ) {
 		return false ;
 	}
@@ -234,7 +236,7 @@ function add_icon( $thumb_file, $src_ext, $icon_name )
 		return false ;
 	}
 
-	$tmp_file = $this->_TMP_DIR .'/'. uniqid( 'tmp_' ) .'.'. $src_ext;
+	$tmp_file = $this->build_tmp_file( $src_ext );
 	$this->_image_create_class->cmd_add_icon( $thumb_file, $tmp_file, $icon_file );
 	if ( ! is_file($tmp_file) ) {
 		return false ;
@@ -291,6 +293,21 @@ function resize_icon( $thumb_file , $icon_file )
 	}
 
 	return $icon_file ;
+}
+
+function build_icon_file( $icon_name, $flag_ext )
+{
+	$file = $this->_ROOT_EXTS_DIR .'/'. $icon_name ;
+	if ( $flag_ext ) {
+		$file .= '.'. $this->_EXT_PNG ;
+	}
+	return $file;
+}
+
+function build_tmp_file( $ext )
+{
+	$file = $this->_TMP_DIR .'/'. uniqid( _C_WEBPHOTO_UPLOADER_PREFIX ) .'.'. $ext;
+	return $file;
 }
 
 // --- class end ---

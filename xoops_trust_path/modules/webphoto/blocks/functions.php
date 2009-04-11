@@ -1,5 +1,5 @@
 <?php
-// $Id: functions.php,v 1.3 2009/01/31 19:12:49 ohwada Exp $
+// $Id: functions.php,v 1.4 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// b_webphoto_timeline_show()
 // 2009-01-25 K.OHWADA
 // b_webphoto_topnews_p_edit()
 // 2008-11-29 K.OHWADA
@@ -101,6 +103,18 @@ function b_webphoto_tagcloud_edit( $options )
 {
 	$inc_class =& webphoto_inc_blocks::getInstance();
 	return $inc_class->tagcloud_edit( $options );
+}
+
+function b_webphoto_timeline_show( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->timeline_show( $options );
+}
+
+function b_webphoto_timeline_edit( $options )
+{
+	$inc_class =& webphoto_inc_blocks::getInstance();
+	return $inc_class->timeline_edit( $options );
 }
 
 ?>

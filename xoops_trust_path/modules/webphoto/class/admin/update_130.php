@@ -1,10 +1,16 @@
 <?php
-// $Id: update_130.php,v 1.2 2009/03/23 12:42:00 ohwada Exp $
+// $Id: update_130.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-15 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-10 K.OHWADA
+// webphoto_small_create
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,7 +20,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_update_130 extends webphoto_base_this
 {
 	var $_form_class;
-	var $_middle_thumb_create_class;
+	var $_small_create_class;
 
 	var $_post_offset;
 	var $_next;
@@ -32,7 +38,7 @@ function webphoto_admin_update_130( $dirname , $trust_dirname )
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
 	$this->_form_class =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
-	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( $dirname );
+	$this->_small_create_class =& webphoto_edit_small_create::getInstance( $dirname );
 
 	$this->_item_handler->set_debug_error( true );
 	$this->_file_handler->set_debug_error( true );
@@ -152,7 +158,7 @@ function _update_item()
 		}
 
 // create small image
-		$small_param = $this->_middle_thumb_create_class->create_small_image( $src_param );
+		$small_param = $this->_small_create_class->create_small_image( $src_param );
 		if ( ! is_array($small_param) ) {
 			echo ' failed to create image ';
 			echo "<br />\n";
@@ -194,7 +200,6 @@ function _update_item()
 function _get_src_param( $item_row )
 {
 	$item_id        = $item_row[ 'item_id' ];
-	$icon_name      = $item_row[ 'item_icon_name' ];
 	$file_id_cont   = $item_row[ _C_WEBPHOTO_ITEM_FILE_CONT ];
 	$file_id_middle = $item_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ];
 	$file_id_small  = $item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ];
@@ -230,13 +235,9 @@ function _get_src_param( $item_row )
 		}
 	}
 
-	if ( $icon_name ) {
-		$arr = array(
-			'item_id'  => $item_id ,
-			'src_file' => $this->_ROOT_EXTS_DIR .'/'. $icon_name ,
-			'src_ext'  => 'png' ,
-		);
-		return $arr;
+	$param = $this->_small_create_class->build_small_param_from_external_icon( $item_row );
+	if ( is_array($param) ) {
+		return $param;
 	}
 
 	echo ' skip not exist original image ';

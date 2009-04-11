@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.31 2009/04/04 20:27:00 ohwada Exp $
+// $Id: main.php,v 1.32 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -852,7 +852,7 @@ define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "File ID: Flash Video" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "File ID: Docomo Video" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "File ID: PDF" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "File ID: Flash swf" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "file8" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "File ID: Small" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
 define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
@@ -892,7 +892,7 @@ define("_WEBPHOTO_FILE_KIND_4" ,  "Flash Video" ) ;
 define("_WEBPHOTO_FILE_KIND_5" ,  "Docomo Video" ) ;
 define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
-define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
+define("_WEBPHOTO_FILE_KIND_8" ,  "Small" ) ;
 define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
 define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
 

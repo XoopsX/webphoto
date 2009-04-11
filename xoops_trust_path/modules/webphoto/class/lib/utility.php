@@ -1,15 +1,15 @@
 <?php
-// $Id: utility.php,v 1.11 2009/03/20 13:44:48 ohwada Exp $
+// $Id: utility.php,v 1.12 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-// mysql_datetime_to_unixtime( $datetime )
-
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// mysql_datetime_to_unixtime()
 // 2009-01-10 K.OHWADA
 // build_random_file_name()
 // 2008-11-29 K.OHWADA
@@ -193,6 +193,29 @@ function get_array_value_by_key( $array, $key, $default=null )
 		return  $array[ $key ] ;
 	}
 	return $default ;
+}
+
+function array_merge_unique( $arr1, $arr2, $key_name )
+{
+	$arr_ret = null;
+	if ( is_array($arr1) && count($arr1)  ) {
+		$arr_ret = $arr1 ;
+
+		if ( is_array($arr2) && count($arr2) ) {
+			foreach ( $arr2 as $a ) 
+			{
+				$key_val = $a[ $key_name ] ;
+				if ( ! isset( $arr_ret[ $key_val ] ) ) {
+					$arr_ret[ $key_val ] = $a ;
+				}
+			}
+		}
+
+	} elseif ( is_array($arr2) && count($arr2) ) {
+		$arr_ret = $arr2;
+	}
+
+	return $arr_ret;
 }
 
 //---------------------------------------------------------

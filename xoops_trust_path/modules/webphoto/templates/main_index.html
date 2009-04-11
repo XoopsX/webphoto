@@ -1,4 +1,4 @@
-<{* $Id: main_index.html,v 1.10 2009/03/22 01:11:39 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.11 2009/04/11 14:23:35 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -25,7 +25,7 @@ function webphoto_timeline_zoom( link, op, unit )
 
   &gt;&gt; 
 
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_first.cat_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_first.cat_id}>">
@@ -35,7 +35,7 @@ function webphoto_timeline_zoom( link, op, unit )
   </a> 
 
   <{foreach item=catpath_list from=$catpath.list}>
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">
@@ -150,7 +150,7 @@ function webphoto_timeline_zoom( link, op, unit )
 
   <{if $show_timeline_large }>
     <div class="webphoto_timeline_navi">
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">
@@ -199,7 +199,7 @@ function webphoto_timeline_zoom( link, op, unit )
 
   <{if $show_map_large }>
     <div class="webphoto_gmap_navi">
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/map/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map">
@@ -226,7 +226,7 @@ function webphoto_timeline_zoom( link, op, unit )
   <{assign var="catpath_last" value=$catpath.last }>
   <div class="webphoto_catpath">
 
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_last.cat_id}>">
@@ -244,7 +244,7 @@ function webphoto_timeline_zoom( link, op, unit )
   </a> 
 
   <{foreach item=catpath_list from=$catpath.list}>
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">

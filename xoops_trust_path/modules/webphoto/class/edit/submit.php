@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.6 2009/03/23 12:42:00 ohwada Exp $
+// $Id: submit.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// webphoto_page
+// insert_media_file_small()
 // 2009-03-15 K.OHWADA
 // create_small_param_by_photo()
 // 2009-01-25 K.OHWADA
@@ -24,6 +27,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 {
+	var $_page_class ;
 	var $_editor_class ;
 	var $_tag_class;
 	var $_show_image_class;
@@ -58,6 +62,7 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_imagemanager_submit( $dirname , $trust_dirname );
 
+	$this->_page_class       =& webphoto_page::getInstance( $dirname , $trust_dirname );
 	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
 	$this->_external_build_class =& webphoto_edit_external_build::getInstance( $dirname );
 	$this->_playlist_build_class =& webphoto_edit_playlist_build::getInstance( $dirname );
@@ -375,7 +380,7 @@ function submit_exec()
 		}
 
 // --- update item ---
-		$item_row = $this->build_item_row_submit_update( $item_row);
+		$item_row = $this->build_item_row_submit_update( $item_row );
 		$ret = $this->_item_handler->update( $item_row );
 		if ( !$ret ) {
 			$this->set_error( $this->_item_handler->get_errors() );
@@ -384,6 +389,22 @@ function submit_exec()
 		$this->_row_create = $item_row;
 
 		$this->unlink_uploaded_files();
+	}
+
+// small image if empty
+	if ( empty( $item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ] ) ) {
+// --- insert files
+		$newid = $this->insert_media_file_small( $item_row );
+		if ( $newid > 0 ) {
+
+// --- update item ---
+			$item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ] = $newid ;
+			$ret = $this->_item_handler->update( $item_row );
+			if ( !$ret ) {
+				$this->set_error( $this->_item_handler->get_errors() );
+			}
+			$this->_row_create = $item_row;
+		}
 	}
 
 	$this->set_factory_error();
@@ -494,6 +515,18 @@ function notify_new_photo( $item_row )
 //---------------------------------------------------------
 // media files 
 //---------------------------------------------------------
+function insert_media_file_small( $item_row )
+{
+	$param = $this->_factory_create_class->create_small_param_from_external_icon( $item_row );
+	if ( ! is_array($param) ) {
+		return false;
+	}
+
+// --- insert file ---
+	return $this->_factory_create_class->insert_file( 
+		$item_row['item_id'], $param );
+}
+
 function insert_media_files( $item_row )
 {
 	$ret = $this->create_media_file_params( $item_row );
@@ -814,9 +847,7 @@ function build_no_image_preview()
 function build_preview_template( $row )
 {
 	$tpl = new XoopsTpl() ;
-	$tpl->assign( 'xoops_dirname' , $this->_DIRNAME ) ;
-	$tpl->assign( 'mydirname' ,     $this->_DIRNAME ) ;
-	$tpl->assign( $this->get_photo_globals() ) ;
+	$tpl->assign( $this->_page_class->build_base_param() ) ;
 	$tpl->assign( 'photo' , $row ) ;
 
 // BUG: not show description in preview

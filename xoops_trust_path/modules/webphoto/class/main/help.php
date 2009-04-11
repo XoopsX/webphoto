@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.8 2009/02/16 13:02:57 ohwada Exp $
+// $Id: help.php,v 1.9 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// webphoto_page
 // 2009-02-16 K.OHWADA
 // Fatal error: Call to undefined method webphoto_inc_xoops_header::assign_for_main()
 // 2009-01-04 K.OHWADA
@@ -24,10 +26,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_help extends webphoto_base_this
 {
-	var $_cfg_is_set_mail = false ;
-	var $_cfg_file_dir    = false ;
-	var $_has_perm_mail   = false ;
-	var $_has_perm_file   = false ;
+	var $_show_menu_mail   = false ;
+	var $_show_menu_file   = false ;
 
 	var $_MAIL_RETRIEVE_AUTO_TIME = 0 ;
 
@@ -38,21 +38,11 @@ function webphoto_main_help( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_cfg_is_set_mail = $this->_config_class->is_set_mail() ;
-	$this->_cfg_file_dir    = $this->get_config_by_name('file_dir') ;
-	$has_mail               = $this->_perm_class->has_mail() ;
-	$has_file               = $this->_perm_class->has_file() ;
-
-	if ( $this->_cfg_is_set_mail && $has_mail ) {
-		$this->_has_perm_mail = true;
-	}
-
-	if ( $this->_cfg_file_dir && $has_file ) {
-		$this->_has_perm_file = true;
-	}
+	$this->_page_class =& webphoto_page::getInstance( $dirname , $trust_dirname );
 
 	$this->preload_init();
 	$this->preload_constant();
+	$this->_page_class->init_preload();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -71,19 +61,26 @@ function main()
 {
 	$this->_assign_xoops_header();
 
+	$main_param = $this->_page_class->build_main_param();
+	$this->_show_menu_mail = $main_param['show_menu_mail'] ;
+	$this->_show_menu_file = $main_param['show_menu_file'] ;
+	$cfg_is_set_mail       = $main_param['cfg_is_set_mail'] ;
+	$cfg_file_dir          = $main_param['cfg_file_dir'] ;
+
 	$param = array(
 		'lang_help_mobile_text' => $this->_build_mobile_text() ,
-		'show_help_mail'        => $this->_cfg_is_set_mail ,
+		'show_help_mail'        => $cfg_is_set_mail ,
 		'show_help_mail_text'   => $this->_build_show_mail_text() ,
 		'lang_help_mail_perm'   => $this->_build_mail_perm() ,
 		'lang_help_mail_text'   => $this->_build_mail_text() ,
-		'show_help_file'        => $this->_cfg_file_dir ,
+		'show_help_file'        => $cfg_file_dir ,
 		'show_help_file_text'   => $this->_build_show_file_text() ,
 		'lang_help_file_perm'   => $this->_build_file_perm() ,
 		'lang_help_file_text_1' => $this->_build_file_text_1() ,
 		'lang_help_file_text_2' => $this->_build_file_text_2() ,
 	);
-	return $param;
+
+	return array_merge( $param, $main_param );
 }
 
 function _build_mobile_text()
@@ -95,7 +92,7 @@ function _build_mobile_text()
 
 function _build_show_mail_text()
 {
-	if ( $this->_has_perm_mail ) {
+	if ( $this->_show_menu_mail ) {
 		return true;
 	} elseif ( $this->_is_login_user ) {
 		return true;
@@ -105,7 +102,7 @@ function _build_show_mail_text()
 
 function _build_mail_perm()
 {
-	return $this->_build_perm( $this->_has_perm_mail ) ;
+	return $this->_build_perm( $this->_show_menu_mail ) ;
 }
 
 function _build_mail_text()
@@ -117,7 +114,7 @@ function _build_mail_text()
 
 function _build_mail_post()
 {
-	if ( $this->_has_perm_mail ) {
+	if ( $this->_show_menu_mail ) {
 		$mail_addr  = $this->sanitize( $this->get_config_by_name('mail_addr') );
 		$mail_guest = null;
 	} else {
@@ -150,7 +147,7 @@ function _build_mail_retrieve()
 
 function _build_show_file_text()
 {
-	if ( $this->_has_perm_file ) {
+	if ( $this->_show_menu_file ) {
 		return true;
 	} elseif ( $this->_is_login_user ) {
 		return true;
@@ -160,7 +157,7 @@ function _build_show_file_text()
 
 function _build_file_perm()
 {
-	return $this->_build_perm( $this->_has_perm_file ) ;
+	return $this->_build_perm( $this->_show_menu_file ) ;
 }
 
 function _build_file_text_1()
@@ -172,7 +169,7 @@ function _build_file_text_1()
 
 function _build_file_text_2()
 {
-	if ( $this->_has_perm_file ) {
+	if ( $this->_show_menu_file ) {
 		$str = $this->get_config_by_name('file_desc') ;
 	} else {
 		$str = null ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.20 2009/03/20 04:18:09 ohwada Exp $
+// $Id: base_this.php,v 1.21 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// remove get_photo_globals()
 // 2009-03-15 K.OHWADA
 // _SMALLS_PATH;
 // 2009-03-01 K.OHWADA
@@ -203,62 +205,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// photo globals
+// config class
 //---------------------------------------------------------
-function get_photo_globals()
-{
-	$cfg_colsoftableview = $this->get_config_by_name('colsoftableview');
-	$cfg_cat_width       = $this->get_config_by_name('cat_width');
-	$cfg_csub_width      = $this->get_config_by_name('csub_width');
-
-	$cfg_is_set_mail     = $this->_config_class->is_set_mail() ;
-	$cfg_file_dir        = $this->get_config_by_name('file_dir') ;
-	$has_mail            = $this->_perm_class->has_mail() ;
-	$has_file            = $this->_perm_class->has_file() ;
-
-	$show_menu_mail = ( $cfg_is_set_mail && $has_mail );
-	$show_menu_file = ( $cfg_file_dir    && $has_file );
-
-	$arr = array(
-		'mydirname'            => $this->_DIRNAME ,
-		'photos_url'           => $this->_PHOTOS_URL ,
-		'thumbs_url'           => $this->_THUMBS_URL ,
-		'middles_url'          => $this->_MIDDLES_URL ,
-		'qrs_url'              => $this->_QRS_URL ,
-		'use_pathinfo'         => $this->get_config_by_name('use_pathinfo') ,
-		'cfg_is_set_mail'      => $cfg_is_set_mail ,
-		'width_of_tableview'   => intval( 100 / $cfg_colsoftableview ),
-		'has_rateview'         => $this->_perm_class->has_rateview() ,
-		'has_ratevote'         => $this->_perm_class->has_ratevote() ,
-		'has_tellafriend'      => $this->_perm_class->has_tellafriend() ,
-		'has_insertable'       => $this->_perm_class->has_insertable(),
-		'show_menu_mail'       => $show_menu_mail ,
-		'show_menu_file'       => $show_menu_file ,
-		'cat_main_width'       => $cfg_cat_width ,
-		'cat_main_height'      => $cfg_cat_width ,
-		'cat_sub_width'        => $cfg_csub_width ,
-		'cat_sub_height'       => $cfg_csub_width ,
-
-// for XOOPS 2.0.18
-		'xoops_dirname'        => $this->_DIRNAME ,
-		'xoops_modulename'     => $this->sanitize( $this->_MODULE_NAME ) ,
-
-	);
-
-// config
-	$config_array = $this->get_config_array();
-	foreach ( $config_array as $k => $v ) {
-		$arr[ 'cfg_'.$k ] = $v ;
-	}
-
-	return $arr;
-}
-
-function get_config_array()
-{
-	return $this->_config_class->get_config_array();
-}
-
 function get_config_by_name( $name )
 {
 	return $this->_config_class->get_by_name( $name );
@@ -406,20 +354,6 @@ function is_playlist_feed_kind( $kind )
 function is_playlist_dir_kind( $kind )
 {
 	return $this->_kind_class->is_playlist_dir_kind( $kind ) ;
-}
-
-//---------------------------------------------------------
-// footer
-//---------------------------------------------------------
-function get_footer_param()
-{
-	$arr = array(
-		'is_module_admin' => $this->_is_module_admin,
-		'execution_time'  => $this->_utility_class->get_execution_time( WEBPHOTO_TIME_START ) ,
-		'memory_usage'    => $this->_utility_class->get_memory_usage() ,
-		'happy_linux_url' => $this->_utility_class->get_happy_linux_url( $this->_is_japanese ) ,
-	);
-	return $arr;
 }
 
 //---------------------------------------------------------

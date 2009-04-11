@@ -1,10 +1,16 @@
 <?php
-// $Id: item_cat_handler.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: item_cat_handler.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-10 K.OHWADA
+// add key in get_rows_item_cat_by_where_orderby()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -81,16 +87,16 @@ function get_count_item_by_name_param( $name, $param )
 // get rows
 //---------------------------------------------------------
 function get_rows_item_cat_by_name_param_orderby( 
-	$name, $param, $orderby, $limit=0, $offset=0 )
+	$name, $param, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$where = $this->build_where_item_cat_by_name_param( $name, $param );
-	return $this->get_rows_item_cat_by_where_orderby( $where, $orderby, $limit, $offset );
+	return $this->get_rows_item_cat_by_where_orderby( $where, $orderby, $limit, $offset, $key );
 }
 
-function get_rows_item_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0 )
+function get_rows_item_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$where = $this->build_where_by_name_param( $name, $param );
-	return $this->get_rows_item_by_where_orderby( $where, $orderby, $limit, $offset );
+	return $this->get_rows_item_by_where_orderby( $where, $orderby, $limit, $offset, $key );
 }
 
 //---------------------------------------------------------
@@ -532,7 +538,7 @@ function get_count_item_by_where( $where )
 	return $this->get_count_by_sql( $sql );
 }
 
-function get_rows_item_cat_by_where_orderby( $where, $orderby, $limit=0, $offset=0 )
+function get_rows_item_cat_by_where_orderby( $where, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$sql  = 'SELECT i.* FROM ';
 	$sql .= $this->_item_table .' i ';
@@ -540,16 +546,16 @@ function get_rows_item_cat_by_where_orderby( $where, $orderby, $limit=0, $offset
 	$sql .= ' ON i.item_cat_id = c.cat_id ';
 	$sql .= ' WHERE '. $where;
 	$sql .= ' ORDER BY '. $orderby;
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
+	return $this->get_rows_by_sql( $sql, $limit, $offset, $key );
 }
 
-function get_rows_item_by_where_orderby( $where, $orderby, $limit=0, $offset=0 )
+function get_rows_item_by_where_orderby( $where, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$sql  = 'SELECT * FROM ';
 	$sql .= $this->_item_table ;
 	$sql .= ' WHERE '. $where;
 	$sql .= ' ORDER BY '. $orderby;
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
+	return $this->get_rows_by_sql( $sql, $limit, $offset, $key );
 }
 
 function get_id_array_item_by_where_orderby( $where, $orderby, $limit=0, $offset=0 )

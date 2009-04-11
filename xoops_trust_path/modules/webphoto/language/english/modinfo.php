@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.15 2009/04/04 20:27:00 ohwada Exp $
+// $Id: modinfo.php,v 1.16 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -347,6 +347,18 @@ define($constpref."OPT_TIMELINE_SCALE_WEEK",   "one week") ;
 define($constpref."OPT_TIMELINE_SCALE_MONTH",  "one month") ;
 define($constpref."OPT_TIMELINE_SCALE_YEAR",   "one year") ;
 define($constpref."OPT_TIMELINE_SCALE_DECADE", "10 years") ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+// timeline
+define($constpref."CFG_TIMELINE_LATEST", "Number of latest photos in timeline");
+define($constpref."CFG_TIMELINE_RANDOM", "Number of random photos in timeline"");
+define($constpref."BNAME_TIMELINE" , "Timeline" ) ;
+
+// map, tag
+define($constpref."CFG_GMAP_PHOTOS", "Number of photos in map");
+define($constpref."CFG_TAGS", "Number of tags in tagcloud");
 
 }
 // === define begin ===

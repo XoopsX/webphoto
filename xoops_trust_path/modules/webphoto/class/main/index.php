@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.6 2009/03/20 11:13:53 ohwada Exp $
+// $Id: index.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// build_main_param()
 // 2009-03-15 K.OHWADA
 // add_box_list() -> add_show_js_windows()
 // 2008-12-12 K.OHWADA
@@ -65,34 +67,21 @@ function main()
 	$date  = $this->_post_class->get_get_text('date');
 
 	if ( $total > 0 ) {
-		$show_photo = true;
-		if ( $this->_MAX_TIMELINE > $this->_MAX_PHOTOS ) { 
-			$timeline_photos = $this->_get_photos_by_mode( $this->_MAX_TIMELINE, $start );
-			$main_photos     = array_slice( $timeline_photos, 0, $this->_MAX_PHOTOS );
-		} else {
-			$main_photos     = $this->_get_photos_by_mode(  $this->_MAX_PHOTOS, $start );
-			$timeline_photos = array_slice( $main_photos, 0, $this->_MAX_TIMELINE );
-		}
+		$show_photo  = true;
+		$main_rows   = $this->_get_rows_by_mode( $this->_MAX_PHOTOS, $start );
+		$main_photos = $this->build_photo_show_from_rows( $main_rows );
 	}
 
 	$sub_title_s = $this->sanitize( $this->get_constant( 'TITLE_'. $mode ) ); 
 
-	$init_param     = $this->build_init_param( $mode, true );
-	$tagcloud_param = $this->_build_tagcloud_param();
-	$catlist_param  = $this->_build_catlist_param();
-	$noti_param     = $this->_build_notification_select_param();
-	$navi_param     = $this->_build_navi_param( $total, $limit );
-
 	$gmap_param = $this->_build_gmap_param();
 	$show_gmap  = $gmap_param['show_gmap'];
-
-	$timeline_param = $this->_build_timeline_param( $unit, $date, $timeline_photos );
 
 	$this->assign_xoops_header( $mode, null, $show_gmap );
 
 	$this->create_mobile_qr( 0 );
 
-	$arr = array(
+	$param = array(
 		'xoops_pagetitle'   => $this->sanitize( $this->_MODULE_NAME ),
 		'title_bread_crumb' => $sub_title_s,
 		'total_bread_crumb' => $total,
@@ -109,8 +98,16 @@ function main()
 		'mobile_url'        => $this->build_mobile_url( 0 ) ,
 	);
 
-	$ret = array_merge( $arr, $init_param, $navi_param, $tagcloud_param, $catlist_param, $gmap_param, $timeline_param, $noti_param );
-	return $this->add_show_js_windows( $ret );
+	$arr = array_merge( 
+		$param, $gmap_param, 
+		$this->build_main_param( $mode, true ) ,
+		$this->_build_tagcloud_param() ,
+		$this->_build_catlist_param() ,
+		$this->_build_timeline_param( $unit, $date, $main_rows ) ,
+		$this->_build_notification_select_param() ,
+		$this->_build_navi_param( $total, $limit ) 
+	);
+	return $this->add_show_js_windows( $arr );
 }
 
 //---------------------------------------------------------
@@ -140,11 +137,10 @@ function _get_action()
 //---------------------------------------------------------
 // latest etc
 //---------------------------------------------------------
-function _get_photos_by_mode( $limit, $start )
+function _get_rows_by_mode( $limit, $start )
 {
-	$orderby  = $this->_sort_class->mode_to_orderby( $this->_mode );
-	$rows     = $this->_public_class->get_rows_by_orderby( $orderby, $limit, $start );
-	return $this->build_photo_show_from_rows( $rows );
+	$orderby = $this->_sort_class->mode_to_orderby( $this->_mode );
+	return $this->_public_class->get_rows_by_orderby( $orderby, $limit, $start );
 }
 
 function _build_random_more_url_s_by_mode()
@@ -162,7 +158,7 @@ function _build_random_more_url_s_by_mode()
 //---------------------------------------------------------
 function _build_index_desc()
 {
-	if ( $this->check_show_common( $this->_mode, 'desc' ) ) {
+	if ( $this->check_show_desc( $this->_mode ) ) {
 		return $this->_config_class->get_by_name('index_desc');
 	}
 	return null;
@@ -227,10 +223,10 @@ function _build_gmap_param()
 //---------------------------------------------------------
 // timeline
 //---------------------------------------------------------
-function _build_timeline_param( $unit, $date, $photos )
+function _build_timeline_param( $unit, $date, $rows )
 {
 	if ( $this->check_show_timeline( $this->_mode ) ) {
-		return $this->build_timeline( $unit, $date, $photos );
+		return $this->build_timeline_param( $unit, $date, $rows );
 	}
 
 	$arr = array(

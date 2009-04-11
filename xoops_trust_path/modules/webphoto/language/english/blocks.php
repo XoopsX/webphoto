@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
+// $Id: blocks.php,v 1.7 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -62,6 +62,18 @@ define($constpref."GMAP_LONGITUDE","Longitude");
 define($constpref."GMAP_ZOOM","Zoom");
 define($constpref."GMAP_HEIGHT","Height of Map");
 define($constpref."PIXEL", "Pixel");
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+define($constpref."TIMELINE_LATEST", "Number of latest photos");
+define($constpref."TIMELINE_RANDOM", "Number of random photos");
+define($constpref."TIMELINE_HEIGHT","Height of Timeline");
+define($constpref."TIMELINE_SCALE", "Timeline scale") ;
+define($constpref."TIMELINE_SCALE_WEEK",   "one week") ;
+define($constpref."TIMELINE_SCALE_MONTH",  "one month") ;
+define($constpref."TIMELINE_SCALE_YEAR",   "one year") ;
+define($constpref."TIMELINE_SCALE_DECADE", "10 years") ;
 
 // === define end ===
 }

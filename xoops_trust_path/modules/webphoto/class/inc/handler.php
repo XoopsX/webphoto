@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.12 2009/02/01 09:04:29 ohwada Exp $
+// $Id: handler.php,v 1.13 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// change build_show_file_image()
 // 2009-01-25 K.OHWADA
 // debug_print_backtrace()
 // 2008-12-12 K.OHWADA
@@ -177,7 +179,8 @@ function build_show_file_image( $file_row )
 		$width  = $file_row['file_width'] ;
 		$height = $file_row['file_height'] ;
 		if ( $path ) {
-			$url = XOOPS_URL .'/'. $path ;
+// not need '/'
+			$url = XOOPS_URL . $path ;
 		}
 	}
 
@@ -409,7 +412,8 @@ function get_item_count_by_where( $where )
 	return $this->get_count_by_sql( $sql );
 }
 
-function get_item_rows_by_where_orderby_with_cat( $where, $orderby, $limit=0, $offset=0 )
+function get_item_rows_by_where_orderby_with_cat( 
+	$where, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$sql  = 'SELECT i.* FROM ';
 	$sql .= $this->prefix_dirname( 'item' ) .' i ';
@@ -418,16 +422,17 @@ function get_item_rows_by_where_orderby_with_cat( $where, $orderby, $limit=0, $o
 	$sql .= ' ON i.item_cat_id = c.cat_id ';
 	$sql .= ' WHERE '. $where;
 	$sql .= ' ORDER BY '. $orderby;
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
+	return $this->get_rows_by_sql( $sql, $limit, $offset, $key );
 }
 
-function get_item_rows_by_where_orderby( $where, $orderby, $limit=0, $offset=0 )
+function get_item_rows_by_where_orderby( 
+	$where, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$sql  = 'SELECT * FROM ';
 	$sql .= $this->prefix_dirname( 'item' ) ;
 	$sql .= ' WHERE '. $where;
 	$sql .= ' ORDER BY '. $orderby;
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
+	return $this->get_rows_by_sql( $sql, $limit, $offset, $key );
 }
 
 function convert_item_field( $str )

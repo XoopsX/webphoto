@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.4 2009/04/04 20:27:00 ohwada Exp $
+// $Id: modinfo.php,v 1.5 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,23 @@ if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+if( !defined($constpref."CFG_TIMELINE_LATEST") ) 
+{
+
+// timeline
+define($constpref."CFG_TIMELINE_LATEST", "Number of latest photos in timeline");
+define($constpref."CFG_TIMELINE_RANDOM", "Number of random photos in timeline"");
+define($constpref."BNAME_TIMELINE" , "Timeline" ) ;
+
+// map, tag
+define($constpref."CFG_GMAP_PHOTOS", "Number of photos in map");
+define($constpref."CFG_TAGS", "Number of tags in tagcloud");
+
+}
 
 //---------------------------------------------------------
 // v1.30

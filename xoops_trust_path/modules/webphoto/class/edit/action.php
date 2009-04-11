@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: action.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// BUG: not clear file id when delete file
 // 2009-03-15 K.OHWADA
 // small_delete()
 // 2009-01-25 K.OHWADA
@@ -532,6 +534,7 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 {
 	$item_id = $item_row['item_id'] ;
 	$file_id = $item_row[ $item_name ] ;
+	$error   = '' ;
 
 	$file_row = $this->_file_handler->get_row_by_id( $file_id );
 	if ( ! is_array($file_row ) ) {
@@ -543,8 +546,18 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 
 	$ret = $this->_file_handler->delete_by_id( $file_id );
 	if ( !$ret ) {
-		$msg  = "DB Error <br />\n" ;
-		$msg .= $this->_file_handler->get_format_error() ;
+		$error .= $this->_file_handler->get_format_error() ;
+	}
+
+// BUG: not clear file id when delete file
+	$item_row[ $item_name ] = 0 ;
+	$ret = $this->_item_handler->update( $item_row );
+	if ( !$ret ) {
+		$error .= $this->_item_handler->get_format_error() ;
+	}
+
+	if ( $error ) {
+		$msg  = "DB Error <br />\n". $error ;
 		redirect_header( $url_redirect, $this->_TIME_FAILED, $msg );
 		exit();
 	}

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.14 2009/03/20 04:18:09 ohwada Exp $
+// $Id: photo.php,v 1.15 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -211,37 +211,34 @@ function main()
 		$this->_item_handler->countup_hits( $photo_id, true );
 	}
 
-	$total_all  = $this->_public_class->get_count();
 	$photo      = $this->_build_photo_show_photo( $row );
 	$gmap_param = $this->_build_gmap_param( $row );
 	$show_gmap  = $gmap_param['show_gmap'];
-	$tags_param = $this->_build_tags_param( $photo_id );
-	$noti_param = $this->build_notification_select();
 	$cat_id     = $this->_get_catid_row_or_post( $row ) ;
 
 	$this->assign_xoops_header( 'category', $cat_id, $show_gmap );
 
 	$this->create_mobile_qr( $photo_id );
 
-	$arr = array(
+	$param = array(
 		'xoops_pagetitle' => $photo['title_s'],
 		'photo'           => $photo,
 		'sub_title'       => $this->build_cat_sub_title( $cat_id ),
 		'photo_nav'       => $this->_build_navi( $photo_id, $cat_id ),
-		'use_box_js'      => $this->_USE_BOX_JS ,
 		'show_photo_desc' => true ,
 		'show_photo_exif' => true ,
-		'photo_total_all' => $total_all ,
-		'lang_thereare'   => $this->build_lang_thereare( $total_all ) ,
 		'mobile_email'    => $this->get_mobile_email() ,
 		'mobile_url'      => $this->build_mobile_url( $photo_id ) ,
 		'mobile_qr_image' => $this->build_mobile_filename( $photo_id ) ,
 	);
 
-	$ret = array_merge( 
-		$arr, $gmap_param, $tags_param, $noti_param, 
-		$this->build_init_show( $this->_mode ) );
-	return $this->add_show_js_windows( $ret );
+	$arr = array_merge( 
+		$param, $gmap_param, 
+		$this->build_main_param( $this->_mode ) ,
+		$this->_build_tags_param( $photo_id ) ,
+		$this->build_notification_select() 
+	);
+	return $this->add_show_js_windows( $arr );
 }
 
 //---------------------------------------------------------

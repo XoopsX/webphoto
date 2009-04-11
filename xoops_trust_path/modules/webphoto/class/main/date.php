@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
+// $Id: date.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// _get_timeline_param()
 // 2009-03-15 K.OHWADA
 // add_box_list() -> add_show_js_windows()
 // 2008-12-12 K.OHWADA
@@ -26,6 +28,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_date extends webphoto_show_list
 {
+	var $_list_rows = array();
+
+	var $_TIMELINE_UNIT = null;
+	var $_TIMELINE_DATE = null;
 
 //---------------------------------------------------------
 // constructor
@@ -49,6 +55,18 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // list
 //---------------------------------------------------------
+// overwrite
+function list_build_list()
+{
+	$this->assign_xoops_header_default();
+
+	$param1 = $this->list_build_list_common();
+	$param2 = $this->_get_timeline_param( $this->_list_rows );
+
+	$ret = array_merge( $param1, $param2 );
+	return $this->add_show_js_windows( $ret );
+}
+
 // overwrite
 function list_get_photo_list()
 {
@@ -177,9 +195,16 @@ function list_get_photo_list()
 
 		$ret_arr[] = $this->list_build_photo_array(
 			$title, $param, $total, $row );
+
+		$this->_list_rows[ $row['item_id'] ] = $row;
 	}
 
 	return $ret_arr;
+}
+
+function _get_timeline_param( $rows )
+{
+	return $this->build_timeline_param( $this->_TIMELINE_UNIT, $this->_TIMELINE_DATE, $rows );
 }
 
 //---------------------------------------------------------
@@ -197,8 +222,6 @@ function list_build_detail( $datetime_in )
 	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
 	$this->set_param_out( $datetime );
 
-	$init_param = $this->list_build_init_param( true );
-
 	if ( $datetime == _C_WEBPHOTO_DATETIME_STR_NOT_SET ) {
 		$title = $this->get_constant('DATE_NOT_SET') ;
 	} else {
@@ -212,14 +235,15 @@ function list_build_detail( $datetime_in )
 			$datetime, $orderby, $limit, $start );
 	}
 
-	$param = $this->list_build_detail_common( $title, $total, $rows );
-
-	$navi_param = $this->list_build_navi( $total, $limit );
-
 	$this->list_assign_xoops_header( $datetime );
 
-	$ret = array_merge( $param, $init_param, $navi_param );
-	return $this->add_show_js_windows( $ret );
+	$arr = array_merge( 
+		$this->list_build_init_param( true ) ,
+		$this->list_build_detail_common( $title, $total, $rows ) ,
+		$this->list_build_navi( $total, $limit ) ,
+		$this->_get_timeline_param( $rows )
+	);
+	return $this->add_show_js_windows( $arr );
 }
 
 // --- class end ---

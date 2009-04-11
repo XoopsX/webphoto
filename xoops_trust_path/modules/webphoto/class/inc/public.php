@@ -1,5 +1,5 @@
 <?php
-// $Id: public.php,v 1.3 2009/03/19 13:43:24 ohwada Exp $
+// $Id: public.php,v 1.4 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// change build_item_description()
 // 2009-03-19 K.OHWADA
 // FLAG_IMAGEMANAGER_IMAGE_ONLY
 //---------------------------------------------------------
@@ -47,10 +49,10 @@ function init_public( $dirname )
 //---------------------------------------------------------
 // item rows
 //---------------------------------------------------------
-function get_item_rows_for_block( $options, $orderby, $limit=0, $offset=0 )
+function get_item_rows_for_block( $options, $orderby, $limit=0, $offset=0, $key=false )
 {
 	return $this->get_item_rows_by_name_param_orderby( 
-		'block', $options, $orderby, $limit, $offset ) ;
+		'block', $options, $orderby, $limit, $offset, $key ) ;
 }
 
 function get_item_rows_for_imagemanager( $cat_id, $limit=0, $offset=0 )
@@ -71,31 +73,39 @@ function get_item_rows_for_whatsnew( $limit=0, $offset=0 )
 		'whatsnew', null, $this->_ITEM_ORDERBY, $limit, $offset ) ;
 }
 
-function get_item_rows_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0 )
+function get_item_rows_by_name_param_orderby( 
+	$name, $param, $orderby, $limit=0, $offset=0, $key=false  )
 {
+	$item_key = null;
+	if ( $key ) {
+		$item_key = 'item_id';
+	}
+
 	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
 		return $this->get_item_rows_item_by_name_param_orderby( 
-			$name, $param, $orderby, $limit, $offset );
+			$name, $param, $orderby, $limit, $offset, $item_key );
 
 	} else {
 		return $this->get_item_rows_item_cat_by_name_param_orderby( 
 			$name, $param, 
 			$this->convert_item_field( $orderby ), 
-			$limit, $offset );
+			$limit, $offset, 
+			$this->convert_item_field( $item_key ) );
 	}
 }
 
 function get_item_rows_item_cat_by_name_param_orderby( 
-	$name, $param, $orderby, $limit=0, $offset=0 )
+	$name, $param, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$where = $this->build_where_item_cat_by_name_param( $name, $param );
-	return $this->get_item_rows_by_where_orderby_with_cat( $where, $orderby, $limit, $offset );
+	return $this->get_item_rows_by_where_orderby_with_cat( $where, $orderby, $limit, $offset, $key );
 }
 
-function get_item_rows_item_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0 )
+function get_item_rows_item_by_name_param_orderby( 
+	$name, $param, $orderby, $limit=0, $offset=0, $key=null )
 {
 	$where = $this->build_where_by_name_param( $name, $param );
-	return $this->get_item_rows_by_where_orderby( $where, $orderby, $limit, $offset );
+	return $this->get_item_rows_by_where_orderby( $where, $orderby, $limit, $offset, $key );
 }
 
 //---------------------------------------------------------
@@ -361,8 +371,27 @@ function build_where_search_single( $str )
 //---------------------------------------------------------
 function build_item_description( $row )
 {
+	$editor = $row['item_editor'] ;
+	$text   = $row['item_description'] ;
+
+// new version (v0.10)
+	$html   = $row['item_description_html'] ;
+	$smiley = $row['item_description_smiley'] ;
+	$xcode  = $row['item_description_xcode'] ;
+	$image  = $row['item_description_image'] ;
+	$br     = $row['item_description_br'] ;
+
+// prev version (v0.90)
+	if ( empty($editor) ) {
+		$html   = 0 ;
+		$smiley = 1 ;
+		$xcode  = 1 ;
+		$image  = 1 ;
+		$br     = 1 ;
+	}
+
 	$myts =& MyTextSanitizer::getInstance();
-	return $myts->displayTarea( $row['item_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
+	return $myts->displayTarea( $text, $html, $smiley, $xcode, $image, $br );
 }
 
 //---------------------------------------------------------

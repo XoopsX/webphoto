@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.6 2009/02/01 23:58:44 ohwada Exp $
+// $Id: gmap_location.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// webphoto_photo_public
 // 2009-01-25 K.OHWADA
 // get_gmap_center()
 // 2008-08-24 K.OHWADA
@@ -30,6 +32,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_gmap_location extends webphoto_base_this
 {
 	var $_gmap_class;
+	var $_public_class;
 	var $_multibyte_class;
 
 	var $_TEMPLATE     = null;
@@ -46,6 +49,7 @@ function webphoto_main_gmap_location( $dirname , $trust_dirname )
 	$this->_TEMPLATE = 'db:'. $dirname .'_main_gmap_location.html';
 
 	$this->_gmap_class      =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
+	$this->_public_class    =& webphoto_photo_public::getInstance( $dirname );
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 }
 
@@ -166,7 +170,12 @@ function _build_list_location()
 		return array( $show_gmap, $gmap_list );
 	}
 
-	$list = $this->_gmap_class->build_list_location( $item_row );
+	$item_rows = $this->_public_class->get_rows_by_gmap_location( $item_row );
+	if ( !is_array($item_rows) || !count($item_rows) ) {
+		return array( $show_gmap, $gmap_list );
+	}
+
+	$list = $this->_gmap_class->build_list_location( $item_rows );
 	if ( !is_array($list) || !count($list) ) {
 		return array( $show_gmap, $gmap_list );
 	}

@@ -1,5 +1,5 @@
 <?php
-// $Id: user.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: user.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -32,6 +32,7 @@ class webphoto_main_user extends webphoto_show_list
 function webphoto_main_user( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_mode( 'user' ) ;
 	$this->init_preload();
 }
 

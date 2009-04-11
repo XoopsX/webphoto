@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.1 2009/03/07 07:37:16 ohwada Exp $
+// $Id: blocks.php,v 1.2 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,6 +7,23 @@
 //=========================================================
 
 $constpref = strtoupper( '_BL_' . $GLOBALS['MY_DIRNAME']. '_' ) ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+if( !defined($constpref."TIMELINE_LATEST") ) 
+{
+
+define($constpref."TIMELINE_LATEST", "Number of latest photos");
+define($constpref."TIMELINE_RANDOM", "Number of random photos");
+define($constpref."TIMELINE_HEIGHT","Height of Timeline");
+define($constpref."TIMELINE_SCALE", "Timeline scale") ;
+define($constpref."TIMELINE_SCALE_WEEK",   "one week") ;
+define($constpref."TIMELINE_SCALE_MONTH",  "one month") ;
+define($constpref."TIMELINE_SCALE_YEAR",   "one year") ;
+define($constpref."TIMELINE_SCALE_DECADE", "10 years") ;
+
+}
 
 //---------------------------------------------------------
 // blocks for Portugues.do.Brasil

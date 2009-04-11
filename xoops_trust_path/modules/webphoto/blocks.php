@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.7 2009/02/01 09:04:29 ohwada Exp $
+// $Id: blocks.php,v 1.8 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// timeline.php
 // 2009-01-25 K.OHWADA
 // gmap_block.php
 // 2008-12-12 K.OHWADA
@@ -55,6 +57,7 @@ webphoto_include_once( 'class/inc/auto_publish.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/uri.php',              $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gmap_block.php',       $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gmap_info.php',        $MY_DIRNAME );
+webphoto_include_once( 'class/inc/timeline.php',         $MY_DIRNAME );
 webphoto_include_once( 'class/inc/blocks.php',           $MY_DIRNAME );
 webphoto_include_once( 'blocks/functions.php',           $MY_DIRNAME );
 

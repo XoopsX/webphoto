@@ -1,10 +1,16 @@
 <?php
-// $Id: date.php,v 1.1 2008/06/21 12:22:14 ohwada Exp $
+// $Id: date.php,v 1.2 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-10 K.OHWADA
+// remove get_photo_globals()
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -22,10 +28,7 @@ $manage =& webphoto_main_date::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DI
 $xoopsOption['template_main'] = $manage->list_get_template() ;
 include XOOPS_ROOT_PATH . '/header.php' ;
 
-$xoopsTpl->assign( $manage->get_photo_show_globals() ) ;
-$xoopsTpl->assign( $manage->get_lang_array() ) ;
 $xoopsTpl->assign( $manage->list_main() ) ;
-$xoopsTpl->assign( $manage->get_footer_param() ) ;
 
 include XOOPS_ROOT_PATH .'/footer.php' ;
 exit();

@@ -1,11 +1,52 @@
-$Id: readme_en.txt,v 1.28 2009/03/23 13:36:45 ohwada Exp $
+$Id: readme_en.txt,v 1.29 2009/04/11 14:23:35 ohwada Exp $
+
+=================================================
+Version: 1.40
+Date:   2009-04-10
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. timeline
+(1) add timeline block
+(2) add timeline in date list
+(3) add timeline in menu of help
+(4) get image by network and create small image, when external media.
+
+2. map
+(1) add map in place list
+
+3. preferrence
+add the following
+(1) number of photos in timeline
+(2) number of photos in map
+(3) number of tags in tag cloud
+
+
+4. bug fix
+(1) packaging mistake
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=932&forum=13
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=948&forum=13
+
+(2) typo in English
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?forum=11&topic_id=449
+
+(3) NOT clear "file id" in item table, when delete image.
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.30
 Date:   2009-03-20
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -35,17 +76,6 @@ Please copy and overwrite in the directory which XOOPS correspond
 (2) Execute the module update in the admin cp
 (3) and execute "Update" in webphoto's admin cp
   for creating the small images.
-
-
-6. Bug fix
-(1) Fatal error in help
-http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=921
-
-(2) Fatal error in imagemanager
-http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=923
-
-(3) not valid "Use pathinfo" in RSS output
-http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=927
 
 
 * Special Thanks *

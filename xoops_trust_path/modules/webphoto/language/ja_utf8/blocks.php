@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
+// $Id: blocks.php,v 1.7 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -63,6 +63,18 @@ define($constpref."GMAP_LONGITUDE","経度");
 define($constpref."GMAP_ZOOM","ズーム");
 define($constpref."GMAP_HEIGHT","表示の高さ");
 define($constpref."PIXEL", "ピクセル");
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+define($constpref."TIMELINE_LATEST", "新しい方から表示する写真の数");
+define($constpref."TIMELINE_RANDOM", "ランダムに表示する写真の数");
+define($constpref."TIMELINE_HEIGHT","表示の高さ");
+define($constpref."TIMELINE_SCALE", "タイムラインの時間幅") ;
+define($constpref."TIMELINE_SCALE_WEEK",   "１週間") ;
+define($constpref."TIMELINE_SCALE_MONTH",  "１ヶ月") ;
+define($constpref."TIMELINE_SCALE_YEAR",   "１年") ;
+define($constpref."TIMELINE_SCALE_DECADE", "１０年") ;
 
 // === define end ===
 }

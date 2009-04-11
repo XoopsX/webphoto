@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.27 2009/03/22 01:11:39 ohwada Exp $
+// $Id: main.php,v 1.28 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -892,7 +892,7 @@ define("_WEBPHOTO_FILE_KIND_4" ,  "Flash ビデオ" ) ;
 define("_WEBPHOTO_FILE_KIND_5" ,  "ドコモ ビデオ" ) ;
 define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
-define("_WEBPHOTO_FILE_KIND_8" ,  "file8" ) ;
+define("_WEBPHOTO_FILE_KIND_8" ,  "スモール" ) ;
 define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
 define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
 

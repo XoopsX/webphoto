@@ -1,5 +1,5 @@
 <?php
-// $Id: rate.php,v 1.4 2008/12/10 19:08:56 ohwada Exp $
+// $Id: rate.php,v 1.5 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -75,7 +75,7 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// main
+// rate
 //---------------------------------------------------------
 function rate()
 {
@@ -217,6 +217,19 @@ function update_rating_by_photoid( $photo_id )
 	}
 
 	return true;
+}
+
+//---------------------------------------------------------
+// main
+//---------------------------------------------------------
+function main()
+{
+	$ret = array_merge(
+		$this->get_photo_globals() ,
+		$this->get_lang_array() ,
+		$this->get_photo() ) 
+	);
+	return $ret;
 }
 
 function get_photo()

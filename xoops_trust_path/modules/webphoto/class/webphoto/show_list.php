@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.7 2009/03/20 10:37:35 ohwada Exp $
+// $Id: show_list.php,v 1.8 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// build_common_param()
 // 2009-03-15 K.OHWADA
 // build_init_show()
 // 2008-12-12 K.OHWADA
@@ -128,21 +130,20 @@ function list_build_list_common( $show_photo_desc=false, $title=null )
 		$title = $this->get_constant( $const );
 	}
 
-	$title_s   = $this->sanitize( $title );
-	$total_all = $this->_public_class->get_count();
+	$title_s = $this->sanitize( $title );
 
-	$arr = array(
+	$param = array(
 		'xoops_pagetitle'    => $title_s ,
 		'title_bread_crumb'  => $title_s,
 		'sub_title_s'        => $title_s ,
-		'show_photo_desc'    => $show_photo_desc ,
-		'use_popbox_js'      => $this->_USE_POPBOX_JS ,
-		'use_box_js'         => $this->_USE_BOX_JS ,
-		'photo_total_all'    => $total_all ,
-		'lang_thereare'      => sprintf( $this->get_constant('S_THEREARE') , $total_all ),
 		'photo_list'         => $this->list_get_photo_list() ,
 	);
-	return array_merge( $arr, $this->build_init_show( $mode ) );
+
+	$arr = array_merge( 
+		$param, 
+		$this->build_common_param( $mode, $show_photo_desc ) 
+	);
+	return $arr;
 }
 
 // overwrite
@@ -189,7 +190,7 @@ function list_build_detail_common( $title, $total, $rows, $photos=null )
 	$photos     = null;
 
 	if ( empty($photos) && is_array($rows) && count($rows) ) {
-		$photos     = $this->build_photo_show_from_rows( $rows );
+		$photos = $this->build_photo_show_from_rows( $rows );
 	}
 
 	if ( is_array($photos) && count($photos) ) {
@@ -214,21 +215,9 @@ function list_build_detail_common( $title, $total, $rows, $photos=null )
 
 function list_build_init_param( $show_photo_desc=false )
 {
-	$total_all = $this->_public_class->get_count();
-
-	$arr = array(
-		'mode'               => $this->_mode,
-		'page'               => $this->_get_page,
-		'sort'               => $this->_get_sort,
-		'param_sort'         => $this->build_uri_list_sort() ,
-		'lang_cursortedby'   => $this->get_lang_sortby( $this->_get_sort ),
-		'use_popbox_js'      => $this->_USE_POPBOX_JS ,
-		'use_box_js'         => $this->_USE_BOX_JS ,
-		'show_photo_desc'    => $show_photo_desc ,
-		'photo_total_all'    => $total_all ,
-		'lang_thereare'      => $this->build_lang_thereare( $total_all ) ,
-	);
-	return array_merge( $arr, $this->build_init_show( $this->_mode ) );
+	$param = $this->build_common_param( $this->_mode, $show_photo_desc ) ;
+	$param['param_sort'] = $this->build_uri_list_sort() ;
+	return $param;
 }
 
 function list_build_random_more( $total, $url=null )

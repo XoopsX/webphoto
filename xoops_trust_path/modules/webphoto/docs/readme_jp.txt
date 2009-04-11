@@ -1,11 +1,51 @@
-$Id: readme_jp.txt,v 1.28 2009/03/23 13:36:45 ohwada Exp $
+$Id: readme_jp.txt,v 1.29 2009/04/11 14:23:35 ohwada Exp $
+
+=================================================
+Version: 1.40
+Date:   2009-04-10
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. タイムライン
+(1) ブロック表示を追加した
+(2) 撮影日一覧にタイムライン表示を追加した
+(3) ヘルプのメニューにタイムラインを追加した
+(4) 外部メディアのときは、ネット越しい画像を取得し、スモール画像を生成する
+
+2. マップ
+(1) 撮影場所一覧にマップ表示を追加した
+
+3. 一般設定
+下記を追加した
+(1) タイムラインに表示する写真の数
+(2) マップに表示する写真の数
+(3) タグクラウドに表示するタグの数
+
+4. バグ対策
+(1) パッケージ作成ミス
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=932&forum=13
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=948&forum=13
+
+(2) 英語のtypo
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?forum=11&topic_id=449
+
+(3) 画像を削除したときに、item テーブルの file id が 0 にならない
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.30
 Date:   2009-03-20
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

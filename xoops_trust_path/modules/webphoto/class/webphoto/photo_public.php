@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.4 2009/01/31 19:12:50 ohwada Exp $
+// $Id: photo_public.php,v 1.5 2009/04/11 14:23:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// add $key in get_rows_by_orderby()
 // 2009-01-25 K.OHWADA
 // remove catlist->set_perm_cat_read()
 //---------------------------------------------------------
@@ -26,6 +28,9 @@ class webphoto_photo_public
 	var $_tagcloud_class;
 
 	var $_cfg_perm_cat_read ;
+
+	var $_ORDERBY_ASC    = 'item_id ASC';
+	var $_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
 
 //---------------------------------------------------------
 // constructor
@@ -191,77 +196,127 @@ function get_rows_by_catid_orderby( $param, $orderby, $limit=0, $offset=0 )
 		'catid', $param, $orderby, $limit, $offset );
 }
 
-function get_rows_by_orderby( $orderby, $limit=0, $offset=0 )
+function get_rows_by_orderby( $orderby, $limit=0, $offset=0, $key=false )
 {
-	return $this->_get_rows_by_name_param_orderby( 
-		'public', null, $orderby, $limit, $offset ) ;
+	return $this->get_rows_by_name_param_orderby( 
+		'public', null, $orderby, $limit, $offset, $key ) ;
 }
 
 function get_rows_imode_by_orderby( $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'imode', null, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_photo_by_orderby( $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'photo', null, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_photo_by_catid_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'photo_catid', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_catid_array_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'catid_array', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_like_datetime_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'like_datetime', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_place_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'place', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_place_array_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'place_array', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_uid_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'uid', $param, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_search_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
-	return $this->_get_rows_by_name_param_orderby( 
+	return $this->get_rows_by_name_param_orderby( 
 		'search', $param, $orderby, $limit, $offset ) ;
 }
 
-function _get_rows_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0 )
+function get_rows_by_gmap( $cat_id, $limit=0, $offset=0 )
 {
+	$cat_id = intval($cat_id);
+	if ( $cat_id > 0 ) {
+		$rows = $this->get_rows_by_gmap_catid(
+			$cat_id, $limit, $offset );
+
+	} else {
+		$rows = $this->get_rows_by_gmap_latest(
+			$limit, $offset );
+	}
+
+	return $rows ;
+}
+
+function get_rows_by_gmap_catid( $cat_id, $limit=0, $offset=0 )
+{
+	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id ) ;
+
+	return $this->get_rows_by_name_param_orderby( 
+		'gmap_catid_array', $catid_array, $this->_ORDERBY_LATEST, $limit, $offset ) ;
+}
+
+function get_rows_by_gmap_latest( $limit=0, $offset=0, $key=false )
+{
+	return $this->get_rows_by_name_param_orderby( 
+		'gmap_latest', null, $this->_ORDERBY_LATEST, $limit, $offset, $key ) ;
+}
+
+function get_rows_by_gmap_location( $item_row, $limit=0, $offset=0 )
+{
+	$id  = $item_row['item_id'];
+	$lat = $item_row['item_gmap_latitude'];
+	$lon = $item_row['item_gmap_longitude'];
+
+	return $this->get_rows_by_gmap_area( $id, $lat, $lon );
+}
+
+function get_rows_by_gmap_area( $id, $lat, $lon, $limit=0, $offset=0 )
+{
+	return $this->get_rows_by_name_param_orderby( 
+		'gmap_area', array( $id, $lat, $lon ), $this->_ORDERBY_ASC, $limit, $offset ) ;
+}
+
+function get_rows_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0, $key=false )
+{
+	$item_key = null;
+	if ( $key ) {
+		$item_key = 'item_id';
+	}
+
 	if ( $this->_cfg_perm_cat_read  == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
 		return $this->_item_cat_handler->get_rows_item_by_name_param_orderby( 
-			$name, $param, $orderby, $limit, $offset );
+			$name, $param, $orderby, $limit, $offset, $item_key );
 
 	} else {
 		return $this->_item_cat_handler->get_rows_item_cat_by_name_param_orderby( 
 			$name, $param, 
 			$this->_item_cat_handler->convert_item_field( $orderby ), 
-			$limit, $offset );
+			$limit, $offset, 
+			$this->_item_cat_handler->convert_item_field( $item_key ) );
 	}
 }
 

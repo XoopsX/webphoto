@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.18 2009/02/01 11:02:38 ohwada Exp $
+// $Id: blocks.php,v 1.19 2009/04/11 14:23:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// timeline_show()
 // 2009-01-25 K.OHWADA
 // webphoto_inc_gmap_block
 // 2009-01-04 K.OHWADA
@@ -37,10 +39,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_blocks extends webphoto_inc_public
 {
+	var $_utility_class ;
 	var $_multibyte_class ;
 	var $_catlist_class ;
 	var $_header_class;
 	var $_tagcloud_class ;
+	var $_timeline_class ;
 	var $_gmap_block_class ;
 	var $_gmap_info_class  ;
 
@@ -53,8 +57,10 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_cfg_gmap_latitude  = 0 ;
 	var $_cfg_gmap_longitude = 0 ;
 	var $_cfg_gmap_zoom      = 0 ;
+	var $_cfg_timeline_dirname = null ;
 
 	var $_block_id = 0;
+	var $_init_timeline = false;
 
 	var $_CHECKED  = 'checked="checked"';
 	var $_SELECTED = 'selected="selected"';
@@ -70,6 +76,14 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_GMAP_WIDTH      = '100%';
 	var $_GMAP_HEIGHT     = '650px';
 
+	var $_ORDERBY_RANDOM = 'rand()';
+	var $_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
+	var $_TIMELINE_DATE  = null;
+
+	var $_OFFSET_ZERO = 0 ;
+	var $_KEY_TRUE    = true ;
+	var $_KEY_NAME    = 'item_id' ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -77,6 +91,7 @@ function webphoto_inc_blocks()
 {
 	$this->webphoto_inc_public();
 
+	$this->_utility_class   =& webphoto_lib_utility::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
 	$this->_YESNO_OPTIONS = array(
@@ -121,6 +136,9 @@ function _init( $options )
 	$this->_tagcloud_class   =& webphoto_inc_tagcloud::getSingleton( $dirname );
 	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
 	$this->_gmap_info_class  =& webphoto_inc_gmap_info::getSingleton( $dirname );
+
+	$this->_timeline_class   =& webphoto_inc_timeline::getSingleton( $dirname );
+	$this->_init_timeline    = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
 
 	$this->_block_id = isset($_GET['bid']) ? intval($_GET['bid']) : 0 ;
 }
@@ -230,27 +248,28 @@ function catlist_show( $options )
 	$show_sub_img  = $this->_get_option_int(  $options, 3 ) ;
 	$cols          = $this->_get_option_int(  $options, 4 ) ;
 
-	$block = array() ;
-	$block['dirname'] = $this->_DIRNAME ;
 
 	list( $cols, $width ) =
 		$this->_catlist_class->calc_width( $cols ) ;
 
 	$param = array(
-		'cats'            => $this->_catlist_class->build_catlist( 0, $show_sub ) ,
-		'cols'            => $cols ,
-		'width'           => $width ,
-		'delmita'         => $this->_TOP_CATLIST_DELMITA ,
-		'show_sub'        => $show_sub ,
-		'show_main_img'   => $show_main_img ,
-		'show_sub_img'    => $show_sub_img ,
-		'use_pathinfo'    => $this->_cfg_use_pathinfo ,
-		'main_width'      => $this->_cfg_cat_main_width ,
-		'sub_width'       => $this->_cfg_cat_sub_width ,
-		'lang_total'      => $this->_lang_catlist_total ,
+		'cats'             => $this->_catlist_class->build_catlist( 0, $show_sub ) ,
+		'cols'             => $cols ,
+		'width'            => $width ,
+		'delmita'          => $this->_TOP_CATLIST_DELMITA ,
+		'show_sub'         => $show_sub ,
+		'show_main_img'    => $show_main_img ,
+		'show_sub_img'     => $show_sub_img ,
+		'main_width'       => $this->_cfg_cat_main_width ,
+		'sub_width'        => $this->_cfg_cat_sub_width ,
+		'lang_total'       => $this->_lang_catlist_total ,
 	);
 
-	$block['catlist'] = $param ;
+	$block = array(
+		'dirname'          => $this->_DIRNAME ,
+		'cfg_use_pathinfo' => $this->_cfg_use_pathinfo ,
+		'catlist'          => $param ,
+	);
 
 	return $this->_assign_block( 'catlist', $block ) ;
 }
@@ -340,6 +359,95 @@ function tagcloud_edit( $options )
 }
 
 //---------------------------------------------------------
+// timeline
+//
+// options
+//   0 : dirname
+//   1 : random  limit (100)
+//   2 : lateset limit (10)
+//   3 : height (300) px
+//   4 : scale  (month)
+//---------------------------------------------------------
+function timeline_show( $options )
+{
+	$this->_init( $options );
+	$latest = $this->_get_option_int( $options, 1 ) ;
+	$random = $this->_get_option_int( $options, 2 ) ;
+	$height = $this->_get_option_int( $options, 3 ) ;
+	$scale  = $this->_get_option(     $options, 4 ) ;
+
+	$js      = null ;
+	$element = null;
+
+	if ( $this->_init_timeline ) {
+		$item_rows = $this->_get_item_rows_timeline( $latest, $random );
+		list( $photos, $photo_num ) = 
+			$this->_build_photos( $options, $item_rows );
+		if ( $photo_num > 0 ) {
+
+//			$this->_timeline_class->set_show_timeout( true );
+			$this->_timeline_class->set_show_onload(  true );
+
+			$tl_param = $this->_timeline_class->fetch_timeline( 
+				'painter', $scale, $this->_TIMELINE_DATE, $photos );
+			$js      = $tl_param['timeline_js'] ;
+			$element = $tl_param['timeline_element'] ;
+		}
+	}
+
+	$block = array() ;
+	$block['dirname']          = $this->_DIRNAME ;
+	$block['timeline_js']      = $js;
+	$block['timeline_element'] = $element;
+	$block['timeline_height']  = $height;
+
+	return $this->_assign_block( 'timeline', $block ) ;
+}
+
+function timeline_edit( $options )
+{
+	$this->_init( $options );
+	$latest = $this->_get_option_int( $options, 1 ) ;
+	$random = $this->_get_option_int( $options, 2 ) ;
+	$height = $this->_get_option_int( $options, 3 ) ;
+	$scale  = $this->_get_option(     $options, 4 ) ;
+
+	$SCALE_OPTIONS = array(
+		'week'   => $this->_constant( 'TIMELINE_SCALE_WEEK'   ) ,
+		'month'  => $this->_constant( 'TIMELINE_SCALE_MONTH'  ) ,
+		'year'   => $this->_constant( 'TIMELINE_SCALE_YEAR'   ) ,
+		'decade' => $this->_constant( 'TIMELINE_SCALE_DECADE' ) ,
+	);
+
+	$ret  = '<table border="0"><tr><td>'."\n";
+	$ret .= 'dirname';
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->_DIRNAME;
+	$ret .= '<input type="hidden" name="options[0]" value="'. $this->_DIRNAME .'" />'."\n";
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TIMELINE_LATEST' );
+	$ret .= '</td><td>'."\n";
+	$ret .= '<input type="text" size="4" name="options[1]" value="'. $latest .'" />'."\n";
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TIMELINE_RANDOM' );
+	$ret .= '</td><td>'."\n";
+	$ret .= '<input type="text" size="4" name="options[2]" value="'. $random .'" />'."\n";
+	$ret .= "</td></tr>\n<tr><td>";
+	$ret .= $this->_constant('TIMELINE_HEIGHT') ;
+	$ret .= "</td><td>";
+	$ret .= '<input type="text" name="options[3]" value="'. $height .'" />'."\n";
+	$ret .= $this->_constant('PIXEL') ;
+	$ret .= '</td></tr><tr><td>'."\n";
+	$ret .= $this->_constant( 'TIMELINE_SCALE' );
+	$ret .= '</td><td>'."\n";
+	$ret .= $this->build_form_select( 'options[4]', $scale, $SCALE_OPTIONS );
+	$ret .= "</td></tr>\n";
+	$ret .= '</table>'."\n";
+
+	return $ret ;
+}
+
+//---------------------------------------------------------
 // show common
 //---------------------------------------------------------
 function _top_show_common( $mode , $options )
@@ -386,42 +494,22 @@ function _top_show_common( $mode , $options )
 
 function _build_block( $mode , $options )
 {
-	$title_max_length  = $this->_get_option_int(  $options, 4, 20 ) ;
-	$cols              = $this->_get_option_cols( $options, 5 ) ;
+	$cols = $this->_get_option_cols( $options, 5 ) ;
 
-// count begins from
-	$count = 1 ;
-
-	$block = array() ;
-	$block['dirname']         = $this->_DIRNAME ;
-	$block['cols']            = $cols ;
-	$block['use_pathinfo']    = $this->_cfg_use_pathinfo ;
-	$block['cfg_thumb_width'] = $this->_cfg_thumb_width ;
+	$block = array(
+		'dirname'          => $this->_DIRNAME ,
+		'cols'             => $cols ,
+		'cfg_use_pathinfo' => $this->_cfg_use_pathinfo ,
+		'cfg_thumb_width'  => $this->_cfg_thumb_width ,
+	);
 
 	$item_rows = $this->_get_item_rows_top_common( $mode , $options );
-	if ( !is_array($item_rows) || !count($item_rows) ) {
-		$block['photo']     = null ;
-		$block['photo_num'] = 0 ;
-		return $block ; 
-	}
 
-	foreach ( $item_rows as $item_row )
-	{
-		$cat_title = $this->_build_cat_title( $item_row );
+	list( $photos, $photo_num ) = 
+		$this->_build_photos( $options, $item_rows );
 
-		$arr = array_merge( $item_row, $this->_build_imgsrc( $item_row ) );
-
-		$arr['photo_id']      = $item_row['item_id'] ;
-		$arr['onclick']       = $item_row['item_onclick'] ;
-		$arr['title_s']       = $this->sanitize( $item_row['item_title'] ) ;
-		$arr['title_short_s'] = $this->_build_short_title( $item_row['item_title'], $title_max_length ) ;
-		$arr['cat_title_s']   = $this->sanitize( $cat_title ) ;
-		$arr['hits_suffix']   = $this->_build_hits_suffix( $item_row['item_hits'] ) ;
-
-		$block['photo'][ $count ++ ] = $arr ;
-	}
-
-	$block['photo_num'] = $count - 1 ;
+	$block['photo']     = $photos ;
+	$block['photo_num'] = $photo_num ;
 
 	list( $show_gmap, $gmap ) =
 		$this->_build_gmap_block( $mode, $block['photo'], $options );
@@ -430,6 +518,46 @@ function _build_block( $mode , $options )
 	$block['gmap']      = $gmap ;
 
 	return $block ;
+}
+
+function _build_photos( $options, $item_rows )
+{
+	$title_max_length  = $this->_get_option_int(  $options, 4, 20 ) ;
+
+	if ( !is_array($item_rows) || !count($item_rows) ) {
+		return array( null, 0 ) ; 
+	}
+
+// count begins from
+	$count  = 1 ;
+	$photos = array();
+
+	foreach ( $item_rows as $row )
+	{
+		$item_id   = $row['item_id'] ;
+		$title     = $row['item_title'] ;
+
+		$cat_title = $this->_build_cat_title( $row );
+
+		$arr = array_merge( $row, $this->_build_imgsrc( $row ) );
+
+		$arr['photo_id']      = $item_id ;
+		$arr['onclick']       = $row['item_onclick'] ;
+		$arr['title']         = $title ;
+		$arr['title_s']       = $this->sanitize( $title ) ;
+		$arr['title_short_s'] = $this->_build_short_title( $title, $title_max_length ) ;
+		$arr['cat_title_s']   = $this->sanitize( $cat_title ) ;
+		$arr['hits_suffix']   = $this->_build_hits_suffix( $row['item_hits'] ) ;
+
+		$arr['time_create']   = $row['item_time_create'];
+		$arr['datetime_unix'] = $this->_utility_class->mysql_datetime_to_unixtime( $row['item_datetime'] );
+		$arr['photo_uri']     = $this->_build_uri_photo( $item_id ) ;
+		$arr['description_disp'] = $this->build_item_description( $row );
+
+		$photos[ $count ++ ] = $arr ;
+	}
+
+	return array( $photos, ($count - 1) ) ; 
 }
 
 //---------------------------------------------------------
@@ -655,12 +783,16 @@ function _build_imgsrc( $item_row )
 
 	$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+	$small_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SMALL );
 
 	list( $cont_url, $cont_width, $cont_height ) =
 		$this->build_show_file_image( $cont_row ) ;
 
 	list( $thumb_url, $thumb_width, $thumb_height ) =
 		$this->build_show_file_image( $thumb_row ) ;
+
+	list( $small_url, $small_width, $small_height ) =
+		$this->build_show_file_image( $small_row ) ;
 
 	list( $icon_url, $icon_width, $icon_height ) =
 		$this->build_show_icon_image( $item_row ) ;
@@ -718,6 +850,10 @@ function _build_imgsrc( $item_row )
 		'thumb_url_s'       => $this->sanitize( $thumb_url ) ,
 		'thumb_width'       => $thumb_width ,
 		'thumb_height'      => $thumb_height ,
+		'small_url'         => $small_url ,
+		'small_url_s'       => $this->sanitize( $small_url ) ,
+		'small_width'       => $small_width ,
+		'small_height'      => $small_height ,
 		'icon_url'          => $icon_url ,
 		'icon_url_s'        => $this->sanitize( $icon_url ) ,
 		'icon_width'        => $icon_width ,
@@ -770,6 +906,17 @@ function _build_hits_suffix( $hits )
 {
 	$val = $hits > 1 ? 'hits' : 'hit' ;
 	return $val;
+}
+
+function _build_uri_photo( $id )
+{
+	$str = $this->_MODULE_URL .'/index.php' ;
+	if ( $this->_cfg_use_pathinfo ) {
+		$str .= '/photo/'. $id .'/' ; 
+	} else {
+		$str .= '?fct=photo&photo_id='. $id ;
+	}
+	return $str;
 }
 
 function _adjust_image_thumb( $width, $height )
@@ -906,9 +1053,32 @@ function _shorten_text( $str, $max )
 //---------------------------------------------------------
 // database handler
 //---------------------------------------------------------
+function _get_item_rows_timeline( $latest, $random )
+{
+	$param = array(
+		'cat_limitation'      => 0 ,
+		'cat_limit_recursive' => false ,
+	);
+
+	$latest_rows = $this->get_item_rows_for_block( 
+		$param, $this->_ORDERBY_LATEST, $latest, $this->_OFFSET_ZERO, $this->_KEY_TRUE );
+
+	$random_rows = $this->get_item_rows_for_block( 
+		$param, $this->_ORDERBY_RANDOM, $random, $this->_OFFSET_ZERO, $this->_KEY_TRUE );
+
+	return $this->_utility_class->array_merge_unique( $random_rows, $latest_rows, $this->_KEY_NAME );
+}
+
 function _get_item_rows_top_common( $mode, $options )
 {
-	$photos_num = $this->_get_option_int(  $options, 1, 5 ) ;
+	$photos_num          = $this->_get_option_int(  $options, 1, 5 ) ;
+	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
+	$cat_limit_recursive = $this->_get_option_int(  $options, 3, 0 ) ;
+
+	$param = array(
+		'cat_limitation'      => $cat_limitation ,
+		'cat_limit_recursive' => $cat_limit_recursive,
+	);
 
 	switch( $mode )
 	{
@@ -928,13 +1098,14 @@ function _get_item_rows_top_common( $mode, $options )
 			break;
 	}
 
-	return $this->get_item_rows_for_block( $options, $orderby, $photos_num );
+	return $this->get_item_rows_for_block( $param, $orderby, $photos_num );
 }
 
-function build_where_block_cat_limitation( $options )
+// use in public.php
+function build_where_block_cat_limitation( $param )
 {
-	$cat_limitation      = $this->_get_option_int(  $options, 2, 0 ) ;
-	$cat_limit_recursive = $this->_get_option_int(  $options, 3, 0 ) ;
+	$cat_limitation      = $param['cat_limitation'];
+	$cat_limit_recursive = $param['cat_limit_recursive'];
 
 // Category limitation
 	$where = '' ;
@@ -1026,6 +1197,8 @@ function _init_xoops_config_for_block( $dirname )
 	$this->_cfg_gmap_latitude  = $config_handler->get_by_name( 'gmap_latitude' );
 	$this->_cfg_gmap_longitude = $config_handler->get_by_name( 'gmap_longitude' );
 	$this->_cfg_gmap_zoom      = $config_handler->get_by_name( 'gmap_zoom' );
+	$this->_cfg_timeline_dirname = $config_handler->get_by_name('timeline_dirname');
+
 }
 
 // --- class end ---
