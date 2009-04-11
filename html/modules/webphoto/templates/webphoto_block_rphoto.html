@@ -1,4 +1,4 @@
-<{* $Id: webphoto_block_rphoto.html,v 1.10 2009/02/01 08:59:49 ohwada Exp $ *}>
+<{* $Id: webphoto_block_rphoto.html,v 1.11 2009/04/11 14:46:56 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -24,7 +24,7 @@
 
   <td align="center" style="margin:0px;padding:5px 0px;">
     <{if $photo.title_short_s != '' }>
-      <{if $block.use_pathinfo }>
+      <{if $block.cfg_use_pathinfo }>
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
       <{else}>
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php?fct=photo&amp;photo_id=<{$photo.photo_id}>">
@@ -43,7 +43,7 @@
 
 <{* PHOTO PAGE *}>
     <{else}>
-      <{if $block.use_pathinfo }>
+      <{if $block.cfg_use_pathinfo }>
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
       <{else}>
         <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">

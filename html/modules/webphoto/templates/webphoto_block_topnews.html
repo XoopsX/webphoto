@@ -1,9 +1,9 @@
-<{* $Id: webphoto_block_topnews.html,v 1.4 2008/09/09 13:41:49 ohwada Exp $ *}>
+<{* $Id: webphoto_block_topnews.html,v 1.5 2009/04/11 14:46:56 ohwada Exp $ *}>
 
 <ul>
 <{foreach item=photo from=$block.photo}>
   <li>
-  <{if $block.use_pathinfo }>
+  <{if $block.cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$block.dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">

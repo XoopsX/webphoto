@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_menu.html,v 1.6 2009/03/20 10:20:20 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_menu.html,v 1.7 2009/04/11 14:46:56 ohwada Exp $ *}>
 
 <div class="webphoto_page_menu">
 
@@ -6,7 +6,7 @@
 <div class="webphoto_page_menu_line">
  | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/latest/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=latest">
@@ -14,7 +14,7 @@
 
 <{$lang_title_latest}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/popular/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=popular">
@@ -23,7 +23,7 @@
 <{$lang_title_popular}></a> | 
 
 <{if $has_rateview }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/highrate/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=highrate">
@@ -32,7 +32,7 @@
   <{$lang_title_highrate}></a> | 
 <{/if}>
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=random">
@@ -41,7 +41,7 @@
 <{$lang_title_random}></a> | 
 
 <{if $xoops_isuser }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=myphoto">
@@ -50,7 +50,7 @@
   <{$lang_title_myphoto}></a> | 
 <{/if}>
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=help">
@@ -58,7 +58,7 @@
 
 <{$lang_title_help}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/" target="_blank">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rss" target="_blank">
@@ -87,7 +87,7 @@
    | 
 
   <{if $show_menu_map }>
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/map/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map">
@@ -97,7 +97,7 @@
   <{/if}>
 
   <{if $show_menu_timeline }>
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">
@@ -129,7 +129,7 @@
 <div class="webphoto_page_menu_line">
  | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category">
@@ -137,7 +137,7 @@
 
 <{$lang_title_category_list}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=tag">
@@ -145,7 +145,7 @@
 
 <{$lang_title_tag_list}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user">
@@ -153,7 +153,7 @@
 
 <{$lang_title_user_list}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date">
@@ -161,7 +161,7 @@
 
 <{$lang_title_date_list}></a> | 
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place">

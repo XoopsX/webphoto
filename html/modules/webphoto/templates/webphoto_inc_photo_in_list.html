@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.8 2008/12/10 19:26:05 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.9 2009/04/11 14:46:56 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -7,7 +7,7 @@
 <div class="webphoto_list_image">
 
 <{* POPUP IMAGE  *}>
-<{if ( $photo.onclick == 2 ) && $use_popbox_js }>
+<{if ( $photo.onclick == 2 ) && $cfg_use_popbox }>
   <{if $photo.img_thumb_width && $photo.img_thumb_height }>
     <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_photo_src_s}>" />
   <{else}>
