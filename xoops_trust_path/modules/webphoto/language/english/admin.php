@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.15 2009/04/04 20:27:00 ohwada Exp $
+// $Id: admin.php,v 1.16 2009/04/12 02:49:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -501,6 +501,12 @@ define( "_AM_WEBPHOTO_GPERM_HTML" , "Use HTML" ) ;
 define( "_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
 define( "_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
 define( "_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
+define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
 
 // === define end ===
 }

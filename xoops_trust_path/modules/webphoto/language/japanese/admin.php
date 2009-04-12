@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.14 2009/03/06 04:06:47 ohwada Exp $
+// $Id: admin.php,v 1.15 2009/04/12 02:49:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -501,6 +501,12 @@ define( "_AM_WEBPHOTO_GPERM_HTML" , "HTML投稿可" ) ;
 define( "_AM_WEBPHOTO_RSS_DEBUG" , "RSS デバック表示" ) ;
 define( "_AM_WEBPHOTO_RSS_CLEAR" , "RSS キャッシュ・クリア" ) ;
 define( "_AM_WEBPHOTO_RSS_CLEARED" , "クリアした" ) ;
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "タイムライン・モジュール" ) ;
+define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "モジュールはインストールされていない" ) ;
 
 // === define end ===
 }

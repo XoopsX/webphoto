@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.16 2009/04/11 14:23:35 ohwada Exp $
+// $Id: modinfo.php,v 1.17 2009/04/12 02:49:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -353,7 +353,7 @@ define($constpref."OPT_TIMELINE_SCALE_DECADE", "10 years") ;
 //---------------------------------------------------------
 // timeline
 define($constpref."CFG_TIMELINE_LATEST", "Number of latest photos in timeline");
-define($constpref."CFG_TIMELINE_RANDOM", "Number of random photos in timeline"");
+define($constpref."CFG_TIMELINE_RANDOM", "Number of random photos in timeline");
 define($constpref."BNAME_TIMELINE" , "Timeline" ) ;
 
 // map, tag

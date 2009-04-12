@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.17 2009/03/20 04:18:09 ohwada Exp $
+// $Id: index.php,v 1.18 2009/04/12 02:46:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-10 K.OHWADA
+// _print_timeline()
 // 2009-03-15 K.OHWADA
 // SMALLS_DIR
 // 2009-01-25 K.OHWADA
@@ -103,6 +105,7 @@ function main()
 	$this->_print_check();
 	echo $this->_update_check_class->build_msg();
 	$this->_checkconfig_class->check();
+	$this->_print_timeline();
 	$this->_print_command_url();
 
 	xoops_cp_footer();
@@ -211,6 +214,44 @@ function _workdir_file()
 	}
 
 	return true;
+}
+
+function _print_timeline()
+{
+	$timeline_dirname = $this->get_config_by_name('timeline_dirname');
+	$TIMELINE_DIR = XOOPS_TRUST_PATH.'/modules/'.$timeline_dirname;
+	$version_file = $TIMELINE_DIR.'/include/version.php' ;
+	$isactive     = $this->_xoops_class->get_module_value_by_dirname( 
+		$timeline_dirname, 'isactive' );
+
+	echo '<h4>'. _AM_WEBPHOTO_TIMELINE_MODULE ."</h4>\n";
+	echo 'dirname : '. $timeline_dirname ."<br />\n";
+
+// installed
+	if ( $isactive ) {
+
+// version file
+		if ( file_exists( $version_file ) ) {
+			include_once $version_file ;
+			echo 'version : '. _C_TIMELINE_VERSION ."<br />\n";
+
+// check version
+			if ( _C_TIMELINE_VERSION < _C_WEBPHOTO_TIMELINE_VERSION ) {
+				$msg = 'require version '. _C_WEBPHOTO_TIMELINE_VERSION .' or later';
+				echo $this->highlight( $msg )."<br />\n";
+			}
+
+// not find version file
+		} else {
+			echo $this->highlight( 'not find version file' )."<br />\n";
+		}
+
+// not install
+	} else {
+		echo $this->highlight( _AM_WEBPHOTO_MODULE_NOT_INSTALL )."<br />\n";
+	}
+
+	echo "<br/>\n";
 }
 
 function _print_command_url()

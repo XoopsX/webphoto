@@ -1,10 +1,21 @@
 <?php
-// $Id: admin.php,v 1.2 2009/04/04 20:27:00 ohwada Exp $
+// $Id: admin.php,v 1.3 2009/04/12 02:49:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v1.40
+//---------------------------------------------------------
+if( !defined("_AM_WEBPHOTO_TIMELINE_MODULE") ) 
+{
+
+define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
+define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
+
+}
 
 //---------------------------------------------------------
 // admin for French
