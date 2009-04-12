@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.7 2009/01/29 04:26:55 ohwada Exp $
+// $Id: index.php,v 1.8 2009/04/12 04:51:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2008-04-10 K.OHWADA
+// include/version.php
 // 2008-01-25 K.OHWADA
 // jodconverter.php
 // 2000-01-10 K.OHWADA
@@ -28,6 +30,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
+webphoto_include_once( 'include/version.php' );
 webphoto_include_once( 'class/inc/workdir.php' );
 webphoto_include_once( 'class/lib/server_info.php' );
 webphoto_include_once( 'class/lib/gd.php' );
