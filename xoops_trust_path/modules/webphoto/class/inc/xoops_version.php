@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.24 2009/04/11 14:23:34 ohwada Exp $
+// $Id: xoops_version.php,v 1.25 2009/04/12 07:00:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -413,7 +413,7 @@ function _build_blocks()
 	$arr[8]['description'] = "Shows timeline";
 	$arr[8]['show_func'] = "b_webphoto_timeline_show";
 	$arr[8]['edit_func'] = "b_webphoto_timeline_edit";
-	$arr[8]['options'] = $this->_DIRNAME.'|10|100|300';
+	$arr[8]['options'] = $this->_DIRNAME.'|10|100|300|month';
 	$arr[8]['template'] = '' ;
 	$arr[8]['can_clone'] = true ;
 

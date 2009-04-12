@@ -1,5 +1,5 @@
 <?php
-// $Id: update_130.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
+// $Id: update_130.php,v 1.4 2009/04/12 07:00:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -202,6 +202,7 @@ function _get_src_param( $item_row )
 	$item_id        = $item_row[ 'item_id' ];
 	$file_id_cont   = $item_row[ _C_WEBPHOTO_ITEM_FILE_CONT ];
 	$file_id_middle = $item_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ];
+	$file_id_thumb  = $item_row[ _C_WEBPHOTO_ITEM_FILE_THUMB ];
 	$file_id_small  = $item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ];
 
 	if ( $file_id_small > 0 ) {
@@ -209,30 +210,19 @@ function _get_src_param( $item_row )
 		return false;
 	}
 
-	if ( $file_id_cont > 0 ) {
-		$file_row = $this->_file_handler->get_row_by_id( $file_id_cont );
-		if ( is_array($file_row) && $file_row['file_path'] ) {
-			if ( $this->is_image_ext( $file_row['file_ext'] ) ) {
-				$arr = array(
-					'item_id'  => $item_id ,
-					'src_file' => XOOPS_ROOT_PATH . $file_row['file_path'] ,
-					'src_ext'  => $file_row['file_ext'] ,
-				);
-				return $arr;
-			}
-		}
+	$param = $this->_get_file_param( $file_id_cont, true );
+	if ( is_array($param) ) {
+		return $param;
 	}
 
-	if ( $file_id_middle > 0 ) {
-		$file_row = $this->_file_handler->get_row_by_id( $file_id_middle );
-		if ( is_array($file_row) && $file_row['file_path'] ) {
-			$arr = array(
-				'item_id'  => $item_id ,
-				'src_file' => XOOPS_ROOT_PATH . $file_row['file_path'] ,
-				'src_ext'  => $file_row['file_ext'] ,
-			);
-			return $arr;
-		}
+	$param = $this->_get_file_param( $file_id_middle );
+	if ( is_array($param) ) {
+		return $param;
+	}
+
+	$param = $this->_get_file_param( $file_id_thumb );
+	if ( is_array($param) ) {
+		return $param;
 	}
 
 	$param = $this->_small_create_class->build_small_param_from_external_icon( $item_row );
@@ -242,6 +232,33 @@ function _get_src_param( $item_row )
 
 	echo ' skip not exist original image ';
 	return false;
+}
+
+function _get_file_param( $id, $flag_ext=false )
+{
+	if ( empty($id) ) {
+		return null;
+	}
+
+	$row = $this->_file_handler->get_row_by_id( $id );
+	if ( !is_array($row) ) {
+		return null;
+	} 
+
+	if ( empty( $row['file_path'] ) ) {
+		return null;
+	}
+
+	if ( $flag_ext && !$this->is_image_ext( $row['file_ext'] ) ) {
+			return null;
+	}
+
+	$arr = array(
+		'item_id'  => $item_id ,
+		'src_file' => XOOPS_ROOT_PATH . $row['file_path'] ,
+		'src_ext'  => $row['file_ext'] ,
+	);
+	return $arr;
 }
 
 //---------------------------------------------------------
