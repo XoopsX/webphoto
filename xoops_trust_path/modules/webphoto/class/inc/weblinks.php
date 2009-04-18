@@ -1,10 +1,16 @@
 <?php
-// $Id: weblinks.php,v 1.2 2009/02/01 09:04:29 ohwada Exp $
+// $Id: weblinks.php,v 1.3 2009/04/18 02:35:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-18 K.OHWADA
+// Notice [PHP]: Undefined index: use_pathinfo
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -88,7 +94,10 @@ function photos( $opts )
 	}
 
 	$href_base       = XOOPS_URL .'/modules/'. $dirname .'/index.php';
-	$use_pathinfo    = $block['use_pathinfo'] ;
+
+// Notice [PHP]: Undefined index: use_pathinfo
+	$use_pathinfo    = $block['cfg_use_pathinfo'] ;
+
 	$attribs_default = 'width="'. $block['cfg_thumb_width'] .'"';
 
 	$ret = array();

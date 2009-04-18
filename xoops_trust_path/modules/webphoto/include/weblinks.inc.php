@@ -1,10 +1,17 @@
 <?php
-// $Id: weblinks.inc.php,v 1.2 2009/01/31 19:12:50 ohwada Exp $
+// $Id: weblinks.inc.php,v 1.3 2009/04/18 02:35:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-18 K.OHWADA
+// Fatal error
+// class/inc/group_permission.php
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // $MY_DIRNAME WEBPHOTO_TRUST_PATH are set by caller
@@ -35,6 +42,7 @@ webphoto_include_once( 'class/lib/utility.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/xoops_header.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',       $MY_DIRNAME );
+webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/catlist.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/tagcloud.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/public.php',       $MY_DIRNAME );
@@ -42,6 +50,7 @@ webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/uri.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gmap_block.php',   $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gmap_info.php',    $MY_DIRNAME );
+webphoto_include_once( 'class/inc/timeline.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/blocks.php',       $MY_DIRNAME );
 webphoto_include_once( 'class/inc/weblinks.php',     $MY_DIRNAME );
 
