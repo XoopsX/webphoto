@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.16 2009/04/11 14:23:35 ohwada Exp $
+// $Id: show_main.php,v 1.17 2009/04/18 05:07:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-18 K.OHWADA
+// BUG: not show description
 // 2009-04-10 K.OHWADA
 // webphoto_page
 // 2009-03-15 K.OHWADA
@@ -224,7 +226,8 @@ function set_mode( $val )
 //---------------------------------------------------------
 function build_main_param( $mode, $show_photo_desc=false )
 {
-	$param = $this->build_common_param( $mode, $show_photo_desc=false );
+// BUG: not show description
+	$param = $this->build_common_param( $mode, $show_photo_desc );
 	$param['param_sort'] = $this->build_uri_main_sort( $mode ) ;
 	return $param;
 }

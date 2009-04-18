@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.15 2009/04/11 14:23:34 ohwada Exp $
+// $Id: photo.php,v 1.16 2009/04/18 05:07:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-18 K.OHWADA
+// BUG: not show description
 // 2009-03-15 K.OHWADA
 // add_box_list() -> add_show_js_windows()
 // 2009-01-25 K.OHWADA
@@ -50,6 +52,8 @@ class webphoto_main_photo extends webphoto_show_main
 	var $_show_codebox   = false ;
 	var $_perm_download  = false;
 	var $_codeinfo_array = null;
+
+	var $_SHOW_PHOTO_DESC = true;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -232,9 +236,10 @@ function main()
 		'mobile_qr_image' => $this->build_mobile_filename( $photo_id ) ,
 	);
 
+// BUG: not show description
 	$arr = array_merge( 
 		$param, $gmap_param, 
-		$this->build_main_param( $this->_mode ) ,
+		$this->build_main_param( $this->_mode, $this->_SHOW_PHOTO_DESC ) ,
 		$this->_build_tags_param( $photo_id ) ,
 		$this->build_notification_select() 
 	);
