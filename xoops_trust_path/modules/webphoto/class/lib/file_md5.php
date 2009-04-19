@@ -1,5 +1,5 @@
 <?php
-// $Id: file_md5.php,v 1.1 2009/04/19 11:41:45 ohwada Exp $
+// $Id: file_md5.php,v 1.2 2009/04/19 14:33:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -66,7 +66,7 @@ function create_md5( $name )
 	return $data;
 }
 
-function check_md5( $name )
+function check_md5( $name, $flag_md5=false )
 {
 	$msg  = '';
 	$dir  = $this->build_dir( $name );
@@ -81,7 +81,7 @@ function check_md5( $name )
 			$msg .= 'not exist : '.$file_full."<br />\n";
 			continue;
 		}
-		if ( md5_file($file_full) != trim($md5) ) {
+		if ( $flag_md5 && ( md5_file($file_full) != trim($md5) ) ) {
 			$msg .= 'unmatch md5 : '.$file_full."<br />\n";
 		}
 	}
