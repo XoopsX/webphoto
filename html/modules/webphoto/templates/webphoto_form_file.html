@@ -1,0 +1,47 @@
+<{* $Id: webphoto_form_file.html,v 1.1 2009/04/19 12:01:29 ohwada Exp $ *}>
+
+<{* === form === *}>
+<form name="webphoto_file" action="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="fct" name="fct" value="submit_file" />
+<input type="hidden" id="op" name="op" value="submit" />
+
+<{* === table === *}>
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center"><th colspan="2"><{$lang_title_submit_file}></th></tr>
+
+<tr><td class="head"><{$lang_cap_maxpixel}></td><td class="odd"><{$ele_maxpixel}></td></tr>
+<tr><td class="head"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
+<tr><td class="head"><{$lang_cap_allowed_exts}></td><td class="odd"><{$ele_allowed_exts}></td></tr>
+
+<{* item cat id *}>
+<tr><td class="head"><{$lang_category}></td><td class="odd">
+<select id="item_cat_id" name="item_cat_id" size="1">
+<{$item_cat_id_options}>
+</select>
+</td></tr>
+
+<{* item title *}>
+<tr><td class="head"><{$lang_item_title}></td><td class="odd">
+<input tyep="text" id="item_title" name="item_title" value="<{$item_title_s}>" size="50" />
+<br /><{$lang_dsc_title_blank}></td></tr>
+
+<tr><td class="head"><{$lang_item_description}></td><td class="odd"><{$ele_item_description}></td></tr>
+
+<{* file *}>
+<tr><td class="head"><{$lang_cap_file_select}></td><td class="odd">
+<{if $file_select_options != '' }>
+  <select id="file" name="file" size="5">
+  <{$file_select_options}>
+  </select>
+<{else}>
+  ---
+<{/if}>
+</td></tr>
+
+<tr><td class="head"></td><td class="head">
+<input type="submit" id="add" name="add" value="<{$lang_add}>" />
+</td></tr>
+</table>
+
+</form>

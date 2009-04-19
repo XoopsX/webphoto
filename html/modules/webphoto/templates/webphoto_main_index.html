@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_index.html,v 1.11 2009/04/11 14:46:56 ohwada Exp $ *}>
+<{* $Id: webphoto_main_index.html,v 1.12 2009/04/19 12:01:29 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -21,32 +21,10 @@ function webphoto_timeline_zoom( link, op, unit )
 
 <{* === catpath for category === *}>
 <{if $show_catpath }>
-  <{assign var="catpath_first" value=$catpath.first }>
-
   &gt;&gt; 
-
-  <{if $cfg_use_pathinfo }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_first.cat_id}>/">
-  <{else}>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_first.cat_id}>">
-  <{/if}>
-
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" border="0" alt="<{$catpath_first.cat_title_s}>" />
-  </a> 
-
-  <{foreach item=catpath_list from=$catpath.list}>
-    <{if $cfg_use_pathinfo }>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">
-    <{/if}>
-    <{$catpath_list.cat_title_s}>
-    </a> : 
-  <{/foreach}>
-  
+  <{include file="db:`$mydirname`_inc_catpath.html" }>
   ( <{$total_bread_crumb}> )
 <{/if}>
-<{* === catpath end === *}>
 
 <br />
 
@@ -223,38 +201,9 @@ function webphoto_timeline_zoom( link, op, unit )
 
 <{* === catpath for category === *}>
 <{if $show_catpath }>
-  <{assign var="catpath_last" value=$catpath.last }>
   <div class="webphoto_catpath">
-
-  <{if $cfg_use_pathinfo }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
-  <{else}>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_last.cat_id}>">
-  <{/if}>
-
-  <{if $catpath_last.imgurl_s != ""}>
-    <{if $catpath_last.cat_main_width && $catpath_last.cat_main_height }>
-      <img src="<{$catpath_last.imgurl_s}>" width="<{$catpath_last.cat_main_width}>" height="<{$catpath_last.cat_main_height}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
-    <{else}>
-      <img src="<{$catpath_last.imgurl_s}>" width="<{$cat_main_width}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
-    <{/if}>
-  <{/if}>
-
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" border="0" alt="<{$catpath_last.cat_title_s}>" />
-  </a> 
-
-  <{foreach item=catpath_list from=$catpath.list}>
-    <{if $cfg_use_pathinfo }>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">
-    <{/if}>
-
-    <span class="webphoto_catpath_title"><{$catpath_list.cat_title_s}></span>
-    </a> : 
-  <{/foreach}>  
-
-  Total <{$photo_total}> (<{$photo_sum}>)
+  <{include file="db:`$mydirname`_inc_catpath.html" }>
+  : Total <{$photo_total}> (<{$photo_sum}>)
   </div>
 <{/if}>
 <{* === catpath end === *}>
