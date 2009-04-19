@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.23 2009/04/19 11:39:45 ohwada Exp $
+// $Id: edit.php,v 1.24 2009/04/19 13:44:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -500,8 +500,8 @@ function _build_form_photo( $item_row )
 {
 	$form_class =& webphoto_edit_photo_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$param = $this->build_form_common_param( 'edit' )
-	return $form_class->build_form_photo( $item_row, $param );,
+	$param = $this->build_form_common_param( 'edit' );
+	return $form_class->build_form_photo( $item_row, $param );
 }
 
 function _build_form_redo( $flash_row )

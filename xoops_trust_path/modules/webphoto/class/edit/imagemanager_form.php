@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_form.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
+// $Id: imagemanager_form.php,v 1.3 2009/04/19 13:44:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -56,6 +56,8 @@ function build_form_submit_imagemanager( $row, $param )
 {
 	$has_resize    = $param['has_resize'];
 	$allowed_exts  = $param['allowed_exts'];
+
+	$this->set_row( $row );
 
 	$arr = array(
 		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,

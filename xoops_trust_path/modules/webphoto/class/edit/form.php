@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.3 2009/04/19 11:39:45 ohwada Exp $
+// $Id: form.php,v 1.4 2009/04/19 13:44:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -302,7 +302,8 @@ function ele_allowed_exts( $allowed_exts )
 
 function item_cat_id_options()
 {
-	return $this->_cat_handler->build_options_with_perm_post();
+	$value = $this->get_row_by_key( 'item_cat_id' );
+	return $this->_cat_handler->build_options_with_perm_post( $value );
 }
 
 function item_description_dhtml()

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.14 2009/04/19 11:39:45 ohwada Exp $
+// $Id: submit.php,v 1.15 2009/04/19 13:44:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -112,7 +112,7 @@ function form_param()
 	switch ( $this->_form_action )
 	{
 		case 'form_video_thumb':
-			$param = $this->_build_form_video();
+			$param = $this->_build_form_video_thumb();
 			break;
 
 		case 'form_error':
