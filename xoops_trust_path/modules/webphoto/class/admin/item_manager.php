@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.14 2009/03/20 04:18:09 ohwada Exp $
+// $Id: item_manager.php,v 1.15 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// print_form_admin() -> build_form_admin_with_template()
+// Fatal error: Class 'webphoto_flashvar_form'
 // 2009-03-15 K.OHWADA
 // small_delete()
 // 2009-02-20 K.OHWADA
@@ -51,10 +54,16 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 	var $_player_title    = null;
 	var $_alternate_class = 'even';
 
+// preload
+	var $_SHOW_FORM_ADMIN_EMBED    = true;
+	var $_SHOW_FORM_ADMIN_EDITOR   = true;
+	var $_SHOW_FORM_ADMIN_PLAYLIST = true;
+
 	var $_PERPAGE_DEFAULT = 20;
 
 	var $_THIS_FCT = 'item_manager';
-	var $_THIS_URL = null;
+	var $_THIS_URL;
+	var $_THIS_ACTION;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
@@ -78,7 +87,8 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
 	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
 
-	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
+	$this->_THIS_ACTION = $this->_MODULE_URL .'/admin/index.php' ;
+	$this->_THIS_URL    = $this->_THIS_ACTION.'?fct='.$this->_THIS_FCT ;
 
 	$this->init_preload();
 }
@@ -676,15 +686,17 @@ function _submit_form()
 	$item_row = $this->create_item_row_default();
 	$options  = $this->_editor_class->build_list_options( true );
 
-	if ( $this->is_show_form_embed_playlisy_admin( $item_row ) ) {
-		$this->_print_form_embed(    $mode, $item_row );
-		$this->_print_form_playlist( $mode, $item_row );
+	if (  $this->is_show_form_embed_playlisy_admin( $item_row ) ) {
+		if ( $this->_SHOW_FORM_ADMIN_EMBED ) {
+			$this->_print_form_embed(    $mode, $item_row );
+		}
+		if ( $this->_SHOW_FORM_ADMIN_PLAYLIST ) {
+			$this->_print_form_playlist( $mode, $item_row );
+		}
 	}
 
-	if ( $this->is_show_form_editor( $options ) ) {
-		$param_editor = $this->build_form_param( $mode );
-		$param_editor['options'] = $options ;
-		$this->_print_form_editor( $item_row, $param_editor );
+	if ( $this->_SHOW_FORM_ADMIN_EDITOR && $this->is_show_form_editor( $options ) ) {
+		$this->_print_form_editor( $mode, $item_row, $options );
 	}
 
 	$this->_print_form_admin( $mode, $item_row );
@@ -804,8 +816,10 @@ function _confirm_form()
 
 	xoops_cp_header();
 
+	$param = $this->_build_form_common_param_admin( 'admin' );
+
 	echo $this->_build_bread_crumb();
-	$this->print_form_delete_confirm( 'admin', $item_row ) ;
+	echo $this->build_form_delete_confirm_with_template( $item_row, $param ) ;
 
 	xoops_cp_footer();
 	exit();
@@ -840,7 +854,7 @@ function _submit()
 	{
 // video form
 		case _C_WEBPHOTO_RET_VIDEO_FORM :
-			$this->print_form_video_thumb(
+			$this->_print_form_video_thumb(
 				'admin_submit', $this->get_created_row() );
 			break;
 
@@ -922,7 +936,7 @@ function _modify()
 	{
 // video form
 		case _C_WEBPHOTO_RET_VIDEO_FORM :
-			$this->print_form_video_thumb( 
+			$this->_print_form_video_thumb( 
 				'admin_modify', $this->get_updated_row() );
 			break;
 
@@ -1050,7 +1064,7 @@ function _redo()
 	{
 // video form
 		case _C_WEBPHOTO_RET_VIDEO_FORM :
-			$this->print_form_video_thumb( 'admin_modify', $item_row );
+			$this->_print_form_video_thumb( 'admin_modify', $item_row );
 			break;
 
 // error
@@ -1134,7 +1148,8 @@ function _flashvar_form()
 //---------------------------------------------------------
 function _flashvar_submit()
 {
-	$edit_class =& webphoto_flashvar_edit::getInstance( 
+// Fatal error: Class 'webphoto_flashvar_edit'
+	$edit_class =& webphoto_edit_flashvar_edit::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$this->_check_token_and_redirect();
@@ -1562,8 +1577,8 @@ function _print_form_admin( $mode, $item_row )
 	$form_class =& webphoto_admin_item_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_admin_by_item_row( 
-		$item_row, $this->build_form_param( $mode ) );
+	$param = $this->_build_form_common_param_admin( $mode );
+	echo $form_class->build_form_admin_with_template( $item_row, $param );
 }
 
 function _print_form_playlist( $mode, $item_row )
@@ -1571,7 +1586,8 @@ function _print_form_playlist( $mode, $item_row )
 	$form_class =& webphoto_admin_item_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_playlist( $mode, $item_row );
+	$param = $this->_build_form_common_param_admin( $mode );
+	$form_class->print_form_playlist( $item_row, $param );
 }
 
 function _print_form_embed( $mode, $item_row )
@@ -1579,15 +1595,19 @@ function _print_form_embed( $mode, $item_row )
 	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_embed( $mode, $item_row );
+	$param = $this->_build_form_common_param_admin( $mode );
+	echo $form_class->build_form_embed_with_template( $item_row, $param ) ;
 }
 
-function _print_form_editor( $item_row, $param_editor )
+function _print_form_editor( $mode, $item_row, $options )
 {
 	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_editor( $item_row, $param_editor );
+	$param = $this->_build_form_common_param_admin( $mode );
+	$param['options'] = $options ;
+
+	echo $form_class->build_form_editor_with_template( $item_row, $param );
 }
 
 function _print_form_redo( $mode, $item_row, $flash_row )
@@ -1595,16 +1615,32 @@ function _print_form_redo( $mode, $item_row, $flash_row )
 	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_redo( 'admin', $item_row, $flash_row );
+	$param = $this->_build_form_common_param_admin( $mode );
+	echo $form_class->build_form_redo_with_template( $item_row, $flash_row, $param );
 }
 
 function _print_form_flashvar( $mode, $flashvar_row )
 {
-	$form_class =& webphoto_flashvar_form::getInstance( 
+// Fatal error: Class 'webphoto_flashvar_form'
+	$form_class =& webphoto_edit_flashvar_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form( $mode, $flashvar_row );
 
+	$form_class->print_form( $mode, $flashvar_row );
 	echo "<br />\n";
+}
+
+function _print_form_video_thumb( $mode, $item_row )
+{
+	$form_class =& webphoto_edit_misc_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	$param = $this->_build_form_common_param_admin( $mode );
+	echo $form_class->build_form_video_thumb_with_template( $item_row, $param );
+}
+
+function _build_form_common_param_admin( $mode )
+{
+	return $this->build_form_common_param( $mode, $this->_THIS_ACTION, $this->_THIS_FCT );
 }
 
 // --- class end ---

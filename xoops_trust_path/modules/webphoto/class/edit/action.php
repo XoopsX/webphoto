@@ -1,10 +1,12 @@
 <?php
-// $Id: action.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
+// $Id: action.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+// build_form_edit_param( $action, $fct )
 
 //---------------------------------------------------------
 // change log
@@ -118,7 +120,51 @@ function build_item_row_modify_post( $item_row )
 //---------------------------------------------------------
 // print form delete confirm
 //---------------------------------------------------------
-function print_form_delete_confirm( $mode, $item_row )
+function build_form_delete_confirm_with_template( $item_row, $param )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_confirm.html';
+
+	$param_1 = array(
+		'action' => $param['action'] ,
+		'fct'    => $param['fct'] ,
+	);
+
+	$arr = array_merge( 
+		$this->edit_form_build_form_param() ,
+		$this->build_form_delete_confirm( $item_row ) ,
+		$param_1
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function build_form_delete_confirm( $item_row )
+{
+	$src    = null ;
+	$width  = 0 ;
+	$height = 0 ;
+
+	$image = $this->_show_image_class->build_image_by_item_row( $item_row, true ) ;
+	if ( is_array($image) ) {
+		$src    = $image['img_thumb_src'] ;
+		$width  = $image['img_thumb_width'] ;
+		$height = $image['img_thumb_height'] ;
+	}
+
+	$param = array(
+		'thumb_src_s'  => $this->sanitize( $src ) ,
+		'thumb_width'  => $width ,
+		'thumb_height' => $height ,
+		'item_id'      => $item_row['item_id'] ,
+		'item_title_s' => $this->sanitize( $item_row['item_title'] ) ,
+	);
+
+	return $param;
+}
+
+function XXXprint_form_delete_confirm( $mode, $item_row )
 {
 	$img_tag = $this->_show_image_class->build_img_tag_by_item_row( $item_row ) ;
 
@@ -581,6 +627,17 @@ function tag_handler_update_tags( $item_id, $tag_name_array )
 function tag_handler_tag_name_array( $item_id )
 {
 	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
+}
+
+//---------------------------------------------------------
+// form param
+//---------------------------------------------------------
+function build_form_edit_param( $action, $fct )
+{
+	$form_class =& webphoto_edit_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	return $form_class->build_form_param( $action, $fct ) ;
 }
 
 // --- class end ---

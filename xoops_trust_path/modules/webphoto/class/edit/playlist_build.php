@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist_build.php,v 1.2 2009/01/29 04:26:55 ohwada Exp $
+// $Id: playlist_build.php,v 1.3 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// BUG: Notice [PHP]: Undefined variable: laylist_feed
 // 2009-01-25 K.OHWADA
 // not use webphoto_edit_base()
 //---------------------------------------------------------
@@ -127,7 +129,10 @@ function build_title( $row )
 		$title = $playlist_dir ;
 
 	} elseif ( $playlist_feed ) {
-		$param = parse_url( $laylist_feed );
+
+// BUG: Notice [PHP]: Undefined variable: laylist_feed
+		$param = parse_url( $playlist_feed );
+
 		if ( isset($param['host']) ) {
 			$title = $param['host'] ;
 		} else {

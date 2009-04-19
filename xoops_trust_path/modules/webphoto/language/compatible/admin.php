@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.3 2009/04/12 02:49:35 ohwada Exp $
+// $Id: admin.php,v 1.4 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,13 +7,25 @@
 //=========================================================
 
 //---------------------------------------------------------
+// v1.50
+//---------------------------------------------------------
+if( !defined("_AM_WEBPHOTO_FILE_CHECK") ) 
+{
+
+define("_AM_WEBPHOTO_FILE_CHECK" , "File Valid Check" ) ;
+define("_AM_WEBPHOTO_FILE_CHECK_DSC" , "checks there are necessary files with MD5 hash" ) ;
+
+}
+
+
+//---------------------------------------------------------
 // v1.40
 //---------------------------------------------------------
 if( !defined("_AM_WEBPHOTO_TIMELINE_MODULE") ) 
 {
 
-define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
-define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
+define("_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
+define("_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
 
 }
 
@@ -25,9 +37,9 @@ if( !defined("_AM_WEBPHOTO_RSS_DEBUG") )
 //---------------------------------------------------------
 // v1.21
 //---------------------------------------------------------
-define( "_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
-define( "_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
-define( "_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
+define("_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
+define("_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
+define("_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
 
 // === define end ===
 }

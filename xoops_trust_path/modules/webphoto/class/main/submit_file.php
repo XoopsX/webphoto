@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_file.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
+// $Id: submit_file.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// _print_form_submit() -> _build_form_submit()
 // 2009-01-10 K.OHWADA
 // webphoto_edit_factory_create
 // 2009-01-04 K.OHWADA
@@ -101,16 +103,14 @@ function check_action()
 	}
 }
 
-function print_form()
+function form_param()
 {
-	echo $this->build_bread_crumb( 
-		$this->get_constant('TITLE_SUBMIT_FILE'), $this->_THIS_URL );
-
 	if ( $this->_is_video_thumb_form ) {
-		$this->_print_form_video_thumb();
+		$param = $this->_build_form_video_thumb();
 	} else {
-		$this->_print_form_submit();
+		$param = $this->_build_form_submit();
 	}
+	return $param;
 }
 
 //---------------------------------------------------------
@@ -413,35 +413,53 @@ function get_redirect_msg()
 }
 
 //---------------------------------------------------------
-// print form
+// build form
 //---------------------------------------------------------
-function _print_form_submit()
+function _build_form_submit()
 {
+	$form_class =& webphoto_edit_photo_form::getInstance( 
+		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
+
 	list ( $types, $allowed_exts ) = $this->get_my_allowed_mimes();
 
-	$param = array(
+	$file_param = array(
 		'has_resize'   => $this->_has_resize,
 		'allowed_exts' => $allowed_exts ,
 	);
 
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
+	$param = array(
+		'show_form_file' => true ,
+	);
 
-	$form_class->print_form_file( $param );
+	$arr = array_merge( 
+		$this->_build_form_file_param() ,
+		$form_class->build_form_file( $file_param ),
+		$param
+	);
+	return $arr;
 }
 
-function _print_form_video_thumb()
+function _build_form_video_thumb()
 {
-	if ( $this->has_msg_array() ) {
-		echo $this->get_format_msg_array() ;
-		echo "<br />\n";
-	}
+	$param = array(
+		'show_form_video_thumb' => true ,
+	);
 
-	$form_class =& webphoto_edit_misc_form::getInstance( 
+	$arr = array_merge( 
+		$this->_build_form_file_param() ,
+		$this->build_form_video_thumb( $this->_created_row ) ,
+		$param 
+	);
+	return $arr;
+}
+
+function _build_form_file_param( )
+{
+	$form_class =& webphoto_edit_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class->print_form_video_thumb( 
-		'submit_file', $this->_created_row );
+	$action = $this->_MODULE_URL .'/index.php' ;
+	return $form_class->build_form_param( $action, 'submit_file' ) ;
 }
 
 // --- class end ---

@@ -1,10 +1,16 @@
 <?php
-// $Id: base.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: base.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-19 K.OHWADA
+// build_form_video_thumb()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -183,6 +189,25 @@ function clear_tmp_files( $dir_path , $prefix )
 	}
 
 	return $count ;
+}
+
+//---------------------------------------------------------
+// form video thumb
+// submit.php submit_file.php etc
+//---------------------------------------------------------
+function build_form_video_thumb( $item_row )
+{
+	$message = null ;
+	if ( $this->has_msg_array() ) {
+		$message = $this->get_format_msg_array( true, false, true ) ;
+	}
+
+	$form_class =& webphoto_edit_misc_form::getInstance(
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$arr = $form_class->build_form_video_thumb( $item_row, true );
+
+	$arr['message'] = $message ;
+	return $arr;
 }
 
 // --- class end ---

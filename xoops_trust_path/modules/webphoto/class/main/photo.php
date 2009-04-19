@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.16 2009/04/18 05:07:04 ohwada Exp $
+// $Id: photo.php,v 1.17 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// sub_title -> catpath
 // 2009-04-18 K.OHWADA
 // BUG: not show description
 // 2009-03-15 K.OHWADA
@@ -227,7 +229,7 @@ function main()
 	$param = array(
 		'xoops_pagetitle' => $photo['title_s'],
 		'photo'           => $photo,
-		'sub_title'       => $this->build_cat_sub_title( $cat_id ),
+		'catpath'         => $this->build_cat_path( $cat_id ) ,
 		'photo_nav'       => $this->_build_navi( $photo_id, $cat_id ),
 		'show_photo_desc' => true ,
 		'show_photo_exif' => true ,

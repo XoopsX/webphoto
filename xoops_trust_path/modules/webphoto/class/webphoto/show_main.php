@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.17 2009/04/18 05:07:04 ohwada Exp $
+// $Id: show_main.php,v 1.18 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// build_cat_sub_title()
 // 2009-04-18 K.OHWADA
 // BUG: not show description
 // 2009-04-10 K.OHWADA
@@ -394,34 +396,6 @@ function build_cat_path( $cat_id )
 	$ret['last']  = $arr[ $last ];
 
 	return $ret;
-}
-
-function build_cat_sub_title( $cat_id )
-{
-	$rows = $this->_cat_handler->get_parent_path_array( $cat_id );
-	if ( !is_array($rows) || !count($rows) ) {
-		return '';
-	}
-
-	$img = '<img src="'. $this->_URL_CATEGORY_IMAGE .'" border="0" alt="folder" />';
-
-	$str   = '';
-	$start = count($rows) - 1;
-
-	for ( $i=$start; $i >= 0; $i-- )
-	{
-		$row  = $rows[$i];
-		$url  = $this->build_uri_category( $row['cat_id'] ) ;
-
-		$str .= '<a href="'. $url .'">';
-		if ( $i == $start ) {
-			$str .= ' '.$img.' ';
-		}
-		$str .= $this->sanitize( $row['cat_title'] );
-		$str .= "</a> : \n";
-	}
-
-	return $str;
 }
 
 //---------------------------------------------------------

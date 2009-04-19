@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// use template
 // 2009-01-10 K.OHWADA
 // webphoto_imagemanager_submit -> webphoto_edit_imagemanager_submit
 // 2009-01-04 K.OHWADA
@@ -77,9 +79,7 @@ function main()
 			break;
 	}
 
-	$this->_print_header();
 	$this->_print_form_imagemanager();
-	$this->_print_footer();
 }
 
 //---------------------------------------------------------
@@ -244,37 +244,15 @@ function _create_media_file_params( $item_row )
 }
 
 //---------------------------------------------------------
-// print_header
-//---------------------------------------------------------
-function _print_header()
-{
-	echo "<html><head>\n";
-	echo "<title>". $this->get_constant('TITLE_PHOTOUPLOAD') ."</title>\n";
-	echo '<link rel="stylesheet" type="text/css" media="all" href="'. XOOPS_URL .'/xoops.css" />'."\n";
-	echo '<link rel="stylesheet" type="text/css" media="all" href="'. XOOPS_URL .'/modules/system/style.css" />'."\n";
-	echo '<link rel="stylesheet" type="text/css" media="all" href="'. $this->_MODULE_URL .'/libs/default.css" />'."\n";
-	echo '<meta http-equiv="content-type" content="text/html; charset='. _CHARSET .'" />'."\n";
-	echo '<meta http-equiv="content-language" content="'. _LANGCODE .'" />'."\n";
-	echo "</head>\n" ;
-	echo "<html>\n" ;
-	echo '<div class="webphoto_imagemanager">'."\n";
-}
-
-function _print_footer()
-{
-	echo '<div class="webphoto_close">';
-	echo '<input value="'. _CLOSE .'" type="button" onclick="javascript:window.close();" />';
-	echo "</div>\n";
-
-	echo "</div>\n";
-	echo "</body></html>" ;
-}
-
-//---------------------------------------------------------
 // print form
 //---------------------------------------------------------
 function _print_form_imagemanager()
 {
+	$form_class =& webphoto_edit_imagemanager_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	$template = 'db:'. $this->_DIRNAME .'_main_submit_imagemanager.html';
+
 	$row = $this->_create_item_row_default() ;
 
 	$param = array(
@@ -282,9 +260,12 @@ function _print_form_imagemanager()
 		'allowed_exts'  => $this->get_normal_exts() ,
 	);
 
-	$form_class =& webphoto_edit_imagemanager_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_imagemanager( $row, $param );
+	$arr = $form_class->build_form_imagemanager( $row, $param );
+	$arr['xoops_themecss'] = $this->_xoops_class->get_xoops_themecss();
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	$tpl->display( $template ) ;
 }
 
 // --- class end ---

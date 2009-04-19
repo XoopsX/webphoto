@@ -1,11 +1,51 @@
-$Id: readme_en.txt,v 1.29 2009/04/11 14:23:35 ohwada Exp $
+$Id: readme_en.txt,v 1.30 2009/04/19 11:39:45 ohwada Exp $
+
+=================================================
+Version: 1.50
+Date:   2009-04-19
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. customize of the submit form
+(1) change the form to template
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=924
+
+(2) no show of the plugin form
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=938
+
+(3) no show of eternal url
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=951
+
+2. change the bread crumb to template
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=939
+
+3. in "Check Configuration" added to check there are necessary files
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=939
+
+4. bug fix
+(1) fatal error in weblinks
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=952
+
+(2) not show the photo description
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=955
+
+(3) fatal error in "item manager"
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.40
 Date:   2009-04-10
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
+// $Id: form.php,v 1.3 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// build_form_param()
 // 2009-03-15 K.OHWADA
 // _SMALL_FIELD_NAME
 // 2009-01-10 K.OHWADA
@@ -95,6 +97,8 @@ class webphoto_edit_form extends webphoto_lib_form
 
 	var $_EMBED_TYPE_DEFAULT = _C_WEBPHOTO_EMBED_TYPE_DEFAULT ;
 	var $_EDITOR_DEFAULT     = _C_WEBPHOTO_EDITOR_DEFAULT ;
+	var $_ROTATE_DEFAULT     = _C_WEBPHOTO_ROTATE_DEFAULT ;
+
 	var $_PHOTO_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
@@ -173,49 +177,112 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// config
+// common
 //---------------------------------------------------------
-function get_config_by_name( $name )
+function build_form_param( $action=null, $fct=null )
 {
-	return $this->_config_class->get_by_name( $name );
+	$arr = array_merge( 
+		$this->build_base_param() , 
+		$this->build_system_language() ,
+		$this->get_lang_array()
+	);
+
+	if ( $action ) {
+		$arr['action'] = $action;
+	}
+	if ( $fct ) {
+		$arr['fct'] = $fct;
+	}
+
+	return $arr;
+}
+
+function build_base_param()
+{
+	$arr = array(
+		'mydirname'        => $this->_DIRNAME ,
+		'xoops_g_ticket'   => $this->get_token() ,
+		'is_module_admin'  => $this->_is_module_admin ,
+		'has_deletable'    => $this->_has_deletable ,
+
+// for XOOPS 2.0.18
+		'xoops_dirname'    => $this->_DIRNAME ,
+		'xoops_modulename' => $this->xoops_module_name( 's' ) ,
+	);
+
+// config
+	$config_array = $this->get_config_array();
+	foreach ( $config_array as $k => $v ) {
+		$arr[ 'cfg_'.$k ] = $v ;
+	}
+
+	return $arr;
+}
+
+function build_system_language()
+{
+	$arr = array(
+		'lang_add'     => _ADD ,
+		'lang_edit'    => _EDIT ,
+		'lang_preview' => _PREVIEW ,
+		'lang_cancel'  => _CANCEL ,
+		'lang_delete'  => _DELETE ,
+		'lang_close'   => _CLOSE ,
+		'lang_yes'     => _YES , 
+		'lang_no'      => _NO ,
+	);
+	return $arr;
+}
+
+function build_item_row( $row )
+{
+	$arr = array();
+	foreach ( $row as $k => $v )
+	{
+		$arr[ $k ]      = $v;
+		$arr[ $k.'_s' ] = $this->sanitize( $v );
+	}
+	return $arr;
+}
+
+//---------------------------------------------------------
+// element
+//---------------------------------------------------------
+function set_checkbox( $val )
+{
+	$this->_checkbox_array = $val;
+}
+
+function get_checkbox_by_name( $name )
+{
+	if ( isset( $this->_checkbox_array[ $name ] ) ) {
+		 return $this->_checkbox_array[ $name ];
+	}
+	return null;
+}
+
+function build_checkbox_checked( $name, $compare=1 )
+{
+	$val = $this->get_checkbox_by_name( $name );
+	return $this->build_form_checked( $val, $compare );
 }
 
 //---------------------------------------------------------
 // photo form
+// submit.php submit_file.php etc
 //---------------------------------------------------------
-function build_input_hidden_max_file_size()
-{
-	return $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
-}
-
-function build_line_maxpixel( $has_resize )
-{
-	return $this->build_line_ele( 
-		$this->get_constant('CAP_MAXPIXEL'), 
-		$this->_build_ele_maxpixel( $has_resize ) );
-}
-
-function _build_ele_maxpixel( $has_resize )
+function ele_maxpixel( $has_resize )
 {
 	$text = $this->_cfg_width .' x '. $this->_cfg_height ."<br />\n" ;
-
 	if ( $has_resize ) {
 		$text .= $this->get_constant('DSC_PIXCEL_RESIZE');
 	} else {
 		$text .= $this->get_constant('DSC_PIXCEL_REJECT');
 	}
-
 	return $text;
 }
 
-function build_line_maxsize()
-{
-	return $this->build_line_ele( 
-		$this->get_constant('CAP_MAXSIZE'), 
-		$this->_build_ele_maxsize() );
-}
-
-function _build_ele_maxsize()
+function ele_maxsize()
 {
 	$size_desc = '';
 	if( ! ini_get( 'file_uploads' ) ) {
@@ -224,72 +291,25 @@ function _build_ele_maxsize()
 
 	$text  = $this->format_filesize( $this->_cfg_fsize );
 	$text .= $size_desc;
-
 	return $text;
 }
 
-function build_line_allowed_exts( $allowed_exts )
-{
-	return $this->build_line_ele( 
-		$this->get_constant('CAP_ALLOWED_EXTS'), 
-		$this->_build_ele_allowed_exts( $allowed_exts ) );
-}
-
-function _build_ele_allowed_exts( $allowed_exts )
+function ele_allowed_exts( $allowed_exts )
 {
 	$text = implode( ' ', $allowed_exts );
 	return $text;
 }
 
-function build_line_category()
+function item_cat_id_options()
 {
-	return $this->build_line_ele( 
-		$this->get_constant('CATEGORY') , 
-		$this->_build_ele_category() );
+	return $this->_cat_handler->build_options_with_perm_post();
 }
 
-function _build_ele_category()
+function item_description_dhtml()
 {
-	$name  = 'item_cat_id';
+	$name  = 'item_description';
 	$value = $this->get_row_by_key( $name );
-	return $this->_cat_handler->build_selbox_with_perm_post( $value, $name );
-}
-
-function build_line_item_title()
-{
-	return $this->build_line_ele( 
-		$this->get_constant('ITEM_TITLE'), 
-		$this->_build_ele_title() );
-}
-
-function _build_ele_title( $size=50 )
-{
-	$value = $this->get_row_by_key( 'item_title' );
-	$ele  = $this->build_input_text( 'item_title', $value, $size );
-	$ele .= "<br />\n";
-	$ele .= $this->get_constant('DSC_TITLE_BLANK');
-	return $ele;
-}
-
-function build_line_photo_file( $cont_row )
-{
-	return $this->build_line_ele( 
-		$this->get_constant('CAP_PHOTO_SELECT'), 
-		$this->_build_ele_photo_file( $cont_row ) );
-}
-
-function _build_ele_photo_file( $cont_row )
-{
-	$url  = $this->build_file_url_size( $cont_row ) ;
-
-	$ele  = $this->build_form_file( $this->_PHOTO_FIELD_NAME );
-	$ele .= "<br />\n";
-
-	if ( $url ) {
-		$ele .= $this->build_link_blank( $url );
-	}
-
-	return $ele;
+	return $this->build_form_dhtml( $name, $value );
 }
 
 function build_file_url_size( $file_row )
@@ -300,26 +320,7 @@ function build_file_url_size( $file_row )
 	return $url;
 }
 
-function build_link_blank( $url )
-{
-	if ( empty($url) ) {
-		return '';
-	}
-
-	$url_s = $this->sanitize( $url );
-	$str   = '<a href="'. $url_s .'" target="_blank">'. $url_s .'</a>'."<br />\n";
-	return $str;
-}
-
-function build_photo_delete_button( $name )
-{
-	if ( $this->_has_deletable ) {
-		return $this->build_input_submit( $name, _DELETE );
-	}
-	return null;
-}
-
-function get_item_editor( $flag=true )
+function get_item_editor( $flag )
 {
 	$value = $this->get_row_by_key( 'item_editor' );
 	if ( $flag && empty($value) ) {
@@ -405,20 +406,27 @@ function get_cached_file_row_by_kind( $item_row, $kind )
 //---------------------------------------------------------
 function build_ele_group_perms_by_key( $name )
 {
-	$all_name = $name .'_all';
-	$id_name  = $name .'_ids';
-
-	$groups = $this->get_cached_xoops_db_groups() ;
-	$perms  = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
-	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
-
-	$text  = '';
-	$text .= $this->build_input_checkbox_js_check_all( $all_name, $id_name );
+	$text  = $this->build_group_perms_check_all_by_key( $name );
 	$text .= $this->get_constant('GROUP_PERM_ALL') ;
 	$text .= "<br />\n";
-	$text .= $this->build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes );
-
+	$text .= $this->build_group_perms_checkboxs_by_key( $name );
 	return $text;
+}
+
+function build_group_perms_check_all_by_key( $name )
+{
+	$all_name = $name .'_all';
+	$id_name  = $name .'_ids';
+	return $this->build_input_checkbox_js_check_all( $all_name, $id_name );
+}
+
+function build_group_perms_checkboxs_by_key( $name )
+{
+	$id_name = $name .'_ids';
+	$groups  = $this->get_cached_xoops_db_groups() ;
+	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+	return $this->build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes );
 }
 
 function get_group_perms_array_by_row_name( $row, $name )
@@ -433,49 +441,6 @@ function get_group_perms_array_by_row_name( $row, $name )
 function get_group_perms_array( $val )
 {
 	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
-}
-
-//---------------------------------------------------------
-// java script
-//---------------------------------------------------------
-function build_input_checkbox_js_check_all( $name, $id_name )
-{
-	$onclick = "webphoto_check_all(this, '". $id_name ."')";
-	$extra   = 'onclick="'. $onclick .'"';
-	return $this->build_input_checkbox_yes( $name, 0, $extra );
-}
-
-function build_js_check_all()
-{
-	$text = <<< END_OF_TEXT
-/* edit form */
-function webphoto_check_all(cbox, prefix) 
-{
-	var regexp = new RegExp("^" + prefix );
-	var inputs = document.getElementsByTagName("input");
-	for (i=0; i<inputs.length; i++) {
-		var ele = inputs[i];
-        if (ele.type == "checkbox" && ele.name.match(regexp)) {
-			ele.checked = cbox.checked;
-		}
-	}
-}
-END_OF_TEXT;
-
-	return $text."\n";
-}
-
-function build_js_envelop( $content )
-{
-	$text = <<< END_OF_TEXT
-<script type="text/javascript">
-//<![CDATA[
-$content
-//]]>
-</script>
-END_OF_TEXT;
-
-	return $text."\n";
 }
 
 //---------------------------------------------------------
@@ -521,6 +486,19 @@ function preload_constant()
 }
 
 //---------------------------------------------------------
+// config
+//---------------------------------------------------------
+function get_config_by_name( $name )
+{
+	return $this->_config_class->get_by_name( $name );
+}
+
+function get_config_array()
+{
+	return $this->_config_class->get_config_array();
+}
+
+//---------------------------------------------------------
 // xoops param
 //---------------------------------------------------------
 function build_form_user_select( $sel_name, $sel_value, $none=false )
@@ -548,6 +526,14 @@ function build_form_user_select( $sel_name, $sel_value, $none=false )
 	$text .= "</select>\n";
 	return $text;
 
+}
+
+//---------------------------------------------------------
+// xoops class
+//---------------------------------------------------------
+function xoops_module_name( $format='s' )
+{
+	return $this->_xoops_class->get_my_module_name( $format );
 }
 
 // --- class end ---

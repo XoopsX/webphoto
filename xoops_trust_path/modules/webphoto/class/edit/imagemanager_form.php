@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: imagemanager_form.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// print_form_imagemanager() -> build_form_imagemanager()
 // 2009-01-10 K.OHWADA
 // webphoto_imagemanager_form -> webphoto_edit_imagemanager_form
 //---------------------------------------------------------
@@ -41,36 +43,28 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // imagemanager
 //---------------------------------------------------------
-function print_form_imagemanager( $row, $param )
+function build_form_imagemanager( $row, $param )
+{
+	$arr = array_merge(
+		$this->build_form_param() ,
+		$this->build_form_submit_imagemanager( $row, $param )
+	);
+	return $arr;
+}
+
+function build_form_submit_imagemanager( $row, $param )
 {
 	$has_resize    = $param['has_resize'];
 	$allowed_exts  = $param['allowed_exts'];
 
-	$this->set_row( $row );
-
-	echo $this->build_form_upload( 'uploadphoto', $this->_THIS_URL );
-	echo $this->build_html_token();
-
-	echo $this->build_input_hidden( 'op',           'submit' );
-	echo $this->build_input_hidden( 'fct',          $this->_THIS_IMAGEMANEGER_FCT );
-	echo $this->build_input_hidden( 'fieldCounter', $this->_FILED_COUNTER_1 );
-
-	echo $this->build_input_hidden_max_file_size();
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_PHOTOUPLOAD') );
-
-	echo $this->build_line_maxpixel( $has_resize ) ;
-	echo $this->build_line_maxsize() ;
-	echo $this->build_line_allowed_exts( $allowed_exts ) ;
-	echo $this->build_line_category() ;
-	echo $this->build_line_item_title() ;
-	echo $this->build_line_photo_file( null ) ;
-
-	echo $this->build_line_ele( '', $this->build_input_submit( 'submit', _ADD ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
+	$arr = array(
+		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
+		'ele_maxsize'          => $this->ele_maxsize() ,
+		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,
+		'ele_item_description' => $this->item_description_dhtml() ,
+		'item_cat_id_options'  => $this->item_cat_id_options() ,
+	);
+	return $arr ;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.17 2009/03/20 04:18:09 ohwada Exp $
+// $Id: constants.php,v 1.18 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -331,6 +331,9 @@ define("_C_WEBPHOTO_OPT_PERM_READ_NO_CAT"  , 2 ) ;
 // v1.00
 define("_C_WEBPHOTO_EDITOR_DEFAULT" , "xoopsdhtml" ) ;
 define("_C_WEBPHOTO_EMBED_TYPE_DEFAULT" , "youtube" ) ;
+
+// v1.50
+define("_C_WEBPHOTO_ROTATE_DEFAULT" , "rot0" ) ;
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;

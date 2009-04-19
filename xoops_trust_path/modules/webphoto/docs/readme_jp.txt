@@ -1,11 +1,51 @@
-$Id: readme_jp.txt,v 1.29 2009/04/11 14:23:35 ohwada Exp $
+$Id: readme_jp.txt,v 1.30 2009/04/19 11:39:45 ohwada Exp $
+
+=================================================
+Version: 1.50
+Date:   2009-04-19
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 投稿フォームのカスタマイズ
+(1) テンプレート化
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=924
+
+(2) プラグインの非表示
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=938
+
+(3) 外部リンクのURLの非表示
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=951
+
+2. パンくずリストのテンプレート化
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=939
+
+3. 動作チェッカーにて、必要なファイルが揃ってるかのチェックを追加した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=939
+
+4. バグ対策
+(1) weblinks にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=952
+
+(2) 写真説明文が表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=955
+
+(3) アイテム管理にて fatal error
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.40
 Date:   2009-04-10
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

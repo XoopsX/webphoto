@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.16 2009/04/12 02:49:35 ohwada Exp $
+// $Id: admin.php,v 1.17 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -493,20 +493,26 @@ define("_AM_WEBPHOTO_CAT_CHILD_PERM" , "Change permission of child categories" )
 // v1.00
 //---------------------------------------------------------
 // groupperm
-define( "_AM_WEBPHOTO_GPERM_HTML" , "Use HTML" ) ;
+define("_AM_WEBPHOTO_GPERM_HTML" , "Use HTML" ) ;
 
 //---------------------------------------------------------
 // v1.21
 //---------------------------------------------------------
-define( "_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
-define( "_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
-define( "_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
+define("_AM_WEBPHOTO_RSS_DEBUG" , "RSS Debug View" ) ;
+define("_AM_WEBPHOTO_RSS_CLEAR" , "RSS Cache Clear" ) ;
+define("_AM_WEBPHOTO_RSS_CLEARED" , "Cleared" ) ;
 
 //---------------------------------------------------------
 // v1.40
 //---------------------------------------------------------
-define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
-define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
+define("_AM_WEBPHOTO_TIMELINE_MODULE" , "Timeline Module" ) ;
+define("_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
+
+//---------------------------------------------------------
+// v1.50
+//---------------------------------------------------------
+define("_AM_WEBPHOTO_FILE_CHECK" , "File Valid Check" ) ;
+define("_AM_WEBPHOTO_FILE_CHECK_DSC" , "checks there are necessary files with MD5 hash" ) ;
 
 // === define end ===
 }

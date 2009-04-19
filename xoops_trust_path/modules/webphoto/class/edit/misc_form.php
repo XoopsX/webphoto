@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: misc_form.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// print_form_editor() -> build_form_editor_with_template()
 // 2009-01-10 K.OHWADA
 // webphoto_photo_misc_form -> webphoto_edit_misc_form
 // webphoto_ffmpeg
@@ -54,214 +56,168 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // editor
 //---------------------------------------------------------
-function print_form_editor( $row, $param )
+function build_form_editor_with_template( $item_row, $param )
 {
-	$form_embed    = $this->_post_class->get_post_int('form_embed');
-	$form_playlist = $this->_post_class->get_post_int('form_playlist');
+	$template = 'db:'. $this->_DIRNAME .'_form_editor.html';
 
+	$param_1 = array(
+		'action'        => $param['action'] ,
+		'fct'           => $param['fct'] ,
+		'form_embed'    => $param['form_embed'] ,
+		'form_editor'   => $param['form_editor'] ,
+		'form_playlist' => $param['form_playlist'] ,
+	);
+
+	$arr = array_merge( 
+		$this->build_form_param() ,
+		$this->build_form_editor( $item_row, $param ) ,
+		$this->build_item_row( $item_row ) ,
+		$param_1
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function build_form_editor( $row, $param )
+{
 	$mode    = $param['mode'] ;
 	$options = $param['options'] ;
 
 	switch ($mode)
 	{
 		case 'admin_submit':
-			$url = $this->_MODULE_URL .'/admin/index.php';
-			$fct = 'item_manager';
 			$op  = 'submit_form';
 			break;
 
 		case 'admin_modify':
-			$url = $this->_MODULE_URL .'/admin/index.php';
-			$fct = 'item_manager';
 			$op  = 'modify_form';
 			break;
 
 		case 'user_submit':
 		default:
-			$url = $this->_MODULE_URL .'/index.php';
-			$fct = 'submit';
 			$op  = 'submit_form';
 			break;
 	}
 
 	$this->set_row( $row );
 
-	echo $this->build_form_tag( 'editor', $url );
-	echo $this->build_html_token();
+	$arr = array(
+		'op_editor' => $op ,
+		'item_editor_select_options' => $this->item_editor_select_options( $options ) ,
+	);
 
-	echo $this->build_input_hidden( 'fct',  $fct );
-	echo $this->build_input_hidden( 'op',   $op );
-	echo $this->build_input_hidden( 'form_editor',   1 );
-	echo $this->build_input_hidden( 'form_embed',    $form_embed );
-	echo $this->build_input_hidden( 'form_playlist', $form_playlist );
-
-	echo $this->build_row_hidden( 'item_id' );
-	echo $this->build_row_hidden( 'item_kind' );
-	echo $this->build_row_hidden( 'item_embed_type' );
-	echo $this->build_row_hidden( 'item_playlist_type' );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_EDITOR_SELECT') );
-
-	echo $this->build_line_ele( $this->get_constant('ITEM_EDITOR'), 
-		$this->_build_ele_editor_option( $options ) );
-
-	echo $this->build_line_ele( '', 
-		$this->build_input_submit( 'submit', $this->get_constant('BUTTON_SELECT') ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-	echo "<br />\n";
+	return $arr;
 }
 
-function _build_ele_editor_option( $options )
+function item_editor_select_options( $options )
 {
-	$value = $this->get_item_editor();
-	return $this->build_form_select( 'item_editor', $value, $options, 1 );
+	$value = $this->get_item_editor( true );
+	return $this->build_form_options( $value, $options );
 }
 
 //---------------------------------------------------------
 // embed
 //---------------------------------------------------------
-function print_form_embed( $mode, $row )
+function build_form_embed_with_template( $item_row, $param )
 {
-	$form_editor   = $this->_post_class->get_post_int('form_editor');
-	$form_playlist = $this->_post_class->get_post_int('form_playlist');
+	$template = 'db:'. $this->_DIRNAME .'_form_embed.html';
 
-	switch ($mode)
-	{
-		case 'admin_submit':
-			$url = $this->_MODULE_URL .'/admin/index.php';
-			$fct = 'item_manager';
-			break;
-
-		case 'user_submit':
-		default:
-			$url = $this->_MODULE_URL .'/index.php';
-			$fct = 'submit';
-			break;
-	}
-
-	$this->set_row( $row );
-
-	echo $this->build_form_tag( 'external', $url );
-	echo $this->build_html_token();
-
-	echo $this->build_input_hidden( 'fct',   $fct );
-	echo $this->build_input_hidden( 'op',   'submit_form' );
-	echo $this->build_input_hidden( 'type', 'embed' );
-	echo $this->build_input_hidden( 'form_embed',    1 );
-	echo $this->build_input_hidden( 'form_playlist', $form_playlist );
-	echo $this->build_input_hidden( 'form_editor',   $form_editor );
-
-	echo $this->build_row_hidden( 'item_editor' );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('EMBED_ADD') );
-
-	echo $this->build_line_ele( $this->get_constant('ITEM_EMBED_TYPE'), 
-		$this->_build_ele_embed_type_option() );
-
-	echo $this->build_line_ele( '', 
-		$this->build_input_submit( 'submit', $this->get_constant('BUTTON_SELECT') ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-	echo "<br />\n";
-}
-
-function _build_ele_embed_type_option()
-{
-	$value   = $this->get_item_embed_type( true );
-	$options = $this->_embed_class->build_type_options( $this->_is_module_admin );
-
-	return $this->build_form_select( 'item_embed_type', $value, $options, 1 );
-}
-
-//---------------------------------------------------------
-// delete confirm
-//---------------------------------------------------------
-function print_form_delete_confirm( $mode, $item_id )
-{
-	switch ($mode)
-	{
-		case 'admin':
-			$url = $this->_MODULE_URL .'/admin/index.php';
-			$fct = 'item_manager';
-			break;
-
-		case 'user':
-		default:
-			$url = $this->_MODULE_URL .'/index.php';
-			$fct = 'edit';
-			break;
-	}
-
-	$hiddens = array(
-		'fct'      => $fct ,
-		'op'       => 'delete' ,
-		'item_id'  => $item_id ,
-		'photo_id' => $item_id ,
+	$param_1 = array(
+		'action'        => $param['action'] ,
+		'fct'           => $param['fct'] ,
+		'form_embed'    => $param['form_embed'] ,
+		'form_editor'   => $param['form_editor'] ,
+		'form_playlist' => $param['form_playlist'] ,
 	);
 
-	echo $this->build_form_confirm( 
-		$hiddens, $url, $this->get_constant('CONFIRM_PHOTODEL'), _YES, _NO );
+	$arr = array_merge( 
+		$this->build_form_param() ,
+		$this->build_form_embed( $item_row ) ,
+		$this->build_item_row( $item_row ) ,
+		$param_1
+	);
 
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function build_form_embed( $row )
+{
+	$this->set_row( $row );
+
+	$arr = array(
+		'item_embed_type_select_options' => $this->item_embed_type_select_options() 
+	);
+	return $arr;
+}
+
+function item_embed_type_select_options()
+{ 
+	$value   = $this->get_item_embed_type( true );
+	$options = $this->_embed_class->build_type_options( $this->_is_module_admin );
+	return $this->build_form_options( $value, $options );
 }
 
 //---------------------------------------------------------
 // video thumb
 //---------------------------------------------------------
-function print_form_video_thumb( $mode, $row )
+function build_form_video_thumb_with_template( $row, $param )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_video_thumb.html';
+
+	$param_1 = array(
+		'action'  => $param['action'] ,
+		'fct'     => $param['fct'] ,
+	);
+
+	$arr = array_merge( 
+		$this->build_form_param() ,
+		$this->build_form_video_thumb( $row, false ) ,
+		$this->build_item_row( $row ) ,
+		$param_1
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function build_form_video_thumb( $row, $flag_row )
+{
+	$param = array(
+		'video_thumb_array'    => $this->build_video_thumb_array( $row ) ,
+		'colspan_video_submit' => $this->_VIDEO_THUMB_MAX + 1,
+	);
+
+	if ( $flag_row ) {
+		$arr = array_merge( $param, $this->build_item_row( $row ) );
+	} else {
+		$arr = $param;
+	}
+
+	return $arr;
+}
+
+function build_video_thumb_array( $row )
 {
 	$item_id = $row['item_id'];
 	$ext     = $row['item_ext'];
 
-	switch ($mode)
+	$arr = array();
+	for ( $i = 0; $i <= $this->_VIDEO_THUMB_MAX; $i ++ ) 
 	{
-		case 'admin_submit':
-		case 'admin_modify':
-			$fct = $this->_THIS_ADMIN_FCT ;
-			break;
-
-		case 'edit':
-			$fct = $this->_THIS_EDIT_FCT ;
-			break;
-
-		case 'submit_file':
-			$fct = $this->_THIS_FILE_FCT ;
-			break;
-
-		case 'submit':
-		default:
-			$fct = $this->_THIS_SUBMIT_FCT ;
-			break;
-	}
-
-	$MAX = $this->_VIDEO_THUMB_MAX;
-	$colspan = $MAX + 1 ;
-
-	echo $this->build_form_begin();
-	echo $this->build_input_hidden( 'op',       'video' );
-	echo $this->build_input_hidden( 'fct',      $fct );
-	echo $this->build_input_hidden( 'mode',     $mode );
-	echo $this->build_input_hidden( 'item_id',  $item_id );
-	echo $this->build_input_hidden( 'photo_id', $item_id );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_THUMB_SEL'), $colspan );
-	echo "<tr>\n";
-
-	for ( $i = 0; $i <= $MAX; $i ++ ) 
-	{
+		$src   = null ;
+		$width = 0 ;
 
 // default icon
 		if ( $i == 0 ) {
 			list( $name, $width, $height ) = 
 				$this->_icon_build_class->build_icon_image( $ext );
 			if ( $name ) {
-				$url = $this->_ROOT_EXTS_URL .'/'. $name ;
-				$this->print_form_video_thumb_single( $url, $width, $i );
+				$src = $this->_ROOT_EXTS_URL .'/'. $name ;
 			}
 
 // created thumbs
@@ -272,152 +228,55 @@ function print_form_video_thumb( $mode, $row )
 
 			if ( is_file($file) ) {
 				$name_encode = rawurlencode( $name );
-				$url = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. $name_encode ;
-				$this->print_form_video_thumb_single( $url, $width, $i );
+				$src = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. $name_encode ;
 			}
 		}
+
+		$arr[] =array(
+			'src_s' => $this->sanitize( $src ) ,
+			'width' => $width ,
+			'num'   => $i ,
+		);
 	}
-
-	echo "</tr>\n";
-	echo '<tr><td align="center" class="head" colspan="'. $colspan .'">';
-	echo '<input type="submit" name="submit" value="'.$this->get_constant('BUTTON_SELECT').'" />';
-	echo "</td></tr>\n";
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
-}
-
-function print_form_video_thumb_single( $url, $width, $num )
-{
-	echo '<td align="center" class="odd">';
-	echo '<img src="'. $this->sanitize($url) .'" width="'. $width .'"><br />';
-	echo '<input type="radio" name="num" value="'. $num .'" />';
-	echo "</td>\n";
+	return $arr;
 }
 
 //---------------------------------------------------------
 // redo
 //---------------------------------------------------------
-function print_form_redo( $mode, $item_row, $flash_row )
+function build_form_redo_with_template( $item_row,$flash_row, $param )
 {
-	$item_id = $item_row['item_id'];
+	$template = 'db:'. $this->_DIRNAME .'_form_redo.html';
 
-	switch ($mode)
-	{
-		case 'admin':
-			$fct = $this->_THIS_ADMIN_FCT ;
-			break;
+	$param_1 = array(
+		'action'  => $param['action'] ,
+		'fct'     => $param['fct'] ,
+	);
 
-		case 'edit':
-		default:
-			$fct = $this->_THIS_EDIT_FCT ;
-			break;
-	}
+	$arr = array_merge( 
+		$this->build_form_param() ,
+		$this->build_form_redo( $flash_row ) ,
+		$this->build_item_row( $item_row ) ,
+		$param_1
+	);
 
-	$this->set_row( $item_row );
-
-	echo $this->build_form_begin( 'webphoto_redo' );
-	echo $this->build_input_hidden( 'op',       'redo' );
-	echo $this->build_input_hidden( 'fct',      $fct );
-	echo $this->build_input_hidden( 'item_id',  $item_id );
-	echo $this->build_input_hidden( 'photo_id', $item_id );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_VIDEO_REDO') );
-
-	echo $this->build_line_ele( $this->get_constant('CAP_REDO_FLASH'), 
-		$this->_build_ele_redo_flash( $flash_row ) );
-
-	if ( $this->_cfg_makethumb ) {
-		echo $this->build_line_ele( $this->get_constant('CAP_REDO_THUMB'), 
-			$this->_build_ele_redo_thumb() );
-	}
-
-	echo $this->build_line_ele( '', $this->build_input_submit( 'submit', _EDIT ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
 }
 
-function _build_ele_redo_thumb()
+function build_form_redo( $flash_row )
 {
-	$text  = $this->build_input_checkbox_yes( 'redo_thumb', 1 );
-	$text .= ' '.$this->get_constant('CAP_REDO_THUMB') ;
-	return $text;
+	$arr = array(
+		'flash_url_s' => $this->build_flash_url_s( $flash_row )
+	);
+	return $arr;
 }
 
-function _build_ele_redo_flash( $flash_row )
+function build_flash_url_s( $flash_row )
 {
-	$url = '' ;
-	if ( is_array($flash_row) ) {
-		$url = $flash_row['file_url'] ;
-	}
-
-	$ele  = $this->build_input_checkbox_yes( 'redo_flash', 1 );
-	$ele .= ' ';
-	$ele .= $this->get_constant('CAP_REDO_FLASH') ;
-
-	if ( $url ) {
-		$ele .= "<br />\n";
-		$ele .= $this->build_link_blank( $url );
-		$ele .= $this->build_photo_delete_button( 'flash_delete' );
-	}
-
-	return $ele ;
-}
-
-//---------------------------------------------------------
-// form file
-//---------------------------------------------------------
-function print_form_file( $param )
-{
-	$has_resize    = $param['has_resize'];
-	$allowed_exts  = $param['allowed_exts'];
-
-	echo $this->build_form_begin();
-	echo $this->build_input_hidden( 'fct', $this->_THIS_FILE_FCT );
-	echo $this->build_input_hidden( 'op',  'submit' );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_SUBMIT_FILE') );
-
-	echo $this->build_line_maxpixel( $has_resize ) ;
-
-	echo $this->build_line_ele( $this->get_constant('CAP_MAXSIZE'), 
-		$this->_build_ele_file_maxsize() );
-
-	echo $this->build_line_allowed_exts( $allowed_exts ) ;
-	echo $this->build_line_category() ;
-	echo $this->build_line_item_title() ;
-
-	echo $this->build_row_dhtml( $this->get_constant('ITEM_DESCRIPTION'), 'item_description' );
-
-	echo $this->build_line_ele( $this->get_constant('CAP_FILE_SELECT'), 
-		$this->_build_ele_file_file() );
-
-	echo $this->build_line_add();
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
-}
-
-function _build_ele_file_maxsize()
-{
-	return $this->format_filesize( $this->_cfg_file_size );
-}
-
-function _build_ele_file_file()
-{
-	$options = $this->_utility_class->get_files_in_dir( 
-		$this->_FILE_DIR, null, false, true, true );
-
-	if ( !is_array($options) || !count($options) ) {
-		return '---';
-	}
-	return $this->build_form_select( 'file', null, $options );
+	return $this->sanitize( 
+		$this->build_file_url_size( $flash_row ) );
 }
 
 // --- class end ---

@@ -1,0 +1,37 @@
+<{* $Id: main_submit_file.html,v 1.1 2009/04/19 11:41:45 ohwada Exp $ *}>
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
+<{$xoops_modulename}></a>
+&gt;&gt; 
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit_file" >
+<{$lang_title_submit_file}></a>
+<br /><br />
+
+<{if $message != '' }>
+  <{* color: red;  background-color: lightyellow;  border: gray; *}>
+  <div style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
+  <{$message}>
+  </div><br />
+<{/if}>
+
+<{if $error != '' }>
+  <{* color: red;  background-color: lightyellow;  border: gray; *}>
+  <div style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
+  <{$error}>
+  </div><br />
+<{/if}>
+
+<{if $show_form_file }>
+  <{include file="db:`$mydirname`_form_file.html" }>
+  <br />
+<{/if}>
+
+<{if $show_form_video_thumb }>
+  <{include file="db:`$mydirname`_form_video_thumb.html" }>
+  <br />
+<{/if}>
+
+<{if $is_module_admin }>
+  <br />
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php"><{$lang_goto_admin}></a>
+<{/if}>

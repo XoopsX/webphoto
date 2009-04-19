@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.6 2009/04/11 14:23:34 ohwada Exp $
+// $Id: factory_create.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// BUG : Notice [PHP]: Undefined variable: ret
 // 2009-04-10 K.OHWADA
 // webphoto_edit_small_create
 // 2009-03-15 K.OHWADA
@@ -511,7 +513,8 @@ function create_middle_param( $param )
 //---------------------------------------------------------
 function create_small_param_from_external_icon( $row )
 {
-	$param = $this->_small_create_class->create_small_param_from_external_icon( $row ) ;
+// BUG : Notice [PHP]: Undefined variable: ret
+	$ret = $this->_small_create_class->create_small_param_from_external_icon( $row ) ;
 	$this->_msg_sub_class->set_msg( $this->_small_create_class->get_msg_array() ) ;
 	return $ret ;
 }

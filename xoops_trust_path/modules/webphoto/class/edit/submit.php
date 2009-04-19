@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
+// $Id: submit.php,v 1.8 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -42,6 +42,9 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_cfg_allownoimage ;
 
 // post
+	var $_post_form_embed    = 0;
+	var $_post_form_playlist = 0;
+	var $_post_form_editor   = 0;
 	var $_checkbox_array = array();
 	var $_form_action    = null;
 	var $_post_rotate    = null;
@@ -162,6 +165,10 @@ function create_item_row_default()
 		$row['item_kind'] = $item_kind ;
 	}
 
+	if ( empty( $row['item_editor'] ) ) {
+		$row['item_editor'] = _C_WEBPHOTO_EDITOR_DEFAULT ;
+	}
+
 	return $row ;
 }
 
@@ -176,6 +183,10 @@ function create_item_row_preview()
 		$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_YES );
 	} else {
 		$row['item_datetime'] = $this->get_mysql_date_today();
+	}
+
+	if ( empty( $row['item_editor'] ) ) {
+		$row['item_editor'] = _C_WEBPHOTO_EDITOR_DEFAULT ;
 	}
 
 	return $row;
@@ -298,22 +309,33 @@ function _is_show_form( $name )
 //---------------------------------------------------------
 // submit form
 //---------------------------------------------------------
-function build_form_param( $mode )
+function build_form_common_param( $mode, $action=null, $fct=null )
 {
 	list ( $types, $allowed_exts ) = $this->get_my_allowed_mimes();
 
-	$param = array(
+	$arr = array(
 		'mode'            => $mode,
 		'rotate'          => $this->_post_rotate,
+		'form_embed'      => $this->_post_form_embed ,
+		'form_editor'     => $this->_post_form_editor ,
+		'form_playlist'   => $this->_post_form_playlist ,
 		'preview_name'    => $this->_preview_name,
 		'tag_name_array'  => $this->_tag_name_array,
 		'checkbox_array'  => $this->_checkbox_array,
 		'has_resize'      => $this->_has_image_resize,
 		'has_rotate'      => $this->_has_image_rotate,
 		'allowed_exts'    => $allowed_exts ,
+		'flag_item_row'   => true ,
 	);
 
-	return $param;
+	if ( $action ) {
+		$arr['action'] = $action;
+	}
+	if ( $fct ) {
+		$arr['fct'] = $fct;
+	}
+
+	return $arr;
 }
 
 //---------------------------------------------------------
@@ -757,7 +779,22 @@ function video_thumb( $item_row )
 //---------------------------------------------------------
 // print form video thumb
 //---------------------------------------------------------
-function print_form_video_thumb( $mode, $item_row )
+function build_form_video_thumb( $item_row )
+{
+	$message = null ;
+	if ( $this->has_msg_array() ) {
+		$message = $this->get_format_msg_array( true, false, true ) ;
+	}
+
+	$form_class =& webphoto_edit_misc_form::getInstance(
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$arr = $form_class->build_form_video_thumb( $item_row, true );
+
+	$arr['message'] = $message ;
+	return $arr;
+}
+
+function XXXprint_form_video_thumb( $mode, $item_row )
 {
 	if ( $this->has_msg_array() ) {
 		echo $this->get_format_msg_array() ;
@@ -868,6 +905,17 @@ function set_preview_name( $val )
 function get_preview_name()
 {
 	return $this->_preview_name;
+}
+
+//---------------------------------------------------------
+// form param
+//---------------------------------------------------------
+function edit_form_build_form_param( $action=null, $fct=null )
+{
+	$form_class =& webphoto_edit_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	return $form_class->build_form_param( $action, $fct );
 }
 
 // --- class end ---

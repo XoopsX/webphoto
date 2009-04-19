@@ -1,4 +1,4 @@
-<{* $Id: main_list.html,v 1.3 2009/04/11 14:23:35 ohwada Exp $ *}>
+<{* $Id: main_list.html,v 1.4 2009/04/19 11:39:45 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -90,6 +90,8 @@ function webphoto_timeline_zoom( link, op, unit )
   <a href="javascript:webphoto_box_visible_flip('webphoto_box_catlist', 0)">
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/box_minus.png" width="16" height="16" border="0" alt="minus" />
   <{$lang_catlist_off}></a> <br />
+
+<{* catlist *}>
   <div class="webphoto_categories" >
   <{include file="db:`$mydirname`_inc_catlist.html"}>
   </div>
@@ -100,6 +102,8 @@ function webphoto_timeline_zoom( link, op, unit )
   <a href="javascript:webphoto_box_visible_flip('webphoto_box_catlist', 1)">
   <{$lang_catlist_on}></a>
   </div>
+
+  <br />
 <{/if}>
 
 <{* === timeline === *}>
@@ -174,49 +178,22 @@ function webphoto_timeline_zoom( link, op, unit )
 <{foreach item=list from=$photo_list}>
   <div class="webphoto_list_frame">
 
-<{* --- catpath for category --- *}>
+<{* --- category --- *}>
   <{if $list.show_catpath }>
-    <{assign var="catpath_last" value=$list.catpath.last }>
-    <div class="webphoto_catpath">
-    <{if $use_pathinfo }>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_last.cat_id}>/">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_last.cat_id}>">
-    <{/if}>
-  
-    <{if $catpath_last.imgurl_s != ""}>
-      <{if $catpath_last.cat_sub_width && $catpath_last.cat_sub_height }>
-        <img src="<{$catpath_last.imgurl_s}>" width="<{$catpath_last.cat_sub_width}>" height="<{$catpath_last.cat_sub_height}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
-      <{else}>
-        <img src="<{$catpath_last.imgurl_s}>" width="<{$cat_sub_width}>" border="0" alt="<{$catpath_last.cat_title_s}>" />
-      <{/if}>
-    <{/if}>
-
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" border="0" alt="<{$catpath_last.cat_title_s}>" />
-    </a> 
-
-    <{foreach item=catpath_list from=$list.catpath.list}>
-      <{if $use_pathinfo }>
-        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$catpath_list.cat_id}>/">
-      <{else}>
-        <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$catpath_list.cat_id}>">
-      <{/if}>
-      <span class="webphoto_catpath_title"><{$catpath_list.cat_title_s}></span>
-      </a> : 
-    <{/foreach}>  
-
+    <{assign var="catpath" value=$list.catpath }>
+    <{include file="db:`$mydirname`_inc_catpath.html" }>
     (<{$list.total}>)
-    </div>
 
+<{* photo *}>
     <{if $list.sum > 0 }>
       <{assign var="photo" value=$list.photo }>
       <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
     <{/if}>
 
   <{/if}>
-<{* --- catpath end --- *}>
+<{* --- category end --- *}>
 
-<{* --- title for normal --- *}>
+<{* --- normal ( not category )--- *}>
   <{if $list.title_s != ''}>
     <{if $list.link_s}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/<{$list.link_s}>">
@@ -228,18 +205,17 @@ function webphoto_timeline_zoom( link, op, unit )
 
     (<{$list.total}>) 
 
+<{* photo *}>
     <{if $list.total > 0 }>
       <{assign var="photo" value=$list.photo }>
       <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
     <{/if}>
 
   <{/if}>
-<{* --- title end --- *}>
+<{* --- normal end --- *}>
 
   </div>
 <{/foreach}>
-
-
 
 <hr />
 <div class="webphoto_execution_time">execution time : <{$execution_time}> sec </div>

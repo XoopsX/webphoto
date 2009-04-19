@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.15 2009/04/12 02:49:35 ohwada Exp $
+// $Id: admin.php,v 1.16 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -508,6 +508,12 @@ define( "_AM_WEBPHOTO_RSS_CLEARED" , "クリアした" ) ;
 //---------------------------------------------------------
 define( "_AM_WEBPHOTO_TIMELINE_MODULE" , "タイムライン・モジュール" ) ;
 define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "モジュールはインストールされていない" ) ;
+
+//---------------------------------------------------------
+// v1.50
+//---------------------------------------------------------
+define( "_AM_WEBPHOTO_FILE_CHECK" , "ファイルの妥当性の検査" ) ;
+define( "_AM_WEBPHOTO_FILE_CHECK_DSC" , "必要なファイルがあるか MD5 でチェックする" ) ;
 
 // === define end ===
 }

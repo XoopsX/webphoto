@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.6 2009/02/01 11:02:38 ohwada Exp $
+// $Id: base.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// get_xoops_themecss()
 // 2009-01-25 K.OHWADA
 // get_block_options_by_bid()
 // 2009-01-10 K.OHWADA
@@ -78,6 +80,11 @@ function is_japanese( $str=null )
 		return true;
 	}
 	return false;
+}
+
+function get_xoops_themecss()
+{
+	return getcss( $this->get_config_by_name('theme_set') );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.13 2009/03/20 04:18:09 ohwada Exp $
+// $Id: submit.php,v 1.14 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// _print_form_default() -> _build_form_default()
 // 2009-03-15 K.OHWADA
 // change _preview_new()
 // 2009-01-10 K.OHWADA
@@ -42,6 +44,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_submit extends webphoto_edit_submit
 {
+// preload
+	var $_SHOW_FORM_EMBED  = true;
+	var $_SHOW_FORM_EDITOR = true;
+
 	var $_THIS_FCT = 'submit';
 	var $_THIS_URL = null;
 
@@ -101,29 +107,28 @@ function check_submit()
 	}
 }
 
-function print_form()
+function form_param()
 {
-	echo $this->build_bread_crumb( 
-		$this->get_constant('TITLE_ADDPHOTO'), $this->_THIS_URL );
-
 	switch ( $this->_form_action )
 	{
 		case 'form_video_thumb':
-			$this->_print_form_video();
+			$param = $this->_build_form_video();
 			break;
 
 		case 'form_error':
-			$this->_print_form_error() ;
+			$param = $this->_build_form_error() ;
 			break;
 
 		case 'preview' :
-			$this->_print_form_preview();
+			$param = $this->_build_form_preview();
 			break;
 
 		default:
-			$this->_print_form_default();
+			$param = $this->_build_form_default();
 			break;
 	}
+
+	return $param;
 }
 
 function _get_action()
@@ -269,15 +274,21 @@ function _build_preview_info( $item_row )
 	return array( $item_row, $image_info );
 }
 
-function _print_preview_submit( $item_row, $image_info )
+function _build_preview_submit( $item_row, $image_info )
 {
 	$show_class =& webphoto_show_photo::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$show1 = $show_class->build_photo_show_basic( $item_row, $this->get_tag_name_array() );
-	$show2 = array_merge( $show1, $image_info );
+	$photo = array_merge( 
+		$show_class->build_photo_show_basic( $item_row, $this->get_tag_name_array() ) ,
+		$image_info 
+	);
 
-	echo $this->build_preview_template( $show2 );
+	$arr = array(
+		'photo'           => $photo ,
+		'show_photo_desc' => true 
+	);
+	return $arr;
 }
 
 function _preview_new( $item_row )
@@ -304,69 +315,119 @@ function _preview_no_image()
 }
 
 //---------------------------------------------------------
-// print form
+// get form param
 //---------------------------------------------------------
-function _print_form_video()
-{
-	$this->print_form_video_thumb( 'submit', $this->get_created_row() );
-}
-
-function _print_form_error()
-{
-	$err = $this->get_format_error( $flag_sanitize=false, $flag_highlight=false );
-	echo $this->error_in_box( $err );
-	$this->_print_form_preview() ;
-}
-
-function _print_form_preview()
-{
-	$item_row = $this->create_item_row_preview() ;
-	list( $item_row, $image_info ) =
-		$this->_build_preview_info( $item_row );
-	$this->_print_preview_submit( $item_row, $image_info );
-	$this->_print_form_submit( $item_row );
-}
-
-function _print_form_default()
+function _build_form_default()
 {
 	$item_row = $this->create_item_row_default();
 	$options  = $this->_editor_class->build_list_options( true );
 
-	if ( $this->is_show_form_embed() ) {
-		$this->_print_form_embed( $item_row );
+	$show_form_embed  = false;
+	$show_form_editor = false;
+
+	$param1 = array();
+	$param2 = array();
+
+	if ( $this->_SHOW_FORM_EMBED && $this->is_show_form_embed() ) {
+		$show_form_embed = true;
+		$param1 = $this->_build_form_embed( $item_row );
 	}
 
-	if ( $this->is_show_form_editor_option( $options ) ) {
-		$this->_print_form_editor( $item_row, $options );
+	if ( $this->_SHOW_FORM_EDITOR && $this->is_show_form_editor_option( $options ) ) {
+		$show_form_editor = true;
+		$param2 = $this->_build_form_editor( $item_row, $options );
 	}
 
-	$this->_print_form_submit( $item_row );
+	$param = array(
+		'show_form_embed'  => $show_form_embed ,
+		'show_form_editor' => $show_form_editor ,
+		'show_form_photo'   => true ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_submit_param() ,
+		$this->_build_form_submit( $item_row ),
+		$param, $param1, $param2
+	);
+	return $arr;
 }
 
-function _print_form_submit( $item_row )
+function _build_form_error()
+{
+	$param = array(
+		'error' => $this->get_format_error( true, false ) ,
+	);
+	$arr = array_merge( 
+		$this->_build_form_preview(),
+		$param
+	);
+	return $arr;
+}
+
+function _build_form_preview()
+{
+	$item_row = $this->create_item_row_preview() ;
+	list( $item_row, $image_info ) =
+		$this->_build_preview_info( $item_row );
+
+	$param = array(
+		'show_preview'    => true ,
+		'show_form_photo' => true ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_submit_param() ,
+		$this->_build_preview_submit( $item_row, $image_info ) ,
+		$this->_build_form_submit( $item_row ) ,
+		$param 
+	);
+	return $arr;
+}
+
+function _build_form_submit( $item_row )
 {
 	$form_class =& webphoto_edit_photo_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_common( 
-		$item_row, $this->build_form_param( 'submit' ) );
+	return $form_class->build_form_photo( 
+		$item_row, $this->build_form_common_param( 'submit' ) );
 }
 
-function _print_form_embed( $item_row )
+function _build_form_embed( $item_row )
 {
 	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_embed( 'submit', $item_row );
+	return $form_class->build_form_embed( $item_row );
 }
 
-function _print_form_editor( $item_row, $options )
+function _build_form_editor( $item_row, $options )
 {
 	$form_class =& webphoto_edit_misc_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$param = $this->build_form_param( 'submit' );
+	$param = $this->build_form_common_param( 'submit' );
 	$param['options'] = $options ;
 
-	$form_class->print_form_editor( $item_row, $param );
+	return $form_class->build_form_editor( $item_row, $param );
+}
+
+function _build_form_video_thumb()
+{
+	$param = array(
+		'show_form_video_thumb' => true ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_submit_param() ,
+		$this->build_form_video_thumb( $this->get_created_row() ) ,
+		$param 
+	);
+	return $arr;
+}
+
+function _build_form_submit_param()
+{
+	$action = $this->_MODULE_URL .'/index.php' ;
+	return $this->edit_form_build_form_param( $action, 'submit' );
 }
 
 // --- class end ---

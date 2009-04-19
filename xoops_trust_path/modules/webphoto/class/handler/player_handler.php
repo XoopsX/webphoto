@@ -1,10 +1,16 @@
 <?php
-// $Id: player_handler.php,v 1.1 2008/10/30 00:27:21 ohwada Exp $
+// $Id: player_handler.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-19 K.OHWADA
+// build_row_options()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,6 +22,8 @@ class webphoto_player_handler extends webphoto_lib_handler
 	var $_WIDTH_DEFAULT  = _C_WEBPHOTO_PLAYER_WIDTH_DEFAULT ;
 	var $_HEIGHT_DEFAULT = _C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT ;
 
+	var $_THIS_TITLE_NAME = 'player_title';
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -24,7 +32,7 @@ function webphoto_player_handler( $dirname )
 	$this->webphoto_lib_handler( $dirname );
 	$this->set_table_prefix_dirname( 'player' );
 	$this->set_id_name( 'player_id' );
-	$this->set_title_name( 'player_title' );
+	$this->set_title_name( $this->_THIS_TITLE_NAME );
 
 	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
 	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
@@ -179,6 +187,15 @@ function get_style_options()
 //		'3' => _WEBPHOTO_PLAYER_STYLE_PAGE ,
 	);
 	return $arr;
+}
+
+//---------------------------------------------------------
+// selbox
+//---------------------------------------------------------
+function build_row_options()
+{
+	$rows = $this->get_rows_by_orderby( $this->_THIS_TITLE_NAME );
+	return  $this->build_form_select_options( $rows, $this->_THIS_TITLE_NAME );
 }
 
 // --- class end ---

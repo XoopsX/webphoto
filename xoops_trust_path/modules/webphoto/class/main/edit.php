@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.22 2009/03/20 04:18:09 ohwada Exp $
+// $Id: edit.php,v 1.23 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// _print_form_modify() -> _build_form_modify()
 // 2009-03-15 K.OHWADA
 // small_delete()
 // 2009-01-10 K.OHWADA
@@ -136,29 +138,27 @@ function check_action()
 	return true;
 }
 
-function print_form()
+function form_param()
 {
-	echo $this->_build_bread_crumb_edit();
-
 	switch ( $this->_form_action ) 
 	{
 		case 'form_video_thumb':
-			$this->_print_form_video() ;
+			$param = $this->_build_form_video_thumb() ;
 			break;
 
 		case 'form_error':
-			$this->_print_form_error() ;
+			$param = $this->_build_form_error() ;
 			break;
 
 		case 'confirm':
-			$this->_print_form_confirm();
+			$param = $this->_build_form_confirm();
 			break;
 
 		default:
-			$this->_print_form_modify();
+			$param = $this->_build_form_modify();
 			break;
 	}
-	return true;
+	return $param;
 }
 
 //---------------------------------------------------------
@@ -455,24 +455,8 @@ function _delete_common()
 //---------------------------------------------------------
 // print form modify
 //---------------------------------------------------------
-function _print_form_video()
+function _build_form_modify( $flag_default=true )
 {
-	$this->print_form_video_thumb( 'edit', $this->get_updated_row() );
-}
-
-function _print_form_error()
-{
-	echo $this->error_in_box( $this->get_format_error() );
-	$this->_print_form_modify( $flag_default=false );
-}
-
-function _print_form_modify( $flag_default=true )
-{
-	$edit_form_class =& webphoto_edit_photo_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$misc_form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
 	$item_row = $this->_row_current ;
 
 	if ( $flag_default ) {
@@ -487,56 +471,107 @@ function _print_form_modify( $flag_default=true )
 	$item_id   = $item_row['item_id'] ;
 	$kind      = $item_row['item_kind'] ;
 
-	$this->_print_preview_modify( $item_row );
-
-	if ( $this->_is_module_admin ) {
-		$url = $this->_MODULE_URL .'/admin/index.php?fct=item_manager&amp;op=modify_form&amp;item_id='. $item_id ;
-		echo '<a href="'. $url .'">';
-		echo 'goto admin item manager: '. $item_id ;
-		echo "</a><br /><br />\n";
-	}
-
-	$edit_form_class->print_form_common( 
-		$item_row, $this->build_form_param( 'edit' ) );
+	$show_form_redo = false ;
+	$param1 = array(); 
 
 	if ( $this->is_video_kind( $kind ) ) {
-		$misc_form_class->print_form_redo( 'edit', $item_row, $flash_row );
+		$show_form_redo = true ;
+		$param1 = $this->_build_form_redo( $flash_row );
 	}
 
-	if ( $this->_is_module_admin ) {
-		$url = $this->_MODULE_URL .'/admin/index.php' ;
-		echo "<br />\n";
-		echo '<a href="'. $url .'">';
-		echo $this->get_constant('goto_admin');
-		echo "</a><br />\n";
-	}
+	$param = array(
+		'show_preview'       => true ,
+		'show_admin_manager' => $this->_is_module_admin ,
+		'show_form_photo'    => true ,
+		'show_form_redo'     => $show_form_redo ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_edit_param() ,
+		$this->_build_preview_modify( $item_row ) ,
+		$this->_build_form_photo( $item_row ) ,
+		$param, $param1
+	);
+	return $arr;
 
 }
 
-function _print_preview_modify( $item_row )
+function _build_form_photo( $item_row )
+{
+	$form_class =& webphoto_edit_photo_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$param = $this->build_form_common_param( 'edit' )
+	return $form_class->build_form_photo( $item_row, $param );,
+}
+
+function _build_form_redo( $flash_row )
+{
+	$misc_form_class =& webphoto_edit_misc_form::getInstance( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	return $misc_form_class->build_form_redo( $flash_row );
+}
+
+function _build_preview_modify( $item_row )
 {
 	$show_class =& webphoto_show_photo::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	echo $this->build_preview_template( 
-		$show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) );
+	$arr = array(
+		'photo'           => $show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ,
+		'show_photo_desc' => true 
+	);
+	return $arr;
 }
 
-function _build_bread_crumb_edit()
+function _build_form_video()
 {
-	$item_id = $this->_row_current['item_id'] ;
-
-	return $this->build_bread_crumb( 
-		$this->get_constant('TITLE_EDIT'), 
-		$this->_build_edit_url( $item_id ) );
+	$this->build_form_video_thumb( 'edit', $this->get_updated_row() );
 }
 
-//---------------------------------------------------------
-// print form confirm
-//---------------------------------------------------------
-function _print_form_confirm()
+function _build_form_error()
 {
-	$this->print_form_delete_confirm( 'edit', $this->_row_current ) ;
+	$param = array(
+		'error' => $this->get_format_error( true, false ) ,
+	);
+	$arr = array_merge( 
+		$this->_build_form_modify( false ) ,
+		$param
+	);
+	return $arr;
+}
+
+function _build_form_video_thumb()
+{
+	$param = array(
+		'show_form_video_thumb' => true ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_edit_param() ,
+		$this->build_form_video_thumb( $this->get_updated_row() ) ,
+		$param 
+	);
+	return $arr;
+}
+
+function _build_form_confirm()
+{
+	$param = array(
+		'show_form_confirm' => true ,
+	);
+
+	$arr = array_merge( 
+		$this->_build_form_edit_param() ,
+		$this->build_form_delete_confirm( $this->_row_current ) ,
+		$param 
+	);
+	return $arr;
+}
+
+function _build_form_edit_param()
+{
+	$action = $this->_MODULE_URL .'/index.php' ;
+	return $this->edit_form_build_form_param( $action, 'edit' );
 }
 
 // --- class end ---

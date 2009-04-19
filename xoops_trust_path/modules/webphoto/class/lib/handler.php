@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.6 2009/02/01 09:04:29 ohwada Exp $
+// $Id: handler.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// build_form_select_options()
 // 2009-01-25 K.OHWADA
 // debug_print_backtrace()
 // 2008-12-12 K.OHWADA
@@ -644,10 +646,15 @@ function build_form_selbox( $name='', $value=0, $none=0, $onchange='' )
 
 function build_form_select_list( $rows, $title_name='', $preset_id=0, $none=0, $sel_name='', $onchange='' )
 {
-	if ( empty($title_name) ) {
-		$title_name = $this->_title_name;
-	}
+	$str  = $this->build_form_select_tag( $sel_name, $onchange );
+	$str .= $this->build_form_select_option_none( $none );
+	$str .= $this->build_form_select_options( $rows, $title_name, $preset_id );
+	$str .= "</select>\n";
+	return $str;
+}
 
+function build_form_select_tag( $sel_name='', $onchange='' )
+{
 	if ( empty($sel_name) ) {
 		$sel_name = $this->_id_name;
 	}
@@ -657,41 +664,54 @@ function build_form_select_list( $rows, $title_name='', $preset_id=0, $none=0, $
 		$str .= ' onchange="'. $onchange .'" ';
 	}
 	$str .= ">\n";
+	return $str;
+}
 
+function build_form_select_option_none( $none=0 )
+{
+	$str = '';
 	if ( $none ) {
 		$str .= '<option value="0">';
 		$str .= $this->_NONE_VALUE ;
 		$str .= "</option>\n";
 	}
+	return $str;
+}
 
-// Warning : Invalid argument supplied for foreach() 
-	if ( is_array($rows) && count($rows) ) {
-		foreach ( $rows as $row )
-		{
-			$id     = $row[ $this->_id_name ];
-			$title  = $row[ $title_name ];
-			$prefix = '' ;
-
-			if ( $this->_use_prefix ) {
-				$prefix = $row[ $this->_PREFIX_NAME ] ;
-
-				if ( $prefix ) {
-					$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';
-				}
-			}
-
-			$sel = '';
-			if ( $id == $preset_id ) {
-				$sel = ' selected="selected" ';
-			}
-
-			$str .= '<option value="'. $id .'" '. $sel .'>';
-			$str .= $prefix . $this->sanitize($title);
-			$str .= "</option>\n";
-		}
+function build_form_select_options( $rows, $title_name='', $preset_id=0 )
+{
+	if ( !is_array($rows) || !count($rows) ) {
+		return null;
 	}
 
-	$str .=  "</select>\n";
+	if ( empty($title_name) ) {
+		$title_name = $this->_title_name;
+	}
+
+	$str = '';
+	foreach ( $rows as $row )
+	{
+		$id     = $row[ $this->_id_name ];
+		$title  = $row[ $title_name ];
+		$prefix = '' ;
+
+		if ( $this->_use_prefix ) {
+			$prefix = $row[ $this->_PREFIX_NAME ] ;
+
+			if ( $prefix ) {
+				$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';
+			}
+		}
+
+		$sel = '';
+		if ( $id == $preset_id ) {
+			$sel = ' selected="selected" ';
+		}
+
+		$str .= '<option value="'. $id .'" '. $sel .'>';
+		$str .= $prefix . $this->sanitize($title);
+		$str .= "</option>\n";
+	}
 	return $str;
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.8 2008/12/18 13:23:16 ohwada Exp $
+// $Id: element.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-19 K.OHWADA
+// build_form_option_list()
 // 2008-12-12 K.OHWADA
 // build_form_checkbox_group_perms()
 // 2008-11-16 K.OHWADA
@@ -267,14 +269,8 @@ function build_form_select( $name, $value, $options, $size=5, $extra=null )
 		return null;
 	}
 
-	$text = $this->build_form_select_tag( $name, $name, $size, $extra );
-
-	foreach ( $options as $k => $v )
-	{
-		$selected = $this->build_form_selected( $k, $value );
-		$text .= $this->build_form_option( $k, $v, $selected );
-	}
-
+	$text  = $this->build_form_select_tag( $name, $name, $size, $extra );
+	$text .= $this->build_form_options( $value, $options );
 	$text .= $this->build_form_select_end() ;
 	return $text;
 }
@@ -284,7 +280,6 @@ function build_form_select_multiple( $id, $values, $options, $size=5, $extra_in=
 	if ( !is_array($values) ) {
 		return null;
 	}
-
 	if ( !is_array($options) || !count($options) ) {
 		return null;
 	}
@@ -292,14 +287,8 @@ function build_form_select_multiple( $id, $values, $options, $size=5, $extra_in=
 	$name  = $id.'[]';
 	$extra = 'multiple '.$extra_in;
 
-	$text = $this->build_form_select_tag( $id, $name, $size, $extra );
-
-	foreach ( $options as $k => $v )
-	{
-		$selected = $this->build_form_selected_multi( $values, $k );
-		$text .= $this->build_form_option( $k, $v, $selected );
-	}
-
+	$text  = $this->build_form_select_tag( $id, $name, $size, $extra );
+	$text .= $this->build_form_options_multi( $values, $options );
 	$text .= $this->build_form_select_end() ;
 	return $text;
 }
@@ -314,6 +303,76 @@ function build_form_select_end()
 {
 	$str = '</select>'."\n";
 	return $str;
+}
+
+function build_form_options_multi( $values, $options )
+{
+	if ( !is_array($values) ) {
+		return null;
+	}
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$text = '';
+	$list = $this->build_form_option_list_multi( $values, $options );
+	foreach ( $list as $opt ) {
+		$text .= $this->build_form_option( $opt['value'], $opt['caption'], $opt['selected'] );
+	}
+	return $text;
+}
+
+function build_form_options( $value, $options )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$text = '';
+	$list = $this->build_form_option_list( $value, $options );
+	foreach ( $list as $opt ) {
+		$text .= $this->build_form_option( $opt['value'], $opt['caption'], $opt['selected'] );
+	}
+	return $text;
+}
+
+function build_form_option_list_multi( $values, $options )
+{
+	if ( !is_array($values) ) {
+		return null;
+	}
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$arr = array();
+	foreach ( $options as $k => $v )
+	{
+		$arr[] = array(
+			'value'    => $k,
+			'caption'  => $v,
+			'selected' => $this->build_form_selected_multi( $values, $k ),
+		);
+	}
+	return $arr;
+}
+
+function build_form_option_list( $value, $options )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$arr = array();
+	foreach ( $options as $k => $v )
+	{
+		$arr[] = array(
+			'value'    => $k,
+			'caption'  => $v,
+			'selected' => $this->build_form_selected( $value, $k ),
+		);
+	}
+	return $arr;
 }
 
 function build_form_option( $value, $caption, $selected=null )
@@ -683,6 +742,12 @@ function build_row_radio_yesno( $title, $name )
 	$value = $this->get_row_by_key( $name );
 	$ele   = $this->build_form_radio_yesno( $name, $value );
 	return $this->build_line_ele( $title, $ele );
+}
+
+function build_row_checked( $name, $compare=1 )
+{
+	$val = $this->get_row_by_key( $name, null, false );
+	return $this->build_form_checked( $val, $compare );
 }
 
 function build_line_add()

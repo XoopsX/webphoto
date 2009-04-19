@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
+// $Id: submit.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,9 +8,11 @@
 
 //---------------------------------------------------------
 // change log
-// 2008-01-10 K.OHWADA
+// 2009-04-19 K.OHWADA
+// template_main
+// 2009-01-10 K.OHWADA
 // header_submit.php
-// 2008-01-04 K.OHWADA
+// 2009-01-04 K.OHWADA
 // editor.php
 // 2008-11-08 K.OHWADA
 // imagemagick.php
@@ -45,9 +47,10 @@ $manage =& webphoto_main_submit::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_
 // exit if execute submit
 $manage->check_submit();
 
+$xoopsOption['template_main'] = WEBPHOTO_DIRNAME.'_main_submit.html' ;
 include( XOOPS_ROOT_PATH.'/header.php' ) ;
 
-$manage->print_form();
+$xoopsTpl->assign( $manage->form_param() ) ;
 
 include( XOOPS_ROOT_PATH.'/footer.php' ) ;
 exit();

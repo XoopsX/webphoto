@@ -1,8 +1,9 @@
-<{* $Id: main_photo.html,v 1.15 2009/03/21 08:13:39 ohwada Exp $ *}>
+<{* $Id: main_photo.html,v 1.16 2009/04/19 11:39:45 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
-<b><{$sub_title}> <{$photo.title_s}></b>
+<{include file="db:`$mydirname`_inc_catpath.html" }>
+ &gt; <b><{$photo.title_s}></b>
 <br />
 
 <script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/code.js"></script>
@@ -41,7 +42,8 @@
 <{* === windows js end === *}>
 
 <div class="webphoto_page_title">
-  <{$sub_title}> <{$photo.title_s}>
+  <{include file="db:`$mydirname`_inc_catpath.html" }>
+  &gt; <{$photo.title_s}>
 </div>
 
 <{* === menue === *}>
