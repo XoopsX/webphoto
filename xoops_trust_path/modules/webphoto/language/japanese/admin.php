@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.16 2009/04/19 11:39:45 ohwada Exp $
+// $Id: admin.php,v 1.17 2009/04/19 16:18:28 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -512,7 +512,7 @@ define( "_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "¥â¥¸¥å¡¼¥ë¤Ï¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Æ¤¤¤Ê¤
 // v1.50
 //---------------------------------------------------------
 define( "_AM_WEBPHOTO_FILE_CHECK" , "¥Õ¥¡¥¤¥ë¤ÎÂÅÅöÀ­¤Î¸¡ºº" ) ;
-define( "_AM_WEBPHOTO_FILE_CHECK_DSC" , "É¬Í×¤Ê¥Õ¥¡¥¤¥ë¤¬¤¢¤ë¤« MD5 ¤Ç¥Á¥§¥Ã¥¯¤¹¤ë" ) ;
+define( "_AM_WEBPHOTO_FILE_CHECK_DSC" , "É¬Í×¤Ê¥Õ¥¡¥¤¥ë¤¬¤¢¤ë¤«¥Õ¥¡¥¤¥ë¥µ¥¤¥º¤Ç¥Á¥§¥Ã¥¯¤¹¤ë" ) ;
 
 // === define end ===
 }

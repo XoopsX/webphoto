@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.17 2009/04/19 11:39:45 ohwada Exp $
+// $Id: admin.php,v 1.18 2009/04/19 16:18:28 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -512,7 +512,7 @@ define("_AM_WEBPHOTO_MODULE_NOT_INSTALL" , "Module is not installed" ) ;
 // v1.50
 //---------------------------------------------------------
 define("_AM_WEBPHOTO_FILE_CHECK" , "File Valid Check" ) ;
-define("_AM_WEBPHOTO_FILE_CHECK_DSC" , "checks there are necessary files with MD5 hash" ) ;
+define("_AM_WEBPHOTO_FILE_CHECK_DSC" , "checks there are necessary files with file size" ) ;
 
 // === define end ===
 }
