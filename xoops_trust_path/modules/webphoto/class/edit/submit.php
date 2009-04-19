@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.8 2009/04/19 11:39:45 ohwada Exp $
+// $Id: submit.php,v 1.9 2009/04/19 16:28:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -266,19 +266,10 @@ function is_show_form_embed_playlisy_admin( $item_row )
 
 function is_show_form_editor_option( $options )
 {
-	if ( ! $this->is_show_form_editor() ) {
-		return false ;
+	if ( !is_array($options) || !count($options) ) {
+		return false;
 	}
-	return $this->is_show_form_editor_admin( $options );
-}
-
-function is_show_form_editor_admin( $options )
-{
-// true if options
-	if ( is_array($options) && count($options) ) {
-		return true;
-	}
-	return false;
+	return $this->is_show_form_editor();
 }
 
 function is_show_form_embed()

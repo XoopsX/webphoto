@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.15 2009/04/19 11:39:45 ohwada Exp $
+// $Id: item_manager.php,v 1.16 2009/04/19 16:28:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -695,7 +695,7 @@ function _submit_form()
 		}
 	}
 
-	if ( $this->_SHOW_FORM_ADMIN_EDITOR && $this->is_show_form_editor( $options ) ) {
+	if ( $this->_SHOW_FORM_ADMIN_EDITOR && $this->is_show_form_editor_option( $options ) ) {
 		$this->_print_form_editor( $mode, $item_row, $options );
 	}
 
