@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.19 2009/04/19 11:39:45 ohwada Exp $
+// $Id: index.php,v 1.20 2009/04/19 16:07:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2009-04-19 K.OHWADA
-// webphoto_lib_file_md5
+// webphoto_lib_file_check
 // 2009-04-10 K.OHWADA
 // _print_timeline()
 // 2009-03-15 K.OHWADA
@@ -48,7 +48,7 @@ class webphoto_admin_index extends webphoto_base_this
 	var $_checkconfig_class;
 	var $_update_check_class;
 	var $_workdir_class ;
-	var $_file_md5_class;
+	var $_file_check_class;
 
 	var $_DIR_TRUST_MOD_UPLOADS;
 	var $_FILE_INSTALL ;
@@ -68,7 +68,7 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 		$dirname , $trust_dirname );
 	$this->_workdir_class =& webphoto_inc_workdir::getSingleton( 
 		$dirname, $trust_dirname );
-	$this->_file_md5_class =& webphoto_lib_file_md5::getInstance(
+	$this->_file_check_class =& webphoto_lib_file_check::getInstance(
 		$dirname , $trust_dirname );
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
@@ -110,7 +110,7 @@ function main()
 	$this->_print_check();
 	echo $this->_update_check_class->build_msg();
 	$this->_checkconfig_class->check();
-	$this->_print_check_md5();
+	$this->_print_file_check();
 	$this->_print_timeline();
 	$this->_print_command_url();
 
@@ -222,20 +222,20 @@ function _workdir_file()
 	return true;
 }
 
-function _print_check_md5()
+function _print_file_check()
 {
 	echo "<h4>". _AM_WEBPHOTO_FILE_CHECK ."</h4>\n";
 	echo _AM_WEBPHOTO_FILE_CHECK_DSC ."<br />\n";
 
 	$flag_error = false;
 
-	$msg = $this->_file_md5_class->check_md5( 'trust' );
+	$msg = $this->_file_check_class->check_list( 'trust' );
 	if ( $msg ) {
 		$flag_error = true;
 		echo $this->highlight( $msg );
 	}
 
-	$msg = $this->_file_md5_class->check_md5( 'root' );
+	$msg = $this->_file_check_class->check_list( 'root' );
 	if ( $msg ) {
 		$flag_error = true;
 		echo $this->highlight( $msg );

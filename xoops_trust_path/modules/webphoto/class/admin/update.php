@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.8 2009/04/19 11:39:45 ohwada Exp $
+// $Id: update.php,v 1.9 2009/04/19 16:07:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2009-04-19 K.OHWADA
-// create_md5
+// create_file_check
 // 2009-03-15 K.OHWADA
 // v1.30
 //---------------------------------------------------------
@@ -55,10 +55,10 @@ function main()
 
 	$op = $this->_post_class->get_post_text('op');
 
-	$url_040 = $this->_update_check_class->get_url('040');
-	$url_050 = $this->_update_check_class->get_url('050');
-	$url_130 = $this->_update_check_class->get_url('130');
-	$url_md5 = $this->_MODULE_URL .'/admin/index.php?fct=create_md5' ;
+	$url_040  = $this->_update_check_class->get_url('040');
+	$url_050  = $this->_update_check_class->get_url('050');
+	$url_130  = $this->_update_check_class->get_url('130');
+	$url_file = $this->_MODULE_URL .'/admin/index.php?fct=create_file_list' ;
 
 	echo $this->_update_check_class->build_msg();
 	echo "<br />\n";
@@ -75,8 +75,8 @@ function main()
 	echo "Update v0.30 to v0.40";
 	echo "</a><br /><br />\n";
 
-	echo ' - <a href="'. $url_md5 .'">';
-	echo "Create file md5";
+	echo ' - <a href="'. $url_file .'">';
+	echo "Create file check list";
 	echo "</a><br /><br />\n";
 
 	xoops_cp_footer();

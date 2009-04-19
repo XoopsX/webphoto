@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
+// $Id: index.php,v 1.10 2009/04/19 16:07:42 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2008-04-19 K.OHWADA
-// class/lib/file_md5.php
+// class/lib/file_check.php
 // 2008-04-10 K.OHWADA
 // include/version.php
 // 2008-01-25 K.OHWADA
@@ -42,7 +42,7 @@ webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/dir.php' );
-webphoto_include_once( 'class/lib/file_md5.php' );
+webphoto_include_once( 'class/lib/file_check.php' );
 webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/photo_handler.php' );
 webphoto_include_once( 'class/webphoto/jodconverter.php' );
