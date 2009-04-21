@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
+// $Id: image_cmd.php,v 1.8 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
 // 2009-01-10 K.OHWADA
 // add_icon()
 // 2008-11-08 K.OHWADA
@@ -33,6 +35,8 @@ class webphoto_lib_image_cmd
 	var $_imagemagick_class;
 	var $_netpbm_class;
 
+	var $_ini_safe_mode ;
+
 	var $_cfg_imagingpipe  = 0;		// PIPEID_GD;
 	var $_cfg_forcegd2     = false;
 	var $_cfg_imagickpath  = null;
@@ -54,6 +58,8 @@ class webphoto_lib_image_cmd
 	var $_CODE_SKIPPED    = 3 ;
 	var $_CODE_RESIZE     = 5 ;
 
+	var $_CHMOD_MODE = 0777;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -62,6 +68,8 @@ function webphoto_lib_image_cmd()
 	$this->_gd_class          =& webphoto_lib_gd::getInstance();
 	$this->_imagemagick_class =& webphoto_lib_imagemagick::getInstance();
 	$this->_netpbm_class      =& webphoto_lib_netpbm::getInstance();
+
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getInstance()
@@ -181,7 +189,7 @@ function resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rotate=0
 	$ret = $this->exec_resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rotate );
 
 	if ( $this->_flag_chmod ) {
-		chmod( $dst_file, 0777 );
+		$this->chmod_file( $dst_file, $this->_CHMOD_MODE );
 	}
 
 	return $ret;
@@ -308,6 +316,13 @@ function check_file( $file )
 	}
 	$this->set_msg( 'not exist file : '.$file );
 	return false;
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 //---------------------------------------------------------

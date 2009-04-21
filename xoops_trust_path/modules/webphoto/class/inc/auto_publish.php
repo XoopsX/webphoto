@@ -1,5 +1,5 @@
 <?php
-// $Id: auto_publish.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: auto_publish.php,v 1.5 2009/04/21 15:14:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// Warning: chmod()
+// chmod_file()
 // 2009-01-10 K.OHWADA
 // tmp -> log
 // 2008-12-12 K.OHWADA
@@ -24,9 +27,12 @@ class webphoto_inc_auto_publish extends webphoto_inc_handler
 {
 	var $_table_item ;
 
+	var $_ini_safe_mode ;
+
 	var $_FILE_AUTO_PUBLISH ;
 	var $_TIME_AUTO_PUBLISH = 3600 ; // 1 hour
 	var $_FLAG_AUTO_PUBLISH_CHMOD = true ;
+	var $_CHMOD_MODE = 0777;
 
 //---------------------------------------------------------
 // constructor
@@ -37,6 +43,8 @@ function webphoto_inc_auto_publish( $dirname )
 	$this->init_handler( $dirname );
 
 	$this->_table_item = $this->prefix_dirname( 'item' ) ;
+
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getSingleton( $dirname )
@@ -113,10 +121,18 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 
 // the user can delete this file which apache made.
 	if (( $byte > 0 )&& $flag_chmod ) {
-		chmod( $file, 0777 );
+		$this->chmod_file( $file, $this->_CHMOD_MODE );
 	}
 
 	return $byte;
+}
+
+function chmod_file( $file, $mode )
+{
+// Warning: chmod()
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 //---------------------------------------------------------

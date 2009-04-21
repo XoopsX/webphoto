@@ -1,13 +1,17 @@
 <?php
-// $Id: pdf.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: pdf.php,v 1.5 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
 
+//function chmod_file( $file, $mode )
+
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
 // 2009-01-25 K.OHWADA
 // icon_name in create_image()
 //---------------------------------------------------------
@@ -25,16 +29,19 @@ class webphoto_pdf extends webphoto_lib_error
 	var $_xpdf_class;
 	var $_imagemagick_class;
 
+	var $_ini_safe_mode ;
 	var $_cfg_use_xpdf;
+
 	var $_flag_chmod = true;
 
 	var $_cached = array();
 
 	var $_TMP_DIR;
 
-	var $_PDF_EXT  = 'pdf';
-	var $_JPEG_EXT = 'jpg';
-	var $_TEXT_EXT = 'txt';
+	var $_PDF_EXT    = 'pdf';
+	var $_JPEG_EXT   = 'jpg';
+	var $_TEXT_EXT   = 'txt';
+	var $_CHMOD_MODE = 0777;
 
 //---------------------------------------------------------
 // constructor
@@ -47,6 +54,8 @@ function webphoto_pdf( $dirname )
 	$this->_xpdf_class        =& webphoto_lib_xpdf::getInstance();
 	$this->_imagemagick_class =& webphoto_lib_imagemagick::getInstance();
 	$this->_multibyte_class   =& webphoto_multibyte::getInstance();
+
+	$this->_ini_safe_mode = ini_get('safe_mode');
 
 	$this->_cfg_use_xpdf = $this->_config_class->get_by_name( 'use_xpdf' );
 	$this->_cfg_xpdfpath = $this->_config_class->get_dir_by_name(  'xpdfpath' );
@@ -128,10 +137,17 @@ function create_jpeg( $item_id, $pdf_file )
 	$this->_imagemagick_class->convert( $ppm_file, $jpg_file );
 	unlink( $ppm_file );
 	if ( $this->_flag_chmod ) {
-		chmod( $jpg_file, 0777 );
+		$this->chmod_file( $jpg_file, $this->_CHMOD_MODE );
 	}
 
 	return $jpg_file;
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 //---------------------------------------------------------

@@ -1,10 +1,16 @@
 <?php
-// $Id: jodconverter.php,v 1.5 2009/02/01 13:56:14 ohwada Exp $
+// $Id: jodconverter.php,v 1.6 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -19,6 +25,8 @@ class webphoto_jodconverter extends webphoto_lib_error
 	var $_multibyte_class;
 	var $_utility_class;
 
+	var $_ini_safe_mode ;
+
 	var $_use_jod    = false;
 	var $_java_path  = '';
 	var $_flag_chmod = true;
@@ -27,6 +35,8 @@ class webphoto_jodconverter extends webphoto_lib_error
 	var $_TMP_DIR;
 	var $_TEXT_EXT = 'txt';
 	var $_HTML_EXT = 'html';
+
+	var $_CHMOD_MODE = 0777;
 
 	var $_JUNK_WORDS_ENG = array(
 		'Slide', 'First page', 'Last page', 'Back', 'Continue', 'Graphics', 'Text', 
@@ -148,11 +158,11 @@ function get_text_content_for_xls_ppt( $src_file )
 	$dir     = $this->_TMP_DIR ;
 	$dir_new = $this->_TMP_DIR .'/'. uniqid('d');
 
-// make tmp dir
-	if ( ! ini_get('safe_mode') ) {
+// make tmp dir, if not safe_mode
+	if ( ! $this->_ini_safe_mode ) {
 		mkdir( $dir_new );
 		if ( is_dir($dir_new) ) {
-			chmod( $dir_new, 0777 ) ;
+			chmod( $dir_new, $this->_CHMOD_MODE ) ;
 			$dir = $dir_new ;
 			$flag_dir = true ;
 		}
@@ -252,7 +262,7 @@ function convert_single( $src_file, $dst_file )
 	$ret = $this->_jod_class->convert( $src_file, $dst_file );
 	if ( is_file($dst_file) ) {
 		if ( $this->_flag_chmod ) {
-			chmod( $dst_file, 0777 );
+			$this->chmod_file( $dst_file, $this->_CHMOD_MODE );
 		}
 		return 1 ;	// suceess
 	}
@@ -290,6 +300,11 @@ function str_to_array( $str, $pattern )
 function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false )
 {
 	return $this->_utility_class->get_files_in_dir( $path, $ext, $flag_dir, $flag_sort, $id_as_key );
+}
+
+function chmod_file( $file, $mode )
+{
+	return $this->_utility_class->chmod_file( $file, $mode );
 }
 
 // --- class end ---

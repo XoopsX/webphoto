@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.12 2009/04/11 14:23:34 ohwada Exp $
+// $Id: utility.php,v 1.13 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
 // 2009-04-10 K.OHWADA
 // mysql_datetime_to_unixtime()
 // 2009-01-10 K.OHWADA
@@ -36,6 +38,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_lib_utility
 {
+	var $_ini_safe_mode ;
+
 	var $_MYSQL_FMT_DATE     = 'Y-m-d';
 	var $_MYSQL_FMT_DATETIME = 'Y-m-d H:i:s';
 
@@ -46,6 +50,7 @@ class webphoto_lib_utility
 	var $_ASCII_LOWER_Z = 122;
 
 	var $_C_YES = 1;
+	var $_CHMOD_MODE = 0777;
 
 // base on style sheet of default theme
 	var $_STYLE_ERROR_MSG = 'background-color: #FFCCCC; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ';
@@ -55,7 +60,7 @@ class webphoto_lib_utility
 //---------------------------------------------------------
 function webphoto_lib_utility()
 {
-	// dummy
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getInstance()
@@ -318,7 +323,7 @@ function copy_file( $src, $dst, $flag_chmod=false )
 
 // the user can delete this file which apache made.
 		if ( $ret && $flag_chmod ) {
-			chmod( $dst, 0777 );
+			$this->chmod_file( $dst, $this->_CHMOD_MODE );
 		}
 
 		return $ret;
@@ -377,7 +382,7 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 
 // the user can delete this file which apache made.
 	if (( $byte > 0 )&& $flag_chmod ) {
-		chmod( $file, 0777 );
+		$this->chmod_file( $file, $this->_CHMOD_MODE );
 	}
 
 	return $byte;
@@ -404,6 +409,13 @@ function check_file_time( $file, $interval )
 function renew_file_time( $file, $chmod )
 {
 	$this->write_file( $file, time(), 'w', $chmod );
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 //---------------------------------------------------------

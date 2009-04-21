@@ -1,10 +1,16 @@
 <?php
-// $Id: file_check.php,v 1.1 2009/04/19 16:14:32 ohwada Exp $
+// $Id: file_check.php,v 1.2 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-04-19 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,10 +21,14 @@ class webphoto_lib_file_check
 {
 	var $_dir_class;
 
+	var $_ini_safe_mode ;
+
 	var $_DIRNAME;
 	var $_TRUST_DIRNAME;
 	var $_MODULE_DIR;
 	var $_TRUST_DIR;
+
+	var $_CHMOD_MODE = 0777;
 
 //---------------------------------------------------------
 // constructor
@@ -31,6 +41,8 @@ function webphoto_lib_file_check( $dirname , $trust_dirname )
 	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 
 	$this->_dir_class =& webphoto_lib_dir::getInstance();
+
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -126,10 +138,17 @@ function write_file( $name, $data, $mode='w', $flag_chmod=true )
 
 // the user can delete this file which apache made.
 	if (( $byte > 0 )&& $flag_chmod ) {
-		chmod( $file, 0777 );
+		$this->chmod_file( $file, $this->_CHMOD_MODE );
 	}
 
 	return $byte;
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 function read_file( $name )

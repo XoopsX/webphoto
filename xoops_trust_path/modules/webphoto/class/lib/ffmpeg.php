@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.7 2009/01/25 10:25:27 ohwada Exp $
+// $Id: ffmpeg.php,v 1.8 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
 // 2009-01-10 K.OHWADA
 // version()
 // 2008-08-24 K.OHWADA
@@ -21,6 +23,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_lib_ffmpeg
 {
+	var $_ini_safe_mode ;
+
 // set param
 	var $_CMD_PATH = null;
 	var $_TMP_PATH = null;
@@ -35,7 +39,8 @@ class webphoto_lib_ffmpeg
 	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
 	var $_CMD_CREATE_FLASH  = 'ffmpeg -i %s -vcodec flv %s -f flv %s';
 
-	var $_EXT_FLV = 'flv';
+	var $_EXT_FLV    = 'flv';
+	var $_CHMOD_MODE = 0777;
 
 	var $_DEBUG   = false;
 
@@ -44,7 +49,7 @@ class webphoto_lib_ffmpeg
 //---------------------------------------------------------
 function webphoto_lib_ffmpeg()
 {
-	// dummy
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getInstance()
@@ -182,13 +187,20 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 
 		if ( is_file($file_out) && filesize( $file_out ) ) {
 			if ( $this->_flag_chmod ) {
-				chmod( $file_out, 0777 );
+				$this->chmod_file( $file_out, $this->_CHMOD_MODE );
 			}
 			$count ++;
 		}
 	}
 
 	return $count ;
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 function build_thumb_name( $num )
@@ -224,7 +236,7 @@ function create_flash( $file_in, $file_out, $extra=null )
 
 	if ( is_file($file_out) && filesize( $file_out ) ) {
 		if ( $this->_flag_chmod ) {
-			chmod( $file_out, 0777 );
+			$this->chmod_file( $file_out, $this->_CHMOD_MODE );
 		}
 		return true ;
 	}

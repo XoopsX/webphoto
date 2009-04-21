@@ -1,5 +1,5 @@
 <?php
-// $Id: workdir.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
+// $Id: workdir.php,v 1.6 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+// chmod_file()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-12-05 K.OHWADA
@@ -21,10 +23,14 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_workdir
 {
+	var $_ini_safe_mode ;
+
 	var $_DIRNAME ;
 	var $_TRUST_DIRNAME ;
 	var $_DIR_TRUST_UPLOADS ;
 	var $_FILE_WORKDIR ;
+
+	var $_CHMOD_MODE = 0777;
 
 //---------------------------------------------------------
 // constructor
@@ -38,6 +44,8 @@ function webphoto_inc_workdir( $dirname, $trust_dirname )
 		XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads' ;
 
 	$this->_FILE_WORKDIR = $this->_DIR_TRUST_UPLOADS .'/workdir.txt' ;
+
+	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
 function &getSingleton( $dirname, $trust_dirname )
@@ -147,10 +155,17 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 
 // the user can delete this file which apache made.
 	if (( $byte > 0 )&& $flag_chmod ) {
-		chmod( $file, 0777 );
+		$this->chmod_file( $file, $this->_CHMOD_MODE );
 	}
 
 	return $byte;
+}
+
+function chmod_file( $file, $mode )
+{
+	if ( ! $this->_ini_safe_mode ) {
+		chmod( $file, $mode );
+	}
 }
 
 function get_filename()

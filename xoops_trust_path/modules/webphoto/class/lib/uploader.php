@@ -1,5 +1,5 @@
 <?php
-// $Id: uploader.php,v 1.4 2008/11/20 11:15:46 ohwada Exp $
+// $Id: uploader.php,v 1.5 2009/04/21 15:14:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,6 +15,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2009-04-21 K.OHWADA
+//   chmod_file()
 // 2008-11-16
 //   clear error
 // 2008-11-08
@@ -105,6 +107,9 @@ class webphoto_lib_uploader
 		14 => 'Failed uploading file: ', // mediaName
 	);
 
+// 2009-04-21
+	var $_ini_safe_mode ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -121,7 +126,7 @@ class webphoto_lib_uploader
 	 **/
  	function webphoto_lib_uploader()
 	{
-		// dummy
+		$this->_ini_safe_mode = ini_get('safe_mode');
 	}
 
 // added for webphoto
@@ -482,8 +487,16 @@ class webphoto_lib_uploader
 		if (!move_uploaded_file($this->mediaTmpName, $this->savedDestination)) {
 			return false;
 		}
-		@chmod($this->savedDestination, $chmod);
+		$this->chmod_file( $this->savedDestination, $chmod );
 		return true;
+	}
+
+// 2009-04-21
+	function chmod_file( $file, $mode )
+	{
+		if ( ! $this->_ini_safe_mode ) {
+			chmod( $file, $mode );
+		}
 	}
 
 	/**
