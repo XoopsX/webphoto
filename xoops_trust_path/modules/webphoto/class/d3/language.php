@@ -1,10 +1,16 @@
 <?php
-// $Id: language.php,v 1.1 2008/06/21 12:22:22 ohwada Exp $
+// $Id: language.php,v 1.2 2009/04/27 18:38:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-04-27 K.OHWADA
+// typo
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -90,7 +96,9 @@ function get_constant( $name )
 	$cont_name_1 = $this->_build_constant_name_1( $name );
 	$cont_name_2 = $this->_build_constant_name_2( $name );
 	$cont_name_3 = $this->_build_constant_name_3( $name );
-	$cont_name_4 = $this->_build_constant_name_3( $name );
+
+// typo
+	$cont_name_4 = $this->_build_constant_name_4( $name );
 
 	if ( defined($cont_name_1) ) {
 		return constant($cont_name_1);
