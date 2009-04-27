@@ -1,11 +1,33 @@
-$Id: readme_jp.txt,v 1.30 2009/04/19 11:39:45 ohwada Exp $
+$Id: readme_jp.txt,v 1.31 2009/04/27 18:30:04 ohwada Exp $
+
+=================================================
+Version: 1.51
+Date:   2009-04-27
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ対策
+(1) Warning: chmod()
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=959
+
+(2) カテゴリ管理にて Fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=961
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.50
 Date:   2009-04-19
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

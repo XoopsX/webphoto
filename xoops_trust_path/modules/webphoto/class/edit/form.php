@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.5 2009/04/22 15:25:31 ohwada Exp $
+// $Id: form.php,v 1.6 2009/04/27 18:30:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,9 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-27 K.OHWADA
+// build_script_edit_js()
 // 2009-04-21 K.OHWADA
 // Fatal error: Call to undefined method build_js_envelop()
-// build_form_param()
 // 2009-04-19 K.OHWADA
 // build_form_param()
 // 2009-03-15 K.OHWADA
@@ -95,6 +96,7 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_ICON_ROTATE_URL;
 	var $_ROOT_EXTS_DIR;
 	var $_ROOT_EXTS_URL;
+	var $_LIBS_URL;
 
 	var $_TAGS_SIZE = 80;
 
@@ -166,7 +168,8 @@ function webphoto_edit_form( $dirname , $trust_dirname )
 	$this->_ICON_ROTATE_URL = $this->_MODULE_URL .'/images/uploader';
 	$this->_ROOT_EXTS_URL   = $this->_MODULE_URL .'/images/exts';
 	$this->_ROOT_EXTS_DIR   = $this->_MODULE_DIR .'/images/exts';
-	
+	$this->_LIBS_URL        = $this->_MODULE_URL .'/libs';
+
 	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 }
 
@@ -449,46 +452,29 @@ function get_group_perms_array( $val )
 
 //---------------------------------------------------------
 // java script
+// admin/cat_form.php, mime_form.php
 //---------------------------------------------------------
+function build_script_edit_js()
+{
+	return $this->build_script_js_libs( 'edit.js' ) ;
+}
+
+function build_script_js_libs( $js )
+{
+	return $this->build_script_js( $this->_LIBS_URL .'/'. $js ) ;
+}
+
+function build_script_js( $src )
+{
+	$str = '<script src="'. $src .'" type="text/javascript"></script>'."\n";
+	return $str;
+}
+
 function build_input_checkbox_js_check_all( $name, $id_name )
 {
 	$onclick = "webphoto_check_all(this, '". $id_name ."')";
 	$extra   = 'onclick="'. $onclick .'"';
 	return $this->build_input_checkbox_yes( $name, 0, $extra );
-}
-
-function build_js_check_all()
-{
-	$text = <<< END_OF_TEXT
-/* edit form */
-function webphoto_check_all(cbox, prefix) 
-{
-	var regexp = new RegExp("^" + prefix );
-	var inputs = document.getElementsByTagName("input");
-	for (i=0; i<inputs.length; i++) {
-		var ele = inputs[i];
-        if (ele.type == "checkbox" && ele.name.match(regexp)) {
-			ele.checked = cbox.checked;
-		}
-	}
-}
-END_OF_TEXT;
-
-	return $text."\n";
-}
-
-// Fatal error: Call to undefined method webphoto_admin_cat_form::build_js_envelop() in cat_form.php
-function build_js_envelop( $content )
-{
-	$text = <<< END_OF_TEXT
-<script type="text/javascript">
-//<![CDATA[
-$content
-//]]>
-</script>
-END_OF_TEXT;
-
-	return $text."\n";
 }
 
 //---------------------------------------------------------

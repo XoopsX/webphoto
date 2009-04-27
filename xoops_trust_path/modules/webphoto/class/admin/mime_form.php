@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_form.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mime_form.php,v 1.5 2009/04/27 18:30:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-27 K.OHWADA
+// _build_script() -> build_script_edit_js()
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
 // 2008-12-12 K.OHWADA
@@ -52,13 +54,13 @@ function print_form_mimetype( $row )
 	$this->set_row( $row );
 
 	$mime_id = $row['mime_id'];
- 
+
 	$extra_submit  = 'onclick="this.form.elements.op.value=\'save\'" ';
 	$extra_delete  = 'onclick="this.form.elements.op.value=\'delete\'" ';
 	$extra_cancel  = 'onclick="history.go(-1)" ';
 	$button_cancel = $this->build_input_button( 'cancel', _CANCEL, $extra_cancel );
 
-	echo $this->_build_script();
+	echo $this->build_script_edit_js();
 
 	echo $this->build_form_tag( 'mimetype' );
 	echo $this->build_html_token();

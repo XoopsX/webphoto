@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.7 2009/01/31 19:12:49 ohwada Exp $
+// $Id: cat_form.php,v 1.8 2009/04/27 18:30:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-04-27 K.OHWADA
+// _build_script() -> build_script_edit_js()
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
 // _build_gmap_iframe()
@@ -105,7 +107,7 @@ function print_form( $row, $param )
 
 	$this->set_row( $row );
 
-	echo $this->_build_script();
+	echo $this->build_script_edit_js();
 
 	if ( $cfg_gmap_apikey ) {
 		echo $this->_build_gmap_iframe();
@@ -344,11 +346,6 @@ function _build_ele_perm_child()
 		$str .= _AM_WEBPHOTO_CAT_CHILD_PERM ;
 	}
 	return $str;
-}
-
-function _build_script()
-{
-	return $this->build_js_envelop( $this->build_js_check_all() );
 }
 
 //---------------------------------------------------------

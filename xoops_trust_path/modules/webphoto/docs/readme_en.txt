@@ -1,11 +1,33 @@
-$Id: readme_en.txt,v 1.30 2009/04/19 11:39:45 ohwada Exp $
+$Id: readme_en.txt,v 1.31 2009/04/27 18:30:04 ohwada Exp $
+
+=================================================
+Version: 1.51
+Date:   2009-04-27
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bug fix
+(1) Warning: chmod()
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=959
+
+(2) Fatal error in "category management"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=961
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.50
 Date:   2009-04-19
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
