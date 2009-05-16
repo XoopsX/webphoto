@@ -1,5 +1,5 @@
 <?php
-// $Id: rate.php,v 1.5 2009/04/11 14:23:34 ohwada Exp $
+// $Id: rate.php,v 1.6 2009/05/16 03:21:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-15 K.OHWADA
+// Parse error: syntax error
+// webphoto_page
 // 2008-12-07 K.OHWADA
 // webphoto_rate_check
 // 2008-10-01 K.OHWADA
@@ -25,6 +28,7 @@ class webphoto_main_rate extends webphoto_base_this
 {
 	var $_vote_handler;
 	var $_rate_check_class;
+	var $_page_class;
 
 	var $_photo_id = 0 ;
 	var $_item_row = null ;
@@ -53,8 +57,9 @@ function webphoto_main_rate( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_vote_handler =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
 	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
+	$this->_page_class       =& webphoto_page::getInstance( $dirname , $trust_dirname );
 
 	$this->_RATE_SESSION_NAME = $dirname.'_rate_uri';
 
@@ -224,10 +229,10 @@ function update_rating_by_photoid( $photo_id )
 //---------------------------------------------------------
 function main()
 {
+// Parse error: syntax error
 	$ret = array_merge(
-		$this->get_photo_globals() ,
-		$this->get_lang_array() ,
-		$this->get_photo() ) 
+		$this->_page_class->build_main_param() ,
+		$this->get_photo() 
 	);
 	return $ret;
 }
