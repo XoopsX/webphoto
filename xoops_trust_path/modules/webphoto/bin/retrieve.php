@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.8 2009/01/31 20:15:53 ohwada Exp $
+// $Id: retrieve.php,v 1.9 2009/05/16 00:18:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-15 K.OHWADA
+// Fatal error: Class 'webphoto_edit_small_create' not found 
 // 2008-01-25 K.OHWADA
 // jodconverter.php
 // 2009-01-10 K.OHWADA
@@ -21,6 +23,11 @@
 //---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
+
+//---------------------------------------------------------
+// xoops system files
+//---------------------------------------------------------
+include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 
 //---------------------------------------------------------
 // webphoto files
@@ -128,6 +135,7 @@ webphoto_include_once( 'class/edit/item_build.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/cont_create.php' );
 webphoto_include_once( 'class/edit/middle_thumb_create.php' );
+webphoto_include_once( 'class/edit/small_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );

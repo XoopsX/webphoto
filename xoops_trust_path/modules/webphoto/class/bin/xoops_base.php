@@ -1,10 +1,17 @@
 <?php
-// $Id: xoops_base.php,v 1.1 2008/08/25 19:30:22 ohwada Exp $
+// $Id: xoops_base.php,v 1.2 2009/05/16 00:18:50 ohwada Exp $
+
 
 //=========================================================
 // webphoto module
 // 2008-04-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-05-15 K.OHWADA
+// _include_once_file() -> _include_global_php()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -50,20 +57,40 @@ function _init()
 	$this->_MY_MODULE_ID = $this->get_my_module_id();
 	$this->_LANGUAGE     = $this->get_config_by_name( 'language' );
 
-	$this->_include_once_file( 'global.php' );
+	$this->_include_global_php();
 }
 
-function _include_once_file( $file )
+function _include_global_php()
 {
-	$file_lang  = XOOPS_ROOT_PATH .'/language/'. $this->_LANGUAGE .'/'.$file;
-	$file_eng   = XOOPS_ROOT_PATH .'/language/english/'.                     $file;
+	$file = 'global.php';
 
-	if ( file_exists( $file_lang ) ) {
-		include_once $file_lang;
+	$file_sys_lang  = $this->_build_lang_file( $file, $this->_LANGUAGE );
+	$file_sys_eng   = $this->_build_lang_file( $file, 'english' );
+	$file_mod_lang  = $this->_build_lang_file( $file, $this->_LANGUAGE, 'legacy' );
+	$file_mod_eng   = $this->_build_lang_file( $file, 'english',        'legacy' );
 
-	} elseif ( file_exists( $file_eng ) ) {
-		include_once $file_eng;
+	if ( file_exists( $file_sys_lang ) ) {
+		include_once $file_sys_lang;
+
+	} elseif ( file_exists( $file_sys_eng ) ) {
+		include_once $file_sys_eng;
+
+	} elseif ( file_exists( $file_mod_lang ) ) {
+		include_once $file_mod_lang;
+
+	} elseif ( file_exists( $file_mod_eng ) ) {
+		include_once $file_mod_eng;
 	}
+}
+
+function _build_lang_file( $file, $lang, $module=null )
+{
+	if ( $module ) {
+		$str  = XOOPS_ROOT_PATH .'/modules/'. $module .'/language/'. $lang .'/'. $file;
+	} else {
+		$str  = XOOPS_ROOT_PATH .'/language/'. $lang .'/'. $file;
+	}
+	return $str;
 }
 
 function get_language()
