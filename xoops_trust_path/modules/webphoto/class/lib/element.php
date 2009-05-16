@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
+// $Id: element.php,v 1.10 2009/05/16 00:16:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-15 K.OHWADA
+// typo
 // 2009-04-19 K.OHWADA
 // build_form_option_list()
 // 2008-12-12 K.OHWADA
@@ -813,7 +815,8 @@ function build_input_text( $name, $value, $size=50, $extra=null )
 
 function build_input_text_id( $id, $name, $value, $size=50, $extra=null )
 {
-	$text = '<input tyep="text" id="'. $id .'"  name="'. $name .'" value="'. $value .'" size="'. $size .'" '. $extra .' />'."\n";
+// typo
+	$text = '<input type="text" id="'. $id .'"  name="'. $name .'" value="'. $value .'" size="'. $size .'" '. $extra .' />'."\n";
 	return $text;
 }
 
