@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_list.html,v 1.9 2009/04/11 14:46:56 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_list.html,v 1.10 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -18,7 +18,7 @@
 <{elseif $photo.onclick == 1 }>
   <{if $photo.media_url_s }>
     <a href="<{$photo.media_url_s}>" target="_blank">
-  <{elseif $use_pathinfo }>
+  <{elseif $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
@@ -33,7 +33,7 @@
 
 <{* PHOTO PAGE *}>
 <{else}>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">

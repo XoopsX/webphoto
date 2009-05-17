@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_admin_item.html,v 1.1 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_form_admin_item.html,v 1.2 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -137,6 +137,13 @@
   </select>
   </td></tr>
 <{/if}>
+
+<{* item uid *}>
+<tr><td class="head"><{$lang_submitter}></td><td class="odd">
+<select name="item_uid">
+<{$item_uid_options}>
+</select>
+</td></tr>
 
 <{* item cat id *}>
 <tr><td class="head"><{$lang_category}></td><td class="odd">

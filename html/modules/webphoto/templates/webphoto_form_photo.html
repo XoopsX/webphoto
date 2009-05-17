@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_photo.html,v 1.1 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_form_photo.html,v 1.2 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -16,7 +16,7 @@ function webphoto_gmap_disp_on()
 <{$editor_js}>
 
 <{* === form === *}>
-<form name="webphoto_edit" action="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php" method="post" enctype="multipart/form-data">
+<form name="webphoto_edit" action="<{$action}>" method="post" enctype="multipart/form-data">
 <input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
 <input type="hidden" id="fct" name="fct" value="<{$fct}>" />
 <input type="hidden" id="op" name="op" value="<{$op_edit}>" />
@@ -24,7 +24,7 @@ function webphoto_gmap_disp_on()
 <input type="hidden" id="item_id" name="item_id" value="<{$item_id}>" />
 <input type="hidden" id="photo_id" name="photo_id" value="<{$item_id}>" />
 <input type="hidden" id="preview_name" name="preview_name" value="<{$preview_name}>" />
-<input type="hidden" id="fieldCounter" name="fieldCounter" value="4" />
+<input type="hidden" id="fieldCounter" name="fieldCounter" value="<{$field_counter}>" />
 
 <{if $is_submit }>
   <input type="hidden" id="item_exif" name="item_exif" value="<{$item_exif_s}>" />
@@ -56,12 +56,16 @@ function webphoto_gmap_disp_on()
 <tr align="center"><th colspan="2"><{$lang_title_photoupload}></th></tr>
 
 <{* item id *}>
-<{if $is_module_admin }>
+<{if $is_edit && $is_module_admin }>
   <tr><td class="head" width="20%"><{$lang_item_id}></td><td class="odd"><{$item_id}></td></tr>
 <{/if}>
 
 <tr><td class="head" width="20%"><{$lang_cap_maxpixel}></td><td class="odd"><{$ele_maxpixel}></td></tr>
-<tr><td class="head" width="20%"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
+
+<{if $show_maxsize }>
+  <tr><td class="head" width="20%"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
+<{/if}>
+
 <tr><td class="head" width="20%"><{$lang_cap_allowed_exts}></td><td class="odd"><{$ele_allowed_exts}></td></tr>
 
 <{* item cat id *}>
@@ -133,7 +137,7 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{* file photo *}>
+<{* --- file photo --- *}>
 <{if $show_file_photo }>
   <tr><td class="head" width="20%"><{$lang_cap_photo_select}></td><td class="odd">
   <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_photo" />
@@ -147,7 +151,7 @@ function webphoto_gmap_disp_on()
 <{/if}>
 
 <{if $photo_url_s != '' }>  
-  <a href="<{$photo_url_s}>" target="_blank"><{$photo_url_s}></a><br />
+  <a href="<{$photo_url_s}>" title="photo" target="_blank"><{$photo_url_s}></a><br />
 <{/if}>
 
 <{if $show_file_photo_delete }>
@@ -158,7 +162,7 @@ function webphoto_gmap_disp_on()
 <{/if}>
 
 <{* rotate *}>
-<{if $show_file_photo && $has_rotate }>
+<{if $show_rotate }>
   <tr><td class="head" width="20%"><{$lang_radio_rotatetitle}></td><td class="odd">
   <input type="radio" name="rotate" value="rot0" <{$rotate_checked.rot0}> />
   <{$lang_radio_rotate0}> &nbsp; 
@@ -173,7 +177,52 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{if $is_submit }>
+<{* file *}>
+<{if $show_file_ftp }>
+  <tr><td class="head" width="20%"><{$lang_cap_file_select}></td><td class="odd">
+  <{if $file_select_options != '' }>
+    <select id="file" name="file" size="5">
+    <{$file_select_options}>
+    </select>
+  <{else}>
+    ---
+  <{/if}>
+  </td></tr>
+<{/if}>
+
+<{* file id array *}>
+<{if $show_file_ids }>
+  <{foreach from=$file_id_array item=file_id }>
+    <tr><td class="head" width="20%"><{$lang_cap_photo_select}> <{$file_id}></td><td class="odd">
+    <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_<{$file_id}>" />
+    <input type="file" id="file_<{$file_id}>" name="file_<{$file_id}>" size="50" />
+    </td></tr>
+  <{/foreach}>
+<{/if}>
+
+<{if $show_batch_uid }>
+  <tr><td class="head" width="20%"><{$lang_submitter}></td><td class="odd">
+  <select name="item_uid">
+  <{$item_uid_options}>
+  </select>
+  </td></tr>
+<{/if}>
+
+<{if $show_batch_update }>
+  <tr><td class="head" width="20%"><{$lang_photo_time_update}></td><td class="odd">
+  <input type="text" id="item_time_update_disp" name="item_time_update_disp" value="<{$item_time_update_disp}>" size="50" />
+  </td></tr>
+<{/if}>
+
+<{if $show_batch_dir }>
+  <tr><td class="head" width="20%"><{$lang_text_directory}></td><td class="odd">
+  <{$lang_photopath}> 
+  <input type="text" id="batch_dir" name="batch_dir" value="<{$batch_dir_s}>" size="50" />
+  <br /><{$lang_desc_photopath}>
+  </td></tr>
+<{/if}>
+
+<{if $show_detail_onoff }>
   <tr><td class="head" width="20%"><{$lang_cap_detail}></td><td class="odd">
   <input type="checkbox" id="webphoto_form_detail_onoff" onclick="webphoto_detail_disp_onoff(this)" />
   <{$lang_cap_detail_onoff}></td></tr>
@@ -183,7 +232,7 @@ function webphoto_gmap_disp_on()
 <{* basic table end *}>
 
 <{* === detail div === *}>
-<{if $is_submit }>
+<{if $show_detail_onoff }>
   <div id="webphoto_detail" style="display: none;">
 <{/if}>
 
@@ -239,11 +288,6 @@ function webphoto_gmap_disp_on()
 <input tyep="text" id="item_page_height" name="item_page_height" value="<{$item_page_height}>" size="50" />
 </td></tr>
 
-<{* tags *}>
-<tr><td class="head" width="20%"><{$lang_tags}></td><td class="odd">
-<input tyep="text" id="tags" name="tags" value="<{$tags_val_s}>" size="80" />
-<br /><{$lang_dsc_tag_divid}></td></tr>
-
 <{if $is_edit }>
   <tr><td class="head" width="20%"><{$lang_item_exif}></td><td class="odd">
   <textarea id="item_exif" name="item_exif" rows="5" cols="80"><{$item_exif_s}></textarea>
@@ -253,11 +297,17 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{* thumb file *}>
-<tr><td class="head" width="20%"><{$lang_cap_thumb_select}></td><td class="odd">
-<input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_thumb" />
-<input type="file" id="file_thumb" name="file_thumb" size="50" />
-<br /><br />
+<{* tags *}>
+<tr><td class="head" width="20%"><{$lang_tags}></td><td class="odd">
+<input tyep="text" id="tags" name="tags" value="<{$tags_val_s}>" size="80" />
+<br /><{$lang_dsc_tag_divid}></td></tr>
+
+<{* --- file thumb --- *}>
+<{if $show_file_thumb }>
+  <tr><td class="head" width="20%"><{$lang_cap_thumb_select}></td><td class="odd">
+  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_thumb" />
+  <input type="file" id="file_thumb" name="file_thumb" size="50" />
+  <br /><br />
 
 <{if $show_external_thumb }>
   <{$lang_or}> <{$lang_item_external_thumb}><br />
@@ -281,20 +331,22 @@ function webphoto_gmap_disp_on()
 <{/if}>
 
 <{if $thumb_url_s != '' }>  
-  <a href="<{$thumb_url_s}>" target="_blank"><{$thumb_url_s}></a><br />
+  <a href="<{$thumb_url_s}>" title="thumb" target="_blank"><{$thumb_url_s}></a><br />
 <{/if}>
 
 <{if $show_file_thumb_delete }>
   <input type="submit" id="file_thumb_delete" name="file_thumb_delete" value="<{$lang_delete}>" />
 <{/if}>
 
-</td></tr>
+  </td></tr>
+<{/if}>
 
-<{* middle file *}>
-<tr><td class="head" width="20%"><{$lang_cap_middle_select}></td><td class="odd">
-<input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_middle" />
-<input type="file" id="file_middle" name="file_middle" size="50" />
-<br /><br />
+<{* --- file middle --- *}>
+<{if $show_file_middle }>
+  <tr><td class="head" width="20%"><{$lang_cap_middle_select}></td><td class="odd">
+  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_middle" />
+  <input type="file" id="file_middle" name="file_middle" size="50" />
+ <br /><br />
 
 <{if $show_external_middle }>
   <{$lang_or}> <{$lang_item_external_middle}><br />
@@ -307,16 +359,18 @@ function webphoto_gmap_disp_on()
 <{/if}>
 
 <{if $middle_url_s != '' }>  
-  <a href="<{$middle_url_s}>" target="_blank"><{$middle_url_s}></a><br />
+  <a href="<{$middle_url_s}>" title="middle" target="_blank"><{$middle_url_s}></a><br />
 <{/if}>
 
 <{if $show_file_middle_delete }>
   <input type="submit" id="file_middle_delete" name="file_middle_delete" value="<{$lang_delete}>" />
 <{/if}>
 
-</td></tr>
+  </td></tr>
+<{/if}>
 
-<{* small file *}>
+<{* --- file small --- *}>
+<{if $show_file_small }>
 <tr><td class="head" width="20%"><{$lang_cap_small_select}></td><td class="odd">
 <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_small" />
 <input type="file" id="file_small" name="file_small" size="50" />
@@ -327,14 +381,15 @@ function webphoto_gmap_disp_on()
 <{/if}>
 
 <{if $small_url_s != '' }>  
-  <a href="<{$small_url_s}>" target="_blank"><{$small_url_s}></a><br />
+  <a href="<{$small_url_s}>" title="small" target="_blank"><{$small_url_s}></a><br />
 <{/if}>
 
 <{if $show_file_small_delete }>
   <input type="submit" id="file_small_delete" name="file_small_delete" value="<{$lang_delete}>" />
 <{/if}>
 
-</td></tr>
+  </td></tr>
+<{/if}>
 
 <{* item file others *}>
 <{foreach item=item_file from=$item_file_array}>
@@ -388,7 +443,7 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{if $show_gmap && $is_submit }>
+<{if $show_gmap_onoff }>
   <tr><td class="head" width="20%">google map</td><td class="odd">
   <input type="checkbox" id="webphoto_form_gmap_onoff" checked="checked" onclick="webphoto_gmap_disp_onoff(this)" />
   <{$lang_cap_detail_onoff}></td></tr>
@@ -402,7 +457,7 @@ function webphoto_gmap_disp_on()
   <table class="outer" cellpadding="4" cellspacing="1" width="100%">
   <tr><td style="background-color:#ffffff;"><{* white *}>
 
-<{if $is_submit }>
+<{if $show_gmap_onoff }>
   <div id="webphoto_gmap_iframe"></div>
 <{/if}>
 
@@ -418,7 +473,7 @@ function webphoto_gmap_disp_on()
 <{/if}>
 <{* gmap table end *}>
 
-<{if $is_submit }>
+<{if $show_detail_onoff }>
   </div>
 <{/if}>
 <{* detail div end *}>
@@ -426,16 +481,16 @@ function webphoto_gmap_disp_on()
 <{* === submit table === *}>
 <table class="outer" cellpadding="4" cellspacing="1" width="100%">
 <tr><td class="head" width="20%"></td><td class="head">
-<input type="submit" id="submit" name="submit" value="<{$value_submit}>" />
+<input type="submit" id="webphoto_photo_submit" name="submit" value="<{$value_submit}>" />
 
-<{if $is_submit }>
-  <input type="submit" id="preview" name="preview" value="<{$lang_preview}>" />
+<{if $show_button_preview }>
+  <input type="submit" id="webphoto_photo_preview" name="preview" value="<{$lang_preview}>" />
 <{/if}>
 
-<input type="reset" id="reset" name="reset" value="<{$lang_cancel}>" />
+<input type="reset" id="webphoto_photo_reset" name="reset" value="<{$lang_cancel}>" />
 
-<{if $is_edit && $has_deletable }>
-  <input type="submit" id="conf_delete" name="conf_delete" value="<{$lang_delete}>" />
+<{if $show_button_delete }>
+  <input type="submit" id="webphoto_photo_conf_delete" name="conf_delete" value="<{$lang_delete}>" />
 <{/if}>
 
 </td></tr>

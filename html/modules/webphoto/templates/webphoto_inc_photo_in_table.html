@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_table.html,v 1.10 2009/04/11 14:46:56 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_table.html,v 1.11 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <{* IMAGE PART *}>
 <div class="webphoto_table_image">
@@ -15,7 +15,7 @@
 <{elseif $photo.onclick == 1 }>
   <{if $photo.media_url_s }>
     <a href="<{$photo.media_url_s}>" target="_blank">
-  <{elseif $use_pathinfo }>
+  <{elseif $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
@@ -30,7 +30,7 @@
 
 <{* PHOTO PAGE *}>
 <{else}>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
@@ -54,7 +54,7 @@
 <{* PHOTO"S SUBJECT *}>
 <a name="<{$photo.photo_id}>"></a>
 
-<{if $use_pathinfo }>
+<{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
 <{else}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
@@ -68,7 +68,7 @@
 <{* SUBMITTER *}>
 <{* user *}>
 <{if $photo.uid > 0}>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/<{$photo.uid}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user&amp;p=<{$photo.uid}>">
@@ -85,7 +85,7 @@
 
 <{* DATE *}>
 <{if $photo.datetime_disp != '' }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/<{$photo.datetime_disp}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date&amp;p=<{$photo.datetime_disp}>">
@@ -97,7 +97,7 @@
 
 <{* PLACE *}>
 <{if $photo.place_s != '' }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/<{$photo.place_urlencode}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place&amp;p=<{$photo.place_urlencode}>">

@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_list.html,v 1.4 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_main_list.html,v 1.5 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -115,7 +115,7 @@ function webphoto_timeline_zoom( link, op, unit )
 
   <{if $show_timeline_large }>
     <div class="webphoto_timeline_navi">
-    <{if $use_pathinfo }>
+    <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">

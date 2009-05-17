@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_confirm.html,v 1.1 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_form_confirm.html,v 1.2 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <h4><{$lang_title_photodel}></h4>
 <b><{$item_title_s}><b/><br />
@@ -24,8 +24,8 @@
 <input type="hidden" id="op" name="op" value="delete" />
 <input type="hidden" id="item_id" name="item_id" value="<{$item_id}>" />
 <input type="hidden" id="photo_id" name="photo_id" value="<{$item_id}>" />
-<input type="submit" id="confirm_submit" name="confirm_submit" value="<{$lang_yes}>" />
+<input type="submit" id="webphoto_confirm_submit" name="confirm_submit" value="<{$lang_yes}>" />
  &nbsp; 
-<input type="button" id="confirm_cancel" name="confirm_cancel" value="<{$lang_no}>" onclick="javascript:history.go(-1);" />
+<input type="button" id="webphoto_confirm_cancel" name="confirm_cancel" value="<{$lang_no}>" onclick="javascript:history.go(-1);" />
 </form>
 </div>

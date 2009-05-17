@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_index.html,v 1.12 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_main_index.html,v 1.13 2009/05/17 09:21:57 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -370,6 +370,7 @@ function webphoto_timeline_zoom( link, op, unit )
   <{/if}>
 
     <{foreach name=webphoto_list item=photo from=$photos}>
+      <{assign var="webphoto_list_num" value=$smarty.foreach.webphoto_list.iteration }>
       <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
     <{/foreach}>
   </div>
