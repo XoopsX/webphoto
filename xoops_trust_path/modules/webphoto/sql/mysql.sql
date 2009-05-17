@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.14 2009/01/24 07:10:39 ohwada Exp $
+# $Id: mysql.sql,v 1.15 2009/05/17 09:30:42 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-05-05 K.OHWADA
+# video/avi
 # 2009-01-10 K.OHWADA
 # item_content
 # 2009-01-04 K.OHWADA
@@ -563,7 +565,7 @@ INSERT INTO gicon VALUES (10, 0, 0, 'yellow 18x28', '/modules/{DIRNAME}/images/m
 INSERT INTO mime VALUES (1, 0, 0, '3g2', 'video', 'video/3gpp2', 'Third Generation Partnership Project 2 File Format', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (2, 0, 0, '3gp', 'video', 'video/3gpp', 'Third Generation Partnership Project File Format', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (3, 0, 0, 'asf', 'video', 'video/x-ms-asf', 'Advanced Systems Format', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (4, 0, 0, 'avi', 'video', 'video/x-msvideo', 'Audio Video Interleave File', '&1&', '-ar 44100');
+INSERT INTO mime VALUES (4, 0, 0, 'avi', 'video', 'video/x-msvideo video/avi', 'Audio Video Interleave File', '&1&', '-ar 44100');
 INSERT INTO mime VALUES (5, 0, 0, 'bmp','image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '');
 INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '');
 INSERT INTO mime VALUES (7, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100');
