@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.1 2009/03/07 07:34:24 ohwada Exp $
+// $Id: main.php,v 1.2 2009/05/17 08:24:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -16,48 +16,48 @@ define("_MB_WEBPHOTO_LANG_LOADED" , 1 ) ;
 // base on myalbum
 //=========================================================
 
-define("_WEBPHOTO_CATEGORY","Cat�gorie");
-define("_WEBPHOTO_SUBMITTER","Participant");
-define("_WEBPHOTO_NOMATCH_PHOTO","Aucune photo correspondant � votre demande");
+define("_WEBPHOTO_CATEGORY","Catégorie");
+define("_WEBPHOTO_SUBMITTER","Proposé par");
+define("_WEBPHOTO_NOMATCH_PHOTO","Aucune photo ne correspond à votre recherche");
 
 define("_WEBPHOTO_ICON_NEW","Nouveau");
-define("_WEBPHOTO_ICON_UPDATE","Mise � jour");
-define("_WEBPHOTO_ICON_POPULAR","Popularit�");
-define("_WEBPHOTO_ICON_LASTUPDATE","Derni�re mise � jour");
-define("_WEBPHOTO_ICON_HITS","Classement");
+define("_WEBPHOTO_ICON_UPDATE","Mise à jour");
+define("_WEBPHOTO_ICON_POPULAR","Populaire");
+define("_WEBPHOTO_ICON_LASTUPDATE","Dernière mise à jour");
+define("_WEBPHOTO_ICON_HITS","Affichages");
 define("_WEBPHOTO_ICON_COMMENTS","Commentaires");
 
-define("_WEBPHOTO_SORT_IDA","Record Number (Du plus petit ID au plus grand)");
-define("_WEBPHOTO_SORT_IDD","Record Number (Du plus grand ID au plus petit)");
-define("_WEBPHOTO_SORT_HITSA","Popularit� (Du moins au plus populaire)");
-define("_WEBPHOTO_SORT_HITSD","Popularit� (Du plus au moins populaire)");
-define("_WEBPHOTO_SORT_TITLEA","Titre (A � Z)");
-define("_WEBPHOTO_SORT_TITLED","Titre (Z � A))");
-define("_WEBPHOTO_SORT_DATEA","Date de mise � jour (La plus ancienne photo en premier)");
-define("_WEBPHOTO_SORT_DATED","Date de mise � jour (La plus r�cente photo en premier)");
-define("_WEBPHOTO_SORT_RATINGA","Evaluation (de la plus basse � la plus haute note)");
-define("_WEBPHOTO_SORT_RATINGD","Evaluation (de la plus haute � la plus basse note)");
-define("_WEBPHOTO_SORT_RANDOM","Al�atoire");
+define("_WEBPHOTO_SORT_IDA","Numéro d'enregistrement (classement par ID croissant)");
+define("_WEBPHOTO_SORT_IDD","Numéro d'enregistrement (classement par ID décroissant)");
+define("_WEBPHOTO_SORT_HITSA","Popularité (ordre croissant)");
+define("_WEBPHOTO_SORT_HITSD","Popularité (ordre décroissant)");
+define("_WEBPHOTO_SORT_TITLEA","Titre (ordre alphabétique)");
+define("_WEBPHOTO_SORT_TITLED","Titre (odre ante alhabétique))");
+define("_WEBPHOTO_SORT_DATEA","Date de mise à jour (ordre chronologique)");
+define("_WEBPHOTO_SORT_DATED","Date de mise à jour (ordre ante chronologique)");
+define("_WEBPHOTO_SORT_RATINGA","Note (des plus basses aux plus hautes)");
+define("_WEBPHOTO_SORT_RATINGD","Note (des plus hautes aux plus basses)");
+define("_WEBPHOTO_SORT_RANDOM","Au hasard");
 
-define("_WEBPHOTO_SORT_SORTBY","Trier par:");
+define("_WEBPHOTO_SORT_SORTBY","Trié par :");
 define("_WEBPHOTO_SORT_TITLE","Titre");
-define("_WEBPHOTO_SORT_DATE","Date de mise � jour");
-define("_WEBPHOTO_SORT_HITS","Popularit�");
-define("_WEBPHOTO_SORT_RATING","Evaluation");
-define("_WEBPHOTO_SORT_S_CURSORTEDBY","Les photos sont actuellement tri�s par: %s");
+define("_WEBPHOTO_SORT_DATE","Date de mise à jour");
+define("_WEBPHOTO_SORT_HITS","Popularité");
+define("_WEBPHOTO_SORT_RATING","Note");
+define("_WEBPHOTO_SORT_S_CURSORTEDBY","Elements actuellement classés par : %s");
 
-define("_WEBPHOTO_NAVI_PREVIOUS","Pr�c�dent");
-define("_WEBPHOTO_NAVI_NEXT","Suivante");
-define("_WEBPHOTO_S_NAVINFO" , "Photo N�. %s - %s (de %s photos populaire)" ) ;
-define("_WEBPHOTO_S_THEREARE","Il y a <b>%s</b> Images dans notre base de donn�es.");
+define("_WEBPHOTO_NAVI_PREVIOUS","Précédent");
+define("_WEBPHOTO_NAVI_NEXT","Suivant");
+define("_WEBPHOTO_S_NAVINFO" , "Photo No. %s - %s (de %s affichages)" ) ;
+define("_WEBPHOTO_S_THEREARE","Il y a actuellement <b>%s</b> images dans notre base de données.");
 define("_WEBPHOTO_S_MOREPHOTOS","Plus de photos de %s");
 define("_WEBPHOTO_ONEVOTE","1 vote");
 define("_WEBPHOTO_S_NUMVOTES","%s votes");
-define("_WEBPHOTO_ONEPOST","1 message");
-define("_WEBPHOTO_S_NUMPOSTS","%s messages");
-define("_WEBPHOTO_VOTETHIS","Vote this");
-define("_WEBPHOTO_TELLAFRIEND","Envoyer � un contact");
-define("_WEBPHOTO_SUBJECT4TAF","Une photo pour vous");
+define("_WEBPHOTO_ONEPOST","1 commentaire");
+define("_WEBPHOTO_S_NUMPOSTS","%s commentaires");
+define("_WEBPHOTO_VOTETHIS","Voter");
+define("_WEBPHOTO_TELLAFRIEND","En parler à un(e) ami(e)");
+define("_WEBPHOTO_SUBJECT4TAF","Une photo pour vous !");
 
 
 //---------------------------------------------------------
@@ -68,52 +68,53 @@ define("_WEBPHOTO_DTFMT_YMDHI" , "d M Y H:i" ) ;
 
 define("_WEBPHOTO_TITLE_ADDPHOTO","Ajouter une photo");
 define("_WEBPHOTO_TITLE_PHOTOUPLOAD","Envoyer une photo");
-define("_WEBPHOTO_CAP_MAXPIXEL","Nombre maximum de pixel");
-define("_WEBPHOTO_CAP_MAXSIZE","Taille maximun du fichier (byte)");
+define("_WEBPHOTO_CAP_MAXPIXEL","Taille maximale (pixels)");
+define("_WEBPHOTO_CAP_MAXSIZE","Poids maximal (bytes)");
 define("_WEBPHOTO_CAP_VALIDPHOTO","Valider");
-define("_WEBPHOTO_DSC_TITLE_BLANK","Laissez le titre vide pour utiliser le nom du fichier comme titre");
+define("_WEBPHOTO_DSC_TITLE_BLANK","Laisser le champ vide pour utiliser le nom du fichier en tant que titre");
 
 define("_WEBPHOTO_RADIO_ROTATETITLE" , "Rotation de l'image" ) ;
-define("_WEBPHOTO_RADIO_ROTATE0" , "Reste fixe" ) ;
-define("_WEBPHOTO_RADIO_ROTATE90" , "tourner � droite" ) ;
-define("_WEBPHOTO_RADIO_ROTATE180" , "tourner � 180 degr�" ) ;
-define("_WEBPHOTO_RADIO_ROTATE270" , "tourner � gauche" ) ;
+define("_WEBPHOTO_RADIO_ROTATE0" , "Ne pas pivoter" ) ;
+define("_WEBPHOTO_RADIO_ROTATE90" , "90° vers la droite" ) ;
+define("_WEBPHOTO_RADIO_ROTATE180" , "180°" ) ;
+define("_WEBPHOTO_RADIO_ROTATE270" , "90° vers la gauche" ) ;
 
-define("_WEBPHOTO_SUBMIT_RECEIVED","Nous avons re�u votre photo. Merci de votre participation!");
-define("_WEBPHOTO_SUBMIT_ALLPENDING","Toutes les photos sont affich�es en attente de v�rification.");
+define("_WEBPHOTO_SUBMIT_RECEIVED","Nous avons reçu votre image. Merci !");
+define("_WEBPHOTO_SUBMIT_ALLPENDING","Toutes les photos proposées sont vérifiées avant publication.");
 
-define("_WEBPHOTO_ERR_MUSTREGFIRST","D�sol�, vous n'avez pas la permission d'effectuer cette action.<br /> vous devez vous inscrire d'abord!");
-define("_WEBPHOTO_ERR_MUSTADDCATFIRST","D�sol�, il n'y a pas de cat�gories d'ajouter pour le moment.<br /> vous devez en cr�er une d'abord!");
-define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","Aucune photo n'a �t� t�l�charg�");
-define("_WEBPHOTO_ERR_FILE","Les photos sont trop volumineuses ou il y a un probl�me avec la configuration");
-define("_WEBPHOTO_ERR_FILEREAD","Le format photos n'est pas lisible.");
+define("_WEBPHOTO_ERR_MUSTREGFIRST","Désolé, vous ne disposez pas des permissions requises pour effactuer cette action.<br />Veuillez vous identifier ou vous créer un compte.");
+define("_WEBPHOTO_ERR_MUSTADDCATFIRST","Désolé, aucune Catégorie n'est disponible.<br />Veuillez créer d'abord créer une Catégorie");
+define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","Aucune photo n'a été téléversée");
+define("_WEBPHOTO_ERR_FILE","Les photos sont trop volumineuses ou un problème de configuration est survenu");
+define("_WEBPHOTO_ERR_FILEREAD","Les photos ne peuvent pas être atteintes.");
 define("_WEBPHOTO_ERR_TITLE","Vous devez entrer un 'Titre' ");
 
 
 //---------------------------------------------------------
 // edit
 //---------------------------------------------------------
-define("_WEBPHOTO_TITLE_EDIT","Modifier photo");
-define("_WEBPHOTO_TITLE_PHOTODEL","Supprimer la photo");
-define("_WEBPHOTO_CONFIRM_PHOTODEL","Voulez-vous vraiment supprimer la photo?");
-define("_WEBPHOTO_DBUPDATED","Base de donn�es mis � jour avec succ�s!");
-define("_WEBPHOTO_DELETED","Supprim�!");
+define("_WEBPHOTO_TITLE_EDIT","Modifier une photo");
+define("_WEBPHOTO_TITLE_PHOTODEL","Supprimer une photo");
+define("_WEBPHOTO_CONFIRM_PHOTODEL","Supprimer la photo ?");
+define("_WEBPHOTO_DBUPDATED","Mise à jour de la Base de données effectuée avec succès !");
+define("_WEBPHOTO_DELETED","Supprimée !");
 
 
 //---------------------------------------------------------
 // rate
 //---------------------------------------------------------
-define("_WEBPHOTO_RATE_VOTEONCE","Ne voter pas plusieurs fois pour la m�me ressource.");
-define("_WEBPHOTO_RATE_RATINGSCALE","L'�chelle est 1 - 10, avec 1 �tant faible et 10 �tant excellent.");
-define("_WEBPHOTO_RATE_BEOBJECTIVE","Soyez objectif, les notes 1 et 10 doivent �tre exceptionnelles.");
-define("_WEBPHOTO_RATE_DONOTVOTE","Ne votez pas pour vos propres ressources.");
-define("_WEBPHOTO_RATE_IT","A voter!");
-define("_WEBPHOTO_RATE_VOTEAPPRE","Votre vote est appr�ci�e.");
-define("_WEBPHOTO_RATE_S_THANKURATE","Merci de prendre le temps de noter cette photo %s.");
+define("_WEBPHOTO_RATE_VOTEONCE","Merci de ne pas voter pour une même ressource plus d'une fois.");
+define("_WEBPHOTO_RATE_RATINGSCALE","L'échelle de notation va de 01 à 10, 10 étant la meilleure évaluation possible.");
+define("_WEBPHOTO_RATE_BEOBJECTIVE","Afin de préserver la pertinence des classements, merci d'être objectif");
+define("_WEBPHOTO_RATE_DONOTVOTE","Veuillez ne pas voter pour vos propres ressources.");
+define("_WEBPHOTO_RATE_IT","Noter");
+define("_WEBPHOTO_RATE_VOTEAPPRE","Votre note est enregistrée");
+define("_WEBPHOTO_RATE_S_THANKURATE","Merci d'avoir pris quelques instants pour évaluer cette ressources sur %s.");
 
-define("_WEBPHOTO_ERR_NORATING","Aucun vote n'est retenu.");
-define("_WEBPHOTO_ERR_CANTVOTEOWN","Vous ne pouvez pas voter sur les ressources que vous avez soumises.<br /> Tous les votes sont enregistr�s et examin�s.");
-define("_WEBPHOTO_ERR_VOTEONCE","Voter pour la ressource qu'une fois seulement. <br /> Tous les votes sont enregistr�s et examin�s.");
+define("_WEBPHOTO_ERR_NORATING","Aucune note sélectionnée");
+define("_WEBPHOTO_ERR_CANTVOTEOWN","Vous n'êtes pas autorisé à voter pour vos propres ressources.<br />Toutes les évaluations sont enregistrées et contrôlées.");
+define("_WEBPHOTO_ERR_VOTEONCE","Ne votez pas plus d'une fois pour la même ressources.<br />Toutes les évaluations sont enregistrées et contrôlées.");
+
 
 //---------------------------------------------------------
 // movo to admin.php
@@ -258,7 +259,7 @@ define("_WEBPHOTO_ERR_VOTEONCE","Voter pour la ressource qu'une fois seulement. 
 
 //define("_WEBPHOTO_DIRECTCATSEL","SELECT A CATEGORY");
 //define("_WEBPHOTO_THEREARE","There are <b>%s</b> Images in our Database.");
-//define("_WEBPHOTO_LATESTLIST","Derni�res listes");
+//define("_WEBPHOTO_LATESTLIST","Latest Listings");
 
 //define("_WEBPHOTO_VOTEAPPRE","Your vote is appreciated.");
 //define("_WEBPHOTO_THANKURATE","Thank you for taking the time to rate a photo here at %s.");
@@ -338,867 +339,866 @@ define("_WEBPHOTO_ERR_VOTEONCE","Voter pour la ressource qu'une fois seulement. 
 //define("_WEBPHOTO_CONFUPDATED","Configuration Updated Successfully!");
 
 
-//------------------------------------------------ ---------
-// Passage de myalbum_constants.php
-//------------------------------------------------ ---------
-// L�gende
-define("_WEBPHOTO_CAPTION_TOTAL","Total:");
-define("_WEBPHOTO_CAPTION_GUESTNAME","Visiteur");
-define("_WEBPHOTO_CAPTION_REFRESH","rafra�chir");
-define("_WEBPHOTO_CAPTION_IMAGEXYT","Taille (Type)");
-define("_WEBPHOTO_CAPTION_CATEGORY","Cat�gorie");
+//---------------------------------------------------------
+// move from myalbum_constants.php
+//---------------------------------------------------------
+// Caption
+define("_WEBPHOTO_CAPTION_TOTAL" , "Total:" ) ;
+define("_WEBPHOTO_CAPTION_GUESTNAME" , "Invité" ) ;
+define("_WEBPHOTO_CAPTION_REFRESH" , "Rafraîchir" ) ;
+define("_WEBPHOTO_CAPTION_IMAGEXYT" , "Dimensions (type)" ) ;
+define("_WEBPHOTO_CAPTION_CATEGORY" , "Catégorie" ) ;
 
 
-//================================================ =========
-// Ajouter pour webphoto
-//================================================ =========
+//=========================================================
+// add for webphoto
+//=========================================================
 
-//------------------------------------------------ ---------
-// Table de base de donn�es articles
-//------------------------------------------------ ---------
+//---------------------------------------------------------
+// database table items
+//---------------------------------------------------------
 
-// Tableau photo
-define("_WEBPHOTO_PHOTO_TABLE","Table de photos");
-define("_WEBPHOTO_PHOTO_ID","Photo ID");
-define("_WEBPHOTO_PHOTO_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_PHOTO_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_PHOTO_CAT_ID","ID de cat�gorie");
-define("_WEBPHOTO_PHOTO_GICON_ID","Icon ID");
-define("_WEBPHOTO_PHOTO_UID","ID de l'utilisateur");
-define("_WEBPHOTO_PHOTO_DATETIME","Photo Datetime");
-define("_WEBPHOTO_PHOTO_TITLE","Titre de photo");
-define("_WEBPHOTO_PHOTO_PLACE","Place");
-define("_WEBPHOTO_PHOTO_EQUIPMENT","Equipement");
-define("_WEBPHOTO_PHOTO_FILE_URL","Dossier Web (URL)");
-define("_WEBPHOTO_PHOTO_FILE_PATH","Chemin du fichier");
-define("_WEBPHOTO_PHOTO_FILE_NAME","Nom de fichier");
-define("_WEBPHOTO_PHOTO_FILE_EXT","Extension du fichier");
-define("_WEBPHOTO_PHOTO_FILE_MIME","Fichier de type MIME");
-define("_WEBPHOTO_PHOTO_FILE_MEDIUM","Type de fichier moyenne");
-define("_WEBPHOTO_PHOTO_FILE_SIZE","Taille du fichier");
-define("_WEBPHOTO_PHOTO_CONT_URL","L'URL de la photo");
-define("_WEBPHOTO_PHOTO_CONT_PATH","Le chemin de la photo");
-define("_WEBPHOTO_PHOTO_CONT_NAME","Nom de la photo");
-define("_WEBPHOTO_PHOTO_CONT_EXT","Photo Extension");
-define("_WEBPHOTO_PHOTO_CONT_MIME","photo de type MIME");
-define("_WEBPHOTO_PHOTO_CONT_MEDIUM","Photo Support Type");
-define("_WEBPHOTO_PHOTO_CONT_SIZE","Photo Taille du fichier");
-define("_WEBPHOTO_PHOTO_CONT_WIDTH","Largeur de l'image photo");
-define("_WEBPHOTO_PHOTO_CONT_HEIGHT","Hauteur de l'image photo");
-define("_WEBPHOTO_PHOTO_CONT_DURATION","Dur�e de la vid�o Time");
-define("_WEBPHOTO_PHOTO_CONT_EXIF","Exif Information");
-define("_WEBPHOTO_PHOTO_MIDDLE_WIDTH","Moyen-Largeur de l'image");
-define("_WEBPHOTO_PHOTO_MIDDLE_HEIGHT","Moyen-Hauteur de l'image");
-define("_WEBPHOTO_PHOTO_THUMB_URL","pouce Web");
-define("_WEBPHOTO_PHOTO_THUMB_PATH","Thumb Path");
-define("_WEBPHOTO_PHOTO_THUMB_NAME","Pouce Nom");
-define("_WEBPHOTO_PHOTO_THUMB_EXT","Extension du pouce");
-define("_WEBPHOTO_PHOTO_THUMB_MIME","Thumb MIME type");
-define("_WEBPHOTO_PHOTO_THUMB_MEDIUM","Pouce Meduim Type");
-define("_WEBPHOTO_PHOTO_THUMB_SIZE","Pouce Taille du fichier");
-define("_WEBPHOTO_PHOTO_THUMB_WIDTH","Pouce Largeur de l'image");
-define("_WEBPHOTO_PHOTO_THUMB_HEIGHT","Pouce Hauteur de l'image");
-define("_WEBPHOTO_PHOTO_GMAP_LATITUDE","GoogleMap Latitude");
-define("_WEBPHOTO_PHOTO_GMAP_LONGITUDE","GoogleMap Longitude");
-define("_WEBPHOTO_PHOTO_GMAP_ZOOM","GoogleMap Zoom");
-define("_WEBPHOTO_PHOTO_GMAP_TYPE","Type GoogleMap");
-define("_WEBPHOTO_PHOTO_PERM_READ","Lire la permission");
-define("_WEBPHOTO_PHOTO_STATUS","Status");
-define("_WEBPHOTO_PHOTO_HITS","Hits");
-define("_WEBPHOTO_PHOTO_RATING","Note");
-define("_WEBPHOTO_PHOTO_VOTES","Votes");
-define("_WEBPHOTO_PHOTO_COMMENTS","commentaire");
-define("_WEBPHOTO_PHOTO_TEXT1","Text1");
-define("_WEBPHOTO_PHOTO_TEXT2","Text2");
-define("_WEBPHOTO_PHOTO_TEXT3","Text3");
-define("_WEBPHOTO_PHOTO_TEXT4","Text4");
-define("_WEBPHOTO_PHOTO_TEXT5","Text5");
-define("_WEBPHOTO_PHOTO_TEXT6","Text6");
-define("_WEBPHOTO_PHOTO_TEXT7","Text7");
-define("_WEBPHOTO_PHOTO_TEXT8","Text8");
-define("_WEBPHOTO_PHOTO_TEXT9","Text9");
-define("_WEBPHOTO_PHOTO_TEXT10","Text10");
-define("_WEBPHOTO_PHOTO_DESCRIPTION","Photo Description");
-define("_WEBPHOTO_PHOTO_SEARCH","Recherche");
+// photo table
+define("_WEBPHOTO_PHOTO_TABLE" , "Tableau des photos" ) ;
+define("_WEBPHOTO_PHOTO_ID" , "ID de la photo" ) ;
+define("_WEBPHOTO_PHOTO_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_PHOTO_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_PHOTO_CAT_ID" ,  "ID de la Catégorie" ) ;
+define("_WEBPHOTO_PHOTO_GICON_ID" , "ID de la vignette" ) ;
+define("_WEBPHOTO_PHOTO_UID" ,   "ID de l'utilisateur" ) ;
+define("_WEBPHOTO_PHOTO_DATETIME" ,  "Date de la photo" ) ;
+define("_WEBPHOTO_PHOTO_TITLE" , "Titre de la photo" ) ;
+define("_WEBPHOTO_PHOTO_PLACE" , "Localisation" ) ;
+define("_WEBPHOTO_PHOTO_EQUIPMENT" , "Equipement" ) ;
+define("_WEBPHOTO_PHOTO_FILE_URL" ,  "Url du fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_PATH" , "Chemin d'accès au fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_NAME" , "Nom du fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_EXT" ,  "Extension du fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_MIME" ,  "MIME TYPE du fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_MEDIUM" ,  "Type de format du fichier" ) ;
+define("_WEBPHOTO_PHOTO_FILE_SIZE" , "Taille du fichier" ) ;
+define("_WEBPHOTO_PHOTO_CONT_URL" ,    "Url de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_PATH" ,   "Chemin d'accès à la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_NAME" ,   "Nom de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_EXT" ,    "Extension de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_MIME" ,   "MIME TYPE de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_MEDIUM" , "Type de format de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_SIZE" ,   "Taille de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_WIDTH" ,  "Largeur de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_HEIGHT" , "Hauteur de la photo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_DURATION" , "Durée de la vidéo" ) ;
+define("_WEBPHOTO_PHOTO_CONT_EXIF" , "Information Exif" ) ;
+define("_WEBPHOTO_PHOTO_MIDDLE_WIDTH" ,  "Largeur moyenne de l'image" ) ;
+define("_WEBPHOTO_PHOTO_MIDDLE_HEIGHT" , "Hauteur moyenne de l'image" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_URL" ,    "Url de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_PATH" ,   "Chemin d'accès à la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_NAME" ,   "Nom de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_EXT" ,    "Extension de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_MIME" ,   "MIME TYPE de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_MEDIUM" , "Type de format de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_SIZE" ,   "Taille de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_WIDTH" ,  "Largeur de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_THUMB_HEIGHT" , "Hauteur de la miniature" ) ;
+define("_WEBPHOTO_PHOTO_GMAP_LATITUDE" ,  "Latitude de la carte Googlemap" ) ;
+define("_WEBPHOTO_PHOTO_GMAP_LONGITUDE" , "Longitude de la carte Googlemap" ) ;
+define("_WEBPHOTO_PHOTO_GMAP_ZOOM" ,      "Pourcentage du zoom" ) ;
+define("_WEBPHOTO_PHOTO_GMAP_TYPE" ,      "Type de carte" ) ;
+define("_WEBPHOTO_PHOTO_PERM_READ" , "Permission de consulter" ) ;
+define("_WEBPHOTO_PHOTO_STATUS" ,   "Statut" ) ;
+define("_WEBPHOTO_PHOTO_HITS" ,     "Affichages" ) ;
+define("_WEBPHOTO_PHOTO_RATING" ,   "Notes" ) ;
+define("_WEBPHOTO_PHOTO_VOTES" ,    "Votes" ) ;
+define("_WEBPHOTO_PHOTO_COMMENTS" , "Commentaires" ) ;
+define("_WEBPHOTO_PHOTO_TEXT1" ,  "texte1" ) ;
+define("_WEBPHOTO_PHOTO_TEXT2" ,  "texte2" ) ;
+define("_WEBPHOTO_PHOTO_TEXT3" ,  "texte3" ) ;
+define("_WEBPHOTO_PHOTO_TEXT4" ,  "texte4" ) ;
+define("_WEBPHOTO_PHOTO_TEXT5" ,  "texte5" ) ;
+define("_WEBPHOTO_PHOTO_TEXT6" ,  "texte6" ) ;
+define("_WEBPHOTO_PHOTO_TEXT7" ,  "texte7" ) ;
+define("_WEBPHOTO_PHOTO_TEXT8" ,  "texte8" ) ;
+define("_WEBPHOTO_PHOTO_TEXT9" ,  "texte9" ) ;
+define("_WEBPHOTO_PHOTO_TEXT10" , "texte10" ) ;
+define("_WEBPHOTO_PHOTO_DESCRIPTION" ,  "Description de la photo" ) ;
+define("_WEBPHOTO_PHOTO_SEARCH" ,  "Rechercher" ) ;
 
-// Tableau de la cat�gorie
-define("_WEBPHOTO_CAT_TABLE","Cat�gorie Table");
-define("_WEBPHOTO_CAT_ID","ID de cat�gorie");
-define("_WEBPHOTO_CAT_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_CAT_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_CAT_GICON_ID","Icon ID");
-define("_WEBPHOTO_CAT_FORUM_ID","Forum ID");
-define("_WEBPHOTO_CAT_PID","Parent ID");
-define("_WEBPHOTO_CAT_TITLE","Titre Cat�gorie");
-define("_WEBPHOTO_CAT_IMG_PATH","Cat�gorie Image Path");
-define("_WEBPHOTO_CAT_IMG_MODE","Mode d'affichage d'images");
-define("_WEBPHOTO_CAT_ORIG_WIDTH","Image Original Width");
-define("_WEBPHOTO_CAT_ORIG_HEIGHT","Image Original Taille");
-define("_WEBPHOTO_CAT_MAIN_WIDTH","Largeur de l'image dans la cat�gorie principale");
-define("_WEBPHOTO_CAT_MAIN_HEIGHT","Hauteur de l'image dans la cat�gorie principale");
-define("_WEBPHOTO_CAT_SUB_WIDTH","Largeur de l'image dans la sous cat�gorie");
-define("_WEBPHOTO_CAT_SUB_HEIGHT","Hauteur de l'image dans la sous cat�gorie");
-define("_WEBPHOTO_CAT_WEIGHT","Poids");
-define("_WEBPHOTO_CAT_DEPTH","Profondeur");
-define("_WEBPHOTO_CAT_ALLOWED_EXT","Extensions autoris�es");
-define("_WEBPHOTO_CAT_ITEM_TYPE","Type d'�l�ment");
-define("_WEBPHOTO_CAT_GMAP_MODE","Voir GoogleMap Mode");
-define("_WEBPHOTO_CAT_GMAP_LATITUDE","GoogleMap Latitude");
-define("_WEBPHOTO_CAT_GMAP_LONGITUDE","GoogleMap Longitude");
-define("_WEBPHOTO_CAT_GMAP_ZOOM","GoogleMap Zoom");
-define("_WEBPHOTO_CAT_GMAP_TYPE","Type GoogleMap");
-define("_WEBPHOTO_CAT_PERM_READ","Lire la permission");
-define("_WEBPHOTO_CAT_PERM_POST","Post Autorisation");
-define("_WEBPHOTO_CAT_TEXT1","text1");
-define("_WEBPHOTO_CAT_TEXT2","text2");
-define("_WEBPHOTO_CAT_TEXT3","Text3");
-define("_WEBPHOTO_CAT_TEXT4","Text4");
-define("_WEBPHOTO_CAT_TEXT5","text5");
-define("_WEBPHOTO_CAT_DESCRIPTION","Description");
+// category table
+define("_WEBPHOTO_CAT_TABLE" , "Tableau des Catégories" ) ;
+define("_WEBPHOTO_CAT_ID" ,          "ID de la Catégorie" ) ;
+define("_WEBPHOTO_CAT_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_CAT_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_CAT_GICON_ID" ,  "ID de la vignette" ) ;
+define("_WEBPHOTO_CAT_FORUM_ID" ,  "ID du forum" ) ;
+define("_WEBPHOTO_CAT_PID" ,    "ID associé" ) ;
+define("_WEBPHOTO_CAT_TITLE" ,  "Titre de la Catégorie" ) ;
+define("_WEBPHOTO_CAT_IMG_PATH" , "Chemin d'accès à l'image de la Catégorie" ) ;
+define("_WEBPHOTO_CAT_IMG_MODE" , "Mode d'affichage de l'image" ) ;
+define("_WEBPHOTO_CAT_ORIG_WIDTH" ,  "Largeur originale de l'image" ) ;
+define("_WEBPHOTO_CAT_ORIG_HEIGHT" , "Hauteur originale de l'image" ) ;
+define("_WEBPHOTO_CAT_MAIN_WIDTH" ,  "Largeur de l'image dans la Catégorie principale" ) ;
+define("_WEBPHOTO_CAT_MAIN_HEIGHT" , "Hauteur de l'image dans la Catégorie principale" ) ;
+define("_WEBPHOTO_CAT_SUB_WIDTH" ,   "Largeur de l'image dans la sous-catégorie" ) ;
+define("_WEBPHOTO_CAT_SUB_HEIGHT" ,  "Hauteur de l'image dans la sous-catégorie" ) ;
+define("_WEBPHOTO_CAT_WEIGHT" , "Poids" ) ;
+define("_WEBPHOTO_CAT_DEPTH" ,  "Profondeur" ) ;
+define("_WEBPHOTO_CAT_ALLOWED_EXT" , "Extensions autorisées" ) ;
+define("_WEBPHOTO_CAT_ITEM_TYPE" ,      "Type de données" ) ;
+define("_WEBPHOTO_CAT_GMAP_MODE" ,      "Mode d'affichage de la carte Googlemap" ) ;
+define("_WEBPHOTO_CAT_GMAP_LATITUDE" ,  "Latitude de la carte" ) ;
+define("_WEBPHOTO_CAT_GMAP_LONGITUDE" , "Longitude de la carte" ) ;
+define("_WEBPHOTO_CAT_GMAP_ZOOM" ,      "Pourcentage du zoom" ) ;
+define("_WEBPHOTO_CAT_GMAP_TYPE" ,      "Type de carte" ) ;
+define("_WEBPHOTO_CAT_PERM_READ" , "Permission de consulter" ) ;
+define("_WEBPHOTO_CAT_PERM_POST" , "Permission de proposer" ) ;
+define("_WEBPHOTO_CAT_TEXT1" ,  "texte1" ) ;
+define("_WEBPHOTO_CAT_TEXT2" ,  "texte2" ) ;
+define("_WEBPHOTO_CAT_TEXT3" ,  "texte3" ) ;
+define("_WEBPHOTO_CAT_TEXT4" ,  "texte4" ) ;
+define("_WEBPHOTO_CAT_TEXT5" ,  "texte5" ) ;
+define("_WEBPHOTO_CAT_DESCRIPTION" ,  "Description de la Catégorie" ) ;
 
-// Tableau de vote
-define("_WEBPHOTO_VOTE_TABLE","Vote Table");
-define("_WEBPHOTO_VOTE_ID","Vote ID");
-define("_WEBPHOTO_VOTE_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_VOTE_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_VOTE_PHOTO_ID","Photo ID");
-define("_WEBPHOTO_VOTE_UID","User ID");
-define("_WEBPHOTO_VOTE_RATING","Note");
-define("_WEBPHOTO_VOTE_HOSTNAME","adresse IP");
+// vote table
+define("_WEBPHOTO_VOTE_TABLE" , "Table des votes" ) ;
+define("_WEBPHOTO_VOTE_ID" ,          "ID du vote" ) ;
+define("_WEBPHOTO_VOTE_TIME_CREATE" , "Date du vote" ) ;
+define("_WEBPHOTO_VOTE_TIME_UPDATE" , "Mise à jour du vote" ) ;
+define("_WEBPHOTO_VOTE_PHOTO_ID" , "ID de la photo" ) ;
+define("_WEBPHOTO_VOTE_UID" ,      "ID de l'utilisateur" ) ;
+define("_WEBPHOTO_VOTE_RATING" ,   "Notes" ) ;
+define("_WEBPHOTO_VOTE_HOSTNAME" , "Adresse IP" ) ;
 
-// Google ic�ne de table
-define("_WEBPHOTO_GICON_TABLE","Google Icon Table");
-define("_WEBPHOTO_GICON_ID","Icon ID");
-define("_WEBPHOTO_GICON_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_GICON_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_GICON_TITLE","Icon Titre");
-define("_WEBPHOTO_GICON_IMAGE_PATH","Image Path");
-define("_WEBPHOTO_GICON_IMAGE_NAME","Nom de l'image");
-define("_WEBPHOTO_GICON_IMAGE_EXT","Image Extntion");
-define("_WEBPHOTO_GICON_SHADOW_PATH","Shadow Path");
-define("_WEBPHOTO_GICON_SHADOW_NAME","Shadow Name");
-define("_WEBPHOTO_GICON_SHADOW_EXT","Shadow Extension");
-define("_WEBPHOTO_GICON_IMAGE_WIDTH","Largeur de l'image");
-define("_WEBPHOTO_GICON_IMAGE_HEIGHT","Hauteur de l'image");
-define("_WEBPHOTO_GICON_SHADOW_WIDTH","Shadow Hauteur");
-define("_WEBPHOTO_GICON_SHADOW_HEIGHT","Shadow Size Y");
-define("_WEBPHOTO_GICON_ANCHOR_X","X Taille Anchor");
-define("_WEBPHOTO_GICON_ANCHOR_Y","Y Taille Anchor");
-define("_WEBPHOTO_GICON_INFO_X","Taille WindowInfo X");
-define("_WEBPHOTO_GICON_INFO_Y","Taille WindowInfo Y");
+// google icon table
+define("_WEBPHOTO_GICON_TABLE" , "Tableau des icônes Google" ) ;
+define("_WEBPHOTO_GICON_ID" ,          "ID de l'icône" ) ;
+define("_WEBPHOTO_GICON_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_GICON_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_GICON_TITLE" ,     "Titre de l'icône" ) ;
+define("_WEBPHOTO_GICON_IMAGE_PATH" ,  "Chemin d'accès à l'icône" ) ;
+define("_WEBPHOTO_GICON_IMAGE_NAME" ,  "Extension de l'image" ) ;
+define("_WEBPHOTO_GICON_SHADOW_PATH" , "Chemin d'accès masqué" ) ;
+define("_WEBPHOTO_GICON_SHADOW_NAME" , "Nom caché" ) ;
+define("_WEBPHOTO_GICON_SHADOW_EXT" ,  "Extension cachée" ) ;
+define("_WEBPHOTO_GICON_IMAGE_WIDTH" ,  "Largeur de l'image" ) ;
+define("_WEBPHOTO_GICON_IMAGE_HEIGHT" , "Hauteur de l'image" ) ;
+define("_WEBPHOTO_GICON_SHADOW_WIDTH" ,  "Largeur de l'ombre" ) ;
+define("_WEBPHOTO_GICON_SHADOW_HEIGHT" , "Hauteur de l'ombre" ) ;
+define("_WEBPHOTO_GICON_ANCHOR_X" , "Point d'ancrage sur X" ) ;
+define("_WEBPHOTO_GICON_ANCHOR_Y" , "Point d'ancrage sur Y" ) ;
+define("_WEBPHOTO_GICON_INFO_X" , "Largeur de la fenêtre d'information" ) ;
+define("_WEBPHOTO_GICON_INFO_Y" , "Hauteur de la fenêtre d'information" ) ;
 
-// Type mime table
-define("_WEBPHOTO_MIME_TABLE","Type MIME Table");
-define("_WEBPHOTO_MIME_ID","MIME ID");
-define("_WEBPHOTO_MIME_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_MIME_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_MIME_EXT","Extension");
-define("_WEBPHOTO_MIME_MEDIUM","Meduim Type");
-define("_WEBPHOTO_MIME_TYPE","Type MIME");
-define("_WEBPHOTO_MIME_NAME","MIME Name");
-define("_WEBPHOTO_MIME_PERMS","autorisation");
+// mime type table
+define("_WEBPHOTO_MIME_TABLE" , "Tableau des MIME TYPES" ) ;
+define("_WEBPHOTO_MIME_ID" ,          "ID du MIME TYPE" ) ;
+define("_WEBPHOTO_MIME_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_MIME_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_MIME_EXT" ,   "Extension" ) ;
+define("_WEBPHOTO_MIME_MEDIUM" ,  "Format" ) ;
+define("_WEBPHOTO_MIME_TYPE" ,  "MIME Type" ) ;
+define("_WEBPHOTO_MIME_NAME" ,  "Nom du MIME TYPE" ) ;
+define("_WEBPHOTO_MIME_PERMS" , "Permission" ) ;
 
-// Ajout� dans v0.20
-define("_WEBPHOTO_MIME_FFMPEG","ffmpeg option");
+// added in v0.20
+define("_WEBPHOTO_MIME_FFMPEG" , "Option ffmpeg" ) ;
 
-// Tag table
-define("_WEBPHOTO_TAG_TABLE","Table Tag");
-define("_WEBPHOTO_TAG_ID","ID Tag");
-define("_WEBPHOTO_TAG_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_TAG_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_TAG_NAME","Tag Name");
+// tag table
+define("_WEBPHOTO_TAG_TABLE" , "Tableau des Tags" ) ;
+define("_WEBPHOTO_TAG_ID" ,          "ID du tag" ) ;
+define("_WEBPHOTO_TAG_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_TAG_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_TAG_NAME" ,   "Nom du tag" ) ;
 
-// Photo-de-table tag
-define("_WEBPHOTO_P2T_TABLE","Photo Tag liaison Table");
-define("_WEBPHOTO_P2T_ID","Photo-Tag ID");
-define("_WEBPHOTO_P2T_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_P2T_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_P2T_PHOTO_ID","Photo ID");
-define("_WEBPHOTO_P2T_TAG_ID","ID Tag");
-define("_WEBPHOTO_P2T_UID","User ID");
+// photo-to-tag table
+define("_WEBPHOTO_P2T_TABLE" , "Tableau de relation Photo / Tags" ) ;
+define("_WEBPHOTO_P2T_ID" ,          "ID du Photo-tag" ) ;
+define("_WEBPHOTO_P2T_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_P2T_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_P2T_PHOTO_ID" , "ID de la photo" ) ;
+define("_WEBPHOTO_P2T_TAG_ID" ,   "ID du tag" ) ;
+define("_WEBPHOTO_P2T_UID" ,      "ID de l'utilisateur" ) ;
 
-// Synonyme table
-define("_WEBPHOTO_SYNO_TABLE","Synonyme Table");
-define("_WEBPHOTO_SYNO_ID","Synonyme ID");
-define("_WEBPHOTO_SYNO_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_SYNO_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_SYNO_WEIGHT","Poids");
-define("_WEBPHOTO_SYNO_KEY","cl�s");
-define("_WEBPHOTO_SYNO_VALUE","Synonyme");
+// synonym table
+define("_WEBPHOTO_SYNO_TABLE" , "Table des synonymes" ) ;
+define("_WEBPHOTO_SYNO_ID" ,          "ID du synonyme" ) ;
+define("_WEBPHOTO_SYNO_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_SYNO_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_SYNO_WEIGHT" , "Poids" ) ;
+define("_WEBPHOTO_SYNO_KEY" , "Clé" ) ;
+define("_WEBPHOTO_SYNO_VALUE" , "Synonyme" ) ;
 
 
-//------------------------------------------------ ---------
-// Titre
-//------------------------------------------------ ---------
-define("_WEBPHOTO_TITLE_LATEST","Derni�re");
-define("_WEBPHOTO_TITLE_SUBMIT","Valider");
-define("_WEBPHOTO_TITLE_POPULAR","populaire");
-define("_WEBPHOTO_TITLE_HIGHRATE","TopRated");
+//---------------------------------------------------------
+// title
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_LATEST","Les derniers");
+define("_WEBPHOTO_TITLE_SUBMIT","Soumettre");
+define("_WEBPHOTO_TITLE_POPULAR","Populaire");
+define("_WEBPHOTO_TITLE_HIGHRATE","Les mieux notés");
 define("_WEBPHOTO_TITLE_MYPHOTO","Mes photos");
-define("_WEBPHOTO_TITLE_RANDOM","Photo al�atoire");
+define("_WEBPHOTO_TITLE_RANDOM","Photos au hasard");
 define("_WEBPHOTO_TITLE_HELP","Aide");
-define("_WEBPHOTO_TITLE_CATEGORY_LIST","Liste de cat�gories");
-define("_WEBPHOTO_TITLE_TAG_LIST","Tag List");
-define("_WEBPHOTO_TITLE_TAGS","Tag");
-define("_WEBPHOTO_TITLE_USER_LIST","Submitter List");
-define("_WEBPHOTO_TITLE_DATE_LIST","Photo Date list");
-define("_WEBPHOTO_TITLE_PLACE_LIST","Photo Place List");
+define("_WEBPHOTO_TITLE_CATEGORY_LIST", "Liste des Catégories");
+define("_WEBPHOTO_TITLE_TAG_LIST",  "Liste des tags");
+define("_WEBPHOTO_TITLE_TAGS",  "Tag");
+define("_WEBPHOTO_TITLE_USER_LIST", "Auteur de la liste");
+define("_WEBPHOTO_TITLE_DATE_LIST", "Date de la liste de photos");
+define("_WEBPHOTO_TITLE_PLACE_LIST","Localisation de la liste de photos");
 define("_WEBPHOTO_TITLE_RSS","RSS");
 
-define("_WEBPHOTO_VIEWTYPE_LIST","type de liste");
-define("_WEBPHOTO_VIEWTYPE_TABLE","Table Type");
+define("_WEBPHOTO_VIEWTYPE_LIST", "Type de liste");
+define("_WEBPHOTO_VIEWTYPE_TABLE", "Tableau des types");
 
-define("_WEBPHOTO_CATLIST_ON","Voir la cat�gorie");
-define("_WEBPHOTO_CATLIST_OFF","Masquer la cat�gorie");
-define("_WEBPHOTO_TAGCLOUD_ON","Afficher Tag Cloud");
-define("_WEBPHOTO_TAGCLOUD_OFF","Hide Tag Cloud");
-define("_WEBPHOTO_GMAP_ON","Voir la GoogleMap");
-define("_WEBPHOTO_GMAP_OFF","Masquer GoogleMap");
+define("_WEBPHOTO_CATLIST_ON",   "Afficher la Catégorie");
+define("_WEBPHOTO_CATLIST_OFF",  "Masquer la Catégorie");
+define("_WEBPHOTO_TAGCLOUD_ON",  "Afficher le nuage de tags");
+define("_WEBPHOTO_TAGCLOUD_OFF", "Masquer le nuage de tags");
+define("_WEBPHOTO_GMAP_ON",  "Afficher Googlemap");
+define("_WEBPHOTO_GMAP_OFF", "Masquer Googlemap");
 
-define("_WEBPHOTO_NO_TAG","Not Set Tag");
+define("_WEBPHOTO_NO_TAG","Ne pas entrer de tags");
 
-//------------------------------------------------ ---------
-// Google maps
-//------------------------------------------------ ---------
-define("_WEBPHOTO_TITLE_GET_LOCATION","R�glage de la latitude et la longitude");
-define("_WEBPHOTO_GMAP_DESC","Afficher l'image du pouce, alors cliquez sur le marqueur dans GoogleMaps");
-define("_WEBPHOTO_GMAP_ICON","GoogleMap Icons");
-define("_WEBPHOTO_GMAP_LATITUDE","GoogleMap Latitude");
-define("_WEBPHOTO_GMAP_LONGITUDE","GoogleMap Longitude");
-define("_WEBPHOTO_GMAP_ZOOM","GoogleMap Zoom");
-define("_WEBPHOTO_GMAP_ADDRESS","Address");
-define("_WEBPHOTO_GMAP_GET_LOCATION","Get latitude et longitude");
-define("_WEBPHOTO_GMAP_SEARCH_LIST","recherche liste");
-define("_WEBPHOTO_GMAP_CURRENT_LOCATION","Situation actuelle");
-define("_WEBPHOTO_GMAP_CURRENT_ADDRESS","Adresse actuelle");
-define("_WEBPHOTO_GMAP_NO_MATCH_PLACE","Il n'y a pas de place matched");
-define("_WEBPHOTO_GMAP_NOT_COMPATIBLE","Ne pas afficher les Google Maps dans votre navigateur web");
-define("_WEBPHOTO_JS_INVALID","Ne pas utiliser JavaScript dans votre navigateur web");
-define("_WEBPHOTO_IFRAME_NOT_SUPPORT","Ne pas utiliser la balise iframe dans votre navigateur web");
+//---------------------------------------------------------
+// google maps
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_GET_LOCATION", "Paramètres de latitude et de longitude");
+define("_WEBPHOTO_GMAP_DESC", "Afficher la miniature au clic sur le marqueur de la carte");
+define("_WEBPHOTO_GMAP_ICON", "Icones Googlemap");
+define("_WEBPHOTO_GMAP_LATITUDE", "Latitude Googlemap");
+define("_WEBPHOTO_GMAP_LONGITUDE","Longitude Googlemap");
+define("_WEBPHOTO_GMAP_ZOOM","Zoom Googlemap");
+define("_WEBPHOTO_GMAP_ADDRESS",  "Adresse");
+define("_WEBPHOTO_GMAP_GET_LOCATION", "Obtenir la latitude et la longitude");
+define("_WEBPHOTO_GMAP_SEARCH_LIST",  "Liste de recherche");
+define("_WEBPHOTO_GMAP_CURRENT_LOCATION",  "Localisation actuelle");
+define("_WEBPHOTO_GMAP_CURRENT_ADDRESS",  "Adresse actuelle");
+define("_WEBPHOTO_GMAP_NO_MATCH_PLACE",  "Aucun emplacement ne correspond");
+define("_WEBPHOTO_GMAP_NOT_COMPATIBLE", "Ne pas afficher Googlemap dans le navigateur");
+define("_WEBPHOTO_JS_INVALID", "Ne pas utiliser de Javascript dans le navigateur");
+define("_WEBPHOTO_IFRAME_NOT_SUPPORT","Ne pas utiliser d'iframe dans le navigateur");
 
-//------------------------------------------------ ---------
-// Recherche
-//------------------------------------------------ ---------
-define("_WEBPHOTO_SR_SEARCH","Recherche");
+//---------------------------------------------------------
+// search
+//---------------------------------------------------------
+define("_WEBPHOTO_SR_SEARCH","Rechercher");
 
-//------------------------------------------------ ---------
-// Popbox
-//------------------------------------------------ ---------
-define("_WEBPHOTO_POPBOX_REVERT","Cliquez sur l'image pour r�tr�cir.");
+//---------------------------------------------------------
+// popbox
+//---------------------------------------------------------
+define("_WEBPHOTO_POPBOX_REVERT", "Cliquer sur l'image pour développer");
 
-//------------------------------------------------ ---------
-// Tag
-//------------------------------------------------ ---------
-define("_WEBPHOTO_TAGS","tags");
-define("_WEBPHOTO_EDIT_TAG","Edit tags");
-define("_WEBPHOTO_DSC_TAG_DIVID","diviser par une virgule (,) si vous souhaitez utiliser deux ou plusieurs tags");
-define("_WEBPHOTO_DSC_TAG_EDITABLE","Vous pouvez modifier uniquement les balises qui vous avez publi�");
+//---------------------------------------------------------
+// tag
+//---------------------------------------------------------
+define("_WEBPHOTO_TAGS","Tags");
+define("_WEBPHOTO_EDIT_TAG","Modifier les Tags");
+define("_WEBPHOTO_DSC_TAG_DIVID", "séparez par une virgule (,) les tags que vous souhaitez utiliser");
+define("_WEBPHOTO_DSC_TAG_EDITABLE", "Vous êtes seulement autorisés à modifier vos propres tags");
 
-//------------------------------------------------ ---------
-// Pr�senter le formulaire
-//------------------------------------------------ ---------
-define("_WEBPHOTO_CAP_ALLOWED_EXTS","Extensions autoris�es");
-define("_WEBPHOTO_CAP_PHOTO_SELECT","S�lectionnez l'image");
-define("_WEBPHOTO_CAP_THUMB_SELECT","S�lectionnez l'onglet image");
-define("_WEBPHOTO_DSC_THUMB_SELECT","cr�er � partir de l'image, quand ce n'est pas de s�lectionner");
-define("_WEBPHOTO_DSC_SET_DATETIME","Set photo datetime");
+//---------------------------------------------------------
+// submit form
+//---------------------------------------------------------
+define("_WEBPHOTO_CAP_ALLOWED_EXTS", "Extensions autorisées");
+define("_WEBPHOTO_CAP_PHOTO_SELECT","Sélectionner l'image principale");
+define("_WEBPHOTO_CAP_THUMB_SELECT", "Sélectionner la miniature");
+define("_WEBPHOTO_DSC_THUMB_SELECT", "Créée depuis l'image principale lorsqu'aucune vignette n'est sélectionnée");
+define("_WEBPHOTO_DSC_SET_DATETIME",  "Indiquez la date de la photo");
 
-// define ( "_WEBPHOTO_DSC_SET_TIME_UPDATE", "Ensemble de mise � jour de temps");
+//define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "Set update time");
 
-define("_WEBPHOTO_DSC_PIXCEL_RESIZE","Redimensionner automatiquement si plus grande que cette taille");
-define("_WEBPHOTO_DSC_PIXCEL_REJECT","Impossible de t�l�charger, si plus grande que cette taille");
-define("_WEBPHOTO_BUTTON_CLEAR","Effacer");
-define("_WEBPHOTO_SUBMIT_RESIZED","Resized, parce que la photo est trop grand");
+define("_WEBPHOTO_DSC_PIXCEL_RESIZE", "Redimensionner automatiquement en cas de dépassement de la taille");
+define("_WEBPHOTO_DSC_PIXCEL_REJECT", "Téléversement impossible en cas de dépassement de la taille");
+define("_WEBPHOTO_BUTTON_CLEAR", "Effacer");
+define("_WEBPHOTO_SUBMIT_RESIZED", "Photo redimensionnée car dépassant les limites paramétrées");
 
-// Upload d'erreur PHP
-// Http://www.php.net/manual/en/features.file-upload.errors.php
-define("_WEBPHOTO_PHP_UPLOAD_ERR_OK","Il n'y a pas d'erreur, le fichier t�l�charg� avec succ�s.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_INI_SIZE","Le fichier d�passe la upload_max_filesize.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE","Le fichier% s est sup�rieur.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_PARTIAL","Le fichier n'a �t� que partiellement t�l�charg�.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_FILE","Aucun fichier a �t� t�l�charg�.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_TMP_DIR","Missing un dossier temporaire.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_CANT_WRITE","Impossible d'�crire le fichier sur le disque.");
-define("_WEBPHOTO_PHP_UPLOAD_ERR_EXTENSION","File upload par arr�t� d'extension.");
+// PHP upload error
+// http://www.php.net/manual/en/features.file-upload.errors.php
+define("_WEBPHOTO_PHP_UPLOAD_ERR_OK", "Aucune erreur, le fichier a été téléversé avec succès.");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_INI_SIZE", "Les fichiers téléversés dépassent la limite de la configuration (upload_max_filesize).");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_FORM_SIZE", "Le fichier téléversé dépasse la limite de %s .");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_PARTIAL", "Le téléversement a été partiellement effectué");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_FILE", "Aucun fichier n'a pu être téléversé.");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_NO_TMP_DIR", "Un répertoire temporaire est manquant.");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_CANT_WRITE", "Echec d'écriture sur le disque.");
+define("_WEBPHOTO_PHP_UPLOAD_ERR_EXTENSION", "Le téléversement a été interrompu en raison de l'extension du fichier.");
 
-// Upload d'erreur
-define("_WEBPHOTO_UPLOADER_ERR_NOT_FOUND","fichier non trouv�");
-define("_WEBPHOTO_UPLOADER_ERR_INVALID_FILE_SIZE","Taille de fichier non valide");
-define("_WEBPHOTO_UPLOADER_ERR_EMPTY_FILE_NAME","Nom du fichier est vide");
-define("_WEBPHOTO_UPLOADER_ERR_NO_FILE","Aucun fichier t�l�charg�");
-define("_WEBPHOTO_UPLOADER_ERR_NOT_SET_DIR","Upload r�pertoire non d�fini");
-define("_WEBPHOTO_UPLOADER_ERR_NOT_ALLOWED_EXT","Extension pas autoris�");
-define("_WEBPHOTO_UPLOADER_ERR_PHP_OCCURED","Une erreur s'est produite: Erreur #");
-define("_WEBPHOTO_UPLOADER_ERR_NOT_OPEN_DIR","Failed opening r�pertoire:");
-define("_WEBPHOTO_UPLOADER_ERR_NO_PERM_DIR","Failed opening r�pertoire avec la permission d'�criture:");
-define("_WEBPHOTO_UPLOADER_ERR_NOT_ALLOWED_MIME","type MIME pas permis:");
-define("_WEBPHOTO_UPLOADER_ERR_LARGE_FILE_SIZE","La taille du fichier trop grand:");
-define("_WEBPHOTO_UPLOADER_ERR_LARGE_WIDTH","largeur de dossier doit �tre plus petit que");
-define("_WEBPHOTO_UPLOADER_ERR_LARGE_HEIGHT","File la hauteur doit �tre inf�rieure �");
-define("_WEBPHOTO_UPLOADER_ERR_UPLOAD","Impossible de t�l�charger le fichier:");
+// upload error
+define("_WEBPHOTO_UPLOADER_ERR_NOT_FOUND", "Le fichier téléversé n'a pas été trouvé");
+define("_WEBPHOTO_UPLOADER_ERR_INVALID_FILE_SIZE", "Taille du fichier invalide");
+define("_WEBPHOTO_UPLOADER_ERR_EMPTY_FILE_NAME", "Le nom du fichier est absent");
+define("_WEBPHOTO_UPLOADER_ERR_NO_FILE", "Aucun fichier téléversé");
+define("_WEBPHOTO_UPLOADER_ERR_NOT_SET_DIR", "Le répertoire pour les téléversement n'a pas été précisé");
+define("_WEBPHOTO_UPLOADER_ERR_NOT_ALLOWED_EXT", "L'extension n'est pas autorisée");
+define("_WEBPHOTO_UPLOADER_ERR_PHP_OCCURED", "Une erreur est survenue : erreur #");
+define("_WEBPHOTO_UPLOADER_ERR_NOT_OPEN_DIR", "Echec à l'ouverture du répertoire : ");
+define("_WEBPHOTO_UPLOADER_ERR_NO_PERM_DIR", "Echerc à l'ouverture-écriture du répertoire : ");
+define("_WEBPHOTO_UPLOADER_ERR_NOT_ALLOWED_MIME", "MIMETYPE non autorisé : ");
+define("_WEBPHOTO_UPLOADER_ERR_LARGE_FILE_SIZE", "Le poids de l'image excède la limite : ");
+define("_WEBPHOTO_UPLOADER_ERR_LARGE_WIDTH", "La largeur du fichier doit être inférieure à ");
+define("_WEBPHOTO_UPLOADER_ERR_LARGE_HEIGHT", "La hauteur du fichier doit être inférieure à ");
+define("_WEBPHOTO_UPLOADER_ERR_UPLOAD", "Echec lors du téléversement du fichier : ");
 
-//------------------------------------------------ ---------
-// Help
-//------------------------------------------------ ---------
-define("_WEBPHOTO_HELP_DSC","Ceci est la description de l'application qui fonctionne sur votre PC");
+//---------------------------------------------------------
+// help
+//---------------------------------------------------------
+define("_WEBPHOTO_HELP_DSC", "Aide / description du module");
 
-define("_WEBPHOTO_HELP_PICLENS_TITLE","PicLens");
-define("_WEBPHOTO_HELP_PICLENS_DSC","
-PicLens est l'addon qui Cooliris Inc pr�voit FireFox <br />
-Il s'agit de la visionneuse de photos dans le site Web <br /> <br />
-<b> D�finition </ b> <br />
-(1) T�l�chargez FireFox <br />
-<a href='http://www.mozilla-japan.org/products/firefox/' target='_blank'>
+define("_WEBPHOTO_HELP_PICLENS_TITLE", "PicLens");
+define("_WEBPHOTO_HELP_PICLENS_DSC", '
+Piclens est une extension firefox réalisée par Cooliris<br />
+qui vous permet d\'installer une visionneuse de photo sur votre site<br /><br />
+<b>Mise en place</b><br />
+(1) Télécharger Firefox<br />
+<a href="http://www.mozilla-japan.org/products/firefox/" target="_blank">
 http://www.mozilla-japan.org/products/firefox/
-</ a> <br /> <br />
-(2) T�l�charger PicLens addon <br />
-<a href='http://www.piclens.com/' target='_blank'>
+</a><br /><br />
+(2) Télécharger Piclens<br />
+<a href="http://www.piclens.com/" target="_blank">
 http://www.piclens.com/
-</ a> <br /> <br />
-(3) Voir webphoto dans webphoto <br />
-http://THIS-SITE/modules/webphoto/ <br /> <br />
-(4) Cliquez sur l'ic�ne bleue en haut � droite de Firefox <br />
-Vous ne pouvez pas utiliser PicLens, lorsque l'ic�ne est noir <br /> ");
+</a><br /><br />
+(3) Accéder au module Webphoto<br />
+http://THIS-SITE/modules/webphoto/ <br /><br />
+(4) Cliquer sur le bouton situé à l\extrémité droite du navigateur Firefox<br />
+Note : lorsque l\'icône est noire, vous ne pouvez pas activer Piclens<br />' );
 
 //
-// Lignes de mannequin, ajuste le num�ro de ligne pour le Japonais lang fichier.
-// 
+// dummy lines , adjusts line number for Japanese lang file.
+//
 
-define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_TITLE","Media RSS Slide Show");
-define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_DSC","
-'Media RSS Slide Show' est le gadget Google Desktop <br />
-Cela montre des photos � partir de l'Internet avec le diaporama <br /> <br />
-<b> D�finition </ b> <br />
-(1) T�l�charger le 'Google Desktop' <br />
-<a href='http://desktop.google.co.jp/' target='_blank'>
+define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_TITLE", "Media RSS Slide Show");
+define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_DSC", '
+"Media RSS Slide Show" est une Gadget Google qui fonctionne avec Google Desktop<br />
+Il permet d\'afficher sur votre bureau un diaporama de vos galeries d\'images<br /><br />
+<b>Mise en place</b><br />
+(1) Télécharger "Google Desktop"<br />
+<a href="http://desktop.google.co.jp/" target="_blank">
 http://desktop.google.co.jp/
-</ a> <br /> <br />
-(2) T�l�charger 'Media RSS Slide Show' gadget <br />
-<a href='http://desktop.google.com/plugins/i/mediarssslideshow.html' target='_blank'>
+</a><br /><br />
+(2) Télécharger le Gadget "Media RSS  Slide Show"<br />
+<a href="http://desktop.google.com/plugins/i/mediarssslideshow.html" target="_blank">
 http://desktop.google.com/plugins/i/mediarssslideshow.html
-</ a> <br /> <br />
-(3) Modifier 'URL de MediaRSS' dans le texte suivant, en utilisant l'option du gadget <br /> ");
+</a><br /><br />
+(3) Modifier "URL of MediaRSS" dans les options du Gadget<br />' );
 
-//------------------------------------------------ ---------
-// Autres
-//------------------------------------------------ ---------
-define("_WEBPHOTO_RANDOM_MORE","Plus de photos au hasard");
-define("_WEBPHOTO_USAGE_PHOTO","la grande photo Popup, lorsque cliquez sur la vignette");
-define("_WEBPHOTO_USAGE_TITLE","Allez � la page de photos, cliquez sur la photo lorsque le titre");
-define("_WEBPHOTO_DATE_NOT_SET","Non d�fini Photo Date");
-define("_WEBPHOTO_PLACE_NOT_SET","Not Set Photo Place");
-define("_WEBPHOTO_GOTO_ADMIN","Goto Admin Control");
+//---------------------------------------------------------
+// others
+//---------------------------------------------------------
+define("_WEBPHOTO_RANDOM_MORE","Plus de photos aléatoires");
+define("_WEBPHOTO_USAGE_PHOTO","Au clic sur la miniature, afficher dans une Popup la photo grand format");
+define("_WEBPHOTO_USAGE_TITLE","Au clic sur le titre, déplacer la photo sur la page");
+define("_WEBPHOTO_DATE_NOT_SET","Ne pas indiquer de date pour la photo");
+define("_WEBPHOTO_PLACE_NOT_SET","Ne pas indiquer de localisation pour la phot");
+define("_WEBPHOTO_GOTO_ADMIN", "Se rendre dans la zone d'administration");
 
-//------------------------------------------------ ---------
-// Search for Japanese
-//------------------------------------------------ ---------
-define("_WEBPHOTO_SR_CANDICATE","Candicate pour la recherche");
+//---------------------------------------------------------
+// search for Japanese
+//---------------------------------------------------------
+define("_WEBPHOTO_SR_CANDICATE","Nomminé pour la recherche");
 define("_WEBPHOTO_SR_ZENKAKU","Zenkaku");
 define("_WEBPHOTO_SR_HANKAKU","Hanhaku");
 
-define("_WEBPHOTO_JA_KUTEN","");
-define("_WEBPHOTO_JA_DOKUTEN","");
-define("_WEBPHOTO_JA_PERIOD","");
-define("_WEBPHOTO_JA_COMMA","");
+define("_WEBPHOTO_JA_KUTEN",   "");
+define("_WEBPHOTO_JA_DOKUTEN", "");
+define("_WEBPHOTO_JA_PERIOD",  "");
+define("_WEBPHOTO_JA_COMMA",   "");
 
-//------------------------------------------------ ---------
-// V0.20
-//------------------------------------------------ ---------
-define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL","Select aper�u de la vid�o");
-define("_WEBPHOTO_TITLE_VIDEO_REDO","Re-cr�er des vignettes � partir de Flash et vid�o envoy�e");
-define("_WEBPHOTO_CAP_REDO_THUMB","Cr�er Thumbnail");
+//---------------------------------------------------------
+// v0.20
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_VIDEO_THUMB_SEL", "Sélectionner une miniature vidéo");
+define("_WEBPHOTO_TITLE_VIDEO_REDO","Re-générer le Flash et la miniature à partir de la vidéo téléversée");
+define("_WEBPHOTO_CAP_REDO_THUMB","Créer une miniature");
 define("_WEBPHOTO_CAP_REDO_FLASH","Cretae Flash Video");
-define("_WEBPHOTO_ERR_VIDEO_FLASH","Impossible de cr�er des vid�os Flash");
-define("_WEBPHOTO_ERR_VIDEO_THUMB","Substituted avec l'ic�ne, car ne peut pas cr�er de vignette de la vid�o");
-define("_WEBPHOTO_BUTTON_SELECT","Select");
+define("_WEBPHOTO_ERR_VIDEO_FLASH", "Impossible de créer une vidéo Flash");
+define("_WEBPHOTO_ERR_VIDEO_THUMB", "La miniature ne pouvant être créée à partir de la vidéo, une icône de remplacement est utilisée");
+define("_WEBPHOTO_BUTTON_SELECT", "Sélectionner");
 
-define("_WEBPHOTO_DSC_DOWNLOAD_PLAY","apr�s le t�l�chargement Play");
-define("_WEBPHOTO_ICON_VIDEO","Vid�o");
-define("_WEBPHOTO_HOUR","heure");
-define("_WEBPHOTO_MINUTE","min");
-define("_WEBPHOTO_SECOND","sec");
+define("_WEBPHOTO_DSC_DOWNLOAD_PLAY","Lire après le téléchargement");
+define("_WEBPHOTO_ICON_VIDEO", "Vidéo");
+define("_WEBPHOTO_HOUR", "heure");
+define("_WEBPHOTO_MINUTE", "min.");
+define("_WEBPHOTO_SECOND", "sec.");
 
-//------------------------------------------------ ---------
-// V0.30
-//------------------------------------------------ ---------
-// User table
-define("_WEBPHOTO_USER_TABLE","User Aux Table");
-define("_WEBPHOTO_USER_ID","Aux User ID");
-define("_WEBPHOTO_USER_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_USER_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_USER_UID","Uesr ID");
-define("_WEBPHOTO_USER_CAT_ID","ID de cat�gorie");
-define("_WEBPHOTO_USER_EMAIL","Email Address");
-define("_WEBPHOTO_USER_TEXT1","text1");
-define("_WEBPHOTO_USER_TEXT2","text2");
-define("_WEBPHOTO_USER_TEXT3","Text3");
-define("_WEBPHOTO_USER_TEXT4","Text4");
-define("_WEBPHOTO_USER_TEXT5","text5");
+//---------------------------------------------------------
+// v0.30
+//---------------------------------------------------------
+// user table
+define("_WEBPHOTO_USER_TABLE" , "Tableau des utilisateurs auxiliaires" ) ;
+define("_WEBPHOTO_USER_ID" ,          "ID des utilisateurs auxiliaires" ) ;
+define("_WEBPHOTO_USER_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_USER_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_USER_UID" , "ID de l'utilisateur" ) ;
+define("_WEBPHOTO_USER_CAT_ID" , "ID de la Catégorie" ) ;
+define("_WEBPHOTO_USER_EMAIL" , "Adresse e-mail" ) ;
+define("_WEBPHOTO_USER_TEXT1" ,  "texte1" ) ;
+define("_WEBPHOTO_USER_TEXT2" ,  "texte2" ) ;
+define("_WEBPHOTO_USER_TEXT3" ,  "texte3" ) ;
+define("_WEBPHOTO_USER_TEXT4" ,  "texte4" ) ;
+define("_WEBPHOTO_USER_TEXT5" ,  "texte5" ) ;
 
-// Maillog
-define("_WEBPHOTO_MAILLOG_TABLE","maillog Table");
-define("_WEBPHOTO_MAILLOG_ID","maillog ID");
-define("_WEBPHOTO_MAILLOG_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_MAILLOG_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_MAILLOG_PHOTO_IDS","Photo identifiants");
-define("_WEBPHOTO_MAILLOG_STATUS","Status");
-define("_WEBPHOTO_MAILLOG_FROM","De Mail Address");
-define("_WEBPHOTO_MAILLOG_SUBJECT","Objet");
-define("_WEBPHOTO_MAILLOG_BODY","Body");
-define("_WEBPHOTO_MAILLOG_FILE","Nom de fichier");
-define("_WEBPHOTO_MAILLOG_ATTACH","Attach Files");
-define("_WEBPHOTO_MAILLOG_COMMENT","commentaire");
+// maillog
+define("_WEBPHOTO_MAILLOG_TABLE" , "Tableau d'enregistement des e-mails" ) ;
+define("_WEBPHOTO_MAILLOG_ID" ,          "ID de l'enregistrement" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_MAILLOG_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_MAILLOG_PHOTO_IDS" , "ID des photos" ) ;
+define("_WEBPHOTO_MAILLOG_STATUS" , "Statut" ) ;
+define("_WEBPHOTO_MAILLOG_FROM" , "Provenance de l'e-mail" ) ;
+define("_WEBPHOTO_MAILLOG_SUBJECT" , "Sujet" ) ;
+define("_WEBPHOTO_MAILLOG_BODY" ,  "Message" ) ;
+define("_WEBPHOTO_MAILLOG_FILE" ,  "Patronyme" ) ;
+define("_WEBPHOTO_MAILLOG_ATTACH" ,  "Fichiers joints" ) ;
+define("_WEBPHOTO_MAILLOG_COMMENT" ,  "Commentaires" ) ;
 
-// Mail enregistrer
-define("_WEBPHOTO_TITLE_MAIL_REGISTER","Mail Registre");
-define("_WEBPHOTO_MAIL_HELP","S'il vous pla�t se r�f�rer' Aide 'pour l'utilisation");
-define("_WEBPHOTO_CAT_USER","User Name");
-define("_WEBPHOTO_BUTTON_REGISTER","REGISTER");
-define("_WEBPHOTO_NOMATCH_USER","Il n'y a pas d'utilisateur");
-define("_WEBPHOTO_ERR_MAIL_EMPTY","Vous devez entrer' Mail ");
-define("_WEBPHOTO_ERR_MAIL_ILLEGAL","Illegal format de mail");
+// mail register
+define("_WEBPHOTO_TITLE_MAIL_REGISTER" ,  "Enregistrement d'adresses e-mails" ) ;
+define("_WEBPHOTO_MAIL_HELP" ,  "Merci de consulter la rubrique d'aide" ) ;
+define("_WEBPHOTO_CAT_USER" ,  "Nom de l'utilisateur" ) ;
+define("_WEBPHOTO_BUTTON_REGISTER" ,  "ENREGISTRER" ) ;
+define("_WEBPHOTO_NOMATCH_USER","Aucun utilisateur ne correspond");
+define("_WEBPHOTO_ERR_MAIL_EMPTY","Vous devez indiquer une adresse");
+define("_WEBPHOTO_ERR_MAIL_ILLEGAL","Format d'e-mail incorrect");
 
-// R�cup�rer mail
-define("_WEBPHOTO_TITLE_MAIL_RETRIEVE","Retrieve Mail");
-define("_WEBPHOTO_DSC_MAIL_RETRIEVE","R�cup�rer les mails du serveur de mail");
-define("_WEBPHOTO_BUTTON_RETRIEVE","Recherche");
-define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS","Acc�s au serveur de courrier");
-define("_WEBPHOTO_SUBTITLE_MAIL_PARSE","Analyse du courrier re�u");
-define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO","la soumission ci-joint les photos de mails");
-define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME","Dans la limitation de l'acc�s");
-define("_WEBPHOTO_TEXT_MAIL_RETRY","Access 1 minute plus tard");
-define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE","ne peut pas r�cup�rer le courrier. <br /> probablement temporaire de communication. <br /> S'il vous pla�t r�essayer apr�s un certain temps");
-define("_WEBPHOTO_TEXT_MAIL_NO_NEW","Il n'y a pas de nouveaux messages");
-define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT","%s R�cup�r�e mails");
-define("_WEBPHOTO_TEXT_MAIL_NO_VALID","Il n'y a pas de mail valide");
-define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT","%s Submited photos");
-define("_WEBPHOTO_GOTO_INDEX","Aller � la page principale du module");
+// mail retrieve
+define("_WEBPHOTO_TITLE_MAIL_RETRIEVE" ,  "Récupération d'e-mails" ) ;
+define("_WEBPHOTO_DSC_MAIL_RETRIEVE" ,  "Récupérer une adresse e-mail depuis le serveur" ) ;
+define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "RECUPERER" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "Accéder au serveur d'e-mails" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "Analyser les e-mails réceptionnés" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "Soumettre les photos attachés aux e-mails" ) ;
+define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "Limitation d'accès" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "Accéder au bout d'une minute" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "Impossible de récupérer les e-mails.<br />La communication est probablement interrompue provisoirement.<br />Merci de patienter un moment avant de tenter une nouvelle récupération" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_NEW" ,  "Aucun nouvel e-mail trouvé" ) ;
+define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "%s e-mails récupérés" ) ;
+define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "Aucun e-mail valide" ) ;
+define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "%s photos proposées" ) ;
+define("_WEBPHOTO_GOTO_INDEX" ,  "Se rendre en page d'accueil du module" ) ;
 
-// I.php
-define("_WEBPHOTO_TITLE_MAIL_POST","Post Mail");
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_POST" ,  "Envoyer par e-mail" ) ;
 
-// File
-define("_WEBPHOTO_TITLE_SUBMIT_FILE","Ajouter une photo � partir d'un fichier");
-define("_WEBPHOTO_CAP_FILE_SELECT","Select File");
-define("_WEBPHOTO_ERR_EMPTY_FILE","Vous devez s�lectionner le fichier");
-define("_WEBPHOTO_ERR_EMPTY_CAT","Vous devez s�lectionner la cat�gorie");
-define("_WEBPHOTO_ERR_INVALID_CAT","non valide de cat�gorie");
-define("_WEBPHOTO_ERR_CREATE_PHOTO","Ne peut cr�er photo");
-define("_WEBPHOTO_ERR_CREATE_THUMB","Impossible de cr�er un pouce d'image");
+// file
+define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "Ajouter une photo depuis un fichier" ) ;
+define("_WEBPHOTO_CAP_FILE_SELECT", "Sélectionner un fichier");
+define("_WEBPHOTO_ERR_EMPTY_FILE" , "Vous devez sélectionner un fichier" ) ;
+define("_WEBPHOTO_ERR_EMPTY_CAT" , "Vous devez sélectionner une Catégorie" ) ;
+define("_WEBPHOTO_ERR_INVALID_CAT" , "Catégorie non valide" ) ;
+define("_WEBPHOTO_ERR_CREATE_PHOTO" , "Impossible de créer la photto" ) ;
+define("_WEBPHOTO_ERR_CREATE_THUMB" , "Impossible de créer la miniature" ) ;
 
-// Help
-define("_WEBPHOTO_HELP_MUST_LOGIN","S'il vous pla�t vous connecter, si vous voulez le lire plus en d�tail");
-define("_WEBPHOTO_HELP_NOT_PERM","Vous n'avez pas l'autorisation. S'il vous pla�t contacter le webmaster");
+// help
+define("_WEBPHOTO_HELP_MUST_LOGIN","Merci de bien vouloir vous connecter si vous voulez accéder à davantage de détails");
+define("_WEBPHOTO_HELP_NOT_PERM", "Les permissions requises ne vous ont pas été accordées. Veuillez contacter le webmestre");
 
-define("_WEBPHOTO_HELP_MOBILE_TITLE","t�l�phone portable");
-define("_WEBPHOTO_HELP_MOBILE_DSC","Vous pouvez regarder la photo et la vid�o dans le t�l�phone mobile <br/> de la taille de l'�cran est de 240x320");
-define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT","
-<b> Web Access </ b> <br />
-<a href='{MODULE_URL}/i.php' target='_blank'> MODULE_URL () / i.php </ a> ");
+define("_WEBPHOTO_HELP_MOBILE_TITLE", "Téléphone modile");
+define("_WEBPHOTO_HELP_MOBILE_DSC", "Vous pouvez consulter la photo et la vidéo sur votre téléphone mobile<br/>Les dimensions de l'écran doivent être de 240x320 ");
+define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
+<b>URL d\'accès</b><br />
+<a href="{MODULE_URL}/i.php" rel="external">{MODULE_URL}/i.php</a>');
 
-define("_WEBPHOTO_HELP_MAIL_TITLE","Mobile Mail");
-define("_WEBPHOTO_HELP_MAIL_DSC","Vous pouvez envoyer la photo et la vid�o par e-mail � partir du t�l�phone mobile");
-define("_WEBPHOTO_HELP_MAIL_GUEST","Ceci est l'�chantillon. Vous pouvez regarder la REAL mail, si vous avez la permission.");
+define("_WEBPHOTO_HELP_MAIL_TITLE", "E-mail via mobile");
+define("_WEBPHOTO_HELP_MAIL_DSC", "Vous pouvez transmettre vos photo et vos vidéos par e-mail via votre téléphone mobile");
+define("_WEBPHOTO_HELP_MAIL_GUEST", "Ceci est un exemple. Si vous disposez des droits requis, vous pouvez accéder à la véritable adresse e-mail.");
 
-define("_WEBPHOTO_HELP_FILE_TITLE","Post FTP");
-define("_WEBPHOTO_HELP_FILE_DSC","Vous pouvez poster de grande taille de la photo et la vid�o, lorsque vous t�l�chargez le fichier par FTP");
-define("_WEBPHOTO_HELP_FILE_TEXT_FMT","
-<b> photo </ b> <br />
-(1) T�l�charger le fichier au serveur FTP <br />
-(2) Cliquez sur <a href='{MODULE_URL}/index.php?fct=submit_file' target='_blank'> Ajouter une photo � partir d'un fichier </ a> <br />
-(3) S�lectionnez le fichier t�l�charg� et post ");
+define("_WEBPHOTO_HELP_FILE_TITLE", "Transmission par FTP");
+define("_WEBPHOTO_HELP_FILE_DSC", "Les transferts par FTP vous permettent de téléverser des photos et des vidéos de grandes tailles");
+define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
+<b>Envoyer un fichier</b><br />
+(1) Téléverser le fichier sur le serveur via FTP<br />
+(2) Cliquer sur <a href="{MODULE_URL}/index.php?fct=submit_file" rel="external">Ajouter une photo depuis le fichier</a><br />
+(3) Sélectionner le fichier téléversé et Valider' );
 
-// Check mail
-// For Japanese
-define("_WEBPHOTO_MAIL_DENY_TITLE_PREG","");
-define("_WEBPHOTO_MAIL_AD_WORD_1","");
-define("_WEBPHOTO_MAIL_AD_WORD_2","");
+// mail check
+// for Japanese
+define("_WEBPHOTO_MAIL_DENY_TITLE_PREG", "" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_1", "" ) ;
+define("_WEBPHOTO_MAIL_AD_WORD_2", "" ) ;
 
-//------------------------------------------------ ---------
-// V0.40
-//------------------------------------------------ ---------
-// Point de table
-define("_WEBPHOTO_ITEM_TABLE","Point Table");
-define("_WEBPHOTO_ITEM_ID","Point ID");
-define("_WEBPHOTO_ITEM_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_ITEM_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_ITEM_CAT_ID","ID de cat�gorie");
-define("_WEBPHOTO_ITEM_GICON_ID","Icon GoogleMap ID");
-define("_WEBPHOTO_ITEM_UID","User ID");
-define("_WEBPHOTO_ITEM_KIND","Type de fichier");
-define("_WEBPHOTO_ITEM_EXT","Extension du fichier");
-define("_WEBPHOTO_ITEM_DATETIME","Photo Datetime");
-define("_WEBPHOTO_ITEM_TITLE","Titre de photos");
-define("_WEBPHOTO_ITEM_PLACE","Place");
-define("_WEBPHOTO_ITEM_EQUIPMENT","Equipement");
-define("_WEBPHOTO_ITEM_GMAP_LATITUDE","GoogleMap Latitude");
-define("_WEBPHOTO_ITEM_GMAP_LONGITUDE","GoogleMap Longitude");
-define("_WEBPHOTO_ITEM_GMAP_ZOOM","GoogleMap Zoom");
-define("_WEBPHOTO_ITEM_GMAP_TYPE","Type GoogleMap");
-define("_WEBPHOTO_ITEM_PERM_READ","Lire la permission");
-define("_WEBPHOTO_ITEM_STATUS","Status");
-define("_WEBPHOTO_ITEM_HITS","Hits");
-define("_WEBPHOTO_ITEM_RATING","Note");
-define("_WEBPHOTO_ITEM_VOTES","Votes");
-define("_WEBPHOTO_ITEM_DESCRIPTION","Photo Description");
-define("_WEBPHOTO_ITEM_EXIF","Exif Information");
-define("_WEBPHOTO_ITEM_SEARCH","Recherche");
-define("_WEBPHOTO_ITEM_COMMENTS","Commentaires");
-define("_WEBPHOTO_ITEM_FILE_ID_1","Fichier ID: Content");
-define("_WEBPHOTO_ITEM_FILE_ID_2","Fichier ID: Thumbnail");
-define("_WEBPHOTO_ITEM_FILE_ID_3","Fichier ID: Moyen");
-define("_WEBPHOTO_ITEM_FILE_ID_4","Fichier ID: Flash Video");
-define("_WEBPHOTO_ITEM_FILE_ID_5","Fichier ID: Docomo Video");
-define("_WEBPHOTO_ITEM_FILE_ID_6","file6");
-define("_WEBPHOTO_ITEM_FILE_ID_7","file7");
-define("_WEBPHOTO_ITEM_FILE_ID_8","file8");
-define("_WEBPHOTO_ITEM_FILE_ID_9","file9");
-define("_WEBPHOTO_ITEM_FILE_ID_10","file10");
-define("_WEBPHOTO_ITEM_TEXT_1","text1");
-define("_WEBPHOTO_ITEM_TEXT_2","text2");
-define("_WEBPHOTO_ITEM_TEXT_3","Text3");
-define("_WEBPHOTO_ITEM_TEXT_4","Text4");
-define("_WEBPHOTO_ITEM_TEXT_5","text5");
-define("_WEBPHOTO_ITEM_TEXT_6","text6");
-define("_WEBPHOTO_ITEM_TEXT_7","text7");
-define("_WEBPHOTO_ITEM_TEXT_8","text8");
-define("_WEBPHOTO_ITEM_TEXT_9","text9");
-define("_WEBPHOTO_ITEM_TEXT_10","text10");
+//---------------------------------------------------------
+// v0.40
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TABLE" , "Tableau des ressources" ) ;
+define("_WEBPHOTO_ITEM_ID" , "ID de l'élément" ) ;
+define("_WEBPHOTO_ITEM_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_ITEM_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_ITEM_CAT_ID" ,  "ID de la Catégorie" ) ;
+define("_WEBPHOTO_ITEM_GICON_ID" , "ID de l'icône Googlemap" ) ;
+define("_WEBPHOTO_ITEM_UID" ,   "ID de l'utilisateur" ) ;
+define("_WEBPHOTO_ITEM_KIND" , "Type de ressource" ) ;
+define("_WEBPHOTO_ITEM_EXT" ,  "Extension du fichier" ) ;
+define("_WEBPHOTO_ITEM_DATETIME" ,  "Date de la photo" ) ;
+define("_WEBPHOTO_ITEM_TITLE" , "Titre photo" ) ;
+define("_WEBPHOTO_ITEM_PLACE" , "Localisation" ) ;
+define("_WEBPHOTO_ITEM_EQUIPMENT" , "Equipment" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LATITUDE" ,  "Latitude Googlemap" ) ;
+define("_WEBPHOTO_ITEM_GMAP_LONGITUDE" , "Longitude Googlemap" ) ;
+define("_WEBPHOTO_ITEM_GMAP_ZOOM" ,      "Pourcentage du zoom" ) ;
+define("_WEBPHOTO_ITEM_GMAP_TYPE" ,      "Type de carte" ) ;
+define("_WEBPHOTO_ITEM_PERM_READ" , "Permission de consulter" ) ;
+define("_WEBPHOTO_ITEM_STATUS" ,   "Statut" ) ;
+define("_WEBPHOTO_ITEM_HITS" ,     "Affichages" ) ;
+define("_WEBPHOTO_ITEM_RATING" ,   "Notes" ) ;
+define("_WEBPHOTO_ITEM_VOTES" ,    "Votes" ) ;
+define("_WEBPHOTO_ITEM_DESCRIPTION" ,  "Description de la photo" ) ;
+define("_WEBPHOTO_ITEM_EXIF" , "Informations Exif" ) ;
+define("_WEBPHOTO_ITEM_SEARCH" ,  "Rechercher" ) ;
+define("_WEBPHOTO_ITEM_COMMENTS" , "Commentaires" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_1" ,  "ID du fichier: Contenu" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_2" ,  "ID du fichier: Miniature" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_3" ,  "ID du fichier: MIddle" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_4" ,  "ID du fichier: Vidéo Flash" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "ID du fichier: Vidéo Docomo" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "ID du fichier: PDF" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "ID du fichier: Flash au format swf" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "fichier8" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "fichier9" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_10" , "fichier10" ) ;
+define("_WEBPHOTO_ITEM_TEXT_1" ,  "texte1" ) ;
+define("_WEBPHOTO_ITEM_TEXT_2" ,  "texte2" ) ;
+define("_WEBPHOTO_ITEM_TEXT_3" ,  "texte3" ) ;
+define("_WEBPHOTO_ITEM_TEXT_4" ,  "texte4" ) ;
+define("_WEBPHOTO_ITEM_TEXT_5" ,  "texte5" ) ;
+define("_WEBPHOTO_ITEM_TEXT_6" ,  "texte6" ) ;
+define("_WEBPHOTO_ITEM_TEXT_7" ,  "texte7" ) ;
+define("_WEBPHOTO_ITEM_TEXT_8" ,  "texte8" ) ;
+define("_WEBPHOTO_ITEM_TEXT_9" ,  "texte9" ) ;
+define("_WEBPHOTO_ITEM_TEXT_10" , "texte10" ) ;
 
-// Table de fichiers
-define("_WEBPHOTO_FILE_TABLE","File Table");
-define("_WEBPHOTO_FILE_ID","Fichier ID");
-define("_WEBPHOTO_FILE_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_FILE_TIME_UPDATE","Mise � jour Time");
-define("_WEBPHOTO_FILE_ITEM_ID","Point ID");
-define("_WEBPHOTO_FILE_KIND","Type de fichier");
-define("_WEBPHOTO_FILE_URL","URL");
-define("_WEBPHOTO_FILE_PATH","Chemin du fichier");
-define("_WEBPHOTO_FILE_NAME","Nom de fichier");
-define("_WEBPHOTO_FILE_EXT","Extension du fichier");
-define("_WEBPHOTO_FILE_MIME","MIME type");
-define("_WEBPHOTO_FILE_MEDIUM","Medium Type");
-define("_WEBPHOTO_FILE_SIZE","Taille du fichier");
-define("_WEBPHOTO_FILE_WIDTH","Largeur de l'image");
-define("_WEBPHOTO_FILE_HEIGHT","Hauteur de l'image");
-define("_WEBPHOTO_FILE_DURATION","Dur�e de la vid�o Time");
+// file table
+define("_WEBPHOTO_FILE_TABLE" , "Tableau des fichiers" ) ;
+define("_WEBPHOTO_FILE_ID" , "ID du fichier" ) ;
+define("_WEBPHOTO_FILE_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_FILE_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_FILE_ITEM_ID" ,  "ID de l'élément" ) ;
+define("_WEBPHOTO_FILE_KIND" , "Type de fichier" ) ;
+define("_WEBPHOTO_FILE_URL" ,    "URL" ) ;
+define("_WEBPHOTO_FILE_PATH" ,   "Chemin d'accès au fichier" ) ;
+define("_WEBPHOTO_FILE_NAME" ,   "Nom du fichier" ) ;
+define("_WEBPHOTO_FILE_EXT" ,    "Extension du fichier" ) ;
+define("_WEBPHOTO_FILE_MIME" ,   "MIME type" ) ;
+define("_WEBPHOTO_FILE_MEDIUM" , "Type de format" ) ;
+define("_WEBPHOTO_FILE_SIZE" ,   "Taille du fichier" ) ;
+define("_WEBPHOTO_FILE_WIDTH" ,  "Largeur de l'image" ) ;
+define("_WEBPHOTO_FILE_HEIGHT" , "Hauteur de l'image" ) ;
+define("_WEBPHOTO_FILE_DURATION" , "Durée de la vidéo" ) ;
 
-// Type de fichier (pour les admin checktables)
-define("_WEBPHOTO_FILE_KIND_1","Contenu");
-define("_WEBPHOTO_FILE_KIND_2","vignette");
-define("_WEBPHOTO_FILE_KIND_3","Moyen");
-define("_WEBPHOTO_FILE_KIND_4","Flash Video");
-define("_WEBPHOTO_FILE_KIND_5","Docomo Video");
-define("_WEBPHOTO_FILE_KIND_6","file6");
-define("_WEBPHOTO_FILE_KIND_7","file7");
-define( "_WEBPHOTO_FILE_KIND_8","file8");
-define("_WEBPHOTO_FILE_KIND_9","file9");
-define("_WEBPHOTO_FILE_KIND_10","file10");
+// file kind ( for admin checktables )
+define("_WEBPHOTO_FILE_KIND_1" ,  "Contenu" ) ;
+define("_WEBPHOTO_FILE_KIND_2" ,  "Miniature" ) ;
+define("_WEBPHOTO_FILE_KIND_3" ,  "MIddle" ) ;
+define("_WEBPHOTO_FILE_KIND_4" ,  "Vidéo Flash" ) ;
+define("_WEBPHOTO_FILE_KIND_5" ,  "Vidéo Docomo" ) ;
+define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
+define("_WEBPHOTO_FILE_KIND_7" ,  "Flash au format swf" ) ;
+define("_WEBPHOTO_FILE_KIND_8" ,  "fichier8" ) ;
+define("_WEBPHOTO_FILE_KIND_9" ,  "fichier9" ) ;
+define("_WEBPHOTO_FILE_KIND_10" , "fichier10" ) ;
 
-// Index
-define("_WEBPHOTO_MOBILE_MAILTO","Envoyer l'URL � la t�l�phonie mobile");
+// index
+define("_WEBPHOTO_MOBILE_MAILTO" , "Transmettre l'URL sur téléphone mobile" ) ;
 
-// I.php
-define("_WEBPHOTO_TITLE_MAIL_JUDGE","juge le transporteur mobile");
-define("_WEBPHOTO_MAIL_MODEL","mobile");
-define("_WEBPHOTO_MAIL_BROWSER","Web Browser");
-define("_WEBPHOTO_MAIL_NOT_JUDGE","Je ne peux pas juger de l'op�rateur mobile");
-define("_WEBPHOTO_MAIL_TO_WEBMASTER","Mail de webmaster");
+// i.php
+define("_WEBPHOTO_TITLE_MAIL_JUDGE" ,  "Evaluer l'Opérateur mobile" ) ;
+define("_WEBPHOTO_MAIL_MODEL", "Opérateur mobile" ) ;
+define("_WEBPHOTO_MAIL_BROWSER", "Navigateur" ) ;
+define("_WEBPHOTO_MAIL_NOT_JUDGE", "Impossible d'évaluer l'Opérateur mobile" ) ;
+define("_WEBPHOTO_MAIL_TO_WEBMASTER", "E-mail pour le webmestre" ) ;
 
-// Help
-define("_WEBPHOTO_HELP_MAIL_POST_FMT","
-Pr�parer <b> </ b> <br />
-Inscrivez votre adresse e-mail de t�l�phone mobile <br />
-<a href='{MODULE_URL}/index.php?fct=mail_register' target='_blank'> Inscrivez-Mail Addrtess </ a> <br /> <br />
-<b> photo </ b> <br />
-Envoyer un mail � l'adresse de la fixation des fllowing fichier photo. <br />
-MAIL_ADDR <a href='mailto:{MAIL_ADDR}'> () </ a> () MAIL_GUEST <br /> <br />
-<b> Rotation de photo </ b> <br />
-Vous pouvez tourner la photo de droite ou de gauche, puisque vous entrez le terme de 'Sujet' comme suit <br />
-  @ R: tourner � droite <br />
-  L @: tourner � gauche <br /> <br /> ");
-define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE","mail <b> r�cup�rer et de pr�senter la photo </ b> <br />");
-define("_WEBPHOTO_HELP_MAIL_RETRIEVE_FMT","
-Cliquez <a href='{MODULE_URL}/i.php?op=post' target='_blank'> Post Mail </ a>, apr�s avoir envoy� un courriel quelques secondes. <br />
-Webphoto r�cup�rer le mail qui vous a envoy�, pr�senter et de montrer la photo ci-jointe <br /> ");
-define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT","Webphoto r�cup�rer le mail qui vous a envoy�, pr�senter et de montrer la photo ci-jointe <br />");
-define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT","
-Le courrier est automatiquement% s secondes plus tard, lorsque vous envoyez un mail. <br />
-S'il vous pla�t, cliquez <a href='{MODULE_URL}/i.php?op=post' target='_blank'> Post Mail </ a>, si elle n'est pas pr�sent�e. <br /> ");
+// help
+define("_WEBPHOTO_HELP_MAIL_POST_FMT", '
+<b>Préparation</b><br />
+Enregistrez votre adresse e-mail liée à votre téléphone mobile<br />
+<a href="{MODULE_URL}/index.php?fct=mail_register" rel="external">Enregistrer l\'adresse e-mail</a><br /><br />
+<b>Envoyer une photo</b><br />
+Transmettre l\'e-mail à l\'adresse suivante avec la photo en pièce jointe.<br />
+<a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
+<b>Faire pivoter les photos</b><br />
+Vous pouvez faire pivoter les photos vers la droite et vers la gauche en précisant à la fin du Sujet de l\'e-mail<br />
+ R@ : pivoter vers la droite <br />
+ L@ : pivoter vers la gauche<br /><br />' );
+define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE", "<b>Récupérer les e-mails et leurs documents joints</b><br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_FMT", '
+Cliquer sur <a href="{MODULE_URL}/i.php?op=post" rel="external">Envois par e-mail</a>, quelques secondes après la transmission de l\'e-mail.<br />
+Webphoto va récupérer l\'e-mail que vous avez envoyé et afficher la photo proposée<br />' );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "Webphoto récupère le mail que vous avez envoyé et affiche la photo transmise en pièce jointe<br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
+L\'e-mail est traité automatiquement %s secondes après la transmission de l\'e-mail.<br />
+Merci de cliquer <a href="{MODULE_URL}/i.php?op=post" rel="external">Evoyer par e-mail</a>, si l\'e-mail n\'est pas traité.<br />' );
 
-//------------------------------------------------ ---------
-// V0.50
-//------------------------------------------------ ---------
-// Point de table
-define("_WEBPHOTO_ITEM_TIME_PUBLISH","Heure de publication");
-define("_WEBPHOTO_ITEM_TIME_EXPIRE","Expired Time");
-define("_WEBPHOTO_ITEM_PLAYER_ID","Player ID");
-define("_WEBPHOTO_ITEM_FLASHVAR_ID","FlashVar ID");
-define("_WEBPHOTO_ITEM_DURATION","Dur�e de la vid�o Time");
-define("_WEBPHOTO_ITEM_DISPLAYTYPE","Type d'affichage");
-define("_WEBPHOTO_ITEM_ONCLICK","Action lorsque click thumbnail");
-define("_WEBPHOTO_ITEM_SITEURL","Site Web");
-define("_WEBPHOTO_ITEM_ARTIST","Artiste");
-define("_WEBPHOTO_ITEM_ALBUM","Album");
-define("_WEBPHOTO_ITEM_LABEL","Label");
-define("_WEBPHOTO_ITEM_VIEWS","Vues");
-define("_WEBPHOTO_ITEM_PERM_DOWN","Permission T�l�charger");
-define("_WEBPHOTO_ITEM_EMBED_TYPE","Type Plugin");
-define("_WEBPHOTO_ITEM_EMBED_SRC","Plug-in Web Param");
-define("_WEBPHOTO_ITEM_EXTERNAL_URL","External URL");
-define("_WEBPHOTO_ITEM_EXTERNAL_THUMB","External Thumbnail URL");
-define("_WEBPHOTO_ITEM_PLAYLIST_TYPE","Type de lecture");
-define("_WEBPHOTO_ITEM_PLAYLIST_FEED","Playlist Feed URL");
-define("_WEBPHOTO_ITEM_PLAYLIST_DIR","R�pertoire Playlist");
-define("_WEBPHOTO_ITEM_PLAYLIST_CACHE","Playlist Cache Name");
-define("_WEBPHOTO_ITEM_PLAYLIST_TIME","Playlist Cache Time");
-define("_WEBPHOTO_ITEM_CHAIN","cha�ne");
-define("_WEBPHOTO_ITEM_SHOWINFO","Afficher l'information");
+//---------------------------------------------------------
+// v0.50
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_TIME_PUBLISH" , "Date de publication" ) ;
+define("_WEBPHOTO_ITEM_TIME_EXPIRE"  , "Date de suspension" ) ;
+define("_WEBPHOTO_ITEM_PLAYER_ID" ,    "ID du lecteur" ) ;
+define("_WEBPHOTO_ITEM_FLASHVAR_ID" ,  "ID de la variable FlashVar" ) ;
+define("_WEBPHOTO_ITEM_DURATION" , "Durée de la vidéo" ) ;
+define("_WEBPHOTO_ITEM_DISPLAYTYPE", "Type d'affichage");
+define("_WEBPHOTO_ITEM_ONCLICK","Action au clic sur la miniature");
+define("_WEBPHOTO_ITEM_SITEURL", "URL du site");
+define("_WEBPHOTO_ITEM_ARTIST", "Artiste");
+define("_WEBPHOTO_ITEM_ALBUM", "Album");
+define("_WEBPHOTO_ITEM_LABEL", "Label");
+define("_WEBPHOTO_ITEM_VIEWS", "Affichages");
+define("_WEBPHOTO_ITEM_PERM_DOWN" , "Përmission de télécharger" ) ;
+define("_WEBPHOTO_ITEM_EMBED_TYPE" ,  "Type de Plugin" ) ;
+define("_WEBPHOTO_ITEM_EMBED_SRC" ,   "URL de paramétrage du Plugin" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_URL" , "URL extérieure" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_THUMB" , "URL extérieure pour la miniature" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE",  "Type de Playlist" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_FEED",  "URL du flux de la Playlist" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_DIR",   "Répertoire de la Playlist" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_CACHE", "Nom du cache de la Playlist" ) ;
+define("_WEBPHOTO_ITEM_PLAYLIST_TIME",  "Délais de mise en cache de la Playlist" ) ;
+define("_WEBPHOTO_ITEM_CHAIN", "Chaîne");
+define("_WEBPHOTO_ITEM_SHOWINFO", "Afficher les informations");
 
-// Lecteur de table
-define("_WEBPHOTO_PLAYER_TABLE", "Table Player");
-define("_WEBPHOTO_PLAYER_ID", "Player ID");
-define("_WEBPHOTO_PLAYER_TIME_CREATE", "Cr�er l'heure");
-define("_WEBPHOTO_PLAYER_TIME_UPDATE", "Mise � jour Time");
-define("_WEBPHOTO_PLAYER_TITLE", "Titre Player");
-define("_WEBPHOTO_PLAYER_STYLE", "Style Option");
-define("_WEBPHOTO_PLAYER_WIDTH", "Largeur Player");
-define("_WEBPHOTO_PLAYER_HEIGHT", "Hauteur Player");
-define("_WEBPHOTO_PLAYER_DISPLAYWIDTH", "Display Width");
-define("_WEBPHOTO_PLAYER_DISPLAYHEIGHT", "Hauteur d'affichage");
-define("_WEBPHOTO_PLAYER_SCREENCOLOR", "Couleur d'�cran");
-define("_WEBPHOTO_PLAYER_BACKCOLOR", "Back Color");
-define("_WEBPHOTO_PLAYER_FRONTCOLOR", "Front Color");
-define("_WEBPHOTO_PLAYER_LIGHTCOLOR", "Light Color");
+// player table
+define("_WEBPHOTO_PLAYER_TABLE","Tableau de lecteurs vidéo");
+define("_WEBPHOTO_PLAYER_ID","ID du lecteur");
+define("_WEBPHOTO_PLAYER_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_PLAYER_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_PLAYER_TITLE","Nom du lecteur");
+define("_WEBPHOTO_PLAYER_STYLE","Apparence");
+define("_WEBPHOTO_PLAYER_WIDTH","Largeur du lecteur");
+define("_WEBPHOTO_PLAYER_HEIGHT","Hauteur du lecteur");
+define("_WEBPHOTO_PLAYER_DISPLAYWIDTH","Afficher la largeur");
+define("_WEBPHOTO_PLAYER_DISPLAYHEIGHT","Afficher la hauteur");
+define("_WEBPHOTO_PLAYER_SCREENCOLOR","Couleur de l'écran");
+define("_WEBPHOTO_PLAYER_BACKCOLOR","Couleur de fond");
+define("_WEBPHOTO_PLAYER_FRONTCOLOR","Couleur de premier plan");
+define("_WEBPHOTO_PLAYER_LIGHTCOLOR","Couleur de l'éclairage");
 
 // FlashVar table
-define("_WEBPHOTO_FLASHVAR_TABLE","FlashVra Table");
-define("_WEBPHOTO_FLASHVAR_ID","FlashVar ID");
-define("_WEBPHOTO_FLASHVAR_TIME_CREATE","Cr�er l'heure");
-define("_WEBPHOTO_FLASHVAR_TIME_UPDATE","Update Time" ) ;
-define("_WEBPHOTO_FLASHVAR_ITEM_ID","Item ID");
-define("_WEBPHOTO_FLASHVAR_WIDTH","Player Width");
-define("_WEBPHOTO_FLASHVAR_HEIGHT","Player Height");
-define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH","Display Width");
-define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT","Display Height");
-define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW","Show Image");
-define("_WEBPHOTO_FLASHVAR_SEARCHBAR","Searchbar");
-define("_WEBPHOTO_FLASHVAR_SHOWEQ","Show Equalizer");
-define("_WEBPHOTO_FLASHVAR_SHOWICONS","Activity Icons");
-define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION","Show Navigation");
-define("_WEBPHOTO_FLASHVAR_SHOWSTOP","Show Stop");
-define("_WEBPHOTO_FLASHVAR_SHOWDIGITS","Show Digits");
-define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD","Show Download");
-define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN","Full Screen Button");
-define("_WEBPHOTO_FLASHVAR_AUTOSCROLL","Scroll Bar Off");
-define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST","Thumbnails");
-define("_WEBPHOTO_FLASHVAR_AUTOSTART","Auto Start");
-define("_WEBPHOTO_FLASHVAR_REPEAT","Repeat");
-define("_WEBPHOTO_FLASHVAR_SHUFFLE","Shuffle");
-define("_WEBPHOTO_FLASHVAR_SMOOTHING","Smoothing");
-define("_WEBPHOTO_FLASHVAR_ENABLEJS","Enable Javascript");
-define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY","Link from Display");
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE","Screen Hyperlink");
-define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH","Bufferlength");
-define("_WEBPHOTO_FLASHVAR_ROTATETIME","Image Rotation Time");
+define("_WEBPHOTO_FLASHVAR_TABLE","Tableau de FlashVar");
+define("_WEBPHOTO_FLASHVAR_ID","ID de FlashVar");
+define("_WEBPHOTO_FLASHVAR_TIME_CREATE" , "Date de création" ) ;
+define("_WEBPHOTO_FLASHVAR_TIME_UPDATE" , "Date de mise à jour" ) ;
+define("_WEBPHOTO_FLASHVAR_ITEM_ID","ID de l'élément");
+define("_WEBPHOTO_FLASHVAR_WIDTH","Largur du lecteur");
+define("_WEBPHOTO_FLASHVAR_HEIGHT","Hauteur du lecteur");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH","Afficher la largeur");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT","Afficher la hauteur");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW","Afficher l'image");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR","Barre de recherche");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ","Afficher les égaliseurs");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS","Icônes d'activité");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION","Afficher la navigation");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP","Afficher la fonction Stop");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS","Afficher le compteur");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD","Afficher la fonction télécharger");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN","Afficher le bouton plein écran");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL","Barre de défilement inactive");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST","Miniatures");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART","Démarrage automatique de la lecture");
+define("_WEBPHOTO_FLASHVAR_REPEAT","Fonction Répéter");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE","Fonction Lecture léatoire");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING","Fonction Atténuation");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS","Activer le javascript");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY","Lien depuis Afficher");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE","Hyperliens sur l'écran");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH","Longueur du tampon");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME","Durée de rotation de l'image");
 define("_WEBPHOTO_FLASHVAR_VOLUME","volume");
-define("_WEBPHOTO_FLASHVAR_LINKTARGET","Link Target");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH","Stretch Image/Video");
-define("_WEBPHOTO_FLASHVAR_TRANSITION","Slide Show Transition");
-define("_WEBPHOTO_FLASHVAR_SCREENCOLOR","Screen Color");
-define("_WEBPHOTO_FLASHVAR_BACKCOLOR","Back Color");
-define("_WEBPHOTO_FLASHVAR_FRONTCOLOR","Front Color");
-define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR","Light Color");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET","Cible du lien");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH","Elasticité de l'image / vidéo");
+define("_WEBPHOTO_FLASHVAR_TRANSITION","Transition du diaporama");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR","Couleur de l'écran");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR","Couleur de fond");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR","Couleur du premier plan");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR","Couleur de l'éclairage");
 define("_WEBPHOTO_FLASHVAR_TYPE","Type");
-define("_WEBPHOTO_FLASHVAR_FILE","Media File");
-define("_WEBPHOTO_FLASHVAR_IMAGE","Preview Image");
-define("_WEBPHOTO_FLASHVAR_LOGO","Player Logo Image");
-define("_WEBPHOTO_FLASHVAR_LINK","Screen Hyperlink");
-define("_WEBPHOTO_FLASHVAR_AUDIO","Audio Program");
-define("_WEBPHOTO_FLASHVAR_CAPTIONS","Captions URL");
-define("_WEBPHOTO_FLASHVAR_FALLBACK","Fallback URL");
-define("_WEBPHOTO_FLASHVAR_CALLBACK","Callback URL");
-define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID","JavaScript ID");
-define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS","Recommendations");
-define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT","Stream Script URL");
-define("_WEBPHOTO_FLASHVAR_SEARCHLINK","Search Link");
+define("_WEBPHOTO_FLASHVAR_FILE","Fichier media");
+define("_WEBPHOTO_FLASHVAR_IMAGE","Prévisualiser l'image");
+define("_WEBPHOTO_FLASHVAR_LOGO","Logo associé au lecteur");
+define("_WEBPHOTO_FLASHVAR_LINK","Liens sur l'écran");
+define("_WEBPHOTO_FLASHVAR_AUDIO","Programme automatique");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS","Légendes des URL");
+define("_WEBPHOTO_FLASHVAR_FALLBACK","URL de retour");
+define("_WEBPHOTO_FLASHVAR_CALLBACK","URL de rappel");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID","ID du javascript");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS","Recommandations");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT","URL de diffusion du script");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK","Lien de recherche");
 
 // log file
-define("_WEBPHOTO_LOGFILE_LINE","Line");
+define("_WEBPHOTO_LOGFILE_LINE","Ligne");
 define("_WEBPHOTO_LOGFILE_DATE","Date");
-define("_WEBPHOTO_LOGFILE_REFERER","Referer");
-define("_WEBPHOTO_LOGFILE_IP","IP Address");
-define("_WEBPHOTO_LOGFILE_STATE","State");
+define("_WEBPHOTO_LOGFILE_REFERER","Lien référent");
+define("_WEBPHOTO_LOGFILE_IP","Adresse IP");
+define("_WEBPHOTO_LOGFILE_STATE","Etat");
 define("_WEBPHOTO_LOGFILE_ID","ID");
-define("_WEBPHOTO_LOGFILE_TITLE","Title");
-define("_WEBPHOTO_LOGFILE_FILE","File");
-define("_WEBPHOTO_LOGFILE_DURATION","Duration");
+define("_WEBPHOTO_LOGFILE_TITLE","Titre");
+define("_WEBPHOTO_LOGFILE_FILE","Fichier");
+define("_WEBPHOTO_LOGFILE_DURATION","Durée");
 
 // item option
-define("_WEBPHOTO_ITEM_KIND_UNDEFINED","Undefined");
-define("_WEBPHOTO_ITEM_KIND_NONE","No Media");
+define("_WEBPHOTO_ITEM_KIND_UNDEFINED","Indéfini");
+define("_WEBPHOTO_ITEM_KIND_NONE","Aucun média");
 define("_WEBPHOTO_ITEM_KIND_GENERAL","General");
 define("_WEBPHOTO_ITEM_KIND_IMAGE","Image (jpg,gif,png)");
-define("_WEBPHOTO_ITEM_KIND_VIDEO","Video (wmv,mov,flv...");
+define("_WEBPHOTO_ITEM_KIND_VIDEO","Vidéo (wmv,mov,flv...");
 define("_WEBPHOTO_ITEM_KIND_AUDIO","Audio (mp3...)");
-define("_WEBPHOTO_ITEM_KIND_EMBED","Embed Plugin");
-define("_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL","External General");
-define("_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE","External Image");
-define("_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED","PlayList Web Feed");
-define("_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR", "PlayList Media directory");
+define("_WEBPHOTO_ITEM_KIND_EMBED","Plugin EMBED");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL","Externe (général)");
+define("_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE","Externe (image)");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED","Flux de la playlist");
+define("_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR", "Répertoire de la playlist");
 
-define("_WEBPHOTO_ITEM_DISPLAYTYPE_GENERAL","General");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_GENERAL","Général");
 define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGE","Image (jpg,gif,png)");
-define("_WEBPHOTO_ITEM_DISPLAYTYPE_EMBED","Embed Plugin");
+define("_WEBPHOTO_ITEM_DISPLAYTYPE_EMBED","Plugin EMBED");
 define("_WEBPHOTO_ITEM_DISPLAYTYPE_SWFOBJECT","FlashPlayer (swf)");
 define("_WEBPHOTO_ITEM_DISPLAYTYPE_MEDIAPLAYER","MediaPlayer (jpg,gif,png,flv,mp3)");
 define("_WEBPHOTO_ITEM_DISPLAYTYPE_IMAGEROTATOR","ImageRotator (jpg,gif,png)");
 
-define("_WEBPHOTO_ITEM_ONCLICK_PAGE","Detail Page");
-define("_WEBPHOTO_ITEM_ONCLICK_DIRECT","Direct Link");
+define("_WEBPHOTO_ITEM_ONCLICK_PAGE","Page de détail");
+define("_WEBPHOTO_ITEM_ONCLICK_DIRECT","Lien direct");
 define("_WEBPHOTO_ITEM_ONCLICK_POPUP","Image Popup");
 
-define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_DSC","What is the media file type?");
-define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_NONE","None");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_DSC","Quel est le type de ressource ?");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_NONE","Aucun");
 define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_IMAGE","Image (jpg,gif,png)");
 define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_AUDIO","Audio (mp3)");
-define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_VIDEO","Video (flv)");
+define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_VIDEO","Vidéo (flv)");
 define("_WEBPHOTO_ITEM_PLAYLIST_TYPE_FLASH","Flash (swf)");
 
 define("_WEBPHOTO_ITEM_SHOWINFO_DESCRIPTION","Description");
-define("_WEBPHOTO_ITEM_SHOWINFO_LOGOIMAGE","Thumbnail");
-define("_WEBPHOTO_ITEM_SHOWINFO_CREDITS","Credits");
-define("_WEBPHOTO_ITEM_SHOWINFO_STATISTICS","Statistics");
-define("_WEBPHOTO_ITEM_SHOWINFO_SUBMITTER","Submitter");
+define("_WEBPHOTO_ITEM_SHOWINFO_LOGOIMAGE","Miniature");
+define("_WEBPHOTO_ITEM_SHOWINFO_CREDITS","Crédits");
+define("_WEBPHOTO_ITEM_SHOWINFO_STATISTICS","Statistiques");
+define("_WEBPHOTO_ITEM_SHOWINFO_SUBMITTER","Proposé par");
 define("_WEBPHOTO_ITEM_SHOWINFO_POPUP","PopUp");
 define("_WEBPHOTO_ITEM_SHOWINFO_TAGS","Tags");
-define("_WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD","Download");
+define("_WEBPHOTO_ITEM_SHOWINFO_DOWNLOAD","Télécharger");
 define("_WEBPHOTO_ITEM_SHOWINFO_WEBSITE","Site");
-define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","Feed");
+define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","Flux");
 
-define("_WEBPHOTO_ITEM_STATUS_WAITING","Waiting Approval");
-define("_WEBPHOTO_ITEM_STATUS_APPROVED","Appoved");
-define("_WEBPHOTO_ITEM_STATUS_UPDATED","Online (Updated)");
-define("_WEBPHOTO_ITEM_STATUS_OFFLINE","Off Line");
-define("_WEBPHOTO_ITEM_STATUS_EXPIRED","Expired");
+define("_WEBPHOTO_ITEM_STATUS_WAITING","En attente d'approbation");
+define("_WEBPHOTO_ITEM_STATUS_APPROVED","Approuvé");
+define("_WEBPHOTO_ITEM_STATUS_UPDATED","En ligne (mis à jour)");
+define("_WEBPHOTO_ITEM_STATUS_OFFLINE","Désactivé");
+define("_WEBPHOTO_ITEM_STATUS_EXPIRED","Expiré");
 
 // player option
 define("_WEBPHOTO_PLAYER_STYLE_MONO","Monochrome");
-define("_WEBPHOTO_PLAYER_STYLE_THEME","Color from Theme");
-define("_WEBPHOTO_PLAYER_STYLE_PLAYER","Custom Player");
-define("_WEBPHOTO_PLAYER_STYLE_PAGE","Custom Player/Page");
+define("_WEBPHOTO_PLAYER_STYLE_THEME","Couleur du thème");
+define("_WEBPHOTO_PLAYER_STYLE_PLAYER","Lecteur personnalisé");
+define("_WEBPHOTO_PLAYER_STYLE_PAGE","Lecteur / page personnalisé");
 
 // flashvar desc
-define("_WEBPHOTO_FLASHVAR_ID_DSC","[Basics] <br />Use this to set the RTMP stream identifier with the mediaplayer. <br />The ID will also be sent to statistics callbacks. <br />If you play a playlist, you can set an id for every entry. ");
-define("_WEBPHOTO_FLASHVAR_HEIGHT_DSC","[Basics] ");
-define("_WEBPHOTO_FLASHVAR_WIDTH_DSC","[Basics] ");
-define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT_DSC","[Playlist] [mediaplayer] <br />Set this smaller as the height to show a playlist below the display. <br />If you set it the same as the height, the controlbar will auto-hide on top of the video. ");
-define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH_DSC","[Playlist] [mediaplayer] <br />Bottom tracks:<br /> Screen = Player<br /> Side tracks:<br />Screen < Player ");
-define("_WEBPHOTO_FLASHVAR_DISPLAY_DEFAULT","when 0, use value of the player.");
-define("_WEBPHOTO_FLASHVAR_SCREENCOLOR_DSC","[Colors] <br />[imagerotator] change this to your HTML page's color make images of different sizes blend nicely. ");
-define("_WEBPHOTO_FLASHVAR_BACKCOLOR_DSC","[Colors] <br />Backgroundcolor of the controls");
-define("_WEBPHOTO_FLASHVAR_FRONTCOLOR_DSC","[Colors] <br />Texts &amp; buttons color of the controls");
-define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR_DSC","[Colors] <br />Rollover color of the controls");
-define("_WEBPHOTO_FLASHVAR_COLOR_DEFAULT","when blank, use value of the player.");
-define("_WEBPHOTO_FLASHVAR_SEARCHBAR_DSC","[Basics] <br />Set this to false to hide the searchbar below the display. <br />You can set the search destination with the searchlink flashvar. ");
-define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW_DSC","[Basics] <br />true = Show preview image");
-define("_WEBPHOTO_FLASHVAR_IMAGE_DSC","[Basics] <br />If you play a sound or movie, set this to the url of a preview image. <br />When using a playlist, you can set an image for every entry. ");
-define("_WEBPHOTO_FLASHVAR_FILE_DSC","[Basics] <br />Sets the location of the file or playlist to play. <br />The imagerotator only plays playlists. ");
-define("_WEBPHOTO_FLASHVAR_LOGO_DSC","[Display] <br />Set this to an image that can be put as a watermark logo in the top right corner of the display. <br />Transparent PNG files give the best results. ");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_DSC","[Display] <br />Sets how to stretch images/movies to make them fit the display. <br />false (default) = fit the display. <br />true = stretch them proportionally to fill the display. <br />fit = stretch them disproportionally<br />none = keep original dimensions. ");
-define("_WEBPHOTO_FLASHVAR_SHOWEQ_DSC","[Display] <br />Set this to true to show a (fake) equalizer at the bottom of the display. <br />Nice for MP3 files. ");
-define("_WEBPHOTO_FLASHVAR_SHOWICONS_DSC","[Display] <br />Set this to false to hide the activity icon and play button in the middle of the display. ");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_DSC","[Display] [imagerotator] <br />Sets the transition to use between images. ");
-define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION_DSC","[Controlbar] <br />Set this to false to completely hide the controlbar. ");
-define("_WEBPHOTO_FLASHVAR_SHOWSTOP_DSC","[Controlbar] [mediaplayer] <br />Set this to true to show a stop button in the controlbar. ");
-define("_WEBPHOTO_FLASHVAR_SHOWDIGITS_DSC","[Controlbar] [mediaplayer] <br />Set this to false to hide the elapsed/remaining digits in the controlbar. ");
-define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD_DSC","[Controlbar] [mediaplayer] <br />Set this to true to show a button in the player controlbar which links to the link flashvar. ");
-define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN_DSC","[Controlbar] <br />Set this to false to hide the fullscreen button and disable fullscreen. ");
-define("_WEBPHOTO_FLASHVAR_AUTOSCROLL_DSC","[Playlist] [mediaplayer] <br />Set this to true to automatically scroll through the playlist on rollover, instead of using a scrollbar. ");
-define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST_DSC","[Playlist] [mediaplayer] <br />Set this to false to hide preview images in the display");
-define("_WEBPHOTO_FLASHVAR_AUDIO_DSC","[Playback] <br />Assigns an additional, synchronized MP3. <br />Use this for a closed audio description or director's comments with the mediaplayer or background music with the rotator. <br />When using the mediaplayer and a playlist, you can assign audio to every entry. ");
-define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","[Playback] <br />Set this to true in the player to automatically start playing when the page loads, <br />or set this to false with the rotator to prevent the automatic rotation.");
-define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","[Playback] [mediaplayer] <br />Sets the number of seconds a video should be buffered before the players starts playback.<br />Set this small for fast connections or short videos and big for slow connections. ");
-define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","[Playback] [mediaplayer] <br />Captions should be in TimedText format. <br />When using a playlist, you can assign captions for every entry. ");
-define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","[Playback] [mediaplayer] <br />If you play an MP4 file, set here the location of an FLV fallback. <br />It'll automatically be picked by older flash player. ");
-define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","[Playback] <br />Set this to true to automatically rpeat playback of all files. <br />Set this to list to playback an entire playlist once. ");
-define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","[Playback] <br />Sets the number of seconds an image is played back. ");
-define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","[Playback] <br />Set this to true to playback a playlist in random order. ");
-define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","[Playback] [mediaplayer] <br />Set this to false to turn of the smoothing of video. <br />Quality will decrease, but performance will increase. <br />Good for HD files and slower computers. ");
-define("_WEBPHOTO_FLASHVAR_VOLUME_DSC","[Playback] <br />sets the startup volume for playback of sounds, movies and audiotracks. ");
-define("_WEBPHOTO_FLASHVAR_ENABLEJS_DSC","[External] <br />Set this to true to enable javascript interaction. <br />This'll only work online! <br />Javascript interaction includes playback control, asynchroneous loading of media files and return of track information. ");
-define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID_DSC","[External] <br />If you interact with multiple mediaplayers/rotators in javascript, use this flashvar to give each of them a unique ID. ");
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE_DSC","[External] <br />This link is assigned to the display, logo and link button. <br >when None, assign nothing. <br />Else, assign a webpage to open. ");
+define("_WEBPHOTO_FLASHVAR_ID_DSC","[Paramètres de base] <br />A utiliser pour indiquer l'idebntifiant de diffusion RTMP du lecteur.<br />L'ID sera également utilisé pour les statistiques.<br />Si vous lisez une playlist, vous pouvez indiquer un ID pour chaque élément. ");
+define("_WEBPHOTO_FLASHVAR_HEIGHT_DSC","[Paramètres de base] ");
+define("_WEBPHOTO_FLASHVAR_WIDTH_DSC","[Paramètres de base]  ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYHEIGHT_DSC","[Playlist] [mediaplayer] <br />Paramétrer une dimension inférieure à la hauteur afin de voir la playlist. <br />Si vous conservez une valeur identique à la hauteur, les commandes du lecteur seront automatiquement masquées au sommet de la vidéo. ");
+define("_WEBPHOTO_FLASHVAR_DISPLAYWIDTH_DSC","[Playlist] [mediaplayer] <br />Pistes du bas :<br /> Ecran = lecteur<br /> Pistes latérales :<br />Ecran < au lecteur ");
+define("_WEBPHOTO_FLASHVAR_DISPLAY_DEFAULT","si la valeur indiquée est 0, celle du lecteur sera utilisée.");
+define("_WEBPHOTO_FLASHVAR_SCREENCOLOR_DSC","[Couleurs] <br />[imagerotator] Modifier ce paramètre couleur dans le code HTML de votre page permet d'améliorer la mise en page lorsque les images sont de tailles différentes. ");
+define("_WEBPHOTO_FLASHVAR_BACKCOLOR_DSC","[Couleurs] <br />Couleur de fond des commandes");
+define("_WEBPHOTO_FLASHVAR_FRONTCOLOR_DSC","[Couleurs] <br />Couleur du texte des commandes");
+define("_WEBPHOTO_FLASHVAR_LIGHTCOLOR_DSC","[Couleurs] <br />Couleur de survol des commandes");
+define("_WEBPHOTO_FLASHVAR_COLOR_DEFAULT","Si aucune valeur n'est indiquée, celle du lecteur sera utilisée.");
+define("_WEBPHOTO_FLASHVAR_SEARCHBAR_DSC","(Paramètres de base) <br />Sélectionner False pour masquer la barre de recherche sous le lecteur. <br />Vous pouvez indiquer le lien de la page de résultat en utilisant le lien de recherhce du FlashVar. ");
+define("_WEBPHOTO_FLASHVAR_IMAGE_SHOW_DSC","(Paramètres de base) <br />True = l'image de prévisualisation s'affiche");
+define("_WEBPHOTO_FLASHVAR_IMAGE_DSC","(Paramètres de base) <br />Si vous lisez un son ou une vidéo, indiquez l'url de l'image de prévisualisation. <br />Si vous lisez une playlist, vous pouvez indiquer une image pour chaque élément. ");
+define("_WEBPHOTO_FLASHVAR_FILE_DSC","(Paramètres de base) <br />Indiquer l'emplacement du fichier ou de la playlist à lire. <br />L'Imagerotator ne reconnaît que les playlists. ");
+define("_WEBPHOTO_FLASHVAR_LOGO_DSC","(Affichage) <br />Indiquer une image qui pourra être employée comme filigrane (visible en haut à droite). <br />Pour un meilleur rendu, ne image png transparente est recommandée. ");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_DSC","(Affichage) <br />Indiquer comment éleragir l'image ou la vidéo dans la zone de lecture. <br />false (par défaut) = la zone de lecture est entièrement utilisée. <br />true = la zone de lecture est utilisée en conservant les proportions du média. <br />fit = élargissement du média stretch sans conserver les proportions<br />none = les dimensions originales sont conservées. ");
+define("_WEBPHOTO_FLASHVAR_SHOWEQ_DSC","(Affichage) <br />Sélectionner true pour afficher un égaliseur (fictif) au pied de la zone de lecture. <br />Recommandé pour la lecture de fichiers MP3. ");
+define("_WEBPHOTO_FLASHVAR_SHOWICONS_DSC","(Affichage) <br />Sélectionner false afin de masquer l'icône d'activité et le bouton de lecture situé au centre de la zone de lecture. ");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_DSC","(Affichage) [Imagerotator] <br />Sélectionner la transition à utiliser entre les images. ");
+define("_WEBPHOTO_FLASHVAR_SHOWNAVIGATION_DSC","[Barre de contrôle] <br />Sélectionner false to completely hide the controlbar. ");
+define("_WEBPHOTO_FLASHVAR_SHOWSTOP_DSC","[Barre de contrôle] [mediaplayer] <br />Sélectionner true pour afficher le bouton Stop dans la barre de contrôle. ");
+define("_WEBPHOTO_FLASHVAR_SHOWDIGITS_DSC","[Barre de contrôle] [mediaplayer] <br />Sélectionner false pour masquer le compteur de lecture dans la barre de contrôle. ");
+define("_WEBPHOTO_FLASHVAR_SHOWDOWNLOAD_DSC","[Barre de contrôle] [mediaplayer] <br />Sélectionner true pour afficher dans la barre de contrôle le boutton permettant de relier le media à FlashVar. ");
+define("_WEBPHOTO_FLASHVAR_USEFULLSCREEN_DSC","[Barre de contrôle] <br />Sélectionner false pour masquer le bouton Plein écran (le mode lecture plein écran sera également désactivé). ");
+define("_WEBPHOTO_FLASHVAR_AUTOSCROLL_DSC","[Playlist] [mediaplayer] <br />Sélectionner true  pour pouvoir faire défiler verticalement le média sans recourir aux ascenseurs. ");
+define("_WEBPHOTO_FLASHVAR_THUMBSINPLAYLIST_DSC","[Playlist] [mediaplayer] <br />Sélectionner false pour masquer la prévisualisation dans la zone de lecture");
+define("_WEBPHOTO_FLASHVAR_AUDIO_DSC","(Lecture) <br />Assigne un MP3 supplémentaire synchrone. <br />A utiliser pour achever une description audio, un commentaire réalisé sur fond sonore ou encore une musique associée à Imagerotator. <br />When using the mediaplayer and a playlist, you can assign audio to every entry. ");
+define("_WEBPHOTO_FLASHVAR_AUTOSTART_DSC","(Lecture) <br />Sélectionner true pour lancer le média dès son chargement<br />ou sélectionner false lorsque le média est associé à Imagerotator (afin d'empêcher sa rotation automatique).");
+define("_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DSC","(Lecture)  [mediaplayer] <br />Indiquer le délais (n secondes) durant lequel la vidéo devra être mise en mémoire tampon avant d'être lue.<br />Indiquer une valeur réduite pour les connections rapides ou pour les vidéos de courte durée.  ");
+define("_WEBPHOTO_FLASHVAR_CAPTIONS_DSC","(Lecture) [mediaplayer] <br />Les légendes devraient être au format Timedtext. <br />Lorsque vous utiliser un lecteur, vous pouvez indiquer une légende pour chacune des ressource lue. ");
+define("_WEBPHOTO_FLASHVAR_FALLBACK_DSC","(Lecture) [mediaplayer] <br />Si vous lisez un fichier MP4, indiquer l'emplacement d'un FLV. <br />Il sera automatiquement employé par un lecteur flash, qui devient alors compatible. ");
+define("_WEBPHOTO_FLASHVAR_REPEAT_DSC","(Lecture) <br />Sélectionner true pour déclencher automatiquement la relecture de tous les fichiers. <br />A utiliser pour lire à nouveau en intégralité une playlist. ");
+define("_WEBPHOTO_FLASHVAR_ROTATETIME_DSC","(Lecture) <br />Indiquer le nombre de secondes durant lesquelle l'image sera lue. ");
+define("_WEBPHOTO_FLASHVAR_SHUFFLE_DSC","(Lecture) <br />Sélectionner true pour lire les élements d'une playlist au hasard. ");
+define("_WEBPHOTO_FLASHVAR_SMOOTHING_DSC","(Lecture) [mediaplayer] <br />Sélectionner false pour désactiver la fonction de lissage de la vidéo. <br />La qualité de la vidéo sera réduite mais les performances meilleures. <br />Ce paramètre est recommandé pour les films en haute résolution ou pour les ordinateurs anciens ");
+define("_WEBPHOTO_FLASHVAR_VOLUME_DSC","(Lecture) <br />Paramètre le volume initial de la lecture (sons, vidéos et fichiers musicaux). ");
+define("_WEBPHOTO_FLASHVAR_ENABLEJS_DSC","(Intéraction web)<br />Sélectionner true pour autoriser l'intéraction javascript. <br />Ce paramètre ne peut fonctionner qu'avec une connection<br />L'intéraction javascript inclut le commandes de lecture, le chargement asynchrone des médias et l'affichage des informations relatives au média. ");
+define("_WEBPHOTO_FLASHVAR_JAVASCRIPTID_DSC","(Intéraction web)<br />Si vous mettez en relation plusieurs lecteurs / diaporamas en javascript, utiliser le Flashvar pour les singulariser avec un ID propre. ");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_DSC","(Intéraction web)<br />Ce lien est assigné à l'affichage, au logo et au bouton Lien. <br >Lorsqu'aucune information n'est saisie, aucun lien n'est assigné. <br />Si une valeur est précisée, alors une page sera accessible. ");
 
-//define("_WEBPHOTO_FLASHVAR_LINK_DSC","[External] <br />Set this to an external URL or downloadeable version of the file. <br />This link is assigned to the display, logo and link button. <br />With playlists, set links for every entry in the XML. ");
+//define("_WEBPHOTO_FLASHVAR_LINK_DSC","(Intéraction web)<br />Set this to an external URL or downloadeable version of the file. <br />This link is assigned to the display, logo and link button. <br />With playlists, set links for every entry in the XML. ");
 
-define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY_DSC","[External] <br />Set this to true to make a click on the display result in a jump to the webpage assigned to the link flashvar. ");
-define("_WEBPHOTO_FLASHVAR_LINKTARGET_DSC","[External] <br />Set this to the frame you want hyperlinks to open in. <br />Set it to _blank to open links in a new window or _top to open in the top frame. ");
-define("_WEBPHOTO_FLASHVAR_CALLBACK_DSC","[External] <br />Set this to a serverside script that can process statistics. <br />The player will send it a POST every time an item starts/stops. <br />To send callbacks automatically to Google Analytics, set this to urchin or analytics. ");
-define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS_DSC","[External] [mediaplayer] <br />Set this to an XML with items you want to recommend. <br />The thumbs will show up when the current movie stops playing, just like Youtube. ");
-define("_WEBPHOTO_FLASHVAR_SEARCHLINK_DSC","[External] [mediaplayer] <br />Sets the destination of the searchbar. <br />The default is 'search.longtail.tv', but you can set other destinations. <br />Use the searchbar flashvar to hide the bar altogether. ");
-define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT_DSC","[External] [mediaplayer] <br />Set this to the URL of a script to use for http streaming movies. <br />The parameters file and pos are sent to the script. <br />If you use LigHTTPD streaming, set this to lighttpd. ");
-define("_WEBPHOTO_FLASHVAR_TYPE_DSC","[External] [mediaplayer] <br />the mediaplayer which determines the type of file to play based upon the last three characters of the file flashvar. <br />This doesn't work with database id's or mod_rewrite, so you can set this flashvar to the correct filetype. <br />If not sure, the player assumes a playlist is loaded. ");
+define("_WEBPHOTO_FLASHVAR_LINKFROMDISPLAY_DSC","(Intéraction web)<br />Sélectionner true pour que le clic sur le média redirige sur la page assignée par Flashvar. ");
+define("_WEBPHOTO_FLASHVAR_LINKTARGET_DSC","(Intéraction web)<br />Indiquer la destination (frame) dans laquelle vous souhaitez voir s'ouvrir le lien. <br />Indiquer _blank pour ouvrir dans une nouvelle fenêtre ou _top pour ouvrir dans la fenêtre active. ");
+define("_WEBPHOTO_FLASHVAR_CALLBACK_DSC","(Intéraction web)<br />Indiquer le script chargé de collecter les statistiques. <br />Le lecteur enverra une valeur à chaque déclenchement et arrêtde lecture. <br />Pour transmettre les informations à Google Analytics automatiquement, indiquer urchin ou analytics. ");
+define("_WEBPHOTO_FLASHVAR_RECOMMENDATIONS_DSC","(Intéraction web)[mediaplayer] <br />Indiquez un fichier XML contenant la liste des ressources que vous souhaitez recommander <br />Les vignettes s'afficheront à l'arrêt de la vidéo (exemple sur Youtube). ");
+define("_WEBPHOTO_FLASHVAR_SEARCHLINK_DSC","(Intéraction web)[mediaplayer] <br />Indiquer la destination de la page de résultat des recherches <br />Par défaut il s'agit de 'search.longtail.tv', mais vous pouvez indiquer des destinations différente. <br />Appliquer Flashvar à la barre de recherche pour la masquer totalement. ");
+define("_WEBPHOTO_FLASHVAR_STREAMSCRIPT_DSC","(Intéraction web)[mediaplayer] <br />Indiquer l'URL du script à exécuter pour utiliser le streaming vidéo. <br />Les paramètres du fichier et sa position seront transmis au script. <br />Si vous utilisez le streaming LigHTTPD, indiquez lighttpd. ");
+define("_WEBPHOTO_FLASHVAR_TYPE_DSC","(Intéraction web)[mediaplayer] <br />Le lecteur qui détermine le type de fichier à jouer se base sur les 3 derniers caractères du Flashvar. <br />Ce paramétrage ne fonctionne pas avec l'ID enregistré en base de données et avec le mod_rewrite sur On. Vous devez dans ce cas indiquer le Flashvar avec le Type de fichier approprié. <br />Si vous n'êtes pas sûr, le lecteur considèrera qu'une la plylist est chargée. ");
 
 // flashvar option
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE_NONE","None");
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE","Website URL");
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE","Detail Page");
-define("_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE","Media File");
-define("_WEBPHOTO_FLASHVAR_LINKTREGET_SELF","Self Window");
-define("_WEBPHOTO_FLASHVAR_LINKTREGET_BLANK","New Window");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FALSE","False");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FIT","Fit");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_TRUE","True");
-define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_NONE","None");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_OFF","Slide Show Player Off");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_FADE","Fade");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_SLOWFADE","Slow Fade");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_BGFADE","Background Fade");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_CIRCLES","Circles");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_BLOCKS","Blocks");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_BUBBLES","Bubbles");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_NONE","Aucun");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE","URL du site");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE","Page de détail");
+define("_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE","Fichier média");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_SELF","Même fenêtre");
+define("_WEBPHOTO_FLASHVAR_LINKTREGET_BLANK","nouvelle fenêtre");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FALSE","Faux");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_FIT","Remplir");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_TRUE","Vrai");
+define("_WEBPHOTO_FLASHVAR_OVERSTRETCH_NONE","Aucun");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_OFF","Diaporama du lecture désactivé");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FADE","Exctinction progressive");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_SLOWFADE","Exctinction progressive et lente");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BGFADE","Extinction de l'arrière plan");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_CIRCLES","Cercles");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BLOCKS","Blocs");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_BUBBLES","Bulles");
 define("_WEBPHOTO_FLASHVAR_TRANSITION_FLASH","Flash");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_FLUIDS","Fluids");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_LINES","Lines");
-define("_WEBPHOTO_FLASHVAR_TRANSITION_RANDOM","Random");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_FLUIDS","Fluide");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_LINES","Lignes");
+define("_WEBPHOTO_FLASHVAR_TRANSITION_RANDOM","Aléatoire");
 
 // edit form
-define("_WEBPHOTO_CAP_DETAIL","Show Detail");
-define("_WEBPHOTO_CAP_DETAIL_ONOFF","Ouvert/Fermer");
-define("_WEBPHOTO_PLAYER","Player");
-define("_WEBPHOTO_EMBED_ADD", "Add Embed Plugin" ) ;
-define("_WEBPHOTO_EMBED_THUMB","La source ext�rieure fournira un aper�u.");
-define("_WEBPHOTO_ERR_EMBED","Vous devez configurer le plugin");
-define("_WEBPHOTO_ERR_PLAYLIST","Vous devez d�finir la playlist");
+define("_WEBPHOTO_CAP_DETAIL","Afficher les détails");
+define("_WEBPHOTO_CAP_DETAIL_ONOFF","Activé/Désactivé");
+define("_WEBPHOTO_PLAYER","Lecteur");
+define("_WEBPHOTO_EMBED_ADD", "Ajouter une extension EMBED" ) ;
+define("_WEBPHOTO_EMBED_THUMB","Une source extérieure fournit la miniature.");
+define("_WEBPHOTO_ERR_EMBED","Vous devez indiquer un Plugin");
+define("_WEBPHOTO_ERR_PLAYLIST","Vous devez indiquer une playlist");
 
 // sort
-define("_WEBPHOTO_SORT_VOTESA","Votes (Least)");
-define("_WEBPHOTO_SORT_VOTESD","Votes (Most)");
-define("_WEBPHOTO_SORT_VIEWSA","Media Views (Least)");
-define("_WEBPHOTO_SORT_VIEWSD","Media Views (Most)");
+define("_WEBPHOTO_SORT_VOTESA","Votes (mini)");
+define("_WEBPHOTO_SORT_VOTESD","Votes (maxi)");
+define("_WEBPHOTO_SORT_VIEWSA","Affichage des médias (mini)");
+define("_WEBPHOTO_SORT_VIEWSD","Affichage des médias (maxi)");
 
 // flashvar form
 define("_WEBPHOTO_FLASHVARS_FORM","FlashVars");
-define("_WEBPHOTO_FLASHVARS_LIST","Liste des variables Flash");
-define("_WEBPHOTO_FLASHVARS_LOGO_SELECT","S�lectionnez un jeu de logo");
-define("_WEBPHOTO_FLASHVARS_LOGO_UPLOAD","Envoyer un jeu de logo ");
-define("_WEBPHOTO_FLASHVARS_LOGO_DSC","[Display] <br />Les jeux de logos sont ");
+define("_WEBPHOTO_FLASHVARS_LIST","Liste des variables flash");
+define("_WEBPHOTO_FLASHVARS_LOGO_SELECT","Sélectionner un logo de lecteur");
+define("_WEBPHOTO_FLASHVARS_LOGO_UPLOAD","Charger un logo de lecteur");
+define("_WEBPHOTO_FLASHVARS_LOGO_DSC","(Affichage) <br />Les logos de lecteur sont en place");
 define("_WEBPHOTO_BUTTON_COLOR_PICKUP","Couleur");
-define("_WEBPHOTO_BUTTON_RESTORE","Restaurer par d�faut");
+define("_WEBPHOTO_BUTTON_RESTORE","Restaurer les valeurs par défaut");
 
 // Playlist Cache 
-define("_WEBPHOTO_PLAYLIST_STATUS_REPORT","Rapport de situation");
-define("_WEBPHOTO_PLAYLIST_STATUS_FETCHED","Ce flux a �t� r�cup�r� et mis en cache.");
-define("_WEBPHOTO_PLAYLIST_STATUS_CREATED","Une nouvelle liste de lecture a �t� mise en cache");
-define("_WEBPHOTO_PLAYLIST_ERR_CACHE","[ERREUR] la cr�ation de fichier cache");
-define("_WEBPHOTO_PLAYLIST_ERR_FETCH","Impossible de r�cup�rer le flux. <br /> confirmer l'emplacement et le flux d'actualisation du cache.");
-define("_WEBPHOTO_PLAYLIST_ERR_NODIR","L'annuaire des m�dias n'existe pas");
-define("_WEBPHOTO_PLAYLIST_ERR_EMPTYDIR","L'annuaire des m�dias est vide");
-define("_WEBPHOTO_PLAYLIST_ERR_WRITE","Impossible d'�crire dans le fichier (voir permission chmod)");
+define("_WEBPHOTO_PLAYLIST_STATUS_REPORT","Compte rendu du statut");
+define("_WEBPHOTO_PLAYLIST_STATUS_FETCHED","Ce flux a été récupéré et mis en cache.");
+define("_WEBPHOTO_PLAYLIST_STATUS_CREATED","Une nouvelle playlist a été mise en cache");
+define("_WEBPHOTO_PLAYLIST_ERR_CACHE","[ERREUR] lors de la création du cache");
+define("_WEBPHOTO_PLAYLIST_ERR_FETCH","Impossible de récupérer le flux. <br />Veuillez confirmer l'emplacement du flux et mettre à jour le cache.");
+define("_WEBPHOTO_PLAYLIST_ERR_NODIR","Le répertoire des médias n'existe pas");
+define("_WEBPHOTO_PLAYLIST_ERR_EMPTYDIR","Le répertoire des médias est vide");
+define("_WEBPHOTO_PLAYLIST_ERR_WRITE","Impossible de créer le fichier de cache");
 
-define("_WEBPHOTO_USER",  "utilisateu" ) ;
-define("_WEBPHOTO_OR",  "OU" ) ;
+define("_WEBPHOTO_USER",  "Utilisateur" ) ;
+define("_WEBPHOTO_OR",  "ou" ) ;
 
 //---------------------------------------------------------
 // v0.60
@@ -1206,33 +1206,33 @@ define("_WEBPHOTO_OR",  "OU" ) ;
 // item table
 //define("_WEBPHOTO_ITEM_ICON" , "Icon Name" ) ;
 
-define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "External Middle URL" ) ;
+define("_WEBPHOTO_ITEM_EXTERNAL_MIDDLE" , "URL extérieur (middle)" ) ;
 
 // cat table
-define("_WEBPHOTO_CAT_IMG_NAME" , "Cat�gorie de nom de l'image" ) ;
+define("_WEBPHOTO_CAT_IMG_NAME" , "Nom de la Catégorie d'images" ) ;
 
 // edit form
-define("_WEBPHOTO_CAP_MIDDLE_SELECT", "S�lectionnez une image de taille moyenne");
+define("_WEBPHOTO_CAP_MIDDLE_SELECT", "Sélectionner l'image (middle)");
 
 //---------------------------------------------------------
 // v0.70
 //---------------------------------------------------------
 // item table
-define("_WEBPHOTO_ITEM_CODEINFO", "Code Info");
-define("_WEBPHOTO_ITEM_PAGE_WIDTH",  "Largeur de page");
-define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "Hauteur de page");
-define("_WEBPHOTO_ITEM_EMBED_TEXT",  "Int�grer");
+define("_WEBPHOTO_ITEM_CODEINFO", "Info code");
+define("_WEBPHOTO_ITEM_PAGE_WIDTH",  "Largeur de la page");
+define("_WEBPHOTO_ITEM_PAGE_HEIGHT", "Hauteur de la page");
+define("_WEBPHOTO_ITEM_EMBED_TEXT",  "Embed");
 
 // item option
-define("_WEBPHOTO_ITEM_CODEINFO_CONT","m�dias");
-define("_WEBPHOTO_ITEM_CODEINFO_THUMB","Petite Image");
-define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","Moyen Image");
-define("_WEBPHOTO_ITEM_CODEINFO_FLASH","Flash Video");
-define("_WEBPHOTO_ITEM_CODEINFO_DOCOMO","Autres formats Videos");
+define("_WEBPHOTO_ITEM_CODEINFO_CONT","Média");
+define("_WEBPHOTO_ITEM_CODEINFO_THUMB","Miniature de l'image");
+define("_WEBPHOTO_ITEM_CODEINFO_MIDDLE","Image (middle)");
+define("_WEBPHOTO_ITEM_CODEINFO_FLASH","Vidéo Flash");
+define("_WEBPHOTO_ITEM_CODEINFO_DOCOMO","Vidéo Docomo");
 define("_WEBPHOTO_ITEM_CODEINFO_PAGE","URL");
 define("_WEBPHOTO_ITEM_CODEINFO_SITE","Site");
-define("_WEBPHOTO_ITEM_CODEINFO_PLAY","Liste de s�lection");
-define("_WEBPHOTO_ITEM_CODEINFO_EMBED","Int�grer");
+define("_WEBPHOTO_ITEM_CODEINFO_PLAY","Playlist");
+define("_WEBPHOTO_ITEM_CODEINFO_EMBED","Embed");
 define("_WEBPHOTO_ITEM_CODEINFO_JS","Script");
 
 define("_WEBPHOTO_ITEM_PLAYLIST_TIME_HOUR", "1 heure");
@@ -1241,7 +1241,7 @@ define("_WEBPHOTO_ITEM_PLAYLIST_TIME_WEEK", "1 semaine");
 define("_WEBPHOTO_ITEM_PLAYLIST_TIME_MONTH","1 mois");
 
 // photo
-define("_WEBPHOTO_DOWNLOAD","T�l�charger");
+define("_WEBPHOTO_DOWNLOAD","Télécharger");
 
 // file_read
 define("_WEBPHOTO_NO_FILE", "Le fichier n'existe pas");
@@ -1250,14 +1250,14 @@ define("_WEBPHOTO_NO_FILE", "Le fichier n'existe pas");
 // v0.80
 //---------------------------------------------------------
 // item table
-define("_WEBPHOTO_ITEM_ICON_NAME" ,   "Nom de l'ic�ne" ) ;
-define("_WEBPHOTO_ITEM_ICON_WIDTH" ,  "Largeur de l'ic�ne" ) ;
-define("_WEBPHOTO_ITEM_ICON_HEIGHT" , "Hauteur de l'ic�ne" ) ;
+define("_WEBPHOTO_ITEM_ICON_NAME" ,   "Nom de l'icône" ) ;
+define("_WEBPHOTO_ITEM_ICON_WIDTH" ,  "Largeur de l'icône" ) ;
+define("_WEBPHOTO_ITEM_ICON_HEIGHT" , "Hauteur de l'icône" ) ;
 
 // item form
-define("_WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE",  "mis � jour du d�lai de publication");
-define("_WEBPHOTO_DSC_SET_ITEM_TIME_PUBLISH", "R�glez le d�lai de publication");
-define("_WEBPHOTO_DSC_SET_ITEM_TIME_EXPIRE",  "Le d�lai autoris� est termin�");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_UPDATE",  "Indiquer la date de mise à jour");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_PUBLISH", "Indiquer la date de publication");
+define("_WEBPHOTO_DSC_SET_ITEM_TIME_EXPIRE",  "Indiquer la date de suspension");
 
 //---------------------------------------------------------
 // v0.81
@@ -1278,30 +1278,74 @@ define("_WEBPHOTO_VOTE_RATING_10","10");
 // v0.90
 //---------------------------------------------------------
 // edit form
-define("_WEBPHOTO_GROUP_PERM_ALL" , "Tous les groupes" ) ;
+define("_WEBPHOTO_GROUP_PERM_ALL" , "Tous les Groupes" ) ;
 
 //---------------------------------------------------------
 // v1.00
 //---------------------------------------------------------
 // item table
-define("_WEBPHOTO_ITEM_EDITOR", "Editor");
-define("_WEBPHOTO_ITEM_DESCRIPTION_HTML",   "HTML Mots-cl�s");
-define("_WEBPHOTO_ITEM_DESCRIPTION_SMILEY", "Smiley icons");
-define("_WEBPHOTO_ITEM_DESCRIPTION_XCODE",  "Codes");
+define("_WEBPHOTO_ITEM_EDITOR", "Editeur");
+define("_WEBPHOTO_ITEM_DESCRIPTION_HTML",   "Tags HTML");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SMILEY", "Smiley");
+define("_WEBPHOTO_ITEM_DESCRIPTION_XCODE",  "XOOPS codes");
 define("_WEBPHOTO_ITEM_DESCRIPTION_IMAGE",  "Images");
-define("_WEBPHOTO_ITEM_DESCRIPTION_BR",     "saut de ligne");
+define("_WEBPHOTO_ITEM_DESCRIPTION_BR",     "Linebreak (br)");
 
 // edit form
-define("_WEBPHOTO_TITLE_EDITOR_SELECT", "S�lectionnez un Editeur");
+define("_WEBPHOTO_TITLE_EDITOR_SELECT", "Sélectionner un éditeur");
 define("_WEBPHOTO_CAP_DESCRIPTION_OPTION", "Options");
-define("_WEBPHOTO_CAP_HTML",   "Activer les balises HTML");
-define("_WEBPHOTO_CAP_SMILEY", "Activer les smileys ic�nes");
-define("_WEBPHOTO_CAP_XCODE",  "Activer les codes");
-define("_WEBPHOTO_CAP_IMAGE",  "Activer l'image");
-define("_WEBPHOTO_CAP_BR",     "Activer le saut de ligne");
+define("_WEBPHOTO_CAP_HTML",   "Activer les Tags HTML");
+define("_WEBPHOTO_CAP_SMILEY", "Activer les Smiley");
+define("_WEBPHOTO_CAP_XCODE",  "Activer les XOOPS codes");
+define("_WEBPHOTO_CAP_IMAGE",  "Activer les images");
+define("_WEBPHOTO_CAP_BR",     "Activer linebreak (br)");
+
+//---------------------------------------------------------
+// v1.10
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_WIDTH",  "Largeur de l'image");
+define("_WEBPHOTO_ITEM_HEIGHT", "Hauteur de l'image");
+define("_WEBPHOTO_ITEM_CONTENT", "Contenu du text");
+
+//---------------------------------------------------------
+// v1.20
+//---------------------------------------------------------
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_PDF","PDF");
+define("_WEBPHOTO_ITEM_CODEINFO_SWF","Flash swf");
+
+// form
+define("_WEBPHOTO_ERR_PDF", "Impossible de créer le fichier PDF");
+define("_WEBPHOTO_ERR_SWF", "Impossible de créer le fichier swf");
+
+// jodconverter
+define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "");
+
+//---------------------------------------------------------
+// v1.30
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_MAP",  "Googlemap");
+define("_WEBPHOTO_MAP_LARGE", "Voir la carte grand format");
+
+// timeline
+define("_WEBPHOTO_TITLE_TIMELINE",  "Chronologie");
+define("_WEBPHOTO_TIMELINE_ON",  "Afficher la chronologie");
+define("_WEBPHOTO_TIMELINE_OFF", "Masquer la chronologie");
+define("_WEBPHOTO_TIMELINE_SCALE_WEEK",   "1 semaine") ;
+define("_WEBPHOTO_TIMELINE_SCALE_MONTH",  "1 mois") ;
+define("_WEBPHOTO_TIMELINE_SCALE_YEAR",   "1 an") ;
+define("_WEBPHOTO_TIMELINE_SCALE_DECADE", "10 ans") ;
+define("_WEBPHOTO_TIMELINE_LARGE", "Afficher la chronologie étendue");
+define("_WEBPHOTO_TIMELINE_CAUTION_IE", "Des problèmes d'affichage peuvent survenir avec vec Internet Expoler. Veuillez essayer d'autres navigateurs (Firefox, Opera, Safari).");
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_SMALL","Image réduite");
+
+// edit form
+define("_WEBPHOTO_CAP_SMALL_SELECT", "Sélectionner une image réduite");
 
 // === define end ===
 }
-// jodconverter
-define("_WEBPHOTO_JODCONVERTER_JUNK_WORDS", "Jod convertisseur junk mot");
+
 ?>
