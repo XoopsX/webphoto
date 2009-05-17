@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.15 2009/04/19 13:44:47 ohwada Exp $
+// $Id: submit.php,v 1.16 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// _build_form_submit_param() -> build_form_base_param()
+// _submit_bulk()
 // 2009-04-19 K.OHWADA
 // _print_form_default() -> _build_form_default()
 // 2009-03-15 K.OHWADA
@@ -44,12 +47,12 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_submit extends webphoto_edit_submit
 {
+// submit file
+	var $_post_file = null ;
+
 // preload
 	var $_SHOW_FORM_EMBED  = true;
 	var $_SHOW_FORM_EDITOR = true;
-
-	var $_THIS_FCT = 'submit';
-	var $_THIS_URL = null;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
@@ -62,7 +65,8 @@ function webphoto_main_submit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
-	$this->_THIS_URL = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
+	$this->set_fct( 'submit' );
+	$this->set_form_mode( 'submit' );
 
 	$this->init_preload();
 }
@@ -82,13 +86,16 @@ function &getInstance( $dirname , $trust_dirname )
 function check_submit()
 {
 	$ret = 0;
-	$this->_check();
-
 	$action = $this->_get_action();
+
+	$this->_check( $action );
+
 	switch ( $action ) 
 	{
 		case 'submit':
-			$ret = $this->_submit();
+		case 'submit_bulk':
+		case 'submit_file':
+			$ret = $this->_submit( $action );
 			break;
 
 		case 'video':
@@ -109,6 +116,8 @@ function check_submit()
 
 function form_param()
 {
+	$this->init_form();
+
 	switch ( $this->_form_action )
 	{
 		case 'form_video_thumb':
@@ -123,8 +132,11 @@ function form_param()
 			$param = $this->_build_form_preview();
 			break;
 
+		case 'submit_form':
+		case 'bulk_form':
+		case 'file_form':
 		default:
-			$param = $this->_build_form_default();
+			$param = $this->_build_form_default( $this->_form_action );
 			break;
 	}
 
@@ -134,7 +146,7 @@ function form_param()
 function _get_action()
 {
 	$preview = $this->_post_class->get_post_text( 'preview' );
-	$op      = $this->_post_class->get_post_text( 'op' );
+	$op      = $this->_post_class->get_post_get_text( 'op' );
 	if ( $preview ) {
 		return 'preview';
 	}
@@ -144,11 +156,22 @@ function _get_action()
 //---------------------------------------------------------
 // check 
 //---------------------------------------------------------
-function _check()
+function _check( $action )
 {
 	$this->get_post_param();
 
-	$ret = $this->submit_check();
+	switch ( $action )
+	{
+		case 'file_form':
+		case 'submit_file':
+			$ret = $this->_check_file();
+			break;
+
+		default:
+			$ret = $this->submit_check();
+			break;
+	}
+
 	if ( !$ret ) {
 		redirect_header( 
 			$this->get_redirect_url() , 
@@ -159,17 +182,48 @@ function _check()
 	}
 }
 
+function _check_file()
+{
+	$ret = $this->submit_check();
+	if ( !$ret ) {
+		return $ret;
+	}
+
+	$ret = $this->_check_exec_file() ;
+	if ( $ret < 0 ) {
+		$this->submit_check_redirect( $ret );
+		return false;
+	}
+
+	return true;
+}
+
+function _check_exec_file()
+{
+	if ( ! $this->_has_file )   {
+		return _C_WEBPHOTO_ERR_NO_PERM ; 
+	}
+
+	$ret = $this->check_dir( $this->_FILE_DIR );
+	if ( $ret < 0 ) {
+		return $ret; 
+	}
+
+	return 0;
+}
+
 //---------------------------------------------------------
 // submit
 //---------------------------------------------------------
-function _submit()
+function _submit( $action )
 {
 	if ( ! $this->check_token() ) {
 		$this->set_token_error() ;
 		return _C_WEBPHOTO_RET_ERROR ;
 	}
 
-	$ret = $this->submit_main();
+	$ret = $this->_submit_exec( $action );
+
 	switch ( $ret )
 	{
 
@@ -183,14 +237,41 @@ function _submit()
 			break;
 	}
 
-	$item_row = $this->get_created_row();
-	$cat_id   = $item_row['item_cat_id'];
-
-	list( $url, $time, $msg ) = $this->build_redirect( 
-		$this->_build_redirect_param( false, $cat_id ) );
+	list( $url, $time, $msg ) = $this->build_submit_redirect(); 
 
 	redirect_header( $url, $time, $msg );
 	exit();
+}
+
+function _submit_exec( $action )
+{
+	$this->get_post_param();
+	
+	switch ($action)
+	{
+		case 'submit_bulk':
+			$ret = $this->_submit_bulk();
+			break;
+
+		case 'submit_file':
+			$ret = $this->_submit_file();
+			break;
+
+		default:
+			$ret = $this->submit_exec();
+			break;
+	}
+
+	if ( $this->_is_video_thumb_form ) {
+		return _C_WEBPHOTO_RET_VIDEO_FORM ;
+	}
+
+	$ret2 = $this->build_failed_msg( $ret );
+	if ( !$ret2 ) {
+		return _C_WEBPHOTO_RET_ERROR ;
+	}
+
+	return _C_WEBPHOTO_RET_SUCCESS ;
 }
 
 function _check_token_and_redirect()
@@ -198,26 +279,186 @@ function _check_token_and_redirect()
 	$this->check_token_and_redirect( $this->_THIS_URL, $this->_TIME_FAILED );
 }
 
-function _build_redirect_param( $is_failed, $cat_id )
+
+//---------------------------------------------------------
+// submit bulk
+//---------------------------------------------------------
+function _submit_bulk()
 {
+	$this->set_form_mode( 'bulk' );
+	$this->clear_msg_array();
+
+	$item_row = $this->create_item_row_by_post();
+	$post_title = $item_row['item_title'] ;
+
 	$param = array(
-		'is_failed'   => $is_failed ,
-		'is_pending'  => ! $this->_has_superinsert ,
-		'url_success' => $this->_build_redirect_url_success( $cat_id ) ,
-		'url_pending' => $this->build_uri_operate( 'latest' ) , 
-		'url_failed'  => $this->_THIS_URL , 
-		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
-		'msg_pending' => $this->get_constant('SUBMIT_ALLPENDING') , 
+		'flag_video_single' => true ,
 	);
-	return $param ;
+
+	$filecount = 1 ;
+	for ( $i=1; $i <= $this->_MAX_PHOTO_FILE; $i++ )
+	{
+		$field_name = 'file_'.$i;
+
+		$ret = $this->_upload_class->fetch_media( $field_name, $this->_FLAG_FETCH_ALLOW_ALL );
+		if ( $ret < 0 ) {
+			$this->set_msg_array( $this->_upload_class->get_errors() );
+			contine; 
+		}
+
+// not success
+		if ( $ret != 1 ) {
+			continue; 
+		}
+
+		$file_tmp_name   = $this->_upload_class->get_tmp_name();
+		$file_media_type = $this->_upload_class->get_uploader_media_type();
+		$file_media_name = $this->_upload_class->get_uploader_media_name();
+
+		if ( empty($file_tmp_name) ) {
+			contiune; 
+		}
+
+		$item_row['item_title'] = $this->build_bulk_title( $post_title, $filecount );
+
+		$item_row = $this->_factory_create_class->build_item_row_photo( 
+			$item_row, $file_tmp_name, $file_media_name );
+
+		$param['src_file'] = $this->build_tmp_dir_file( $file_tmp_name );
+
+		$ret = $this->_factory_create_class->create_item_from_param( $item_row, $param );
+		if ( !$ret ) {
+			$this->set_msg_array( $this->_factory_create_class->get_errors() );
+			contiune; 
+		}
+
+		$filecount ++ ;
+	}
+
+	if ( $filecount == 1 ) {
+		return _C_WEBPHOTO_ERR_NO_IMAGE;
+	}
+
+	$this->set_created_row( $item_row );
+
+	$this->submit_exec_post_count();
+	$this->submit_exec_notify( $item_row );
+
+	return 0;
 }
 
-function _build_redirect_url_success( $cat_id )
+//---------------------------------------------------------
+// submit file
+//---------------------------------------------------------
+function _submit_file()
 {
+	$this->set_form_mode( 'file' );
+	$this->clear_msg_array();
+
+	$this->_post_file = $this->get_post_text( 'file' ) ;
+	$src_file = $this->build_file_dir_file( $this->_post_file );
+	$src_node = $this->_utility_class->strip_ext( $this->_post_file );
+
+	$item_row = $this->create_item_row_by_post();
+
+	$ret = $this->submit_exec_check( $item_row );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$ret = $this->_check_submit_file();
+	if ( $ret < 0 ) {
+		return $ret;
+	}
+
+	if ( empty($item_row['item_title']) ) {
+		$item_row['item_title'] = addslashes( $src_node );
+	}
+
+	$item_row['item_status'] = _C_WEBPHOTO_STATUS_APPROVED ;
+
 	$param = array(
-		'orderby' => 'dated'
+		'src_file'          => $src_file ,
+		'flag_video_plural' => true ,
 	);
-	return $this->build_uri_category( $cat_id, $param );
+
+	$ret      = $this->_factory_create_class->create_item_from_param( $item_row, $param );
+	$item_row = $this->_factory_create_class->get_item_row() ;
+
+	if ( $ret < 0 ) {
+		$this->_move_file( $src_file );
+		$this->set_error( $this->_factory_create_class->get_errors() );
+		return $ret;
+	}
+
+	if ( ! is_array($item_row) ) {
+		$this->_move_file( $src_file );
+		return _C_WEBPHOTO_ERR_CREATE_PHOTO;
+	}
+
+	$this->unlink_file( $src_file );
+
+	$item_id = $item_row['item_id'];
+	$this->set_created_row( $item_row );
+
+	if ( $this->_factory_create_class->get_resized() ) {
+		$this->set_msg_array( $this->get_constant('SUBMIT_RESIZED') ) ;
+	}
+
+	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
+	}
+
+	if ( $this->_factory_create_class->get_flag_video_image_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
+	}
+
+	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
+		$this->_is_video_thumb_form = true;
+	}
+
+	$this->submit_exec_post_count();
+	$this->notify_new_photo( $item_row );
+
+	return 0;
+}
+
+function _check_submit_file()
+{
+	$src_file = $this->build_file_dir_file( $this->_post_file );
+	$src_ext  = $this->parse_ext( $this->_post_file ) ;
+
+	if ( empty( $this->_post_file ) ) {
+		return _C_WEBPHOTO_ERR_EMPTY_FILE ;
+	}
+
+	if ( ! is_readable( $src_file ) ) {
+		return _C_WEBPHOTO_ERR_FILEREAD ;
+	}
+
+	if ( ! $this->is_my_allow_ext( $src_ext ) ) {
+		return _C_WEBPHOTO_ERR_EXT ;
+	}
+
+	if ( ! $this->_check_file_size( $src_file ) ) {
+		return _C_WEBPHOTO_ERR_FILE_SIZE ;
+	}
+
+	return 0;
+}
+
+function _check_file_size( $file )
+{
+	if ( filesize( $file ) < $this->_cfg_file_size ) {
+		return true;
+	}
+	return false;
+}
+
+function _move_file( $old )
+{
+	$new = $this->build_tmp_dir_file( uniqid( 'file_' ) );
+	rename( $old, $new );
 }
 
 //---------------------------------------------------------
@@ -231,7 +472,7 @@ function _video()
 	$ret = $this->video_thumb( $item_row );
 
 	list( $url, $time, $msg ) = $this->build_redirect( 
-		$this->_build_redirect_param( !$ret, $item_row['item_cat_id'] ) );
+		$this->build_submit_redirect_param( !$ret, $item_row['item_cat_id'] ) );
 
 	redirect_header( $url, $time, $msg );
 	exit();
@@ -317,37 +558,61 @@ function _preview_no_image()
 //---------------------------------------------------------
 // get form param
 //---------------------------------------------------------
-function _build_form_default()
+function _build_form_default( $action )
 {
-	$item_row = $this->create_item_row_default();
-	$options  = $this->_editor_class->build_list_options( true );
+	$flag_embed = false;
 
-	$show_form_embed  = false;
-	$show_form_editor = false;
+	switch ( $action )
+	{
+		case 'bulk_form':
+			$this->set_form_mode( 'bulk' );
+			$lang_title_sub = $this->get_constant('TITLE_SUBMIT_BULK');
+			break;
 
-	$param1 = array();
-	$param2 = array();
+		case 'file_form':
+			$this->set_form_mode( 'file' );
+			$lang_title_sub = $this->get_constant('TITLE_SUBMIT_FILE');
+			break;
 
-	if ( $this->_SHOW_FORM_EMBED && $this->is_show_form_embed() ) {
-		$show_form_embed = true;
-		$param1 = $this->_build_form_embed( $item_row );
+		case 'submit_form':
+		default:
+			$flag_embed = true;
+			$lang_title_sub = $this->get_constant('TITLE_SUBMIT_SINGLE');
+			break;
 	}
 
-	if ( $this->_SHOW_FORM_EDITOR && $this->is_show_form_editor_option( $options ) ) {
-		$show_form_editor = true;
-		$param2 = $this->_build_form_editor( $item_row, $options );
+	$item_row = $this->create_item_row_default();
+	$this->init_form();
+
+	$show_form_editor = false;
+	$show_form_embed  = false;
+	$param_editor     = array();
+	$param_embed      = array();
+
+	if ( $this->_SHOW_FORM_EDITOR ) {
+		list( $show_form_editor, $param_editor ) =
+			$this->build_form_editor( $item_row );
+	}
+
+	if ( $this->_SHOW_FORM_EMBED && $flag_embed ) {
+		list( $show_form_embed, $param_embed ) =
+			$this->build_form_embed( $item_row );
 	}
 
 	$param = array(
-		'show_form_embed'  => $show_form_embed ,
-		'show_form_editor' => $show_form_editor ,
-		'show_form_photo'   => true ,
+		'lang_title_sub'     => $lang_title_sub ,
+		'show_form_editor'   => $show_form_editor ,
+		'show_form_embed'    => $show_form_embed ,
+		'show_form_photo'    => true ,
+		'show_submit_select' => true ,
+		'show_select_file'   => $this->get_show_select_file() ,
 	);
 
 	$arr = array_merge( 
-		$this->_build_form_submit_param() ,
-		$this->_build_form_submit( $item_row ),
-		$param, $param1, $param2
+		$this->build_form_base_param() ,
+		$this->build_form_select_param() ,
+		$this->build_form_photo( $item_row ) ,
+		$param, $param_editor, $param_embed
 	);
 	return $arr;
 }
@@ -367,67 +632,32 @@ function _build_form_error()
 function _build_form_preview()
 {
 	$item_row = $this->create_item_row_preview() ;
+
+// set preview name
 	list( $item_row, $image_info ) =
 		$this->_build_preview_info( $item_row );
+
+// set preview name to form
+	$this->init_form();
 
 	$param = array(
 		'show_preview'    => true ,
 		'show_form_photo' => true ,
+		'lang_title_sub'  => $this->get_constant('TITLE_SUBMIT_SINGLE')
 	);
 
 	$arr = array_merge( 
-		$this->_build_form_submit_param() ,
+		$this->build_form_base_param() ,
 		$this->_build_preview_submit( $item_row, $image_info ) ,
-		$this->_build_form_submit( $item_row ) ,
+		$this->build_form_photo( $item_row ) ,
 		$param 
 	);
 	return $arr;
-}
-
-function _build_form_submit( $item_row )
-{
-	$form_class =& webphoto_edit_photo_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	return $form_class->build_form_photo( 
-		$item_row, $this->build_form_common_param( 'submit' ) );
-}
-
-function _build_form_embed( $item_row )
-{
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	return $form_class->build_form_embed( $item_row );
-}
-
-function _build_form_editor( $item_row, $options )
-{
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->build_form_common_param( 'submit' );
-	$param['options'] = $options ;
-
-	return $form_class->build_form_editor( $item_row, $param );
 }
 
 function _build_form_video_thumb()
 {
-	$param = array(
-		'show_form_video_thumb' => true ,
-	);
-
-	$arr = array_merge( 
-		$this->_build_form_submit_param() ,
-		$this->build_form_video_thumb( $this->get_created_row() ) ,
-		$param 
-	);
-	return $arr;
-}
-
-function _build_form_submit_param()
-{
-	$action = $this->_MODULE_URL .'/index.php' ;
-	return $this->edit_form_build_form_param( $action, 'submit' );
+	return $this->build_form_video_thumb( $this->get_created_row() );
 }
 
 // --- class end ---

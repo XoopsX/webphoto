@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.6 2009/04/27 18:30:04 ohwada Exp $
+// $Id: form.php,v 1.7 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// build_form_param() -> build_form_base_param()
+// build_form_select_param()
 // 2009-04-27 K.OHWADA
 // build_script_edit_js()
 // 2009-04-21 K.OHWADA
@@ -49,10 +52,10 @@ class webphoto_edit_form extends webphoto_lib_form
 {
 	var $_cat_handler;
 	var $_item_handler;
-	var $_gicon_handler;
+	var $_file_handler;
 	var $_config_class;
 	var $_preload_class;
-	var $_perm_class ;
+	var $_perm_class;
 
 	var $_cfg_gmap_apikey ;
 	var $_cfg_width ;
@@ -63,6 +66,11 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_cfg_perm_item_read ;
 
 	var $_has_deletable ;
+
+// post
+	var $_post_form_editor   = 0;
+	var $_post_form_embed    = 0;
+	var $_post_form_playlist = 0;
 
 	var $_is_japanese    = false;
 	var $_checkbox_array = array();
@@ -109,11 +117,14 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_MIDDLE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
 	var $_SMALL_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_SMALL ;
 
-	var $_THIS_IMAGEMANEGER_FCT = 'submit_imagemanager';
-	var $_THIS_SUBMIT_FCT = 'submit';
-	var $_THIS_EDIT_FCT   = 'edit';
-	var $_THIS_ADMIN_FCT  = 'item_manager';
-	var $_THIS_FILE_FCT   = 'submit_file';
+	var $_THIS_FCT_IMAGEMANEGER = 'submit_imagemanager';
+	var $_THIS_FCT_SUBMIT = 'submit';
+	var $_THIS_FCT_EDIT   = 'edit';
+	var $_THIS_FCT_ADMIN  = 'item_manager';
+	var $_THIS_FCT_ADMIN_BATCH = 'batch';
+
+	var $_FORM_ACTION = null;
+	var $_THIS_FCT    = null;
 
 //---------------------------------------------------------
 // constructor
@@ -125,8 +136,8 @@ function webphoto_edit_form( $dirname , $trust_dirname )
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
 	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
-	$this->_cat_handler  =& webphoto_cat_handler::getInstance(   $dirname );
-	$this->_perm_class   =& webphoto_permission::getInstance( $dirname );
+	$this->_cat_handler  =& webphoto_cat_handler::getInstance(  $dirname );
+	$this->_perm_class   =& webphoto_permission::getInstance(   $dirname );
 
 	$this->_cfg_gmap_apikey    = $this->_config_class->get_by_name( 'gmap_apikey' );
 	$this->_cfg_width          = $this->_config_class->get_by_name( 'width' );
@@ -180,97 +191,6 @@ function &getInstance( $dirname, $trust_dirname )
 		$instance = new webphoto_edit_form( $dirname, $trust_dirname );
 	}
 	return $instance;
-}
-
-//---------------------------------------------------------
-// common
-//---------------------------------------------------------
-function build_form_param( $action=null, $fct=null )
-{
-	$arr = array_merge( 
-		$this->build_base_param() , 
-		$this->build_system_language() ,
-		$this->get_lang_array()
-	);
-
-	if ( $action ) {
-		$arr['action'] = $action;
-	}
-	if ( $fct ) {
-		$arr['fct'] = $fct;
-	}
-
-	return $arr;
-}
-
-function build_base_param()
-{
-	$arr = array(
-		'mydirname'        => $this->_DIRNAME ,
-		'xoops_g_ticket'   => $this->get_token() ,
-		'is_module_admin'  => $this->_is_module_admin ,
-		'has_deletable'    => $this->_has_deletable ,
-
-// for XOOPS 2.0.18
-		'xoops_dirname'    => $this->_DIRNAME ,
-		'xoops_modulename' => $this->xoops_module_name( 's' ) ,
-	);
-
-// config
-	$config_array = $this->get_config_array();
-	foreach ( $config_array as $k => $v ) {
-		$arr[ 'cfg_'.$k ] = $v ;
-	}
-
-	return $arr;
-}
-
-function build_system_language()
-{
-	$arr = array(
-		'lang_add'     => _ADD ,
-		'lang_edit'    => _EDIT ,
-		'lang_preview' => _PREVIEW ,
-		'lang_cancel'  => _CANCEL ,
-		'lang_delete'  => _DELETE ,
-		'lang_close'   => _CLOSE ,
-		'lang_yes'     => _YES , 
-		'lang_no'      => _NO ,
-	);
-	return $arr;
-}
-
-function build_item_row( $row )
-{
-	$arr = array();
-	foreach ( $row as $k => $v )
-	{
-		$arr[ $k ]      = $v;
-		$arr[ $k.'_s' ] = $this->sanitize( $v );
-	}
-	return $arr;
-}
-
-//---------------------------------------------------------
-// element
-//---------------------------------------------------------
-function set_checkbox( $val )
-{
-	$this->_checkbox_array = $val;
-}
-
-function get_checkbox_by_name( $name )
-{
-	if ( isset( $this->_checkbox_array[ $name ] ) ) {
-		 return $this->_checkbox_array[ $name ];
-	}
-	return null;
-}
-
-function build_checkbox_checked( $name, $compare=1 )
-{
-	$val = $this->get_checkbox_by_name( $name );
-	return $this->build_form_checked( $val, $compare );
 }
 
 //---------------------------------------------------------
@@ -345,6 +265,30 @@ function get_item_embed_type( $flag )
 	return $value;
 }
 
+function exists_photo( $item_row )
+{
+	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( is_array($cont_row) ) {
+		$cont_path = $cont_row['file_path'];
+	} else {
+		return false;
+	}
+
+	if ( $cont_path  && is_readable( XOOPS_ROOT_PATH . $cont_path ) ) {
+		return true;
+	}
+	return false;
+}
+
+function get_cached_file_row_by_kind( $item_row, $kind )
+{
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_cached_row_by_id( $file_id );
+	}
+	return null;
+}
+
 //---------------------------------------------------------
 // build image
 //---------------------------------------------------------
@@ -382,30 +326,6 @@ function build_img_catedit()
 {
 	$str = '<img src="'. $this->_ICONS_URL .'/cat_edit.png" width="18" height="15"  border="0" alt="'. _AM_WEBPHOTO_CAT_LINK_EDIT .'" title="'. _AM_WEBPHOTO_CAT_LINK_EDIT .'" />'."\n";
 	return $str;
-}
-
-function exists_photo( $item_row )
-{
-	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( is_array($cont_row) ) {
-		$cont_path = $cont_row['file_path'];
-	} else {
-		return false;
-	}
-
-	if ( $cont_path  && is_readable( XOOPS_ROOT_PATH . $cont_path ) ) {
-		return true;
-	}
-	return false;
-}
-
-function get_cached_file_row_by_kind( $item_row, $kind )
-{
-	$file_id = $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
-	if ( $file_id > 0 ) {
-		return $this->_file_handler->get_cached_row_by_id( $file_id );
-	}
-	return null;
 }
 
 //---------------------------------------------------------
@@ -537,6 +457,14 @@ function get_config_array()
 //---------------------------------------------------------
 function build_form_user_select( $sel_name, $sel_value, $none=false )
 {
+	$text  = '<select name="'. $sel_name .'">';
+	$text .= $this->build_form_user_select_options( $sel_value, $none );
+	$text .= "</select>\n";
+	return $text;
+}
+
+function build_form_user_select_options( $sel_value, $none=false )
+{
 	$list = $this->get_xoops_user_list();
 
 	$opt = '';
@@ -550,16 +478,12 @@ function build_form_user_select( $sel_name, $sel_value, $none=false )
 	foreach ( $list as $uid => $uname_s )
 	{
 		$selected = $this->build_form_selected( $uid, $sel_value );
-		$opt .= '<option value="'. $uid .'" '. $selected .' ">';
+		$opt .= '<option value="'. $uid .'" '. $selected .' >';
 		$opt .= $uname_s;
 		$opt .= "</option>\n";
 	}
 
-	$text  = '<select name="'. $sel_name .'">';
-	$text .= $opt;
-	$text .= "</select>\n";
-	return $text;
-
+	return $opt;
 }
 
 //---------------------------------------------------------
@@ -568,6 +492,201 @@ function build_form_user_select( $sel_name, $sel_value, $none=false )
 function xoops_module_name( $format='s' )
 {
 	return $this->_xoops_class->get_my_module_name( $format );
+}
+
+//---------------------------------------------------------
+// is show
+//---------------------------------------------------------
+function is_show_form_admin( $item_row )
+{
+	if ( ! $this->is_show_form_photomanager( $item_row ) ) {
+		return false;
+	}
+	if ( $this->is_show_form_embed() && $this->is_show_form_playlist() ) {
+		return true;
+	}
+	return false;
+}
+
+function is_show_form_photomanager( $item_row )
+{
+// from photomanager
+	if ( $item_row['item_cat_id'] > 0 ) {
+		return false ;
+	}
+	return true ;
+}
+
+function is_show_form_editor_option( $options )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return false;
+	}
+	return $this->is_show_form_editor();
+}
+
+function is_show_form_editor()
+{
+	return $this->_is_show_form( $this->_post_form_editor );
+}
+
+function is_show_form_embed()
+{
+	return $this->_is_show_form( $this->_post_form_embed );
+}
+
+function is_show_form_playlist()
+{
+	return $this->_is_show_form( $this->_post_form_playlist );
+}
+
+function _is_show_form( $val )
+{
+	$ret = $val ? false : true ;
+	return $ret ;
+}
+
+//---------------------------------------------------------
+// common
+//---------------------------------------------------------
+function build_form_base_param()
+{
+	$arr = array_merge( 
+		$this->build_base_param() , 
+		$this->build_system_language() ,
+		$this->get_lang_array()
+	);
+
+	$arr['action'] = $this->_FORM_ACTION;
+	$arr['fct']    = $this->_THIS_FCT;
+
+	return $arr;
+}
+
+function build_base_param()
+{
+	$arr = array(
+		'mydirname'        => $this->_DIRNAME ,
+		'xoops_g_ticket'   => $this->get_token() ,
+		'is_module_admin'  => $this->_is_module_admin ,
+		'has_deletable'    => $this->_has_deletable ,
+
+// for XOOPS 2.0.18
+		'xoops_dirname'    => $this->_DIRNAME ,
+		'xoops_modulename' => $this->xoops_module_name( 's' ) ,
+	);
+
+// config
+	$config_array = $this->get_config_array();
+	foreach ( $config_array as $k => $v ) {
+		$arr[ 'cfg_'.$k ] = $v ;
+	}
+
+	return $arr;
+}
+
+function build_system_language()
+{
+	$arr = array(
+		'lang_add'     => _ADD ,
+		'lang_edit'    => _EDIT ,
+		'lang_preview' => _PREVIEW ,
+		'lang_cancel'  => _CANCEL ,
+		'lang_delete'  => _DELETE ,
+		'lang_close'   => _CLOSE ,
+		'lang_yes'     => _YES , 
+		'lang_no'      => _NO ,
+	);
+	return $arr;
+}
+
+function build_item_row( $row )
+{
+	$arr = array();
+	foreach ( $row as $k => $v )
+	{
+		$arr[ $k ]      = $v;
+		$arr[ $k.'_s' ] = $this->sanitize( $v );
+	}
+	return $arr;
+}
+
+function set_fct( $val )
+{
+	$this->_THIS_FCT = $val ;
+}
+
+function set_form_action( $flag_admin )
+{
+	if ( $flag_admin ) {
+		$this->_FORM_ACTION = $this->_MODULE_URL .'/admin/index.php' ;
+	} else {
+		$this->_FORM_ACTION = $this->_MODULE_URL .'/index.php' ;
+	}
+}
+
+//---------------------------------------------------------
+// common param
+//---------------------------------------------------------
+function get_post_select_param()
+{
+	$this->_post_form_editor   = $this->get_post_int( 'form_editor' );
+	$this->_post_form_embed    = $this->get_post_int( 'form_embed' );
+	$this->_post_form_playlist = $this->get_post_int( 'form_playlist' );
+}
+
+function build_form_select_param( $mode=null )
+{
+	$arr = array(
+		'mode'           => $this->get_form_mode_default( $mode ) ,
+		'form_editor'    => $this->_post_form_editor ,
+		'form_embed'     => $this->_post_form_embed ,
+		'form_playlist'  => $this->_post_form_playlist ,
+	);
+	return $arr;
+}
+
+function build_form_mode_param( $mode )
+{
+	$arr = array(
+		'mode' => $this->get_form_mode_default( $mode ) ,
+	);
+	return $arr;
+}
+
+function get_form_mode_default( $mode )
+{
+	if ( empty($mode) ) {
+		$mode = $this->_FORM_MODE ;
+	}
+	return $mode;
+}
+
+function set_form_mode( $val )
+{
+	$this->_FORM_MODE = $val ;
+}
+
+//---------------------------------------------------------
+// checkbox
+//---------------------------------------------------------
+function set_checkbox_array( $val )
+{
+	$this->_checkbox_array = $val;
+}
+
+function get_checkbox_by_name( $name )
+{
+	if ( isset( $this->_checkbox_array[ $name ] ) ) {
+		 return $this->_checkbox_array[ $name ];
+	}
+	return null;
+}
+
+function build_checkbox_checked( $name, $compare=1 )
+{
+	$val = $this->get_checkbox_by_name( $name );
+	return $this->build_form_checked( $val, $compare );
 }
 
 // --- class end ---

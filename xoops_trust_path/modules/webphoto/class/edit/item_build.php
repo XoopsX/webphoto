@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.5 2009/03/23 12:42:00 ohwada Exp $
+// $Id: item_build.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// item_uid
 // 2009-03-15 K.OHWADA
 // _C_WEBPHOTO_ITEM_FILE_SMALL
 // BUG: flash player becomes default in the user edit
@@ -121,6 +123,8 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	}
 
 	if ( $this->_FLAG_ADMIN ) {
+		$row['item_uid']           = $this->get_post_int(   'item_uid' );
+
 // kind
 		$row['item_kind']          = $this->get_post_int(   'item_kind' );
 		$row['item_displaytype']   = $this->get_post_int(   'item_displaytype' );

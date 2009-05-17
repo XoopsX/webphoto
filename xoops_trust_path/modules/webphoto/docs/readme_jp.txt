@@ -1,11 +1,44 @@
-$Id: readme_jp.txt,v 1.31 2009/04/27 18:30:04 ohwada Exp $
+$Id: readme_jp.txt,v 1.32 2009/05/17 08:59:00 ohwada Exp $
+
+=================================================
+Version: 1.60
+Date:   2009-05-17
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 複数枚のアップロードを追加した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=960
+
+2. 「ファイルからの画像追加」と「画像一括登録」に「エディタを選択する」を追加した
+3. 「アイテム管理」の登録フォームに投稿者を追加した
+
+4. フランス語 1.51対応
+
+5. バグ対策
+(1) typo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=980
+
+(2) bin/retrieve.php にて 403 エラー
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=981
+
+(3) 「投票する」にて Parse error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=981
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.51
 Date:   2009-04-27
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

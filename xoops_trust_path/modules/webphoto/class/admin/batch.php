@@ -1,5 +1,5 @@
 <?php
-// $Id: batch.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: batch.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// webphoto_admin_batch_form -> webphoto_edit_photo_form
 // 2009-01-10 K.OHWADA
 // webphoto_photo_create -> webphoto_edit_factory_create
 // 2008-08-01 K.OHWADA
@@ -22,33 +24,26 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_batch
 //=========================================================
-class webphoto_admin_batch extends webphoto_edit_base
+class webphoto_admin_batch extends webphoto_edit_submit
 {
-	var $_factory_create_class;
-
-	var $_post_catid;
-	var $_post_desc;
-	var $_post_uid;
-	var $_time_update;
-
-	var $_ADMIN_BATCH_PHP;
-
 	var $_TIME_SUCCESS  = 1;
 	var $_TIME_FAIL     = 5;
+
+	var $_SHOW_FORM_ADMIN_EDITOR = true;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_admin_batch( $dirname , $trust_dirname )
 {
-	$this->webphoto_edit_base( $dirname , $trust_dirname );
+	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
-	$this->_factory_create_class =& webphoto_edit_factory_create::getInstance( 
-		$dirname , $trust_dirname );
+	$this->set_flag_admin( true );
+	$this->set_fct( 'batch' );
+	$this->set_form_mode( 'admin_batch' );
+
 	$this->_factory_create_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );
 	$this->_factory_create_class->set_flag_print_first_msg( true );
-
-	$this->_ADMIN_BATCH_PHP = $this->_MODULE_URL .'/admin/index.php?fct=batch';
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -71,26 +66,23 @@ function main()
 		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';
 		$msg .= _WEBPHOTO_ERR_MUSTADDCATFIRST ;
 		$msg .= '</a>';
+
 		xoops_cp_header();
-		echo $this->build_admin_menu();
-		echo $this->build_admin_title( 'BATCH' );
+		$this->_print_title();
 		echo $this->build_error_msg( $msg, '', false );
 		xoops_cp_footer() ;
 		exit();
 	}
 
-	$post_submit = $this->_post_class->get_post_text('submit');
-
-	if ( $post_submit != '' ) {
+	$op = $this->get_post_text('op');
+	if ( $op == 'submit' ) {
 		$this->_submit();
 		exit();
 	}
 
 	xoops_cp_header();
 
-	echo $this->build_admin_menu();
-	echo $this->build_admin_title( 'BATCH' );
-
+	$this->_print_title();
 	$this->_print_form();
 
 	xoops_cp_footer() ;
@@ -107,16 +99,21 @@ function _check_cat()
 	return false;
 }
 
+function _print_title()
+{
+	$title = $this->get_admin_title( 'BATCH' );
+
+	echo $this->build_admin_bread_crumb( $title, $this->_THIS_URL );
+	echo "<h3>". $title ."</h3>\n";
+}
+
 //---------------------------------------------------------
 // submit
 //---------------------------------------------------------
 function _submit()
 {
-	$title = $this->get_admin_title( 'BATCH' );
-
 	xoops_cp_header();
-	echo $this->build_admin_bread_crumb( $title, $this->_ADMIN_BATCH_PHP );
-	echo "<h3>". $title ."</h3>\n";
+	$this->_print_title();
 
 	$this->_exec_submit();
 
@@ -134,18 +131,14 @@ function _submit()
 
 function _exec_submit()
 {
-	// Check Directory
-	$post_dir          = $this->_post_class->get_post_text( 'dir' ) ;
-	$post_title        = $this->_post_class->get_post_text( 'title' ) ;
-	$post_update       = $this->_post_class->get_post_time( 'update' ) ;
-	$this->_post_catid = $this->_post_class->get_post_get_int('cat_id') ;
-	$this->_post_desc  = $this->_post_class->get_post_text( 'desc' ) ;
-	$this->_post_uid   = $this->_post_class->get_post_int( 'uid', $this->_xoops_uid ) ;
+	$post_dir    = $this->_post_class->get_post_text( 'batch_dir' ) ;
+	$post_update = $this->_post_class->get_post_time( 'item_time_update_disp' ) ;
+	$post_uid    = $this->_post_class->get_post_int( 'item_uid', $this->_xoops_uid ) ;
 
 	if ( $post_update > 0 ) {
-		$this->_time_update = $post_update;
+		$item_time_update = $post_update;
 	} else {
-		$this->_time_update = time();
+		$item_time_update = time();
 	}
 
 	if ( !$this->check_token() ) {
@@ -196,13 +189,14 @@ function _exec_submit()
 		$file_names[] = $file_name ;
 	}
 	sort( $file_names ) ;
+	closedir( $dh ) ;
 
-	$item_row = $this->_item_handler->create( true );
-	$item_row['item_cat_id']      = $this->_post_catid ;
-	$item_row['item_uid']         = $this->_post_uid ;
-	$item_row['item_time_update'] = $this->_time_update ;
-	$item_row['item_description'] = $this->_post_desc ;
+	$item_row = $this->create_item_row_by_post();
+	$item_row['item_time_update'] = $item_time_update ;
+	$item_row['item_uid']         = $post_uid ;
 	$item_row['item_status']      = _C_WEBPHOTO_STATUS_APPROVED ;
+
+	$post_title = $item_row['item_title'] ;
 
 	$param = array(
 		'flag_video_single' => true ,
@@ -228,9 +222,8 @@ function _exec_submit()
 			continue;
 		}
 
-		$title = empty( $post_title ) ? addslashes( $node ) : $post_title.' - '.$filecount ;
+		$item_row['item_title'] = $this->build_bulk_title( $post_title, $filecount, $node );
 
-		$item_row['item_title'] = $title ;
 		$param['src_file']      = $src_file ;
 
 		$this->_factory_create_class->create_item_from_param( $item_row, $param );
@@ -239,8 +232,6 @@ function _exec_submit()
 
 		$filecount ++ ;
 	}
-
-	closedir( $dh ) ;
 
 	if ( $filecount <= 1 ) {
 		$msg = $this->sanitize($post_dir) . ' : '. _AM_WEBPHOTO_MES_BATCHNONE ;
@@ -259,11 +250,14 @@ function _exec_submit()
 //---------------------------------------------------------
 function _print_form()
 {
-	$form =& webphoto_admin_batch_form::getInstance(
-		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
+	$item_row = $this->create_item_row_default();
+	$this->init_form();
 
-	$form->print_form_batch( 
-		$this->_cat_handler->build_selbox_catid( 0 ) );
+	if ( $this->_SHOW_FORM_ADMIN_EDITOR ) {
+		echo $this->_misc_form_class->build_form_editor_with_template( $this->_FORM_MODE, $item_row ) ;
+	}
+
+	echo $this->_photo_form_class->build_form_photo_with_template( $item_row );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.16 2009/04/19 16:28:18 ohwada Exp $
+// $Id: item_manager.php,v 1.17 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// remove _build_form_common_param_admin()
 // 2009-04-19 K.OHWADA
 // print_form_admin() -> build_form_admin_with_template()
 // Fatal error: Class 'webphoto_flashvar_form'
@@ -48,6 +50,7 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 	var $_flash_class;
 	var $_log_class ;
 	var $_sort_class ;
+	var $_admin_item_form_class;
 
 	var $_sort_array      = null;
 	var $_player_id       = 0 ;
@@ -61,10 +64,6 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 
 	var $_PERPAGE_DEFAULT = 20;
 
-	var $_THIS_FCT = 'item_manager';
-	var $_THIS_URL;
-	var $_THIS_ACTION;
-
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
 	var $_TIME_FAILED  = 5;
@@ -76,6 +75,7 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_action( $dirname , $trust_dirname );
 	$this->set_flag_admin( true );
+	$this->set_fct( 'item_manager' );
 
 	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
 	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
@@ -83,12 +83,12 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname );
 	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
 
+	$this->_admin_item_form_class =& webphoto_admin_item_form::getInstance( 
+		$dirname , $trust_dirname );
+
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
 	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
-
-	$this->_THIS_ACTION = $this->_MODULE_URL .'/admin/index.php' ;
-	$this->_THIS_URL    = $this->_THIS_ACTION.'?fct='.$this->_THIS_FCT ;
 
 	$this->init_preload();
 }
@@ -108,6 +108,8 @@ function &getInstance( $dirname , $trust_dirname )
 function main()
 {
 	$action = $this->_get_action() ;
+
+	$this->_init_form();
 
 	switch ( $action ) 
 	{
@@ -257,9 +259,6 @@ function _get_action()
 //---------------------------------------------------------
 function _menu()
 {
-	$form_class =& webphoto_admin_item_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
 	xoops_cp_header();
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'ITEM_MANAGER' );
@@ -274,10 +273,10 @@ function _menu()
 	$total_all = $this->_item_handler->get_count_all();
 	$item_rows = $this->_item_handler->get_rows_by_orderby( $orderby, $perpage, $start );
 
-	$form_class->print_form_refresh_cache();
+	$this->_admin_item_form_class->print_form_refresh_cache();
 	echo "<br />\n";
 
-	$form_class->print_form_select_item( $item_id, $sort );
+	$this->_admin_item_form_class->print_form_select_item( $item_id, $sort );
 	echo "<br />\n";
 
 	$this->_print_menu_status( _C_WEBPHOTO_STATUS_WAITING, 'waiting', false );
@@ -684,20 +683,10 @@ function _submit_form()
 	echo $this->_build_bread_crumb();
 
 	$item_row = $this->create_item_row_default();
-	$options  = $this->_editor_class->build_list_options( true );
 
-	if (  $this->is_show_form_embed_playlisy_admin( $item_row ) ) {
-		if ( $this->_SHOW_FORM_ADMIN_EMBED ) {
-			$this->_print_form_embed(    $mode, $item_row );
-		}
-		if ( $this->_SHOW_FORM_ADMIN_PLAYLIST ) {
-			$this->_print_form_playlist( $mode, $item_row );
-		}
-	}
-
-	if ( $this->_SHOW_FORM_ADMIN_EDITOR && $this->is_show_form_editor_option( $options ) ) {
-		$this->_print_form_editor( $mode, $item_row, $options );
-	}
+	$this->_print_form_embed(    $mode, $item_row );
+	$this->_print_form_playlist( $mode, $item_row );
+	$this->_print_form_editor(   $mode, $item_row );
 
 	$this->_print_form_admin( $mode, $item_row );
 
@@ -816,10 +805,8 @@ function _confirm_form()
 
 	xoops_cp_header();
 
-	$param = $this->_build_form_common_param_admin( 'admin' );
-
 	echo $this->_build_bread_crumb();
-	echo $this->build_form_delete_confirm_with_template( $item_row, $param ) ;
+	echo $this->build_form_delete_confirm_with_template( $item_row ) ;
 
 	xoops_cp_footer();
 	exit();
@@ -832,7 +819,7 @@ function _submit()
 {
 	$this->_check_token_and_redirect();
 
-	$ret = $this->submit_main();
+	$ret = $this->_submit_exec();
 
 // success
 	if ( $ret == _C_WEBPHOTO_RET_SUCCESS )
@@ -868,6 +855,23 @@ function _submit()
 
 	xoops_cp_footer();
 	exit();
+}
+
+function _submit_exec()
+{
+	$this->get_post_param();
+	$ret = $this->submit_exec();
+
+	if ( $this->_is_video_thumb_form ) {
+		return _C_WEBPHOTO_RET_VIDEO_FORM ;
+	}
+
+	$ret2 = $this->build_failed_msg( $ret );
+	if ( !$ret2 ) {
+		return _C_WEBPHOTO_RET_ERROR ;
+	}
+
+	return _C_WEBPHOTO_RET_SUCCESS ;
 }
 
 function _check_token_and_redirect()
@@ -1331,6 +1335,7 @@ function _vote_stats()
 		$this->_vote_print_guest_table( $item_id, $guest_rows );
 	}
 
+	xoops_cp_footer();
 }
 
 function _vote_print_user_table( $item_id, $user_rows )
@@ -1572,51 +1577,53 @@ function _refresh_cache()
 //---------------------------------------------------------
 // form
 //---------------------------------------------------------
+function _init_form()
+{
+	$this->init_admin_item_form();
+	$this->init_misc_form();
+}
+
+function init_admin_item_form()
+{
+	$this->_admin_item_form_class->get_post_select_param();
+	$this->_admin_item_form_class->set_fct( $this->_THIS_FCT ) ;
+	$this->_admin_item_form_class->set_form_mode( $this->_FORM_MODE ) ;
+	$this->_admin_item_form_class->set_form_action( $this->_FLAG_ADMIN ) ;
+	$this->_admin_item_form_class->set_tag_name_array( $this->_tag_name_array ) ;
+	$this->_admin_item_form_class->set_checkbox_array( $this->_checkbox_array ) ;
+	$this->_admin_item_form_class->set_preview_name( $this->_preview_name ) ;
+	$this->_admin_item_form_class->set_rotate( $this->_post_rotate ) ;
+}
+
 function _print_form_admin( $mode, $item_row )
 {
-	$form_class =& webphoto_admin_item_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	echo $form_class->build_form_admin_with_template( $item_row, $param );
+	echo $this->_admin_item_form_class->build_form_admin_with_template( $mode, $item_row );
 }
 
 function _print_form_playlist( $mode, $item_row )
 {
-	$form_class =& webphoto_admin_item_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	$form_class->print_form_playlist( $item_row, $param );
+	if ( $this->_SHOW_FORM_ADMIN_PLAYLIST ) {
+		echo $this->_admin_item_form_class->print_form_playlist( $mode, $item_row );
+	}
 }
 
 function _print_form_embed( $mode, $item_row )
 {
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	echo $form_class->build_form_embed_with_template( $item_row, $param ) ;
+	if ( $this->_SHOW_FORM_ADMIN_EMBED ) {
+		echo $this->_misc_form_class->build_form_embed_with_template( $mode, $item_row ) ;
+	}
 }
 
-function _print_form_editor( $mode, $item_row, $options )
+function _print_form_editor( $mode, $item_row )
 {
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	$param['options'] = $options ;
-
-	echo $form_class->build_form_editor_with_template( $item_row, $param );
+	if ( $this->_SHOW_FORM_ADMIN_EDITOR ) {
+		echo $this->_misc_form_class->build_form_editor_with_template( $mode, $item_row ) ;
+	}
 }
 
 function _print_form_redo( $mode, $item_row, $flash_row )
 {
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	echo $form_class->build_form_redo_with_template( $item_row, $flash_row, $param );
+	echo $this->_misc_form_class->build_form_redo_with_template( $mode, $item_row, $flash_row );
 }
 
 function _print_form_flashvar( $mode, $flashvar_row )
@@ -1631,16 +1638,7 @@ function _print_form_flashvar( $mode, $flashvar_row )
 
 function _print_form_video_thumb( $mode, $item_row )
 {
-	$form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	$param = $this->_build_form_common_param_admin( $mode );
-	echo $form_class->build_form_video_thumb_with_template( $item_row, $param );
-}
-
-function _build_form_common_param_admin( $mode )
-{
-	return $this->build_form_common_param( $mode, $this->_THIS_ACTION, $this->_THIS_FCT );
+	echo $this->_misc_form_class->build_form_video_thumb_with_template( $mode, $item_row );
 }
 
 // --- class end ---

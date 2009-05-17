@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_form.php,v 1.3 2009/04/19 13:44:47 ohwada Exp $
+// $Id: imagemanager_form.php,v 1.4 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// build_form_param() -> build_form_base_param()
 // 2009-04-19 K.OHWADA
 // print_form_imagemanager() -> build_form_imagemanager()
 // 2009-01-10 K.OHWADA
@@ -46,7 +48,7 @@ function &getInstance( $dirname, $trust_dirname )
 function build_form_imagemanager( $row, $param )
 {
 	$arr = array_merge(
-		$this->build_form_param() ,
+		$this->build_form_base_param() ,
 		$this->build_form_submit_imagemanager( $row, $param )
 	);
 	return $arr;
@@ -60,6 +62,7 @@ function build_form_submit_imagemanager( $row, $param )
 	$this->set_row( $row );
 
 	$arr = array(
+		'max_file_size'        => $this->_cfg_fsize ,
 		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
 		'ele_maxsize'          => $this->ele_maxsize() ,
 		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,

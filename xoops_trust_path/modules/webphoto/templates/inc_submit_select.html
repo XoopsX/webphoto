@@ -1,0 +1,23 @@
+<{* $Id: inc_submit_select.html,v 1.1 2009/05/17 09:00:42 ohwada Exp $ *}>
+
+<{* === table === *}>
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center"><th colspan="2"><{$lang_title_submit_select}></th></tr>
+
+<tr><td class="head">
+
+<{* === form === *}>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit">
+<{$lang_title_submit_single}></a> | 
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit&amp;op=bulk_form">
+<{$lang_title_submit_bulk}></a>
+
+<{if $show_select_file }>
+  | 
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit&amp;op=file_form">
+  <{$lang_title_submit_file}></a>
+<{/if}>
+
+</td></tr>
+</table>

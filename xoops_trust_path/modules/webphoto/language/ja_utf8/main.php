@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.28 2009/04/11 14:23:35 ohwada Exp $
+// $Id: main.php,v 1.29 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1346,6 +1346,13 @@ define("_WEBPHOTO_ITEM_CODEINFO_SMALL","スモール画像");
 
 // edit form
 define("_WEBPHOTO_CAP_SMALL_SELECT", "スモール画像の選択");
+
+//---------------------------------------------------------
+// v1.60
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_SUBMIT_SELECT",  "登録形式の切替え");
+define("_WEBPHOTO_TITLE_SUBMIT_SINGLE",  "１枚の登録");
+define("_WEBPHOTO_TITLE_SUBMIT_BULK",  "複数枚の一括登録");
 
 // === define end ===
 }

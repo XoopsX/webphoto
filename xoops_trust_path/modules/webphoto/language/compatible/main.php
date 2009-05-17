@@ -1,10 +1,20 @@
 <?php
-// $Id: main.php,v 1.6 2009/04/04 20:27:00 ohwada Exp $
+// $Id: main.php,v 1.7 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v1.60
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_TITLE_SUBMIT_SELECT") ) 
+{
+define("_WEBPHOTO_TITLE_SUBMIT_SELECT",  "Select submit form");
+define("_WEBPHOTO_TITLE_SUBMIT_SINGLE",  "Registration of one photo");
+define("_WEBPHOTO_TITLE_SUBMIT_BULK",  "Batch registration of photos");
+}
 
 //---------------------------------------------------------
 // v1.30

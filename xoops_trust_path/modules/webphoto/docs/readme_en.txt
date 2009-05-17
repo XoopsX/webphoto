@@ -1,4 +1,40 @@
-$Id: readme_en.txt,v 1.31 2009/04/27 18:30:04 ohwada Exp $
+$Id: readme_en.txt,v 1.32 2009/05/17 08:59:00 ohwada Exp $
+
+=================================================
+Version: 1.60
+Date:   2009-05-17
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Added uploading plural photos
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=960
+
+2. Added "Select Editor" in "Add Photo from File" and "Batch Register"
+3. Added Submitter in "Photo Upload" form of "Item Management"
+
+4. French for v1.51
+
+5. Bug fix
+(1) typo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=980
+
+(2) 403 error in bin/retrieve.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=981
+
+(3) Parse error in "Vote this"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=981
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.51

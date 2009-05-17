@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.6 2008/11/20 11:15:46 ohwada Exp $
+// $Id: upload.php,v 1.7 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// Notice [PHP]: Undefined index: file_photo
 // 2008-11-16 K.OHWADA
 // clear_errors()
 // 2008-11-08 K.OHWADA
@@ -222,7 +224,11 @@ function get_uploader_media_type()
 
 function is_readable_files_tmp_name( $field )
 {
-	return is_readable( $_FILES[ $field ]['tmp_name'] );
+// Notice [PHP]: Undefined index: file_photo
+	if ( isset( $_FILES[ $field ]['tmp_name'] ) ) {
+		return is_readable( $_FILES[ $field ]['tmp_name'] );
+	}
+	return false;
 }
 
 function is_readable_in_tmp_dir( $name )

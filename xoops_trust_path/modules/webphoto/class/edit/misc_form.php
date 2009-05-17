@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
+// $Id: misc_form.php,v 1.3 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// use build_form_mode_param()
 // 2009-04-19 K.OHWADA
 // print_form_editor() -> build_form_editor_with_template()
 // 2009-01-10 K.OHWADA
@@ -26,6 +28,7 @@ class webphoto_edit_misc_form extends webphoto_edit_form
 	var $_editor_class ;
 	var $_ffmpeg_class;
 	var $_icon_build_class ;
+	var $_kind_class;
 
 	var $_VIDEO_THUMB_WIDTH = 120;
 	var $_VIDEO_THUMB_MAX   = _C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX ;
@@ -41,6 +44,7 @@ function webphoto_edit_misc_form( $dirname, $trust_dirname )
 	$this->_editor_class =& webphoto_editor::getInstance( $dirname, $trust_dirname );
 	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname );
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
+	$this->_kind_class   =& webphoto_kind::getInstance();
 
 }
 
@@ -56,23 +60,22 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // editor
 //---------------------------------------------------------
-function build_form_editor_with_template( $item_row, $param )
+function build_form_editor_with_template( $mode, $item_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_editor.html';
 
-	$param_1 = array(
-		'action'        => $param['action'] ,
-		'fct'           => $param['fct'] ,
-		'form_embed'    => $param['form_embed'] ,
-		'form_editor'   => $param['form_editor'] ,
-		'form_playlist' => $param['form_playlist'] ,
-	);
+	list( $show_editor, $param_editor ) =
+		$this->build_form_editor( $item_row, $mode );
+
+	if ( ! $show_editor ) {
+		return '';
+	}
 
 	$arr = array_merge( 
-		$this->build_form_param() ,
-		$this->build_form_editor( $item_row, $param ) ,
+		$this->build_form_select_param( $mode ) ,
+		$this->build_form_base_param() ,
 		$this->build_item_row( $item_row ) ,
-		$param_1
+		$param_editor 
 	);
 
 	$tpl = new XoopsTpl() ;
@@ -80,15 +83,39 @@ function build_form_editor_with_template( $item_row, $param )
 	return $tpl->fetch( $template ) ;
 }
 
-function build_form_editor( $row, $param )
+function build_form_editor( $item_row, $mode=null )
+{
+	$options  = $this->_editor_class->build_list_options( true );
+
+	if ( ! $this->is_show_form_editor_option( $options ) ) {
+		return array( false, array() );
+	}
+
+	$param = array(
+		'mode'    => $this->get_form_mode_default( $mode ) ,
+		'options' => $options
+	);
+
+	$arr = array( 
+		true, 
+		$this->build_form_editor_with_param( $item_row, $param )
+	);
+	return $arr; 
+}
+
+function build_form_editor_with_param( $row, $param )
 {
 	$mode    = $param['mode'] ;
 	$options = $param['options'] ;
 
 	switch ($mode)
 	{
-		case 'admin_submit':
-			$op  = 'submit_form';
+		case 'bulk':
+			$op  = 'bulk_form';
+			break;
+
+		case 'file':
+			$op  = 'file_form';
 			break;
 
 		case 'admin_modify':
@@ -96,6 +123,8 @@ function build_form_editor( $row, $param )
 			break;
 
 		case 'user_submit':
+		case 'admin_submit':
+		case 'admin_batch':
 		default:
 			$op  = 'submit_form';
 			break;
@@ -120,23 +149,19 @@ function item_editor_select_options( $options )
 //---------------------------------------------------------
 // embed
 //---------------------------------------------------------
-function build_form_embed_with_template( $item_row, $param )
+function build_form_embed_with_template( $mode, $item_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_embed.html';
 
-	$param_1 = array(
-		'action'        => $param['action'] ,
-		'fct'           => $param['fct'] ,
-		'form_embed'    => $param['form_embed'] ,
-		'form_editor'   => $param['form_editor'] ,
-		'form_playlist' => $param['form_playlist'] ,
-	);
+	if ( !$this->is_show_form_admin( $item_row ) ) {
+		return '';
+	}
 
 	$arr = array_merge( 
-		$this->build_form_param() ,
-		$this->build_form_embed( $item_row ) ,
-		$this->build_item_row( $item_row ) ,
-		$param_1
+		$this->build_form_select_param( $mode ) ,
+		$this->build_form_base_param() ,
+		$this->build_form_embed_with_row( $item_row ) ,
+		$this->build_item_row( $item_row ) 
 	);
 
 	$tpl = new XoopsTpl() ;
@@ -144,9 +169,22 @@ function build_form_embed_with_template( $item_row, $param )
 	return $tpl->fetch( $template ) ;
 }
 
-function build_form_embed( $row )
+function build_form_embed( $item_row )
 {
-	$this->set_row( $row );
+	if ( ! $this->is_show_form_embed() ) {
+		return array( false, array() );
+	}
+
+	$arr = array( 
+		true, 
+		$this->build_form_embed_with_row( $item_row )
+	);
+	return $arr; 
+}
+
+function build_form_embed_with_row( $item_row )
+{
+	$this->set_row( $item_row );
 
 	$arr = array(
 		'item_embed_type_select_options' => $this->item_embed_type_select_options() 
@@ -164,20 +202,14 @@ function item_embed_type_select_options()
 //---------------------------------------------------------
 // video thumb
 //---------------------------------------------------------
-function build_form_video_thumb_with_template( $row, $param )
+function build_form_video_thumb_with_template( $mode, $row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_video_thumb.html';
 
-	$param_1 = array(
-		'action'  => $param['action'] ,
-		'fct'     => $param['fct'] ,
-	);
-
 	$arr = array_merge( 
-		$this->build_form_param() ,
-		$this->build_form_video_thumb( $row, false ) ,
-		$this->build_item_row( $row ) ,
-		$param_1
+		$this->build_form_mode_param( $mode ) ,
+		$this->build_form_base_param() ,
+		$this->build_form_video_thumb( $row, true )
 	);
 
 	$tpl = new XoopsTpl() ;
@@ -244,20 +276,19 @@ function build_video_thumb_array( $row )
 //---------------------------------------------------------
 // redo
 //---------------------------------------------------------
-function build_form_redo_with_template( $item_row,$flash_row, $param )
+function build_form_redo_with_template( $mode, $item_row, $flash_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_redo.html';
 
-	$param_1 = array(
-		'action'  => $param['action'] ,
-		'fct'     => $param['fct'] ,
-	);
+	if ( ! $this->is_show_form_redo( $item_row ) ) {
+		return '';
+	}
 
 	$arr = array_merge( 
-		$this->build_form_param() ,
-		$this->build_form_redo( $flash_row ) ,
-		$this->build_item_row( $item_row ) ,
-		$param_1
+		$this->build_form_mode_param( $mode ) ,
+		$this->build_form_base_param() ,
+		$this->build_form_redo_by_flash_row( $flash_row ) ,
+		$this->build_item_row( $item_row )
 	);
 
 	$tpl = new XoopsTpl() ;
@@ -265,7 +296,23 @@ function build_form_redo_with_template( $item_row,$flash_row, $param )
 	return $tpl->fetch( $template ) ;
 }
 
-function build_form_redo( $flash_row )
+function build_form_redo_by_item_row( $item_row )
+{
+	if ( ! $this->is_show_form_redo( $item_row ) ) {
+		return array( false, array() ) ;
+	}
+
+	$flash_row = $this->get_cached_file_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
+
+	$arr = array(
+		true ,
+		$this->build_form_redo_by_flash_row( $flash_row )
+	);
+	return $arr;
+}
+
+function build_form_redo_by_flash_row( $flash_row )
 {
 	$arr = array(
 		'flash_url_s' => $this->build_flash_url_s( $flash_row )
@@ -277,6 +324,19 @@ function build_flash_url_s( $flash_row )
 {
 	return $this->sanitize( 
 		$this->build_file_url_size( $flash_row ) );
+}
+
+function is_show_form_redo( $item_row )
+{
+	if ( $this->is_video_kind( $item_row['item_kind'] ) ) {
+		return true;
+	}
+	return false ;
+}
+
+function is_video_kind( $kind )
+{
+	return $this->_kind_class->is_video_kind( $kind );
 }
 
 // --- class end ---

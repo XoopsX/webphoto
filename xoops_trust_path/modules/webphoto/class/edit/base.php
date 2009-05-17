@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
+// $Id: base.php,v 1.3 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// build_tmp_dir_file()
 // 2009-04-19 K.OHWADA
 // build_form_video_thumb()
 //---------------------------------------------------------
@@ -125,6 +127,28 @@ function get_server_time_by_post( $key, $default=0 )
 }
 
 //---------------------------------------------------------
+// tmp dir
+//---------------------------------------------------------
+function build_tmp_dir_file( $name )
+{
+	$str = $this->_TMP_DIR .'/'. $name ;
+	return $str;
+}
+
+function unlink_tmp_dir_file( $name )
+{
+	if ( $name ) {
+		$this->unlink_file( $this->build_tmp_dir_file( $name ) );
+	}
+}
+
+function build_file_dir_file( $name )
+{
+	$str = $this->_FILE_DIR .'/'. $name ;
+	return $str;
+}
+
+//---------------------------------------------------------
 // msg
 //---------------------------------------------------------
 function check_msg_level_admin()
@@ -189,25 +213,6 @@ function clear_tmp_files( $dir_path , $prefix )
 	}
 
 	return $count ;
-}
-
-//---------------------------------------------------------
-// form video thumb
-// submit.php submit_file.php etc
-//---------------------------------------------------------
-function build_form_video_thumb( $item_row )
-{
-	$message = null ;
-	if ( $this->has_msg_array() ) {
-		$message = $this->get_format_msg_array( true, false, true ) ;
-	}
-
-	$form_class =& webphoto_edit_misc_form::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$arr = $form_class->build_form_video_thumb( $item_row, true );
-
-	$arr['message'] = $message ;
-	return $arr;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.24 2009/04/19 13:44:47 ohwada Exp $
+// $Id: edit.php,v 1.25 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// _build_form_edit_param() -> build_form_base_param()
 // 2009-04-19 K.OHWADA
 // _print_form_modify() -> _build_form_modify()
 // 2009-03-15 K.OHWADA
@@ -46,9 +48,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_edit extends webphoto_edit_action
 {
-	var $_THIS_FCT  = 'edit' ;
-	var $_THIS_URL  = null ;
-
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
 	var $_TIME_FAILED  = 5;
@@ -60,7 +59,8 @@ function webphoto_main_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_action( $dirname , $trust_dirname );
 
-	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
+	$this->set_fct( 'edit' );
+	$this->set_form_mode( 'edit' );
 
 	$this->init_preload();
 }
@@ -140,6 +140,8 @@ function check_action()
 
 function form_param()
 {
+	$this->init_form();
+
 	switch ( $this->_form_action ) 
 	{
 		case 'form_video_thumb':
@@ -466,18 +468,8 @@ function _build_form_modify( $flag_default=true )
 		$item_row = $this->build_item_row_modify_post( $item_row );
 	}
 
-	$flash_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
-
-	$item_id   = $item_row['item_id'] ;
-	$kind      = $item_row['item_kind'] ;
-
-	$show_form_redo = false ;
-	$param1 = array(); 
-
-	if ( $this->is_video_kind( $kind ) ) {
-		$show_form_redo = true ;
-		$param1 = $this->_build_form_redo( $flash_row );
-	}
+	list( $show_form_redo, $param_form_redo ) =
+		$this->build_form_redo( $item_row );
 
 	$param = array(
 		'show_preview'       => true ,
@@ -487,28 +479,13 @@ function _build_form_modify( $flag_default=true )
 	);
 
 	$arr = array_merge( 
-		$this->_build_form_edit_param() ,
 		$this->_build_preview_modify( $item_row ) ,
-		$this->_build_form_photo( $item_row ) ,
-		$param, $param1
+		$this->build_form_base_param() ,
+		$this->build_form_photo( $item_row ) ,
+		$param, $param_form_redo
 	);
 	return $arr;
 
-}
-
-function _build_form_photo( $item_row )
-{
-	$form_class =& webphoto_edit_photo_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$param = $this->build_form_common_param( 'edit' );
-	return $form_class->build_form_photo( $item_row, $param );
-}
-
-function _build_form_redo( $flash_row )
-{
-	$misc_form_class =& webphoto_edit_misc_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	return $misc_form_class->build_form_redo( $flash_row );
 }
 
 function _build_preview_modify( $item_row )
@@ -542,16 +519,7 @@ function _build_form_error()
 
 function _build_form_video_thumb()
 {
-	$param = array(
-		'show_form_video_thumb' => true ,
-	);
-
-	$arr = array_merge( 
-		$this->_build_form_edit_param() ,
-		$this->build_form_video_thumb( $this->get_updated_row() ) ,
-		$param 
-	);
-	return $arr;
+	return $this->build_form_video_thumb( $this->get_updated_row() );
 }
 
 function _build_form_confirm()
@@ -561,17 +529,12 @@ function _build_form_confirm()
 	);
 
 	$arr = array_merge( 
-		$this->_build_form_edit_param() ,
+		$this->build_form_base_param() ,
 		$this->build_form_delete_confirm( $this->_row_current ) ,
 		$param 
+
 	);
 	return $arr;
-}
-
-function _build_form_edit_param()
-{
-	$action = $this->_MODULE_URL .'/index.php' ;
-	return $this->edit_form_build_form_param( $action, 'edit' );
 }
 
 // --- class end ---

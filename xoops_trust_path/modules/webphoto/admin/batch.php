@@ -1,5 +1,5 @@
 <?php
-// $Id: batch.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: batch.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// batch_form.php -> photo_form.php
 // 2008-01-10 K.OHWADA
 // header_edit.php
 // 2008-11-08 K.OHWADA
@@ -24,7 +26,8 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header_edit.php' );
-webphoto_include_once( 'class/admin/batch_form.php' );
+webphoto_include_once( 'class/edit/photo_form.php' );
+webphoto_include_once( 'class/edit/misc_form.php' );
 webphoto_include_once( 'class/admin/batch.php' );
 
 //=========================================================

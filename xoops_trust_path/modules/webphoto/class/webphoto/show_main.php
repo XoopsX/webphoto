@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.18 2009/04/19 11:39:45 ohwada Exp $
+// $Id: show_main.php,v 1.19 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// Undefined variable: photos 
 // 2009-04-19 K.OHWADA
 // build_cat_sub_title()
 // 2009-04-18 K.OHWADA
@@ -546,6 +548,9 @@ function build_gmap_from_rows( $rows, $cat_id=0 )
 	$mode  = $this->_mode; 
 	$show  = false;
 	$icons = null;
+
+// Undefined variable: photos 
+	$photos = null;
 
 	list( $code, $latitude, $longitude, $zoom ) =
 		$this->_gmap_class->get_gmap_center( 0, $cat_id );

@@ -1,4 +1,4 @@
-<{* $Id: main_submit_file.html,v 1.1 2009/04/19 11:41:45 ohwada Exp $ *}>
+<{* $Id: main_submit_file.html,v 1.2 2009/05/17 08:59:00 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -21,8 +21,13 @@
   </div><br />
 <{/if}>
 
-<{if $show_form_file }>
-  <{include file="db:`$mydirname`_form_file.html" }>
+<{if $show_form_editor }>
+  <{include file="db:`$mydirname`_form_editor.html" }>
+  <br />
+<{/if}>
+
+<{if $show_form_photo }>
+  <{include file="db:`$mydirname`_form_photo.html" }>
   <br />
 <{/if}>
 

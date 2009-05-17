@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.4 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// unlink_tmp_dir_file()
 // 2009-03-15 K.OHWADA
 // create_small_param_by_photo()
 // 2009-01-10 K.OHWADA
@@ -30,6 +32,7 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 	var $_has_editable       = false;
 	var $_has_deletable      = false;
 	var $_has_html           = false;
+	var $_has_file           = false;
 	var $_has_image_resize   = false;
 	var $_has_image_rotate   = false;
 
@@ -102,6 +105,7 @@ function webphoto_edit_imagemanager_submit( $dirname , $trust_dirname )
 	$this->_has_editable    = $this->_perm_class->has_editable();
 	$this->_has_deletable   = $this->_perm_class->has_deletable();
 	$this->_has_html        = $this->_perm_class->has_html();
+	$this->_has_file        = $this->_perm_class->has_file();
 }
 
 // for admin_photo_manage admin_catmanager
@@ -290,6 +294,11 @@ function build_item_row_submit_update( $row )
 		$row, $this->_file_id_array, $this->_tag_name_array );
 }
 
+function set_created_row( $val )
+{
+	$this->_row_create = $val;
+}
+
 function get_created_row()
 {
 	return $this->_row_create ;
@@ -306,29 +315,19 @@ function insert_media_files_from_params( $item_row )
 
 function unlink_uploaded_files()
 {
-	if ( $this->_photo_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_photo_tmp_name );
+	$this->unlink_tmp_dir_file( $this->_photo_tmp_name );
+	$this->unlink_tmp_dir_file( $this->_thumb_tmp_name );
+	$this->unlink_tmp_dir_file( $this->_middle_tmp_name );
+	$this->unlink_tmp_dir_file( $this->_small_tmp_name );
+	$this->unlink_file( $this->_image_tmp_file );
 
+	if ( $this->_photo_tmp_name ) {
 		$rot_name = str_replace( 
 			_C_WEBPHOTO_UPLOADER_PREFIX_PREV , 
 			_C_WEBPHOTO_UPLOADER_PREFIX_ROT , 
 			$this->_photo_tmp_name 
 		) ;
-		if ( $rot_name ) {
-			$this->unlink_file( $this->_TMP_DIR .'/'. $rot_name );
-		}
-	}
-	if ( $this->_thumb_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_thumb_tmp_name );
-	}
-	if ( $this->_middle_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_middle_tmp_name );
-	}
-	if ( $this->_small_tmp_name ) {
-		$this->unlink_file( $this->_TMP_DIR .'/'. $this->_small_tmp_name );
-	}
-	if ( $this->_image_tmp_file ) {
-		$this->unlink_file( $this->_image_tmp_file );
+		$this->unlink_tmp_dir_file( $rot_name );
 	}
 }
 

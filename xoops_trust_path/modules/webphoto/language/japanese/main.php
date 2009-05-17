@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.28 2009/04/11 14:23:35 ohwada Exp $
+// $Id: main.php,v 1.29 2009/05/17 08:59:00 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1345,6 +1345,13 @@ define("_WEBPHOTO_ITEM_CODEINFO_SMALL","¥¹¥â¡¼¥ë²èÁü");
 
 // edit form
 define("_WEBPHOTO_CAP_SMALL_SELECT", "¥¹¥â¡¼¥ë²èÁü¤ÎÁªÂò");
+
+//---------------------------------------------------------
+// v1.60
+//---------------------------------------------------------
+define("_WEBPHOTO_TITLE_SUBMIT_SELECT",  "ÅÐÏ¿·Á¼°¤ÎÀÚÂØ¤¨");
+define("_WEBPHOTO_TITLE_SUBMIT_SINGLE",  "£±Ëç¤ÎÅÐÏ¿");
+define("_WEBPHOTO_TITLE_SUBMIT_BULK",  "Ê£¿ôËç¤Î°ì³çÅÐÏ¿");
 
 // === define end ===
 }

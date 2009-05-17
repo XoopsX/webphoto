@@ -1,28 +1,35 @@
-<{* $Id: main_submit.html,v 1.1 2009/04/19 11:41:45 ohwada Exp $ *}>
+<{* $Id: main_submit.html,v 1.2 2009/05/17 08:59:00 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
 &gt;&gt; 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit" >
-<{$lang_title_addphoto}></a>
+<{$lang_title_addphoto}></a> 
+&gt; 
+<b><{$lang_title_sub}></b>
 <br /><br />
 
 <{if $message != '' }>
   <{* color: red;  background-color: lightyellow;  border: gray; *}>
-  <div style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
+  <div id="webphoto_submit_message" style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
   <{$message}>
   </div><br />
 <{/if}>
 
 <{if $error != '' }>
   <{* color: red;  background-color: lightyellow;  border: gray; *}>
-  <div style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
+  <div id="webphoto_submit_error" style="color:#ff0000; background-color:#ffffeo; border:1px dotted #808080; padding:3px;">
   <{$error}>
   </div><br />
 <{/if}>
 
 <{if $show_preview }>
   <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
+<{/if}>
+
+<{if $show_submit_select }>
+  <{include file="db:`$mydirname`_inc_submit_select.html"}>
+  <br />
 <{/if}>
 
 <{if $show_form_embed }>

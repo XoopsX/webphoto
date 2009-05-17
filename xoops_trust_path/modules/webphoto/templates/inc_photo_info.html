@@ -1,6 +1,9 @@
-<{* $Id: inc_photo_info.html,v 1.6 2009/01/24 07:10:40 ohwada Exp $ *}>
+<{* $Id: inc_photo_info.html,v 1.7 2009/05/17 08:59:00 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
+
+<{* ANCHOR *}>
+<a id="webphoto_list_id_<{$webphoto_list_num}>" name="<{$photo.photo_id}>"></a>
 
 <{* EDIT ICON *}>
 <{if $photo.can_edit}>
@@ -8,17 +11,15 @@
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /></a>
 <{/if}>
 
-<{* PHOTO"S SUBJECT *}>
-<a name="<{$photo.photo_id}>"></a>
-
-<{if $use_pathinfo && $search_merged_urlencode }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/keywords=<{$search_merged_urlencode}>/">
-<{elseif $use_pathinfo }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+<{* PHOTO SUBJECT *}>
+<{if $cfg_use_pathinfo && $search_merged_urlencode }>
+  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/keywords=<{$search_merged_urlencode}>/">
+<{elseif $cfg_use_pathinfo }>
+  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
 <{elseif $search_merged_urlencode }>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>&amp;keywords=<{$search_merged_urlencode}>">
+  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>&amp;keywords=<{$search_merged_urlencode}>">
 <{else}>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
 <{/if}>
 
 <b><{$photo.title_s}></b></a>
@@ -49,7 +50,7 @@
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/submitter.png" width="16" height="16" alt="<{$lang_submitter}>" title="<{$lang_submitter}>" border="0" />
   </a>
 
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/<{$photo.uid}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user&amp;p=<{$photo.uid}>">
@@ -67,7 +68,7 @@
 
 <{* DATE *}>
 <{if $photo.datetime_disp != '' }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/<{$photo.datetime_urlencode}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date&amp;p=<{$photo.datetime_urlencode}>">
@@ -80,7 +81,7 @@
 
 <{* PLACE *}>
 <{if $photo.place_s != '' }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/<{$photo.place_urlencode}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place&amp;p=<{$photo.place_urlencode}>">
@@ -93,7 +94,7 @@
 
 <{* EQUIPMENT *}>
 <{if $photo.equipment_s != '' }>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/search/<{$photo.equipment_urlencode}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=search&amp;p=<{$photo.equipment_urlencode}>">
@@ -121,7 +122,7 @@
 <{* TAG *}>
 <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/tags.png" width="16" height="16" alt="<{$lang_tags}>" title="<{$lang_tags}>" border="0" /> 
 <{foreach name=webphoto_tags item=tag from=$photo.tags}>
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/<{$tag.urlencoded}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=tag&amp;p=<{$tag.urlencoded}>">
@@ -136,7 +137,7 @@
 <{* CATEGORY *}>
 <{if $photo.cat_title_s}>
 
-  <{if $use_pathinfo }>
+  <{if $cfg_use_pathinfo }>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$photo.cat_id}>/">
   <{else}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$photo.cat_id}>">

@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.9 2009/04/19 16:28:18 ohwada Exp $
+// $Id: submit.php,v 1.10 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// init_form()
 // 2009-04-10 K.OHWADA
 // webphoto_page
 // insert_media_file_small()
@@ -34,12 +36,16 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_external_build_class ;
 	var $_embed_build_class ;
 	var $_playlist_build_class ;
+	var $_photo_form_class ;
+	var $_misc_form_class ;
 
 	var $_cfg_addposts ;
 	var $_cfg_makethumb ;
 	var $_cfg_thumb_width ;
 	var $_cfg_thumb_height ;
 	var $_cfg_allownoimage ;
+	var $_cfg_file_dir ;
+	var $_cfg_file_size ;
 
 // post
 	var $_post_form_embed    = 0;
@@ -57,6 +63,14 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 
 	var $_URL_DAFAULT_IMAGE;
 	var $_URL_PIXEL_IMAGE ;
+
+	var $_THIS_FCT    = null;
+	var $_THIS_URL    = null;
+	var $_FROM_ACTION = null;
+	var $_FORM_MODE   = null;
+	var $_FLAG_ADMIN  = false;
+
+	var $_MAX_PHOTO_FILE = _C_WEBPHOTO_MAX_PHOTO_FILE ;
 
 //---------------------------------------------------------
 // constructor
@@ -76,6 +90,12 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_editor_class =& webphoto_editor::getInstance( 
 		$dirname, $trust_dirname );
 
+	$this->_photo_form_class =& webphoto_edit_photo_form::getInstance( 
+		$dirname, $trust_dirname );
+
+	$this->_misc_form_class =& webphoto_edit_misc_form::getInstance( 
+		$dirname, $trust_dirname );
+
 	$this->_tag_class  =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 
@@ -84,6 +104,8 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_cfg_thumb_width    = $this->get_config_by_name( 'thumb_width' ) ;
 	$this->_cfg_thumb_height   = $this->get_config_by_name( 'thumb_height' ) ;
 	$this->_cfg_allownoimage   = $this->get_config_by_name( 'allownoimage' ) ;
+	$this->_cfg_file_dir       = $this->get_config_by_name( 'file_dir' ) ;
+	$this->_cfg_file_size      = $this->get_config_by_name( 'file_size' ) ;
 
 	$this->_URL_DAFAULT_IMAGE = $this->_MODULE_URL .'/images/exts/default.png' ;
 	$this->_URL_PIXEL_IMAGE   = $this->_MODULE_URL .'/images/icons/pixel_trans.png' ;
@@ -109,20 +131,15 @@ function get_post_param()
 {
 	$this->_post_item_id = $this->get_post_item_id();
 
-	$this->_post_form_embed    = $this->get_post_int( 'form_embed' );
-	$this->_post_form_playlist = $this->get_post_int( 'form_playlist' );
-	$this->_post_form_editor   = $this->get_post_int( 'form_editor' );
-
-	$this->_preview_name = $this->get_post_text( 'preview_name' ) ;
-
-	$this->_post_rotate  = $this->_post_class->get_post( 'rotate' ) ;
-	$this->_rotate_angle = $this->conv_rotate( $this->_post_rotate );
+	$this->set_preview_name( $this->get_post_text( 'preview_name' ) ) ;
+	$this->set_rotate(       $this->get_post_text( 'rotate' ) );
 
 	$this->set_checkbox_by_post( 'item_time_update_checkbox' );
 	$this->set_checkbox_by_post( 'item_datetime_checkbox' );
 
-	$post_tags = $this->get_post_text( 'tags' );
-	$this->set_tag_name_array( $this->_tag_class->str_to_tag_name_array( $post_tags ) );
+	$this->set_tag_name_array( 
+		$this->_tag_class->str_to_tag_name_array( 
+			$this->get_post_text( 'tags' ) ) );
 }
 
 //---------------------------------------------------------
@@ -139,6 +156,7 @@ function create_item_row_default()
 	$row['item_editor']        = $this->get_post_text( 'item_editor' );
 	$row['item_embed_type']    = $item_embed_type ;
 	$row['item_playlist_type'] = $item_playlist_type ;
+	$row['item_uid']           = $this->_xoops_uid;
 
 // datetime
 	$row['item_datetime'] = $this->get_mysql_date_today();
@@ -202,153 +220,8 @@ function create_item_row_by_post()
 }
 
 //---------------------------------------------------------
-// checkbox
-//---------------------------------------------------------
-function set_checkbox_by_post( $name )
-{
-	$this->set_checkbox_by_name( $name, $this->_post_class->get_post_int( $name ) );
-}
-
-function set_checkbox_by_name( $name, $value )
-{
-	$this->_checkbox_array[ $name ] = $value;
-}
-
-function get_checkbox_by_name( $name )
-{
-	if ( isset( $this->_checkbox_array[ $name ] ) ) {
-		 return $this->_checkbox_array[ $name ];
-	}
-	return null;
-}
-
-//---------------------------------------------------------
-// tag
-//---------------------------------------------------------
-function set_tag_name_array( $val )
-{
-	if ( is_array($val) ) {
-		$this->_tag_name_array = $val;
-	}
-}
-
-function get_tag_name_array()
-{
-	return $this->_tag_name_array;
-}
-
-//---------------------------------------------------------
-// is type
-//---------------------------------------------------------
-function is_flashvar_form()
-{
-	if ( $this->_form_action == 'flashvar_form' ) {
-		return true;
-	}
-	return false;
-}
-
-function is_show_form_embed_playlisy_admin( $item_row )
-{
-// from photomanager
-	if ( $item_row['item_cat_id'] > 0 ) {
-		return false ;
-	}
-
-	if ( ! $this->is_show_form_embed() ) {
-		return false ;
-	}
-	if ( ! $this->is_show_form_playlist() ) {
-		return false ;
-	}
-	return true ;
-}
-
-function is_show_form_editor_option( $options )
-{
-	if ( !is_array($options) || !count($options) ) {
-		return false;
-	}
-	return $this->is_show_form_editor();
-}
-
-function is_show_form_embed()
-{
-	return $this->_is_show_form( 'form_embed' );
-}
-
-function is_show_form_playlist()
-{
-	return $this->_is_show_form( 'form_playlist' );
-}
-
-function is_show_form_editor()
-{
-	return $this->_is_show_form( 'form_editor' );
-}
-
-function _is_show_form( $name )
-{
-// false if set form
-	$form = $this->get_post_int( $name );
-	if ( $form ) {
-		return false ;
-	}
-	return true ;
-}
-
-//---------------------------------------------------------
-// submit form
-//---------------------------------------------------------
-function build_form_common_param( $mode, $action=null, $fct=null )
-{
-	list ( $types, $allowed_exts ) = $this->get_my_allowed_mimes();
-
-	$arr = array(
-		'mode'            => $mode,
-		'rotate'          => $this->_post_rotate,
-		'form_embed'      => $this->_post_form_embed ,
-		'form_editor'     => $this->_post_form_editor ,
-		'form_playlist'   => $this->_post_form_playlist ,
-		'preview_name'    => $this->_preview_name,
-		'tag_name_array'  => $this->_tag_name_array,
-		'checkbox_array'  => $this->_checkbox_array,
-		'has_resize'      => $this->_has_image_resize,
-		'has_rotate'      => $this->_has_image_rotate,
-		'allowed_exts'    => $allowed_exts ,
-		'flag_item_row'   => true ,
-	);
-
-	if ( $action ) {
-		$arr['action'] = $action;
-	}
-	if ( $fct ) {
-		$arr['fct'] = $fct;
-	}
-
-	return $arr;
-}
-
-//---------------------------------------------------------
 // submit
 //---------------------------------------------------------
-function submit_main()
-{
-	$this->get_post_param();
-	$ret1 = $this->submit_exec();
-
-	if ( $this->_is_video_thumb_form ) {
-		return _C_WEBPHOTO_RET_VIDEO_FORM ;
-	}
-
-	$ret2 = $this->build_failed_msg( $ret1 );
-	if ( !$ret2 ) {
-		return _C_WEBPHOTO_RET_ERROR ;
-	}
-
-	return _C_WEBPHOTO_RET_SUCCESS ;
-}
-
 function submit_exec()
 {
 	$this->clear_msg_array();
@@ -380,7 +253,7 @@ function submit_exec()
 	}
 
 	$item_row['item_id'] = $item_id;
-	$this->_row_create = $item_row;
+	$this->set_created_row( $item_row );
 
 // uploaded photo
 	if ( $photo_name || $middle_name || $thumb_name || $small_name ) {
@@ -399,7 +272,7 @@ function submit_exec()
 			$this->set_error( $this->_item_handler->get_errors() );
 			return _C_WEBPHOTO_ERR_DB;
 		}
-		$this->_row_create = $item_row;
+		$this->set_created_row( $item_row );
 
 		$this->unlink_uploaded_files();
 	}
@@ -416,7 +289,7 @@ function submit_exec()
 			if ( !$ret ) {
 				$this->set_error( $this->_item_handler->get_errors() );
 			}
-			$this->_row_create = $item_row;
+			$this->set_created_row( $item_row );
 		}
 	}
 
@@ -504,17 +377,13 @@ function submit_exec_post_count()
 	$xoops_user_class->increment_post_by_num_own( $this->_cfg_addposts );
 }
 
-function submit_exec_notify( $row )
+function submit_exec_notify( $item_row )
 {
 	if ( ! $this->_has_superinsert ) {
 		return;
 	}
 
-// Trigger Notification when supper insert
-	$notification_class =& webphoto_notification_event::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$notification_class->notify_new_photo( 
-		$row['item_id'],  $row['item_cat_id'],  $row['item_title'] );
+	$this->notify_new_photo( $item_row );
 }
 
 function notify_new_photo( $item_row )
@@ -675,8 +544,8 @@ function rotate_tmp_image( $src_name, $rotate, $flag_rename=false )
 		$src_name 
 	) ;
 
-	$src_file = $this->_TMP_DIR .'/'. $src_name;
-	$dst_file = $this->_TMP_DIR .'/'. $dst_name ;
+	$src_file = $this->build_tmp_dir_file( $src_name );
+	$dst_file = $this->build_tmp_dir_file( $dst_name );
 	$name     = $src_name ;
 
 	$this->_factory_create_class->rotate_image( $src_file, $dst_file, $rotate );
@@ -760,41 +629,26 @@ function set_factory_error()
 }
 
 //---------------------------------------------------------
+// bulk
+//---------------------------------------------------------
+function build_bulk_title( $title, $num, $default=null )
+{
+	$str = $default;
+
+// set title if specfy
+	if ( $title ) {
+		$str = $title.' - '.$num ;
+	}
+
+	return $str;
+}
+
+//---------------------------------------------------------
 // video thumb
 //---------------------------------------------------------
 function video_thumb( $item_row )
 {
 	return $this->_factory_create_class->video_thumb( $item_row );
-}
-
-//---------------------------------------------------------
-// print form video thumb
-//---------------------------------------------------------
-function build_form_video_thumb( $item_row )
-{
-	$message = null ;
-	if ( $this->has_msg_array() ) {
-		$message = $this->get_format_msg_array( true, false, true ) ;
-	}
-
-	$form_class =& webphoto_edit_misc_form::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$arr = $form_class->build_form_video_thumb( $item_row, true );
-
-	$arr['message'] = $message ;
-	return $arr;
-}
-
-function XXXprint_form_video_thumb( $mode, $item_row )
-{
-	if ( $this->has_msg_array() ) {
-		echo $this->get_format_msg_array() ;
-		echo "<br />\n";
-	}
-
-	$form_class =& webphoto_edit_misc_form::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-	$form_class->print_form_video_thumb( $mode, $item_row );
 }
 
 //---------------------------------------------------------
@@ -810,8 +664,8 @@ function create_preview_new( $photo_name )
 
 	$this->set_preview_name( $preview_name );
 
-	$src_file = $this->_TMP_DIR .'/'. $photo_name;
-	$dst_file = $this->_TMP_DIR .'/'. $preview_name;
+	$src_file = $this->build_tmp_dir_file( $photo_name );
+	$dst_file = $this->build_tmp_dir_file( $preview_name );
 	rename( $src_file , $dst_file ) ;
 
 	return $this->build_preview( $preview_name ) ;
@@ -827,7 +681,7 @@ function build_preview( $preview_name )
 
 	$ext = $this->parse_ext( $rotate_name );
 
-	$path_photo = $this->_TMP_DIR .'/'. $rotate_name ;
+	$path_photo = $this->build_tmp_dir_file( $rotate_name );
 	$media_url  = $this->_MODULE_URL.'/index.php?fct=image_tmp&name='. rawurlencode( $rotate_name ) ;
 	$img_thumb_src = $media_url;
 
@@ -888,6 +742,149 @@ function build_preview_template( $row )
 	return $tpl->fetch( $template ) ;
 }
 
+//---------------------------------------------------------
+// build_redirect
+//---------------------------------------------------------
+function build_submit_redirect()
+{
+	$item_row = $this->get_created_row();
+	$cat_id   = $item_row['item_cat_id'];
+
+	return $this->build_redirect( 
+		$this->build_submit_redirect_param( false, $cat_id ) );
+}
+
+function build_submit_redirect_param( $is_failed, $cat_id )
+{
+	$param = array(
+		'is_failed'   => $is_failed ,
+		'is_pending'  => ! $this->_has_superinsert ,
+		'url_success' => $this->build_submit_redirect_url_success( $cat_id ) ,
+		'url_pending' => $this->build_uri_operate( 'latest' ) , 
+		'url_failed'  => $this->_THIS_URL , 
+		'msg_success' => $this->get_constant('SUBMIT_RECEIVED') ,
+		'msg_pending' => $this->get_constant('SUBMIT_ALLPENDING') , 
+	);
+	return $param ;
+}
+
+function build_submit_redirect_url_success( $cat_id )
+{
+	$param = array(
+		'orderby' => 'dated'
+	);
+	return $this->build_uri_category( $cat_id, $param );
+}
+
+//---------------------------------------------------------
+// menu
+//---------------------------------------------------------
+function get_show_select_file()
+{
+	$show = ( $this->_cfg_file_dir && $this->_has_file );
+	return $show;
+}
+
+//---------------------------------------------------------
+// build form
+//---------------------------------------------------------
+function init_form()
+{
+	$this->init_photo_form();
+	$this->init_misc_form();
+}
+
+function init_photo_form()
+{
+	$this->_photo_form_class->set_fct( $this->_THIS_FCT ) ;
+	$this->_photo_form_class->set_form_mode( $this->_FORM_MODE ) ;
+	$this->_photo_form_class->set_form_action( $this->_FLAG_ADMIN ) ;
+	$this->_photo_form_class->set_tag_name_array( $this->_tag_name_array ) ;
+	$this->_photo_form_class->set_checkbox_array( $this->_checkbox_array ) ;
+	$this->_photo_form_class->set_preview_name( $this->_preview_name ) ;
+	$this->_photo_form_class->set_rotate( $this->_post_rotate ) ;
+}
+
+function init_misc_form()
+{
+	$this->_misc_form_class->get_post_select_param();
+	$this->_misc_form_class->set_fct( $this->_THIS_FCT ) ;
+	$this->_misc_form_class->set_form_mode( $this->_FORM_MODE ) ;
+	$this->_misc_form_class->set_form_action( $this->_FLAG_ADMIN ) ;
+}
+
+function build_form_base_param()
+{
+	return $this->_photo_form_class->build_form_base_param() ;
+}
+
+function build_form_photo( $item_row )
+{
+	return $this->_photo_form_class->build_form_photo( $item_row ) ;
+}
+
+function build_form_select_param()
+{
+	return $this->_misc_form_class->build_form_select_param() ;
+}
+
+function build_form_editor( $item_row )
+{
+	return $this->_misc_form_class->build_form_editor( $item_row ) ;
+}
+
+function build_form_embed( $item_row )
+{
+	return $this->_misc_form_class->build_form_embed( $item_row ) ;
+}
+
+function build_form_redo( $item_row )
+{
+	return $this->_misc_form_class->build_form_redo_by_item_row( $item_row );
+}
+
+//---------------------------------------------------------
+// form video thumb
+//---------------------------------------------------------
+function build_form_video_thumb( $item_row )
+{
+	$message = null ;
+	if ( $this->has_msg_array() ) {
+		$message = $this->get_format_msg_array( true, false, true ) ;
+	}
+
+	$param = array(
+		'show_form_video_thumb' => true ,
+		'message'               => $message ,
+	);
+
+	$arr = array_merge( 
+		$this->build_form_base_param() ,
+		$this->_misc_form_class->build_form_video_thumb( $item_row, true ) ,
+		$param 
+	);
+	return $arr;
+}
+
+//---------------------------------------------------------
+// set param form
+//---------------------------------------------------------
+function set_fct( $val )
+{
+	$this->_THIS_FCT = $val ;
+
+	if ( $this->_FLAG_ADMIN ) {
+		$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$val ;
+	} else {
+		$this->_THIS_URL = $this->_MODULE_URL .'/index.php?fct='.$val ;
+	}
+}
+
+function set_form_mode( $val )
+{
+	$this->_FORM_MODE = $val ;
+}
+
 function set_preview_name( $val )
 {
 	$this->_preview_name = $val;
@@ -898,15 +895,40 @@ function get_preview_name()
 	return $this->_preview_name;
 }
 
-//---------------------------------------------------------
-// form param
-//---------------------------------------------------------
-function edit_form_build_form_param( $action=null, $fct=null )
+function set_tag_name_array( $val )
 {
-	$form_class =& webphoto_edit_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	if ( is_array($val) ) {
+		$this->_tag_name_array = $val;
+	}
+}
 
-	return $form_class->build_form_param( $action, $fct );
+function get_tag_name_array()
+{
+	return $this->_tag_name_array;
+}
+
+function set_checkbox_by_post( $name )
+{
+	$this->set_checkbox_by_name( $name, $this->get_post_int( $name ) );
+}
+
+function set_checkbox_by_name( $name, $value )
+{
+	$this->_checkbox_array[ $name ] = $value;
+}
+
+function get_checkbox_by_name( $name )
+{
+	if ( isset( $this->_checkbox_array[ $name ] ) ) {
+		 return $this->_checkbox_array[ $name ];
+	}
+	return null;
+}
+
+function set_rotate( $val )
+{
+	$this->_post_rotate  = $val ;
+	$this->_rotate_angle = $this->conv_rotate( $val );
 }
 
 // --- class end ---

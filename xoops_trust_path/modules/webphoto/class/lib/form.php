@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.5 2008/11/30 10:36:34 ohwada Exp $
+// $Id: form.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// get_post_text()
 // 2008-11-29 K.OHWADA
 // format_timestamp()
 // 2008-11-16 K.OHWADA
@@ -107,7 +109,7 @@ function &getInstance( $dirname, $trust_dirname )
 function get_post_js_checkbox_array()
 {
 	$name = $this->_FORM_NAME . '_id';
-	return $this->_post_class->get_post( $name );
+	return $this->get_post( $name );
 }
 
 //---------------------------------------------------------
@@ -147,7 +149,7 @@ function pagenavi_get_perpage()
 
 function get_fct_from_post()
 {
-	return $this->_post_class->get_post_get_text('fct') ;
+	return $this->get_post_get_text('fct') ;
 }
 
 //---------------------------------------------------------
@@ -218,6 +220,39 @@ function get_mysql_date_today()
 function build_error_msg( $msg, $title='', $flag_sanitize=true )
 {
 	return $this->_utility_class->build_error_msg( $msg, $title, $flag_sanitize );
+}
+
+//---------------------------------------------------------
+// post class
+//---------------------------------------------------------
+function get_post_text( $key, $default=null )
+{
+	return $this->_post_class->get_post_text( $key, $default );
+}
+
+function get_post_int( $key, $default=0 )
+{
+	return $this->_post_class->get_post_int( $key, $default );
+}
+
+function get_post_float( $key, $default=0 )
+{
+	return $this->_post_class->get_post_float( $key, $default );
+}
+
+function get_post( $key, $default=null )
+{
+	return $this->_post_class->get_post( $key, $default );
+}
+
+function get_post_get_text( $key, $default=null )
+{
+	return $this->_post_class->get_post_get_text( $key, $default ) ;
+}
+
+function get_post_get_int( $key, $default=0 )
+{
+	return $this->_post_class->get_post_get_int( $key, $default ) ;
 }
 
 //---------------------------------------------------------

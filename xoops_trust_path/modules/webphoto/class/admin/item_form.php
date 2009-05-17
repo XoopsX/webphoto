@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.15 2009/04/19 11:39:45 ohwada Exp $
+// $Id: item_form.php,v 1.16 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// print_form_playlist() -> print_form_playlist_with_param()
 // 2009-04-19 K.OHWADA
 // build_form_admin_by_item_row() -> build_form_admin_with_template()
 // 2009-03-15 K.OHWADA
@@ -45,7 +47,7 @@ class webphoto_admin_item_form extends webphoto_edit_photo_form
 	var $_sort_array = null ;
 
 	var $_THIS_FCT = 'item_manager' ;
-	var $_THIS_URL ;
+	var $_THIS_URL;
 	var $_URL_ADMIN_INDEX ;
 
 	var $_PLAYLIST_FEED_SIZE = 80;
@@ -64,8 +66,8 @@ function webphoto_admin_item_form( $dirname, $trust_dirname )
 
 	$this->_show_delete_button = true;
 
-	$this->_THIS_URL        = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 	$this->_URL_ADMIN_INDEX = $this->_MODULE_URL .'/admin/index.php';
+	$this->_THIS_URL        = $this->_MODULE_URL .'/admin/index.php?fct='. $this->_THIS_FCT ;
 
 	$this->init_preload();
 }
@@ -82,13 +84,13 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // build submit edit form
 //---------------------------------------------------------
-function build_form_admin_with_template( $item_row, $param )
+function build_form_admin_with_template( $mode, $item_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_admin_item.html';
 
 	$arr = array_merge( 
-		$this->build_form_param( $this->_URL_ADMIN_INDEX, $this->_THIS_FCT ),
-		$this->build_form_admin_by_item_row( $item_row, $param ),
+		$this->build_form_base_param(),
+		$this->build_form_admin_by_item_row( $mode, $item_row ),
 		$this->build_item_row( $item_row ) ,
 		$this->build_admin_language()
 	);
@@ -98,7 +100,7 @@ function build_form_admin_with_template( $item_row, $param )
 	return $tpl->fetch( $template ) ;
 }
 
-function build_form_admin_by_item_row( $item_row, $param )
+function build_form_admin_by_item_row( $mode, $item_row )
 {
 	$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
 	$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
@@ -124,10 +126,10 @@ function build_form_admin_by_item_row( $item_row, $param )
 		'swf_row'    => $swf_row ,
 	);
 
-	return $this->build_form_admin_by_files( $files, $param );
+	return $this->build_form_admin_by_files( $mode, $files );
 }
 
-function build_form_admin_by_files( $files, $param )
+function build_form_admin_by_files( $mode, $files )
 {
 	$item_row      = $files['item_row']; 
 	$cont_row      = $files['cont_row']; 
@@ -139,16 +141,16 @@ function build_form_admin_by_files( $files, $param )
 	$pdf_row       = $files['pdf_row']; 
 	$swf_row       = $files['swf_row']; 
 
-	$mode          = $param['mode'];
-	$rotate        = $param['rotate'];
-	$preview_name  = $param['preview_name'];
-	$has_resize    = $param['has_resize'];
-	$has_rotate    = $param['has_rotate'];
-	$allowed_exts  = $param['allowed_exts'];
+	$preview_name   = $this->_preview_name ;
+	$tag_name_array = $this->_tag_name_array ;
+	$rotate         = $this->_rotate ;
+
+	$has_resize     = $this->_has_image_resize ;
+	$has_rotate     = $this->_has_image_rotate ;
+	$allowed_exts   = $this->_allowed_exts ;
+	$max_photo_file = $this->_MAX_PHOTO_FILE ;
 
 	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
-
-	$this->set_checkbox( $param['checkbox_array'] );
 
 	$is_submit  = false ;
 	$is_edit    = false ;
@@ -228,6 +230,7 @@ function build_form_admin_by_files( $files, $param )
 		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,
 		'ele_item_description' => $this->_editor_desc ,
 
+		'item_uid_options'               => $this->item_uid_options() ,
 		'item_cat_id_options'            => $this->item_cat_id_options() ,
 		'item_gicon_id_select_options'   => $this->item_gicon_id_select_options() ,
 		'item_codeinfo_select_options'   => $this->item_codeinfo_select_options() ,
@@ -250,7 +253,7 @@ function build_form_admin_by_files( $files, $param )
 		'thumb_url_s'   => $this->sanitize( $thumb_url ), 
 		'middle_url_s'  => $this->sanitize( $middle_url ), 
 		'small_url_s'   => $this->sanitize( $small_url ), 
-		'tags_val_s'    => $this->tags_val_s( $param ) ,
+		'tags_val_s'    => $this->tags_val_s( $tag_name_array ) ,
 		'embed_src_dsc' => $this->embed_src_dsc() ,
 		'editor_js'     => $this->_editor_js ,
 
@@ -412,24 +415,6 @@ function get_item_playlist_type( $flag )
 	return $value;
 }
 
-function time_now()
-{
-	return formatTimestamp( time(), $this->get_constant('DTFMT_YMDHI') ) ;
-}
-
-function build_time_disp( $name, $flag_now )
-{
-	$date  = '';
-	$value = intval( $this->get_row_by_key( $name ) );
-	if ( $flag_now && empty($value) ) {
-		$value = time();
-	}
-	if ( $value > 0 ) {
-		$date = $this->format_timestamp( $value, $this->get_constant('DTFMT_YMDHI') );
-	}
-	return $date ;
-}
-
 function is_playlist_type()
 {
 	$kind = $this->get_row_by_key( 'item_kind' );
@@ -474,7 +459,17 @@ function build_admin_language()
 //---------------------------------------------------------
 // playlist
 //---------------------------------------------------------
-function print_form_playlist( $item_row, $param )
+function print_form_playlist( $mode, $item_row )
+{
+	if ( ! $this->is_show_form_admin( $item_row ) ) {
+		return;
+	}
+
+	$this->print_form_playlist_with_param( 
+		$item_row, $this->build_form_select_param( $mode ) );
+}
+
+function print_form_playlist_with_param( $item_row, $param )
 {
 	$mode        = $param['mode'];
 	$form_embed  = $param['form_embed'];

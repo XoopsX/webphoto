@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.4 2009/04/19 11:39:45 ohwada Exp $
+// $Id: photo_form.php,v 1.5 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// merge build_form_file() to build_form_photo()
+// build_form_photo_with_template()
 // 2009-04-19 K.OHWADA
 // print_form_common() -> build_form_photo()
 // 2009-03-15 K.OHWADA
@@ -53,21 +56,16 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 {
 	var $_gicon_handler;
 	var $_player_handler;
-	var $_perm_class;
-	var $_tag_class;
 	var $_embed_class;
 	var $_editor_class;
 	var $_kind_class;
+	var $_tag_class;
+	var $_mime_class;
+	var $_image_create_class;
 
-	var $_cfg_gmap_apikey ;
-	var $_cfg_width ;
-	var $_cfg_height ;
-	var $_cfg_fsize ;
-	var $_cfg_makethumb ;
-	var $_cfg_file_size ;
-	var $_cfg_perm_item_read ;
-
-	var $_has_deletable ;
+	var $_has_image_resize;
+	var $_has_image_rotate;
+	var $_allowed_exts;
 
 	var $_xoops_db_groups  = null;
 
@@ -88,6 +86,9 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_DESCRIPTION_ROWS  = 5;
 	var $_DESCRIPTION_COLS  = 50;
 
+	var $_FLAG_ITEM_ROW  = true ;
+	var $_MAX_PHOTO_FILE = _C_WEBPHOTO_MAX_PHOTO_FILE ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -100,8 +101,16 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
 	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
 	$this->_kind_class     =& webphoto_kind::getInstance();
+	$this->_mime_class     =& webphoto_mime::getInstance( $dirname );
+	$this->_tag_class      =& webphoto_tag::getInstance( $dirname );
+	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
 
-	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
+	$this->_has_image_resize  = $this->_image_create_class->has_resize();
+	$this->_has_image_rotate  = $this->_image_create_class->has_rotate();
+
+	list ( $types, $this->_allowed_exts ) 
+		= $this->_mime_class->get_my_allowed_mimes();
+
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 }
 
@@ -115,77 +124,167 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// form file
+// set param
 //---------------------------------------------------------
-function build_form_file( $param )
+function set_preview_name( $val )
 {
-	$has_resize    = $param['has_resize'];
-	$allowed_exts  = $param['allowed_exts'];
-
-	$param = array(
-		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
-		'ele_maxsize'          => $this->ele_maxsize() ,
-		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,
-		'ele_item_description' => $this->item_description_dhtml() ,
-		'item_cat_id_options'  => $this->item_cat_id_options() ,
-		'file_select_options'  => $this->file_select_options() ,
-	);
-	return $param ;
+	$this->_preview_name = $val;
 }
 
-function file_select_options()
+function set_tag_name_array( $val )
 {
-	$options = $this->_utility_class->get_files_in_dir( 
-		$this->_FILE_DIR, null, false, true, true );
+	$this->_tag_name_array = $val;
+}
 
-	if ( !is_array($options) || !count($options) ) {
-		return null;
-	}
-	return $this->build_form_options( null, $options );
+function set_rotate( $val )
+{
+	$this->_rotate = $val ;
 }
 
 //---------------------------------------------------------
 // submit edit form
 //---------------------------------------------------------
-function build_form_photo( $item_row, $param )
+function build_form_photo_with_template( $item_row )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_photo.html';
+
+	$param = array(
+		'lang_text_directory' => _AM_WEBPHOTO_TEXT_DIRECTORY ,
+		'lang_photopath'      => _AM_WEBPHOTO_PHOTOPATH ,
+		'lang_desc_photopath' => _AM_WEBPHOTO_DESC_PHOTOPATH ,
+	);
+
+	$arr = array_merge( 
+		$this->build_form_base_param() ,
+		$this->build_form_photo( $item_row ),
+		$param
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function build_form_photo( $item_row )
 {
 	$this->init_preload();
 
-	$mode          = $param['mode'];
-	$rotate        = $param['rotate'];
-	$preview_name  = $param['preview_name'];
-	$has_resize    = $param['has_resize'];
-	$has_rotate    = $param['has_rotate'];
-	$allowed_exts  = $param['allowed_exts'];
-	$flag_item_row = $param['flag_item_row'];
+	$mode           = $this->_FORM_MODE ;
+	$preview_name   = $this->_preview_name ;
+	$tag_name_array = $this->_tag_name_array ;
+	$rotate         = $this->_rotate ;
 
-	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
-
-	$this->set_checkbox( $param['checkbox_array'] );
+	$has_resize     = $this->_has_image_resize ;
+	$has_rotate     = $this->_has_image_rotate ;
+	$allowed_exts   = $this->_allowed_exts ;
+	$max_photo_file = $this->_MAX_PHOTO_FILE ;
+	$flag_item_row  = $this->_FLAG_ITEM_ROW ;
 
 	$is_submit = false ;
 	$is_edit   = false ;
+	$is_bulk   = false ;
+	$is_file   = false ;
+
+	$show_maxsize        = false;
+	$show_file_photo     = false;
+	$show_file_thumb     = false;
+	$show_file_middle    = false;
+	$show_file_small     = false;
+	$show_file_ids       = false;
+	$show_file_ftp       = false;
+	$show_batch_dir      = false;
+	$show_batch_uid      = false;
+	$show_batch_update   = false;
+	$show_rotate         = false;
+	$show_detail_onoff   = false;
+	$show_gmap_onoff     = false;
+	$show_button_preview = false;
+	$show_button_delete  = false;
+	$file_id_array       = null;
+	$field_counter       = 0;
+
+	$max_file_size = $this->_cfg_fsize ;
 
 	switch ($mode)
 	{
 		case 'edit':
 			$is_edit = true;
-			$fct     = $this->_THIS_EDIT_FCT ;
+			$fct     = $this->_THIS_FCT_EDIT ;
 			$op      = 'modify';
 			$submit  = _EDIT;
+			$show_button_delete  = true;
+			break;
+
+		case 'bulk':
+			$is_bulk   = true;
+			$fct       = $this->_THIS_FCT_SUBMIT ;
+			$op        = 'submit_bulk';
+			$submit    = _ADD;
+			$show_detail_onoff   = true;
+			break;
+
+		case 'file':
+			$is_file   = true;
+			$fct       = $this->_THIS_FCT_SUBMIT ;
+			$op        = 'submit_file';
+			$submit    = _ADD;
+			$show_detail_onoff   = true;
+			break;
+
+		case 'admin_batch':
+			$is_batch  = true;
+			$fct       = $this->_THIS_FCT_ADMIN_BATCH ;
+			$op        = 'submit';
+			$submit    = _ADD;
+			$show_detail_onoff = true;
 			break;
 
 		case 'submit':
 		default:
 			$is_submit = true;
-			$fct       = $this->_THIS_SUBMIT_FCT ;
+			$fct       = $this->_THIS_FCT_SUBMIT ;
 			$op        = 'submit';
 			$submit    = _ADD;
+			$show_detail_onoff   = true;
+			$show_button_preview = true;
 			break;
 	}
 
 	$this->set_row( $item_row );
 	$this->init_editor();
+
+	switch ($mode)
+	{
+		case 'bulk':
+			$show_maxsize  = true;
+			$show_file_ids = true;
+			$field_counter = $max_photo_file;
+			$file_id_array = range( 1, $max_photo_file );
+			break;
+
+		case 'file':
+			$show_maxsize     = true;
+			$show_file_ftp = true;
+			$max_file_size = $this->_cfg_file_size ;
+			break;
+
+		case 'admin_batch':
+			$show_batch_dir    = true;
+			$show_batch_uid    = true;
+			$show_batch_update = true;
+			break;
+
+		case 'submit':
+		case 'edit':
+		default:
+			$show_maxsize     = true;
+			$show_file_photo  = $this->is_upload_type() ;
+			$show_file_thumb  = true;
+			$show_file_middle = true;
+			$show_file_small  = true;
+			$field_counter    = 4;
+			break;
+	}
 
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
@@ -205,13 +304,23 @@ function build_form_photo( $item_row, $param )
 	list( $small_url, $show_file_small_delete ) 
 		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_SMALL, '' );
 
+	if ( $show_file_photo && $has_rotate ) {
+		$show_rotate = true ;
+	}
+
+	$show_gmap = $this->show_gmap() ;
+	if ( $show_gmap && ( $is_submit || $is_bulk ) ) {
+		$show_gmap_onoff = true;
+	}
+
 	$param = array( 
 		'op_edit'         => $op ,
 		'preview_name'    => $preview_name ,
 		'is_submit'       => $is_submit ,
 		'is_edit'         => $is_edit ,
+		'is_bulk'         => $is_bulk ,
 		'max_file_size'   => $this->_cfg_fsize ,
-		'has_rotate'      => $has_rotate ,
+		'field_counter'   => $field_counter ,
 
 		'show_desc_options'           => $this->_editor_show ,
 		'show_desc_options_hidden'    => ! $this->_editor_show ,
@@ -224,17 +333,31 @@ function build_form_photo( $item_row, $param )
 		'show_item_siteurl_1st'       => $show_item_embed_text ,
 		'show_item_siteurl_2nd'       => ! $show_item_embed_text ,
 		'show_item_perm_read'         => $this->show_item_perm_read() ,
-		'show_file_photo'         => $this->is_upload_type(),
-		'show_gmap'               => $this->show_gmap() ,
-		'show_thumb_dsc_select'   => $show_thumb_dsc_select ,
-		'show_thumb_dsc_embed'    => $show_thumb_dsc_embed ,
+
+		'show_file_photo'         => $show_file_photo ,
+		'show_file_thumb'         => $show_file_thumb ,
+		'show_file_middle'        => $show_file_middle ,
+		'show_file_small'         => $show_file_small ,
 		'show_file_photo_delete'  => $show_file_photo_delete ,
 		'show_file_thumb_delete'  => $show_file_thumb_delete ,
 		'show_file_middle_delete' => $show_file_middle_delete ,
 		'show_file_small_delete'  => $show_file_small_delete ,
+		'show_file_ids'           => $show_file_ids ,
+		'show_file_ftp'           => $show_file_ftp ,
+		'show_thumb_dsc_select'   => $show_thumb_dsc_select ,
+		'show_thumb_dsc_embed'    => $show_thumb_dsc_embed ,
 		'show_external_url'       => $this->_SHOW_EXTERNAL_URL ,
 		'show_external_middle'    => $this->_SHOW_EXTERNAL_MIDDLE ,
 		'show_external_thumb'     => $this->_SHOW_EXTERNAL_THUMB ,
+		'show_rotate'             => $show_rotate ,
+		'show_gmap'               => $show_gmap ,
+		'show_gmap_onoff'         => $show_gmap_onoff ,
+		'show_batch_dir'          => $show_batch_dir ,
+		'show_batch_uid'          => $show_batch_uid ,
+		'show_batch_update'       => $show_batch_update ,
+		'show_detail_onoff'       => $show_detail_onoff ,
+		'show_button_preview'     => $show_button_preview ,
+		'show_button_delete'      => $show_button_delete ,
 
 		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
 		'ele_maxsize'          => $this->ele_maxsize() ,
@@ -257,15 +380,22 @@ function build_form_photo( $item_row, $param )
 		'item_description_image_checked'  => $this->build_row_checked( 'item_description_image' ),
 		'item_description_br_checked'     => $this->build_row_checked( 'item_description_br' ),
 		'item_datetime_checkbox_checked'  => $this->build_checkbox_checked( 'item_datetime_checkbox' ) ,
-		'rotate_checked'                  => $this->rotate_checked( $rotate ) ,
 
 		'photo_url_s'   => $this->sanitize( $photo_url ), 
 		'thumb_url_s'   => $this->sanitize( $thumb_url ), 
 		'middle_url_s'  => $this->sanitize( $middle_url ), 
 		'small_url_s'   => $this->sanitize( $small_url ), 
-		'tags_val_s'    => $this->tags_val_s( $param ) ,
+		'tags_val_s'    => $this->tags_val_s( $tag_name_array ) ,
 		'embed_src_dsc' => $this->embed_src_dsc() ,
 		'editor_js'     => $this->_editor_js ,
+
+		'item_time_update_disp' => $this->build_time_disp( 'item_time_update',  true ) ,
+		'item_uid_options'      => $this->item_uid_options() ,
+		'batch_dir_s'           => $this->batch_dir_s() ,
+
+		'rotate_checked'      => $this->rotate_checked( $rotate ) ,
+		'file_id_array'       => $file_id_array ,
+		'file_select_options' => $this->file_select_options() ,
 
 		'value_submit' => $submit ,
 	);
@@ -432,11 +562,10 @@ function rotate_checked( $rotate )
 	return $checked;
 }
 
-function tags_val_s( $param )
+function tags_val_s( $tag_name_array )
 {
 	return $this->sanitize(
-		$this->_tag_class->tag_name_array_to_str( 
-		$param['tag_name_array'] ) );
+		$this->_tag_class->tag_name_array_to_str( $tag_name_array ) );
 }
 
 function embed_src_dsc()
@@ -491,6 +620,52 @@ function is_embed_general_type( )
 		return true;
 	}
 	return false;
+}
+
+function file_select_options()
+{
+	$options = $this->_utility_class->get_files_in_dir( 
+		$this->_FILE_DIR, null, false, true, true );
+
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+	return $this->build_form_options( null, $options );
+}
+
+function batch_dir_s()
+{
+	return '' ;
+}
+
+function batch_update_s()
+{
+	return $this->sanitize( 
+		formatTimestamp( time() , _WEBPHOTO_DTFMT_YMDHI ) ) ;
+}
+
+function item_uid_options()
+{
+	$value = $this->get_row_by_key( 'item_uid' );
+	return $this->build_form_user_select_options( $value );
+}
+
+function time_now()
+{
+	return formatTimestamp( time(), $this->get_constant('DTFMT_YMDHI') ) ;
+}
+
+function build_time_disp( $name, $flag_now )
+{
+	$date  = '';
+	$value = intval( $this->get_row_by_key( $name ) );
+	if ( $flag_now && empty($value) ) {
+		$value = time();
+	}
+	if ( $value > 0 ) {
+		$date = $this->format_timestamp( $value, $this->get_constant('DTFMT_YMDHI') );
+	}
+	return $date ;
 }
 
 //---------------------------------------------------------

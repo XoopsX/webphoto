@@ -1,15 +1,15 @@
 <?php
-// $Id: action.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
+// $Id: action.php,v 1.8 2009/05/17 08:58:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
 
-// build_form_edit_param( $action, $fct )
-
 //---------------------------------------------------------
 // change log
+// 2009-05-05 K.OHWADA
+// edit_form_build_form_param() -> build_form_base_param()
 // 2009-04-10 K.OHWADA
 // BUG: not clear file id when delete file
 // 2009-03-15 K.OHWADA
@@ -118,21 +118,15 @@ function build_item_row_modify_post( $item_row )
 }
 
 //---------------------------------------------------------
-// print form delete confirm
+// build form delete confirm
 //---------------------------------------------------------
-function build_form_delete_confirm_with_template( $item_row, $param )
+function build_form_delete_confirm_with_template( $item_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_confirm.html';
 
-	$param_1 = array(
-		'action' => $param['action'] ,
-		'fct'    => $param['fct'] ,
-	);
-
 	$arr = array_merge( 
-		$this->edit_form_build_form_param() ,
-		$this->build_form_delete_confirm( $item_row ) ,
-		$param_1
+		$this->_admin_item_form_class->build_form_base_param() ,
+		$this->build_form_delete_confirm( $item_row ) 
 	);
 
 	$tpl = new XoopsTpl() ;
@@ -162,26 +156,6 @@ function build_form_delete_confirm( $item_row )
 	);
 
 	return $param;
-}
-
-function XXXprint_form_delete_confirm( $mode, $item_row )
-{
-	$img_tag = $this->_show_image_class->build_img_tag_by_item_row( $item_row ) ;
-
-	echo '<h4>'. $this->get_constant('TITLE_PHOTODEL') ."</h4>\n";
-	echo '<b>'. $this->sanitize( $item_row['item_title'] ) ."<b><br />\n";
-
-	if ( $img_tag ) {
-		echo $img_tag ;
-	}
-
-	echo "<br />\n";
-
-	$form_class =& webphoto_edit_misc_form::getInstance(
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-// BUG: return to admin when delete
-	$form_class->print_form_delete_confirm( $mode, $item_row['item_id'] );
 }
 
 //---------------------------------------------------------
@@ -627,17 +601,6 @@ function tag_handler_update_tags( $item_id, $tag_name_array )
 function tag_handler_tag_name_array( $item_id )
 {
 	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
-}
-
-//---------------------------------------------------------
-// form param
-//---------------------------------------------------------
-function build_form_edit_param( $action, $fct )
-{
-	$form_class =& webphoto_edit_form::getInstance( 
-		$this->_DIRNAME , $this->_TRUST_DIRNAME );
-
-	return $form_class->build_form_param( $action, $fct ) ;
 }
 
 // --- class end ---
