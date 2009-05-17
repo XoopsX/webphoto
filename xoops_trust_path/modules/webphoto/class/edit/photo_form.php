@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.5 2009/05/17 08:58:59 ohwada Exp $
+// $Id: photo_form.php,v 1.6 2009/05/17 10:12:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -205,6 +205,8 @@ function build_form_photo( $item_row )
 
 	$max_file_size = $this->_cfg_fsize ;
 
+	$show_gmap = $this->show_gmap() ;
+
 	switch ($mode)
 	{
 		case 'edit':
@@ -221,6 +223,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit_bulk';
 			$submit    = _ADD;
 			$show_detail_onoff   = true;
+			$show_gmap_onoff     = $show_gmap;
 			break;
 
 		case 'file':
@@ -229,6 +232,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit_file';
 			$submit    = _ADD;
 			$show_detail_onoff   = true;
+			$show_gmap_onoff     = $show_gmap;
 			break;
 
 		case 'admin_batch':
@@ -237,6 +241,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit';
 			$submit    = _ADD;
 			$show_detail_onoff = true;
+			$show_gmap_onoff   = $show_gmap;
 			break;
 
 		case 'submit':
@@ -245,8 +250,9 @@ function build_form_photo( $item_row )
 			$fct       = $this->_THIS_FCT_SUBMIT ;
 			$op        = 'submit';
 			$submit    = _ADD;
-			$show_detail_onoff   = true;
 			$show_button_preview = true;
+			$show_detail_onoff   = true;
+			$show_gmap_onoff     = $show_gmap;
 			break;
 	}
 
@@ -306,11 +312,6 @@ function build_form_photo( $item_row )
 
 	if ( $show_file_photo && $has_rotate ) {
 		$show_rotate = true ;
-	}
-
-	$show_gmap = $this->show_gmap() ;
-	if ( $show_gmap && ( $is_submit || $is_bulk ) ) {
-		$show_gmap_onoff = true;
 	}
 
 	$param = array( 
