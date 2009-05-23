@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.16 2009/04/11 14:23:35 ohwada Exp $
+// $Id: modinfo.php,v 1.17 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -359,6 +359,19 @@ define($constpref."BNAME_TIMELINE" , "タイムライン" ) ;
 // map, tag
 define($constpref."CFG_GMAP_PHOTOS", "マップに表示する写真の数");
 define($constpref."CFG_TAGS", "タグクラウドに表示するタグの数");
+
+//---------------------------------------------------------
+// v1.70
+//---------------------------------------------------------
+define($constpref."CFG_ITEM_SUMMARY", "写真の説明の最大の文字数");
+define($constpref."CFG_ITEM_SUMMARY_DSC", "一覧に表示する写真の説明文の最大の文字数を指定する<br />-1 は制限なし");
+define($constpref."CFG_CAT_SUMMARY", "カテゴリの説明の最大の文字数");
+define($constpref."CFG_CAT_SUMMARY_DSC", "カテゴリ一覧に表示する説明文の最大の文字数を指定する<br />-1 は制限なし");
+define($constpref."CFG_CAT_CHILD", "下位カテゴリの画像の表示");
+define($constpref."CFG_CAT_CHILD_DSC", "カテゴリ表示のときに下位カテゴリの画像を表示するか否かを指定する");
+define($constpref."OPT_CAT_CHILD_NON", "カテゴリの画像のみを表示する。常に下位カテゴリの画像を表示しない");
+define($constpref."OPT_CAT_CHILD_EMPTY", "カテゴリの画像がゼロのときに、下位カテゴリの画像を表示する");
+define($constpref."OPT_CAT_CHILD_ALWAYS", "常に下位カテゴリの画像を表示する");
 
 }
 // === define begin ===

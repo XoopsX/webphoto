@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.8 2009/04/19 13:44:47 ohwada Exp $
+// $Id: cat_handler.php,v 1.9 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// changed build_options_with_perm_post()
 // 2009-04-19 K.OHWADA
 // build_options_with_perm_post()
 // 2008-12-12 K.OHWADA
@@ -408,14 +410,16 @@ function build_selbox_pid( $pid )
 
 function build_selbox_with_perm_post( $cat_id, $sel_name )
 {
-	$tree = $this->get_all_tree_array( '', 'cat_perm_post' );
-	return $this->build_sel_box( $tree, 'cat_title', $cat_id, 0, $sel_name ) ;
+	$str  = $this->build_form_select_tag( $sel_name );
+	$str .= $this->build_options_with_perm_post( $cat_id );
+	$str .= $this->build_form_select_tag_close();
+	return $str;
 }
 
 function build_options_with_perm_post( $value )
 {
-	$rows = $this->get_all_tree_array( '', 'cat_perm_post' );
-	return  $this->build_form_select_options( $rows, 'cat_title', $value );
+	$rows = $this->get_all_tree_array();
+	return  $this->build_form_select_options( $rows, 'cat_title', $value, 'cat_perm_post' );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.16 2009/05/17 08:58:59 ohwada Exp $
+// $Id: item_form.php,v 1.17 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// show_err_invalid_cat()
 // 2009-05-05 K.OHWADA
 // print_form_playlist() -> print_form_playlist_with_param()
 // 2009-04-19 K.OHWADA
@@ -293,6 +295,8 @@ function build_form_admin_by_files( $mode, $files )
 		'item_playlist_type_select_options' => $this->item_playlist_type_select_options(),
 		'item_playlist_dir_select_options'  => $this->item_playlist_dir_select_options(),
 		'item_playlist_time_select_options' => $this->item_playlist_time_select_options(),
+
+		'show_err_invalid_cat'              => $this->show_err_invalid_cat() ,
 
 	);
 

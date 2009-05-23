@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
+// $Id: handler.php,v 1.8 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// build_form_option_extra()
 // 2009-04-19 K.OHWADA
 // build_form_select_options()
 // 2009-01-25 K.OHWADA
@@ -232,6 +234,12 @@ function exists_record()
 		return true;
 	}
 	return false;
+}
+
+function get_count_by_id( $id )
+{
+	$where = $this->_id_name .'='. intval($id);
+	return $this->get_count_by_where( $where );
 }
 
 function get_count_all()
@@ -649,7 +657,7 @@ function build_form_select_list( $rows, $title_name='', $preset_id=0, $none=0, $
 	$str  = $this->build_form_select_tag( $sel_name, $onchange );
 	$str .= $this->build_form_select_option_none( $none );
 	$str .= $this->build_form_select_options( $rows, $title_name, $preset_id );
-	$str .= "</select>\n";
+	$str .= $this->build_form_select_tag_close();
 	return $str;
 }
 
@@ -667,18 +675,21 @@ function build_form_select_tag( $sel_name='', $onchange='' )
 	return $str;
 }
 
-function build_form_select_option_none( $none=0 )
+function build_form_select_tag_close()
+{
+	return "</select>\n";
+}
+
+function build_form_select_option_none( $none )
 {
 	$str = '';
 	if ( $none ) {
-		$str .= '<option value="0">';
-		$str .= $this->_NONE_VALUE ;
-		$str .= "</option>\n";
+		$str .= $this->build_form_option( 0, $this->_NONE_VALUE );
 	}
 	return $str;
 }
 
-function build_form_select_options( $rows, $title_name='', $preset_id=0 )
+function build_form_select_options( $rows, $title_name='', $preset_id=0, $name_perm=null )
 {
 	if ( !is_array($rows) || !count($rows) ) {
 		return null;
@@ -691,28 +702,49 @@ function build_form_select_options( $rows, $title_name='', $preset_id=0 )
 	$str = '';
 	foreach ( $rows as $row )
 	{
-		$id     = $row[ $this->_id_name ];
-		$title  = $row[ $title_name ];
-		$prefix = '' ;
-
-		if ( $this->_use_prefix ) {
-			$prefix = $row[ $this->_PREFIX_NAME ] ;
-
-			if ( $prefix ) {
-				$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';
-			}
-		}
-
-		$sel = '';
-		if ( $id == $preset_id ) {
-			$sel = ' selected="selected" ';
-		}
-
-		$str .= '<option value="'. $id .'" '. $sel .'>';
-		$str .= $prefix . $this->sanitize($title);
-		$str .= "</option>\n";
+		$str .= $this->build_form_option( 
+			$row[ $this->_id_name ] , 
+			$this->build_form_option_caption( $row, $title_name ) , 
+			$this->build_form_option_extra( $row, $preset_id, $name_perm ) 
+		);
 	}
 	return $str;
+}
+
+function build_form_option( $value, $caption, $extra=null )
+{
+	$str  = '<option value="'. $value .'" '. $extra .' >';
+	$str .= $caption ;
+	$str .= '</option >'."\n";
+	return $str;
+}
+
+function build_form_option_caption( $row, $title_name )
+{
+	$prefix = '' ;
+	if ( $this->_use_prefix ) {
+		$prefix = $row[ $this->_PREFIX_NAME ] ;
+		if ( $prefix ) {
+			$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';
+		}
+	}
+
+	$caption = $prefix . $this->sanitize( $row[ $title_name ] );
+	return $caption;
+}
+
+function build_form_option_extra( $row, $preset_id, $name_perm=null )
+{
+	$extra = '';
+// match id
+	if ( $row[ $this->_id_name ] == $preset_id ) {
+		$extra = ' selected="selected" ';
+
+// not permit
+	} elseif ( $name_perm && isset( $row[ $name_perm ] ) && !(bool)$row[ $name_perm ] ) {
+		$extra = ' disabled="disabled" ';
+	}
+	return $extra;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
+// $Id: category.php,v 1.7 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// _build_cat_summary_disp()
 // 2009-03-15 K.OHWADA
 // add_box_list() -> add_show_js_windows()
 // 2008-12-12 K.OHWADA
@@ -35,6 +37,7 @@ function webphoto_main_category( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
 	$this->set_mode( 'category' );
+
 	$this->init_preload();
 }
 
@@ -85,16 +88,20 @@ function list_get_photo_list()
 
 		list( $photo, $total, $this_sum ) = $this->_get_photo_for_list( $cat_id );
 
+		$cat_desc_disp = $this->_build_cat_desc_disp( $row ) ; 
+
 		$arr[] = array(
-			'title'        => '' ,
-			'title_s'      => '' ,
-			'link'         => '' ,
-			'link_s'       => '' ,
-			'total'        => $total ,
-			'photo'        => $photo ,
-			'sum'          => $this_sum ,
-			'show_catpath' => $show_catpath ,
-			'catpath'      => $catpath ,
+			'title'            => '' ,
+			'title_s'          => '' ,
+			'link'             => '' ,
+			'link_s'           => '' ,
+			'total'            => $total ,
+			'photo'            => $photo ,
+			'sum'              => $this_sum ,
+			'show_catpath'     => $show_catpath ,
+			'catpath'          => $catpath ,
+			'cat_desc_disp'    => $cat_desc_disp , 
+			'cat_summary_disp' => $this->_build_cat_summary_disp( $cat_desc_disp )
 		);
 
 	}
@@ -115,6 +122,16 @@ function _get_photo_for_list( $cat_id )
 	}
 
 	return array( $photo, $total, $this_sum );
+}
+
+function _build_cat_summary_disp( $desc )
+{
+	return $this->_multibyte_class->build_summary( $desc, $this->_cfg_cat_summary );
+}
+
+function _build_cat_desc_disp( $row )
+{
+	return $this->_cat_handler->build_show_desc_disp( $row ) ; 
 }
 
 //---------------------------------------------------------
@@ -190,7 +207,7 @@ function _build_category( $cat_id, $limit, $start )
 
 	list( $photo_rows, $total, $this_sum ) =
 		$this->_public_class->get_rows_total_by_catid( 
-			$cat_id, $orderby, $limit, $start, true );
+			$cat_id, $orderby, $limit, $start );
 
 	if (( $this_sum > 1 ) ||
 	    ( $this_sum == 0 ) && ( $total > 1 )) {
@@ -211,7 +228,7 @@ function _build_category( $cat_id, $limit, $start )
 		'photo_sum'      => $this_sum,
 		'show_catpath'   => $show_catpath , 
 		'catpath'        => $catpath , 
-		'cat_desc_disp'  => $this->_cat_handler->build_show_desc_disp( $row ) , 
+		'cat_desc_disp'  => $this->_build_cat_desc_disp( $row ) , 
 	);
 
 	return $arr;

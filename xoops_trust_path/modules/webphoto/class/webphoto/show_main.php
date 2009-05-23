@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.19 2009/05/17 08:59:00 ohwada Exp $
+// $Id: show_main.php,v 1.20 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// $show_photo_desc -> $show_summary in build_common_param()
 // 2009-05-05 K.OHWADA
 // Undefined variable: photos 
 // 2009-04-19 K.OHWADA
@@ -70,12 +72,6 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_get_sort;
 	var $_get_page;
 	var $_get_viewtype = null;
-
-	var $_cfg_gmap_apikey    ;
-	var $_cfg_use_pathinfo   ;
-	var $_cfg_cat_main_width ;
-	var $_cfg_cat_sub_width  ;
-	var $_cfg_timeline_dirname ;
 
 	var $_use_box_js;
 
@@ -149,30 +145,16 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->_pagenavi_class->set_mark_id_prev( '<b>'. $this->get_constant('NAVI_PREVIOUS') .'</b>' );
 	$this->_pagenavi_class->set_mark_id_next( '<b>'. $this->get_constant('NAVI_NEXT') .'</b>' );
 
-	$cfg_newphotos               = $this->get_config_by_name('newphotos');
-	$cfg_gmap_photos             = $this->get_config_by_name('gmap_photos');
-	$cfg_tags                    = $this->get_config_by_name('tags');
-	$cfg_viewcattype             = $this->get_config_by_name('viewcattype');
-	$cfg_sort                    = $this->get_config_by_name('sort');
-	$cfg_use_popbox              = $this->get_config_by_name('use_popbox');
-	$cfg_perm_cat_read           = $this->get_config_by_name('perm_cat_read');
-	$cfg_perm_item_read          = $this->get_config_by_name('perm_item_read');
-	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
-	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
-	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
-	$this->_cfg_cat_sub_width    = $this->get_config_by_name('cat_sub_width');
-	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
-
-	$this->_MAX_PHOTOS       = $cfg_newphotos;
-	$this->_MAX_GMAPS        = $cfg_gmap_photos;
-	$this->_MAX_TAG_CLOUD    = $cfg_tags;
-	$this->_VIEWTYPE_DEFAULT = $cfg_viewcattype;
-	$this->_USE_POPBOX_JS    = $cfg_use_popbox;
+	$this->_MAX_PHOTOS       = $this->_cfg_newphotos;
+	$this->_MAX_GMAPS        = $this->_cfg_gmap_photos;
+	$this->_MAX_TAG_CLOUD    = $this->_cfg_tags;
+	$this->_VIEWTYPE_DEFAULT = $this->_cfg_viewcattype;
+	$this->_USE_POPBOX_JS    = $this->_cfg_use_popbox;
 
 	$this->_use_box_js = $this->_page_class->get_use_box_js();
 
 	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
-	$this->_sort_class->set_photo_sort_default( $cfg_sort );
+	$this->_sort_class->set_photo_sort_default( $this->_cfg_sort );
 
 // separator
 	if ( $this->_cfg_use_pathinfo ) {
@@ -228,21 +210,21 @@ function set_mode( $val )
 //---------------------------------------------------------
 // build param
 //---------------------------------------------------------
-function build_main_param( $mode, $show_photo_desc=false )
+function build_main_param( $mode, $show_summary=false )
 {
 // BUG: not show description
-	$param = $this->build_common_param( $mode, $show_photo_desc );
+	$param = $this->build_common_param( $mode, $show_summary );
 	$param['param_sort'] = $this->build_uri_main_sort( $mode ) ;
 	return $param;
 }
 
-function build_common_param( $mode, $show_photo_desc=false )
+function build_common_param( $mode, $show_summary=false )
 {
 	$param = array_merge( 
 		$this->page_build_main_param( $mode ) ,
 		$this->build_get_param( $mode ) 
 	);
-	$param['show_photo_desc'] = $show_photo_desc ;
+	$param['show_photo_summary'] = $show_summary ;
 	return $param;
 }
 

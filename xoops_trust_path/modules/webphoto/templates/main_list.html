@@ -1,4 +1,4 @@
-<{* $Id: main_list.html,v 1.5 2009/05/17 08:59:00 ohwada Exp $ *}>
+<{* $Id: main_list.html,v 1.6 2009/05/23 14:57:15 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -182,8 +182,12 @@ function webphoto_timeline_zoom( link, op, unit )
   <{if $list.show_catpath }>
     <{assign var="catpath" value=$list.catpath }>
     <{include file="db:`$mydirname`_inc_catpath.html" }>
-    (<{$list.total}>)
+    (<{$list.total}>) <br />
 
+    <{if $list.cat_summary_disp != '' }>
+      <div class="webphoto_cat_desc"><{$list.cat_summary_disp}></div>
+    <{/if}>
+    
 <{* photo *}>
     <{if $list.sum > 0 }>
       <{assign var="photo" value=$list.photo }>

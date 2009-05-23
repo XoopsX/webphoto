@@ -1,4 +1,39 @@
-$Id: readme_en.txt,v 1.32 2009/05/17 08:59:00 ohwada Exp $
+$Id: readme_en.txt,v 1.33 2009/05/23 14:57:15 ohwada Exp $
+
+=================================================
+Version: 1.70
+Date:   2009-05-23
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Category
+(1) Show category's description in category list
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=972
+
+(2) Unrelated category's post permission from the parent category's
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=983
+
+(3) Added "Show photos of subcategoies" in "Preference"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=983
+
+(4) Show parent category and chiledren categories at the form in "category management"
+
+(5) Show error for zombie, photo which belongs to no category, in "item management"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=859
+
+2. Changed photo's description from full text to summary in photo list
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.60
@@ -39,9 +74,6 @@ Please copy and overwrite in the directory which XOOPS correspond
 =================================================
 Version: 1.51
 Date:   2009-04-27
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

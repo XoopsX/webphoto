@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.17 2009/04/12 02:49:35 ohwada Exp $
+// $Id: modinfo.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -359,6 +359,19 @@ define($constpref."BNAME_TIMELINE" , "Timeline" ) ;
 // map, tag
 define($constpref."CFG_GMAP_PHOTOS", "Number of photos in map");
 define($constpref."CFG_TAGS", "Number of tags in tagcloud");
+
+//---------------------------------------------------------
+// v1.70
+//---------------------------------------------------------
+define($constpref."CFG_ITEM_SUMMARY", "Max characters of photo description");
+define($constpref."CFG_ITEM_SUMMARY_DSC", "Enter the maximum number of characters of photo description in the photo list.<br />-1 is unlimited");
+define($constpref."CFG_CAT_SUMMARY", "Max characters of category description");
+define($constpref."CFG_CAT_SUMMARY_DSC", "Enter the maximum number of characters of category description in the category list.<br />-1 is unlimited");
+define($constpref."CFG_CAT_CHILD", "Show photos of subcategoies");
+define($constpref."CFG_CAT_CHILD_DSC", "Enter to show or not photos of subcategoies in category list");
+define($constpref."OPT_CAT_CHILD_NON", "Photos of this category only. Not show photos of subcategoies");
+define($constpref."OPT_CAT_CHILD_EMPTY", "When no photo in this category, show photos of subcategoies");
+define($constpref."OPT_CAT_CHILD_ALWAYS", "Show alwayas photos of subcategoies");
 
 }
 // === define begin ===

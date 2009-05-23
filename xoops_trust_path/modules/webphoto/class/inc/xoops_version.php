@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.25 2009/04/12 07:00:12 ohwada Exp $
+// $Id: xoops_version.php,v 1.26 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// cat_summary
 // 2009-04-10 K.OHWADA
 // b_webphoto_timeline_show
 // 2009-03-15 K.OHWADA
@@ -888,6 +890,40 @@ function _build_config()
 //---------------------------------------------------------
 // added for webphoto
 //---------------------------------------------------------
+	$arr[] = array(
+		'name'			=> 'item_summary' ,
+		'title'			=> $this->_constant_name( 'CFG_ITEM_SUMMARY' ) ,
+		'description'	=> $this->_constant_name( 'CFG_ITEM_SUMMARY_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '100' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'cat_summary' ,
+		'title'			=> $this->_constant_name( 'CFG_CAT_SUMMARY' ) ,
+		'description'	=> $this->_constant_name( 'CFG_CAT_SUMMARY_DSC' ) ,
+		'formtype'		=> 'text' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '50' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'cat_child' ,
+		'title'			=> $this->_constant_name( 'CFG_CAT_CHILD' ) ,
+		'description'	=> $this->_constant_name( 'CFG_CAT_CHILD_DSC' ) ,
+		'formtype'		=> 'select' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> _C_WEBPHOTO_CAT_CHILD_EMPTY ,
+		'options'		=> array(
+			$this->_constant( 'OPT_CAT_CHILD_NON'  )   => _C_WEBPHOTO_CAT_CHILD_NON,
+			$this->_constant( 'OPT_CAT_CHILD_EMPTY' )  => _C_WEBPHOTO_CAT_CHILD_EMPTY,
+			$this->_constant( 'OPT_CAT_CHILD_ALWAYS' ) => _C_WEBPHOTO_CAT_CHILD_ALWAYS,
+		)
+	) ;
+
 	$arr[] = array(
 		'name'			=> 'gmap_apikey' ,
 		'title'			=> $this->_constant_name( 'CFG_APIKEY' ) ,

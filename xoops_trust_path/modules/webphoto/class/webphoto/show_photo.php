@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.23 2009/03/21 07:52:26 ohwada Exp $
+// $Id: show_photo.php,v 1.24 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// _cfg_item_summary
 // 2009-03-15 K.OHWADA
 // small_url
 // 2009-02-20 K.OHWADA
@@ -51,12 +53,26 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_image_class;
 	var $_multibyte_class;
 
-	var $_cfg_sort;
 	var $_cfg_newdays;
 	var $_cfg_popular;
 	var $_cfg_nameoruname;
 	var $_cfg_thumb_width;
 	var $_cfg_middle_width;
+	var $_cfg_item_summary;
+	var $_cfg_cat_summary;
+	var $_cfg_newphotos;
+	var $_cfg_gmap_photos;
+	var $_cfg_tags;
+	var $_cfg_viewcattype;
+	var $_cfg_sort;
+	var $_cfg_use_popbox;
+	var $_cfg_perm_cat_read;
+	var $_cfg_perm_item_read;
+	var $_cfg_gmap_apikey;
+	var $_cfg_use_pathinfo;
+	var $_cfg_cat_main_width;
+	var $_cfg_cat_sub_width;
+	var $_cfg_timeline_dirname;
 
 	var $_item_text_type_array;
 	var $_time_newdays;
@@ -73,7 +89,6 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_DEFAULT_IMAGE_HEIGHT = 64;
 
 	var $_WINDOW_MERGIN = 16;
-	var $_MAX_SUMMARY   = 100;
 	var $_MAX_CONTENT   = 500;
 	var $_MAX_EXIF      = 500;
 	var $_SUMMARY_TAIL  = ' ...';
@@ -105,6 +120,25 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_cfg_nameoruname  = $this->get_config_by_name('nameoruname');
 	$this->_cfg_thumb_width  = $this->get_config_by_name('thumb_width' ) ;
 	$this->_cfg_middle_width = $this->get_config_by_name('middle_width' ) ;
+	$this->_cfg_item_summary = $this->get_config_by_name('item_summary' ) ;
+
+// show_main.php
+	$this->_cfg_newphotos        = $this->get_config_by_name('newphotos');
+	$this->_cfg_gmap_photos      = $this->get_config_by_name('gmap_photos');
+	$this->_cfg_tags             = $this->get_config_by_name('tags');
+	$this->_cfg_viewcattype      = $this->get_config_by_name('viewcattype');
+	$this->_cfg_sort             = $this->get_config_by_name('sort');
+	$this->_cfg_use_popbox       = $this->get_config_by_name('use_popbox');
+	$this->_cfg_perm_cat_read    = $this->get_config_by_name('perm_cat_read');
+	$this->_cfg_perm_item_read   = $this->get_config_by_name('perm_item_read');
+	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
+	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
+	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width    = $this->get_config_by_name('cat_sub_width');
+	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
+
+// caregory.php
+	$this->_cfg_cat_summary  = $this->get_config_by_name('cat_summary');
 
 	$this->_item_text_type_array = $this->_item_handler->get_text_type_array();
 
@@ -310,11 +344,26 @@ function build_show_filesize( $size )
 function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=null )
 {
 	$desc = $this->_item_handler->build_show_description_disp( $row );
-	$summary= $this->_multibyte_class->build_summary( 
-		$desc, $this->_MAX_SUMMARY, $this->_SUMMARY_TAIL, $this->_is_japanese );
+
+// search 
+	if ( is_array($keyword_array) ) {
+		$summary = $this->_multibyte_class->build_plane_text( $desc );
+		$summary = $this->_multibyte_class->build_summary_with_search( 
+			$summary, $keyword_array, $this->_cfg_item_summary );
+
+// more than limit
+	} elseif ( $this->_multibyte_class->str_len($desc) > $this->_cfg_item_summary ) {
+		$summary = $this->_multibyte_class->build_summary( 
+			$desc, $this->_cfg_item_summary );
+
+// full text
+	} else {
+		$summary = $desc;
+	}
 
 	if ( $flag_highlight ) {
-		$desc = $this->_highlight_class->build_highlight_keyword_array( $desc, $keyword_array );
+		$desc    = $this->_highlight_class->build_highlight_keyword_array( $desc, $keyword_array );
+		$summary = $this->_highlight_class->build_highlight_keyword_array( $summary, $keyword_array );
 	}
 
 	return array($desc, $summary);

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.17 2009/05/17 08:58:59 ohwada Exp $
+// $Id: item_manager.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// _build_cat_title()
 // 2009-05-05 K.OHWADA
 // remove _build_form_common_param_admin()
 // 2009-04-19 K.OHWADA
@@ -342,7 +344,6 @@ function _print_list_table( $mode, $item_rows )
 	$this->_cat_handler->set_path_separator( ' ' );
 	$kind_options = $this->_item_handler->get_kind_options();
 
-	$cat_func_url = $this->_MODULE_URL.'/admin/index.php?fct=catmanager&amp;disp=edit' ;
 	$player_url   = $this->_MODULE_URL.'/admin/index.php?fct=player_manager&amp;op=modPlayer&amp;player_id=' ;
 
 	$FORM_NAME = 'item_manager';
@@ -416,7 +417,6 @@ function _print_list_table( $mode, $item_rows )
 		list( $is_online, $status_report, $status_link, $status_icon )
 			= $this->_build_status( $row );
 
-		$catpath      = $this->_cat_handler->get_nice_path_from_id( $cat_id, 'cat_title', $cat_func_url );
 		$photo_url_s  = $this->sanitize( $this->_get_photo_url( $row, $is_online ) );
 		$player_link  = '<a href="'. $player_url.'/'.$player_id .'" title="'. _AM_WEBPHOTO_PLAYER_MOD .'">';
 		$player_link .= $player_id.'</a>'."\n";
@@ -450,7 +450,7 @@ function _print_list_table( $mode, $item_rows )
 
 		echo '<td>'. $kind_options[ $row['item_kind'] ] .'</td>'."\n";
 		echo '<td>'. $this->sanitize( $ext_disp ).'</td>'."\n";
-		echo '<td>'. $catpath.'</td>'."\n";
+		echo '<td nowrap="nowrap">'. $this->_build_cat_title( $cat_id ) .'</td>'."\n";
 		echo '<td>'. $player_link.'</td>'."\n";
 		echo '<td>'. $this->format_timestamp( $row['item_time_create'] , 'm' ).'</td>'."\n";
 		echo '<td>'. $this->format_timestamp( $row['item_time_update'] , 'm' ).'</td>'."\n";
@@ -629,6 +629,23 @@ function _build_button( $op, $value )
 	$str = '<input type="button" value="'. $value .'" onClick="'. $onclick .'" />'."\n";   
 	return $str;
 } 
+
+function _build_cat_title( $cat_id )
+{
+	$row = $this->_cat_handler->get_row_by_id( $cat_id );
+	if ( is_array($row) ) {
+		$href = $this->_MODULE_URL .'/admin/index.php?fct=catmanager&amp;disp=edit&amp;cat_id='. $row['cat_id'] ;
+
+		$title  = '<a href="'. $href .'">';
+		$title .= $this->sanitize( $row['cat_title'] );
+		$title .= '</a>';
+
+	} else {
+		$title = $this->highlight( $this->get_constant('ERR_INVALID_CAT') );
+	}
+
+	return $title;
+}
 
 //---------------------------------------------------------
 // list waiting

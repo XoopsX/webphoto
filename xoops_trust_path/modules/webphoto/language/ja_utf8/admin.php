@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.17 2009/04/19 16:18:28 ohwada Exp $
+// $Id: admin.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -32,7 +32,7 @@ define("_AM_WEBPHOTO_MYMENU_GOTO_MODULE" , "モジュールへ" ) ;
 //define( "_AM_WEBPHOTO_CAT_TH_TITLE" , "カテゴリー名" ) ;
 
 define( "_AM_WEBPHOTO_CAT_TH_PHOTOS" , "画像数" ) ;
-define( "_AM_WEBPHOTO_CAT_TH_OPERATION" , "カテゴリ操作" ) ;
+define( "_AM_WEBPHOTO_CAT_TH_OPERATION" , "操作" ) ;
 define( "_AM_WEBPHOTO_CAT_TH_IMAGE" , "イメージ" ) ;
 define( "_AM_WEBPHOTO_CAT_TH_PARENT" , "親カテゴリー" ) ;
 

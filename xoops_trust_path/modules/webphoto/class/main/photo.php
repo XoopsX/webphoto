@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.17 2009/04/19 11:39:45 ohwada Exp $
+// $Id: photo.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// $_SHOW_PHOTO_SUMMARY
 // 2009-04-19 K.OHWADA
 // sub_title -> catpath
 // 2009-04-18 K.OHWADA
@@ -55,7 +57,8 @@ class webphoto_main_photo extends webphoto_show_main
 	var $_perm_download  = false;
 	var $_codeinfo_array = null;
 
-	var $_SHOW_PHOTO_DESC = true;
+	var $_SHOW_PHOTO_SUMMARY = false;
+	var $_SHOW_PHOTO_CONTENT = true;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -236,12 +239,13 @@ function main()
 		'mobile_email'    => $this->get_mobile_email() ,
 		'mobile_url'      => $this->build_mobile_url( $photo_id ) ,
 		'mobile_qr_image' => $this->build_mobile_filename( $photo_id ) ,
+		'show_photo_content' => $this->_SHOW_PHOTO_CONTENT ,
 	);
 
 // BUG: not show description
 	$arr = array_merge( 
 		$param, $gmap_param, 
-		$this->build_main_param( $this->_mode, $this->_SHOW_PHOTO_DESC ) ,
+		$this->build_main_param( $this->_mode, $this->_SHOW_PHOTO_SUMMARY ) ,
 		$this->_build_tags_param( $photo_id ) ,
 		$this->build_notification_select() 
 	);

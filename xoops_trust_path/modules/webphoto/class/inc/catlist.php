@@ -1,5 +1,5 @@
 <?php
-// $Id: catlist.php,v 1.5 2009/02/01 09:04:29 ohwada Exp $
+// $Id: catlist.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// _build_cat_summary()
 // 2009-01-25 K.OHWADA
 // get_cat_titles()
 // 2008-12-12 K.OHWADA
@@ -25,9 +27,13 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 	var $_table_cat ;
 	var $_table_item ;
 
+	var $_myts;
+	var $_multibyte_class;
+
 	var $_cfg_uploadspath ;
 	var $_cfg_perm_cat_read ;
 	var $_cfg_perm_item_read ;
+	var $_cfg_cat_summary ;
 
 	var $_CATS_URL = null ;
 
@@ -36,7 +42,8 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 	var $_PREFIX_MARK = '.' ;
 	var $_PREFIX_BAR  = '--' ;
 
-	var $_CAT_ID_NAME = 'cat_id';
+	var $_CAT_ID_NAME  = 'cat_id';
+	var $_SUMMARY_TAIL = '';
 
 //---------------------------------------------------------
 // constructor
@@ -52,6 +59,10 @@ function webphoto_inc_catlist( $dirname )
 
 	$this->_xoops_tree_handler = new XoopsTree( 
 		$this->_table_cat, $this->_CAT_ID_NAME, 'cat_pid' ) ;
+
+	$this->_myts =& MyTextSanitizer::getInstance();
+
+	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 
 	$this->_CATS_URL = XOOPS_URL . $this->_cfg_uploadspath .'/categories' ;
 }
@@ -160,9 +171,10 @@ function build_cat_show( $cat_row )
 	}
 
 	$show = $cat_row;
-	$show['cat_title_s'] = $this->sanitize( $cat_row['cat_title'] ) ;
-	$show['imgurl']      = $url ;
-	$show['imgurl_s']    = $this->sanitize( $url ) ;
+	$show['cat_title_s']  = $this->sanitize( $cat_row['cat_title'] ) ;
+	$show['imgurl']       = $url ;
+	$show['imgurl_s']     = $this->sanitize( $url ) ;
+	$show['summary']      = $this->_build_cat_summary( $cat_row['cat_description'] );
 
 	return $show;
 }
@@ -195,6 +207,17 @@ function _get_photo_count_by_cat_row( $cat_row )
 	}
 
 	return $this->_get_item_count_by_catid( $cat_row[ $this->_CAT_ID_NAME ] ) ;
+}
+
+function _build_cat_summary( $desc )
+{
+	return $this->_multibyte_class->build_summary( 
+		$this->_build_cat_desc_disp( $desc ), $this->_cfg_cat_summary, $this->_SUMMARY_TAIL );
+}
+
+function _build_cat_desc_disp( $desc )
+{
+	return $this->_myts->displayTarea( $desc , 0 , 1 , 1 , 1 , 1 , 1 );
 }
 
 //---------------------------------------------------------
@@ -448,15 +471,15 @@ function _get_item_count_by_catid( $cat_id )
 
 function _get_item_count_by_catid_array( $catid_array )
 {
+	if ( !is_array($catid_array) || !count($catid_array) ) {
+		return 0;
+	}
+
 	$where  = $this->build_where_public_with_item();
 
 	$where .= ' AND item_cat_id IN ( ' ;
-	foreach( $catid_array as $id ) {
-		$where .= intval($id) .', ';
-	}
-
-// 0 means to belong no category
-	$where .= ' 0 )';
+	$where .= implode( ',', $catid_array );
+	$where .= ' )';
 
 	return $this->get_item_count_by_where( $where ) ;
 }
@@ -471,6 +494,7 @@ function _init_xoops_config( $dirname )
 	$this->_cfg_uploadspath    = $config_handler->get_path_by_name( 'uploadspath' );
 	$this->_cfg_perm_cat_read  = $config_handler->get_by_name( 'perm_cat_read' );
 	$this->_cfg_perm_item_read = $config_handler->get_by_name( 'perm_item_read' );
+	$this->_cfg_cat_summary    = $config_handler->get_by_name( 'cat_summary' );
 }
 
 // --- class end ---

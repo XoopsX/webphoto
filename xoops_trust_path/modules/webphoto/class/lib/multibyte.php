@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.5 2009/01/29 04:26:55 ohwada Exp $
+// $Id: multibyte.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// changed build_summary_with_search()
 // 2009-01-25 K.OHWADA
 // str_replace_continuous_return_code()
 // 2009-01-10 K.OHWADA
@@ -426,7 +428,7 @@ function m_mb_ereg_replace( $pattern, $replace, $string, $option=null )
 function shorten( $str, $max, $tail=' ...' ) 
 {
 	$text = $str;
-	if (( $max > 0 )&&( strlen($str) > $max ) ) {
+	if (( $max > 0 )&&( $this->str_len($str) > $max ) ) {
 		$text = $this->sub_str( $str, 0, $max ) . $tail;
 	} elseif ( $max == 0 )  {
 		$text = null;
@@ -552,31 +554,64 @@ function str_replace_continuous_space_code( $str, $replace=' ' )
 //---------------------------------------------------------
 // summary
 //---------------------------------------------------------
-function build_summary_with_search( $text, $words, $l=255, $tail=' ...' )
+function build_summary_with_search( $text, $words, $len=255, $head='... ', $tail=' ...' )
 {
-	if ( !is_array($words) ) {
-		$words = array();
+// strip spaces
+	$text = ltrim(preg_replace('/\s+/', ' ', $text));
+
+// return full when less than length
+	if ( strlen($text) <= $len ) {
+		return $text;
 	}
 
-	$ret = '';
+// return part from head when no search word
+	if ( !is_array($words) ) {
+		return $this->sub_str( $text, 0, $len );
+	}
+
+// array(aa,bb,cc) -> aa|bb|cc
 	$q_word = str_replace(' ', '|', preg_quote(join(' ', $words), '/') );
 
-	if ( preg_match( "/$q_word/i", $text, $match ) ) {
-		$ret = ltrim(preg_replace('/\s+/', ' ', $text));
-		list($pre, $aft) = preg_split("/$q_word/i", $ret, 2);
-		$m = intval($l/2);
-		$ret  = (strlen($pre) > $m)? $tail : '';
-		$ret .= $this->sub_str( $pre, max(strlen($pre)-$m+1,0), $m );
-		$ret .= $match[0];
-		$m = $l-strlen($ret);
-		$ret .= $this->sub_str( $aft, 0, min(strlen($aft),$m) );
-		if (strlen($aft) > $m) {
-			$ret .= $tail ;
-		}
+// return part from head when no match
+	if ( ! preg_match( "/$q_word/i", $text, $match ) ) {
+		return $this->sub_str( $text, 0, $len );
 	}
 
-	if ( !$ret ) {
-		$ret = $this->sub_str( $text, 0, $l );
+	$half = intval($len/2);
+
+	$center = $match[0];
+	list($left, $right) = preg_split("/$q_word/i", $text, 2);
+
+	$len_l = $this->str_len($left);
+	$len_r = $this->str_len($right);
+	$len_c = $this->str_len($center);
+
+// pert from head when less than length
+	if ( ( $len_l + $len_c ) <= $len ) {
+		$ret  = $this->sub_str( $text, 0, $len );
+		$ret .= $tail;
+
+// part from tail when less than half length
+	} elseif ( ( $len_r + $len_c ) <= $len ) {
+		$ret  = $head ; 
+		$ret .= $this->sub_str( $text, -$len, $len );
+
+	} else {
+		if ( $len_l <= $half ) {
+			$ret = $left;
+		} else {
+			$left_start = $len_l - $half + 1;
+			$ret  = $head;
+			$ret .= $this->sub_str( $left, $left_start, $half );
+		}
+		$ret .= $match[0];
+		$remainder = $len - $this->str_len($ret);
+		if ( $len_r <= $remainder ) {
+			$ret .= $right;
+		} else {
+			$ret .= $this->sub_str( $right, 0, $remainder );
+			$ret .= $tail ;
+		}
 	}
 
 	return $ret;

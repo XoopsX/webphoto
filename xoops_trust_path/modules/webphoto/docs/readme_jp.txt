@@ -1,11 +1,43 @@
-$Id: readme_jp.txt,v 1.32 2009/05/17 08:59:00 ohwada Exp $
+$Id: readme_jp.txt,v 1.33 2009/05/23 14:57:15 ohwada Exp $
+
+=================================================
+Version: 1.70
+Date:   2009-05-23
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. カテゴリ
+(1) カテゴリ一覧にカテゴリ説明文を表示した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=972
+
+(2) カテゴリの投稿権限を親カテゴリから独立した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=983
+
+(3)「一般設定」に下位カテゴリの画像を表示する/しないを追加した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=983
+
+(4)「カテゴリ管理」の登録フォームに親カテゴリと下位カテゴリを表示した
+
+(5)「アイテム管理」にゾンビ(存在しないカテゴリに属する画像）をエラー表示した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=859
+
+2. 一覧表示のときは、写真の説明文を全文から要約に変更した
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.60
 Date:   2009-05-17
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

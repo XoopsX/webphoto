@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.5 2009/04/11 14:23:35 ohwada Exp $
+// $Id: photo_public.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-17 K.OHWADA
+// _cfg_cat_child
 // 2009-04-10 K.OHWADA
 // add $key in get_rows_by_orderby()
 // 2009-01-25 K.OHWADA
@@ -28,6 +30,7 @@ class webphoto_photo_public
 	var $_tagcloud_class;
 
 	var $_cfg_perm_cat_read ;
+	var $_cfg_cat_child ;
 
 	var $_ORDERBY_ASC    = 'item_id ASC';
 	var $_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
@@ -42,6 +45,7 @@ function webphoto_photo_public( $dirname )
 	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
 
 	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
+	$this->_cfg_cat_child     = $this->_config_class->get_by_name( 'cat_child' );
 	$cfg_perm_item_read       = $this->_config_class->get_by_name( 'perm_item_read' );
 	$cfg_use_pathinfo         = $this->_config_class->get_by_name( 'use_pathinfo' );
 	$cfg_uploads_path         = $this->_config_class->get_uploads_path();
@@ -75,22 +79,35 @@ function get_cat_all_tree_array()
 	return $this->_catlist_class->get_cat_all_tree_array() ;
 }
 
-function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0, $flag_child=false )
+function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 {
 	$rows        = null ; 
 	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id );
 	$this_sum    = $this->get_count_by_catid( $cat_id );
 	$total       = $this->get_count_by_catid_array( $catid_array );
 
-	if ( $total > 0 ) {
-		if ( $this_sum > 0 ) {
-			$rows = $this->get_rows_by_catid_orderby( 
-				$cat_id, $orderby, $limit, $offset );
+	switch( $this->_cfg_cat_child ) 
+	{
+		case _C_WEBPHOTO_CAT_CHILD_EMPTY :
+			if ( $this_sum > 0 ) {
+				$rows = $this->get_rows_by_catid_orderby( 
+					$cat_id, $orderby, $limit, $offset );
+			} else {
+				$rows = $this->get_rows_by_catid_array_orderby( 
+					$catid_array, $orderby, $limit, $offset );
+			}
+			break;
 
-		} elseif ( $flag_child ) {
+		case _C_WEBPHOTO_CAT_CHILD_ALWAYS :
 			$rows = $this->get_rows_by_catid_array_orderby( 
 				$catid_array, $orderby, $limit, $offset );
-		}
+			break;
+
+		case _C_WEBPHOTO_CAT_CHILD_NON :
+		default:
+			$rows = $this->get_rows_by_catid_orderby( 
+				$cat_id, $orderby, $limit, $offset );
+			break;
 	}
 
 	return array( $rows, $total, $this_sum );
