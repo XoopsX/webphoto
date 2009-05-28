@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
+// $Id: item_manager.php,v 1.19 2009/05/28 11:39:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-28 K.OHWADA
+// BUG: not show tag
 // 2009-05-17 K.OHWADA
 // _build_cat_title()
 // 2009-05-05 K.OHWADA
@@ -733,6 +735,9 @@ function _modify_form()
 	echo $this->_build_bread_crumb();
 
 	$this->set_param_modify_default( $item_row );
+
+// BUG: not show tag
+	$this->_init_form();
 
 	$item_id     = $item_row['item_id'] ;
 	$flashvar_id = $item_row['item_flashvar_id'] ;

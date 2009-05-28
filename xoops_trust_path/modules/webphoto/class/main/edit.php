@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.25 2009/05/17 08:58:59 ohwada Exp $
+// $Id: edit.php,v 1.26 2009/05/28 11:39:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-28 K.OHWADA
+// BUG: not show tag
 // 2009-05-05 K.OHWADA
 // _build_form_edit_param() -> build_form_base_param()
 // 2009-04-19 K.OHWADA
@@ -468,6 +470,9 @@ function _build_form_modify( $flag_default=true )
 		$item_row = $this->build_item_row_modify_post( $item_row );
 	}
 
+// BUG: not show tag
+	$this->init_form();
+
 	list( $show_form_redo, $param_form_redo ) =
 		$this->build_form_redo( $item_row );
 
@@ -494,8 +499,8 @@ function _build_preview_modify( $item_row )
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$arr = array(
-		'photo'           => $show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ,
-		'show_photo_desc' => true 
+		'photo'              => $show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ,
+		'show_photo_summary' => true 
 	);
 	return $arr;
 }
