@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.20 2009/05/23 14:57:15 ohwada Exp $
+// $Id: show_main.php,v 1.21 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// BUG : not show cat_id
 // 2009-05-17 K.OHWADA
 // $show_photo_desc -> $show_summary in build_common_param()
 // 2009-05-05 K.OHWADA
@@ -64,14 +66,8 @@ class webphoto_show_main extends webphoto_show_photo
 
 // pathinfo param
 	var $_get_op;
-	var $_get_catid;
-	var $_get_tag;
-	var $_get_place;
-	var $_get_date;
-	var $_get_query;
 	var $_get_sort;
 	var $_get_page;
-	var $_get_viewtype = null;
 
 	var $_use_box_js;
 
@@ -218,10 +214,10 @@ function build_main_param( $mode, $show_summary=false )
 	return $param;
 }
 
-function build_common_param( $mode, $show_summary=false )
+function build_common_param( $mode, $show_summary=false, $cat_id=0 )
 {
 	$param = array_merge( 
-		$this->page_build_main_param( $mode ) ,
+		$this->page_build_main_param( $mode, $cat_id ) ,
 		$this->build_get_param( $mode ) 
 	);
 	$param['show_photo_summary'] = $show_summary ;
@@ -400,20 +396,11 @@ function build_random_more_url_with_check_sort( $url, $total, $get_sort=null, $f
 	}
 
 	$url .= 'sort=random/';
-	$ret  = $this->add_viewtype( $url );
 
 	if ( $flag_sanitize ) {
-		$ret = $this->sanitize( $ret );
+		$url = $this->sanitize( $url );
 	}
 
-	return $ret;
-}
-
-function add_viewtype( $url )
-{
-	if ( $this->_get_viewtype ) {
-		$url .= 'viewtype='.$this->_get_viewtype.'/';
-	}
 	return $url;
 }
 
@@ -650,15 +637,15 @@ function is_timeline_mode( $mode )
 //---------------------------------------------------------
 // notification select class
 //---------------------------------------------------------
-function build_notification_select()
+function build_notification_select( $cat_id=0 )
 {
 	$show  = false;
 	$param = null;
 
 // for core's notificationSubscribableCategoryInfo
 	$_SERVER['PHP_SELF'] = $this->_notification_select_class->get_new_php_self();
-	if ( $this->_get_catid > 0 ) {
-		$_GET['cat_id'] = $this->_get_catid;
+	if ( $cat_id > 0 ) {
+		$_GET['cat_id'] = $cat_id;
 	}
 
 	$param = $this->_notification_select_class->build( $this->_cfg_use_pathinfo );
@@ -767,9 +754,10 @@ function check_show_common( $mode, $name )
 	return $this->_page_class->check_show_common( $mode, $name );
 }
 
-function page_build_main_param( $mode )
+// BUG : not show cat_id
+function page_build_main_param( $mode, $cat_id=0 )
 {
-	return $this->_page_class->build_main_param( $mode, $this->_get_catid ) ;
+	return $this->_page_class->build_main_param( $mode, $cat_id ) ;
 }
 
 function add_show_js_windows( $param )

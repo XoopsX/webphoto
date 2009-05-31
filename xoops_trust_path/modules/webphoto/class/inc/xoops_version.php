@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.26 2009/05/23 14:57:15 ohwada Exp $
+// $Id: xoops_version.php,v 1.27 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// _C_WEBPHOTO_OPT_PERM_READ_ALL
 // 2009-05-17 K.OHWADA
 // cat_summary
 // 2009-04-10 K.OHWADA
@@ -1146,9 +1148,9 @@ function _build_config()
 		'valuetype'		=> 'int' ,
 		'default'		=> '0' ,
 		'options'		=> array(
-			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
-			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
-			$this->_constant( 'OPT_PERM_READ_NO_CAT'  ) => '2',
+			$this->_constant( 'OPT_PERM_READ_ALL'  )    => _C_WEBPHOTO_OPT_PERM_READ_ALL ,
+			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => _C_WEBPHOTO_OPT_PERM_READ_NO_ITEM ,
+			$this->_constant( 'OPT_PERM_READ_NO_CAT'  ) => _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ,
 		)
 	) ;
 

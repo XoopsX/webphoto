@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.7 2009/05/23 14:57:15 ohwada Exp $
+// $Id: category.php,v 1.8 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// BUG : not show cat_id
 // 2009-05-17 K.OHWADA
 // _build_cat_summary_disp()
 // 2009-03-15 K.OHWADA
@@ -140,14 +142,11 @@ function _build_cat_desc_disp( $row )
 // overwrite
 function list_build_detail( $cat_id )
 {
-
-// for xoops notification
-	$_GET['cat_id'] = $cat_id;
-
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
 
-	$init_param = $this->list_build_init_param( true );
+// BUG : not show cat_id
+	$init_param = $this->list_build_init_param( true, $cat_id );
 
 	$cat_param = $this->_build_category( $cat_id, $limit, $start );
 	$title      = $cat_param['cat_title'] ;
@@ -160,9 +159,6 @@ function list_build_detail( $cat_id )
 	$param['sub_title_s']       = '' ;
 	$param['show_sort']         = $show_sort ;
 
-// for submit
-	$param['cat_id']            = $cat_id ;
-
 	$navi_param = $this->list_build_navi( $total, $limit );
 
 	$catlist_param = $this->build_catlist(
@@ -171,11 +167,12 @@ function list_build_detail( $cat_id )
 	$gmap_param = $this->build_gmap( $cat_id, $this->_MAX_GMAPS );
 	$show_gmap  = $gmap_param['show_gmap'];
 
-	$noti_param = $this->build_notification_select();
+	$noti_param = $this->build_notification_select( $cat_id );
 
 	$this->list_assign_xoops_header( $cat_id, $show_gmap );
 
 	$ret= array_merge( $param, $init_param, $cat_param, $navi_param, $catlist_param, $gmap_param, $noti_param );
+
 	return $this->add_show_js_windows( $ret );
 }
 

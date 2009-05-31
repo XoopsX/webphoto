@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
+// $Id: index.php,v 1.8 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// random_more_url_s -> show_random_more
 // 2009-04-10 K.OHWADA
 // build_main_param()
 // 2009-03-15 K.OHWADA
@@ -91,7 +93,7 @@ function main()
 		'photos'            => $main_photos,
 		'show_photo'        => $show_photo , 
 		'show_nomatch'      => $this->build_show_nomatch( $total ) ,
-		'random_more_url_s' => $this->_build_random_more_url_s_by_mode() ,
+		'show_random_more'  => $this->_build_show_random_more() ,
 		'index_desc'        => $this->_build_index_desc() ,
 		'mobile_email'      => $this->get_mobile_email() ,
 		'mobile_url'        => $this->build_mobile_url( 0 ) ,
@@ -143,14 +145,12 @@ function _get_rows_by_mode( $limit, $start )
 	return $this->_public_class->get_rows_by_orderby( $orderby, $limit, $start );
 }
 
-function _build_random_more_url_s_by_mode()
+function _build_show_random_more()
 {
-	if ( $this->_mode != 'random' ) {
-		return null;
+	if ( $this->_mode == 'random' ) {
+		return true;
 	}
-
-	$url = 'index.php/random/';
-	return $this->sanitize( $this->add_viewtype( $url ) );
+	return false ;
 }
 
 //---------------------------------------------------------

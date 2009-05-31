@@ -1,4 +1,4 @@
-<{* $Id: main_index.html,v 1.13 2009/05/17 08:59:00 ohwada Exp $ *}>
+<{* $Id: main_index.html,v 1.14 2009/05/31 18:22:59 ohwada Exp $ *}>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -264,9 +264,13 @@ function webphoto_timeline_zoom( link, op, unit )
   <div class="webphoto_error"><{$lang_nomatch_photo}></div>
 <{/if}>
 
-<{if $random_more_url_s != '' }>
+<{if $show_random_more }>
   <div class="webphoto_sub_desc">
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/<{$random_more_url_s}>">
+  <{if $cfg_use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=random">
+  <{/if}>
   <{$lang_random_more}></a>
   </div>
 <{/if}>

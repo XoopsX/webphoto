@@ -1,11 +1,45 @@
-$Id: readme_jp.txt,v 1.33 2009/05/23 14:57:15 ohwada Exp $
+$Id: readme_jp.txt,v 1.34 2009/05/31 18:22:59 ohwada Exp $
+
+=================================================
+Version: 1.71
+Date:   2009-06-01
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. カテゴリ
+(1) 投稿権限のないカテゴリが選択できるバグを修正
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=983
+
+(2) 登録処理にて指定されたカテゴリの投稿権限をチェックした
+
+(3) メニューに cat_id が表示されないバグを修正
+
+2. バグ修正
+(1) 編集画面にタグが表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=986&forum=13
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
+
+● 謝辞
+option タグの disabled 属性に関して、下記を参考にしました。
+Select, Option, Disabled And The JavaScript Solution
+- http://www.lattimore.id.au/2005/07/01/select-option-disabled-and-the-javascript-solution/
+作者の方に、感謝します。
+
 
 =================================================
 Version: 1.70
 Date:   2009-05-23
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

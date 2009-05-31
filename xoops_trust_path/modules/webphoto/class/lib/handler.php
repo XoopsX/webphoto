@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.8 2009/05/23 14:57:15 ohwada Exp $
+// $Id: handler.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// perm_read in build_form_select_options()
 // 2009-05-17 K.OHWADA
 // build_form_option_extra()
 // 2009-04-19 K.OHWADA
@@ -39,9 +41,12 @@ class webphoto_lib_handler extends webphoto_lib_error
 	var $_pid_name;
 	var $_title_name;
 
+	var $_xoops_mid ;
+	var $_xoops_groups ;
+	var $_is_module_admin ;
+
 	var $_id           = 0;
 	var $_xoops_uid    = 0;
-	var $_xoops_groups = null;
 	var $_cached       = array();
 	var $_flag_cached  = false;
 
@@ -58,6 +63,9 @@ class webphoto_lib_handler extends webphoto_lib_error
 	var $_DEBUG_SQL   = false;
 	var $_DEBUG_ERROR = false;
 
+	var $_FORM_SELECTED = ' selected="selected" ';
+	var $_FORM_DISABLED = ' disabled="disabled" ';
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -66,7 +74,10 @@ function webphoto_lib_handler( $dirname=null )
 	$this->webphoto_lib_error();
 
 	$this->_db =& Database::getInstance();
-	$this->_init_xoops_groups() ;
+
+	$this->_xoops_groups    = $this->_get_xoops_groups() ;
+	$this->_xoops_mid       = $this->_get_xoops_mid();
+	$this->_is_module_admin = $this->_get_is_module_admin();
 
 	$this->_DIRNAME = $dirname;
 }
@@ -579,6 +590,10 @@ function check_perm_by_id_name_groups( $id, $name, $groups=null )
 
 function check_perm_by_row_name_groups( $row, $name, $groups=null )
 {
+	if ( empty($name) ) {
+		return true ;
+	}
+
 	if ( ! isset( $row[ $name ] ) ) {
 		return false ;
 	}
@@ -689,7 +704,7 @@ function build_form_select_option_none( $none )
 	return $str;
 }
 
-function build_form_select_options( $rows, $title_name='', $preset_id=0, $name_perm=null )
+function build_form_select_options( $rows, $title_name='', $preset_id=0 )
 {
 	if ( !is_array($rows) || !count($rows) ) {
 		return null;
@@ -700,14 +715,103 @@ function build_form_select_options( $rows, $title_name='', $preset_id=0, $name_p
 	}
 
 	$str = '';
+
+// build options
 	foreach ( $rows as $row )
 	{
 		$str .= $this->build_form_option( 
 			$row[ $this->_id_name ] , 
 			$this->build_form_option_caption( $row, $title_name ) , 
-			$this->build_form_option_extra( $row, $preset_id, $name_perm ) 
+			$this->build_form_option_extra( $row, $preset_id )
 		);
 	}
+
+	return $str;
+}
+
+function build_form_select_options_with_perm_post( $rows, $title_name, $preset_id, $perm_post, $perm_read, $show )
+{
+	if ( !is_array($rows) || !count($rows) ) {
+		return null;
+	}
+
+	if ( empty($title_name) ) {
+		$title_name = $this->_title_name;
+	}
+
+	$flag_selected = false;
+	$row_arr = array();
+	$str = '';
+
+// set extra
+	foreach ( $rows as $row )
+	{
+		$extra    = '' ;
+		$selected = false;
+		$disabled = false;
+
+// not permit read
+		if ( !$this->check_perm_by_row_name_groups( $row, $perm_read ) ) {
+			if ( $show ) {
+				$disabled = true;
+			} else {
+				continue;
+			}
+		}
+
+// match id
+		if ( $this->build_form_option_match( $row, $preset_id ) ) {
+			$selected = true;
+		}
+
+// not permit post
+		if ( !$this->check_perm_by_row_name_groups( $row, $perm_post ) ) {
+			$disabled = true;
+		}
+
+// both
+		if ( $selected && $disabled ) {
+			if ( $this->_is_module_admin ) {
+				$disabled = false;
+			} else {
+				$selected = false;
+			}
+		}
+
+// selected
+		if ( $selected ) {
+			$extra = $this->_FORM_SELECTED ;
+			$flag_selected = true;
+		}
+
+// disabled
+		if ( $disabled ) {
+			$extra = $this->_FORM_DISABLED ;
+		}
+
+		$row['extra'] = $extra;
+		$row_arr[]    = $row;
+	}
+
+// build options
+	foreach ( $row_arr as $row )
+	{
+		$id    = $row[ $this->_id_name ] ;
+		$extra = $row[ 'extra' ] ;
+
+// only one first if no selected
+		if ( !$flag_selected && empty($extra) ) {
+			$flag_selected = true;
+			$extra         = $this->_FORM_SELECTED ;
+		}
+
+		$str .= $this->build_form_option( 
+			$id , 
+			$this->build_form_option_caption( $row, $title_name ) , 
+			$extra
+		);
+	}
+
 	return $str;
 }
 
@@ -733,18 +837,20 @@ function build_form_option_caption( $row, $title_name )
 	return $caption;
 }
 
-function build_form_option_extra( $row, $preset_id, $name_perm=null )
+function build_form_option_extra( $row, $preset_id )
 {
-	$extra = '';
-// match id
-	if ( $row[ $this->_id_name ] == $preset_id ) {
-		$extra = ' selected="selected" ';
-
-// not permit
-	} elseif ( $name_perm && isset( $row[ $name_perm ] ) && !(bool)$row[ $name_perm ] ) {
-		$extra = ' disabled="disabled" ';
+	if ( $this->build_form_option_match( $row, $preset_id ) ) {
+		return $this->_FORM_SELECTED ;
 	}
-	return $extra;
+	return null ;
+}
+
+function build_form_option_match( $row, $preset_id )
+{
+	if ( $row[ $this->_id_name ] == $preset_id ) {
+		return true ;
+	}
+	return false ;
 }
 
 //---------------------------------------------------------
@@ -795,16 +901,35 @@ function sanitize_array_int( $arr_in )
 }
 
 //---------------------------------------------------------
-// xoops groups
+// xoops param
 //---------------------------------------------------------
-function _init_xoops_groups()
+function _get_xoops_groups()
 {
 	global $xoopsUser;
 	if ( is_object($xoopsUser) ) {
-		$this->_xoops_groups = $xoopsUser->getGroups() ;
-	} else {
-		$this->_xoops_groups = array( XOOPS_GROUP_ANONYMOUS );
+		return $xoopsUser->getGroups() ;
 	}
+	return array( XOOPS_GROUP_ANONYMOUS );
+}
+
+function _get_xoops_mid()
+{
+	global $xoopsModule;
+	if ( is_object($xoopsModule) ) {
+		return $xoopsModule->getVar( 'mid' );
+	}
+	return false;
+}
+
+function _get_is_module_admin()
+{
+	global $xoopsUser;
+	if ( is_object($xoopsUser) ) {
+		if ( $xoopsUser->isAdmin( $this->_xoops_mid ) ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 //----- class end -----

@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.4 2009/05/17 08:58:59 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.5 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// check_perm_post_by_row()
 // 2009-05-05 K.OHWADA
 // unlink_tmp_dir_file()
 // 2009-03-15 K.OHWADA
@@ -220,6 +222,7 @@ function submit_check_exec()
 		return _C_WEBPHOTO_ERR_NO_CAT_RECORD ; 
 	}
 
+
 	$ret1 = $this->check_dir( $this->_PHOTOS_DIR );
 	if ( $ret1 < 0 ) {
 		return $ret1; 
@@ -250,7 +253,16 @@ function submit_exec_check( $item_row )
 		return _C_WEBPHOTO_ERR_EMPTY_CAT ;
 	}
 
-	if ( ! $this->check_valid_catid( $cat_id ) ) {
+	$cat_row = $this->_cat_handler->get_cached_row_by_id( $cat_id );
+	if ( !is_array($cat_row) ) {
+		return _C_WEBPHOTO_ERR_INVALID_CAT ;
+	}
+
+	if ( ! $this->_cat_handler->check_perm_read_by_row( $cat_row ) ) {
+		return _C_WEBPHOTO_ERR_INVALID_CAT ;
+	}
+
+	if ( ! $this->_cat_handler->check_perm_post_by_row( $cat_row ) ) {
 		return _C_WEBPHOTO_ERR_INVALID_CAT ;
 	}
 
@@ -302,6 +314,15 @@ function set_created_row( $val )
 function get_created_row()
 {
 	return $this->_row_create ;
+}
+
+function check_cat_perm_post( $id )
+{
+	$row = $this->_cat_handler->get_cached_row_by_id( $id );
+	if ( is_array($row) ) {
+		return $this->_cat_handler->check_perm_post_by_row( $row );
+	}
+	return false;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.8 2009/05/23 14:57:15 ohwada Exp $
+// $Id: form.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// changed item_cat_id_options()
 // 2009-05-17 K.OHWADA
 // show_err_invalid_cat()
 // 2009-05-05 K.OHWADA
@@ -66,7 +68,9 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_cfg_makethumb ;
 	var $_cfg_file_size ;
 	var $_cfg_perm_item_read ;
+	var $_cfg_perm_cat_read ;
 	var $_cfg_use_pathinfo ;
+	var $_cfg_cat_width ;
 
 	var $_has_deletable ;
 
@@ -149,10 +153,10 @@ function webphoto_edit_form( $dirname , $trust_dirname )
 	$this->_cfg_makethumb      = $this->_config_class->get_by_name( 'makethumb' );
 	$this->_cfg_file_size      = $this->_config_class->get_by_name( 'file_size' );
 	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' );
+	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
 
 // cat_form.php
 	$this->_cfg_cat_width     = $this->_config_class->get_by_name( 'cat_width' );
-	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
 	$this->_cfg_use_pathinfo  = $this->_config_class->get_by_name( 'use_pathinfo' );
 
 	$this->_has_deletable = $this->_perm_class->has_deletable();
@@ -237,7 +241,13 @@ function ele_allowed_exts( $allowed_exts )
 function item_cat_id_options()
 {
 	$value = $this->get_row_by_key( 'item_cat_id' );
-	return $this->_cat_handler->build_options_with_perm_post( $value );
+
+	$show = true;
+	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
+		$show = false;
+	}
+
+	return $this->_cat_handler->build_options_with_perm_post( $value, $show );
 }
 
 function show_err_invalid_cat()

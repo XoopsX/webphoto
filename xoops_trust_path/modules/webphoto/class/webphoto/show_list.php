@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.8 2009/04/11 14:23:35 ohwada Exp $
+// $Id: show_list.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// BUG : not show cat_id
 // 2009-04-10 K.OHWADA
 // build_common_param()
 // 2009-03-15 K.OHWADA
@@ -213,9 +215,10 @@ function list_build_detail_common( $title, $total, $rows, $photos=null )
 	return $arr;
 }
 
-function list_build_init_param( $show_photo_desc=false )
+// BUG : not show cat_id
+function list_build_init_param( $show_photo_desc=false, $cat_id=0 )
 {
-	$param = $this->build_common_param( $this->_mode, $show_photo_desc ) ;
+	$param = $this->build_common_param( $this->_mode, $show_photo_desc, $cat_id ) ;
 	$param['param_sort'] = $this->build_uri_list_sort() ;
 	return $param;
 }

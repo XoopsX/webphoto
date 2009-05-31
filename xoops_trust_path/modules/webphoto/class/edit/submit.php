@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.10 2009/05/17 08:58:59 ohwada Exp $
+// $Id: submit.php,v 1.11 2009/05/31 18:22:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-05-30 K.OHWADA
+// show_photo_desc -> show_photo_summary
 // 2009-05-05 K.OHWADA
 // init_form()
 // 2009-04-10 K.OHWADA
@@ -733,7 +735,7 @@ function build_preview_template( $row )
 	$tpl->assign( 'photo' , $row ) ;
 
 // BUG: not show description in preview
-	$tpl->assign( 'show_photo_desc' , true ) ;
+	$tpl->assign( 'show_photo_summary' , true ) ;
 
 // BUG: not show img alt
 	$tpl->assign( $this->get_lang_array() ) ;
