@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
+// $Id: form.php,v 1.10 2009/05/31 19:10:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -250,8 +250,11 @@ function item_cat_id_options()
 	return $this->_cat_handler->build_options_with_perm_post( $value, $show );
 }
 
-function show_err_invalid_cat()
+function show_err_invalid_cat( $is_edit )
 {
+	if ( !$is_edit ) {
+		return false;
+	}
 	$value = $this->get_row_by_key( 'item_cat_id' );
 	$count = $this->_cat_handler->get_count_by_id( $value );
 	return !(bool)$count;
