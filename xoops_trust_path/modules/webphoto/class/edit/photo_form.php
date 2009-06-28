@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.6 2009/05/17 10:12:37 ohwada Exp $
+// $Id: photo_form.php,v 1.7 2009/06/28 14:50:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-06-28 K.OHWADA
+// set_default_item_row()
 // 2009-05-05 K.OHWADA
 // merge build_form_file() to build_form_photo()
 // build_form_photo_with_template()
@@ -256,6 +258,7 @@ function build_form_photo( $item_row )
 			break;
 	}
 
+	$item_row = $this->set_default_item_row( $item_row );
 	$this->set_row( $item_row );
 	$this->init_editor();
 

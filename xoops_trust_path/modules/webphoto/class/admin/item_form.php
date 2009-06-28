@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.18 2009/05/31 19:11:53 ohwada Exp $
+// $Id: item_form.php,v 1.19 2009/06/28 14:50:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-06-28 K.OHWADA
+// set_default_item_row()
 // 2009-05-30 K.OHWADA
 // $is_edit in show_err_invalid_cat()
 // 2009-05-17 K.OHWADA
@@ -91,6 +93,8 @@ function &getInstance( $dirname, $trust_dirname )
 function build_form_admin_with_template( $mode, $item_row )
 {
 	$template = 'db:'. $this->_DIRNAME .'_form_admin_item.html';
+
+	$item_row = $this->set_default_item_row( $item_row );
 
 	$arr = array_merge( 
 		$this->build_form_base_param(),

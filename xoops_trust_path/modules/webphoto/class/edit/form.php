@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.10 2009/05/31 19:10:50 ohwada Exp $
+// $Id: form.php,v 1.11 2009/06/28 14:50:12 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-06-28 K.OHWADA
+// set_default_item_row()
 // 2009-05-30 K.OHWADA
 // changed item_cat_id_options()
 // 2009-05-17 K.OHWADA
@@ -209,6 +211,14 @@ function &getInstance( $dirname, $trust_dirname )
 // photo form
 // submit.php submit_file.php etc
 //---------------------------------------------------------
+function set_default_item_row( $item_row )
+{
+	if ( empty($item_row['item_editor']) ) {
+		$item_row['item_editor'] = $this->_EDITOR_DEFAULT;
+	}
+	return $item_row;
+}
+
 function ele_maxpixel( $has_resize )
 {
 	$text = $this->_cfg_width .' x '. $this->_cfg_height ."<br />\n" ;
@@ -275,6 +285,7 @@ function build_file_url_size( $file_row )
 	return $url;
 }
 
+// for misc_form.php
 function get_item_editor( $flag )
 {
 	$value = $this->get_row_by_key( 'item_editor' );
