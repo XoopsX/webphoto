@@ -1,5 +1,5 @@
 <?php
-// $Id: show_list.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
+// $Id: show_list.php,v 1.10 2009/06/28 14:48:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-06-28 K.OHWADA
+// set_list_mode()
 // 2009-05-30 K.OHWADA
 // BUG : not show cat_id
 // 2009-04-10 K.OHWADA
@@ -33,9 +35,13 @@ class webphoto_show_list extends webphoto_show_main
 {
 	var $_param = null;
 	var $_param_out = null;
+	var $_list_mode = null;
 
 	var $_get_uid     = -1;	// not set
 	var $_UID_DEFAULT = -1;	// not set
+
+// for future
+	var $_get_viewtype = null;
 
 //---------------------------------------------------------
 // constructor
@@ -52,6 +58,22 @@ function &getInstance( $dirname , $trust_dirname )
 		$instance = new webphoto_show_list( $dirname , $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// main
+//---------------------------------------------------------
+// overwrite
+function set_mode( $val )
+{
+	$this->_mode      = $val;
+	$this->_list_mode = $val;
+}
+
+// for myphoto
+function set_list_mode( $val )
+{
+	$this->_list_mode = $val;
 }
 
 //---------------------------------------------------------
@@ -95,13 +117,6 @@ function list_get_pathinfo_param()
 	$this->_get_sort = $this->get_photo_sort_name_by_pathinfo();
 
 	$this->set_param_out( $this->_param );
-
-	switch ( $this->_mode )
-	{
-		case 'myphoto':
-			$this->_mode  = 'user';
-			break;
-	}
 }
 
 function set_param_out( $val )
@@ -265,7 +280,8 @@ function list_build_navi( $total, $limit, $get_page=null, $get_sort=null )
 //---------------------------------------------------------
 function get_uri_list_pathinfo_param()
 {
-	return $this->_uri_class->get_list_pathinfo_param( $this->_mode );
+// list_mode for myphoto
+	return $this->_uri_class->get_list_pathinfo_param( $this->_list_mode );
 }
 
 function build_uri_list_navi_url( $get_sort )
