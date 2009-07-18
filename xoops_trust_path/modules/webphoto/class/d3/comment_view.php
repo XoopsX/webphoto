@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_view.php,v 1.3 2008/07/05 12:54:16 ohwada Exp $
+// $Id: comment_view.php,v 1.4 2009/07/18 18:19:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-07-18 K.OHWADA
+// BUG: not show child in thead
 // 2008-07-01 K.OHWADA
 // change $action_link
 //---------------------------------------------------------
@@ -147,8 +149,9 @@ function assgin_tmplate()
 		// RMV-FIX... added extraParam stuff here
 
 // absolute URL
+// BUG: not show child in thead
 //		$comment_url = $comment_config['pageName'] . '?';
-		$comment_url = $this->_MODULE_URL.'/'.$comment_config['pageName'] . '/'.$com_itemid.'/?' ;
+		$comment_url = $this->_MODULE_URL.'/'.$comment_config['pageName'].'?';
 
 		if (isset($comment_config['extraParams']) && is_array($comment_config['extraParams'])) {
 			$extra_params = '';
@@ -169,8 +172,7 @@ function assgin_tmplate()
 			$comment_url .= $extra_params;
 		}
 
-//		$xoopsTpl->assign('comment_url', $comment_url.$comment_config['itemName'].'='.$com_itemid.'&amp;com_mode=thread&amp;com_order='.$com_order);
-		$xoopsTpl->assign('comment_url', $comment_url.'com_mode=thread&amp;com_order='.$com_order);
+		$xoopsTpl->assign('comment_url', $comment_url.$comment_config['itemName'].'='.$com_itemid.'&amp;com_mode=thread&amp;com_order='.$com_order);
 
 	// Show specific thread tree
 		if (!empty($com_id) && !empty($com_rootid) && ($com_id != $com_rootid)) {
