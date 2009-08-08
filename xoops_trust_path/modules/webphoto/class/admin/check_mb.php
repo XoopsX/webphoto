@@ -1,5 +1,5 @@
 <?php
-// $Id: check_mb.php,v 1.2 2008/12/10 19:08:56 ohwada Exp $
+// $Id: check_mb.php,v 1.3 2009/08/08 08:40:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-08 K.OHWADA
+// mb_conv() iconv_conv()
 // 2008-12-07 K.OHWADA
 // window.close()
 //---------------------------------------------------------
@@ -53,17 +55,32 @@ function main()
 	$this->http_output('pass');
 	header( 'Content-Type:text/html; charset='.$charset );
 
-	$title = $this->_xoops_class->get_config_by_name( 'sitename' ) .' - '. $this->_MODULE_NAME ;
+	$title = 'Check Multibyte';
 
-	$text  = $this->build_html_head( $this->sanitize($title), $charset );
+	$text  = $this->build_html_head( $title, $charset );
 	$text .= $this->build_html_body_begin();
-	$text .= 'charset : '.$charset."<br />\n";
-	$text .= _AM_WEBPHOTO_MULTIBYTE_SUCCESS ;
-	$text .= "<br /><br />\n";
-	$text .= '<input class="formButton" value="'. _CLOSE .'" type="button" onclick="javascript:window.close();" />';
+	$text .= 'charset : '.$charset."<br /><br />\n";
+	
+	if ( $this->mb_exists() ) {
+		$text .= "<b>mb_convert_encoding</b> <br />\n";
+		$text .= $this->mb_conv( _AM_WEBPHOTO_MULTIBYTE_SUCCESS, $charset );
+		$text .= "<br /><br />\n";
+	} else {
+		$text .= "<b>mb_convert_encoding</b> not exist <br /><br />\n";
+	}
+
+	if ( $this->i_exists() ) {
+		$text .= "<b>iconv</b> <br />\n";
+		$text .= $this->i_conv( _AM_WEBPHOTO_MULTIBYTE_SUCCESS, $charset );
+		$text .= "<br /><br />\n";
+	} else {
+		$text .= "<b>iconv</b> not exist <br /><br />\n";
+	}
+
+	$text .= '<input class="formButton" value="CLOSE" type="button" onclick="javascript:window.close();" />';
 	$text .= $this->build_html_body_end();
 
-	echo $this->conv( $text, $charset );
+	echo $text;
 }
 
 //---------------------------------------------------------
@@ -77,6 +94,38 @@ function http_output( $encoding )
 function conv( $str, $charset )
 {
 	return $this->_multibyte_class->convert_encoding( $str, $charset, _CHARSET );
+}
+
+function mb_exists()
+{
+	if ( function_exists('mb_convert_encoding') ) {
+		return true;
+	}
+	return false;
+}
+
+function mb_conv( $str, $to )
+{
+	if ( $to == _CHARSET ) {
+		return $str;
+	}
+	return mb_convert_encoding( $str, $to, _CHARSET );
+}
+
+function i_exists()
+{
+	if ( function_exists('iconv') ) {
+		return true;
+	}
+	return false;
+}
+
+function i_conv( $str, $to, $extra='//IGNORE' )
+{
+	if ( $to == _CHARSET ) {
+		return $str;
+	}
+	return iconv( _CHARSET, $to.$extra , $str );
 }
 
 // --- class end ---
