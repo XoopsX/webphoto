@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.11 2009/01/29 04:26:55 ohwada Exp $
+// $Id: checkconfigs.php,v 1.12 2009/08/08 08:40:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-08 K.OHWADA
+// _build_db_character()
 // 2009-01-25 K.OHWADA
 // webphoto_jodconverter
 // 2009-01-10 K.OHWADA
@@ -85,11 +87,12 @@ function _check_server()
 	$off = ' ( '. _AM_WEBPHOTO_RECOMMEND_OFF .' ) ' ;
 
 	echo "<h4>". _AM_WEBPHOTO_H4_ENVIRONMENT ."</h4>\n" ;
-
 	echo $this->_server_class->build_server();
 
-	echo "<h4>". _AM_WEBPHOTO_PHPDIRECTIVE ."</h4>\n";
+	echo '<h4>'. 'MySQL character' ."</h4>\n";
+	echo $this->_build_db_character();
 
+	echo "<h4>". _AM_WEBPHOTO_PHPDIRECTIVE ."</h4>\n";
 	echo $this->_server_class->build_php_secure( $off );
 	echo $this->_server_class->build_php_upload( $on );
 	echo $this->_server_class->build_php_etc();
@@ -347,6 +350,44 @@ function _print_green( $str )
 function _font_red( $str )
 {
 	return $this->_server_class->font_red( $str ) ;
+}
+
+function _build_db_character()
+{
+	$text = '';
+	list( $ret, $rows, $err ) = $this->_get_db_character();
+
+	if ( $ret ) {
+		foreach ( $rows as $row ) {
+			$text .= $this->sanitize( $row[0].': '.$row[1] )."<br />\n";
+		}
+	} else {
+		$text .= "sql failed <br />\n";
+		$text .= $err;
+		$text .= "<br/>\n";
+	}
+	return $text;
+}
+
+function _get_db_character()
+{
+	$handler = new webphoto_lib_handler();
+	$sql = "show variables like 'character\_set\_%'";
+
+	$arr = array();
+	$err = '';
+
+	$res = $handler->_db->queryF( $sql );
+	if ( !$res ) {
+		$err = $handler->_db->error();
+		return array(flase, $arr, $err);
+	}
+
+	while ( $row = $handler->_db->fetchRow($res) ) {
+		$arr[] = $row;
+	}
+
+	return array(true, $arr, $err);
 }
 
 // --- class end ---
