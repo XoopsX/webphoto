@@ -1,11 +1,55 @@
-$Id: readme_jp.txt,v 1.34 2009/05/31 18:22:59 ohwada Exp $
+$Id: readme_jp.txt,v 1.35 2009/08/09 05:47:09 ohwada Exp $
+
+=================================================
+Version: 1.72
+Date:   2009-08-08
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 文字コード
+(1) 文字コード関数にて mbstring と iconv を選択可能にした
+
+(2) 管理者画面の「文字コード変換が動くかどうか」を mbstring と iconv の両方で動作確認する
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=989&forum=13
+
+(3) 管理者画面にて MySQLの文字コード設定を表示した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1014&post_id=3766#forumpost3766
+
+2. 白い地図マーカーの背景色を透過にした
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=9&topic_id=988
+
+3. バグ修正
+(1) 「自分の投稿」をクリックしたとき投稿者一覧が表示される
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1001&forum=13
+
+(2) item テーブルの editor 項目が空のとき、編集フォームに説明文が表示されない
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
+
+● 使用上の注意
+1. 文字コード処理
+通常は、iconv が存在すれば、iconv を使います。
+iconv と mbstring の両方が存在するときに、mbstring を使いたいときは、
+preload ファイルにより設定します。
+
+preload ファイルをリネームする
+XOOPS_TRUST_PATH/modules/webphoto/preload/_multibyte.php (アンダーバーあり)
+ -> _multibyte.php (アンダーバーなし)
+
 
 =================================================
 Version: 1.71
 Date:   2009-06-01
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
@@ -329,7 +373,7 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=911
 1. jodconverter
 (1) preload ファイルをリネームする
 XOOPS_TRUST_PATH/modules/webphoto/preload/_jodconverter.php (アンダーバーあり)
- -> _jodconverter.php (アンダーバーあり)
+ -> jodconverter.php (アンダーバーなし)
 
 (2) 環境に合わせて、パスを設定する
 -----

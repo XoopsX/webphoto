@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.9 2009/05/31 18:22:59 ohwada Exp $
+// $Id: handler.php,v 1.10 2009/08/09 05:47:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-08 K.OHWADA
+// build_config_character()
 // 2009-05-30 K.OHWADA
 // perm_read in build_form_select_options()
 // 2009-05-17 K.OHWADA
@@ -176,6 +178,32 @@ function set_debug_sql( $val )
 function set_debug_error( $val )
 {
 	$this->_DEBUG_ERROR = intval($val);
+}
+
+//---------------------------------------------------------
+// config
+//---------------------------------------------------------
+function build_config_character()
+{
+	$text = '';
+	$rows = $this->get_config_character();
+
+	if ( is_array($rows) ) {
+		foreach ( $rows as $row ) {
+			$msg   = $row['Variable_name'].': '.$row['Value'];
+			$text .= $this->sanitize($msg)."<br />\n";
+		}
+	} else {
+		$text .= $this->highlight( 'sql failed' )."<br />\n";
+		$text .= $this->get_format_error();
+	}
+	return $text;
+}
+
+function get_config_character()
+{
+	$sql = "show variables like 'character\_set\_%'";
+	return $this->get_rows_by_sql( $sql, 0, 0, null, true );
 }
 
 //---------------------------------------------------------
@@ -409,20 +437,20 @@ function get_first_row_by_sql( $sql )
 	return false;
 }
 
-function get_row_by_sql( $sql )
+function get_row_by_sql( $sql, $force=false )
 {
-	$res = $this->query( $sql );
+	$res = $this->query( $sql, 0, 0, $force );
 	if ( !$res ) { return false; }
 
 	$row = $this->_db->fetchArray($res);
 	return $row; 
 }
 
-function get_rows_by_sql( $sql, $limit=0, $offset=0, $key=null )
+function get_rows_by_sql( $sql, $limit=0, $offset=0, $key=null, $force=false )
 {
 	$arr = array();
 
-	$res = $this->query( $sql, $limit, $offset );
+	$res = $this->query( $sql, $limit, $offset, $force );
 	if ( !$res ) { return false; }
 
 	while ( $row = $this->_db->fetchArray($res) ) 

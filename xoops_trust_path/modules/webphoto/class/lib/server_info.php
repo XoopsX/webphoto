@@ -1,5 +1,5 @@
 <?php
-// $Id: server_info.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: server_info.php,v 1.3 2009/08/09 05:47:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,6 +7,8 @@
 //=========================================================
 
 //---------------------------------------------------------
+// 2009-08-08 K.OHWADA
+// remove build_php_mbstring()
 // 2009-01-10 K.OHWADA
 // move "program version"
 //---------------------------------------------------------
@@ -64,37 +66,9 @@ function build_php_etc()
 	return $str;
 }
 
-function build_php_iconv()
-{
-	$str = "iconv extention: ". $this->build_func_load( 'iconv' ) ."<br />\n" ;
-	return $str;
-}
-
 function build_php_exif()
 {
 	$str = "exif extention: ". $this->build_func_load( 'exif_read_data' ) ."<br />\n" ;
-	return $str;
-}
-
-function build_php_mbstring()
-{
-	$str = '' ;
-	if ( function_exists('mb_internal_encoding') ) {
-		$str .= "mbstring.language: ". mb_language() ."<br />\n";
-		$str .= "mbstring.detect_order: ". implode (' ', mb_detect_order() ) ."<br />\n";
-		$str .= $this->build_ini_val( 'mbstring.http_input' ) ."<br />\n";
-		$str .= "mbstring.http_output: ". mb_http_output() ."<br />\n";
-		$str .= "mbstring.internal_encoding: ". mb_internal_encoding() ."<br />\n";
-		$str .= $this->build_ini_val( 'mbstring.script_encoding' ) ."<br />\n";
-		$str .= $this->build_ini_val( 'mbstring.substitute_character' ) ."<br />\n";
-		$str .= $this->build_ini_val( 'mbstring.func_overload' ) ."<br />\n";
-		$str .= $this->build_ini_int( 'mbstring.encoding_translation' ) ."<br />\n";
-		$str .= $this->build_ini_int( 'mbstring.strict_encoding' ) ."<br />\n";
-
-	} else {
-		$str .= $this->font_red( 'mbstring: not loaded' ) ."<br />\n";
-	}
-
 	return $str;
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
+// $Id: multibyte.php,v 1.7 2009/08/09 05:47:09 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-08 K.OHWADA
+// build_config_mbstring()
 // 2009-05-17 K.OHWADA
 // changed build_summary_with_search()
 // 2009-01-25 K.OHWADA
@@ -32,12 +34,16 @@ class webphoto_lib_multibyte
 	var $_JA_PERIOD  = null;
 	var $_JA_COMMA   = null;
 
+	var $_TRUST_NAME = 'WEBPHOTO';
+	var $_FUNC_SEL   = 1;	// iconv
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_lib_multibyte()
 {
-	$this->set_internal_encoding( _CHARSET );
+	$this->set_encoding( _CHARSET );
+	$this->set_func_sel_by_const();
 }
 
 function &getInstance()
@@ -50,31 +56,138 @@ function &getInstance()
 }
 
 //---------------------------------------------------------
+// func sel
+//---------------------------------------------------------
+function set_func_sel_by_const()
+{
+	$name = strtoupper( '_C_'.$this->_TRUST_NAME.'_MULTIBYTE_FUNC_SEL' );
+	if ( defined($name) ) {
+		$this->set_func_sel( constant($name) );
+	}
+}
+
+function set_func_sel( $val )
+{
+	$this->_FUNC_SEL = intval($val);
+}
+
+function get_func_sel()
+{
+	return $this->_FUNC_SEL;
+}
+
+//---------------------------------------------------------
+// config
+//---------------------------------------------------------
+function build_config_priority()
+{
+	$str = 'multibyte function priority: ';
+	if ( $this->_FUNC_SEL ) {
+		$str .= 'iconv';
+	} else {
+		$str .= 'mbstring';
+	}
+	$str .= "<br />\n";
+	return $str;
+}
+
+function build_config_iconv()
+{
+	$str = '';
+	if ( function_exists('iconv_get_encoding') ) {
+		$vars = iconv_get_encoding();
+		foreach( $vars as $k => $v ) {
+			$str .= 'iconv.'.$k.": ".$v."<br />\n";
+		}
+	} else {
+		$str .= $this->font_red( 'iconv: not loaded' ) ."<br />\n";
+	}
+	return $str;
+}
+
+function build_config_mbstring()
+{
+	$str = '' ;
+	if ( function_exists('mb_internal_encoding') ) {
+		$str .= "mbstring.language: ". mb_language() ."<br />\n";
+		$str .= "mbstring.detect_order: ". implode (' ', mb_detect_order() ) ."<br />\n";
+		$str .= $this->build_ini_val( 'mbstring.http_input' ) ."<br />\n";
+		$str .= "mbstring.http_output: ". mb_http_output() ."<br />\n";
+		$str .= "mbstring.internal_encoding: ". mb_internal_encoding() ."<br />\n";
+		$str .= $this->build_ini_val( 'mbstring.script_encoding' ) ."<br />\n";
+		$str .= $this->build_ini_val( 'mbstring.substitute_character' ) ."<br />\n";
+		$str .= $this->build_ini_val( 'mbstring.func_overload' ) ."<br />\n";
+		$str .= $this->build_ini_int( 'mbstring.encoding_translation' ) ."<br />\n";
+		$str .= $this->build_ini_int( 'mbstring.strict_encoding' ) ."<br />\n";
+
+	} else {
+		$str .= $this->font_red( 'mbstring: not loaded' ) ."<br />\n";
+	}
+
+	return $str;
+}
+
+function build_ini_int( $key )
+{
+	$str = $key .': '. intval( ini_get( $key ) ) ;
+	return $str;
+}
+
+function build_ini_val( $key )
+{
+	$str = $key .': '. ini_get( $key ) ;
+	return $str;
+}
+
+function font_red( $str )
+{
+	$str = '<span style="color:#ff0000; font-weight:bold;">'. $str .'</span>' ;
+	return $str;
+}
+
+//---------------------------------------------------------
 // encoding
 //---------------------------------------------------------
-function set_internal_encoding( $charset )
+function set_encoding( $charset )
+{
+	$this->i_set_encoding( 'input_encoding',    $charset );
+	$this->i_set_encoding( 'output_encoding',   $charset );
+	$this->i_set_encoding( 'internal_encoding', $charset );
+	$this->mb_set_internal_encoding( $charset );
+	return true;	// dummy
+}
+
+function i_set_encoding( $type, $charset )
 {
 	if ( function_exists('iconv_get_encoding') && 
 	     function_exists('iconv_set_encoding') ) {
 
-		$current = iconv_get_encoding( 'internal_encoding' );
-		$ret = iconv_set_encoding( 'internal_encoding', $charset );
+		$current = iconv_get_encoding( $type );
+		if ( strtolower($current) == strtolower($charset) ) {
+			return true;
+		}
+		$ret = iconv_set_encoding( $type, $charset );
 		if ( $ret === false ) {
-			iconv_set_encoding( 'internal_encoding', $current );
+			iconv_set_encoding( $type, $current );
 		}
 		return $ret;
 	}
+	return true;	// dummy
+}
 
+function mb_set_internal_encoding( $charset )
+{
 	if ( function_exists('mb_internal_encoding') ) {
-
 		$current = mb_internal_encoding();
+		if ( strtolower($current) == strtolower($charset) ) {
+			return true;
+		}
 		$ret = mb_internal_encoding( $charset );
 		if ( $ret === false ) {
 			mb_internal_encoding( $current );
 		}
 		return $ret;
 	}
-
 	return true;	// dummy
 }
 
@@ -132,10 +245,10 @@ function m_mb_detect_encoding( $str, $encoding_list=null, $strict=null )
 
 function exists_convert_encoding()
 {
-	if ( function_exists('iconv') ) {
+	if ( function_exists('mb_convert_encoding') ) {
 		return true;
 	}
-	if ( function_exists('mb_convert_encoding') ) {
+	if ( function_exists('iconv') ) {
 		return true;
 	}
 	return false;
@@ -146,22 +259,28 @@ function exists_convert_encoding()
 //---------------------------------------------------------
 function convert_to_utf8( $str, $encoding=_CHARSET )
 {
-	if ( function_exists('iconv') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv') ) {
 		return $this->i_iconv( $encoding, 'UTF-8' , $str );
 	}
 	if ( function_exists('mb_convert_encoding') ) {
 		return mb_convert_encoding( $str, $encoding, 'UTF-8' );
+	}
+	if ( function_exists('iconv') ) {
+		return $this->i_iconv( $encoding, 'UTF-8' , $str );
 	}
 	$str = utf8_encode( $str );
 }
 
 function convert_from_utf8( $str, $encoding=_CHARSET )
 {
-	if ( function_exists('iconv') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv') ) {
 		return $this->i_iconv( 'UTF-8', $encoding , $str );
 	}
 	if ( function_exists('mb_convert_encoding') ) {
 		return mb_convert_encoding( $str, 'UTF-8', $encoding );
+	}
+	if ( function_exists('iconv') ) {
+		return $this->i_iconv( 'UTF-8', $encoding , $str );
 	}
 	$str = utf8_decode($str);
 }
@@ -171,11 +290,14 @@ function convert_encoding( $str, $to, $from )
 	if ( $to == $from ) {
 		return $str;
 	}
-	if ( function_exists('iconv') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv') ) {
 		return $this->i_iconv( $from, $to, $str );
 	}
 	if ( function_exists('mb_convert_encoding') ) {
 		return mb_convert_encoding( $str, $to, $from );
+	}
+	if ( function_exists('iconv') ) {
+		return $this->i_iconv( $from, $to, $str );
 	}
 	return $str;
 }
@@ -225,11 +347,14 @@ function m_mb_convert_kana( $str, $option="KV", $encoding=null )
 //---------------------------------------------------------
 function str_len( $str, $charset=null )
 {
-	if ( function_exists('iconv_strlen') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv_strlen') ) {
 		return $this->i_iconv_strlen( $str, $charset );
 	}
 	if ( function_exists('mb_strlen') ) {
 		return $this->m_mb_strlen( $str, $charset );
+	}
+	if ( function_exists('iconv_strlen') ) {
+		return $this->i_iconv_strlen( $str, $charset );
 	}
 	return strlen( $str );
 }
@@ -263,11 +388,14 @@ function m_mb_strlen( $str, $encoding=null )
 //---------------------------------------------------------
 function str_pos( $haystack, $needle, $offset=0, $charset=null )
 {
-	if ( function_exists('iconv_strpos') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv_strpos') ) {
 		return $this->i_iconv_strpos( $haystack, $needle, $offset, $charset );
 	}
 	if ( function_exists('mb_strpos') ) {
 		return $this->m_mb_strpos( $haystack, $needle, $offset, $charset );
+	}
+	if ( function_exists('iconv_strpos') ) {
+		return $this->i_iconv_strpos( $haystack, $needle, $offset, $charset );
 	}
 	return strpos( $haystack, $needle, $offset );
 }
@@ -305,11 +433,14 @@ function m_mb_strpos( $haystack, $needle, $offset=0, $encoding=null )
 //---------------------------------------------------------
 function str_rpos( $haystack, $needle, $offset=0, $charset=null )
 {
-	if ( function_exists('iconv_strrpos') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv_strrpos') ) {
 		return $this->i_iconv_strrpos( $haystack, $needle, $offset, $charset );
 	}
 	if ( function_exists('mb_strrpos') ) {
 		return $this->m_mb_strrpos( $haystack, $needle, $offset, $charset );
+	}
+	if ( function_exists('iconv_strrpos') ) {
+		return $this->i_iconv_strrpos( $haystack, $needle, $offset, $charset );
 	}
 	return strrpos( $haystack, $needle, $offset );
 }
@@ -343,11 +474,14 @@ function m_mb_strrpos( $haystack, $needle, $offset=0, $encoding=null )
 //---------------------------------------------------------
 function sub_str( $str, $start, $length=0, $charset=null )
 {
-	if ( function_exists('iconv_substr') ) {
+	if ( $this->_FUNC_SEL && function_exists('iconv_substr') ) {
 		return $this->i_iconv_substr( $str, $start, $length, $charset );
 	}
 	if ( function_exists('mb_substr') ) {
 		return $this->m_mb_substr( $str, $start, $length, $charset );
+	}
+	if ( function_exists('iconv_substr') ) {
+		return $this->i_iconv_substr( $str, $start, $length, $charset );
 	}
 	return substr( $str, $start, $length );
 }

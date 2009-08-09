@@ -1,11 +1,57 @@
-$Id: readme_en.txt,v 1.34 2009/05/31 18:22:59 ohwada Exp $
+$Id: readme_en.txt,v 1.35 2009/08/09 05:47:09 ohwada Exp $
+
+=================================================
+Version: 1.72
+Date:   2009-08-08
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Charactor Code
+(1) The admin can choice mbstring or iconv for character code fucntion
+
+(2) Check in both of mbstring and iconv function
+in "Check that 'Charset Convert' is working correctly in your server"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=989&forum=13
+
+(3) Show MySQL Config in admin cp
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1014&post_id=3766#forumpost3766
+
+2. Changed the background of the white map marker into transparent
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=9&topic_id=988
+
+3. Bug fix
+(1) show "Submitter List" when click "My Photos"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1001&forum=13
+
+(2) not show the description in edit form 
+when editor field of item table is empty
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
+
+* Notice for usage *
+1. Charactor Code Function
+In generaly webphoto uses "iconv" if iconv exists.
+if you want to use "mbstring" when both of mbstring and iconv exist
+you can choice with preload file.
+
+rename preload file.
+XOOPS_TRUST_PATH/modules/webphoto/preload/_multibyte.php (with undebar)
+ -> multibyte.php (without undebar)
+
 
 =================================================
 Version: 1.71
 Date:   2009-06-01
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -335,7 +381,7 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=5&topic_id=911
 * Notice for usage *
 1. jodconverter
 (1) rename preload file.
-XOOPS_TRUUST_PATH/modules/webphoto/preload/_jodconverter.php (with undebar)
+XOOPS_TRUST_PATH/modules/webphoto/preload/_jodconverter.php (with undebar)
  -> jodconverter.php (without undebar)
 
 (2) set path according to your enviroment

@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.12 2009/08/08 08:40:27 ohwada Exp $
+// $Id: checkconfigs.php,v 1.13 2009/08/09 05:47:08 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -38,6 +38,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_checkconfigs extends webphoto_base_this
 {
 	var $_server_class ;
+	var $_multibyte_class ;
 
 	var $_ini_safe_mode = 0;
 
@@ -52,7 +53,8 @@ function webphoto_admin_checkconfigs( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_server_class =& webphoto_lib_server_info::getInstance();
+	$this->_server_class    =& webphoto_lib_server_info::getInstance();
+	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -89,17 +91,22 @@ function _check_server()
 	echo "<h4>". _AM_WEBPHOTO_H4_ENVIRONMENT ."</h4>\n" ;
 	echo $this->_server_class->build_server();
 
-	echo '<h4>'. 'MySQL character' ."</h4>\n";
-	echo $this->_build_db_character();
+	echo '<h4>'. _AM_WEBPHOTO_MYSQL_CONFIG ."</h4>\n";
+	$handler = new webphoto_lib_handler();
+	echo $handler->build_config_character();
 
 	echo "<h4>". _AM_WEBPHOTO_PHPDIRECTIVE ."</h4>\n";
 	echo $this->_server_class->build_php_secure( $off );
 	echo $this->_server_class->build_php_upload( $on );
 	echo $this->_server_class->build_php_etc();
 	echo $this->_server_class->build_php_exif();
-	echo $this->_server_class->build_php_iconv();
+
+	echo '<h4>'. _AM_WEBPHOTO_MULTIBYTE_CONFIG ."</h4>\n";
+	echo $this->_multibyte_class->build_config_priority();
 	echo "<br />\n";
-	echo $this->_server_class->build_php_mbstring();
+	echo $this->_multibyte_class->build_config_mbstring();
+	echo "<br />\n";
+	echo $this->_multibyte_class->build_config_iconv();
 }
 
 function _check_mulitibyte_link()
@@ -350,44 +357,6 @@ function _print_green( $str )
 function _font_red( $str )
 {
 	return $this->_server_class->font_red( $str ) ;
-}
-
-function _build_db_character()
-{
-	$text = '';
-	list( $ret, $rows, $err ) = $this->_get_db_character();
-
-	if ( $ret ) {
-		foreach ( $rows as $row ) {
-			$text .= $this->sanitize( $row[0].': '.$row[1] )."<br />\n";
-		}
-	} else {
-		$text .= "sql failed <br />\n";
-		$text .= $err;
-		$text .= "<br/>\n";
-	}
-	return $text;
-}
-
-function _get_db_character()
-{
-	$handler = new webphoto_lib_handler();
-	$sql = "show variables like 'character\_set\_%'";
-
-	$arr = array();
-	$err = '';
-
-	$res = $handler->_db->queryF( $sql );
-	if ( !$res ) {
-		$err = $handler->_db->error();
-		return array(flase, $arr, $err);
-	}
-
-	while ( $row = $handler->_db->fetchRow($res) ) {
-		$arr[] = $row;
-	}
-
-	return array(true, $arr, $err);
 }
 
 // --- class end ---
