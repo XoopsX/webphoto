@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.15 2009/05/17 09:30:42 ohwada Exp $
+# $Id: mysql.sql,v 1.16 2009/08/22 04:10:07 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-08-22 K.OHWADA
+# item_exif TEXT -> BLOB
 # 2009-05-05 K.OHWADA
 # video/avi
 # 2009-01-10 K.OHWADA
@@ -80,7 +82,7 @@ CREATE TABLE item (
   item_text_9  VARCHAR(255) NOT NULL DEFAULT '',
   item_text_10 VARCHAR(255) NOT NULL DEFAULT '',
   item_description TEXT NOT NULL,
-  item_exif   TEXT NOT NULL,
+  item_exif   BLOB NOT NULL,
   item_search TEXT NOT NULL,
   item_time_publish INT(10) UNSIGNED NOT NULL DEFAULT '0',
   item_time_expire  INT(10) UNSIGNED NOT NULL DEFAULT '0',

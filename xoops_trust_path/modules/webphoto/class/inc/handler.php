@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.13 2009/04/11 14:23:34 ohwada Exp $
+// $Id: handler.php,v 1.14 2009/08/22 04:10:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-22 K.OHWADA
+// preg_match_column_type()
 // 2009-04-10 K.OHWADA
 // change build_show_file_image()
 // 2009-01-25 K.OHWADA
@@ -269,34 +271,6 @@ function exists_table( $table )
 	return false;
 }
 
-function exists_column( $table, $column )
-{
-	$row = $this->get_column_row( $table, $column );
-	if ( is_array($row) ) {
-		return true;
-	}
-	return false;
-}
-
-function get_column_row( $table, $column )
-{
-	$sql = "SHOW COLUMNS FROM ". $table. " LIKE ". $this->quote($column);
-
-	$res =& $this->query($sql); 
-	if ( !$res ) {
-		return false;
-	}
-
-	while ( $row = $this->_db->fetchArray( $res ) )
-	{
-		if ( $row['Field'] == $column ) {
-			return $row;
-		}
-	}
-
-	return false;
-}
-
 //---------------------------------------------------------
 // handler
 //---------------------------------------------------------
@@ -355,6 +329,71 @@ function quote( $str )
 {
 	$str = "'". addslashes($str) ."'";
 	return $str;
+}
+
+//---------------------------------------------------------
+// column
+//---------------------------------------------------------
+function preg_match_column_type( $table, $column, $type )
+{
+	$pattern = '/'. preg_quote($type) .'/i';
+	$subject = $this->get_column_type( $table, $column );
+	if ( preg_match( $pattern, $subject ) ) {
+		return true;
+	}
+	return false;
+}
+
+function preg_match_column_type_array( $table, $column, $type_array )
+{
+	$subject = $this->get_column_type( $table, $column );
+	foreach( $type_array as $type ) 
+	{
+		$pattern = '/'. preg_quote($type) .'/i';
+		if ( preg_match( $pattern, $subject ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function get_column_type( $table, $column )
+{
+	$row = $this->get_column_row( $table, $column );
+	if ( isset( $row['Type'] ) ) {
+		return  $row['Type'];
+	}
+	return false;
+}
+
+function exists_column( $table, $column )
+{
+	$row = $this->get_column_row( $table, $column );
+	if ( is_array($row) ) {
+		return true;
+	}
+	return false;
+}
+
+function get_column_row( $table, $column )
+{
+	$false = false;
+
+	$sql = "SHOW COLUMNS FROM ". $table. " LIKE ". $this->quote($column);
+
+	$res = $this->query($sql); 
+	if ( !$res ) {
+		return $false;
+	}
+
+	while ( $row = $this->_db->fetchArray( $res ) ) 
+	{
+		if ( $row['Field'] == $column ) {
+			return $row;
+		}
+	}
+
+	return $false;
 }
 
 //---------------------------------------------------------

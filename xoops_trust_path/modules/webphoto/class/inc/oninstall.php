@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
+// $Id: oninstall.php,v 1.16 2009/08/22 04:10:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-22 K.OHWADA
+// _item_modify_column_173()
 // 2009-01-10 K.OHWADA
 // _item_add_column_110()
 // 2009-01-04 K.OHWADA
@@ -580,6 +582,7 @@ function _item_update()
 	$this->_item_chang_column_080();
 	$this->_item_add_column_100();
 	$this->_item_add_column_110();
+	$this->_item_modify_column_173();
 }
 
 function _item_add_column_050()
@@ -797,6 +800,27 @@ function _item_add_column_110()
 
 	if ( $ret ) {
 		$this->_set_msg( 'Add item_content in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_modify_column_173()
+{
+// return if match column type
+	if ( $this->preg_match_column_type( $this->_table_item, 'item_exif', 'BLOB' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." MODIFY " ;
+	$sql .= "item_exif BLOB NOT NULL ";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Modify item_exif in <b>'. $this->_table_item .'</b>' );
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
 		return false;
