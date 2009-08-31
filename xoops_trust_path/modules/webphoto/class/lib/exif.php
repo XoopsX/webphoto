@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.6 2008/08/25 19:28:05 ohwada Exp $
+// $Id: exif.php,v 1.7 2009/08/31 16:41:25 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-30 K.OHWADA
+// calc_fraction()
 // 2008-08-24 K.OHWADA
 // parse_gps() -> parse_gps_docomo()
 // 2008-08-01 K.OHWADA
@@ -20,6 +22,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_lib_exif
+// http://it.jeita.or.jp/document/publica/standard/exif/japanese/jeida49ja.htm
 // http://park2.wakwak.com/~tsuruzoh/Computer/Digicams/exif.html
 //=========================================================
 class webphoto_lib_exif
@@ -218,15 +221,35 @@ function parse_gps_docomo_array( $sign, $arr )
 {
 	$fig = 0;
 	if ( isset( $arr[0] ) ) {
-		$fig += floatval( $arr[0] );
+		$fig += $this->calc_fraction( $arr[0] );
 	}
 	if ( isset( $arr[1] ) ) {
-		$fig += floatval( $arr[1] ) / 60 ;
+		$fig += $this->calc_fraction( $arr[1] ) / 60 ;
 	}
 	if ( isset( $arr[2] ) ) {
-		$fig += floatval( $arr[2] ) / 3600000 ;
+		$fig += $this->calc_fraction( $arr[2] ) / 3600 ;
 	}
 	$fig = $sign * $fig;
+	return $fig;
+}
+
+function calc_fraction( $val )
+{
+	$arr = explode( '/', $val );
+	$fig = 0;
+	if ( isset( $arr[0] ) ) {
+		$numerator = intval( $arr[0] );
+		if ( isset( $arr[1] ) ) {
+			$denominator = intval( $arr[1] );
+			if ( $denominator > 0 ) {
+				$fig = $numerator / $denominator ;
+			} else {
+				$fig = $numerator ;
+			}
+		} else {
+			$fig = $numerator ;
+		}
+	}
 	return $fig;
 }
 
