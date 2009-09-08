@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
+// $Id: photo_public.php,v 1.7 2009/09/08 16:14:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-09-06 K.OHWADA
+// add ns ew in get_rows_by_gmap_area()
 // 2009-05-17 K.OHWADA
 // _cfg_cat_child
 // 2009-04-10 K.OHWADA
@@ -302,19 +304,10 @@ function get_rows_by_gmap_latest( $limit=0, $offset=0, $key=false )
 		'gmap_latest', null, $this->_ORDERBY_LATEST, $limit, $offset, $key ) ;
 }
 
-function get_rows_by_gmap_location( $item_row, $limit=0, $offset=0 )
-{
-	$id  = $item_row['item_id'];
-	$lat = $item_row['item_gmap_latitude'];
-	$lon = $item_row['item_gmap_longitude'];
-
-	return $this->get_rows_by_gmap_area( $id, $lat, $lon );
-}
-
-function get_rows_by_gmap_area( $id, $lat, $lon, $limit=0, $offset=0 )
+function get_rows_by_gmap_area( $id, $lat, $lon, $ns, $ew, $limit=0, $offset=0, $key=false )
 {
 	return $this->get_rows_by_name_param_orderby( 
-		'gmap_area', array( $id, $lat, $lon ), $this->_ORDERBY_ASC, $limit, $offset ) ;
+		'gmap_area', array( $id, $lat, $lon, $ns, $ew ), $this->_ORDERBY_ASC, $limit, $offset, $key ) ;
 }
 
 function get_rows_by_name_param_orderby( $name, $param, $orderby, $limit=0, $offset=0, $key=false )

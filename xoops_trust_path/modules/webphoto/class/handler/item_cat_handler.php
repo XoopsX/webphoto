@@ -1,5 +1,5 @@
 <?php
-// $Id: item_cat_handler.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
+// $Id: item_cat_handler.php,v 1.4 2009/09/08 16:14:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-09-06 K.OHWADA
+// add ns ew in build_where_item_gmap_area()
 // 2009-04-10 K.OHWADA
 // add key in get_rows_item_cat_by_where_orderby()
 //---------------------------------------------------------
@@ -29,9 +31,6 @@ class webphoto_item_cat_handler extends webphoto_lib_handler
 	var $_PERM_ALLOW_ALL  = _C_WEBPHOTO_PERM_ALLOW_ALL;
 	var $_PERM_DENOY_ALL  = _C_WEBPHOTO_PERM_DENOY_ALL;
 	var $_PERM_SEPARATOR  = _C_WEBPHOTO_PERM_SEPARATOR;
-
-	var $_AREA_NS = 1.0;
-	var $_AREA_EW = 1.0;
 
 //---------------------------------------------------------
 // constructor
@@ -234,8 +233,6 @@ function build_where_photo_by_catid( $cat_id )
 
 function build_where_by_catid( $cat_id )
 {
-//echo " build_where_by_catid( $cat_id ) ";
-
 	$where  = $this->build_where_public();
 	$where .= ' AND item_cat_id='.intval($cat_id);
 	return $where;
@@ -460,11 +457,11 @@ function build_where_by_gmap_area( $param )
 		return null;
 	}
 
-	list( $id, $lat, $lon ) = $param ;
+	list( $id, $lat, $lon, $ns, $ew ) = $param ;
 
 	$where   = $this->build_where_public();
 	$where  .= ' AND '. $this->build_where_item_gmap();
-	$where  .= ' AND '. $this->build_where_item_gmap_area( $lat, $lon );
+	$where  .= ' AND '. $this->build_where_item_gmap_area( $lat, $lon, $ns, $ew );
 	$where  .= ' AND item_id <> '. intval($id);
 
 	return $where;
@@ -478,12 +475,12 @@ function build_where_item_gmap()
 	return $where;
 }
 
-function build_where_item_gmap_area( $lat, $lon )
+function build_where_item_gmap_area( $lat, $lon, $ns, $ew )
 {
-	$north = $this->adjust_latitude(  $lat + $this->_AREA_NS );
-	$south = $this->adjust_latitude(  $lat - $this->_AREA_NS );
-	$east  = $this->adjust_longitude( $lon + $this->_AREA_EW );
-	$west  = $this->adjust_longitude( $lon - $this->_AREA_EW );
+	$north = $this->adjust_latitude(  $lat + $ns );
+	$south = $this->adjust_latitude(  $lat - $ns );
+	$east  = $this->adjust_longitude( $lon + $ew );
+	$west  = $this->adjust_longitude( $lon - $ew );
 
 	$where  = ' item_gmap_latitude > '.floatval($south);
 	$where .= ' AND item_gmap_latitude  < '.floatval($north);

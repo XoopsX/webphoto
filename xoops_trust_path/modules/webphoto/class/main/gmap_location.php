@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.7 2009/04/11 14:23:34 ohwada Exp $
+// $Id: gmap_location.php,v 1.8 2009/09/08 16:14:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-09-06 K.OHWADA
+// _get_item_rows_by_gmap_area()
 // 2009-04-10 K.OHWADA
 // webphoto_photo_public
 // 2009-01-25 K.OHWADA
@@ -38,6 +40,12 @@ class webphoto_main_gmap_location extends webphoto_base_this
 	var $_TEMPLATE     = null;
 	var $_GMAP_HEIGHT  = 300;
 	var $_OPNER_MODE   = 'parent';
+
+	var $_AREA_NUM       = 10;
+	var $_AREA_WIDE_NS   = 0.1;	//  11km
+	var $_AREA_WIDE_EW   = 0.1;	//   9km
+	var $_AREA_NARROW_NS = 0.01;	// 1.1km
+	var $_AREA_NARROW_EW = 0.01;	// 0.9km
 
 //---------------------------------------------------------
 // constructor
@@ -162,16 +170,39 @@ function _build_list_location()
 {
 	$get_photo_id = $this->_post_class->get_get_int('photo_id');
 
-	$show_gmap = false;
-	$gmap_list = null;
+	$show_gmap   = false;
+	$gmap_list   = null;
+	$flag_narrow = false;
+	$flag_wide   = false;
 
 	$item_row = $this->_item_handler->get_cached_row_by_id( $get_photo_id );
 	if ( !is_array($item_row) || !count($item_row) ) {
 		return array( $show_gmap, $gmap_list );
 	}
 
-	$item_rows = $this->_public_class->get_rows_by_gmap_location( $item_row );
-	if ( !is_array($item_rows) || !count($item_rows) ) {
+// narrow area
+	$item_rows_narrow = $this->_get_item_rows_by_gmap_area(
+		$item_row, $this->_AREA_NARROW_NS,  $this->_AREA_NARROW_EW );
+	if ( is_array($item_rows_narrow) && count($item_rows_narrow) ) {
+		$flag_narrow = true;
+	}
+
+// wide area if less than limit
+	if ( !$flag_narrow || ( count($item_rows_narrow) < $this->_AREA_NUM ) ) {
+		$item_rows_wide = $this->_get_item_rows_by_gmap_area(
+			$item_row, $this->_AREA_WIDE_NS,  $this->_AREA_WIDE_EW );
+		if ( is_array($item_rows_wide) && count($item_rows_wide) ) {
+			$flag_wide = true;
+		}
+	}
+
+	if ( $flag_narrow && $flag_wide ) {
+		$item_rows = $this->_merge_item_rows( $item_rows_narrow, $item_rows_wide );
+	} elseif ( $flag_narrow ) {
+		$item_rows = $item_rows_narrow ;
+	} elseif ( $flag_wide ) {
+		$item_rows = $item_rows_wide ;
+	} else {
 		return array( $show_gmap, $gmap_list );
 	}
 
@@ -194,6 +225,28 @@ function _build_list_location()
 	}
 
 	return array( $show_gmap, $gmap_list );
+}
+
+function _get_item_rows_by_gmap_area( $item_row, $ns, $ew )
+{
+	$id  = $item_row['item_id'];
+	$lat = $item_row['item_gmap_latitude'];
+	$lon = $item_row['item_gmap_longitude'];
+
+	return $this->_public_class->get_rows_by_gmap_area( 
+		 $id, $lat, $lon, $ns, $ew, $this->_AREA_NUM, 0, true );
+}
+
+function _merge_item_rows( $arr1, $arr2 )
+{
+	$arr = $arr1;
+	foreach ( $arr2 as $k => $v )
+	{
+		if ( !isset( $arr[ $k ] ) ) {
+			$arr[ $k ] = $v ;
+		}
+	}
+	return $arr;
 }
 
 function _constant( $name )
