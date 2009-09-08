@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_view.php,v 1.4 2009/07/18 18:19:07 ohwada Exp $
+// $Id: comment_view.php,v 1.5 2009/09/08 16:18:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-09-01 K.OHWADA
+// BUG: not show reply in guest on XCL
 // 2009-07-18 K.OHWADA
 // BUG: not show child in thead
 // 2008-07-01 K.OHWADA
@@ -22,7 +24,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 include_once XOOPS_ROOT_PATH.'/include/comment_constants.php';
 include_once XOOPS_ROOT_PATH.'/class/commentrenderer.php';
 
-// XOOPS Cube 2.1
+// XOOPS Cube Legacy 2.1
 if( defined( 'XOOPS_CUBE_LEGACY' ) ) {
 	include_once XOOPS_ROOT_PATH.'/modules/legacy/include/xoops2_system_constants.inc.php';
 
@@ -259,12 +261,17 @@ function assgin_tmplate()
 	unset($postcomment_link);
 	$navbar .= '>'. _NEWESTFIRST .'</option></select><input type="hidden" name="'.$comment_config['itemName'].'" value="'.$com_itemid.'" /> <input type="submit" value="'. _CM_REFRESH .'" class="formButton" />';
 
+// BUG: not show reply in guest on XCL
+// for XCL
+	$xoopsTpl->assign('com_anonpost', $this->_xoops_module_config_com_anonpost);
+
 	if ( $this->_xoops_module_config_com_anonpost || $this->_xoops_uid ) {
 
 // absolute URL
 //		$postcomment_link = 'comment_new.php?com_itemid='.$com_itemid.'&amp;com_order='.$com_order.'&amp;com_mode='.$com_mode;
 		$postcomment_link = $this->_MODULE_URL.'/index.php?fct=comment_new&amp;com_itemid='.$com_itemid.'&amp;com_order='.$com_order.'&amp;com_mode='.$com_mode;
 
+// for xoops 2.0
 		$xoopsTpl->assign('anon_canpost', true);
 	}
 
