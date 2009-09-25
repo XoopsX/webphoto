@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.8 2009/05/31 18:22:59 ohwada Exp $
+// $Id: index.php,v 1.9 2009/09/25 22:50:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-09-25 K.OHWADA
+// Notice [PHP]: Undefined variable: main_rows
 // 2009-05-30 K.OHWADA
 // random_more_url_s -> show_random_more
 // 2009-04-10 K.OHWADA
@@ -57,6 +59,10 @@ function main()
 {
 	$show_photo      = false;
 	$main_photos     = null;
+
+// Notice [PHP]: Undefined variable: main_rows
+	$main_rows       = null;
+
 	$timeline_photos = null ;
 
 	$mode = $this->_get_action();

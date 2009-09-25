@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.1 2009/03/06 03:54:16 ohwada Exp $
+// $Id: rss.php,v 1.2 2009/09/25 22:50:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-30 K.OHWADA
+// user name
 // 2009-02-28 K.OHWADA
 // use_pathinfo
 // georss
@@ -291,6 +293,10 @@ function build_items()
 			'category'     => $this->xml_text( $cat_row['cat_title'] ),
 			'pubdate'      => $this->xml_text( $pubdate ), 
 			'description'  => $this->xml_text( $desc ),
+
+// user name
+			'dc_creator'   => XoopsUser::getUnameFromId( $row['item_uid'] ),
+
 			'geo_lat'      => $geo_lat ,
 			'geo_long'     => $geo_long ,
 			'georss_point' => $georss_point ,

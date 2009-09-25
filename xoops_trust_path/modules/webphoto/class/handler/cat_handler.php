@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.10 2009/05/31 18:22:59 ohwada Exp $
+// $Id: cat_handler.php,v 1.11 2009/09/25 22:50:44 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-08-30 K.OHWADA
+// Warning [PHP]: Missing argument
 // 2009-05-30 K.OHWADA
 // changed build_options_with_perm_post()
 // 2009-05-17 K.OHWADA
@@ -410,15 +412,18 @@ function build_selbox_pid( $pid )
 	return $this->make_my_sel_box( 'cat_title', '', $pid, 1, 'cat_pid' );
 }
 
-function build_selbox_with_perm_post( $cat_id, $sel_name )
+function build_selbox_with_perm_post( $cat_id, $sel_name, $show=false )
 {
 	$str  = $this->build_form_select_tag( $sel_name );
-	$str .= $this->build_options_with_perm_post( $cat_id );
+
+// Warning [PHP]: Missing argument
+	$str .= $this->build_options_with_perm_post( $cat_id, $show );
+
 	$str .= $this->build_form_select_tag_close();
 	return $str;
 }
 
-function build_options_with_perm_post( $value, $show )
+function build_options_with_perm_post( $value, $show=false )
 {
 	$rows = $this->get_all_tree_array();
 	return  $this->build_form_select_options_with_perm_post( $rows, 'cat_title', $value, 'cat_perm_post', 'cat_perm_read', $show );

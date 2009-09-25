@@ -1,11 +1,48 @@
-$Id: readme_en.txt,v 1.35 2009/08/09 05:47:09 ohwada Exp $
+$Id: readme_en.txt,v 1.36 2009/09/25 22:50:44 ohwada Exp $
+
+=================================================
+Version: 1.73
+Date:   2009-09-25
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. New Feature
+(1) add "submitter" in RSS
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1020&forum=13
+
+(2) add Google Map in mobile mode
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1026&forum=13
+
+2. Bug Fix
+(1) change the method of getting location information from EXIF
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=996&forum=13
+
+(2) Incorrect string when save EXIF in DB
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1014&forum=13
+
+(3) limit the number of markers displayed in map when edit
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1023&forum=13
+
+(4) not show reply comment when guest in XCL
+
+3. Database structure
+(1) item table : item_exif TEXT -> BLOB
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.72
 Date:   2009-08-08
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

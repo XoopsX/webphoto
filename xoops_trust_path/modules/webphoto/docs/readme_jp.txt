@@ -1,11 +1,48 @@
-$Id: readme_jp.txt,v 1.35 2009/08/09 05:47:09 ohwada Exp $
+$Id: readme_jp.txt,v 1.36 2009/09/25 22:50:44 ohwada Exp $
+
+=================================================
+Version: 1.73
+Date:   2009-09-26
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 機能追加
+(1) RSSに投稿者名を表示した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1020&forum=13
+
+(2) 携帯電話に Google Map を表示した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1026&forum=13
+
+2. バグ修正
+(1) EXIFから位置情報を抽出する方法を変更した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=996&forum=13
+
+(2) EXIFをDBに保存するときに、不正な文字のエラーになる
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1014&forum=13
+
+(3) 編集時に表示される近辺のマーカーの数を制限した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1023&forum=13
+
+(4) XCL にて、ゲストのとき、コメント reply が表示されない
+
+3. データベース構造
+(1) item テーブル: item_exif TEXT -> BLOB
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.72
 Date:   2009-08-08
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
@@ -44,7 +81,7 @@ preload ファイルにより設定します。
 
 preload ファイルをリネームする
 XOOPS_TRUST_PATH/modules/webphoto/preload/_multibyte.php (アンダーバーあり)
- -> _multibyte.php (アンダーバーなし)
+ -> multibyte.php (アンダーバーなし)
 
 
 =================================================
