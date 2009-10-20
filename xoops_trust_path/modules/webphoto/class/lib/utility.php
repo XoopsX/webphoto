@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.13 2009/04/21 15:14:54 ohwada Exp $
+// $Id: utility.php,v 1.14 2009/10/20 10:24:51 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-20 K.OHWADA
+// array_to_key_value()
 // 2009-04-21 K.OHWADA
 // chmod_file()
 // 2009-04-10 K.OHWADA
@@ -204,7 +206,7 @@ function array_merge_unique( $arr1, $arr2, $key_name )
 {
 	$arr_ret = null;
 	if ( is_array($arr1) && count($arr1)  ) {
-		$arr_ret = $arr1 ;
+		$arr_ret = $this->array_to_key_value( $arr1, $key_name );
 
 		if ( is_array($arr2) && count($arr2) ) {
 			foreach ( $arr2 as $a ) 
@@ -217,9 +219,25 @@ function array_merge_unique( $arr1, $arr2, $key_name )
 		}
 
 	} elseif ( is_array($arr2) && count($arr2) ) {
-		$arr_ret = $arr2;
+		$arr_ret = $this->array_to_key_value( $arr2, $key_name );
 	}
 
+	return $arr_ret;
+}
+
+function array_to_key_value( $arr, $key_name )
+{
+	$arr_ret = null;
+	if ( is_array($arr) && count($arr)  ) {
+		return $arr_ret;
+	}
+
+	$arr_ret = array();
+	foreach ( $arr as $a ) 
+	{
+		$key_val = $a[ $key_name ] ;
+		$arr_ret[ $key_val ] = $a ;
+	}
 	return $arr_ret;
 }
 
