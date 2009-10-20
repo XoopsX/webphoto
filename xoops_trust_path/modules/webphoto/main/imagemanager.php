@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
+// $Id: imagemanager.php,v 1.5 2009/10/20 10:22:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-20 K.OHWADA
+// Fatal error: Class 'webphoto_lib_multibyte' not found
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // public.php
@@ -39,6 +41,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'preload/debug.php' );
 webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
