@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.8 2009/03/22 01:47:52 ohwada Exp $ */
+/* $Id: default.css,v 1.9 2009/11/06 20:05:51 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -311,7 +311,8 @@ div.webphoto_gmap_normal
 	width:   98%;
 	height:  300px;
 	margin:  5px;
-	padding: 5px;
+	padding: 0px;
+	overflow: hidden;
 }
 
 div.webphoto_gmap_large
@@ -320,7 +321,8 @@ div.webphoto_gmap_large
 	width:   98%;
 	height:  600px;
 	margin:  5px;
-	padding: 5px;
+	padding: 0px;
+	overflow: hidden;
 }
 
 div.webphoto_gmap_navi
