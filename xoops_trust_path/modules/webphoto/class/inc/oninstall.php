@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.17 2009/11/06 18:04:17 ohwada Exp $
+// $Id: oninstall.php,v 1.18 2009/11/06 19:05:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -909,7 +909,7 @@ function _mime_add_column_kind_etc()
 	}
 
 	$sql  = "ALTER TABLE ". $this->_table_mime ." ADD ( ";
-	$sql .= "mime_kind int(4) NOT NULL default '', ";
+	$sql .= "mime_kind int(4) NOT NULL default '0', ";
 	$sql .= "mime_option varchar(255) NOT NULL default '' ";
 	$sql .= " )";
 
