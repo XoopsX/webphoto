@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
+// $Id: header_submit.php,v 1.9 2009/11/06 18:26:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
