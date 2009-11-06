@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.37 2009/11/06 18:04:17 ohwada Exp $
+$Id: readme_jp.txt,v 1.38 2009/11/06 20:21:36 ohwada Exp $
 
 =================================================
 Version: 1.80
@@ -33,7 +33,10 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1032&forum=13
 (2) timeline の画像がダブッて表示される
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1033&forum=13
 
-(3) player id が正しく選択されない
+(3) 地図の下に隙間が出来る
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?&topic_id=463&forum=11
+
+(4) player id が正しく選択されない
 
 3. データベース構造
 (1) mime テーブル: 項目追加 mime_kind mime_option

@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.37 2009/11/06 18:04:17 ohwada Exp $
+$Id: readme_en.txt,v 1.38 2009/11/06 20:21:36 ohwada Exp $
 
 =================================================
 Version: 1.80
@@ -33,7 +33,10 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1032&forum=13
 (2) same image overlaps in timelime
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1033&forum=13
 
-(3) player id is not correctly selected 
+(3) gap at bottom of map
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?&topic_id=463&forum=11
+
+(4) player id is not correctly selected 
 
 3. Database structure
 (1) mime table: add field mime_kind, mime_option
