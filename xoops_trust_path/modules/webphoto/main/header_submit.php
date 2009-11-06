@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.7 2009/04/11 14:23:35 ohwada Exp $
+// $Id: header_submit.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// class/lib/lame.php
 // 2009-04-10 K.OHWADA
 // small_create.php
 // 2009-01-25 K.OHWADA
@@ -66,6 +68,8 @@ webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/exif.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
+webphoto_include_once( 'class/lib/lame.php' );
+webphoto_include_once( 'class/lib/timidity.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
@@ -98,7 +102,11 @@ webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/exif.php' );
+webphoto_include_once( 'class/webphoto/cmd_base.php' );
+webphoto_include_once( 'class/webphoto/imagemagick.php' );
 webphoto_include_once( 'class/webphoto/ffmpeg.php' );
+webphoto_include_once( 'class/webphoto/lame.php' );
+webphoto_include_once( 'class/webphoto/timidity.php' );
 webphoto_include_once( 'class/webphoto/pdf.php' );
 webphoto_include_once( 'class/webphoto/jodconverter.php' );
 webphoto_include_once( 'class/webphoto/upload.php' );
@@ -120,10 +128,12 @@ webphoto_include_once( 'class/edit/base_create.php' );
 webphoto_include_once( 'class/edit/item_build.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/cont_create.php' );
+webphoto_include_once( 'class/edit/jpeg_create.php' );
 webphoto_include_once( 'class/edit/middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/small_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
+webphoto_include_once( 'class/edit/mp3_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );
 webphoto_include_once( 'class/edit/swf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_table_manage.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: mime_table_manage.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// mime_kind
 // 2008-07-01 K.OHWADA
 // added mime_ffmpeg
 //---------------------------------------------------------
@@ -66,7 +68,8 @@ function _build_row_by_post()
 		'mime_name'        => $this->_post_class->get_post_text( 'mime_name' ),
 		'mime_perms'       => $this->_post_class->get_post_text( 'mime_perms' ),
 		'mime_ffmpeg'      => $this->_post_class->get_post_text( 'mime_ffmpeg' ),
-
+		'mime_kind'        => $this->_post_class->get_post_int(  'mime_kind' ),
+		'mime_option'      => $this->_post_class->get_post_text( 'mime_option' ),
 	);
 	return $row;
 }
@@ -90,6 +93,8 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'mime_name' );
 	echo $this->build_comp_text( 'mime_perms' );
 	echo $this->build_comp_text( 'mime_ffmpeg' );
+	echo $this->build_comp_text( 'mime_kind' );
+	echo $this->build_comp_text( 'mime_option' );
 
 	echo $this->build_manage_submit();
 

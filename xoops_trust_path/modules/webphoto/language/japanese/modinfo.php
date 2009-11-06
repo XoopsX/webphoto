@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.17 2009/05/23 14:57:15 ohwada Exp $
+// $Id: modinfo.php,v 1.18 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -372,6 +372,19 @@ define($constpref."CFG_CAT_CHILD_DSC", "カテゴリ表示のときに下位カテゴリの画像を
 define($constpref."OPT_CAT_CHILD_NON", "カテゴリの画像のみを表示する。常に下位カテゴリの画像を表示しない");
 define($constpref."OPT_CAT_CHILD_EMPTY", "カテゴリの画像がゼロのときに、下位カテゴリの画像を表示する");
 define($constpref."OPT_CAT_CHILD_ALWAYS", "常に下位カテゴリの画像を表示する");
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+define($constpref."CFG_USE_LAME"  , "lame を使用する" ) ;
+define($constpref."CFG_LAMEPATH"  , "lame の実行パス" ) ;
+define($constpref."CFG_LAMEPATH_DSC" , "lame の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「lame を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
+
+define($constpref."CFG_USE_TIMIDITY"  , "timidity を使用する" ) ;
+define($constpref."CFG_TIMIDITYPATH"  , "timidity の実行パス" ) ;
+define($constpref."CFG_TIMIDITYPATH_DSC" , "timidity の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「timidity を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
+
+define($constpref."SMNAME_SEARCH","検索");
 
 }
 // === define begin ===

@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.9 2009/03/05 15:45:53 ohwada Exp $
+// $Id: flash_player.php,v 1.10 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// _C_WEBPHOTO_FILE_KIND_MP3
 // 2009-02-20 K.OHWADA
 // item_page_width
 // 2009-01-25 K.OHWADA
@@ -199,6 +201,7 @@ function build_code_embed( $param )
 	$item_row       = $param['item_row']; 
 	$cont_row       = $param['cont_row']; 
 	$swf_row        = $param['swf_row']; 
+	$mp3_row        = $param['mp3_row']; 
 	$player_row     = $param['player_row']; 
 	$flashvar_row   = $param['flashvar_row'];
 
@@ -213,7 +216,7 @@ function build_code_embed( $param )
 	$config_url = $this->_MODULE_URL.'/index.php?fct=flash_config&item_id='.$item_id;
 
 	list( $player_sel, $flashplayer ) = 
-		$this->get_player( $item_row, $cont_row, $swf_row );
+		$this->get_player( $item_row, $cont_row, $swf_row, $mp3_row );
 
 	if ( $player_sel == 0 ) {
 		return false ;
@@ -248,22 +251,23 @@ function build_movie_param_by_item_row( $item_row, $player_row=null )
 	$middle_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
 	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$swf_row      = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF ) ;
+	$mp3_row      = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MP3 ) ;
 
 	if ( $flashvar_id > 0 ) {
 		$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
 	}
 
 // default if not specify
-	if ( ! is_array($flashvar_row) ) {
+	if ( !is_array($flashvar_row) ) {
 		$flashvar_row = $this->_flashvar_handler->create() ;
 	}
 
 // default if not specify
-	if ( ! is_array($player_row) ) {
+	if ( !is_array($player_row) || !$player_row['player_id'] ) {
 		if ( $player_id > 0 ) {
 			$player_row = $this->_player_handler->get_cached_row_by_id( $player_id ) ; 
 		}
-		if ( ! is_array($player_row) ) {
+		if ( !is_array($player_row) ) {
 			$player_row = $this->_player_handler->create();
 		}
 	}
@@ -275,6 +279,7 @@ function build_movie_param_by_item_row( $item_row, $player_row=null )
 		'middle_row'     => $middle_row , 
 		'flash_row'      => $flash_row ,
 		'swf_row'        => $swf_row ,
+		'mp3_row'        => $mp3_row ,
 		'flashvar_row'   => $flashvar_row , 
 		'player_row'     => $player_row , 
 		'playlist_cache' => $playlist_cache ,
@@ -320,6 +325,7 @@ function set_variables_in_buffer( $param )
 	$middle_row     = $param['middle_row']; 
 	$flash_row      = $param['flash_row']; 
 	$swf_row        = $param['swf_row']; 
+	$mp3_row        = $param['mp3_row']; 
 	$player_row     = $param['player_row']; 
 	$flashvar_row   = $param['flashvar_row'];
 	$playlist_cache = $param['playlist_cache'] ; 
@@ -393,6 +399,7 @@ function set_variables_in_buffer( $param )
 	$file_cont_url  = $this->get_file_url( $cont_row ) ;
 	$file_flash_url = $this->get_file_url( $flash_row ) ;
 	$file_swf_url   = $this->get_file_url( $swf_row ) ;
+	$file_mp3_url   = $this->get_file_url( $mp3_row ) ;
 
 // overwrite by flashvar
 	list( $width, $height ) = 
@@ -448,7 +455,7 @@ function set_variables_in_buffer( $param )
 	$this->_player_style = $player_style ;
 
 	list( $player_sel, $flashplayer ) =
-		$this->get_player( $item_row, $cont_row, $swf_row ) ;
+		$this->get_player( $item_row, $cont_row, $swf_row, $mp3_row ) ;
 
 	switch ( $player_sel )
 	{
@@ -491,6 +498,11 @@ function set_variables_in_buffer( $param )
 // flash swf
 	} elseif ( $file_swf_url ) {
 		$src_url   = $file_swf_url;
+		$flag_type = false ;
+
+// mp3
+	} elseif ( $file_mp3_url ) {
+		$src_url   = $file_mp3_url;
 		$flag_type = false ;
 
 // external
@@ -760,7 +772,7 @@ function get_file_url( $file_row )
 }
 
 // BUG: not show external swf 
-function get_player( $item_row, $cont_row, $swf_row )
+function get_player( $item_row, $cont_row, $swf_row, $mp3_row )
 {
 	$sel    = 0 ;
 	$player = null;
@@ -770,11 +782,14 @@ function get_player( $item_row, $cont_row, $swf_row )
 	$external_url  = $item_row['item_external_url'];
 	$file_cont_url = $this->get_file_url( $cont_row ) ;
 	$file_swf_url  = $this->get_file_url( $swf_row ) ;
+	$file_mp3_url  = $this->get_file_url( $mp3_row ) ;
 
 	if (  $external_url ) {
 		$file = $external_url ;
 	} elseif (  $file_swf_url ) {
 		$file = $file_swf_url ;
+	} elseif (  $file_mp3_url ) {
+		$file = $file_mp3_url ;
 	} elseif ( $file_cont_url ) {
 		$file = $file_cont_url ;
 	}

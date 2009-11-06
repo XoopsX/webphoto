@@ -1,10 +1,16 @@
 <?php
-// $Id: flash_create.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
+// $Id: flash_create.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-10-25 K.OHWADA
+// remove get_cached_option_by_ext()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,8 +23,6 @@ class webphoto_edit_flash_create extends webphoto_edit_base_create
 	var $_ffmpeg_class ;
 
 	var $_cfg_use_ffmpeg ;
-
-	var $_cached_option_array = array();
 
 	var $_SUB_DIR_FLASHS = 'flashs';
 	var $_FLASH_EXT      = 'flv';
@@ -102,9 +106,7 @@ function create_flash( $item_id, $src_file, $src_ext )
 	$file  = $name_param['file'] ;
 	$url   = $name_param['url']  ;
 
-	$option = $this->get_cached_option_by_ext( $src_ext );
-
-	$ret = $this->_ffmpeg_class->create_flash( $src_file, $file, $option );
+	$ret = $this->_ffmpeg_class->create_flash( $src_file, $file );
 	if ( $ret ) {
 		$this->set_flag_created() ;
 		$this->set_msg( 'create flash' );
@@ -127,25 +129,6 @@ function create_flash( $item_id, $src_file, $src_ext )
 	}
 
 	return $flash_param ;
-}
-
-//---------------------------------------------------------
-// mime
-//---------------------------------------------------------
-function get_cached_option_by_ext( $ext )
-{
-	if ( isset( $this->_cached_option_array[ $ext ] ) ) {
-		return  $this->_cached_option_array[ $ext ];
-	}
-
-	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
-	if ( !is_array($row) ) {
-		return false;
-	}
-
-	$option = trim( $row['mime_ffmpeg'] ) ;
-	$this->_cached_option_array[ $ext ] = $option ;
-	return $option ;
 }
 
 // --- class end ---

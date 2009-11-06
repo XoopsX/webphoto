@@ -1,5 +1,5 @@
 <?php
-// $Id: player_handler.php,v 1.2 2009/04/19 11:39:45 ohwada Exp $
+// $Id: player_handler.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// BUG: player id is not correctly selected 
 // 2009-04-19 K.OHWADA
 // build_row_options()
 //---------------------------------------------------------
@@ -19,6 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_player_handler extends webphoto_lib_handler
 {
+	var $_TITLE_DEFAULT  = 'undefined' ;
 	var $_WIDTH_DEFAULT  = _C_WEBPHOTO_PLAYER_WIDTH_DEFAULT ;
 	var $_HEIGHT_DEFAULT = _C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT ;
 
@@ -69,7 +72,7 @@ function create( $flag_new=false )
 		'player_time_update'    => $time_update,
 		'player_pid'            => 0,
 		'player_style'          => 0 ,
-		'player_title'          => '',
+		'player_title'          => $this->_TITLE_DEFAULT ,
 		'player_width'          => $this->_WIDTH_DEFAULT ,
 		'player_height'         => $this->_HEIGHT_DEFAULT ,
 		'player_displaywidth'   => 0 ,
@@ -192,10 +195,16 @@ function get_style_options()
 //---------------------------------------------------------
 // selbox
 //---------------------------------------------------------
-function build_row_options()
+// BUG: player id is not correctly selected 
+function build_row_options( $preset_id, $flag_undefined=false )
 {
 	$rows = $this->get_rows_by_orderby( $this->_THIS_TITLE_NAME );
-	return  $this->build_form_select_options( $rows, $this->_THIS_TITLE_NAME );
+
+	if ( $flag_undefined ) {
+		array_unshift( $rows, $this->create() );
+	}
+
+	return  $this->build_form_select_options( $rows, $this->_THIS_TITLE_NAME, $preset_id );
 }
 
 // --- class end ---

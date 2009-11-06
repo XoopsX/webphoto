@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.19 2009/06/28 14:50:12 ohwada Exp $
+// $Id: item_form.php,v 1.20 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// BUG: player id is not correctly selected 
 // 2009-06-28 K.OHWADA
 // set_default_item_row()
 // 2009-05-30 K.OHWADA
@@ -388,8 +390,9 @@ function item_onclick_select_options()
 
 function item_player_id_select_options()
 {
+// BUG: player id is not correctly selected 
 	$value = $this->get_row_by_key( 'item_player_id' );
-	return $this->_player_handler->build_row_options( $value );
+	return $this->_player_handler->build_row_options( $value, true );
 }
 
 function item_playlist_type_select_options()

@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.8 2009/05/31 18:22:59 ohwada Exp $
+// $Id: category.php,v 1.9 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// build_photos_param_in_category()
 // 2009-05-30 K.OHWADA
 // BUG : not show cat_id
 // 2009-05-17 K.OHWADA
@@ -41,6 +43,12 @@ function webphoto_main_category( $dirname , $trust_dirname )
 	$this->set_mode( 'category' );
 
 	$this->init_preload();
+
+	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+		$this->_TEMPLATE_DETAIL = 'main_photo.html';
+		$this->_SHOW_PHOTO_VIEW = true;
+		$this->set_navi_mode( 'kind' );
+	}
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -90,7 +98,7 @@ function list_get_photo_list()
 
 		list( $photo, $total, $this_sum ) = $this->_get_photo_for_list( $cat_id );
 
-		$cat_desc_disp = $this->_build_cat_desc_disp( $row ) ; 
+		$cat_desc_disp = $this->build_cat_desc_disp( $row ) ; 
 
 		$arr[] = array(
 			'title'            => '' ,
@@ -131,35 +139,30 @@ function _build_cat_summary_disp( $desc )
 	return $this->_multibyte_class->build_summary( $desc, $this->_cfg_cat_summary );
 }
 
-function _build_cat_desc_disp( $row )
-{
-	return $this->_cat_handler->build_show_desc_disp( $row ) ; 
-}
-
 //---------------------------------------------------------
 // detail list
 //---------------------------------------------------------
 // overwrite
 function list_build_detail( $cat_id )
 {
-	$limit = $this->_MAX_PHOTOS;
-	$start = $this->pagenavi_calc_start( $limit );
 
 // BUG : not show cat_id
 	$init_param = $this->list_build_init_param( true, $cat_id );
 
-	$cat_param = $this->_build_category( $cat_id, $limit, $start );
-	$title      = $cat_param['cat_title'] ;
-	$total      = $cat_param['cat_photo_total'] ;
-	$photo_rows = $cat_param['cat_photo_rows'] ;
-	$show_sort  = $cat_param['cat_show_sort'] ;
+	$photo_param = $this->build_photos_param_in_category( $cat_id );
+	$title       = $photo_param['cat_title'] ;
+	$photo_rows  = $photo_param['cat_photo_rows'];
 
-	$param = $this->list_build_detail_common( $title, $total, $photo_rows );
-	$param['title_bread_crumb'] = '' ;
-	$param['sub_title_s']       = '' ;
-	$param['show_sort']         = $show_sort ;
+	$title_s = $this->sanitize( $title );
+	$param = array(
+		'xoops_pagetitle'   => $title_s ,
+		'title_bread_crumb' => $title_s ,
+	);
 
-	$navi_param = $this->list_build_navi( $total, $limit );
+	if ( $this->_SHOW_PHOTO_VIEW && isset( $photo_rows[0] ) ) {
+		$photo_param['photo'] = $this->build_photo_show_photo( $photo_rows[0] );
+		$photo_param['show_photo_desc'] = true;
+	}
 
 	$catlist_param = $this->build_catlist(
 		$cat_id, $this->_CAT_CATLIST_COLS, $this->_CAT_CATLIST_DELMITA );
@@ -171,65 +174,10 @@ function list_build_detail( $cat_id )
 
 	$this->list_assign_xoops_header( $cat_id, $show_gmap );
 
-	$ret= array_merge( $param, $init_param, $cat_param, $navi_param, $catlist_param, $gmap_param, $noti_param );
+	$arr = array_merge( $init_param, $param, $photo_param, $catlist_param, $gmap_param, $noti_param );
+	$arr['show_qr'] = false;
 
-	return $this->add_show_js_windows( $ret );
-}
-
-function _build_category( $cat_id, $limit, $start )
-{
-	$row = $this->_public_class->get_cat_row( $cat_id );
-
-	if ( !is_array( $row ) ) {
-		$arr = array(
-			'cat_title'       => '',
-			'cat_photo_total' => 0,
-			'cat_photo_rows'  => null,
-			'cat_show_sort'   => false,
-
-			'photo_sum'      => 0,
-			'show_catpath'   => false , 
-			'catpath'        => '' , 
-			'cat_desc_disp'  => '' , 
-		);
-		return $arr;
-	}
-
-	$cat_title = $row['cat_title'];
-
-	$orderby = $this->get_orderby_by_post();
-
-	$show_sort     = false ;
-	$show_catpath  = false ;
-
-	list( $photo_rows, $total, $this_sum ) =
-		$this->_public_class->get_rows_total_by_catid( 
-			$cat_id, $orderby, $limit, $start );
-
-	if (( $this_sum > 1 ) ||
-	    ( $this_sum == 0 ) && ( $total > 1 )) {
-		$show_sort = true ;
-	}
-
-	$catpath = $this->build_cat_path( $cat_id );
-	if ( is_array($catpath) && count($catpath) ) {
-		$show_catpath = true;
-	}
-
-	$arr = array(
-		'cat_title'       => $cat_title,
-		'cat_photo_total' => $total,
-		'cat_photo_rows'  => $photo_rows,
-		'cat_show_sort'   => $show_sort,
-
-		'photo_sum'      => $this_sum,
-		'show_catpath'   => $show_catpath , 
-		'catpath'        => $catpath , 
-		'cat_desc_disp'  => $this->_build_cat_desc_disp( $row ) , 
-	);
-
-	return $arr;
-
+	return $this->add_show_js_windows( $arr );
 }
 
 // --- class end ---

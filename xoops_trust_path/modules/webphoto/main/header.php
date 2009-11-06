@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.15 2009/04/11 14:23:35 ohwada Exp $
+// $Id: header.php,v 1.16 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// class/xoops/groupperm.php
 // 2009-04-10 K.OHWADA
 // page.php
 // 2009-03-15 K.OHWADA
@@ -51,6 +53,7 @@ webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'include/gmap_api.php' );
 webphoto_include_once( 'class/qrcode/qrcode_img.php' );
 webphoto_include_once( 'class/xoops/base.php' );
+webphoto_include_once( 'class/xoops/groupperm.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
@@ -63,6 +66,7 @@ webphoto_include_once( 'class/inc/gmap_info.php' );
 webphoto_include_once( 'class/inc/timeline.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_select.php' );
+webphoto_include_once( 'class/d3/comment_view.php' );
 webphoto_include_once( 'class/d3/preload.php' );
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/msg.php' );
@@ -79,6 +83,7 @@ webphoto_include_once( 'class/lib/cloud.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
+webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
@@ -108,6 +113,8 @@ webphoto_include_once( 'class/webphoto/embed_base.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
 webphoto_include_once( 'class/webphoto/rate_check.php' );
 webphoto_include_once( 'class/webphoto/page.php' );
+webphoto_include_once( 'class/webphoto/item_public.php' );
+webphoto_include_once( 'class/webphoto/photo_navi.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
 webphoto_include_once( 'class/webphoto/show_main.php' );

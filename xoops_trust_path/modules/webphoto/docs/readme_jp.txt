@@ -1,11 +1,53 @@
-$Id: readme_jp.txt,v 1.36 2009/09/25 22:50:44 ohwada Exp $
+$Id: readme_jp.txt,v 1.37 2009/11/06 18:04:17 ohwada Exp $
+
+=================================================
+Version: 1.80
+Date:   2009-11-01
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. メディアファイル
+(1) メディアファイルを追加した
+ai, eps, pct, psd, tif, wmf 
+
+(2) 画像ファイルの処理
+画像ファイルを登録するときに、JPEG に変換し、サムネイルを生成する
+対象: ai, bmp, eps, pct, psd, tif, wmf など WEBブラウザで表示できないもの
+要件: imagemagick が必要
+
+(3) 音楽ファイルの処理
+音楽ファイルを登録するときに、MP3 に変換し、mediaplayer.swf プレイヤで再生する
+対象: wav, mid
+要件: wav は lame が必要
+      mid は lame と timidity が必要
+
+2. バグ対策
+(1) Fatal error in imagemanager.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1032&forum=13
+
+(2) timeline の画像がダブッて表示される
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1033&forum=13
+
+(3) player id が正しく選択されない
+
+3. データベース構造
+(1) mime テーブル: 項目追加 mime_kind mime_option
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
 
 =================================================
 Version: 1.73
 Date:   2009-09-26
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

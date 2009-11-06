@@ -1,59 +1,54 @@
 <?php
-// $Id: video.php,v 1.2 2009/11/06 18:04:17 ohwada Exp $
+// $Id: wav.php,v 1.1 2009/11/06 18:06:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2009-01-10 K.OHWADA
-//=========================================================
-
-//---------------------------------------------------------
-// change log
 // 2009-10-25 K.OHWADA
-// match_ext_kind()
-//---------------------------------------------------------
+//=========================================================
 
-if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
-// class webphoto_ext_video
+// class webphoto_ext_wav
 //=========================================================
-class webphoto_ext_video extends webphoto_ext_base
+class webphoto_ext_wav extends webphoto_ext_base
 {
+	var $_lame_class;
 	var $_ffmpeg_class ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_video( $dirname )
+function webphoto_ext_wav( $dirname )
 {
 	$this->webphoto_ext_base( $dirname );
 
+	$this->_lame_class   =& webphoto_lame::getInstance( $dirname );
 	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname );
 }
 
 //---------------------------------------------------------
-// check type
+// check ext
 //---------------------------------------------------------
 function is_ext( $ext )
 {
-	return $this->is_video_ext( $ext );
+	return $this->is_audio_wav_ext( $ext );
 }
 
-function is_video_ext( $ext )
+function is_audio_wav_ext( $ext )
 {
-	$ret = $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_VIDEO );
-	if ( $ret ) {
-		return $ret;
-	}
-	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG );
+	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_AUDIO_WAV );
 }
 
 //---------------------------------------------------------
-// create image
+// create mp3
 //---------------------------------------------------------
-function create_image( $param )
+function create_mp3( $param )
 {
-	return $this->_ffmpeg_class->create_image( $param );
+	$src_file = $param['src_file'];
+	$mp3_file = $param['mp3_file'] ;
+
+	return $this->_lame_class->create_mp3( $src_file, $mp3_file );
 }
 
 //---------------------------------------------------------

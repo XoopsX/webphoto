@@ -1,10 +1,16 @@
 <?php
-// $Id: audio.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: audio.php,v 1.2 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-10-25 K.OHWADA
+// match_ext_kind()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -35,16 +41,7 @@ function is_ext( $ext )
 
 function is_audio_ext( $ext )
 {
-	$mime = $this->get_cached_mime_type_by_ext( $ext );
-	return $this->is_audio_mime( $mime );
-}
-
-function is_audio_mime( $mime )
-{
-	if ( preg_match('/^audio/', $mime ) ) {
-		return true;
-	}
-	return false;
+	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_AUDIO );
 }
 
 //---------------------------------------------------------

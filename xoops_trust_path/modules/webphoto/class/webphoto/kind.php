@@ -1,5 +1,5 @@
 <?php
-// $Id: kind.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: kind.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// is_jpeg_ext()
 // 2009-03-15 K.OHWADA
 // change is_ext_in_array()
 // 2009-01-25 K.OHWADA
@@ -32,6 +34,8 @@ class webphoto_kind
 	var $_FLASH_EXTS = array( 'flv' );
 	var $_PDF_EXTS   = array( 'pdf' );
 	var $_SWF_EXTS   = array( 'swf' );
+	var $_JPEG_EXTS  = array( 'jpg','jpeg' );
+	var $_MP3_EXTS   = array( 'mp3' );
 
 //---------------------------------------------------------
 // constructor
@@ -78,6 +82,11 @@ function is_image_ext( $ext )
 	return $this->is_ext_in_array( $ext, $this->_IMAGE_EXTS );
 }
 
+function is_jpeg_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_JPEG_EXTS );
+}
+
 function is_swfobject_ext( $ext )
 {
 	return $this->is_ext_in_array( $ext, $this->_SWFOBJECT_EXTS );
@@ -111,6 +120,11 @@ function is_pdf_ext( $ext )
 function is_swf_ext( $ext )
 {
 	return $this->is_ext_in_array( $ext, $this->_SWF_EXTS );
+}
+
+function is_mp3_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_MP3_EXTS );
 }
 
 function is_ext_in_array( $ext, $arr )

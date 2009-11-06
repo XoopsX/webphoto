@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: mime_handler.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// mime_kind
 // 2008-10-01 K.OHWADA
 // get_rows_by_exts()
 // 2008-08-24 K.OHWADA
@@ -76,6 +78,8 @@ function create( $flag_new= false )
 		'mime_type'     => '',
 		'mime_perms'    => '',
 		'mime_ffmpeg'   => '',
+		'mime_kind'     => 0,
+		'mime_option'   => '',
 	);
 
 	return $arr;
@@ -97,7 +101,9 @@ function insert( $row )
 	$sql .= 'mime_medium, ';
 	$sql .= 'mime_type, ';
 	$sql .= 'mime_perms, ';
-	$sql .= 'mime_ffmpeg ';
+	$sql .= 'mime_ffmpeg, ';
+	$sql .= 'mime_kind, ';
+	$sql .= 'mime_option ';
 
 	$sql .= ') VALUES ( ';
 
@@ -108,8 +114,9 @@ function insert( $row )
 	$sql .= $this->quote($mime_medium).', ';
 	$sql .= $this->quote($mime_type).', ';
 	$sql .= $this->quote($mime_perms).', ';
-	$sql .= $this->quote($mime_ffmpeg).' ';
-
+	$sql .= $this->quote($mime_ffmpeg).', ';
+	$sql .= intval($mime_kind).', ';
+	$sql .= $this->quote($mime_option).' ';
 	$sql .= ')';
 
 	$ret = $this->query( $sql );
@@ -134,7 +141,9 @@ function update( $row )
 	$sql .= 'mime_medium='.$this->quote($mime_medium).', ';
 	$sql .= 'mime_type='.$this->quote($mime_type).', ';
 	$sql .= 'mime_perms='.$this->quote($mime_perms).', ';
-	$sql .= 'mime_ffmpeg='.$this->quote($mime_ffmpeg).' ';
+	$sql .= 'mime_ffmpeg='.$this->quote($mime_ffmpeg).', ';
+	$sql .= 'mime_kind='.intval($mime_kind).', ';
+	$sql .= 'mime_option='.$this->quote($mime_option).' ';
 
 	$sql .= 'WHERE mime_id='.intval($mime_id);
 
@@ -211,6 +220,25 @@ function get_rows_by_exts( $exts, $limit=0, $offset=0 )
 	}
 	$where = implode( ' OR ', $arr );
 	return $this->get_rows_by_where( $where, $limit, $offset );
+}
+
+//---------------------------------------------------------
+// get option
+//---------------------------------------------------------
+function get_kind_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_MIME_KIND_GENERAL       => _WEBPHOTO_MIME_KIND_GENERAL ,
+		_C_WEBPHOTO_MIME_KIND_IMAGE         => _WEBPHOTO_MIME_KIND_IMAGE ,
+		_C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT => _WEBPHOTO_MIME_KIND_IMAGE_CONVERT ,
+		_C_WEBPHOTO_MIME_KIND_VIDEO         => _WEBPHOTO_MIME_KIND_VIDEO ,
+		_C_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG  => _WEBPHOTO_MIME_KIND_VIDEO_FFMPEG ,
+		_C_WEBPHOTO_MIME_KIND_AUDIO         => _WEBPHOTO_MIME_KIND_AUDIO ,
+		_C_WEBPHOTO_MIME_KIND_AUDIO_MID     => _WEBPHOTO_MIME_KIND_AUDIO_MID ,
+		_C_WEBPHOTO_MIME_KIND_AUDIO_WAV     => _WEBPHOTO_MIME_KIND_AUDIO_WAV ,
+		_C_WEBPHOTO_MIME_KIND_OFFICE        => _WEBPHOTO_MIME_KIND_OFFICE ,
+	);
+	return $arr;
 }
 
 //---------------------------------------------------------

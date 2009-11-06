@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
+// $Id: item_build.php,v 1.7 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// _C_WEBPHOTO_FILE_LIST
+// BUG: player id is not correctly selected 
 // 2009-05-05 K.OHWADA
 // item_uid
 // 2009-03-15 K.OHWADA
@@ -34,8 +37,10 @@ class webphoto_edit_item_build extends webphoto_edit_base_create
 	var $_has_superinsert ;
 	var $_has_html ;
 
+	var $_FILE_LIST;
 	var $_FLAG_ADMIN = false;
 	var $_NO_TITLE   = 'no title' ;
+	var $_PLAYER_ID_FLASH_DEFAULT = 1;
 
 //---------------------------------------------------------
 // constructor
@@ -54,6 +59,7 @@ function webphoto_edit_item_build( $dirname )
 	$this->_has_html           = $this->_perm_class->has_html();
 	$this->_cfg_perm_item_read = $this->get_config_by_name( 'perm_item_read' );
 
+	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
 
 function &getInstance( $dirname )
@@ -286,53 +292,48 @@ function build_row_files( $row, $file_id_array )
 		return $row;
 	}
 
-	$cont_id   = $this->get_array_value_by_key( $file_id_array, 'cont_id' );
-	$thumb_id  = $this->get_array_value_by_key( $file_id_array, 'thumb_id' );
-	$middle_id = $this->get_array_value_by_key( $file_id_array, 'middle_id' );
-	$small_id  = $this->get_array_value_by_key( $file_id_array, 'small_id' );
-	$flash_id  = $this->get_array_value_by_key( $file_id_array, 'flash_id' );
-	$docomo_id = $this->get_array_value_by_key( $file_id_array, 'docomo_id' );
-	$pdf_id    = $this->get_array_value_by_key( $file_id_array, 'pdf_id' );
-	$swf_id    = $this->get_array_value_by_key( $file_id_array, 'swf_id' );
-
-	if ( $cont_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_CONT ] = $cont_id;
-	}
-
-	if ( $thumb_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_THUMB ] = $thumb_id ;
-		$row['item_icon_name']   = '' ;
-		$row['item_icon_width']  = 0 ;
-		$row['item_icon_height'] = 0 ;
-	}
-
-	if ( $middle_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = $middle_id;
-	}
-
-	if ( $small_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_SMALL ] = $small_id;
-	}
-
-	if ( $flash_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = $flash_id;
-		$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
-	}
-
-	if ( $swf_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_SWF ] = $swf_id;
-		$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
-	}
-
-	if ( $docomo_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO ] = $docomo_id;
-	}
-
-	if ( $pdf_id > 0 ) {
-		$row[ _C_WEBPHOTO_ITEM_FILE_PDF ] = $pdf_id;
+	foreach( $this->_FILE_LIST as $file ) 
+	{
+		$file_id_name = $file.'_id';
+		$file_id      = $this->get_array_value_by_key( $file_id_array, $file_id_name );
+		if ( $file_id > 0 ) {
+			$row = $this->build_row_files_individual( $row, $file, $file_id );
+		}
 	}
 
 	return $row ;
+}
+
+function build_row_files_individual( $row, $file, $file_id )
+{
+	$const_name = strtoupper( '_C_WEBPHOTO_ITEM_FILE_'.$file );
+	$const      = constant($const_name);
+	$row[ $const ] = $file_id;
+
+	switch ($file)
+	{
+		case 'thumb':
+			$row['item_icon_name']   = '' ;
+			$row['item_icon_width']  = 0 ;
+			$row['item_icon_height'] = 0 ;
+			break;
+
+		case 'flash':
+// BUG: player id is not correctly selected 
+			$row['item_player_id']   = $this->_PLAYER_ID_FLASH_DEFAULT ;
+			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+			break;
+
+		case 'mp3':
+			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+			break;
+
+		case 'swf':
+			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+			break;
+	}
+
+	return $row;
 }
 
 //---------------------------------------------------------

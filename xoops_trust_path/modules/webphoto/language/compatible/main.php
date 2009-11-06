@@ -1,10 +1,48 @@
 <?php
-// $Id: main.php,v 1.7 2009/05/17 08:59:00 ohwada Exp $
+// $Id: main.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_MIME_KIND") ) 
+{
+// mime
+define("_WEBPHOTO_MIME_KIND" , "File Kind" ) ;
+define("_WEBPHOTO_MIME_OPTION" , "Command Option" ) ;
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_JPEG","JPEG Image");
+define("_WEBPHOTO_ITEM_CODEINFO_MP3", "MP3");
+
+// form
+define("_WEBPHOTO_ERR_JPEG", "Cannot create JPEG");
+define("_WEBPHOTO_ERR_MP3",  "Cannot create MP3");
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_GENERAL",       "Genaral") ;
+define("_WEBPHOTO_MIME_KIND_IMAGE",         "Image" ) ;
+define("_WEBPHOTO_MIME_KIND_IMAGE_CONVERT", "Image convert"  ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO",         "Video" ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG",  "Video ffmpeg" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO",         "Audio" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_MID",     "Audio midi" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_WAV",     "Audio wav" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE",        "Office" ) ;
+
+// player option
+define("_WEBPHOTO_PLAYER_TITLE_DEFAULT", "Undefined");
+
+define("_WEBPHOTO_TITLE_IMAGE",   "Images" ) ;
+define("_WEBPHOTO_TITLE_VIDEO",   "Videos" ) ;
+define("_WEBPHOTO_TITLE_MUSIC",   "Musics" ) ;
+define("_WEBPHOTO_TITLE_OFFICE",  "Offices" ) ;
+
+}
 
 //---------------------------------------------------------
 // v1.60

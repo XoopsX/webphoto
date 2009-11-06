@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: base_create.php,v 1.5 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// is_jpeg_ext()
 // 2009-01-25 K.OHWADA
 // is_swf_ext()
 //---------------------------------------------------------
@@ -170,6 +172,16 @@ function is_flash_ext( $ext )
 function is_video_docomo_ext( $ext )
 {
 	return $this->_kind_class->is_video_docomo_ext( $ext ) ;
+}
+
+function is_jpeg_ext( $ext )
+{
+	return $this->_kind_class->is_jpeg_ext( $ext ) ;
+}
+
+function is_mp3_ext( $ext )
+{
+	return $this->_kind_class->is_mp3_ext( $ext ) ;
 }
 
 function is_pdf_ext( $ext )

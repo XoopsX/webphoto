@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.21 2009/04/11 14:23:35 ohwada Exp $
+// $Id: base_this.php,v 1.22 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// _JPEGS_PATH
 // 2009-04-10 K.OHWADA
 // remove get_photo_globals()
 // 2009-03-15 K.OHWADA
@@ -99,6 +101,15 @@ class webphoto_base_this extends webphoto_lib_base
 	var $_PDFS_PATH;
 	var $_PDFS_DIR;
 	var $_PDFS_URL;
+	var $_SWFS_PATH;
+	var $_SWFS_DIR;
+	var $_SWFS_URL;
+	var $_JPEGS_PATH;
+	var $_JPEGS_DIR;
+	var $_JPEGS_URL;
+	var $_MP3S_PATH;
+	var $_MP3S_DIR;
+	var $_MP3S_URL;
 	var $_CATS_PATH;
 	var $_CATS_DIR;
 	var $_CATS_URL;
@@ -155,6 +166,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_DOCOMOS_PATH    = $this->_UPLOADS_PATH.'/docomos' ;
 	$this->_PDFS_PATH       = $this->_UPLOADS_PATH.'/pdfs' ;
 	$this->_SWFS_PATH       = $this->_UPLOADS_PATH.'/swfs' ;
+	$this->_JPEGS_PATH      = $this->_UPLOADS_PATH.'/jpegs' ;
+	$this->_MP3S_PATH       = $this->_UPLOADS_PATH.'/mp3s' ;
 	$this->_CATS_PATH       = $this->_UPLOADS_PATH.'/categories' ;
 	$this->_GICONS_PATH     = $this->_UPLOADS_PATH.'/gicons' ;
 	$this->_GSHADOWS_PATH   = $this->_UPLOADS_PATH.'/gshadows' ;
@@ -171,6 +184,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_DOCOMOS_DIR    = XOOPS_ROOT_PATH . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_DIR       = XOOPS_ROOT_PATH . $this->_PDFS_PATH ;
 	$this->_SWFS_DIR       = XOOPS_ROOT_PATH . $this->_SWFS_PATH ;
+	$this->_JPEGS_DIR      = XOOPS_ROOT_PATH . $this->_JPEGS_PATH ;
+	$this->_MP3S_DIR       = XOOPS_ROOT_PATH . $this->_MP3S_PATH ;
 	$this->_CATS_DIR       = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
 	$this->_GICONS_DIR     = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_DIR   = XOOPS_ROOT_PATH . $this->_GSHADOWS_PATH ;
@@ -187,6 +202,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_DOCOMOS_URL    = XOOPS_URL . $this->_DOCOMOS_PATH ;
 	$this->_PDFS_URL       = XOOPS_URL . $this->_PDFS_PATH ;
 	$this->_SWFS_URL       = XOOPS_URL . $this->_SWFS_PATH ;
+	$this->_JPEGS_URL      = XOOPS_URL . $this->_JPEGS_PATH ;
+	$this->_MP3S_URL       = XOOPS_URL . $this->_MP3S_PATH ;
 	$this->_CATS_URL       = XOOPS_URL . $this->_CATS_PATH ;
 	$this->_GICONS_URL     = XOOPS_URL . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;
@@ -256,6 +273,11 @@ function is_image_ext( $ext )
 	return $this->_kind_class->is_image_ext( $ext ) ;
 }
 
+function is_jpeg_ext( $ext )
+{
+	return $this->_kind_class->is_jpeg_ext( $ext ) ;
+}
+
 function is_swfobject_ext( $ext )
 {
 	return $this->_kind_class->is_swfobject_ext( $ext ) ;
@@ -279,6 +301,11 @@ function is_flash_ext( $ext )
 function is_pdf_ext( $ext )
 {
 	return $this->_kind_class->is_pdf_ext( $ext ) ;
+}
+
+function is_mp3_ext( $ext )
+{
+	return $this->_kind_class->is_mp3_ext( $ext ) ;
 }
 
 function is_video_audio_kind( $kind )

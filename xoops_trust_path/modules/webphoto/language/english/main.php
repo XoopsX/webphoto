@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.33 2009/05/17 08:59:00 ohwada Exp $
+// $Id: main.php,v 1.34 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -502,6 +502,10 @@ define("_WEBPHOTO_MIME_PERMS" , "Permission" ) ;
 // added in v0.20
 define("_WEBPHOTO_MIME_FFMPEG" , "ffmpeg option" ) ;
 
+// added in v1.80
+define("_WEBPHOTO_MIME_KIND" , "File Kind" ) ;
+define("_WEBPHOTO_MIME_OPTION" , "Command Option" ) ;
+
 // tag table
 define("_WEBPHOTO_TAG_TABLE" , "Tag Table" ) ;
 define("_WEBPHOTO_TAG_ID" ,          "Tag ID" ) ;
@@ -853,8 +857,8 @@ define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "File ID: Docomo Video" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "File ID: PDF" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "File ID: Flash swf" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "File ID: Small" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "File ID: JPEG" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_10" , "File ID: MP3" ) ;
 define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
 define("_WEBPHOTO_ITEM_TEXT_2" ,  "text2" ) ;
 define("_WEBPHOTO_ITEM_TEXT_3" ,  "text3" ) ;
@@ -893,8 +897,8 @@ define("_WEBPHOTO_FILE_KIND_5" ,  "Docomo Video" ) ;
 define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_8" ,  "Small" ) ;
-define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
-define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
+define("_WEBPHOTO_FILE_KIND_9" ,  "JPEG" ) ;
+define("_WEBPHOTO_FILE_KIND_10" , "MP3" ) ;
 
 // index
 define("_WEBPHOTO_MOBILE_MAILTO" , "Send URL to the mobile phone" ) ;
@@ -1352,6 +1356,36 @@ define("_WEBPHOTO_CAP_SMALL_SELECT", "Select the small image");
 define("_WEBPHOTO_TITLE_SUBMIT_SELECT",  "Select submit form");
 define("_WEBPHOTO_TITLE_SUBMIT_SINGLE",  "Registration of one photo");
 define("_WEBPHOTO_TITLE_SUBMIT_BULK",  "Batch registration of photos");
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_JPEG","JPEG Image");
+define("_WEBPHOTO_ITEM_CODEINFO_MP3", "MP3");
+
+// form
+define("_WEBPHOTO_ERR_JPEG", "Cannot create JPEG");
+define("_WEBPHOTO_ERR_MP3",  "Cannot create MP3");
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_GENERAL",       "Genaral") ;
+define("_WEBPHOTO_MIME_KIND_IMAGE",         "Image" ) ;
+define("_WEBPHOTO_MIME_KIND_IMAGE_CONVERT", "Image convert"  ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO",         "Video" ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG",  "Video ffmpeg" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO",         "Audio" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_MID",     "Audio midi" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_WAV",     "Audio wav" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE",        "Office" ) ;
+
+// player option
+define("_WEBPHOTO_PLAYER_TITLE_DEFAULT", "Undefined");
+
+define("_WEBPHOTO_TITLE_IMAGE",   "Images" ) ;
+define("_WEBPHOTO_TITLE_VIDEO",   "Videos" ) ;
+define("_WEBPHOTO_TITLE_MUSIC",   "Musics" ) ;
+define("_WEBPHOTO_TITLE_OFFICE",  "Offices" ) ;
 
 // === define end ===
 }

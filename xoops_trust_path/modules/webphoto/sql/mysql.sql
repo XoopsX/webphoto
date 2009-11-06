@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.16 2009/08/22 04:10:07 ohwada Exp $
+# $Id: mysql.sql,v 1.17 2009/11/06 18:04:17 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-10-25 K.OHWADA
+# mime_kind
 # 2009-08-22 K.OHWADA
 # item_exif TEXT -> BLOB
 # 2009-05-05 K.OHWADA
@@ -371,6 +373,8 @@ CREATE TABLE mime (
   mime_name   VARCHAR(255) NOT NULL DEFAULT '',
   mime_perms  VARCHAR(255) NOT NULL DEFAULT '',
   mime_ffmpeg VARCHAR(255) NOT NULL DEFAULT '',
+  mime_kind   INT(4) NOT NULL DEFAULT '0',
+  mime_option VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY mime_id (mime_id),
   KEY (mime_ext)
 ) TYPE=MyISAM;
@@ -564,32 +568,38 @@ INSERT INTO gicon VALUES (10, 0, 0, 'yellow 18x28', '/modules/{DIRNAME}/images/m
 # MS IE 6 use ' image/x-png image/pjpeg '
 #
 
-INSERT INTO mime VALUES (1, 0, 0, '3g2', 'video', 'video/3gpp2', 'Third Generation Partnership Project 2 File Format', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (2, 0, 0, '3gp', 'video', 'video/3gpp', 'Third Generation Partnership Project File Format', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (3, 0, 0, 'asf', 'video', 'video/x-ms-asf', 'Advanced Systems Format', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (4, 0, 0, 'avi', 'video', 'video/x-msvideo video/avi', 'Audio Video Interleave File', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (5, 0, 0, 'bmp','image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '');
-INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '');
-INSERT INTO mime VALUES (7, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (8, 0, 0, 'gif', 'image', 'image/gif', 'Graphic Interchange Format', '&1&2&', '');
-INSERT INTO mime VALUES (9, 0, 0, 'jpg','image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '');
-INSERT INTO mime VALUES (10, 0, 0, 'jpeg','image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '');
-INSERT INTO mime VALUES (11, 0, 0, 'mid', 'audio','audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '');
-INSERT INTO mime VALUES (12, 0, 0, 'mov','video', 'video/quicktime', 'QuickTime Video Clip', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (13, 0, 0, 'mp3','audio', 'audio/mpeg', 'MPEG Audio Stream, Layer III', '&1&', '');
-INSERT INTO mime VALUES (14, 0, 0, 'mpeg','video', 'video/mpeg', 'MPEG Movie', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (15, 0, 0, 'mpg','video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (16, 0, 0, 'pdf','', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '');
-INSERT INTO mime VALUES (17, 0, 0, 'png', 'image', 'image/png image/x-png', 'Portable (Public) Network Graphic', '&1&2&', '');
-INSERT INTO mime VALUES (18, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '');
-INSERT INTO mime VALUES (19, 0, 0, 'ram', 'audio', 'audio/x-pn-realaudio', 'RealMedia Metafile', '&1&', '');
-INSERT INTO mime VALUES (20, 0, 0, 'rar','', 'application/x-rar-compressed', 'WinRAR Compressed Archive', '&1&', '');
-INSERT INTO mime VALUES (21, 0, 0, 'swf','', 'application/x-shockwave-flash', 'Macromedia Flash Format File', '&1&', '');
-INSERT INTO mime VALUES (22, 0, 0, 'txt','', 'text/plain', 'Text File', '&1&', '');
-INSERT INTO mime VALUES (23, 0, 0, 'wav', 'audio', 'audio/x-wav', 'Waveform Audio', '&1&', '');
-INSERT INTO mime VALUES (24, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Media File', '&1&', '-ar 44100');
-INSERT INTO mime VALUES (25, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel','&1&', '');
-INSERT INTO mime VALUES (26, 0, 0, 'zip', '', 'application/zip', 'Compressed Archive File', '&1&', '');
+INSERT INTO mime VALUES (1, 0, 0, '3g2', 'video', 'video/3gpp2', 'Third Generation Partnership Project 2 File Format', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (2, 0, 0, '3gp', 'video', 'video/3gpp', 'Third Generation Partnership Project File Format', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (3, 0, 0, 'asf', 'video', 'video/x-ms-asf', 'Advanced Systems Format', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (4, 0, 0, 'avi', 'video', 'video/x-msvideo video/avi', 'Audio Video Interleave File', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (5, 0, 0, 'bmp', 'image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '', 11, '');
+INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '', 0, '');
+INSERT INTO mime VALUES (7, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100', 20, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (8, 0, 0, 'gif', 'image', 'image/gif', 'Graphic Interchange Format', '&1&2&', '', 10, '');
+INSERT INTO mime VALUES (9, 0, 0, 'jpg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 10, '');
+INSERT INTO mime VALUES (10, 0, 0, 'jpeg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 10, '');
+INSERT INTO mime VALUES (11, 0, 0, 'mid', 'audio', 'audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '', 31, '');
+INSERT INTO mime VALUES (12, 0, 0, 'mov', 'video', 'video/quicktime', 'QuickTime Video Clip', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (13, 0, 0, 'mp3', 'audio', 'audio/mpeg', 'MPEG Audio Stream, Layer III', '&1&', '', 30, '');
+INSERT INTO mime VALUES (14, 0, 0, 'mpeg', 'video', 'video/mpeg', 'MPEG Movie', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (15, 0, 0, 'mpg', 'video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (16, 0, 0, 'pdf', '', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '', 0, '');
+INSERT INTO mime VALUES (17, 0, 0, 'png', 'image', 'image/png image/x-png', 'Portable (Public) Network Graphic', '&1&2&', '', 10, '');
+INSERT INTO mime VALUES (18, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '', 0, '');
+INSERT INTO mime VALUES (19, 0, 0, 'ram', 'audio', 'audio/x-pn-realaudio', 'RealMedia Metafile', '&1&', '', 30, '');
+INSERT INTO mime VALUES (20, 0, 0, 'rar', '', 'application/x-rar-compressed', 'WinRAR Compressed Archive', '&1&', '', 0, '');
+INSERT INTO mime VALUES (21, 0, 0, 'swf', '', 'application/x-shockwave-flash', 'Macromedia Flash Format File', '&1&', '', 0, '');
+INSERT INTO mime VALUES (22, 0, 0, 'txt', '', 'text/plain', 'Text File', '&1&', '', 0, '');
+INSERT INTO mime VALUES (23, 0, 0, 'wav', 'audio', 'audio/wav audio/x-wav', 'Waveform Audio', '&1&', '', 32, '');
+INSERT INTO mime VALUES (24, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Media File', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (25, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel', '&1&', '', 0, '');
+INSERT INTO mime VALUES (26, 0, 0, 'zip', '', 'application/zip', 'Compressed Archive File', '&1&', '', 0, '');
+INSERT INTO mime VALUES (27, 0, 0, 'ai', '', 'application/postscript', 'Adobe Illustrator', '&1&', '', 11, '');
+INSERT INTO mime VALUES (28, 0, 0, 'eps', '', 'application/postscript', 'Encapsulated PostScript', '&1&', '', 11, '');
+INSERT INTO mime VALUES (29, 0, 0, 'pct', '', 'image/x-pict', 'Apple Macintosh QuickDraw/PICT', '&1&', '', 11, '');
+INSERT INTO mime VALUES (30, 0, 0, 'psd', '', 'image/x-photshop', 'Adobe Photoshop', '&1&', '', 11, 'convert:--flatten');
+INSERT INTO mime VALUES (31, 0, 0, 'tif', '', 'image/tiff', 'Tag Image File Format', '&1&', '', 11, '');
+INSERT INTO mime VALUES (32, 0, 0, 'wmf', '', 'image/wmf application/octet-stream', 'Windows Meta File', '&1&', '', 11, '');
 
 #
 # player table

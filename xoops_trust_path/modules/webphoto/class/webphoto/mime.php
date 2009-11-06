@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.7 2008/11/01 23:53:08 ohwada Exp $
+// $Id: mime.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// get_cached_mime_kind_by_ext()
 // 2008-10-01 K.OHWADA
 // get_image_mimes()
 // 2008-08-24 K.OHWADA
@@ -30,11 +32,16 @@ class webphoto_mime
 	var $_xoops_class ;
 
 	var $_cached_my_allowed_mimes = null;
+	var $_cached_kind_array = array();
 	var $_cached_mime_array = array();
+	var $_cached_mime_options_array = array();
 
 	var $_IMAGE_MEDIUM = 'image' ;
 	var $_VIDEO_MEDIUM = 'video' ;
 	var $_AUDIO_MEDIUM = 'audio' ;
+
+	var $_MIME_OPTION_DELMITA_1 = ';';
+	var $_MIME_OPTION_DELMITA_2 = ':';
 
 // asx is meta file (text)
 	var $_EXT_ASX = 'asx';
@@ -177,11 +184,54 @@ function get_cached_mime_type_by_ext( $ext )
 	return false;
 }
 
+function get_cached_mime_kind_by_ext( $ext )
+{
+	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
+	if ( !is_array($row) ) {
+		return false;
+	}
+	return $row['mime_kind'];
+}
+
+function get_cached_mime_options_by_ext( $ext )
+{
+	if ( isset( $this->_cached_mime_options_array[ $ext ] ) ) {
+		return  $this->_cached_mime_options_array[ $ext ];
+	}
+
+	$opt_arr = array();
+
+	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
+	if ( !is_array($row) ) {
+		return false;
+	}
+
+	$arr1 = $this->str_to_array( $row['mime_option'] , $this->_MIME_OPTION_DELMITA_1 );
+	if ( !is_array($arr1) || !count($arr1) ) {
+		return null;
+	}
+
+	foreach ($arr1 as $opt)
+	{
+		$arr2 = $this->str_to_array( $opt , $this->_MIME_OPTION_DELMITA_2 );
+		if ( isset($arr2[0]) && isset($arr2[1]) ) {
+			$opt_arr[ $arr2[0] ] = $arr2[1];
+		}
+	}
+
+	$this->_cached_mime_options_array[ $ext ] = $opt_arr;
+	return $opt_arr;
+}
+
 //---------------------------------------------------------
 // judge mime type
 //---------------------------------------------------------
 function ext_to_kind( $ext )
 {
+	if ( isset( $this->_cached_kind_array[ $ext ] ) ) {
+		return  $this->_cached_kind_array[ $ext ];
+	}
+
 	$kind = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
 	if ( $this->is_image_ext( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_IMAGE ;
@@ -192,12 +242,18 @@ function ext_to_kind( $ext )
 	} elseif ( $ext != '' ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
 	}
+	$this->_cached_kind_array[ $ext ] = $kind;
 	return $kind ;
 }
 
 function ext_to_mime( $ext )
 {
 	return $this->get_cached_mime_type_by_ext( $ext );
+}
+
+function ext_to_mime_kind( $ext )
+{
+	return $this->get_cached_mime_kind_by_ext( $ext );
 }
 
 function mime_to_medium( $mime )
@@ -224,6 +280,14 @@ function is_image_ext( $ext )
 	return false;
 }
 
+function is_image_convert_ext( $ext )
+{
+	if ( $this->ext_to_mime_kind( $ext ) == _C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT ) {
+		return true;
+	}
+	return false;
+}
+
 function is_video_ext( $ext )
 {
 	if ( $ext == $this->_EXT_ASX ) {
@@ -238,7 +302,6 @@ function is_audio_ext( $ext )
 	return $this->is_audio_mime( 
 		$this->ext_to_mime( $ext ) );
 }
-
 
 function is_image_mime( $mime )
 {

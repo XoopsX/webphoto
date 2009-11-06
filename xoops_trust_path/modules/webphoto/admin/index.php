@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.10 2009/04/19 16:07:42 ohwada Exp $
+// $Id: index.php,v 1.11 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// class/lib/lame.php
 // 2008-04-19 K.OHWADA
 // class/lib/file_check.php
 // 2008-04-10 K.OHWADA
@@ -39,6 +41,8 @@ webphoto_include_once( 'class/lib/gd.php' );
 webphoto_include_once( 'class/lib/imagemagick.php' );
 webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/ffmpeg.php' );
+webphoto_include_once( 'class/lib/lame.php' );
+webphoto_include_once( 'class/lib/timidity.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/dir.php' );

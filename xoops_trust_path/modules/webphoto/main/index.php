@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.3 2009/04/11 14:23:35 ohwada Exp $
+// $Id: index.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// get_template_main()
 // 2009-04-10 K.OHWADA
 // remove get_photo_globals()
 // 2008-08-01 K.OHWADA
@@ -24,7 +26,7 @@ webphoto_include_once( 'class/main/index.php' );
 //=========================================================
 $manage =& webphoto_main_index::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
 
-$xoopsOption['template_main'] = WEBPHOTO_DIRNAME.'_main_index.html' ;
+$xoopsOption['template_main'] = $manage->get_template_main() ;
 include XOOPS_ROOT_PATH . "/header.php" ;
 
 $xoopsTpl->assign( $manage->main() ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: ext.php,v 1.3 2009/01/31 19:12:50 ohwada Exp $
+// $Id: ext.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// create_jpeg()
 // 2009-01-25 K.OHWADA
 // create_swf()
 //---------------------------------------------------------
@@ -73,10 +75,30 @@ function create_image( $param )
 	return null ;
 }
 
+function create_jpeg( $param )
+{
+	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+
+	$list = $this->get_cached_list();
+	foreach ( $list as $type )
+	{
+		$class =& $this->get_cached_class_object( $type );
+		if ( ! is_object($class) ) {
+			continue;
+		}
+		if ( ! $class->is_ext( $src_ext ) ) {
+			continue;
+		}
+
+		return $class->create_jpeg( $param );
+	}
+
+	return 0 ;	// no action
+}
+
 function create_pdf( $param )
 {
 	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
-	$pdf_file = isset($param['pdf_file']) ? $param['pdf_file'] : null ;
 
 	$list = $this->get_cached_list();
 	foreach ( $list as $type )
@@ -98,7 +120,6 @@ function create_pdf( $param )
 function create_swf( $param )
 {
 	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
-	$swf_file = isset($param['swf_file']) ? $param['swf_file'] : null ;
 
 	$list = $this->get_cached_list();
 	foreach ( $list as $type )
@@ -112,6 +133,27 @@ function create_swf( $param )
 		}
 
 		return $class->create_swf( $param );
+	}
+
+	return 0 ;	// no action
+}
+
+function create_mp3( $param )
+{
+	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+
+	$list = $this->get_cached_list();
+	foreach ( $list as $type )
+	{
+		$class =& $this->get_cached_class_object( $type );
+		if ( ! is_object($class) ) {
+			continue;
+		}
+		if ( ! $class->is_ext( $src_ext ) ) {
+			continue;
+		}
+
+		return $class->create_mp3( $param );
 	}
 
 	return 0 ;	// no action

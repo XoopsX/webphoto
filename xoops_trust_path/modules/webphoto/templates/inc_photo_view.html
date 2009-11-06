@@ -1,0 +1,81 @@
+<{* $Id: inc_photo_view.html,v 1.1 2009/11/06 18:06:06 ohwada Exp $ *}>
+
+<{* IMAGES *}>
+<{if $photo.displaytype == 1 }>
+
+  <{if $photo.img_middle_width && $photo.img_middle_height }>
+    <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
+    <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
+
+  <{else}>
+    <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', '' ); return(false);">
+    <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+  <{/if}>
+
+  </a> <br />
+  <span class="webphoto_photo_title"><{$photo.title_s}></span>
+
+  <{if $photo.cont_size_disp}>
+    ( <{$photo.cont_size_disp}> )
+  <{/if}>
+  <br />
+
+<{* ENBED *}>
+<{elseif $photo.displaytype == 10 }>
+  <{$photo.embed_embed}> 
+  <br /><br />
+  <{if $photo.embed_link != '' }>
+    <a href="<{$photo.embed_link}>" target="_blank">
+    <{$photo.title_s}></a>
+  <{else}>
+    <{$photo.title_s}>
+  <{/if}>
+
+  <{if $photo.cont_size_disp}>
+    ( <{$photo.cont_size_disp}> )
+  <{/if}>
+
+  <br />
+
+<{* FALSH PLAYER *}>
+<{elseif $photo.displaytype_flash }>
+  <{$photo.flash_player}>
+  <br />
+  <span class="webphoto_photo_title"><{$photo.title_s}></span>
+
+  <{if $photo.cont_size_disp}>
+    ( <{$photo.cont_size_disp}> )
+  <{/if}>
+  <br />
+
+<{* GENERAL *}>
+<{elseif $photo.media_url_s }>
+  <a href="<{$photo.media_url_s}>" target="_blank">
+
+  <{if $photo.img_middle_src_s && $photo.img_middle_width && $photo.img_middle_height }>
+    <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
+  <{elseif $photo.img_middle_src_s }>
+    <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+  <{elseif $photo.thumb_width && $photo.thumb_height }>
+    <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
+  <{/if}>
+
+  </a> <br />
+  <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+
+  <{if $photo.is_video && $photo.cont_duration_disp }>
+    ( <{$photo.cont_duration_disp}> ) 
+  <{/if}>
+
+  <{if $photo.cont_size_disp}>
+    ( <{$photo.cont_size_disp}> )
+  <{/if}>
+
+  <br />
+
+<{* NO FILE TYPE *}>
+<{else}>
+  <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
+<{/if}>

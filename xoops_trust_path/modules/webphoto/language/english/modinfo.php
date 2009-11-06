@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.18 2009/05/23 14:57:15 ohwada Exp $
+// $Id: modinfo.php,v 1.19 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -372,6 +372,19 @@ define($constpref."CFG_CAT_CHILD_DSC", "Enter to show or not photos of subcatego
 define($constpref."OPT_CAT_CHILD_NON", "Photos of this category only. Not show photos of subcategoies");
 define($constpref."OPT_CAT_CHILD_EMPTY", "When no photo in this category, show photos of subcategoies");
 define($constpref."OPT_CAT_CHILD_ALWAYS", "Show alwayas photos of subcategoies");
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+define($constpref."CFG_USE_LAME"  , "Use lame" ) ;
+define($constpref."CFG_LAMEPATH"  , "Path to lame" ) ;
+define($constpref."CFG_LAMEPATH_DSC" , "Alhough the full path to 'lame' should be written, leave it blank in most environments.<br />This configuration is significant only when using lame" ) ;
+
+define($constpref."CFG_USE_TIMIDITY"  , "Use timidity" ) ;
+define($constpref."CFG_TIMIDITYPATH"  , "Path to timidity" ) ;
+define($constpref."CFG_TIMIDITYPATH_DSC" , "Alhough the full path to 'timidity' should be written, leave it blank in most environments.<br />This configuration is significant only when using timidity" ) ;
+
+define($constpref."SMNAME_SEARCH","Search");
 
 }
 // === define begin ===

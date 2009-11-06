@@ -1,11 +1,52 @@
-$Id: readme_en.txt,v 1.36 2009/09/25 22:50:44 ohwada Exp $
+$Id: readme_en.txt,v 1.37 2009/11/06 18:04:17 ohwada Exp $
+
+=================================================
+Version: 1.80
+Date:   2009-11-01
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. media file
+(1) added media files
+ai, eps, pct, psd, tif, wmf 
+
+(2) processing of image files
+convert to JPEG and create thumbnail, when submit image files. 
+object: ai, bmp, eps, pct, psd, tif, wmf which are can not be show by WEB browser
+requirement: imagemagick is necessary
+
+(3) processing of audeo files
+convert to MP3 and play in mediaplayer.swf, when submit image files. 
+object: wav, mid
+requirement: for wav, lame is necessary
+             for mid, lame and timidity are necessary
+
+2. bug fix
+(1) Fatal error in imagemanager.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1032&forum=13
+
+(2) same image overlaps in timelime
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1033&forum=13
+
+(3) player id is not correctly selected 
+
+3. Database structure
+(1) mime table: add field mime_kind, mime_option
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.73
 Date:   2009-09-25
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

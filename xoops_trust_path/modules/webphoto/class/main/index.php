@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.9 2009/09/25 22:50:44 ohwada Exp $
+// $Id: index.php,v 1.10 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// webphoto_show_list
 // 2009-09-25 K.OHWADA
 // Notice [PHP]: Undefined variable: main_rows
 // 2009-05-30 K.OHWADA
@@ -30,17 +32,26 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_index
 //=========================================================
-class webphoto_main_index extends webphoto_show_main
+class webphoto_main_index extends webphoto_show_list
 {
+	var $_QR_IMAGE_INDEX = 'qr_index.png';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_main_index( $dirname , $trust_dirname )
 {
-	$this->webphoto_show_main( $dirname , $trust_dirname );
+	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->set_template_main( 'main_index.html' );
 
 	$this->init_preload();
+
+	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+		$this->set_template_main( 'main_photo.html' );
+		$this->_SHOW_PHOTO_VIEW = true;
+		$this->set_navi_mode( 'kind' );
+	}
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -59,6 +70,8 @@ function main()
 {
 	$show_photo      = false;
 	$main_photos     = null;
+	$photo           = null;
+	$show_photo_desc = false;
 
 // Notice [PHP]: Undefined variable: main_rows
 	$main_rows       = null;
@@ -78,6 +91,11 @@ function main()
 		$show_photo  = true;
 		$main_rows   = $this->_get_rows_by_mode( $this->_MAX_PHOTOS, $start );
 		$main_photos = $this->build_photo_show_from_rows( $main_rows );
+
+		if ( $this->_SHOW_PHOTO_VIEW && isset( $main_rows[0] ) ) {
+			$photo = $this->build_photo_show_photo( $main_rows[0] );
+			$show_photo_desc = true;
+		}
 	}
 
 	$sub_title_s = $this->sanitize( $this->get_constant( 'TITLE_'. $mode ) ); 
@@ -97,13 +115,15 @@ function main()
 		'sub_desc_s'        => '' , 
 		'photo_total'       => $total,
 		'photos'            => $main_photos,
+		'photo'             => $photo ,
 		'show_photo'        => $show_photo , 
+		'show_photo_desc'   => $show_photo_desc ,
 		'show_nomatch'      => $this->build_show_nomatch( $total ) ,
 		'show_random_more'  => $this->_build_show_random_more() ,
 		'index_desc'        => $this->_build_index_desc() ,
 		'mobile_email'      => $this->get_mobile_email() ,
 		'mobile_url'        => $this->build_mobile_url( 0 ) ,
-		'mobile_url'        => $this->build_mobile_url( 0 ) ,
+		'mobile_qr_image'   => $this->_QR_IMAGE_INDEX ,
 	);
 
 	$arr = array_merge( 
@@ -115,6 +135,7 @@ function main()
 		$this->_build_notification_select_param() ,
 		$this->_build_navi_param( $total, $limit ) 
 	);
+
 	return $this->add_show_js_windows( $arr );
 }
 

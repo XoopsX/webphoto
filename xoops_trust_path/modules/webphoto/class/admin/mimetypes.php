@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.5 2008/12/18 13:23:16 ohwada Exp $
+// $Id: mimetypes.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// mime_kind
 // 2008-12-12 K.OHWADA
 // build_group_perms_by_post()
 // 2008-08-24 K.OHWADA
@@ -148,7 +150,9 @@ function _save()
 	$row['mime_ext']    = $this->_post_class->get_post_text('mime_ext');
 	$row['mime_name']   = $this->_post_class->get_post_text('mime_name');
 	$row['mime_type']   = $this->_post_class->get_post_text('mime_type');
-	$row['mime_ffmpeg'] = $this->_post_class->get_post_text('mime_ffmpeg');
+//	$row['mime_ffmpeg'] = $this->_post_class->get_post_text('mime_ffmpeg');
+	$row['mime_kind']   = $this->_post_class->get_post_int( 'mime_kind');
+	$row['mime_option'] = $this->_post_class->get_post_text('mime_option');
 	$row['mime_perms']  = $this->get_group_perms_str_by_post('mime_perms_ids');
 
 	if ( $post_mime_id > 0 ) {

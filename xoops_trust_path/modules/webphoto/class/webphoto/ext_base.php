@@ -1,5 +1,5 @@
 <?php
-// $Id: ext_base.php,v 1.3 2009/01/31 19:12:50 ohwada Exp $
+// $Id: ext_base.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// get_cached_mime_kind_by_ext()
 // 2009-01-25 K.OHWADA
 // create_swf()
 //---------------------------------------------------------
@@ -33,7 +35,8 @@ class webphoto_ext_base
 	var $_flag_chmod = false;
 	var $_cached     = array();
 	var $_errors     = array();
-	var $_cached_mime_array = array();
+	var $_cached_mime_type_array = array();
+	var $_cached_mime_kind_array  = array();
 
 	var $_TMP_DIR;
 
@@ -86,6 +89,22 @@ function is_ext_in_array( $ext, $array )
 function create_image( $param )
 {
 	return false;
+}
+
+//---------------------------------------------------------
+// create jpeg
+//---------------------------------------------------------
+function create_jpeg( $param )
+{
+	return 0 ;	// no action
+}
+
+//---------------------------------------------------------
+// create mp3
+//---------------------------------------------------------
+function create_mp3( $param )
+{
+	return 0 ;	// no action
 }
 
 //---------------------------------------------------------
@@ -149,8 +168,8 @@ function get_errors()
 //---------------------------------------------------------
 function get_cached_mime_type_by_ext( $ext )
 {
-	if ( isset( $this->_cached_mime_array[ $ext ] ) ) {
-		return  $this->_cached_mime_array[ $ext ];
+	if ( isset( $this->_cached_mime_type_array[ $ext ] ) ) {
+		return  $this->_cached_mime_type_array[ $ext ];
 	}
 
 	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
@@ -161,10 +180,34 @@ function get_cached_mime_type_by_ext( $ext )
 	$mime_arr = $this->_utility_class->str_to_array( $row['mime_type'] , ' ' );
 	if ( isset( $mime_arr[0] ) ) {
 		$mime = $mime_arr[0];
-		$this->_cached_mime_array[ $ext ] = $mime;
+		$this->_cached_mime_type_array[ $ext ] = $mime;
 		return  $mime ;
 	}
 
+	return false;
+}
+
+function get_cached_mime_kind_by_ext( $ext )
+{
+	if ( isset( $this->_cached_mime_kind_array[ $ext ] ) ) {
+		return  $this->_cached_mime_kind_array[ $ext ];
+	}
+
+	$row = $this->_mime_handler->get_cached_row_by_ext( $ext );
+	if ( !is_array($row) ) {
+		return false;
+	}
+
+	$kind = $row['mime_kind'];
+	$this->_cached_mime_kind_array[ $ext ] = $kind;
+	return $kind ;
+}
+
+function match_ext_kind( $ext, $kind )
+{
+	if ( $this->get_cached_mime_kind_by_ext( $ext ) == $kind ) {
+		return true;
+	}
 	return false;
 }
 

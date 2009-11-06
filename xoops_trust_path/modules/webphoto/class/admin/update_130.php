@@ -1,5 +1,5 @@
 <?php
-// $Id: update_130.php,v 1.4 2009/04/12 07:00:12 ohwada Exp $
+// $Id: update_130.php,v 1.5 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// BUG: Notice [PHP]: Undefined variable: item_id
 // 2009-04-10 K.OHWADA
 // webphoto_small_create
 //---------------------------------------------------------
@@ -210,17 +212,17 @@ function _get_src_param( $item_row )
 		return false;
 	}
 
-	$param = $this->_get_file_param( $file_id_cont, true );
+	$param = $this->_get_file_param( $item_id, $file_id_cont, true );
 	if ( is_array($param) ) {
 		return $param;
 	}
 
-	$param = $this->_get_file_param( $file_id_middle );
+	$param = $this->_get_file_param( $item_id, $file_id_middle );
 	if ( is_array($param) ) {
 		return $param;
 	}
 
-	$param = $this->_get_file_param( $file_id_thumb );
+	$param = $this->_get_file_param( $item_id, $file_id_thumb );
 	if ( is_array($param) ) {
 		return $param;
 	}
@@ -234,13 +236,14 @@ function _get_src_param( $item_row )
 	return false;
 }
 
-function _get_file_param( $id, $flag_ext=false )
+// Notice [PHP]: Undefined variable: item_id
+function _get_file_param( $item_id, $file_id, $flag_ext=false )
 {
-	if ( empty($id) ) {
+	if ( empty($file_id) ) {
 		return null;
 	}
 
-	$row = $this->_file_handler->get_row_by_id( $id );
+	$row = $this->_file_handler->get_row_by_id( $file_id );
 	if ( !is_array($row) ) {
 		return null;
 	} 

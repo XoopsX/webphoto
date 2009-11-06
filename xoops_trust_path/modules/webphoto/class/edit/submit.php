@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.11 2009/05/31 18:22:59 ohwada Exp $
+// $Id: submit.php,v 1.12 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// create_jpeg_param()
 // 2009-05-30 K.OHWADA
 // show_photo_desc -> show_photo_summary
 // 2009-05-05 K.OHWADA
@@ -74,6 +76,8 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 
 	var $_MAX_PHOTO_FILE = _C_WEBPHOTO_MAX_PHOTO_FILE ;
 
+	var $_FILE_LIST;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -114,6 +118,7 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 
 	$this->_FLAG_FETCH_ALLOW_ALL = true ;
 
+	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
 
 // for admin_photo_manage admin_catmanager
@@ -433,13 +438,7 @@ function create_media_file_params( $item_row, $is_submit=true )
 	$item_id   = $item_row['item_id'] ;
 	$item_kind = $item_row['item_kind'] ;
 
-	$thumb_param  = null;
-	$middle_param = null;
-	$small_param  = null;
-	$flash_param  = null ;
-	$docomo_param = null ;
-	$pdf_param    = null ;
-	$swf_param    = null ;
+	$file_params = array();
 	$middle_thumb_param = null;
 
 	$this->init_photo_create();
@@ -457,55 +456,47 @@ function create_media_file_params( $item_row, $is_submit=true )
 		return $ret ;
 	}
 
+	$file_params['cont'] = $cont_param;
+
 // -- docomo, flash, pdf, video images
 	if ( is_array($cont_param) ) {
-		$docomo_param = $this->create_docomo_param( $photo_param, $cont_param  );
-		$flash_param  = $this->create_flash_param(  $photo_param );
-		$pdf_param    = $this->create_pdf_param(    $photo_param );
-		$swf_param    = $this->create_swf_param(    $photo_param );
+		$file_params['docomo'] = $this->create_docomo_param( $photo_param, $cont_param  );
+		$file_params['flash']  = $this->create_flash_param(  $photo_param );
+		$file_params['jpeg']   = $this->create_jpeg_param(   $photo_param );
+		$file_params['mp3']    = $this->create_mp3_param(    $photo_param );
+		$file_params['pdf']    = $this->create_pdf_param(    $photo_param );
+		$file_params['swf']    = $this->create_swf_param(    $photo_param );
 
 		$middle_thumb_param = $this->create_image_for_middle_thumb(
-			$photo_param, $pdf_param, $flag_video=false );
+			$photo_param, $file_params['jpeg'], $file_params['pdf'], $flag_video=false );
+
 		$this->create_video_plural_images( $photo_param );
 	}
 
 // -- thmub 
 	if ( $thumb_name ) {
-		$thumb_param = $this->create_thumb_param_by_tmp( $item_row, $thumb_name );
-
+		$file_params['thumb'] = $this->create_thumb_param_by_tmp( $item_row, $thumb_name );
 	} elseif ( $is_submit && $this->is_external_embed_playlist_kind( $item_kind ) ) {
 		//	dummy
-
 	} elseif ( is_array($cont_param) ) {
-		$thumb_param = $this->create_thumb_param_by_photo( $middle_thumb_param );
+		$file_params['thumb'] = $this->create_thumb_param_by_photo( $middle_thumb_param );
 	}
 
 // -- middle 
 	if ( $middle_name ) {
-		$middle_param = $this->create_middle_param_by_tmp( $item_row, $middle_name );
-
+		$file_params['middle'] = $this->create_middle_param_by_tmp( $item_row, $middle_name );
 	} elseif ( is_array($cont_param) ) {
-		$middle_param = $this->create_middle_param_by_photo( $middle_thumb_param );
+		$file_params['middle'] = $this->create_middle_param_by_photo( $middle_thumb_param );
 	}
 
-// -- middle 
+// -- small 
 	if ( $small_name ) {
-		$small_param = $this->create_small_param_by_tmp( $item_row, $small_name );
-
+		$file_params['small'] = $this->create_small_param_by_tmp( $item_row, $small_name );
 	} elseif ( is_array($cont_param) ) {
-		$small_param = $this->create_small_param_by_photo( $middle_thumb_param );
+		$file_params['small'] = $this->create_small_param_by_photo( $middle_thumb_param );
 	}
 
-	$this->_media_file_params = array(
-		'cont'   => $cont_param ,
-		'thumb'  => $thumb_param ,
-		'middle' => $middle_param ,
-		'small'  => $small_param ,
-		'flash'  => $flash_param ,
-		'docomo' => $docomo_param ,
-		'pdf'    => $pdf_param ,
-		'swf'    => $swf_param ,
-	);
+	$this->_media_file_params = $file_params ;
 
 	return 0;
 }
@@ -582,6 +573,24 @@ function create_flash_param( $photo_param )
 	return $flash_param;
 }
 
+function create_jpeg_param( $photo_param )
+{
+	$jpeg_param = $this->_factory_create_class->create_jpeg_param( $photo_param );
+	if ( $this->_factory_create_class->get_flag_jpeg_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_JPEG') ) ;
+	}
+	return $jpeg_param;
+}
+
+function create_mp3_param( $photo_param )
+{
+	$mp3_param = $this->_factory_create_class->create_mp3_param( $photo_param );
+	if ( $this->_factory_create_class->get_flag_mp3_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_MP3') ) ;
+	}
+	return $mp3_param;
+}
+
 function create_pdf_param( $param )
 {
 	$pdf_param = $this->_factory_create_class->create_pdf_param( $param );
@@ -600,10 +609,10 @@ function create_swf_param( $param )
 	return $swf_param ;
 }
 
-function create_image_for_middle_thumb( $photo_param, $pdf_param, $flag_video )
+function create_image_for_middle_thumb( $photo_param, $jpeg_param, $pdf_param, $flag_video )
 {
 	$img_param = $this->_factory_create_class->create_image_for_middle_thumb( 
-		$photo_param, $pdf_param, $flag_video );
+		$photo_param, $jpeg_param, $pdf_param, $flag_video );
 	$this->_image_tmp_file = $this->_factory_create_class->get_image_tmp_file();
 	if ( $this->_factory_create_class->get_flag_image_ext_failed() ) {
 		$this->set_msg_array( 'cannot create image ext' ) ;

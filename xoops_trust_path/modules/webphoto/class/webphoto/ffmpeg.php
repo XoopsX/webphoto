@@ -1,10 +1,16 @@
 <?php
-// $Id: ffmpeg.php,v 1.2 2009/01/24 15:33:44 ohwada Exp $
+// $Id: ffmpeg.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-10-25 K.OHWADA
+// webphoto_cmd_base
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -12,16 +18,13 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_ffmpeg
 // wrapper for webphoto_lib_ffmpeg
 //=========================================================
-class webphoto_ffmpeg extends webphoto_lib_error
+class webphoto_ffmpeg extends webphoto_cmd_base
 {
-	var $_config_class ;
 	var $_ffmpeg_class ;
 
 	var $_cfg_use_ffmpeg = false;
 
 	var $_thumb_id = 0;
-
-	var $_TMP_DIR ;
 
 	var $_PLURAL_MAX    = _C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX ;
 	var $_PLURAL_SECOND = 0;
@@ -33,20 +36,16 @@ class webphoto_ffmpeg extends webphoto_lib_error
 	var $_SINGLE_FIRST  = 0;
 
 	var $_THUMB_PREFIX = _C_WEBPHOTO_VIDEO_THUMB_PREFIX ;	// tmp_ffmpeg_
-	var $_JPEG_EXT     = 'jpg';
 
-	var $_DEBUG = false ;
+	var $_CMD_FFMPEG = 'ffmpeg';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_ffmpeg( $dirname )
 {
-	$this->webphoto_lib_error();
+	$this->webphoto_cmd_base( $dirname );
 
-	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-
-	$this->_TMP_DIR        = $this->_config_class->get_work_dir( 'tmp' );
 	$this->_cfg_use_ffmpeg = $this->_config_class->get_by_name( 'use_ffmpeg' );
 	$cfg_ffmpegpath        = $this->_config_class->get_dir_by_name( 'ffmpegpath' );
 
@@ -56,8 +55,7 @@ function webphoto_ffmpeg( $dirname )
 	$this->_ffmpeg_class->set_ext( $this->_JPEG_EXT );
 	$this->_ffmpeg_class->set_flag_chmod( true );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_by_const_name(   $constpref.'DEBUG_FFMPEG' );
+	$this->set_debug_by_const_name( $this->_ffmpeg_class, 'DEBUG_FFMPEG' );
 }
 
 function &getInstance( $dirname )
@@ -96,7 +94,7 @@ function create_image( $param )
 	if ( isset( $this->_cached[ $item_id ] ) ) {
 		$created_file = $this->_cached[ $item_id ];
 	} else {
-		$created_file = $this->create_jpeg( $item_id, $src_file );
+		$created_file = $this->create_jpeg_tmp( $item_id, $src_file );
 	}
 
 	if ( ! is_file($created_file) ) {
@@ -115,7 +113,7 @@ function create_image( $param )
 	return $arr;
 }
 
-function create_jpeg( $id, $file )
+function create_jpeg_tmp( $id, $file )
 {
 	$path = null;
 
@@ -186,30 +184,17 @@ function create_plural_images( $id, $file )
 //---------------------------------------------------------
 // flash
 //---------------------------------------------------------
-function create_flash( $file_in, $file_out, $extra )
+function create_flash( $src_file, $dst_file, $option=null )
 {
-	$ret = $this->_ffmpeg_class->create_flash( $file_in, $file_out, $extra );
+	if ( empty($option) ) {
+		$option = $this->get_cmd_option( $src_file, $this->_CMD_FFMPEG );
+	}
+
+	$ret = $this->_ffmpeg_class->create_flash( $src_file, $dst_file, $option );
 	if ( !$ret ) {
 		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
 	}
 	return $ret;
-}
-
-//---------------------------------------------------------
-// debug
-//---------------------------------------------------------
-function set_debug_by_const_name( $name )
-{
-	if ( defined($name) ) {
-		$val = constant($name);
-		$this->set_debug( $val );
-		$this->_ffmpeg_class->set_debug( $val );
-	}
-}
-
-function set_debug( $val )
-{
-	$this->_DEBUG = (bool)$val ;
 }
 
 // --- class end ---

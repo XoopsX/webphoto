@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.13 2009/08/09 05:47:08 ohwada Exp $
+// $Id: checkconfigs.php,v 1.14 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// webphoto_lib_lame
 // 2009-08-08 K.OHWADA
 // _build_db_character()
 // 2009-01-25 K.OHWADA
@@ -136,16 +138,22 @@ function _check_program()
 	$imagemagick_class  =& webphoto_lib_imagemagick::getInstance();
 	$netpbm_class       =& webphoto_lib_netpbm::getInstance();
 	$ffmpeg_class       =& webphoto_lib_ffmpeg::getInstance();
+	$lame_class         =& webphoto_lib_lame::getInstance();
+	$timidity_class     =& webphoto_lib_timidity::getInstance();
 	$xpdf_class         =& webphoto_lib_xpdf::getInstance();
 	$jodconverter_class =& webphoto_jodconverter::getInstance( $this->_DIRNAME );
 
-	$cfg_imagingpipe = $this->get_config_by_name('imagingpipe');
-	$cfg_use_ffmpeg  = $this->get_config_by_name('use_ffmpeg');
-	$cfg_use_xpdf    = $this->get_config_by_name('use_xpdf');
-	$cfg_imagickpath = $this->_config_class->get_dir_by_name('imagickpath');
-	$cfg_netpbmpath  = $this->_config_class->get_dir_by_name('netpbmpath');
-	$cfg_ffmpegpath  = $this->_config_class->get_dir_by_name('ffmpegpath');
-	$cfg_xpdfpath    = $this->_config_class->get_dir_by_name('xpdfpath');
+	$cfg_imagingpipe  = $this->get_config_by_name('imagingpipe');
+	$cfg_use_ffmpeg   = $this->get_config_by_name('use_ffmpeg');
+	$cfg_use_lame     = $this->get_config_by_name('use_lame');
+	$cfg_use_timidity = $this->get_config_by_name('use_timidity');
+	$cfg_use_xpdf     = $this->get_config_by_name('use_xpdf');
+	$cfg_imagickpath  = $this->_config_class->get_dir_by_name('imagickpath');
+	$cfg_netpbmpath   = $this->_config_class->get_dir_by_name('netpbmpath');
+	$cfg_ffmpegpath   = $this->_config_class->get_dir_by_name('ffmpegpath');
+	$cfg_lamepath     = $this->_config_class->get_dir_by_name('lamepath');
+	$cfg_timiditypath = $this->_config_class->get_dir_by_name('timiditypath');
+	$cfg_xpdfpath     = $this->_config_class->get_dir_by_name('xpdfpath');
 
 	echo "<h4>"._AM_WEBPHOTO_H4_CONFIG."</h4>\n" ;
 
@@ -199,6 +207,28 @@ function _check_program()
 
 	} else {
 		echo "<b>FFmpeg</b> : not use <br /><br />\n";
+	}
+
+	if ( $cfg_use_lame || $cfg_lamepath ) {
+		echo "<b>lame</b><br />\n";
+		echo "Path: ". $cfg_lamepath ."<br />\n" ;
+		list( $ret, $msg ) = $lame_class->version( $cfg_lamepath );
+		$this->_print_ret_msg( $ret , $msg );
+		echo "<br />\n";
+
+	} else {
+		echo "<b>lame</b> : not use <br /><br />\n";
+	}
+
+	if ( $cfg_use_timidity || $cfg_timiditypath ) {
+		echo "<b>timidity</b><br />\n";
+		echo "Path: ". $cfg_timiditypath ."<br />\n" ;
+		list( $ret, $msg ) = $timidity_class->version( $cfg_timiditypath );
+		$this->_print_ret_msg( $ret , $msg );
+		echo "<br />\n";
+
+	} else {
+		echo "<b>timidity</b> : not use <br /><br />\n";
 	}
 
 	if ( $cfg_use_xpdf || $cfg_xpdfpath ) {

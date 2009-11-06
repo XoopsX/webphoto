@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.21 2009/05/31 18:22:59 ohwada Exp $
+// $Id: show_main.php,v 1.22 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// get_photo_kind_name_by_pathinfo()
 // 2009-05-30 K.OHWADA
 // BUG : not show cat_id
 // 2009-05-17 K.OHWADA
@@ -80,6 +82,7 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_MAX_TAG_CLOUD;
 	var $_VIEWTYPE_DEFAULT;
 	var $_USE_POPBOX_JS;
+	var $_TEMPLATE_MAIN = null ;
 
 	var $_SORT_ARRAY = array();
 
@@ -116,6 +119,11 @@ class webphoto_show_main extends webphoto_show_photo
 	var $_SHOW_CAT_SUB      = true;
 	var $_SHOW_CAT_MAIN_IMG = true;
 	var $_SHOW_CAT_SUB_IMG  = true;
+
+// kind
+	var $_PHOTO_KIND_ARRAY = array(
+		'latest', 'popular', 'random', 'video', 'image', 'office' );
+	var $_PHOTO_KIND_DEFAULT = 'latest';
 
 	var $_DEBUG_PRELOAD = false ;
 
@@ -201,6 +209,20 @@ function _preload_photo_sort_array()
 function set_mode( $val )
 {
 	$this->_mode = $val;
+}
+
+//---------------------------------------------------------
+// template
+//---------------------------------------------------------
+function set_template_main( $val )
+{
+	$this->_TEMPLATE_MAIN = $val;
+}
+
+function get_template_main()
+{
+	$str = $this->_DIRNAME .'_'. $this->_TEMPLATE_MAIN ;
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -376,6 +398,11 @@ function build_cat_path( $cat_id )
 	$ret['last']  = $arr[ $last ];
 
 	return $ret;
+}
+
+function build_cat_desc_disp( $row )
+{
+	return $this->_cat_handler->build_show_desc_disp( $row ) ; 
 }
 
 //---------------------------------------------------------
@@ -704,6 +731,23 @@ function get_photo_sort_name_by_pathinfo()
 {
 	return $this->_sort_class->get_photo_sort_name(
 		$this->_pathinfo_class->get_text( 'sort' ) );
+}
+
+function get_photo_kind_name_by_pathinfo()
+{
+	return $this->get_photo_kind_name(
+		$this->_pathinfo_class->get_text( 'kind' ) );
+}
+
+function get_photo_kind_name( $name )
+{
+	if( $name && isset( $this->_PHOTO_KIND_ARRAY[ $name ] ) ) {
+		return $name ;
+	} elseif( isset( $this->_PHOTO_KIND_ARRAY[ $this->_PHOTO_KIND_DEFAULT ] ) ) {
+		return $this->_PHOTO_KIND_DEFAULT ;
+	}
+
+	return false;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.27 2009/05/31 18:22:59 ohwada Exp $
+// $Id: xoops_version.php,v 1.28 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// use_lame
 // 2009-05-30 K.OHWADA
 // _C_WEBPHOTO_OPT_PERM_READ_ALL
 // 2009-05-17 K.OHWADA
@@ -63,6 +65,12 @@ class webphoto_inc_xoops_version extends webphoto_inc_handler
 	var $_has_rateview     = false;
 	var $_is_module_admin  = false;
 
+	var $_show_sub_myphoto    = true;
+	var $_show_sub_popular    = true;
+	var $_show_sub_highrate   = true;
+	var $_show_sub_cat_prefix = true;
+	var $_show_sub_search     = false;
+
 	var $_config_workdir_default = null;
 
 	var $_TRUST_DIRNAME = null ;
@@ -96,6 +104,14 @@ function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
+
+	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+		$this->_show_sub_myphoto    = false;
+		$this->_show_sub_popular    = false;
+		$this->_show_sub_highrate   = false;
+		$this->_show_sub_cat_prefix = false;
+		$this->_show_sub_search     = true;
+	}
 }
 
 function &getSingleton( $dirname, $trust_dirname )
@@ -271,16 +287,25 @@ function _build_sub()
 	if ( $this->_has_insertable ) {
 		$arr[] = $this->_build_sub_array_const(
 			'SMNAME_SUBMIT', $this->_build_sub_url_fct( 'submit' ) );
-		$arr[] = $this->_build_sub_array_const(
-			'SMNAME_MYPHOTO', $this->_build_sub_url_fct( 'myphoto' ) );
+		if ( $this->_show_sub_myphoto ) {
+			$arr[] = $this->_build_sub_array_const(
+				'SMNAME_MYPHOTO', $this->_build_sub_url_fct( 'myphoto' ) );
+		}
 	}
 
-	$arr[] = $this->_build_sub_array_const(
+	if ( $this->_show_sub_popular ) {
+		$arr[] = $this->_build_sub_array_const(
 		'SMNAME_POPULAR', $this->_build_sub_url_op( 'popular' ) );
+	}
 
-	if ( $this->_has_rateview ) {
+	if ( $this->_show_sub_highrate && $this->_has_rateview ) {
 		$arr[] = $this->_build_sub_array_const(
 			'SMNAME_HIGHRATE', $this->_build_sub_url_op( 'highrate' ) );
+	}
+
+	$name_prefix = '';
+	if ( $this->_show_sub_cat_prefix ) {
+		$name_prefix = ' - ';
 	}
 
 	if ( $this->_cfg_catonsubmenu ) {
@@ -288,11 +313,16 @@ function _build_sub()
 		if( is_array($rows) && count($rows) ) {
 			foreach ( $rows as $row )
 			{
-				$name  = ' - '. $this->sanitize( $row['cat_title'] ) ;
+				$name  = $name_prefix . $this->sanitize( $row['cat_title'] ) ;
 				$url   = $this->_build_sub_url_category( $row['cat_id'] ) ;
 				$arr[] = $this->_build_sub_array( $name, $url );
 			}
 		}
+	}
+
+	if ( $this->_show_sub_search ) {
+		$arr[] = $this->_build_sub_array_const(
+		'SMNAME_SEARCH', $this->_build_sub_url_op( 'search' ) );
 	}
 
 	return $arr;
@@ -559,6 +589,48 @@ function _build_config()
 		'name'			=> 'ffmpegpath' ,
 		'title'			=> $this->_constant_name( 'CFG_FFMPEGPATH' ) ,
 		'description'	=> $this->_constant_name( 'CFG_DESCFFMPEGPATH' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'use_lame' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_LAME' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> 0 ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'lamepath' ,
+		'title'			=> $this->_constant_name( 'CFG_LAMEPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_LAMEPATH_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
+		'options'		=> array()
+	) ;
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'use_timidity' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_TIMIDITY' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> 0 ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'timiditypath' ,
+		'title'			=> $this->_constant_name( 'CFG_TIMIDITYPATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_TIMIDITYPATH_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
 		'default'		=> '' ,

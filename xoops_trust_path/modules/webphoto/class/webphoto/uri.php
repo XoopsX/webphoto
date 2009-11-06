@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.5 2009/03/20 04:18:09 ohwada Exp $
+// $Id: uri.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// build_list_navi_url_kind()
 // 2009-03-15 K.OHWADA
 // flag_amp_sanitize in build_photo()
 // 2008-12-12 K.OHWADA
@@ -211,32 +213,45 @@ function build_main_op( $op, $flag_head_slash=false )
 	return $str;
 }
 
-function build_sort( $sort )
+
+function build_sort( $val )
+{
+	return $this->build_param_str( 'sort', $val );
+}
+
+function build_kind( $val )
+{
+	return $this->build_param_str( 'kind', $val );
+}
+
+function build_viewtype( $val )
+{
+	return $this->build_param_str( 'viewtype', $val );
+}
+
+function build_page( $val )
+{
+	return $this->build_param_int( 'page', $val );
+}
+
+function build_param_str( $name, $val )
 {
 	$str = '';
-	if ( $sort ) {
-		$str = $this->_SEPARATOR .'sort='. $this->sanitize($sort);
+	if ( $val ) {
+		$str = $this->_SEPARATOR . $name. '='. $this->sanitize($val);
 	}
 	return $str;
 }
 
-function build_viewtype( $viewtype )
+function build_param_int( $name, $val )
 {
 	$str = '';
-	if ( $viewtype ) {
-		$str = $this->_SEPARATOR .'viewtype='. $this->sanitize($viewtype);
+	if ( $val ) {
+		$str = $this->_SEPARATOR . $name. '='. intval($val);
 	}
 	return $str;
 }
 
-function build_page( $page )
-{
-	$str = '';
-	if ( $page ) {
-		$str = $this->_SEPARATOR. 'page='. intval($page) ;
-	}
-	return $str;
-}
 
 //---------------------------------------------------------
 // buiid uri for show_list
@@ -246,6 +261,15 @@ function build_list_navi_url( $mode, $param, $sort, $viewtype=null )
 	$str  = $this->_MODULE_URL .'/index.php';
 	$str .= $this->build_list_param( $mode, $param, true );
 	$str .= $this->build_sort( $sort );
+	$str .= $this->build_viewtype( $viewtype );
+	return $str ;
+}
+
+function build_list_navi_url_kind( $mode, $param, $kind, $viewtype=null )
+{
+	$str  = $this->_MODULE_URL .'/index.php';
+	$str .= $this->build_list_param( $mode, $param, true );
+	$str .= $this->build_kind( $kind );
 	$str .= $this->build_viewtype( $viewtype );
 	return $str ;
 }

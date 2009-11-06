@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.7 2009/05/23 14:57:15 ohwada Exp $
+// $Id: modinfo.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,20 @@ if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+if( !defined($constpref."CFG_USE_LAME") ) 
+{
+define($constpref."CFG_USE_LAME"  , "Use lame" ) ;
+define($constpref."CFG_LAMEPATH"  , "Path to lame" ) ;
+define($constpref."CFG_LAMEPATH_DSC" , "Alhough the full path to 'lame' should be written, leave it blank in most environments.<br />This configuration is significant only when using lame" ) ;
+define($constpref."CFG_USE_TIMIDITY"  , "Use timidity" ) ;
+define($constpref."CFG_TIMIDITYPATH"  , "Path to timidity" ) ;
+define($constpref."CFG_TIMIDITYPATH_DSC" , "Alhough the full path to 'timidity' should be written, leave it blank in most environments.<br />This configuration is significant only when using timidity" ) ;
+define($constpref."SMNAME_SEARCH","Search");
+}
 
 //---------------------------------------------------------
 // v1.70

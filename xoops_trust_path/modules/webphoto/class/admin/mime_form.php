@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_form.php,v 1.5 2009/04/27 18:30:04 ohwada Exp $
+// $Id: mime_form.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-25 K.OHWADA
+// mime_kind
 // 2009-04-27 K.OHWADA
 // _build_script() -> build_script_edit_js()
 // 2009-01-10 K.OHWADA
@@ -87,15 +89,27 @@ function print_form_mimetype( $row )
 
 	}
 
+	$this->_mime_handler->get_kind_options();
+
 	echo $this->build_row_text( _WEBPHOTO_MIME_EXT,    'mime_ext' );
 	echo $this->build_row_text( _WEBPHOTO_MIME_NAME,   'mime_name' );
 	echo $this->build_row_text( _WEBPHOTO_MIME_TYPE,   'mime_type' );
-	echo $this->build_row_text( _WEBPHOTO_MIME_FFMPEG, 'mime_ffmpeg' );
+//	echo $this->build_row_text( _WEBPHOTO_MIME_FFMPEG, 'mime_ffmpeg' );
+	echo $this->build_line_ele( _WEBPHOTO_MIME_KIND,   $this->_build_ele_kind() );
+	echo $this->build_row_text( _WEBPHOTO_MIME_OPTION, 'mime_option' );
 	echo $this->build_line_ele( _WEBPHOTO_MIME_PERMS,  $this->_build_ele_perms() );
 	echo $this->build_line_ele( '', $button );
 
 	echo $this->build_table_end();
 	echo $this->build_form_end();
+}
+
+function _build_ele_kind()
+{
+	$name    = 'mime_kind';
+	$value   = $this->get_row_by_key( $name );
+	$options = $this->_mime_handler->get_kind_options();
+	return $this->build_form_select( $name, $value, $options, 1 );
 }
 
 function _build_ele_perms()

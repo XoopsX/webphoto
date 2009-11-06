@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.29 2009/05/17 08:59:00 ohwada Exp $
+// $Id: main.php,v 1.30 2009/11/06 18:04:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -502,6 +502,10 @@ define("_WEBPHOTO_MIME_PERMS" , "パーミッション" ) ;
 // added in v0.20
 define("_WEBPHOTO_MIME_FFMPEG" , "ffmpeg オプション" ) ;
 
+// added in v1.80
+define("_WEBPHOTO_MIME_KIND" , "ファイル種別" ) ;
+define("_WEBPHOTO_MIME_OPTION" , "コマンド・オプション" ) ;
+
 // tag table
 define("_WEBPHOTO_TAG_TABLE" , "タグテーブル" ) ;
 define("_WEBPHOTO_TAG_ID" ,          "タグID" ) ;
@@ -853,8 +857,8 @@ define("_WEBPHOTO_ITEM_FILE_ID_5" ,  "ファイル番号：ドコモ ビデオ" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_6" ,  "ファイル番号：PDF" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_7" ,  "ファイル番号：Flash swf" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_8" ,  "ファイル番号：スモール" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "file9" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_10" , "file10" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_9" ,  "ファイル番号：JPEG" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_10" , "ファイル番号：MP3" ) ;
 define("_WEBPHOTO_ITEM_TEXT_1" ,  "text1" ) ;
 define("_WEBPHOTO_ITEM_TEXT_2" ,  "text2" ) ;
 define("_WEBPHOTO_ITEM_TEXT_3" ,  "text3" ) ;
@@ -893,8 +897,8 @@ define("_WEBPHOTO_FILE_KIND_5" ,  "ドコモ ビデオ" ) ;
 define("_WEBPHOTO_FILE_KIND_6" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_7" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_8" ,  "スモール" ) ;
-define("_WEBPHOTO_FILE_KIND_9" ,  "file9" ) ;
-define("_WEBPHOTO_FILE_KIND_10" , "file10" ) ;
+define("_WEBPHOTO_FILE_KIND_9" ,  "JPEG" ) ;
+define("_WEBPHOTO_FILE_KIND_10" , "MP3" ) ;
 
 // index
 define("_WEBPHOTO_MOBILE_MAILTO" , "携帯電話にURLを送信する" ) ;
@@ -1352,6 +1356,36 @@ define("_WEBPHOTO_CAP_SMALL_SELECT", "スモール画像の選択");
 define("_WEBPHOTO_TITLE_SUBMIT_SELECT",  "登録形式の切替え");
 define("_WEBPHOTO_TITLE_SUBMIT_SINGLE",  "１枚の登録");
 define("_WEBPHOTO_TITLE_SUBMIT_BULK",  "複数枚の一括登録");
+
+//---------------------------------------------------------
+// v1.80
+//---------------------------------------------------------
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_JPEG","JPEG画像");
+define("_WEBPHOTO_ITEM_CODEINFO_MP3", "MP3");
+
+// form
+define("_WEBPHOTO_ERR_JPEG", "JPEG を生成できなかった");
+define("_WEBPHOTO_ERR_MP3",  "MP3 を生成できなかった");
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_GENERAL",       "一般") ;
+define("_WEBPHOTO_MIME_KIND_IMAGE",         "画像" ) ;
+define("_WEBPHOTO_MIME_KIND_IMAGE_CONVERT", "画像 convert"  ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO",         "ビデオ" ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG",  "ビデオ ffmpeg" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO",         "オーディオ" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_MID",     "オーディオ midi" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_WAV",     "オーディオ wav" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE",        "オフィス" ) ;
+
+// player option
+define("_WEBPHOTO_PLAYER_TITLE_DEFAULT", "未定義");
+
+define("_WEBPHOTO_TITLE_IMAGE",   "静止画" ) ;
+define("_WEBPHOTO_TITLE_VIDEO",   "動画" ) ;
+define("_WEBPHOTO_TITLE_MUSIC",   "音楽" ) ;
+define("_WEBPHOTO_TITLE_OFFICE",  "オフィス" ) ;
 
 // === define end ===
 }
