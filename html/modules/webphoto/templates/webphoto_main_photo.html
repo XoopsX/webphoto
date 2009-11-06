@@ -1,12 +1,10 @@
-<{* $Id: webphoto_main_photo.html,v 1.17 2009/04/19 12:01:29 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.18 2009/11/06 18:08:07 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
 <{include file="db:`$mydirname`_inc_catpath.html" }>
  &gt; <b><{$photo.title_s}></b>
 <br />
-
-<script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/code.js"></script>
 
 <{* === gmap js === *}>
 <{if $show_gmap }>
@@ -78,193 +76,13 @@
 <br />
 
 <div align="center">
-
-<{* IMAGES *}>
-  <{if $photo.displaytype == 1 }>
-
-    <{if $photo.img_middle_width && $photo.img_middle_height }>
-      <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
-      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
-
-    <{else}>
-      <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', '' ); return(false);">
-      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
-    <{/if}>
-
-    </a> <br />
-    <span class="webphoto_photo_title"><{$photo.title_s}></span>
-
-    <{if $photo.cont_size_disp}>
-      ( <{$photo.cont_size_disp}> )
-    <{/if}>
-    <br />
-
-<{* ENBED *}>
-  <{elseif $photo.displaytype == 10 }>
-    <{$photo.embed_embed}> 
-    <br /><br />
-    <{if $photo.embed_link != '' }>
-      <a href="<{$photo.embed_link}>" target="_blank">
-      <{$photo.title_s}></a>
-    <{else}>
-      <{$photo.title_s}>
-    <{/if}>
-
-    <{if $photo.cont_size_disp}>
-      ( <{$photo.cont_size_disp}> )
-    <{/if}>
-
-    <br />
-
-<{* FALSH PLAYER *}>
-  <{elseif $photo.displaytype_flash }>
-    <{$photo.flash_player}>
-    <br />
-    <span class="webphoto_photo_title"><{$photo.title_s}></span>
-
-    <{if $photo.cont_size_disp}>
-      ( <{$photo.cont_size_disp}> )
-    <{/if}>
-    <br />
-
-<{* GENERAL *}>
-  <{elseif $photo.media_url_s }>
-    <a href="<{$photo.media_url_s}>" target="_blank">
-
-    <{if $photo.img_middle_src_s && $photo.img_middle_width && $photo.img_middle_height }>
-      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />
-    <{elseif $photo.img_middle_src_s }>
-      <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
-    <{elseif $photo.thumb_width && $photo.thumb_height }>
-      <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.thumb_width}>" height="<{$photo.thumb_height}>" />
-    <{else}>
-      <img src="<{$photo.imgsrc_thumb}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_middle_width}>" />
-    <{/if}>
-
-    </a> <br />
-    <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
-
-    <{if $photo.is_video && $photo.cont_duration_disp }>
-      ( <{$photo.cont_duration_disp}> ) 
-    <{/if}>
-
-    <{if $photo.cont_size_disp}>
-      ( <{$photo.cont_size_disp}> )
-    <{/if}>
-
-    <br />
-
-<{* NO FILE TYPE *}>
-  <{else}>
-    <span class="webphoto_photo_title"><{$photo.title_s}></span> <br />
-  <{/if}>
-
+  <{include file="db:`$mydirname`_inc_photo_view.html"}>
 </div><br />
 
 <{if $photo.show_codebox }>
   <div align="center">
-  <div class="webphoto_div_codebox">
-  <form name="webphoto_codebox_form" id="webphoto_codebox_form"> 
-  <table class="webphoto_table_code">
-  <{if $photo.show_code_page }>
-    <tr><td class="webphoto_td_code_left">
-      <a href="<{$photo.code_page_url}>" target="_self" title="<{$lang_page_view}>">
-      <{$lang_item_codeinfo_page}>
-      </a>
-    </td><td class="webphoto_td_code_middle">
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_page_link" type="text" value="<{$photo.code_page_url}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_cont }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_cont_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_cont_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_cont_link" type="text" value="<{$photo.code_cont_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_flash }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_flash_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_flash_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_flash_link" type="text" value="<{$photo.code_flash_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_pdf }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_pdf_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_pdf_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_pdf_link" type="text" value="<{$photo.code_pdf_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-    <{if $photo.show_code_swf }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_swf_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_swf_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_swf_link" type="text" value="<{$photo.code_swf_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_thumb }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_thumb_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_thumb_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_thumb" type="text" value="<{$photo.code_thumb_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_middle }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_middle_link}>
-    </td><td class="webphoto_td_code_middle">
-      <{$photo.code_middle_size}>
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_middle" type="text" value="<{$photo.code_middle_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_site}>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_site_link}>
-    </td><td class="webphoto_td_code_middle">
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_site" type="text" value="<{$photo.code_site_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_play }>
-    <tr><td class="webphoto_td_code_left">
-      <{$photo.code_play_link}>
-    </td><td class="webphoto_td_code_middle">
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_play" type="text" value="<{$photo.code_play_url_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_embed }>
-    <tr><td class="webphoto_td_code_left">
-      <{$lang_item_codeinfo_embed}>
-    </td><td class="webphoto_td_code_middle">
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_embed" type="text" value="<{$photo.code_embed_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  <{if $photo.show_code_js }>
-    <tr><td class="webphoto_td_code_left">
-      <{$lang_item_codeinfo_js}>
-    </td><td class="webphoto_td_code_middle">
-    </td><td class="webphoto_td_code_right">
-      <input name="webphoto_code_js" type="text" value="<{$photo.code_js_s}>" size="40" class="webphoto_input_codebox" onClick="webphoto_code_focus( this )" readonly="true">
-    </td></tr>
-  <{/if}>
-  </table>
-  </form>
-  </div></div><br />
+    <{include file="db:`$mydirname`_inc_photo_codebox.html"}>
+  </div><br />
 <{/if}>
 
 <div align="left">
