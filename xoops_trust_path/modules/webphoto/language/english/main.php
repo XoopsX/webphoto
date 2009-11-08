@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.34 2009/11/06 18:04:17 ohwada Exp $
+// $Id: main.php,v 1.35 2009/11/08 00:20:03 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -540,7 +540,7 @@ define("_WEBPHOTO_TITLE_SUBMIT","Submit");
 define("_WEBPHOTO_TITLE_POPULAR","Popular");
 define("_WEBPHOTO_TITLE_HIGHRATE","TopRated");
 define("_WEBPHOTO_TITLE_MYPHOTO","My Photos");
-define("_WEBPHOTO_TITLE_RANDOM","Radom Photos");
+define("_WEBPHOTO_TITLE_RANDOM","Random Photos");
 define("_WEBPHOTO_TITLE_HELP","Help");
 define("_WEBPHOTO_TITLE_CATEGORY_LIST", "Category List");
 define("_WEBPHOTO_TITLE_TAG_LIST",  "Tag List");
