@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_build.php,v 1.9 2009/11/29 10:30:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -169,6 +169,7 @@ function build_row_modify_by_post( $row, $flag_status=true )
 
 	$post_preview               = $this->get_post_text('preview');
 	$post_submit                = $this->get_post_text('submit' );
+	$post_detail_onclick        = $this->get_post_int( 'item_detail_onclick' );
 	$post_time_update_checkbox  = $this->get_post_int( 'item_time_update_checkbox' );
 	$post_time_publish_checkbox = $this->get_post_int( 'item_time_publish_checkbox' );
 	$post_time_expire_checkbox  = $this->get_post_int( 'item_time_expire_checkbox' );
@@ -194,8 +195,9 @@ function build_row_modify_by_post( $row, $flag_status=true )
 		if ( $post_time_expire_checkbox ) {
 			$time_expire = $post_time_expire ;
 		}
-		$row['item_time_publish'] = $time_publish ;
-		$row['item_time_expire']  = $time_expire ;
+		$row['item_time_publish']   = $time_publish ;
+		$row['item_time_expire']    = $time_expire ;
+		$row['item_detail_onclick'] = $post_detail_onclick ;
 
 // user
 	} else {
