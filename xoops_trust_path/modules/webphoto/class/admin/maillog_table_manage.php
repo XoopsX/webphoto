@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_table_manage.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: maillog_table_manage.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_maillog_handler
 // 2009-01-10 K.OHWADA
 // webphoto_mail_unlink -> webphoto_edit_mail_unlink
 //---------------------------------------------------------
@@ -27,7 +29,8 @@ class webphoto_admin_maillog_table_manage extends webphoto_lib_manage
 function webphoto_admin_maillog_table_manage( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_manage( $dirname , $trust_dirname );
-	$this->set_manage_handler( webphoto_maillog_handler::getInstance( $dirname ) );
+	$this->set_manage_handler( 
+		webphoto_maillog_handler::getInstance( $dirname , $trust_dirname ) );
 	$this->set_manage_title_by_name( 'MAILLOG_TABLE_MANAGE' );
 
 	$this->set_manage_list_column_array(

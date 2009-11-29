@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_photo.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_maillog_handler
 // 2009-01-10 K.OHWADA
 // webphoto_edit_mail_photo -> webphoto_edit_mail_photo
 // webphoto_edit_factory_create
@@ -53,13 +55,16 @@ function webphoto_edit_mail_photo( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_factory_create_class =& webphoto_edit_factory_create::getInstance( 
-		$dirname , $trust_dirname );
+	$this->_factory_create_class 
+		=& webphoto_edit_factory_create::getInstance( $dirname , $trust_dirname );
+	$this->_user_handler    
+		=& webphoto_user_handler::getInstance( $dirname, $trust_dirname );
+	$this->_maillog_handler 
+		=& webphoto_maillog_handler::getInstance( $dirname, $trust_dirname );
+	$this->_check_class     
+		=& webphoto_edit_mail_check::getInstance( $dirname, $trust_dirname );
 
-	$this->_user_handler    =& webphoto_user_handler::getInstance( $dirname );
-	$this->_maillog_handler =& webphoto_maillog_handler::getInstance( $dirname );
 	$this->_parse_class     =& webphoto_lib_mail_parse::getInstance();
-	$this->_check_class     =& webphoto_edit_mail_check::getInstance( $dirname );
 	$this->_unlink_class    =& webphoto_edit_mail_unlink::getInstance( $dirname );
 
 	$this->_parse_class->set_charset_local( _CHARSET );

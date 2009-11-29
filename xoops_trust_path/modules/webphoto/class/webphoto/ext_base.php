@@ -1,5 +1,5 @@
 <?php
-// $Id: ext_base.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
+// $Id: ext_base.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_base_ini
 // 2009-10-25 K.OHWADA
 // get_cached_mime_kind_by_ext()
 // 2009-01-25 K.OHWADA
@@ -19,15 +21,13 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_ext_base
 //=========================================================
-class webphoto_ext_base
+class webphoto_ext_base extends webphoto_base_ini
 {
-	var $_xoops_class;
 	var $_utility_class;
 	var $_mime_handler;
 	var $_config_class;
 	var $_multibyte_class;
 
-	var $_is_japanese;
 	var $_cfg_work_dir;
 	var $_cfg_makethumb;
 	var $_constpref;
@@ -49,19 +49,19 @@ class webphoto_ext_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_base( $dirname )
+function webphoto_ext_base( $dirname, $trust_dirname )
 {
-	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
-	$this->_mime_handler  =& webphoto_mime_handler::getInstance( $dirname );
-	$this->_config_class  =& webphoto_config::getInstance( $dirname );
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
 
-	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
+	$this->_mime_handler  =& webphoto_mime_handler::getInstance(
+		$dirname, $trust_dirname );
 
+	$this->_config_class    =& webphoto_config::getInstance( $dirname );
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
 	$this->_cfg_work_dir  = $this->_config_class->get_by_name( 'workdir' );
 	$this->_cfg_makethumb = $this->_config_class->get_by_name( 'makethumb' );
+
 	$this->_TMP_DIR       = $this->_cfg_work_dir.'/tmp' ;
 
 	$this->_constpref = strtoupper( '_P_' . $dirname. '_DEBUG_' ) ;
@@ -177,7 +177,7 @@ function get_cached_mime_type_by_ext( $ext )
 		return false;
 	}
 
-	$mime_arr = $this->_utility_class->str_to_array( $row['mime_type'] , ' ' );
+	$mime_arr = $this->str_to_array( $row['mime_type'] , ' ' );
 	if ( isset( $mime_arr[0] ) ) {
 		$mime = $mime_arr[0];
 		$this->_cached_mime_type_array[ $ext ] = $mime;

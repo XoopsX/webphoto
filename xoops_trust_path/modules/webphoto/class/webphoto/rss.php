@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.2 2009/09/25 22:50:44 ohwada Exp $
+// $Id: rss.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
 // 2009-08-30 K.OHWADA
 // user name
 // 2009-02-28 K.OHWADA
@@ -85,15 +87,21 @@ function webphoto_rss( $dirname, $trust_dirname )
 	$this->webphoto_lib_rss( $dirname ) ;
 	$this->set_template( 'db:'.$dirname.'_main_rss.html' );
 
-	$this->_item_handler   =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler   =& webphoto_file_handler::getInstance( $dirname );
-	$this->_cat_handler    =& webphoto_cat_handler::getInstance(   $dirname );
+	$this->_cat_handler    
+		=& webphoto_cat_handler::getInstance( $dirname, $trust_dirname );
+	$this->_item_handler   
+		=& webphoto_item_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_file_handler   
+		=& webphoto_file_handler::getInstance( $dirname, $trust_dirname );
+	$this->_public_class   
+		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
+	$this->_sort_class     
+		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
+
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
 	$this->_search_class   =& webphoto_lib_search::getInstance();
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
-	$this->_sort_class     =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
-	$this->_public_class   =& webphoto_photo_public::getInstance( $dirname );
 
 	$this->_NORMAL_EXTS = explode('|', _C_WEBPHOTO_IMAGE_EXTS);
 	$this->_is_japanese = $this->_is_xoops_japanese( _C_WEBPHOTO_JPAPANESE ) ;

@@ -1,17 +1,23 @@
 <?php
-// $Id: cmd_base.php,v 1.1 2009/11/06 18:06:06 ohwada Exp $
+// $Id: cmd_base.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-10-25 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_error -> webphoto_base_ini
+//---------------------------------------------------------
+
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_cmd_base
 //=========================================================
-class webphoto_cmd_base extends webphoto_lib_error
+class webphoto_cmd_base extends webphoto_base_ini
 {
 	var $_config_class;
 	var $_mime_class;
@@ -33,13 +39,15 @@ class webphoto_cmd_base extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_cmd_base( $dirname )
+function webphoto_cmd_base( $dirname, $trust_dirname )
 {
 	$this->_DIRNAME = $dirname;
-	$this->webphoto_lib_error();
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
+
+	$this->_mime_class    
+		=& webphoto_mime::getInstance( $dirname, $trust_dirname );
 
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
 
 	$this->_ini_safe_mode = ini_get('safe_mode');
 	$this->_TMP_DIR       = $this->_config_class->get_work_dir( 'tmp' );
@@ -147,6 +155,22 @@ function set_debug_by_const_name( $class, $name_in )
 			$class->set_debug( $val );
 		}
 	}
+}
+
+function set_debug_by_ini_name( $class, $name='debug_cmd' )
+{
+	$val = $this->get_ini( $name );
+	if ( $val ) {
+		$this->set_debug( $val );
+		if ( is_object($class) ) {
+			$class->set_debug( $val );
+		}
+	}
+}
+
+function set_debug( $val )
+{
+	$this->_DEBUG = (bool)$val ;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: vote_handler.php,v 1.3 2008/12/10 23:29:23 ohwada Exp $
+// $Id: vote_handler.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
 // 2008-12-07 K.OHWADA
 // get_count_by_photoid()
 // 2008-10-01 K.OHWADA
@@ -20,7 +22,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_vote_handler
 //=========================================================
-class webphoto_vote_handler extends webphoto_lib_handler
+class webphoto_vote_handler extends webphoto_handler_base_ini
 {
 	var $_ONE_DAY_SEC = 86400;	// 1 day ( 86400 sec )
 	var $_WAIT_DAYS   = 1;	// 1 day
@@ -28,23 +30,19 @@ class webphoto_vote_handler extends webphoto_lib_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_vote_handler( $dirname )
+function webphoto_vote_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'vote' );
 	$this->set_id_name( 'vote_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_vote_handler( $dirname );
+		$instance = new webphoto_vote_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -166,7 +164,7 @@ function get_count_by_photoid_uid( $photo_id, $uid )
 
 function get_count_anonymous_by_photoid_hostname( $photo_id, $hostname )
 {
-	$yesterday = ( time() - ($this->_ONE_DAY_SEC * $this->_WAIT_DAYS ) ) ;
+	$yesterday = time() - $this->get_ini( 'vote_anonymous_interval' ) ;
 
 	$where  = 'vote_uid=0 ';
 	$where .= ' AND vote_photo_id='.intval($photo_id);

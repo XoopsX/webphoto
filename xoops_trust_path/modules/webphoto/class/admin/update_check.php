@@ -1,5 +1,5 @@
 <?php
-// $Id: update_check.php,v 1.4 2009/03/23 12:42:00 ohwada Exp $
+// $Id: update_check.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
 // 2009-03-15 K.OHWADA
 // check_130()
 //---------------------------------------------------------
@@ -31,10 +33,13 @@ function webphoto_admin_update_check ( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_base( $dirname , $trust_dirname );
 
-	$this->_item_handler   =& webphoto_item_handler::getInstance(   $dirname );
-	$this->_file_handler   =& webphoto_file_handler::getInstance(   $dirname );
-	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
-	$this->_photo_handler  =& webphoto_photo_handler::getInstance(  $dirname );
+	$this->_item_handler   =& webphoto_item_handler::getInstance(
+		$dirname , $trust_dirname );
+	$this->_file_handler   =& webphoto_file_handler::getInstance(   
+		$dirname , $trust_dirname );
+	$this->_player_handler =& webphoto_player_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_photo_handler  =& webphoto_photo_handler::getInstance( $dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

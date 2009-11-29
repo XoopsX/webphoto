@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.8 2009/09/08 16:14:16 ohwada Exp $
+// $Id: gmap_location.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_photo_public
 // 2009-09-06 K.OHWADA
 // _get_item_rows_by_gmap_area()
 // 2009-04-10 K.OHWADA
@@ -56,8 +58,10 @@ function webphoto_main_gmap_location( $dirname , $trust_dirname )
 
 	$this->_TEMPLATE = 'db:'. $dirname .'_main_gmap_location.html';
 
-	$this->_gmap_class      =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
-	$this->_public_class    =& webphoto_photo_public::getInstance( $dirname );
+	$this->_gmap_class      =& webphoto_gmap::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_public_class    =& webphoto_photo_public::getInstance( 
+		$dirname, $trust_dirname  );
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 }
 

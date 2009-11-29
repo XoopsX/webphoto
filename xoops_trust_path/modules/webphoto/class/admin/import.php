@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: import.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
+// get_ini()
 // 2009-01-10 K.OHWADA
 // webphoto_import -> webphoto_edit_import
 // 2008-08-24 K.OHWADA
@@ -48,14 +51,15 @@ function webphoto_admin_import( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_import( $dirname , $trust_dirname );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$CONST_DEBUG_SQL = $constpref.'DEBUG_SQL';
+	$this->_groupperm_class =& webphoto_xoops_groupperm::getInstance();
 
 	$this->_image_handler =& webphoto_xoops_image_handler::getInstance();
 	$this->_image_handler->set_debug_error( 1 );
-	$this->_image_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
-	$this->_groupperm_class =& webphoto_xoops_groupperm::getInstance();
+	$val = $this->get_ini( _C_WEBPHOTO_NAME_DEBUG_SQL );
+	if ( $val ) {
+		$this->_image_handler->set_debug_sql( $val );
+	}
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -411,10 +415,10 @@ function _init_webphoto( $src_dirname )
 	$this->_webphoto_photos_path = $config_class->get_by_name( 'photospath' );
 	$this->_webphoto_thumbs_path = $config_class->get_by_name( 'thumbspath' );
 
-	$this->_webphoto_cat_handler  = new webphoto_cat_handler(  $src_dirname );
-	$this->_webphoto_item_handler = new webphoto_item_handler( $src_dirname );
-	$this->_webphoto_file_handler = new webphoto_file_handler( $src_dirname );
-	$this->_webphoto_vote_handler = new webphoto_vote_handler( $src_dirname );
+	$this->_webphoto_item_handler = new webphoto_item_handler( $src_dirname, $this->_TRUST_DIRNAME );
+	$this->_webphoto_cat_handler  = new webphoto_cat_handler(  $src_dirname, $this->_TRUST_DIRNAME );
+	$this->_webphoto_file_handler = new webphoto_file_handler( $src_dirname, $this->_TRUST_DIRNAME );
+	$this->_webphoto_vote_handler = new webphoto_vote_handler( $src_dirname, $this->_TRUST_DIRNAME );
 
 	return $mid;
 }
@@ -637,7 +641,7 @@ function _print_form_webphotos()
 		$dirname = $module->getVar('dirname');
 		$name_s  = $module->getVar('name','s');
 
-		$selbox_class->init( $dirname );
+		$selbox_class->init( $dirname, $this->_TRUST_DIRNAME );
 		$cat_selbox = $selbox_class->build_selbox();
 
 		echo "<h4>". sprintf(_AM_WEBPHOTO_FMT_IMPORTFROM_WEBPHOTO, $name_s )."</h4>\n";

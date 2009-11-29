@@ -1,10 +1,16 @@
 <?php
-// $Id: xls.php,v 1.1 2009/01/29 04:28:09 ohwada Exp $
+// $Id: xls.php,v 1.2 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname 
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -16,17 +22,17 @@ class webphoto_ext_xls extends webphoto_ext_base
 	var $_pdf_class;
 	var $_jod_class;
 
-	var $_XLS_EXTS = array( 'xls' );
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_xls( $dirname )
+function webphoto_ext_xls( $dirname, $trust_dirname )
 {
-	$this->webphoto_ext_base( $dirname );
+	$this->webphoto_ext_base( $dirname, $trust_dirname );
 
-	$this->_pdf_class =& webphoto_pdf::getInstance( $dirname );
-	$this->_jod_class =& webphoto_jodconverter::getInstance( $dirname );
+	$this->_pdf_class 
+		=& webphoto_pdf::getInstance( $dirname, $trust_dirname );
+	$this->_jod_class 
+		=& webphoto_jodconverter::getInstance( $dirname, $trust_dirname );
 
 	$this->set_debug_by_name( 'XLS' );
 }
@@ -41,7 +47,7 @@ function is_ext( $ext )
 
 function is_xls_ext( $ext )
 {
-	return $this->is_ext_in_array( $ext, $this->_XLS_EXTS );
+	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_OFFICE_XLS );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.10 2009/01/25 06:46:27 ohwada Exp $
+// $Id: redothumbs.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_edit_item_delete
 // 2009-01-10 K.OHWADA
 // _exist_thumb_icon()
 // 2008-11-08 K.OHWADA
@@ -70,8 +72,9 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
 	$this->_exif_class   =& webphoto_exif::getInstance();
-	$this->_delete_class =& webphoto_edit_item_delete::getInstance( $dirname );
 
+	$this->_delete_class =& webphoto_edit_item_delete::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_cont_create_class =& webphoto_edit_cont_create::getInstance( 
 		$dirname , $trust_dirname );
 	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( 
@@ -264,6 +267,7 @@ function _item_exec( $item_row )
 		case _C_WEBPHOTO_ITEM_KIND_GENERAL :
 		case _C_WEBPHOTO_ITEM_KIND_VIDEO :
 		case _C_WEBPHOTO_ITEM_KIND_AUDIO :
+		case _C_WEBPHOTO_ITEM_KIND_OFFICE :
 		default:
 			$is_cont = true;
 			break;

@@ -1,5 +1,5 @@
 <?php
-// $Id: flashvar_edit.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: flashvar_edit.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_flashvar_handler
 // 2009-01-10 K.OHWADA
 // webphoto_flashvar_edit -> webphoto_edit_flashvar_edit
 // 2008-11-08 K.OHWADA
@@ -45,8 +47,11 @@ function webphoto_edit_flashvar_edit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_upload_class     =& webphoto_upload::getInstance( $dirname , $trust_dirname );
+	$this->_flashvar_handler 
+		=& webphoto_flashvar_handler::getInstance( $dirname , $trust_dirname );
+	$this->_upload_class     
+		=& webphoto_upload::getInstance( $dirname , $trust_dirname );
+
 	$this->_image_cmd_class  =& webphoto_lib_image_cmd::getInstance();
 
 	$this->_cfg_logo_width = $this->_config_class->get_by_name( 'logo_width' );

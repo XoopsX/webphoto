@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_config.php,v 1.3 2008/12/18 13:23:16 ohwada Exp $
+// $Id: flash_config.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_file_handler
 // 2008-12-12 K.OHWADA
 // webphoto_item_public
 //---------------------------------------------------------
@@ -19,6 +21,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_flash_config extends webphoto_item_public
 {
+	var $_file_handler;
+	var $_player_handler;
+	var $_flashvar_handler;
 	var $_player_clss;
 	var $_post_class;
 	var $_xml_class;
@@ -31,11 +36,17 @@ function webphoto_main_flash_config( $dirname , $trust_dirname )
 {
 	$this->webphoto_item_public( $dirname, $trust_dirname );
 
-	$this->_file_handler     =& webphoto_file_handler::getInstance( $dirname );
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_player_clss      =& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+	$this->_file_handler     
+		=& webphoto_file_handler::getInstance( $dirname, $trust_dirname );
+	$this->_player_handler   
+		=& webphoto_player_handler::getInstance( $dirname, $trust_dirname );
+	$this->_flashvar_handler 
+		=& webphoto_flashvar_handler::getInstance( $dirname, $trust_dirname );
+	$this->_player_clss      
+		=& webphoto_flash_player::getInstance( $dirname, $trust_dirname );
+	$this->_playlist_class   
+		=& webphoto_playlist::getInstance( $dirname, $trust_dirname );
+
 	$this->_post_class       =& webphoto_lib_post::getInstance();
 	$this->_xml_class        =& webphoto_lib_xml::getInstance();
 	$this->_multibyte_class  =& webphoto_lib_multibyte::getInstance();

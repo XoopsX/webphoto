@@ -1,10 +1,16 @@
 <?php
-// $Id: notification_event.php,v 1.1 2008/06/21 12:22:24 ohwada Exp $
+// $Id: notification_event.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_cat_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,7 +29,8 @@ function webphoto_notification_event( $dirname , $trust_dirname )
 	$this->webphoto_d3_notification_event();
 	$this->init( $dirname , $trust_dirname );
 
-	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
+	$this->_cat_handler  =& webphoto_cat_handler::getInstance( 
+		$dirname , $trust_dirname );
 
 	$this->_PHOTO_PHP = $this->_MODULE_URL.'/index.php?fct=photo';
 }

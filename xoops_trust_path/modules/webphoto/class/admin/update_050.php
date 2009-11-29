@@ -1,10 +1,16 @@
 <?php
-// $Id: update_050.php,v 1.2 2008/11/01 23:53:08 ohwada Exp $
+// $Id: update_050.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_player_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -32,9 +38,12 @@ function webphoto_admin_update_050( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
-	$this->_form_class     =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
-	$this->_mime_class     =& webphoto_mime::getInstance(   $dirname , $trust_dirname );
+	$this->_player_handler =& webphoto_player_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_form_class     =& webphoto_lib_form::getInstance(   
+		$dirname , $trust_dirname );
+	$this->_mime_class     =& webphoto_mime::getInstance(   
+		$dirname , $trust_dirname );
 
 	$this->_item_handler->set_debug_error( true );
 	$this->_player_handler->set_debug_error( true );

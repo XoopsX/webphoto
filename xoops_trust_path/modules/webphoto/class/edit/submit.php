@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.12 2009/11/06 18:04:17 ohwada Exp $
+// $Id: submit.php,v 1.13 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_show_image
+// item_editor_default
 // 2009-10-25 K.OHWADA
 // create_jpeg_param()
 // 2009-05-30 K.OHWADA
@@ -85,24 +88,25 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_imagemanager_submit( $dirname , $trust_dirname );
 
-	$this->_page_class       =& webphoto_page::getInstance( $dirname , $trust_dirname );
-	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
-	$this->_external_build_class =& webphoto_edit_external_build::getInstance( $dirname );
-	$this->_playlist_build_class =& webphoto_edit_playlist_build::getInstance( $dirname );
+	$this->_page_class       
+		=& webphoto_page::getInstance( $dirname , $trust_dirname );
+	$this->_show_image_class 
+		=& webphoto_show_image::getInstance( $dirname , $trust_dirname );
+	$this->_embed_build_class    
+		=& webphoto_edit_embed_build::getInstance( $dirname, $trust_dirname );
+	$this->_editor_class 
+		=& webphoto_editor::getInstance( $dirname, $trust_dirname );
+	$this->_photo_form_class 
+		=& webphoto_edit_photo_form::getInstance( $dirname, $trust_dirname );
+	$this->_misc_form_class 
+		=& webphoto_edit_misc_form::getInstance( $dirname, $trust_dirname );
+	$this->_playlist_build_class 
+		=& webphoto_edit_playlist_build::getInstance( $dirname, $trust_dirname );
+	$this->_external_build_class 
+		=& webphoto_edit_external_build::getInstance( $dirname, $trust_dirname  );
+	$this->_tag_class  
+		=& webphoto_tag::getInstance( $dirname, $trust_dirname  );
 
-	$this->_embed_build_class    =& webphoto_edit_embed_build::getInstance( 
-		$dirname, $trust_dirname );
-
-	$this->_editor_class =& webphoto_editor::getInstance( 
-		$dirname, $trust_dirname );
-
-	$this->_photo_form_class =& webphoto_edit_photo_form::getInstance( 
-		$dirname, $trust_dirname );
-
-	$this->_misc_form_class =& webphoto_edit_misc_form::getInstance( 
-		$dirname, $trust_dirname );
-
-	$this->_tag_class  =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 
 	$this->_cfg_addposts       = $this->get_config_by_name( 'addposts' );
@@ -191,7 +195,7 @@ function create_item_row_default()
 	}
 
 	if ( empty( $row['item_editor'] ) ) {
-		$row['item_editor'] = _C_WEBPHOTO_EDITOR_DEFAULT ;
+		$row['item_editor'] = $this->get_ini('item_editor_default') ;
 	}
 
 	return $row ;
@@ -211,7 +215,7 @@ function create_item_row_preview()
 	}
 
 	if ( empty( $row['item_editor'] ) ) {
-		$row['item_editor'] = _C_WEBPHOTO_EDITOR_DEFAULT ;
+		$row['item_editor'] = $this->get_ini('item_editor_default') ;
 	}
 
 	return $row;

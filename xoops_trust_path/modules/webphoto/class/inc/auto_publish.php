@@ -1,5 +1,5 @@
 <?php
-// $Id: auto_publish.php,v 1.5 2009/04/21 15:14:53 ohwada Exp $
+// $Id: auto_publish.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-04-21 K.OHWADA
 // Warning: chmod()
 // chmod_file()
@@ -23,7 +25,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_inc_auto_publish
 // caller webphoto_show_main webphoto_inc_public
 //=========================================================
-class webphoto_inc_auto_publish extends webphoto_inc_handler
+class webphoto_inc_auto_publish extends webphoto_inc_base_ini
 {
 	var $_table_item ;
 
@@ -37,9 +39,10 @@ class webphoto_inc_auto_publish extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_auto_publish( $dirname )
+function webphoto_inc_auto_publish( $dirname, $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
 	$this->_table_item = $this->prefix_dirname( 'item' ) ;
@@ -47,11 +50,11 @@ function webphoto_inc_auto_publish( $dirname )
 	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname, $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_auto_publish( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_auto_publish( $dirname, $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }
@@ -121,17 +124,17 @@ function write_file( $file, $data, $mode='w', $flag_chmod=false )
 
 // the user can delete this file which apache made.
 	if (( $byte > 0 )&& $flag_chmod ) {
-		$this->chmod_file( $file, $this->_CHMOD_MODE );
+		$this->chmod_file( $file );
 	}
 
 	return $byte;
 }
 
-function chmod_file( $file, $mode )
+function chmod_file( $file )
 {
 // Warning: chmod()
 	if ( ! $this->_ini_safe_mode ) {
-		chmod( $file, $mode );
+		chmod( $file, $this->_CHMOD_MODE );
 	}
 }
 

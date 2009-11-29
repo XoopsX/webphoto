@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_handler.php,v 1.3 2008/08/27 23:05:57 ohwada Exp $
+// $Id: maillog_handler.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// info_str_to_array( $str )
 // 2008-08-24 K.OHWADA
 // added get_rows_by_photoid()
 //---------------------------------------------------------
@@ -17,30 +20,25 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_maillog_handler
 //=========================================================
-class webphoto_maillog_handler extends webphoto_lib_handler
+class webphoto_maillog_handler extends webphoto_handler_base_ini
 {
-	var $_SEPARATOR = '|';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_maillog_handler( $dirname )
+function webphoto_maillog_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'maillog' );
 	$this->set_id_name( 'maillog_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_maillog_handler( $dirname );
+		$instance = new webphoto_maillog_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -166,11 +164,21 @@ function get_rows_desc_by_status( $status, $limit=0, $start=0 )
 
 function get_rows_by_photoid( $photo_id, $limit=0, $start=0 )
 {
-	$like = '%'. $this->_SEPARATOR . intval($photo_id) . $this->_SEPARATOR . '%';
+// %|123|%
+	$like = $this->build_like_separetor( $photo_id );
 	$sql  = 'SELECT * FROM '.$this->_table;
 	$sql .= ' WHERE maillog_photo_ids LIKE '. $this->quote($like) ;
 	$sql .= ' ORDER BY maillog_id DESC';
 	return $this->get_rows_by_sql( $sql, $limit, $start  );
+}
+
+function build_like_separetor( $id )
+{
+// %|123|%
+	$like  = '%'. _C_WEBPHOTO_INFO_SEPARATOR ;
+	$like .= intval($id) ;
+	$like .= _C_WEBPHOTO_INFO_SEPARATOR . '%';
+	return $like;
 }
 
 //---------------------------------------------------------
@@ -193,8 +201,7 @@ function build_photo_ids_array_to_str( $arr )
 	}
 
 // array -> |1|2|3|
-	$utility_class =& webphoto_lib_utility::getInstance();
-	$str = $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	$str = $this->info_array_to_str( $arr );
 	$ret = $this->build_photo_ids_with_separetor( $str ) ;
 	return $ret ;
 }
@@ -202,14 +209,13 @@ function build_photo_ids_array_to_str( $arr )
 function build_photo_ids_with_separetor( $str )
 {
 // str -> |1|
-	$ret = $this->_SEPARATOR . $str . $this->_SEPARATOR ;
+	$ret = _C_WEBPHOTO_INFO_SEPARATOR . $str . _C_WEBPHOTO_INFO_SEPARATOR ;
 	return $ret ;
 }
 
 function build_photo_ids_row_to_array( $row )
 {
-	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->str_to_array( $row['maillog_photo_ids'], $this->_SEPARATOR );
+	return $this->info_str_to_array( $row['maillog_photo_ids'] );
 }
 
 function build_attach_array_to_str( $arr )
@@ -217,15 +223,24 @@ function build_attach_array_to_str( $arr )
 	if ( !is_array($arr) || !count($arr) ) {
 		return null;
 	}
-
-	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->array_to_str( $arr, $this->_SEPARATOR );
+	return $this->info_array_to_str( $arr );
 }
 
 function build_attach_row_to_array( $row )
 {
+	return $this->info_str_to_array( $row['maillog_attach'] );
+}
+
+function info_str_to_array( $str )
+{
 	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->str_to_array( $row['maillog_attach'], $this->_SEPARATOR );
+	return $utility_class->str_to_array( $str, _C_WEBPHOTO_INFO_SEPARATOR );
+}
+
+function info_array_to_str( $arr )
+{
+	$utility_class =& webphoto_lib_utility::getInstance();
+	return $utility_class->array_to_str( $arr, _C_WEBPHOTO_INFO_SEPARATOR );
 }
 
 //---------------------------------------------------------

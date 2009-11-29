@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.9 2009/01/31 19:12:49 ohwada Exp $
+// $Id: catmanager.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_edit_item_delete
 // 2009-01-25 K.OHWADA
 // cat_gmap_latitude
 // 2009-01-14 K.OHWADA
@@ -60,8 +62,10 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_delete_class    =& webphoto_edit_item_delete::getInstance( $dirname );
-	$this->_upload_class    =& webphoto_upload::getInstance( $dirname , $trust_dirname );
+	$this->_delete_class    =& webphoto_edit_item_delete::getInstance( 
+		$dirname , $trust_dirname  );
+	$this->_upload_class    =& webphoto_upload::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_image_cmd_class =& webphoto_lib_image_cmd::getInstance();
 
 	$this->_cfg_cat_width     = $this->_config_class->get_by_name( 'cat_width' );

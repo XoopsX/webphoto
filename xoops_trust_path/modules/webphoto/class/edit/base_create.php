@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.5 2009/11/06 18:04:17 ohwada Exp $
+// $Id: base_create.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_base_this
+// $trust_dirname
 // 2009-10-25 K.OHWADA
 // is_jpeg_ext()
 // 2009-01-25 K.OHWADA
@@ -19,23 +22,13 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_edit_base_create
 //=========================================================
-class webphoto_edit_base_create
+class webphoto_edit_base_create extends webphoto_base_this
 {
-	var $_config_class;
-	var $_utility_class;
 	var $_msg_class;
-	var $_kind_class;
 	var $_mime_class;
 
 	var $_flag_created = false ;
 	var $_flag_failed  = false ;
-
-	var $_DIRNAME;
-	var $_MODULE_URL;
-	var $_MODULE_DIR;
-	var $_TMP_DIR;
-	var $_UPLOADS_PATH ;
-	var $_ROOT_EXTS_DIR;
 
 	var $_IMAGE_MEDIUM = 'image';
 	var $_EXT_PNG      = 'png';
@@ -43,24 +36,15 @@ class webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_base_create( $dirname )
+function webphoto_edit_base_create( $dirname, $trust_dirname )
 {
-	$this->_DIRNAME       = $dirname ;
-	$this->_MODULE_URL    = XOOPS_URL       .'/modules/'. $dirname;
-	$this->_MODULE_DIR    = XOOPS_ROOT_PATH .'/modules/'. $dirname;
+	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
-	$this->_kind_class    =& webphoto_kind::getInstance();
-	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
+	$this->_mime_class  =& webphoto_mime::getInstance( $dirname, $trust_dirname );
 
 // each msg box
 	$this->_msg_class   = new webphoto_lib_msg();
 	$this->_error_class = new webphoto_lib_error();
-
-	$this->_TMP_DIR       = $this->_config_class->get_work_dir( 'tmp' );
-	$this->_UPLOADS_PATH  = $this->_config_class->get_uploads_path();
-	$this->_ROOT_EXTS_DIR = $this->_MODULE_DIR .'/images/exts';
 }
 
 //---------------------------------------------------------
@@ -146,108 +130,6 @@ function build_image_info( $path, $ext=null )
 	);
 
 	return $arr;
-}
-
-//---------------------------------------------------------
-// config class
-//---------------------------------------------------------
-function get_config_by_name( $name )
-{
-	return $this->_config_class->get_by_name( $name );
-}
-
-//---------------------------------------------------------
-// kind class
-//---------------------------------------------------------
-function is_image_ext( $ext )
-{
-	return $this->_kind_class->is_image_ext( $ext ) ;
-}
-
-function is_flash_ext( $ext )
-{
-	return $this->_kind_class->is_flash_ext( $ext ) ;
-}
-
-function is_video_docomo_ext( $ext )
-{
-	return $this->_kind_class->is_video_docomo_ext( $ext ) ;
-}
-
-function is_jpeg_ext( $ext )
-{
-	return $this->_kind_class->is_jpeg_ext( $ext ) ;
-}
-
-function is_mp3_ext( $ext )
-{
-	return $this->_kind_class->is_mp3_ext( $ext ) ;
-}
-
-function is_pdf_ext( $ext )
-{
-	return $this->_kind_class->is_flash_ext( $ext ) ;
-}
-
-function is_swf_ext( $ext )
-{
-	return $this->_kind_class->is_swf_ext( $ext ) ;
-}
-
-function is_general_kind( $kind )
-{
-	return $this->_kind_class->is_general_kind( $kind ) ;
-}
-
-function is_image_kind( $kind )
-{
-	return $this->_kind_class->is_image_kind( $kind ) ;
-}
-
-function is_video_kind( $kind )
-{
-	return $this->_kind_class->is_video_kind( $kind ) ;
-}
-
-//---------------------------------------------------------
-// utility class
-//---------------------------------------------------------
-function parse_ext( $file )
-{
-	return $this->_utility_class->parse_ext( $file );
-}
-
-function build_random_file_name( $id, $ext, $extra=null )
-{
-	return $this->_utility_class->build_random_file_name( $id, $ext, $extra );
-}
-
-//---------------------------------------------------------
-// mime class
-//---------------------------------------------------------
-function ext_to_kind( $ext )
-{
-	return $this->_mime_class->ext_to_kind( $ext );
-}
-
-function ext_to_mime( $ext )
-{
-	return $this->_mime_class->ext_to_mime( $ext );
-}
-
-function mime_to_medium( $mime )
-{
-	return $this->_mime_class->mime_to_medium( $mime );
-}
-
-function get_my_allowed_mimes()
-{
-	return $this->_mime_class->get_my_allowed_mimes();
-}
-
-function is_my_allow_ext( $ext )
-{
-	return $this->_mime_class->is_my_allow_ext( $ext );
 }
 
 //---------------------------------------------------------

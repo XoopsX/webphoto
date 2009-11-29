@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
+// $Id: giconmanager.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_gicon_handler
 // 2009-01-10 K.OHWADA
 // webphoto_edit_gicon_create
 // 2008-11-08 K.OHWADA
@@ -55,10 +57,14 @@ function webphoto_admin_giconmanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
-	$this->_upload_class  =& webphoto_upload::getInstance( $dirname , $trust_dirname );
-	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
-	$this->_gicon_create_class =& webphoto_edit_gicon_create::getInstance( $dirname );
+	$this->_gicon_handler 
+		=& webphoto_gicon_handler::getInstance( $dirname , $trust_dirname );
+	$this->_upload_class  
+		=& webphoto_upload::getInstance( $dirname , $trust_dirname );
+	$this->_mime_class    
+		=& webphoto_mime::getInstance( $dirname , $trust_dirname  );
+	$this->_gicon_create_class 
+		=& webphoto_edit_gicon_create::getInstance( $dirname , $trust_dirname );
 
 	$this->_ERR_ALLOW_EXTS = 'allowed file type is '. implode( ',' , $this->get_normal_exts() ) ;
 

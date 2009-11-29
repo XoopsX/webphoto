@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: import.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_vote_handler
+// get_ini()
 // 2009-01-10 K.OHWADA
 // webphoto_import -> webphoto_edit_import
 // webphoto_edit_factory_create
@@ -68,26 +71,18 @@ function webphoto_edit_import( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$CONST_DEBUG_SQL = $constpref.'DEBUG_SQL';
-
 	$this->_cat_handler->set_debug_error( 1 );
-	$this->_cat_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
-
 	$this->_item_handler->set_debug_error( 1 );
-	$this->_item_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
-	$this->_vote_handler  =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_vote_handler  =& webphoto_vote_handler::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_vote_handler->set_debug_error( 1 );
-	$this->_vote_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
 	$this->_xoops_comments_handler =& webphoto_xoops_comments_handler::getInstance();
 	$this->_xoops_comments_handler->set_debug_error( 1 );
-	$this->_xoops_comments_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
 	$this->_myalbum_handler =& webphoto_myalbum_handler::getInstance();
 	$this->_myalbum_handler->set_debug_error( 1 );
-	$this->_myalbum_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
 	$this->_factory_create_class =& webphoto_edit_factory_create::getInstance( 
 		$dirname , $trust_dirname );
@@ -101,6 +96,15 @@ function webphoto_edit_import( $dirname , $trust_dirname )
 	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
 	$this->_cfg_cat_width  = $this->_config_class->get_by_name( 'cat_width' );
 	$this->_cfg_csub_width = $this->_config_class->get_by_name( 'csub_width' );
+
+	$val = $this->get_ini( _C_WEBPHOTO_NAME_DEBUG_SQL );
+	if ( $val ) {
+		$this->_cat_handler->set_debug_sql( $val );
+		$this->_item_handler->set_debug_sql( $val );
+		$this->_vote_handler->set_debug_sql( $val );
+		$this->_xoops_comments_handler->set_debug_sql( $val );
+		$this->_myalbum_handler->set_debug_sql( $val );
+	}
 
 }
 

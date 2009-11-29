@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.15 2009/01/24 07:10:39 ohwada Exp $
+// $Id: base.php,v 1.16 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// get_files_in_dir()
 // 2009-01-10 K.OHWADA
 // build_random_file_name()
 // 2008-12-12 K.OHWADA
@@ -307,6 +309,11 @@ function build_random_file_node( $id, $extra=null )
 function parse_url_to_filename( $url )
 {
 	return $this->_utility_class->parse_url_to_filename( $url );
+}
+
+function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false )
+{
+	return $this->_utility_class->get_files_in_dir( $path, $ext, $flag_dir, $flag_sort, $id_as_key );
 }
 
 //---------------------------------------------------------

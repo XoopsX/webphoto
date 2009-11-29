@@ -1,10 +1,16 @@
 <?php
-// $Id: imode.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
+// $Id: imode.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_photo_public
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -50,8 +56,10 @@ function webphoto_imode( $dirname , $trust_dirname )
 	$this->_agent_class        =& webphoto_lib_user_agent::getInstance();
 	$this->_pagenavi_class     =& webphoto_lib_pagenavi::getInstance();
 	$this->_multibyte_class    =& webphoto_lib_multibyte::getInstance();
-	$this->_photo_public_class =& webphoto_photo_public::getInstance( $dirname );
-	$this->_item_public_class  =& webphoto_item_public::getInstance( $dirname, $trust_dirname );
+	$this->_photo_public_class =& webphoto_photo_public::getInstance( 
+		$dirname, $trust_dirname  );
+	$this->_item_public_class  =& webphoto_item_public::getInstance( 
+		$dirname, $trust_dirname );
 
 	$this->set_charset_output();
 	$this->set_mobile_carrier_array();

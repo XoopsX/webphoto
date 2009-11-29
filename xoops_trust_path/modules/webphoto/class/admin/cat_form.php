@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.9 2009/05/23 14:57:15 ohwada Exp $
+// $Id: cat_form.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_gicon_handler
 // 2009-05-17 K.OHWADA
 // _build_children_list()
 // 2009-04-27 K.OHWADA
@@ -55,7 +57,8 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
-	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
+	$this->_gicon_handler  
+		=& webphoto_gicon_handler::getInstance( $dirname, $trust_dirname );
 
 	$this->_THIS_URL      = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
 	$this->_THIS_URL_EDIT = $this->_THIS_URL .'&amp;disp=edit&amp;cat_id=';

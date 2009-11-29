@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.17 2009/11/06 18:04:17 ohwada Exp $
+# $Id: mysql.sql,v 1.18 2009/11/29 07:34:23 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,9 @@
 
 # =========================================================
 # change log
+# 2009-11-11 K.OHWADA
+# item_detail_onclick
+# mime_kind of doc, xls, ppt, pdf
 # 2009-10-25 K.OHWADA
 # mime_kind
 # 2009-08-22 K.OHWADA
@@ -127,6 +130,8 @@ CREATE TABLE item (
   item_width  INT(11) NOT NULL DEFAULT '0',
   item_height INT(11) NOT NULL DEFAULT '0',
   item_content TEXT NOT NULL,
+  item_detail_onclick INT(11) UNSIGNED NOT NULL DEFAULT '0',  
+  item_weight         INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),
@@ -150,6 +155,7 @@ CREATE TABLE item (
   KEY (item_rating),
   KEY (item_votes),
   KEY (item_datetime),
+  KEY (item_weight),
   KEY (item_title(40)),
   KEY (item_place(40)),
   KEY (item_equipment(40)),
@@ -573,7 +579,7 @@ INSERT INTO mime VALUES (2, 0, 0, '3gp', 'video', 'video/3gpp', 'Third Generatio
 INSERT INTO mime VALUES (3, 0, 0, 'asf', 'video', 'video/x-ms-asf', 'Advanced Systems Format', '&1&', '', 21, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (4, 0, 0, 'avi', 'video', 'video/x-msvideo video/avi', 'Audio Video Interleave File', '&1&', '', 21, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (5, 0, 0, 'bmp', 'image', 'image/bmp', 'Windows OS/2 Bitmap Graphics', '&1&', '', 11, '');
-INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '', 0, '');
+INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '', 41, '');
 INSERT INTO mime VALUES (7, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100', 20, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (8, 0, 0, 'gif', 'image', 'image/gif', 'Graphic Interchange Format', '&1&2&', '', 10, '');
 INSERT INTO mime VALUES (9, 0, 0, 'jpg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 10, '');
@@ -583,16 +589,16 @@ INSERT INTO mime VALUES (12, 0, 0, 'mov', 'video', 'video/quicktime', 'QuickTime
 INSERT INTO mime VALUES (13, 0, 0, 'mp3', 'audio', 'audio/mpeg', 'MPEG Audio Stream, Layer III', '&1&', '', 30, '');
 INSERT INTO mime VALUES (14, 0, 0, 'mpeg', 'video', 'video/mpeg', 'MPEG Movie', '&1&', '', 21, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (15, 0, 0, 'mpg', 'video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '', 21, 'ffmpeg:-ar 44100;');
-INSERT INTO mime VALUES (16, 0, 0, 'pdf', '', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '', 0, '');
+INSERT INTO mime VALUES (16, 0, 0, 'pdf', '', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '', 44, '');
 INSERT INTO mime VALUES (17, 0, 0, 'png', 'image', 'image/png image/x-png', 'Portable (Public) Network Graphic', '&1&2&', '', 10, '');
-INSERT INTO mime VALUES (18, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '', 0, '');
+INSERT INTO mime VALUES (18, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '', 43, '');
 INSERT INTO mime VALUES (19, 0, 0, 'ram', 'audio', 'audio/x-pn-realaudio', 'RealMedia Metafile', '&1&', '', 30, '');
 INSERT INTO mime VALUES (20, 0, 0, 'rar', '', 'application/x-rar-compressed', 'WinRAR Compressed Archive', '&1&', '', 0, '');
 INSERT INTO mime VALUES (21, 0, 0, 'swf', '', 'application/x-shockwave-flash', 'Macromedia Flash Format File', '&1&', '', 0, '');
 INSERT INTO mime VALUES (22, 0, 0, 'txt', '', 'text/plain', 'Text File', '&1&', '', 0, '');
 INSERT INTO mime VALUES (23, 0, 0, 'wav', 'audio', 'audio/wav audio/x-wav', 'Waveform Audio', '&1&', '', 32, '');
 INSERT INTO mime VALUES (24, 0, 0, 'wmv', 'video', 'video/x-ms-wmv', 'Windows Media File', '&1&', '', 21, 'ffmpeg:-ar 44100;');
-INSERT INTO mime VALUES (25, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel', '&1&', '', 0, '');
+INSERT INTO mime VALUES (25, 0, 0, 'xls', '', 'application/vnd.ms-excel', 'MS Excel', '&1&', '', 42, '');
 INSERT INTO mime VALUES (26, 0, 0, 'zip', '', 'application/zip', 'Compressed Archive File', '&1&', '', 0, '');
 INSERT INTO mime VALUES (27, 0, 0, 'ai', '', 'application/postscript', 'Adobe Illustrator', '&1&', '', 11, '');
 INSERT INTO mime VALUES (28, 0, 0, 'eps', '', 'application/postscript', 'Encapsulated PostScript', '&1&', '', 11, '');

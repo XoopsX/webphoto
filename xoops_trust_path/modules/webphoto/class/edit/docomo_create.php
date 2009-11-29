@@ -1,10 +1,16 @@
 <?php
-// $Id: docomo_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: docomo_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,16 +23,16 @@ class webphoto_edit_docomo_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_docomo_create( $dirname )
+function webphoto_edit_docomo_create( $dirname , $trust_dirname )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_docomo_create( $dirname );
+		$instance = new webphoto_edit_docomo_create( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.21 2009/11/06 18:04:17 ohwada Exp $
+// $Id: constants.php,v 1.22 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -92,6 +92,11 @@ define("_C_WEBPHOTO_ITEM_KIND_GENERAL",  10 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_IMAGE",    11 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_VIDEO",    12 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_AUDIO",    13 ) ;
+
+// v1.90
+define("_C_WEBPHOTO_ITEM_KIND_OFFICE",      14 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER", 15 ) ;
+
 define("_C_WEBPHOTO_ITEM_KIND_EMBED",   100 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL", 101 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE"  , 102 ) ;
@@ -99,9 +104,9 @@ define("_C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED" , 200 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR"  , 201 ) ;
 
 // v1.80
-define("_C_WEBPHOTO_MIME_KIND_LIST_IMAGE", "10|11" ) ;
-define("_C_WEBPHOTO_MIME_KIND_LIST_VIDEO", "20|21" ) ;
-define("_C_WEBPHOTO_MIME_KIND_LIST_AUDIO", "30|31|32" ) ;
+//define("_C_WEBPHOTO_MIME_KIND_LIST_IMAGE", "10|11" ) ;
+//define("_C_WEBPHOTO_MIME_KIND_LIST_VIDEO", "20|21" ) ;
+//define("_C_WEBPHOTO_MIME_KIND_LIST_AUDIO", "30|31|32" ) ;
 
 define("_C_WEBPHOTO_MIME_KIND_GENERAL",        0 ) ;
 define("_C_WEBPHOTO_MIME_KIND_IMAGE",         10 ) ;
@@ -112,6 +117,12 @@ define("_C_WEBPHOTO_MIME_KIND_AUDIO",         30 ) ;
 define("_C_WEBPHOTO_MIME_KIND_AUDIO_MID",     31 ) ;
 define("_C_WEBPHOTO_MIME_KIND_AUDIO_WAV",     32 ) ;
 define("_C_WEBPHOTO_MIME_KIND_OFFICE",        40 ) ;
+
+// v1.90
+define("_C_WEBPHOTO_MIME_KIND_OFFICE_DOC",    41 ) ;
+define("_C_WEBPHOTO_MIME_KIND_OFFICE_XLS",    42 ) ;
+define("_C_WEBPHOTO_MIME_KIND_OFFICE_PPT",    43 ) ;
+define("_C_WEBPHOTO_MIME_KIND_OFFICE_PDF",    44 ) ;
 
 // v1.80
 define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|middle|small|flash|docomo|pdf|swf|jpeg|mp3" ) ;
@@ -237,8 +248,8 @@ define("_C_WEBPHOTO_GMAP_ZOOM" , "12" ) ;
 // v0.50
 define("_C_WEBPHOTO_FLASH_VERSION", "9");
 
-define("_C_WEBPHOTO_DATETIME_DEFAULT",  "0000-00-00 00:00:00");
-define("_C_WEBPHOTO_PLAYLIST_TIME_DEFAULT", "604800");
+//define("_C_WEBPHOTO_DATETIME_DEFAULT",  "0000-00-00 00:00:00");
+//define("_C_WEBPHOTO_PLAYLIST_TIME_DEFAULT", "604800");
 
 define("_C_WEBPHOTO_DISPLAYTYPE_GENERAL",      "0");
 define("_C_WEBPHOTO_DISPLAYTYPE_IMAGE",        "1");
@@ -251,7 +262,8 @@ define("_C_WEBPHOTO_ONCLICK_PAGE",   "0");
 define("_C_WEBPHOTO_ONCLICK_DIRECT", "1");
 define("_C_WEBPHOTO_ONCLICK_POPUP" , "2");
 
-define("_C_WEBPHOTO_SHOWINFO_DEFAULT", "1|2|3|4|5|6|7|8|9|10");
+//define("_C_WEBPHOTO_SHOWINFO_DEFAULT", "1|2|3|4|5|6|7|8|9|10");
+
 define("_C_WEBPHOTO_SHOWINFO_DESCRIPTION", "1");
 define("_C_WEBPHOTO_SHOWINFO_LOGOIMAGE",   "2");
 define("_C_WEBPHOTO_SHOWINFO_CREDITS",     "3");
@@ -267,8 +279,9 @@ define("_C_WEBPHOTO_PLAYER_ID_NONE",     "0");
 define("_C_WEBPHOTO_PLAYER_ID_DEFAULT",  "1");
 define("_C_WEBPHOTO_PLAYER_ID_PLAYLIST", "2");
 
-define("_C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT",  "240");
-define("_C_WEBPHOTO_PLAYER_WIDTH_DEFAULT",   "320");
+//define("_C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT",  "240");
+//define("_C_WEBPHOTO_PLAYER_WIDTH_DEFAULT",   "320");
+
 define("_C_WEBPHOTO_PLAYER_HEIGHT_PLAYLIST", "340");
 define("_C_WEBPHOTO_PLAYER_WIDTH_PLAYLIST",  "320");
 define("_C_WEBPHOTO_PLAYER_DISPLAYHEIGHT_PLAYLIST", "240");
@@ -288,6 +301,7 @@ define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE", "1");
 define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE", "2");
 define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE", "3");
 
+// http://developer.longtailvideo.com/trac/wiki/ImageRotatorVars
 define("_C_WEBPHOTO_FLASHVAR_AUTOSTART_DEFAULT"   , "2");
 define("_C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT", "3");
 define("_C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT",   "5");
@@ -328,7 +342,8 @@ define("_C_WEBPHOTO_CODEINFO_SHOW_LIST", "page|cont|flash|mp3|pdf|swf|jpeg|thumb
 //define("_C_WEBPHOTO_CODEINFO_FILE_LIST", "cont|thumb|middle|flash|docomo|pdf|swf|jpeg|mp3" ) ;
 //define("_C_WEBPHOTO_CODEINFO_PAGE_LIST", "page|site|play|embed|js");
 
-define("_C_WEBPHOTO_CODEINFO_DEFAULT", "1|2|3|4|6|7|8|9|10|101|102|103|104|105");
+//define("_C_WEBPHOTO_CODEINFO_DEFAULT", "1|2|3|4|6|7|8|9|10|101|102|103|104|105");
+
 define("_C_WEBPHOTO_CODEINFO_CONT",   "1");
 define("_C_WEBPHOTO_CODEINFO_THUMB",  "2");
 define("_C_WEBPHOTO_CODEINFO_MIDDLE", "3");
@@ -372,10 +387,10 @@ define("_C_WEBPHOTO_OPT_PERM_READ_NO_CAT"  , 2 ) ;
 
 // v1.00
 define("_C_WEBPHOTO_EDITOR_DEFAULT" , "xoopsdhtml" ) ;
-define("_C_WEBPHOTO_EMBED_TYPE_DEFAULT" , "youtube" ) ;
+//define("_C_WEBPHOTO_EMBED_TYPE_DEFAULT" , "youtube" ) ;
 
 // v1.50
-define("_C_WEBPHOTO_ROTATE_DEFAULT" , "rot0" ) ;
+//define("_C_WEBPHOTO_ROTATE_DEFAULT" , "rot0" ) ;
 
 // v1.60
 define("_C_WEBPHOTO_MAX_PHOTO_FILE" , 5 ) ;
@@ -385,8 +400,11 @@ define("_C_WEBPHOTO_CAT_CHILD_NON" ,    0 ) ;
 define("_C_WEBPHOTO_CAT_CHILD_EMPTY" ,  1 ) ;
 define("_C_WEBPHOTO_CAT_CHILD_ALWAYS" , 2 ) ;
 
+// v1.90
+define("_C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT", 0 ) ;
+
 // v1.80
-define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;
+//define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;
 
 // error code
 define("_C_WEBPHOTO_ERR_NO_PERM",         -101 ) ;
@@ -424,6 +442,10 @@ define("_C_WEBPHOTO_ERR_NO_FALSHVAR", -124 ) ;
 define("_C_WEBPHOTO_ERR_VOTE_OWN",   -125 ) ;
 define("_C_WEBPHOTO_ERR_VOTE_ONCE",  -126 ) ;
 define("_C_WEBPHOTO_ERR_NO_RATING",  -127 ) ;
+
+// v1.90
+define("_C_WEBPHOTO_NAME_DEBUG_SQL" ,   "debug_sql" ) ;
+define("_C_WEBPHOTO_NAME_DEBUG_ERROR" , "debug_error" ) ;
 
 // for Japanese
 define("_C_WEBPHOTO_JPAPANESE" , "japanese|japaneseutf|ja_utf8" ) ;

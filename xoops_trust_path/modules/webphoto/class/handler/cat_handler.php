@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.11 2009/09/25 22:50:44 ohwada Exp $
+// $Id: cat_handler.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_tree_handler -> webphoto_handler_base_ini
+// cat_allowed_ext_default
 // 2009-08-30 K.OHWADA
 // Warning [PHP]: Missing argument
 // 2009-05-30 K.OHWADA
@@ -29,33 +32,28 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_cat_handler
 //=========================================================
-class webphoto_cat_handler extends webphoto_lib_tree_handler
+class webphoto_cat_handler extends webphoto_handler_base_ini
 {
-	var $_ALLOWED_EXT_DEFAULT = _C_WEBPHOTO_IMAGE_EXTS;
-	var $_WEIGHT_DEFAULT = 1;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_cat_handler( $dirname )
+function webphoto_cat_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_tree_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'cat' );
 	$this->set_id_name(  'cat_id' );
 	$this->set_pid_name( 'cat_pid' );
 	$this->set_order_default( 'cat_weight ASC, cat_title ASC, cat_id ASC' );
 	$this->init_xoops_tree();
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_cat_handler( $dirname );
+		$instance = new webphoto_cat_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -84,9 +82,9 @@ function create( $flag_new=false )
 		'cat_title'          => '',
 		'cat_img_path'       => '',
 		'cat_img_name'       => '',
-		'cat_weight'         => $this->_WEIGHT_DEFAULT ,
+		'cat_weight'         => $this->get_ini('cat_weight_default') ,
 		'cat_depth'          => 0,
-		'cat_allowed_ext'    => $this->_ALLOWED_EXT_DEFAULT ,
+		'cat_allowed_ext'    => $this->get_ini('cat_allowed_ext_default') ,
 		'cat_img_mode'       => 0,
 		'cat_orig_width'     => 0,
 		'cat_orig_height'    => 0,
@@ -100,8 +98,8 @@ function create( $flag_new=false )
 		'cat_gmap_longitude' => 0,
 		'cat_gmap_zoom'      => 0,
 		'cat_gmap_type'      => 0,
-		'cat_perm_read'      => $this->_PERM_ALLOW_ALL ,
-		'cat_perm_post'      => $this->_PERM_ALLOW_ALL ,
+		'cat_perm_read'      => $this->get_ini('cat_perm_read_default') ,
+		'cat_perm_post'      => $this->get_ini('cat_perm_post_default') ,
 		'cat_description'    => '',
 	);
 
@@ -348,6 +346,12 @@ function check_perm_read_by_row( $row )
 function check_perm_post_by_row( $row )
 {
 	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post' );
+}
+
+function is_cached_public_read_in_all_parents_by_id( $id )
+{
+	return $this->check_cached_perm_in_parents_by_id_name_groups_key(
+		$id, 'cat_perm_read', array(XOOPS_GROUP_ANONYMOUS) );
 }
 
 //---------------------------------------------------------

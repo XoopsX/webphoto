@@ -1,16 +1,17 @@
 <?php
-// $Id: photo.php,v 1.19 2009/11/06 18:04:17 ohwada Exp $
+// $Id: photo.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-// webphoto_show_list
-
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_show_list -> webphoto_show_main_photo
 // 2009-10-25 K.OHWADA
+// webphoto_show_list
 // _C_WEBPHOTO_CODEINFO_FILE_LIST
 // 2009-05-17 K.OHWADA
 // $_SHOW_PHOTO_SUMMARY
@@ -43,7 +44,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_photo
 //=========================================================
-class webphoto_main_photo extends webphoto_show_list
+class webphoto_main_photo extends webphoto_show_main_photo
 {
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -53,7 +54,7 @@ class webphoto_main_photo extends webphoto_show_list
 //---------------------------------------------------------
 function webphoto_main_photo( $dirname , $trust_dirname )
 {
-	$this->webphoto_show_list( $dirname , $trust_dirname );
+	$this->webphoto_show_main_photo( $dirname , $trust_dirname );
 
 	$this->set_mode( 'photo' );
 	$this->set_flag_highlight( true );
@@ -61,7 +62,7 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 
 	$this->init_preload();
 
-	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+	if ( $this->get_ini('community_use') ) {
 		$this->_SHOW_PHOTOS_IN_CAT = true;
 		$this->set_navi_mode( 'kind' );
 	}
@@ -91,7 +92,7 @@ function main()
 {
 	$photos_param = array();
 
-	$this->list_get_pathinfo_param();
+	$this->get_pathinfo_param();
 
 // load row
 	$row = $this->_photo_row;

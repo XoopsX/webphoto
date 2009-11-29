@@ -1,10 +1,16 @@
 <?php
-// $Id: page.php,v 1.1 2009/04/11 14:24:40 ohwada Exp $
+// $Id: page.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-04-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_photo_public
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -72,9 +78,12 @@ function webphoto_page( $dirname, $trust_dirname )
 	$this->_xoops_class    =& webphoto_xoops_base::getInstance();
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
-	$this->_perm_class     =& webphoto_permission::getInstance( $dirname );
-	$this->_public_class   =& webphoto_photo_public::getInstance( $dirname );
 	$this->_timeline_class =& webphoto_inc_timeline::getSingleton( $dirname );
+
+	$this->_perm_class     
+		=& webphoto_permission::getInstance( $dirname, $trust_dirname );
+	$this->_public_class   
+		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 
 	$this->_cfg_file_dir     = $this->_config_class->get_by_name('file_dir') ;
 	$this->_cfg_is_set_mail  = $this->_config_class->is_set_mail() ;

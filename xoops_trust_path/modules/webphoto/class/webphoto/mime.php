@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
+// $Id: mime.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_base_ini
 // 2009-10-25 K.OHWADA
 // get_cached_mime_kind_by_ext()
 // 2008-10-01 K.OHWADA
@@ -25,16 +27,20 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_mime
 //=========================================================
-class webphoto_mime
+class webphoto_mime extends webphoto_base_ini
 {
 	var $_mime_handler ;
-	var $_utility_class ;
-	var $_xoops_class ;
 
 	var $_cached_my_allowed_mimes = null;
 	var $_cached_kind_array = array();
 	var $_cached_mime_array = array();
 	var $_cached_mime_options_array = array();
+
+	var $_mime_kind_image_array;
+	var $_mime_kind_video_array;
+	var $_mime_kind_audio_array;
+	var $_mime_kind_office_array;
+	var $_mime_kind_image_other_array;
 
 	var $_IMAGE_MEDIUM = 'image' ;
 	var $_VIDEO_MEDIUM = 'video' ;
@@ -51,20 +57,27 @@ class webphoto_mime
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_mime( $dirname )
+function webphoto_mime( $dirname, $trust_dirname )
 {
-	$this->_mime_handler  =& webphoto_mime_handler::getInstance( $dirname );
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
-	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
+
+	$this->_mime_handler  =& webphoto_mime_handler::getInstance(
+		$dirname, $trust_dirname );
+
+	$this->_mime_kind_image_array  = $this->explode_ini( 'mime_kind_list_image' );
+	$this->_mime_kind_video_array  = $this->explode_ini( 'mime_kind_list_video' );
+	$this->_mime_kind_audio_array  = $this->explode_ini( 'mime_kind_list_audio' );
+	$this->_mime_kind_office_array = $this->explode_ini( 'mime_kind_list_office' );
+	$this->_mime_kind_image_other_array = $this->explode_ini( 'mime_kind_list_image_other' );
 
 	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_mime( $dirname );
+		$instance = new webphoto_mime( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -125,7 +138,7 @@ function get_cached_my_allowed_mimes()
 function get_my_allowed_mimes( $limit=0, $offset=0 )
 {
 	return $this->get_allowed_mimes_by_groups(
-		$this->_xoops_class->get_my_user_groups(), $limit, $offset );
+		$this->_xoops_groups, $limit, $offset );
 }
 
 function get_allowed_mimes_by_groups( $groups, $limit=0, $offset=0 )
@@ -233,17 +246,62 @@ function ext_to_kind( $ext )
 	}
 
 	$kind = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
-	if ( $this->is_image_ext( $ext ) ) {
+	if ( $this->is_mime_ext_image( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_IMAGE ;
-	} elseif ( $this->is_video_ext( $ext ) ) {
+	} elseif ( $this->is_mime_ext_image_other( $ext ) ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER ;
+	} elseif ( $this->is_mime_ext_video( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_VIDEO ;
-	} elseif ( $this->is_audio_ext( $ext ) ) {
+	} elseif ( $this->is_mime_ext_audio( $ext ) ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_AUDIO ;
+	} elseif ( $this->is_mime_ext_office( $ext ) ) {
+		$kind = _C_WEBPHOTO_ITEM_KIND_OFFICE ;
 	} elseif ( $ext != '' ) {
 		$kind = _C_WEBPHOTO_ITEM_KIND_GENERAL ;
 	}
 	$this->_cached_kind_array[ $ext ] = $kind;
 	return $kind ;
+}
+
+function is_mime_ext_image( $ext )
+{
+	return $this->match_mime_ext_in_kind_array( 
+		$ext, $this->_mime_kind_image_array );
+}
+
+function is_mime_ext_image_other( $ext )
+{
+	return $this->match_mime_ext_in_kind_array( 
+		$ext, $this->_mime_kind_image_other_array );
+}
+
+function is_mime_ext_video( $ext )
+{
+	return $this->match_mime_ext_in_kind_array( 
+		$ext, $this->_mime_kind_video_array );
+}
+
+function is_mime_ext_audio( $ext )
+{
+	return $this->match_mime_ext_in_kind_array( 
+		$ext, $this->_mime_kind_audio_array );
+}
+
+function is_mime_ext_office( $ext )
+{
+	return $this->match_mime_ext_in_kind_array( 
+		$ext, $this->_mime_kind_office_array );
+}
+
+function match_mime_ext_in_kind_array( $ext, $kind_array )
+{
+	foreach ( $kind_array as $kind )
+	{
+		if ( $this->get_cached_mime_kind_by_ext( $ext ) == $kind ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function ext_to_mime( $ext )
@@ -275,14 +333,6 @@ function is_normal_ext( $ext )
 function is_image_ext( $ext )
 {
 	if ( in_array( strtolower( $ext ) , $this->_IMAGE_EXTS ) ) {
-		return true;
-	}
-	return false;
-}
-
-function is_image_convert_ext( $ext )
-{
-	if ( $this->ext_to_mime_kind( $ext ) == _C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT ) {
 		return true;
 	}
 	return false;
@@ -365,14 +415,6 @@ function is_my_allow_ext( $ext )
 		return true;
 	}
 	return false;
-}
-
-//---------------------------------------------------------
-// utility
-//---------------------------------------------------------
-function str_to_array( $str, $pattern )
-{
-	return $this->_utility_class->str_to_array( $str, $pattern );
 }
 
 // --- class end ---

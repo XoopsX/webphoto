@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.10 2009/08/09 05:47:09 ohwada Exp $
+// $Id: handler.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// Notice [PHP]: Undefined index: prefix 
 // 2009-08-08 K.OHWADA
 // build_config_character()
 // 2009-05-30 K.OHWADA
@@ -51,6 +53,7 @@ class webphoto_lib_handler extends webphoto_lib_error
 	var $_xoops_uid    = 0;
 	var $_cached       = array();
 	var $_flag_cached  = false;
+	var $_cached_perm_key_array = array();
 
 	var $_use_prefix  = false;
 	var $_NONE_VALUE  = '---' ;
@@ -586,6 +589,17 @@ function build_where_keyword_single( $str, $name )
 //---------------------------------------------------------
 // permission
 //---------------------------------------------------------
+function check_cached_perm_by_row_name_groups_key( $row, $name, $groups=null, $key='0' )
+{
+	$id = $row[ $this->_id_name ] ;
+	if ( isset( $this->_cached_perm_key_array[ $id ][ $key ] ) ) {
+		return  $this->_cached_perm_key_array[ $id ][ $key ];
+	}
+	$ret = $this->check_perm_by_row_name_groups( $row, $name, $groups );
+	$this->_cached_perm_key_array[ $id ][ $key ] = $ret ;
+	return $ret;
+}
+
 function build_id_array_with_perm( $id_array, $name, $groups=null )
 {
 	$arr = array();
@@ -853,8 +867,9 @@ function build_form_option( $value, $caption, $extra=null )
 
 function build_form_option_caption( $row, $title_name )
 {
+// Notice [PHP]: Undefined index: prefix 
 	$prefix = '' ;
-	if ( $this->_use_prefix ) {
+	if ( $this->_use_prefix && isset( $row[ $this->_PREFIX_NAME ] ) ) {
 		$prefix = $row[ $this->_PREFIX_NAME ] ;
 		if ( $prefix ) {
 			$prefix = str_replace( $this->_PREFIX_MARK, $this->_PREFIX_BAR, $prefix ).' ';

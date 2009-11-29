@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.5 2008/10/30 00:22:49 ohwada Exp $
+// $Id: checktables.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_mime_handler
 // 2008-10-01 K.OHWADA
 // player_handler
 // 2008-08-24 K.OHWADA
@@ -44,16 +46,26 @@ function webphoto_admin_checktables( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
-	$this->_gicon_handler    =& webphoto_gicon_handler::getInstance( $dirname );
-	$this->_mime_handler     =& webphoto_mime_handler::getInstance( $dirname );
-	$this->_tag_handler      =& webphoto_tag_handler::getInstance( $dirname );
-	$this->_p2t_handler      =& webphoto_p2t_handler::getInstance( $dirname );
-	$this->_syno_handler     =& webphoto_syno_handler::getInstance( $dirname );
-	$this->_user_handler     =& webphoto_user_handler::getInstance( $dirname );
-	$this->_maillog_handler  =& webphoto_maillog_handler::getInstance( $dirname );
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
+	$this->_mime_handler     
+		=& webphoto_mime_handler::getInstance( $dirname, $trust_dirname );
+	$this->_vote_handler     
+		=& webphoto_vote_handler::getInstance( $dirname, $trust_dirname );
+	$this->_gicon_handler    
+		=& webphoto_gicon_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_tag_handler      
+		=& webphoto_tag_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_p2t_handler      
+		=& webphoto_p2t_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_syno_handler     
+		=& webphoto_syno_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_user_handler     
+		=& webphoto_user_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_maillog_handler  
+		=& webphoto_maillog_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_player_handler   
+		=& webphoto_player_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_flashvar_handler 
+		=& webphoto_flashvar_handler::getInstance( $dirname, $trust_dirname  );
 
 	$this->_xoops_comments_handler =& webphoto_xoops_comments_handler::getInstance();
 }

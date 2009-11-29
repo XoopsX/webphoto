@@ -1,5 +1,5 @@
 <?php
-// $Id: player_handler.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
+// $Id: player_handler.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// player_title_default
 // 2009-10-25 K.OHWADA
 // BUG: player id is not correctly selected 
 // 2009-04-19 K.OHWADA
@@ -19,35 +22,26 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_player_handler
 //=========================================================
-class webphoto_player_handler extends webphoto_lib_handler
+class webphoto_player_handler extends webphoto_handler_base_ini
 {
-	var $_TITLE_DEFAULT  = 'undefined' ;
-	var $_WIDTH_DEFAULT  = _C_WEBPHOTO_PLAYER_WIDTH_DEFAULT ;
-	var $_HEIGHT_DEFAULT = _C_WEBPHOTO_PLAYER_HEIGHT_DEFAULT ;
-
-	var $_THIS_TITLE_NAME = 'player_title';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_player_handler( $dirname )
+function webphoto_player_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'player' );
 	$this->set_id_name( 'player_id' );
-	$this->set_title_name( $this->_THIS_TITLE_NAME );
-
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
+	$this->set_title_name( $this->get_ini( 'player_title_name' ) );
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_player_handler( $dirname );
+		$instance = new webphoto_player_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -72,9 +66,9 @@ function create( $flag_new=false )
 		'player_time_update'    => $time_update,
 		'player_pid'            => 0,
 		'player_style'          => 0 ,
-		'player_title'          => $this->_TITLE_DEFAULT ,
-		'player_width'          => $this->_WIDTH_DEFAULT ,
-		'player_height'         => $this->_HEIGHT_DEFAULT ,
+		'player_title'          => $this->get_ini('player_title_default') ,
+		'player_width'          => $this->get_ini('player_width_default') ,
+		'player_height'         => $this->get_ini('player_height_default') ,
 		'player_displaywidth'   => 0 ,
 		'player_displayheight'  => 0 ,
 		'player_screencolor'    => '',
@@ -198,13 +192,15 @@ function get_style_options()
 // BUG: player id is not correctly selected 
 function build_row_options( $preset_id, $flag_undefined=false )
 {
-	$rows = $this->get_rows_by_orderby( $this->_THIS_TITLE_NAME );
+	$player_title_name = $this->get_ini( 'player_title_name' );
+
+	$rows = $this->get_rows_by_orderby( $player_title_name );
 
 	if ( $flag_undefined ) {
 		array_unshift( $rows, $this->create() );
 	}
 
-	return  $this->build_form_select_options( $rows, $this->_THIS_TITLE_NAME, $preset_id );
+	return  $this->build_form_select_options( $rows, $player_title_name, $preset_id );
 }
 
 // --- class end ---

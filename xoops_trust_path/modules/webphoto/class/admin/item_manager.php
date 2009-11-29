@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.19 2009/05/28 11:39:49 ohwada Exp $
+// $Id: item_manager.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_flash_player
 // 2009-05-28 K.OHWADA
 // BUG: not show tag
 // 2009-05-17 K.OHWADA
@@ -81,12 +83,16 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->set_flag_admin( true );
 	$this->set_fct( 'item_manager' );
 
-	$this->_vote_handler     =& webphoto_vote_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname );
-	$this->_flash_class      =& webphoto_flash_player::getInstance( $dirname );
 	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
 
+	$this->_vote_handler     =& webphoto_vote_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_playlist_class   =& webphoto_playlist::getInstance(
+		$dirname , $trust_dirname  );
+	$this->_flash_class      =& webphoto_flash_player::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_admin_item_form_class =& webphoto_admin_item_form::getInstance( 
 		$dirname , $trust_dirname );
 

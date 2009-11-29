@@ -1,11 +1,77 @@
-$Id: readme_en.txt,v 1.38 2009/11/06 20:21:36 ohwada Exp $
+$Id: readme_en.txt,v 1.39 2009/11/29 07:34:23 ohwada Exp $
+
+=================================================
+Version: 1.90
+Date:   2009-11-29
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. added main.ini
+In old version, the internal status were set as PHP constant. 
+In this version, there are able to be set as variable in each module
+
+It is read in following the order. 
+The last set value becomes effective. 
+(1) XOOPS_TRUST_PATH /include/main.ini
+(2) XOOPS_TRUST_PATH /preload/main.ini (if exists)
+(3) XOOPS_ROOT_PATH  /preload/main.ini (if exists)
+
+2. added Pictures, Videos, Musics, Offices in menu
+
+3. in list and detail page, the group icon are displayed in the item which the guest can not see.
+
+4. in detail pgae, the admin can choice the file which is displayed on click the content image
+(1) uploaded file
+(2) converted PDF
+
+5. in detail pgae, the screen size of the video in Flash Player is automatically adjusted. 
+
+The screen size is decided in following the order. 
+(1) value of item table (if set)
+(2) value of flashvar table (if set)
+(3) the screen size is automatically adjusted to fit value of Flash Player,
+if value of file table (flash video) is set. (new)
+(4) value of Flash Player
+
+6. in submit page, the spin icon is displayed while uploading the file. 
+
+7. in submit page, the admin can change the default of editor
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1046
+
+8. The admin can change the plugin type.
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1043
+
+9. bug fix
+(1) typo Radom -> Random
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=461&forum=11
+
+(2) Fatal error: upload ai type
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1043
+
+10. Database structure
+(1) item  table: add field item_detail_onclick item_weight
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
+
+* Notice *
+In this version, I changed many files, because added main.ini.
+Although there are no big problem, but I think that there are any small problem. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 1.80
 Date:   2009-11-01
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

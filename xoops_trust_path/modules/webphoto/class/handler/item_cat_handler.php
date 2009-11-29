@@ -1,5 +1,5 @@
 <?php
-// $Id: item_cat_handler.php,v 1.4 2009/09/08 16:14:16 ohwada Exp $
+// $Id: item_cat_handler.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// build_where_by_image()
 // 2009-09-06 K.OHWADA
 // add ns ew in build_where_item_gmap_area()
 // 2009-04-10 K.OHWADA
@@ -19,7 +22,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_item_cat_handler
 //=========================================================
-class webphoto_item_cat_handler extends webphoto_lib_handler
+class webphoto_item_cat_handler extends webphoto_handler_base_ini
 {
 	var $_item_table;
 	var $_cat_table;
@@ -28,33 +31,24 @@ class webphoto_item_cat_handler extends webphoto_lib_handler
 
 	var $_cfg_perm_item_read = false;
 
-	var $_PERM_ALLOW_ALL  = _C_WEBPHOTO_PERM_ALLOW_ALL;
-	var $_PERM_DENOY_ALL  = _C_WEBPHOTO_PERM_DENOY_ALL;
-	var $_PERM_SEPARATOR  = _C_WEBPHOTO_PERM_SEPARATOR;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_item_cat_handler( $dirname )
+function webphoto_item_cat_handler( $dirname, $trust_dirname ) 
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 
 	$this->_item_table = $this->prefix_dirname( 'item' );
 	$this->_cat_table  = $this->prefix_dirname( 'cat' );
 	$this->_tag_table  = $this->prefix_dirname( 'tag' );
 	$this->_p2t_table  = $this->prefix_dirname( 'p2t' );
-
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_item_cat_handler( $dirname );
+		$instance = new webphoto_item_cat_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -192,6 +186,38 @@ function build_where_by_name_param( $name, $param )
 			$where = $this->build_where_by_uid( $param );
 			break;
 
+		case 'picture' :
+			$where = $this->build_where_by_picture( $param );
+			break;
+
+		case 'picture_catid_array' :
+			$where = $this->build_where_by_picture_catid_array( $param );
+			break;
+
+		case 'video' :
+			$where = $this->build_where_by_video( $param );
+			break;
+
+		case 'video_catid_array' :
+			$where = $this->build_where_by_video_catid_array( $param );
+			break;
+
+		case 'audio' :
+			$where = $this->build_where_by_audio( $param );
+			break;
+
+		case 'audio_catid_array' :
+			$where = $this->build_where_by_audio_catid_array( $param );
+			break;
+
+		case 'office' :
+			$where = $this->build_where_by_office( $param );
+			break;
+
+		case 'office_catid_array' :
+			$where = $this->build_where_by_office_catid_array( $param );
+			break;
+
 		default:
 //			xoops_error( "$name $param" );
 			break;
@@ -287,6 +313,66 @@ function build_where_by_uid( $uid )
 	return $where;
 }
 
+function build_where_by_picture()
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_picture();
+	return $where;
+}
+
+function build_where_by_picture_catid_array( $catid_array )
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_picture();
+	$where .= ' AND '. $this->build_where_item_catid_array( $catid_array );
+	return $where;
+}
+
+function build_where_by_video()
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_video();
+	return $where;
+}
+
+function build_where_by_video_catid_array( $catid_array )
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_video();
+	$where .= ' AND '. $this->build_where_item_catid_array( $catid_array );
+	return $where;
+}
+
+function build_where_by_audio()
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_audio();
+	return $where;
+}
+
+function build_where_by_audio_catid_array( $catid_array )
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_audio();
+	$where .= ' AND '. $this->build_where_item_catid_array( $catid_array );
+	return $where;
+}
+
+function build_where_by_office()
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_office();
+	return $where;
+}
+
+function build_where_by_office_catid_array( $catid_array )
+{
+	$where  = $this->build_where_public();
+	$where .= ' AND '. $this->build_where_item_office();
+	$where .= ' AND '. $this->build_where_item_catid_array( $catid_array );
+	return $where;
+}
+
 function build_where_item_imode()
 {
 	$where  = " ( item_ext='gif' ";
@@ -306,15 +392,46 @@ function build_where_item_photo()
 	return $where;
 }
 
-function build_where_item_catid_array( $catid_array )
+function build_where_item_picture()
 {
-	$where  = ' item_cat_id IN ( ' ;
-	foreach( $catid_array as $id ) {
-		$where .= intval($id) .', ';
+	return $this->build_where_item_kind( 'item_kind_list_image' );
+}
+
+function build_where_item_video()
+{
+	return $this->build_where_item_kind( 'item_kind_list_video' );
+}
+
+function build_where_item_audio()
+{
+	return $this->build_where_item_kind( 'item_kind_list_audio' );
+}
+
+function build_where_item_office()
+{
+	return $this->build_where_item_kind( 'item_kind_list_office' );
+}
+
+function build_where_item_kind( $list )
+{
+	return $this->build_where_item_in_array(
+		'item_kind', $this->explode_ini( $list ) );
+}
+
+function build_where_item_catid_array( $array )
+{
+	return $this->build_where_item_in_array( 'item_cat_id', $array );
+}
+
+function build_where_item_in_array( $item_name, $array )
+{
+	$where  = ' ' .$item_name .' IN ( ' ;
+	foreach( $array as $val ) {
+		$where .= intval($val) .', ';
 	}
 
-// 0 means to belong no category	
-	$where .= ' 0 )';
+// 0 means to belong no array
+	$where .= ' 0 ) ';
 	return $where;
 }
 
@@ -417,10 +534,10 @@ function build_where_groups( $name )
 {
 	$groups = $this->_xoops_groups ;
 
-	$pre  = '%'. $this->_PERM_SEPARATOR ; 
-	$post = $this->_PERM_SEPARATOR . '%' ;
+	$pre  = '%'. _C_WEBPHOTO_PERM_SEPARATOR ; 
+	$post = _C_WEBPHOTO_PERM_SEPARATOR . '%' ;
 
-	$where = $name .'='. $this->quote( $this->_PERM_ALLOW_ALL ) ;
+	$where = $name .'='. $this->quote( _C_WEBPHOTO_PERM_ALLOW_ALL ) ;
 
 	if ( is_array($groups) && count($groups) ) {
 		foreach ( $groups as $group ) 

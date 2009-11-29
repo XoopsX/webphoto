@@ -1,4 +1,4 @@
-<{* $Id: form_photo.html,v 1.4 2009/06/05 14:41:43 ohwada Exp $ *}>
+<{* $Id: form_photo.html,v 1.5 2009/11/29 07:34:23 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -24,7 +24,7 @@ function webphoto_gmap_disp_on()
 <![endif]-->
 
 <{* === form === *}>
-<form name="webphoto_edit" action="<{$action}>" method="post" enctype="multipart/form-data">
+<form id="webphoto_edit" name="webphoto_edit" action="<{$action}>" method="post" enctype="multipart/form-data" <{if $show_uploading}>onsubmit="webphoto_uploading();"<{/if}> >
 <input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
 <input type="hidden" id="fct" name="fct" value="<{$fct}>" />
 <input type="hidden" id="op" name="op" value="<{$op_edit}>" />

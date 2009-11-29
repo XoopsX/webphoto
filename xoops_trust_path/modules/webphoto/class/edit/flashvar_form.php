@@ -1,5 +1,5 @@
 <?php
-// $Id: flashvar_form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: flashvar_form.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_flashvar_handler
 // 2009-01-10 K.OHWADA
 // webphoto_flashvar_form -> webphoto_edit_flashvar_form
 // 2008-11-08 K.OHWADA
@@ -49,7 +51,8 @@ function webphoto_edit_flashvar_form( $dirname , $trust_dirname )
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
 	$this->set_path_color_pickup( $this->_MODULE_URL.'/libs' );
 
-	$this->_flashvar_handler  =& webphoto_flashvar_handler::getInstance( $dirname );
+	$this->_flashvar_handler  
+		=& webphoto_flashvar_handler::getInstance( $dirname , $trust_dirname );
 
 	$uploads_path          = $this->_config_class->get_uploads_path();
 	$this->_cfg_fsize      = $this->_config_class->get_by_name( 'fsize' );

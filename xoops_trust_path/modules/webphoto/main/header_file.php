@@ -1,5 +1,5 @@
 <?php
-// $Id: header_file.php,v 1.3 2009/01/29 04:26:55 ohwada Exp $
+// $Id: header_file.php,v 1.4 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// main/header_item_handler.php
 // 2009-01-25 K.OHWADA
 // webphoto_include_once_preload_trust()
 // 2009-01-10 K.OHWADA
@@ -19,31 +21,21 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 //---------------------------------------------------------
 // webphoto files
 //---------------------------------------------------------
-if( !defined("WEBPHOTO_DIRNAME") ) {
-	  define("WEBPHOTO_DIRNAME", $MY_DIRNAME );
-}
-if( !defined("WEBPHOTO_ROOT_PATH") ) {
-	  define("WEBPHOTO_ROOT_PATH", XOOPS_ROOT_PATH.'/modules/'.WEBPHOTO_DIRNAME );
-}
+webphoto_include_once( 'main/header_item_handler.php' );
 
-include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
-include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
-
-webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
+
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/preload.php' );
-webphoto_include_once( 'class/lib/error.php' );
+
 webphoto_include_once( 'class/lib/msg.php' );
-webphoto_include_once( 'class/lib/handler.php' );
-webphoto_include_once( 'class/lib/tree_handler.php' );
-webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/post.php' );
 webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
-webphoto_include_once( 'class/handler/item_handler.php' );
+
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
+
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/item_public.php' );

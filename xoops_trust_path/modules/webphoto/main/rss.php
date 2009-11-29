@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.7 2009/03/06 03:54:16 ohwada Exp $
+// $Id: rss.php,v 1.8 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// main/header_item_handler.php
 // 2009-03-01 K.OHWADA
 // class/webphoto/rss.php
 // 2008-12-12 K.OHWADA
@@ -37,25 +39,26 @@ include_once XOOPS_ROOT_PATH.'/class/template.php';
 //---------------------------------------------------------
 // webphoto files
 //---------------------------------------------------------
-webphoto_include_once( 'include/constants.php' );
+webphoto_include_once( 'main/header_item_handler.php' );
+
 webphoto_include_once( 'class/xoops/base.php' );
+
+webphoto_include_once( 'class/inc/handler.php' );
+webphoto_include_once( 'class/inc/base_ini.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/uri.php' );
-webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/tagcloud.php' );
+
 webphoto_include_once( 'class/d3/language.php' );
+
 webphoto_include_once( 'class/lib/multibyte.php' );
-webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/base.php' );
-webphoto_include_once( 'class/lib/handler.php' );
-webphoto_include_once( 'class/lib/tree_handler.php' );
 webphoto_include_once( 'class/lib/pathinfo.php' );
-webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/search.php' );
 webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/rss.php' );
-webphoto_include_once( 'class/handler/item_handler.php' );
+
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );

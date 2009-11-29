@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_create.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
+// $Id: flash_create.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-10-25 K.OHWADA
 // remove get_cached_option_by_ext()
 //---------------------------------------------------------
@@ -19,7 +21,6 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_flash_create extends webphoto_edit_base_create
 {
-	var $_mime_handler ;
 	var $_ffmpeg_class ;
 
 	var $_cfg_use_ffmpeg ;
@@ -32,21 +33,20 @@ class webphoto_edit_flash_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_flash_create( $dirname )
+function webphoto_edit_flash_create( $dirname , $trust_dirname  )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname  );
 
-	$this->_mime_handler  =& webphoto_mime_handler::getInstance( $dirname );
-	$this->_ffmpeg_class  =& webphoto_ffmpeg::getInstance( $dirname );
+	$this->_ffmpeg_class  =& webphoto_ffmpeg::getInstance( $dirname, $trust_dirname );
 
 	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_flash_create( $dirname );
+		$instance = new webphoto_edit_flash_create( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

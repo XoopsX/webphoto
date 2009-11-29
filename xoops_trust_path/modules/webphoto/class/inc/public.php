@@ -1,5 +1,5 @@
 <?php
-// $Id: public.php,v 1.4 2009/04/11 14:23:34 ohwada Exp $
+// $Id: public.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
+// $trust_dirname
 // 2009-04-10 K.OHWADA
 // change build_item_description()
 // 2009-03-19 K.OHWADA
@@ -19,7 +22,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_public
 //=========================================================
-class webphoto_inc_public extends webphoto_inc_handler
+class webphoto_inc_public extends webphoto_inc_base_ini
 {
 	var $_cfg_use_pathinfo   = false;
 	var $_cfg_workdir        = null;
@@ -36,12 +39,13 @@ class webphoto_inc_public extends webphoto_inc_handler
 //---------------------------------------------------------
 function webphoto_inc_public()
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
 }
 
-function init_public( $dirname )
+function init_public( $dirname , $trust_dirname )
 {
-	$this->init_handler( $dirname );
+	$this->init_base_ini( $dirname , $trust_dirname );
+	$this->init_handler(  $dirname );
 
 	$this->_init_xoops_config( $dirname );
 }
@@ -415,9 +419,10 @@ function get_cat_cached_row_by_id( $id )
 //---------------------------------------------------------
 // auto publish
 //---------------------------------------------------------
-function auto_publish( $dirname )
+function auto_publish()
 {
-	$publish_class =& webphoto_inc_auto_publish::getSingleton( $dirname );
+	$publish_class =& webphoto_inc_auto_publish::getSingleton(
+		 $this->_DIRNAME, $this->_TRUST_DIRNAME );
 	$publish_class->set_workdir( $this->_cfg_workdir );
 	$publish_class->auto_publish();
 }

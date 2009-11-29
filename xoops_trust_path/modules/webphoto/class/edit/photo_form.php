@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.7 2009/06/28 14:50:12 ohwada Exp $
+// $Id: photo_form.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_mime
+// submit_rotate_default
 // 2009-06-28 K.OHWADA
 // set_default_item_row()
 // 2009-05-05 K.OHWADA
@@ -98,13 +101,21 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname, $trust_dirname );
 
-	$this->_embed_class    =& webphoto_embed::getInstance( $dirname, $trust_dirname );
-	$this->_editor_class   =& webphoto_editor::getInstance( $dirname, $trust_dirname );
-	$this->_gicon_handler  =& webphoto_gicon_handler::getInstance( $dirname );
-	$this->_player_handler =& webphoto_player_handler::getInstance( $dirname );
+	$this->_gicon_handler  
+		=& webphoto_gicon_handler::getInstance( $dirname, $trust_dirname );
+	$this->_player_handler 
+		=& webphoto_player_handler::getInstance( $dirname, $trust_dirname );
+
+	$this->_embed_class    
+		=& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_editor_class   
+		=& webphoto_editor::getInstance( $dirname, $trust_dirname );
+	$this->_mime_class     
+		=& webphoto_mime::getInstance( $dirname, $trust_dirname  );
+	$this->_tag_class      
+		=& webphoto_tag::getInstance( $dirname, $trust_dirname );
+
 	$this->_kind_class     =& webphoto_kind::getInstance();
-	$this->_mime_class     =& webphoto_mime::getInstance( $dirname );
-	$this->_tag_class      =& webphoto_tag::getInstance( $dirname );
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
 
 	$this->_has_image_resize  = $this->_image_create_class->has_resize();
@@ -554,7 +565,7 @@ function item_perm_down_input_checkboxs()
 function rotate_checked( $rotate )
 {
 	if ( empty($rotate) ) {
-		$rotate = $this->_ROTATE_DEFAULT ;
+		$rotate = $this->get_ini('submit_rotate_default') ;
 	}
 	$checked = array(
 		'rot0'   => '', 

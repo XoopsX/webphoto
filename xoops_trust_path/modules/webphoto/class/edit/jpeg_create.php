@@ -1,10 +1,16 @@
 <?php
-// $Id: jpeg_create.php,v 1.1 2009/11/06 18:06:06 ohwada Exp $
+// $Id: jpeg_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-10-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -27,7 +33,7 @@ class webphoto_edit_jpeg_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 function webphoto_edit_jpeg_create( $dirname , $trust_dirname )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname );
 
 	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }

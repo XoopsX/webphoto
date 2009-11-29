@@ -1,10 +1,16 @@
 <?php
-// $Id: html.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: html.php,v 1.2 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname 
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,9 +24,9 @@ class webphoto_ext_html extends webphoto_ext_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_html( $dirname )
+function webphoto_ext_html( $dirname, $trust_dirname )
 {
-	$this->webphoto_ext_base( $dirname );
+	$this->webphoto_ext_base( $dirname, $trust_dirname );
 }
 
 //---------------------------------------------------------

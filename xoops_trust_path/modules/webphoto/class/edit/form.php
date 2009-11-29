@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.11 2009/06/28 14:50:12 ohwada Exp $
+// $Id: form.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
+// webphoto_embed
+// item_editor_default
 // 2009-06-28 K.OHWADA
 // set_default_item_row()
 // 2009-05-30 K.OHWADA
@@ -62,6 +66,8 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_config_class;
 	var $_preload_class;
 	var $_perm_class;
+	var $_embed_class ;
+	var $_ini_class;
 
 	var $_cfg_gmap_apikey ;
 	var $_cfg_width ;
@@ -115,12 +121,6 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_ROOT_EXTS_URL;
 	var $_LIBS_URL;
 
-	var $_TAGS_SIZE = 80;
-
-	var $_EMBED_TYPE_DEFAULT = _C_WEBPHOTO_EMBED_TYPE_DEFAULT ;
-	var $_EDITOR_DEFAULT     = _C_WEBPHOTO_EDITOR_DEFAULT ;
-	var $_ROTATE_DEFAULT     = _C_WEBPHOTO_ROTATE_DEFAULT ;
-
 	var $_PHOTO_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME   = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
 	var $_MIDDLE_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_MIDDLE ;
@@ -143,10 +143,21 @@ function webphoto_edit_form( $dirname , $trust_dirname )
 	$this->webphoto_lib_form( $dirname , $trust_dirname );
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
-	$this->_cat_handler  =& webphoto_cat_handler::getInstance(  $dirname );
-	$this->_perm_class   =& webphoto_permission::getInstance(   $dirname );
+
+	$this->_cat_handler  
+		=& webphoto_cat_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_item_handler 
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_file_handler 
+		=& webphoto_file_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_perm_class   
+		=& webphoto_permission::getInstance( $dirname , $trust_dirname );
+	$this->_embed_class  
+		=& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_ini_class 
+		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
+
+	$this->_ini_class->read_main_ini();
 
 	$this->_cfg_gmap_apikey    = $this->_config_class->get_by_name( 'gmap_apikey' );
 	$this->_cfg_width          = $this->_config_class->get_by_name( 'width' );
@@ -214,7 +225,7 @@ function &getInstance( $dirname, $trust_dirname )
 function set_default_item_row( $item_row )
 {
 	if ( empty($item_row['item_editor']) ) {
-		$item_row['item_editor'] = $this->_EDITOR_DEFAULT;
+		$item_row['item_editor'] = $this->get_ini('item_editor_default') ;
 	}
 	return $item_row;
 }
@@ -290,7 +301,7 @@ function get_item_editor( $flag )
 {
 	$value = $this->get_row_by_key( 'item_editor' );
 	if ( $flag && empty($value) ) {
-		$value = $this->_EDITOR_DEFAULT;
+		$value = $this->get_ini('item_editor_default') ;
 	}
 	return $value;
 }
@@ -299,7 +310,7 @@ function get_item_embed_type( $flag )
 {
 	$value = $this->get_row_by_key( 'item_embed_type' );
 	if ( $flag && empty($value) ) {
-		$value = $this->_EMBED_TYPE_DEFAULT;
+		$value = $this->get_ini('submit_embed_type_default') ;
 	}
 	return $value;
 }
@@ -326,6 +337,16 @@ function get_cached_file_row_by_kind( $item_row, $kind )
 		return $this->_file_handler->get_cached_row_by_id( $file_id );
 	}
 	return null;
+}
+
+//---------------------------------------------------------
+// embed class
+//---------------------------------------------------------
+function item_embed_type_select_options()
+{ 
+	$value   = $this->get_item_embed_type( true );
+	$options = $this->_embed_class->build_type_options( $this->_is_module_admin );
+	return $this->build_form_options( $value, $options );
 }
 
 //---------------------------------------------------------
@@ -558,6 +579,7 @@ function is_show_form_photomanager( $item_row )
 
 function is_show_form_editor_option( $options )
 {
+
 	if ( !is_array($options) || !count($options) ) {
 		return false;
 	}
@@ -566,11 +588,17 @@ function is_show_form_editor_option( $options )
 
 function is_show_form_editor()
 {
+	if ( !$this->get_ini('show_form_editor') ) {
+		return false;
+	}
 	return $this->_is_show_form( $this->_post_form_editor );
 }
 
 function is_show_form_embed()
 {
+	if ( !$this->get_ini('show_form_embed') ) {
+		return false;
+	}
 	return $this->_is_show_form( $this->_post_form_embed );
 }
 
@@ -726,6 +754,19 @@ function build_checkbox_checked( $name, $compare=1 )
 {
 	$val = $this->get_checkbox_by_name( $name );
 	return $this->build_form_checked( $val, $compare );
+}
+
+//---------------------------------------------------------
+// ini class
+//---------------------------------------------------------
+function get_ini( $name )
+{
+	return $this->_ini_class->get_ini( $name );
+}
+
+function explode_ini( $name )
+{
+	return $this->_ini_class->explode_ini( $name );
 }
 
 // --- class end ---

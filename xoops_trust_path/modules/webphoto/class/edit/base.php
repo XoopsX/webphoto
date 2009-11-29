@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.3 2009/05/17 08:58:59 ohwada Exp $
+// $Id: base.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_mime
 // 2009-05-05 K.OHWADA
 // build_tmp_dir_file()
 // 2009-04-19 K.OHWADA
@@ -31,7 +33,7 @@ function webphoto_edit_base( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_mime_class =& webphoto_mime::getInstance( $dirname );
+	$this->_mime_class =& webphoto_mime::getInstance( $dirname, $trust_dirname );
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 

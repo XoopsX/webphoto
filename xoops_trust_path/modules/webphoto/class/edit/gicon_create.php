@@ -1,5 +1,5 @@
 <?php
-// $Id: gicon_create.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: gicon_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,9 +25,9 @@ class webphoto_edit_gicon_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_gicon_create( $dirname )
+function webphoto_edit_gicon_create( $dirname, $trust_dirname )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname, $trust_dirname );
 
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
 
@@ -35,11 +35,11 @@ function webphoto_edit_gicon_create( $dirname )
 	$this->_cfg_gicon_height = $this->get_config_by_name( 'gicon_height' ) ;
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_gicon_create( $dirname );
+		$instance = new webphoto_edit_gicon_create( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: ext.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
+// $Id: ext.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in plugin class
 // 2009-10-25 K.OHWADA
 // create_jpeg()
 // 2009-01-25 K.OHWADA
@@ -230,7 +232,7 @@ function &get_class_object( $type )
 		return $false;
 	}
 
-	$class = new $class_name( $this->_DIRNAME );
+	$class = new $class_name( $this->_DIRNAME, $this->_TRUST_DIRNAME );
 	return $class ;
 }
 

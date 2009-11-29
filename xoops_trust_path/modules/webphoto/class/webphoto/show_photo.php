@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.24 2009/05/23 14:57:15 ohwada Exp $
+// $Id: show_photo.php,v 1.25 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_show_image
+// get_show_file_url()
 // 2009-05-17 K.OHWADA
 // _cfg_item_summary
 // 2009-03-15 K.OHWADA
@@ -105,10 +108,13 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_image_class =& webphoto_show_image::getInstance( $dirname );
+	$this->_image_class 
+		=& webphoto_show_image::getInstance( $dirname, $trust_dirname );
+	$this->_tag_class 
+		=& webphoto_tag::getInstance( $dirname, $trust_dirname );
+
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
-	$this->_tag_class =& webphoto_tag::getInstance( $dirname );
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
 
 	$this->_highlight_class =& webphoto_lib_highlight::getInstance();
@@ -258,6 +264,9 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$show_arr['cont_size_disp']      = $this->build_show_filesize( $cont_size ) ;
 	$show_arr['cont_duration_disp']  = $this->format_time( $cont_duration ) ;
 
+	$pdf_url = $this->get_show_file_url( $show_arr, _C_WEBPHOTO_FILE_KIND_PDF );
+	$show_arr['pdf_url_s']  = $this->sanitize( $pdf_url ) ;
+
 	return $show_arr;
 }
 
@@ -315,6 +324,7 @@ function build_photo_show( $row )
 		'info_votes'       => $this->build_show_info_vote( $item_rating, $item_votes ) ,
 		'rank'             => $this->build_show_rank( $item_rating ) ,
 		'can_edit'         => $this->has_editable_by_uid( $item_uid ) ,
+		'is_public'        => $this->is_public( $row ) ,
 
 		'is_newphoto'      => $is_newphoto ,
 		'is_updatedphoto'  => $is_updatedphoto ,
@@ -486,7 +496,35 @@ function format_time( $time )
 
 function perm_download( $row )
 {
-	return $this->_item_handler->check_perm_down_by_row( $row, $this->_xoops_groups );
+	return $this->_item_handler->check_perm_down_by_row( 
+		$row, $this->_xoops_groups );
+}
+
+function is_public( $row )
+{
+	if ( $this->is_public_cats( $row ) && $this->is_public_item( $row ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_public_cats( $row )
+{
+	if ( $this->_cfg_perm_cat_read == 0 ) {
+		return true;
+	}
+
+	return $this->_cat_handler->is_cached_public_read_in_all_parents_by_id( 
+		$row['item_cat_id'] );
+}
+
+function is_public_item( $row )
+{
+	if ( $this->_cfg_perm_item_read == 0 ) {
+		return true;
+	}
+
+	return $this->_item_handler->is_public_read_by_row( $row );
 }
 
 function can_download( $row )
@@ -561,6 +599,18 @@ function build_show_imgsrc( $item_row, $show_arr )
 function get_show_file_row( $show_arr, $kind )
 {
 	return $show_arr[ 'file_row_'. $kind ];
+}
+
+function get_show_file_url( $show_arr, $kind )
+{
+	$url = null ;
+
+	$file_row = $this->get_show_file_row( $show_arr, $kind ) ;
+	if ( is_array($file_row) ) {
+		$url = $file_row['file_url'] ;
+	}
+
+	return $url;
 }
 
 function get_show_file_size_duration( $show_arr, $kind )

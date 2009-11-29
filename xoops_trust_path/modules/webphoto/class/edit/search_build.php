@@ -1,5 +1,5 @@
 <?php
-// $Id: search_build.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: search_build.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-01-10 K.OHWADA
 // webphoto_photo_build -> webphoto_edit_search_build
 // get_text_content()
@@ -37,25 +39,30 @@ class webphoto_edit_search_build
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_search_build( $dirname )
+function webphoto_edit_search_build( $dirname , $trust_dirname )
 {
 	$this->_DIRNAME    = $dirname ;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler  =& webphoto_file_handler::getInstance( $dirname );
-	$this->_cat_handler   =& webphoto_cat_handler::getInstance(   $dirname );
-	$this->_syno_handler  =& webphoto_syno_handler::getInstance(  $dirname );
-	$this->_tag_class     =& webphoto_tag::getInstance( $dirname );
+	$this->_item_handler  
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_cat_handler   
+		=& webphoto_cat_handler::getInstance(  $dirname , $trust_dirname  );
+	$this->_file_handler  
+		=& webphoto_file_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_syno_handler  
+		=& webphoto_syno_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_tag_class     
+		=& webphoto_tag::getInstance( $dirname , $trust_dirname );
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_search_build( $dirname );
+		$instance = new webphoto_edit_search_build( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

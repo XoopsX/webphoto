@@ -1,10 +1,16 @@
 <?php
-// $Id: gicon_table_manage.php,v 1.1 2008/06/21 12:22:19 ohwada Exp $
+// $Id: gicon_table_manage.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_gicon_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,7 +27,8 @@ class webphoto_admin_gicon_table_manage extends webphoto_lib_manage
 function webphoto_admin_gicon_table_manage( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_manage( $dirname , $trust_dirname );
-	$this->set_manage_handler( webphoto_gicon_handler::getInstance( $dirname ) );
+	$this->set_manage_handler( 
+		webphoto_gicon_handler::getInstance( $dirname , $trust_dirname ) );
 	$this->set_manage_title_by_name( 'GICON_TABLE_MANAGE' );
 
 	$this->set_manage_list_column_array(

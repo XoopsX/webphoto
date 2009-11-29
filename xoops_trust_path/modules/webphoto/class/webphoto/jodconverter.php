@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.6 2009/04/21 15:14:54 ohwada Exp $
+// $Id: jodconverter.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_error -> webphoto_cmd_base
 // 2009-04-21 K.OHWADA
 // chmod_file()
 //---------------------------------------------------------
@@ -18,25 +20,20 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_jodconverter
 // wrapper for webphoto_lib_jodconverter
 //=========================================================
-class webphoto_jodconverter extends webphoto_lib_error
+class webphoto_jodconverter extends webphoto_cmd_base
 {
 	var $_config_class;
 	var $_jod_class;
 	var $_multibyte_class;
 	var $_utility_class;
 
-	var $_ini_safe_mode ;
-
 	var $_use_jod    = false;
 	var $_java_path  = '';
-	var $_flag_chmod = true;
 	var $_junk_words = null;
 
 	var $_TMP_DIR;
 	var $_TEXT_EXT = 'txt';
 	var $_HTML_EXT = 'html';
-
-	var $_CHMOD_MODE = 0777;
 
 	var $_JUNK_WORDS_ENG = array(
 		'Slide', 'First page', 'Last page', 'Back', 'Continue', 'Graphics', 'Text', 
@@ -46,9 +43,9 @@ class webphoto_jodconverter extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_jodconverter( $dirname )
+function webphoto_jodconverter( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_error();
+	$this->webphoto_cmd_base( $dirname, $trust_dirname );
 
 	$this->_config_class    =& webphoto_config::getInstance( $dirname );
 	$this->_jod_class       =& webphoto_lib_jodconverter::getInstance();
@@ -74,13 +71,15 @@ function webphoto_jodconverter( $dirname )
 	} else {
 		$this->_junk_words = $this->_JUNK_WORDS_ENG ;
 	}
+
+	$this->set_debug_by_ini_name( $this->_jod_class );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_jodconverter( $dirname );
+		$instance = new webphoto_jodconverter( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -261,9 +260,7 @@ function convert_single( $src_file, $dst_file )
 
 	$ret = $this->_jod_class->convert( $src_file, $dst_file );
 	if ( is_file($dst_file) ) {
-		if ( $this->_flag_chmod ) {
-			$this->chmod_file( $dst_file, $this->_CHMOD_MODE );
-		}
+		$this->chmod_file( $dst_file );
 		return 1 ;	// suceess
 	}
 
@@ -287,24 +284,6 @@ function java_path()
 function version()
 {
 	return $this->_jod_class->version();
-}
-
-//---------------------------------------------------------
-// utility
-//---------------------------------------------------------
-function str_to_array( $str, $pattern )
-{
-	return $this->_utility_class->str_to_array( $str, $pattern );
-}
-
-function get_files_in_dir( $path, $ext=null, $flag_dir=false, $flag_sort=false, $id_as_key=false )
-{
-	return $this->_utility_class->get_files_in_dir( $path, $ext, $flag_dir, $flag_sort, $id_as_key );
-}
-
-function chmod_file( $file, $mode )
-{
-	return $this->_utility_class->chmod_file( $file, $mode );
 }
 
 // --- class end ---

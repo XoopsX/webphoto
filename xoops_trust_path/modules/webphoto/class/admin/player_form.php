@@ -1,5 +1,5 @@
 <?php
-// $Id: player_form.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: player_form.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_player_handler
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
 // $param['style'] -> $row['player_style']
@@ -37,7 +39,8 @@ function webphoto_admin_player_form( $dirname , $trust_dirname )
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
 	$this->set_path_color_pickup( $this->_MODULE_URL.'/libs' );
 
-	$this->_player_handler  =& webphoto_player_handler::getInstance( $dirname );
+	$this->_player_handler  =& webphoto_player_handler::getInstance( 
+		$dirname , $trust_dirname );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }

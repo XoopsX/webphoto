@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.22 2009/11/06 18:04:17 ohwada Exp $
+// $Id: show_main.php,v 1.23 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_photo_public
 // 2009-10-25 K.OHWADA
 // get_photo_kind_name_by_pathinfo()
 // 2009-05-30 K.OHWADA
@@ -69,11 +71,17 @@ class webphoto_show_main extends webphoto_show_photo
 // pathinfo param
 	var $_get_op;
 	var $_get_sort;
+	var $_get_kind;
 	var $_get_page;
 
 	var $_use_box_js;
 
-	var $_mode  = null;
+	var $_mode       = null;
+	var $_list_mode  = null;
+	var $_navi_mode  = null;
+	var $_param      = null;
+	var $_param_out  = null;
+
 	var $_init_timeline ;
 
 // set by config
@@ -122,7 +130,7 @@ class webphoto_show_main extends webphoto_show_photo
 
 // kind
 	var $_PHOTO_KIND_ARRAY = array(
-		'latest', 'popular', 'random', 'video', 'image', 'office' );
+		'latest', 'new', 'popular', 'random', 'video', 'picture', 'office' );
 	var $_PHOTO_KIND_DEFAULT = 'latest';
 
 	var $_DEBUG_PRELOAD = false ;
@@ -134,11 +142,17 @@ function webphoto_show_main( $dirname, $trust_dirname )
 {
 	$this->webphoto_show_photo( $dirname, $trust_dirname );
 
-	$this->_user_handler     =& webphoto_user_handler::getInstance( $dirname );
-	$this->_page_class       =& webphoto_page::getInstance( $dirname , $trust_dirname );
-	$this->_gmap_class       =& webphoto_gmap::getInstance( $dirname , $trust_dirname );
-	$this->_rate_check_class =& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
-	$this->_public_class     =& webphoto_photo_public::getInstance( $dirname );
+	$this->_user_handler     
+		=& webphoto_user_handler::getInstance( $dirname, $trust_dirname );
+	$this->_page_class       
+		=& webphoto_page::getInstance( $dirname , $trust_dirname );
+	$this->_gmap_class       
+		=& webphoto_gmap::getInstance( $dirname , $trust_dirname );
+	$this->_rate_check_class 
+		=& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
+	$this->_public_class     
+		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname  );
+
 	$this->_header_class     =& webphoto_xoops_header::getInstance( $dirname );
 	$this->_pathinfo_class   =& webphoto_lib_pathinfo::getInstance();
 
@@ -206,9 +220,25 @@ function _preload_photo_sort_array()
 	}
 }
 
+//---------------------------------------------------------
+// mode
+//---------------------------------------------------------
 function set_mode( $val )
 {
-	$this->_mode = $val;
+	$this->_mode      = $val;
+	$this->_list_mode = $val;
+}
+
+// for myphoto
+function set_list_mode( $val )
+{
+	$this->_list_mode = $val;
+}
+
+// for photo
+function set_navi_mode( $val )
+{
+	$this->_navi_mode = $val;
 }
 
 //---------------------------------------------------------
@@ -408,6 +438,14 @@ function build_cat_desc_disp( $row )
 //---------------------------------------------------------
 // random more
 //---------------------------------------------------------
+function list_build_random_more( $total, $url=null )
+{
+	if ( empty($url) ) {
+		$url = $this->build_uri_list_link( $this->_param_out ) ;
+	}
+	return $this->build_random_more_url_with_check_sort( $url, $total );
+}
+
 function build_random_more_url_with_check_sort( $url, $total, $get_sort=null, $flag_sanitize=true )
 {
 	if ( $total == 0 ) {
@@ -457,12 +495,6 @@ function convert_orderby_join( $str )
 //---------------------------------------------------------
 // pagenavi class
 //---------------------------------------------------------
-function build_main_navi( $mode, $total, $limit, $get_page=null )
-{
-	$url = $this->build_uri_main_navi_url( $mode );
-	return $this->build_navi( $url, $total, $limit, $get_page );
-}
-
 function build_navi( $url, $total, $limit, $get_page=null )
 {
 	if ( empty($get_page) ) {
@@ -700,6 +732,29 @@ function build_uri_main_sort( $mode )
 	return $this->_uri_class->build_main_sort( $mode );
 }
 
+function get_uri_list_pathinfo_param()
+{
+// list_mode for myphoto
+	return $this->_uri_class->get_list_pathinfo_param( $this->_list_mode );
+}
+
+function build_uri_list_navi_url_kind( $mode, $param, $kind )
+{
+	return $this->_uri_class->build_list_navi_url_kind( 
+		$mode, $param, $kind );
+}
+
+function build_uri_list_kind( $mode, $param, $viewtype=null )
+{
+	return $this->_uri_class->build_list_sort(
+		$mode, $param, $viewtype );
+}
+
+function build_uri_list_link( $param )
+{
+	return $this->_uri_class->build_list_link( $this->_mode, $param );
+}
+
 //---------------------------------------------------------
 // get pathinfo param
 //---------------------------------------------------------
@@ -708,6 +763,9 @@ function get_pathinfo_param()
 	$this->_get_op   = $this->get_pathinfo_op() ;
 	$this->_get_page = $this->get_pathinfo_page() ;
 	$this->_get_sort = $this->get_photo_sort_name_by_pathinfo();
+	$this->_get_kind = $this->get_photo_kind_name_by_pathinfo();
+	$this->_param    = $this->get_uri_list_pathinfo_param() ;
+	$this->set_param_out( $this->_param );
 }
 
 function get_pathinfo_op()
@@ -741,13 +799,17 @@ function get_photo_kind_name_by_pathinfo()
 
 function get_photo_kind_name( $name )
 {
-	if( $name && isset( $this->_PHOTO_KIND_ARRAY[ $name ] ) ) {
+	if ( $name && in_array( $name, $this->_PHOTO_KIND_ARRAY ) ) {
 		return $name ;
-	} elseif( isset( $this->_PHOTO_KIND_ARRAY[ $this->_PHOTO_KIND_DEFAULT ] ) ) {
+	} elseif( in_array( $this->_PHOTO_KIND_DEFAULT, $this->_PHOTO_KIND_ARRAY ) ) {
 		return $this->_PHOTO_KIND_DEFAULT ;
 	}
-
 	return false;
+}
+
+function set_param_out( $val )
+{
+	$this->_param_out = $val;
 }
 
 //---------------------------------------------------------
@@ -819,7 +881,8 @@ function build_box_list( $param )
 //---------------------------------------------------------
 function auto_publish()
 {
-	$publish_class =& webphoto_inc_auto_publish::getSingleton( $this->_DIRNAME );
+	$publish_class =& webphoto_inc_auto_publish::getSingleton( 
+		$this->_DIRNAME, $this->_TRUST_DIRNAME  );
 	$publish_class->set_workdir( $this->_WORK_DIR );
 	$publish_class->auto_publish();
 }

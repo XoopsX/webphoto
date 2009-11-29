@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_tag_handler.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: photo_tag_handler.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
 // 2008-08-24 K.OHWADA
 // photo_table -> item_table
 //---------------------------------------------------------
@@ -17,7 +19,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_photo_tag_handler
 //=========================================================
-class webphoto_photo_tag_handler extends webphoto_lib_handler
+class webphoto_photo_tag_handler extends webphoto_handler_base_ini
 {
 	var $_item_table;
 	var $_tag_table;
@@ -26,24 +28,20 @@ class webphoto_photo_tag_handler extends webphoto_lib_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_photo_tag_handler( $dirname )
+function webphoto_photo_tag_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->_item_table = $this->prefix_dirname( 'item' );
 	$this->_tag_table  = $this->prefix_dirname( 'tag' );
 	$this->_p2t_table  = $this->prefix_dirname( 'p2t' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_photo_tag_handler( $dirname );
+		$instance = new webphoto_photo_tag_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

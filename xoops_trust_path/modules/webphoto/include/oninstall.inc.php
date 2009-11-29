@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.inc.php,v 1.2 2008/07/07 23:34:23 ohwada Exp $
+// $Id: oninstall.inc.php,v 1.3 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// getInstance -> getSingleton 
+// include/header.php
 // 2008-07-01 K.OHWADA
 // use webphoto_include_once_trust()
 //---------------------------------------------------------
@@ -27,11 +30,8 @@ include_once XOOPS_ROOT_PATH.'/class/template.php' ;
 //---------------------------------------------------------
 // webphoto files
 //---------------------------------------------------------
-include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
-include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
+include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 
-webphoto_include_once( 'include/constants.php',   $MY_DIRNAME );
-webphoto_include_once( 'class/inc/handler.php',   $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall.php', $MY_DIRNAME );
 
 webphoto_include_once_trust( 'preload/constants.php' );
@@ -64,20 +64,28 @@ if( ! function_exists( 'webphoto_oninstall_base' ) )
 
 function webphoto_oninstall_base( &$module )
 {
-	$inc_class =& webphoto_inc_oninstall::getInstance();
-	return $inc_class->install( WEBPHOTO_TRUST_DIRNAME , $module );
+	$inc_class =& webphoto_inc_oninstall::getSingleton( 
+		webphoto_oninstall_dirname( $module ) , WEBPHOTO_TRUST_DIRNAME );
+	return $inc_class->install( $module );
 }
 
 function webphoto_onupdate_base( &$module )
 {
-	$inc_class =& webphoto_inc_oninstall::getInstance();
-	return $inc_class->update(  WEBPHOTO_TRUST_DIRNAME , $module );
+	$inc_class =& webphoto_inc_oninstall::getSingleton( 
+		webphoto_oninstall_dirname( $module ) , WEBPHOTO_TRUST_DIRNAME );
+	return $inc_class->update( $module );
 }
 
 function webphoto_onuninstall_base( &$module )
 {
-	$inc_class =& webphoto_inc_oninstall::getInstance();
-	return  $inc_class->uninstall( WEBPHOTO_TRUST_DIRNAME , $module );
+	$inc_class =& webphoto_inc_oninstall::getSingleton( 
+		webphoto_oninstall_dirname( $module ) , WEBPHOTO_TRUST_DIRNAME );
+	return  $inc_class->uninstall( $module );
+}
+
+function webphoto_oninstall_dirname( &$module )
+{
+	return $module->getVar( 'dirname', 'n' );
 }
 
 function webphoto_message_append_oninstall( &$module_obj , &$log )

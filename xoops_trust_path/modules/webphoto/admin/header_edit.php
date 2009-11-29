@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.7 2009/11/06 18:04:17 ohwada Exp $
+// $Id: header_edit.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// class/inc/ini.php
 // 2009-10-25 K.OHWADA
 // class/lib/lame.php
 // 2009-04-10 K.OHWADA
@@ -45,7 +47,9 @@ webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/xoops/user.php' );
 
+webphoto_include_once( 'class/inc/ini.php' );
 webphoto_include_once( 'class/inc/handler.php' );
+webphoto_include_once( 'class/inc/base_ini.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
@@ -90,6 +94,7 @@ webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
 
+webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
@@ -106,10 +111,12 @@ webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 
+webphoto_include_once( 'class/webphoto/plugin_ini.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
+webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );

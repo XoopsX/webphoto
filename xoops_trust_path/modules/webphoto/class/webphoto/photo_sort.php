@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_sort.php,v 1.4 2009/03/21 07:52:26 ohwada Exp $
+// $Id: photo_sort.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// picture
 // 2009-03-15 K.OHWADA
 // timeline
 // 2008-10-01 K.OHWADA
@@ -76,6 +78,11 @@ function mode_to_sort_array_default()
 		'random'   => 'random' ,
 		'map'      => 'random' ,
 		'timeline' => 'random' ,
+		'new'      => 'dated' ,
+		'picture'  => 'dated' ,
+		'video'    => 'dated' ,
+		'audio'    => 'dated' ,
+		'office'   => 'dated' ,
 	);
 	return $arr;
 }
@@ -172,7 +179,6 @@ function get_photo_sort_name( $name )
 	} elseif( isset( $this->_PHOTO_SORT_ARRAY[ $this->_PHOTO_SORT_DEFAULT ] ) ) {
 		return $this->_PHOTO_SORT_DEFAULT ;
 	}
-
 	return false;
 }
 

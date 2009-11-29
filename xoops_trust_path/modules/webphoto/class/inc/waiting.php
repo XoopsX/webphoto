@@ -1,5 +1,5 @@
 <?php
-// $Id: waiting.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
+// $Id: waiting.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-08-24 K.OHWADA
@@ -19,23 +21,24 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_waiting
 //=========================================================
-class webphoto_inc_waiting extends webphoto_inc_handler
+class webphoto_inc_waiting extends webphoto_inc_base_ini
 {
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_waiting( $dirname )
+function webphoto_inc_waiting( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_waiting( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_waiting( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }

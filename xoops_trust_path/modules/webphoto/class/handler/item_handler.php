@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.15 2009/11/06 18:04:17 ohwada Exp $
+// $Id: item_handler.php,v 1.16 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// info_array_to_str()
+// item_detail_onclick
 // 2009-10-25 K.OHWADA
 // _C_WEBPHOTO_CODEINFO_JPEG 
 // 2009-01-25 K.OHWADA
@@ -40,63 +44,40 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_item_handler
 //=========================================================
-class webphoto_item_handler extends webphoto_lib_handler
+class webphoto_item_handler extends webphoto_handler_base_ini
 {
-	var $_KIND_FEFAULT          = _C_WEBPHOTO_ITEM_KIND_UNDEFINED ;
-	var $_DATETIME_DEFAULT      = _C_WEBPHOTO_DATETIME_DEFAULT ;
-	var $_SHOWINFO_DEFAULT      = _C_WEBPHOTO_SHOWINFO_DEFAULT ;
-	var $_CODEINFO_DEFAULT      = _C_WEBPHOTO_CODEINFO_DEFAULT ;
-	var $_EDITOR_FEFAULT        = _C_WEBPHOTO_EDITOR_DEFAULT ;
-	var $_PLAYLIST_TIME_DEFUALT = _C_WEBPHOTO_PLAYLIST_TIME_DEFAULT ;
-	var $_PERM_READ             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
-	var $_PERM_DOWN             = _C_WEBPHOTO_PERM_ALLOW_ALL ;
-
-	var $_DESCRIPTION_HTML_FEFAULT   = 0 ;
-	var $_DESCRIPTION_SMILEY_FEFAULT = 1 ;
-	var $_DESCRIPTION_XCODE_FEFAULT  = 1 ;
-	var $_DESCRIPTION_IMAGE_FEFAULT  = 1 ;
-	var $_DESCRIPTION_BR_FEFAULT     = 1 ;
-
-	var $_INFO_SEPARATOR        = _C_WEBPHOTO_INFO_SEPARATOR;
-
-	var $_BUILD_SEARCH_ARRAY = array(
-		'item_title', 'item_place', 'item_equipment', 
-		'item_artist', 'item_album', 'item_label',
-		'item_datetime', 'item_ext', 'item_description', 'item_content' );
-
-	var $_TEXT_ARRAY = array(
-		'item_siteurl', 'item_icon_name', 'item_content',
-		'item_external_url', 'item_external_thumb', 'item_external_middle', 
-		'item_playlist_feed', 'item_playlist_dir', 'item_playlist_cache', 
-		'item_embed_type', 'item_embed_src' );
-
-	var $_ENCODE_ARRAY = array(
-		'item_title', 'item_place', 'item_equipment', 
-		'item_artist', 'item_album', 'item_label' );
+	var $_BUILD_SEARCH_ARRAY ;
+	var $_TEXT_ARRAY ;
+	var $_ENCODE_ARRAY ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_item_handler( $dirname )
+function webphoto_item_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'item' );
 	$this->set_id_name(    'item_id' );
 	$this->set_title_name( 'item_title' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
+	$this->_BUILD_SEARCH_ARRAY = $this->item_explode_ini( 'item_build_search_list' );
+	$this->_TEXT_ARRAY         = $this->item_explode_ini( 'item_text_list' );
+	$this->_ENCODE_ARRAY       = $this->item_explode_ini( 'item_encode_list' );
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_item_handler( $dirname );
+		$instance = new webphoto_item_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
+}
+
+function item_explode_ini( $name )
+{
+	return $this->explode_ini( $name, '|', 'item_' );
 }
 
 //---------------------------------------------------------
@@ -167,19 +148,21 @@ function create( $flag_new=false )
 		'item_page_width'      => 0,
 		'item_page_height'     => 0,
 		'item_content'         => '',
-		'item_kind'            => $this->_KIND_FEFAULT ,
-		'item_datetime'        => $this->_DATETIME_DEFAULT ,
-		'item_playlist_time'   => $this->_PLAYLIST_TIME_DEFUALT,
-		'item_showinfo'        => $this->_SHOWINFO_DEFAULT ,
-		'item_codeinfo'        => $this->_CODEINFO_DEFAULT ,
-		'item_perm_read'       => $this->_PERM_READ,
-		'item_perm_down'       => $this->_PERM_DOWN,
-		'item_editor'          => $this->_EDITOR_FEFAULT,
-		'item_description_html'   => $this->_DESCRIPTION_HTML_FEFAULT,
-		'item_description_smiley' => $this->_DESCRIPTION_SMILEY_FEFAULT,
-		'item_description_xcode'  => $this->_DESCRIPTION_XCODE_FEFAULT,
-		'item_description_image'  => $this->_DESCRIPTION_IMAGE_FEFAULT,
-		'item_description_br'     => $this->_DESCRIPTION_BR_FEFAULT,
+		'item_detail_onclick'  => 0,
+		'item_weight'          => 0,
+		'item_kind'            => $this->get_ini('item_kind_default') ,
+		'item_datetime'        => $this->get_ini('item_datetime_default') ,
+		'item_playlist_time'   => $this->get_ini('item_playlist_time_defualt') ,
+		'item_showinfo'        => $this->get_ini('item_showinfo_default') ,
+		'item_codeinfo'        => $this->get_ini('item_codeinfo_default') ,
+		'item_perm_read'       => $this->get_ini('item_perm_read_default') ,
+		'item_perm_down'       => $this->get_ini('item_perm_down_default') ,
+		'item_editor'          => $this->get_ini('item_editor_default') ,
+		'item_description_html'   => $this->get_ini('item_description_html_default') ,
+		'item_description_smiley' => $this->get_ini('item_description_smiley_default') ,
+		'item_description_xcode'  => $this->get_ini('item_description_xcode_default') ,
+		'item_description_image'  => $this->get_ini('item_description_image_default') ,
+		'item_description_br'     => $this->get_ini('item_description_br_default') ,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
@@ -201,7 +184,7 @@ function insert( $row, $force=false )
 	extract( $row ) ;
 
 	if ( empty($item_datetime) ) {
-		$item_datetime = $this->_DATETIME_DEFAULT ;
+		$item_datetime = $this->get_ini('item_datetime_default') ;
 	}
 
 	$sql  = 'INSERT INTO '.$this->_table.' (';
@@ -274,6 +257,8 @@ function insert( $row, $force=false )
 	$sql .= 'item_description_image, ';
 	$sql .= 'item_description_br, ';
 	$sql .= 'item_content, ';
+	$sql .= 'item_detail_onclick, ';
+	$sql .= 'item_weight, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -355,6 +340,8 @@ function insert( $row, $force=false )
 	$sql .= intval($item_description_image).', ';
 	$sql .= intval($item_description_br).', ';
 	$sql .= $this->quote($item_content).', ';
+	$sql .= intval($item_detail_onclick).', ';
+	$sql .= intval($item_weight).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -382,7 +369,7 @@ function update( $row, $force=false )
 	extract( $row ) ;
 
 	if ( empty($item_datetime) ) {
-		$item_datetime = $this->_DATETIME_DEFAULT ;
+		$item_datetime = $this->get_ini('item_datetime_default') ;
 	}
 
 	$sql  = 'UPDATE '.$this->_table.' SET ';
@@ -450,6 +437,8 @@ function update( $row, $force=false )
 	$sql .= 'item_description_image='.intval($item_description_image).', ';
 	$sql .= 'item_description_br='.intval($item_description_br).', ';
 	$sql .= 'item_content='.$this->quote($item_content).', ';
+	$sql .= 'item_detail_onclick='.intval($item_detail_onclick).', ';
+	$sql .= 'item_weight='.intval($item_weight).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -703,14 +692,12 @@ function build_datetime_by_post( $key, $default=null )
 
 function build_datetime( $str )
 {
-	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->str_to_mysql_datetime( $str );
+	return $this->_utility_class->str_to_mysql_datetime( $str );
 }
 
 function build_info( $arr )
 {
-	return $this->array_to_str( 
-		$this->sanitize_array_int( $arr ), $this->_INFO_SEPARATOR );
+	return $this->info_array_to_str( $this->sanitize_array_int( $arr ) );
 }
 
 //---------------------------------------------------------
@@ -789,12 +776,12 @@ function build_show_icon_image( $item_row, $base_url )
 
 function get_showinfo_array( $row )
 {
-	return $this->str_to_array( $row['item_showinfo'], $this->_INFO_SEPARATOR );
+	return $this->info_str_to_array( $row['item_showinfo'] );
 }
 
 function get_codeinfo_array( $row )
 {
-	return $this->str_to_array( $row['item_codeinfo'], $this->_INFO_SEPARATOR );
+	return $this->info_str_to_array( $row['item_codeinfo'] );
 }
 
 //---------------------------------------------------------
@@ -810,14 +797,20 @@ function get_perm_down_array( $row )
 	return $this->get_perm_array( $row['item_perm_down'] );
 }
 
-function check_perm_read_by_row( $row )
+function check_perm_read_by_row( $row, $groups=null )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read' );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read', $groups );
 }
 
-function check_perm_down_by_row( $row )
+function check_perm_down_by_row( $row, $groups=null )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down' );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down', $groups );
+}
+
+function is_public_read_by_row( $row )
+{
+	return $this->check_perm_by_row_name_groups( 
+		$row, 'item_perm_read', array(XOOPS_GROUP_ANONYMOUS) );
 }
 
 //---------------------------------------------------------
@@ -872,8 +865,10 @@ function get_kind_default_options()
 		_C_WEBPHOTO_ITEM_KIND_NONE             => _WEBPHOTO_ITEM_KIND_NONE ,
 		_C_WEBPHOTO_ITEM_KIND_GENERAL          => _WEBPHOTO_ITEM_KIND_GENERAL ,
 		_C_WEBPHOTO_ITEM_KIND_IMAGE            => _WEBPHOTO_ITEM_KIND_IMAGE ,
+		_C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER      => _WEBPHOTO_ITEM_KIND_IMAGE_OTHER ,
 		_C_WEBPHOTO_ITEM_KIND_VIDEO            => _WEBPHOTO_ITEM_KIND_VIDEO ,
 		_C_WEBPHOTO_ITEM_KIND_AUDIO            => _WEBPHOTO_ITEM_KIND_AUDIO ,
+		_C_WEBPHOTO_ITEM_KIND_OFFICE           => _WEBPHOTO_ITEM_KIND_OFFICE ,
 		_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL => _WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL ,
 		_C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE   => _WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ,
 		_C_WEBPHOTO_ITEM_KIND_EMBED            => _WEBPHOTO_ITEM_KIND_EMBED ,
@@ -984,6 +979,24 @@ function get_codeinfo_options()
 		_C_WEBPHOTO_CODEINFO_PLAY   => _WEBPHOTO_ITEM_CODEINFO_PLAY ,
 		_C_WEBPHOTO_CODEINFO_EMBED  => _WEBPHOTO_ITEM_CODEINFO_EMBED ,
 		_C_WEBPHOTO_CODEINFO_JS     => _WEBPHOTO_ITEM_CODEINFO_JS ,
+	);
+	return $arr;
+}
+
+function get_detail_onclick_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT => _WEBPHOTO_ITEM_DETAIL_ONCLICK_DEFAULT ,
+//		_C_WEBPHOTO_FILE_KIND_CONT         => _WEBPHOTO_FILE_KIND_CONT ,
+//		_C_WEBPHOTO_FILE_KIND_THUMB        => _WEBPHOTO_FILE_KIND_THUMB ,
+//		_C_WEBPHOTO_FILE_KIND_MIDDLE       => _WEBPHOTO_FILE_KIND_MIDDLE ,
+//		_C_WEBPHOTO_FILE_KIND_FLASH        => _WEBPHOTO_FILE_KIND_FLASH ,
+//		_C_WEBPHOTO_FILE_KIND_DOCOMO       => _WEBPHOTO_FILE_KIND_DOCOMO ,
+		_C_WEBPHOTO_FILE_KIND_PDF          => _WEBPHOTO_FILE_KIND_PDF ,
+//		_C_WEBPHOTO_FILE_KIND_SWF          => _WEBPHOTO_FILE_KIND_SWF ,
+//		_C_WEBPHOTO_FILE_KIND_SMALL        => _WEBPHOTO_FILE_KIND_SMALL ,
+//		_C_WEBPHOTO_FILE_KIND_JPEG         => _WEBPHOTO_FILE_KIND_JPEG ,
+//		_C_WEBPHOTO_FILE_KIND_MP3          => _WEBPHOTO_FILE_KIND_MP3 ,
 	);
 	return $arr;
 }

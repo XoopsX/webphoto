@@ -1,5 +1,5 @@
 <?php
-// $Id: export.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: export.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_cat_selbox
+// get_ini()
 // 2008-10-01 K.OHWADA
 // remove an unnecessary title
 // 2008-08-24 K.OHWADA
@@ -39,13 +42,13 @@ function webphoto_admin_export( $dirname , $trust_dirname )
 
 	$this->_groupperm_class =& webphoto_xoops_groupperm::getInstance();
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$CONST_DEBUG_SQL = $constpref.'DEBUG_SQL';
-
 	$this->_image_handler =& webphoto_xoops_image_handler::getInstance();
 	$this->_image_handler->set_debug_error( 1 );
-	$this->_image_handler->set_debug_sql_by_const_name( $CONST_DEBUG_SQL );
 
+	$val = $this->get_ini( _C_WEBPHOTO_NAME_DEBUG_SQL );
+	if ( $val ) {
+		$this->_image_handler->set_debug_sql( $val );
+	}
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -244,7 +247,7 @@ function _print_form_image()
 	echo "<h4>"._AM_WEBPHOTO_FMT_EXPORTTOIMAGEMANAGER."</h4>\n";
 
 	$cat_selbox_class =& webphoto_cat_selbox::getInstance();
-	$cat_selbox_class->init( $this->_DIRNAME );
+	$cat_selbox_class->init( $this->_DIRNAME, $this->_TRUST_DIRNAME );
 
 	$this->_form_class->print_form_image(
 		$cat_selbox_class->build_selbox( 'cat_title', 0, null ) ,

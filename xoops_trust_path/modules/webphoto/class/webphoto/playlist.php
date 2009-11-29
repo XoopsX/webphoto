@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist.php,v 1.4 2009/01/29 04:26:55 ohwada Exp $
+// $Id: playlist.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-01-25 K.OHWADA
 // webphoto_lib_base -> webphoto_lib_error
 // not use get_constant()
@@ -65,7 +67,7 @@ class webphoto_playlist extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_playlist( $dirname )
+function webphoto_playlist( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_error();
 
@@ -74,11 +76,12 @@ function webphoto_playlist( $dirname )
 	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
 
 	$this->_config_class    =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler    =& webphoto_item_handler::getInstance( $dirname );
 	$this->_utility_class   =& webphoto_lib_utility::getInstance();
 	$this->_xml_class       =& webphoto_lib_xml::getInstance();
 	$this->_remote_class    =& webphoto_lib_remote_file::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_item_handler    =& webphoto_item_handler::getInstance( 
+		$dirname  , $trust_dirname );
 
 	$uploads_path = $this->_config_class->get_uploads_path();
 	$medias_path  = $this->_config_class->get_medias_path();
@@ -93,11 +96,11 @@ function webphoto_playlist( $dirname )
 	$this->_SWFOBJECT_EXTS = explode( '|', _C_WEBPHOTO_SWFOBJECT_EXTS ) ;
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_playlist( $dirname );
+		$instance = new webphoto_playlist( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

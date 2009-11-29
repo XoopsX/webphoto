@@ -1,10 +1,16 @@
 <?php
-// $Id: small_create.php,v 1.1 2009/04/11 14:24:40 ohwada Exp $
+// $Id: small_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-04-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -24,18 +30,18 @@ class webphoto_edit_small_create extends webphoto_edit_middle_thumb_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_small_create( $dirname )
+function webphoto_edit_small_create( $dirname , $trust_dirname  )
 {
-	$this->webphoto_edit_middle_thumb_create( $dirname );
+	$this->webphoto_edit_middle_thumb_create( $dirname , $trust_dirname  );
 
 	$this->_remote_class =& webphoto_lib_remote_file::getInstance();
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname  )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_small_create( $dirname );
+		$instance = new webphoto_edit_small_create( $dirname , $trust_dirname  );
 	}
 	return $instance;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_selbox.php,v 1.2 2008/08/25 19:28:05 ohwada Exp $
+// $Id: cat_selbox.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2008-08-24 K.OHWADA
 // photo_handler -> item_handler
 //---------------------------------------------------------
@@ -39,16 +41,19 @@ function &getInstance()
 	return $instance;
 }
 
-function init( $dirname )
+function init( $dirname , $trust_dirname )
 {
-	$this->_item_handler = new webphoto_item_handler( $dirname );
-	$this->_cat_handler  = new webphoto_cat_handler(  $dirname );
+	$this->_item_handler = new webphoto_item_handler( 
+		$dirname , $trust_dirname );
+	$this->_cat_handler  = new webphoto_cat_handler(  
+		$dirname , $trust_dirname );
 }
 
 //---------------------------------------------------------
 // selbox
 //---------------------------------------------------------
-function build_selbox( $order='cat_title', $preset_id=0, $none_title='--', $sel_name='cat_id', $onchange='' )
+function build_selbox( 
+	$order='cat_title', $preset_id=0, $none_title='--', $sel_name='cat_id', $onchange='' )
 {
 	$order = 'cat_title';
 

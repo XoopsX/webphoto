@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_register.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_user_handler
 // 2009-01-10 K.OHWADA
 // webphoto_base_this -> webphoto_edit_base
 // 2008-08-24 K.OHWADA
@@ -48,7 +50,9 @@ function webphoto_main_mail_register( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_user_handler     =& webphoto_user_handler::getInstance( $dirname );
+	$this->_user_handler     
+		=& webphoto_user_handler::getInstance( $dirname , $trust_dirname );
+
 	$this->_parse_class      =& webphoto_lib_mail_parse::getInstance();
 	$this->_xoops_user_class =& webphoto_xoops_user::getInstance();
 

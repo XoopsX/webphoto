@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.10 2008/12/20 06:11:27 ohwada Exp $
+// $Id: whatsnew.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+// get_ini()
 // 2008-12-12 K.OHWADA
 // webphoto_inc_public
 // 2008-11-29 K.OHWADA
@@ -32,30 +35,31 @@ class webphoto_inc_whatsnew extends webphoto_inc_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_whatsnew( $dirname )
+function webphoto_inc_whatsnew( $dirname, $trust_dirname  )
 {
 	$this->webphoto_inc_public();
-	$this->init_public( $dirname );
-	$this->auto_publish( $dirname );
+	$this->init_public( $dirname, $trust_dirname );
+	$this->auto_publish();
+
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
 // preload
-	$name_image= strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_IMAGE' );
-	$name_icon = strtoupper( '_P_'. $dirname .'_WHATSNEW_SHOW_ICON' );
+	$show_image = $this->get_ini( 'whatsnew_show_image' );
+	$show_icon  = $this->get_ini( 'whatsnew_show_icon' );
 
-	if ( defined( $name_image ) ) {
-		$this->_SHOW_IMAGE = constant( $name_image );
+	if ( $show_image ) {
+		$this->_SHOW_IMAGE = $show_image ;
 	}
-	if ( defined( $name_icon ) ) {
-		$this->_SHOW_ICON = constant( $name_icon );
+	if ( $show_icon ) {
+		$this->_SHOW_ICON = $show_icon ;
 	}
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname, $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_whatsnew( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_whatsnew( $dirname, $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }

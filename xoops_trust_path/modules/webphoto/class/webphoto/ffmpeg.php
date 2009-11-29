@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.3 2009/11/06 18:04:17 ohwada Exp $
+// $Id: ffmpeg.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-10-25 K.OHWADA
 // webphoto_cmd_base
 //---------------------------------------------------------
@@ -42,9 +44,9 @@ class webphoto_ffmpeg extends webphoto_cmd_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ffmpeg( $dirname )
+function webphoto_ffmpeg( $dirname, $trust_dirname )
 {
-	$this->webphoto_cmd_base( $dirname );
+	$this->webphoto_cmd_base( $dirname, $trust_dirname );
 
 	$this->_cfg_use_ffmpeg = $this->_config_class->get_by_name( 'use_ffmpeg' );
 	$cfg_ffmpegpath        = $this->_config_class->get_dir_by_name( 'ffmpegpath' );
@@ -55,14 +57,14 @@ function webphoto_ffmpeg( $dirname )
 	$this->_ffmpeg_class->set_ext( $this->_JPEG_EXT );
 	$this->_ffmpeg_class->set_flag_chmod( true );
 
-	$this->set_debug_by_const_name( $this->_ffmpeg_class, 'DEBUG_FFMPEG' );
+	$this->set_debug_by_ini_name( $this->_ffmpeg_class );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_ffmpeg( $dirname );
+		$instance = new webphoto_ffmpeg( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

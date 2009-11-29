@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.5 2009/01/24 07:10:39 ohwada Exp $
+// $Id: maillog_manager.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_maillog_handler
 // 2009-01-10 K.OHWADA
 // webphoto_edit_mail_photo -> webphoto_edit_mail_photo
 // 2008-08-24 K.OHWADA
@@ -42,7 +44,8 @@ class webphoto_admin_maillog_manager extends webphoto_lib_manage
 function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_manage( $dirname , $trust_dirname );
-	$this->set_manage_handler( webphoto_maillog_handler::getInstance( $dirname ) );
+	$this->set_manage_handler( 
+		webphoto_maillog_handler::getInstance( $dirname, $trust_dirname ) );
 	$this->set_manage_title_by_name( 'MAILLOG_MANAGER' );
 
 	$this->set_manage_list_column_array(
@@ -53,11 +56,16 @@ function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 	$this->set_lang_show_list( _AM_WEBPHOTO_SHOW_LIST );
 
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_form_class    =& webphoto_edit_form::getInstance( $dirname , $trust_dirname );
-	$this->_photo_class   =& webphoto_edit_mail_photo::getInstance( $dirname , $trust_dirname );
 	$this->_unlink_class  =& webphoto_edit_mail_unlink::getInstance( $dirname );
+
+	$this->_item_handler  
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_cat_handler   
+		=& webphoto_cat_handler::getInstance( $dirname , $trust_dirname );
+	$this->_form_class    
+		=& webphoto_edit_form::getInstance( $dirname , $trust_dirname );
+	$this->_photo_class   
+		=& webphoto_edit_mail_photo::getInstance( $dirname , $trust_dirname );
 
 	$this->_photo_class->set_mail_groups( XOOPS_GROUP_ADMIN );
 	$this->_photo_class->set_msg_level( _C_WEBPHOTO_MSG_LEVEL_ADMIN );

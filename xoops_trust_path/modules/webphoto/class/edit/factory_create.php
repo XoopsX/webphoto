@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
+// $Id: factory_create.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_edit_cont_create etc
 // 2009-10-25 K.OHWADA
 // webphoto_edit_jpeg_create
 // 2009-04-19 K.OHWADA
@@ -93,27 +95,34 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_cont_create_class   =& webphoto_edit_cont_create::getInstance( $dirname );
-	$this->_flash_create_class  =& webphoto_edit_flash_create::getInstance( $dirname );
-	$this->_docomo_create_class =& webphoto_edit_docomo_create::getInstance( $dirname  );
+	$this->_search_build_class  
+		=& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname  );
+	$this->_item_build_class    
+		=& webphoto_edit_item_build::getInstance( $dirname , $trust_dirname   );
+	$this->_cont_create_class   
+		=& webphoto_edit_cont_create::getInstance( $dirname , $trust_dirname );
+	$this->_flash_create_class  
+		=& webphoto_edit_flash_create::getInstance( $dirname , $trust_dirname );
+	$this->_docomo_create_class 
+		=& webphoto_edit_docomo_create::getInstance( $dirname , $trust_dirname );
+	$this->_small_create_class  
+		=& webphoto_edit_small_create::getInstance( $dirname , $trust_dirname  );
+	$this->_middle_thumb_create_class 
+		=& webphoto_edit_middle_thumb_create::getInstance( $dirname , $trust_dirname  );
+	$this->_pdf_create_class   
+		=& webphoto_edit_pdf_create::getInstance( $dirname , $trust_dirname );
+	$this->_swf_create_class   
+		=& webphoto_edit_swf_create::getInstance( $dirname , $trust_dirname );
+	$this->_jpeg_create_class   
+		=& webphoto_edit_jpeg_create::getInstance( $dirname , $trust_dirname );
+	$this->_mp3_create_class   
+		=& webphoto_edit_mp3_create::getInstance( $dirname , $trust_dirname );
+	$this->_video_middle_thumb_create_class 
+		=& webphoto_edit_video_middle_thumb_create::getInstance( $dirname , $trust_dirname );
+	$this->_ext_class  
+		=& webphoto_ext::getInstance( $dirname , $trust_dirname );
+
 	$this->_icon_build_class    =& webphoto_edit_icon_build::getInstance( $dirname );
-	$this->_search_build_class  =& webphoto_edit_search_build::getInstance( $dirname );
-	$this->_item_build_class    =& webphoto_edit_item_build::getInstance( $dirname );
-	$this->_small_create_class  =& webphoto_edit_small_create::getInstance( $dirname );
-	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( $dirname );
-
-	$this->_pdf_create_class   =& webphoto_edit_pdf_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_swf_create_class   =& webphoto_edit_swf_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_jpeg_create_class   =& webphoto_edit_jpeg_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_mp3_create_class   =& webphoto_edit_mp3_create::getInstance( 
-		$dirname , $trust_dirname );
-
-	$this->_video_middle_thumb_create_class =& webphoto_edit_video_middle_thumb_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_ext_class  =& webphoto_ext::getInstance( $dirname , $trust_dirname );
 	$this->_exif_class =& webphoto_exif::getInstance();
 
 	$this->_msg_main_class = new webphoto_lib_msg();
@@ -484,32 +493,6 @@ function get_resized()
 }
 
 //---------------------------------------------------------
-// create jpeg
-//---------------------------------------------------------
-function create_jpeg_param( $param )
-{
-	if ( $this->is_jpeg_ext( $param['src_ext'] ) ) {
-		return null;
-	}
-
-	$jpeg_param = $this->_jpeg_create_class->create_param( $param );
-	$this->_flag_jpeg_created = $this->_jpeg_create_class->get_flag_created() ;
-	$this->_flag_jpeg_failed  = $this->_jpeg_create_class->get_flag_failed() ;
-	$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
-	return $jpeg_param ;
-}
-
-function get_flag_jpeg_created()
-{
-	return $this->_flag_jpeg_created ;
-}
-
-function get_flag_jpeg_failed()
-{
-	return $this->_flag_jpeg_failed ;
-}
-
-//---------------------------------------------------------
 // create thumb middle
 //---------------------------------------------------------
 function build_middle_thumb_param( $row, $tmp_name )
@@ -642,15 +625,42 @@ function get_flag_image_ext_failed()
 }
 
 //---------------------------------------------------------
+// create jpeg
+//---------------------------------------------------------
+function create_jpeg_param( $param )
+{
+	if ( $this->is_jpeg_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$jpeg_param = $this->_jpeg_create_class->create_param( $param );
+	$this->_flag_jpeg_created = $this->_jpeg_create_class->get_flag_created() ;
+	$this->_flag_jpeg_failed  = $this->_jpeg_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
+	return $jpeg_param ;
+}
+
+function get_flag_jpeg_created()
+{
+	return $this->_flag_jpeg_created ;
+}
+
+function get_flag_jpeg_failed()
+{
+	return $this->_flag_jpeg_failed ;
+}
+
+//---------------------------------------------------------
 // create video docomo
 //---------------------------------------------------------
 function create_docomo_param( $photo_param, $cont_param )
 {
-	if ( ! $this->is_video_kind( $photo_param['src_kind'] ) ) {
+	$param = array_merge( $photo_param, $cont_param );
+
+	if ( $this->is_video_docomo_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
-	$param = array_merge( $photo_param, $cont_param );
 	$ret = $this->_docomo_create_class->create_param( $param );
 	$this->_msg_sub_class->set_msg( $this->_docomo_create_class->get_msg_array() ) ;
 	return $ret ;
@@ -661,7 +671,7 @@ function create_docomo_param( $photo_param, $cont_param )
 //---------------------------------------------------------
 function create_flash_param( $param )
 {
-	if ( ! $this->is_video_kind( $param['src_kind'] ) ) {
+	if ( $this->is_flash_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
@@ -688,7 +698,7 @@ function get_flag_flash_failed()
 //---------------------------------------------------------
 function create_pdf_param( $param )
 {
-	if ( ! $this->is_general_kind( $param['src_kind'] ) ) {
+	if ( $this->is_pdf_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
@@ -714,7 +724,7 @@ function get_flag_pdf_failed()
 //---------------------------------------------------------
 function create_swf_param( $param )
 {
-	if ( ! $this->is_general_kind( $param['src_kind'] ) ) {
+	if ( $this->is_swf_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
@@ -740,9 +750,9 @@ function get_flag_swf_failed()
 //---------------------------------------------------------
 function create_mp3_param( $param )
 {
-//	if ( ! $this->is_general_kind( $param['src_kind'] ) ) {
-//		return null;
-//	}
+	if ( $this->is_mp3_ext( $param['src_ext'] ) ) {
+		return null;
+	}
 
 	$mp3_param = $this->_mp3_create_class->create_param( $param );
 	$this->_flag_mp3_created = $this->_mp3_create_class->get_flag_created() ;

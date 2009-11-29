@@ -1,10 +1,55 @@
 <?php
-// $Id: main.php,v 1.8 2009/11/06 18:04:17 ohwada Exp $
+// $Id: main.php,v 1.9 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v1.90
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_TITLE_PICTURE") ) 
+{
+// menu
+define("_WEBPHOTO_TITLE_PICTURE", "Pictures" ) ;
+define("_WEBPHOTO_TITLE_AUDIO",   "Musics" ) ;
+
+// item 
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK", "Action on click the content image");
+define("_WEBPHOTO_ITEM_WEIGHT", "Weight");
+
+// item option
+define("_WEBPHOTO_ITEM_KIND_OFFICE","Office (doc,xls,ppt...)");
+define("_WEBPHOTO_ITEM_KIND_IMAGE_OTHER","Image (bmp,tif,wmf...)");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_DEFAULT", "Default (uploaded content)");
+
+// file
+define("_WEBPHOTO_FILE_KIND_CONT" ,  "Content" ) ;
+define("_WEBPHOTO_FILE_KIND_THUMB" ,  "Thumbnail" ) ;
+define("_WEBPHOTO_FILE_KIND_MIDDLE" ,  "Middle image" ) ;
+define("_WEBPHOTO_FILE_KIND_FLASH" ,  "Flash flv" ) ;
+define("_WEBPHOTO_FILE_KIND_DOCOMO" ,  "Docomo video" ) ;
+define("_WEBPHOTO_FILE_KIND_PDF" ,  "PDF" ) ;
+define("_WEBPHOTO_FILE_KIND_SWF" ,  "Flash swf" ) ;
+define("_WEBPHOTO_FILE_KIND_SMALL" ,  "Small image" ) ;
+define("_WEBPHOTO_FILE_KIND_JPEG" ,  "JPEG" ) ;
+define("_WEBPHOTO_FILE_KIND_MP30" , "MP3" ) ;
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_OFFICE_DOC", "Office doc" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_XLS", "Office xls" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_PPT", "Office ppt" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_PDF", "Office pdf" ) ;
+
+// submit
+define("_WEBPHOTO_UPLOADING", "Uploading..." ) ;
+define("_WEBPHOTO_EMBED_ENTER", "Enter the video id from the url" ) ;
+define("_WEBPHOTO_EMBED_EXAMPLE", "Example" ) ;
+
+// photo
+define("_WEBPHOTO_ICON_GROUP", "Only in group" ) ;
+}
 
 //---------------------------------------------------------
 // v1.80

@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.3 2009/05/17 08:58:59 ohwada Exp $
+// $Id: misc_form.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_ffmpeg
+// move item_embed_type_select_options()
 // 2009-05-05 K.OHWADA
 // use build_form_mode_param()
 // 2009-04-19 K.OHWADA
@@ -24,7 +27,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_misc_form extends webphoto_edit_form
 {
-	var $_embed_class ;
 	var $_editor_class ;
 	var $_ffmpeg_class;
 	var $_icon_build_class ;
@@ -40,10 +42,12 @@ function webphoto_edit_misc_form( $dirname, $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname, $trust_dirname );
 
-	$this->_embed_class  =& webphoto_embed::getInstance( $dirname, $trust_dirname );
-	$this->_editor_class =& webphoto_editor::getInstance( $dirname, $trust_dirname );
-	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname );
-	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
+	$this->_editor_class 
+		=& webphoto_editor::getInstance( $dirname, $trust_dirname );
+	$this->_ffmpeg_class 
+		=& webphoto_ffmpeg::getInstance( $dirname, $trust_dirname );
+	$this->_icon_build_class 
+		=& webphoto_edit_icon_build::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
 
 }
@@ -190,13 +194,6 @@ function build_form_embed_with_row( $item_row )
 		'item_embed_type_select_options' => $this->item_embed_type_select_options() 
 	);
 	return $arr;
-}
-
-function item_embed_type_select_options()
-{ 
-	$value   = $this->get_item_embed_type( true );
-	$options = $this->_embed_class->build_type_options( $this->_is_module_admin );
-	return $this->build_form_options( $value, $options );
 }
 
 //---------------------------------------------------------

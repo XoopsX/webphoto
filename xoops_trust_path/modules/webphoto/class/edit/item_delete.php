@@ -1,5 +1,5 @@
 <?php
-// $Id: item_delete.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: item_delete.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-01-10 K.OHWADA
 // webphoto_photo_delete -> webphoto_edit_item_delete
 // 2008-10-01 K.OHWADA
@@ -36,25 +38,31 @@ class webphoto_edit_item_delete extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_item_delete( $dirname )
+function webphoto_edit_item_delete( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_error();
 
-	$this->_item_handler      =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler      =& webphoto_file_handler::getInstance( $dirname );
-	$this->_vote_handler      =& webphoto_vote_handler::getInstance( $dirname );
-	$this->_p2t_handler       =& webphoto_p2t_handler::getInstance(  $dirname );
-	$this->_maillog_handler   =& webphoto_maillog_handler::getInstance( $dirname );
+	$this->_item_handler      
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_file_handler      
+		=& webphoto_file_handler::getInstance( $dirname , $trust_dirname );
+	$this->_vote_handler      
+		=& webphoto_vote_handler::getInstance( $dirname , $trust_dirname );
+	$this->_p2t_handler       
+		=& webphoto_p2t_handler::getInstance(  $dirname , $trust_dirname );
+	$this->_maillog_handler   
+		=& webphoto_maillog_handler::getInstance( $dirname , $trust_dirname );
+
 	$this->_mail_unlink_class =& webphoto_edit_mail_unlink::getInstance( $dirname );
 
 	$this->_init_xoops_param();
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_item_delete( $dirname );
+		$instance = new webphoto_edit_item_delete( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

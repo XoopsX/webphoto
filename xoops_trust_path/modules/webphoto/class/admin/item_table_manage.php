@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.8 2009/01/24 07:10:39 ohwada Exp $
+// $Id: item_table_manage.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
+// item_detail_onclick
 // 2009-01-10 K.OHWADA
 // item_content etc
 // 2009-01-04 K.OHWADA
@@ -40,14 +43,17 @@ class webphoto_admin_item_table_manage extends webphoto_lib_manage
 function webphoto_admin_item_table_manage( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_manage( $dirname , $trust_dirname );
-	$this->set_manage_handler( webphoto_item_handler::getInstance( $dirname ) );
+	$this->set_manage_handler( 
+		webphoto_item_handler::getInstance( $dirname , $trust_dirname ) );
 	$this->set_manage_title_by_name( 'ITEM_TABLE_MANAGE' );
 
 	$this->set_manage_list_column_array(
 		array( 'item_title', 'item_uid' ) );
 
-	$this->_search_class  =& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname );
-	$this->_delete_class  =& webphoto_edit_item_delete::getInstance( $dirname );
+	$this->_search_class  =& webphoto_edit_search_build::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_delete_class  =& webphoto_edit_item_delete::getInstance( 
+		$dirname , $trust_dirname  );
 
 }
 
@@ -106,6 +112,8 @@ function _build_row_by_post()
 		'item_kind'            => $this->_post_class->get_post_int(   'item_kind' ),
 		'item_displaytype'     => $this->_post_class->get_post_int(   'item_displaytype' ),
 		'item_onclick'         => $this->_post_class->get_post_int(   'item_onclick' ),
+		'item_detail_onclick'  => $this->_post_class->get_post_int(   'item_detail_onclick' ),
+		'item_weight'          => $this->_post_class->get_post_int(   'item_weight' ),
 		'item_ext'             => $this->_post_class->get_post_text(  'item_ext' ),
 		'item_title'           => $this->_post_class->get_post_text(  'item_title' ),
 		'item_place'           => $this->_post_class->get_post_text(  'item_place' ),
@@ -201,8 +209,10 @@ function _print_form( $row )
 		echo $this->_build_row_file_id( $i );
 	}
 
+	echo $this->build_comp_text( 'item_weight' );
 	echo $this->build_comp_text( 'item_kind' );
 	echo $this->build_comp_text( 'item_displaytype' );
+	echo $this->build_comp_text( 'item_detail_onclick' );
 	echo $this->build_comp_text( 'item_onclick' );
 	echo $this->build_comp_text( 'item_ext' );
 	echo $this->build_comp_text( 'item_datetime' );

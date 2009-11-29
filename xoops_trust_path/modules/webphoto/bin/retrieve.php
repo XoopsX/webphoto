@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.9 2009/05/16 00:18:50 ohwada Exp $
+// $Id: retrieve.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// class/inc/ini.php
 // 2009-05-15 K.OHWADA
 // Fatal error: Class 'webphoto_edit_small_create' not found 
 // 2008-01-25 K.OHWADA
@@ -57,6 +59,7 @@ webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_event.php' );
 webphoto_include_once( 'class/d3/preload.php' );
 
+webphoto_include_once( 'class/inc/ini.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 
 webphoto_include_once( 'class/lib/msg.php' );
@@ -85,6 +88,7 @@ webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/mail_parse.php' );
 webphoto_include_once( 'class/lib/mail_pop.php' );
 
+webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
@@ -101,9 +105,11 @@ webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 
+webphoto_include_once( 'class/webphoto/plugin_ini.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
+webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/gmap_info.php' );
@@ -113,6 +119,8 @@ webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/exif.php' );
+webphoto_include_once( 'class/webphoto/cmd_base.php' );
+webphoto_include_once( 'class/webphoto/imagemagick.php' );
 webphoto_include_once( 'class/webphoto/ffmpeg.php' );
 webphoto_include_once( 'class/webphoto/video.php' );
 webphoto_include_once( 'class/webphoto/pdf.php' );
@@ -134,10 +142,12 @@ webphoto_include_once( 'class/edit/base_create.php' );
 webphoto_include_once( 'class/edit/item_build.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/cont_create.php' );
+webphoto_include_once( 'class/edit/jpeg_create.php' );
 webphoto_include_once( 'class/edit/middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/small_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
+webphoto_include_once( 'class/edit/mp3_create.php' );
 webphoto_include_once( 'class/edit/pdf_create.php' );
 webphoto_include_once( 'class/edit/swf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.11 2009/04/11 14:23:35 ohwada Exp $
+// $Id: gmap.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_cat_handler
 // 2009-04-10 K.OHWADA
 // function array_merge_unique()
 // 2009-01-25 K.OHWADA
@@ -53,8 +55,14 @@ function webphoto_gmap( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_gicon_handler   =& webphoto_gicon_handler::getInstance($dirname);
-	$this->_gmap_info_class =& webphoto_inc_gmap_info::getSingleton( $dirname );
+	$this->_gicon_handler   
+		=& webphoto_gicon_handler::getInstance(  $dirname , $trust_dirname);
+	$this->_item_cat_handler 
+		=& webphoto_item_cat_handler::getInstance( $dirname , $trust_dirname );
+	$this->_catlist_class   
+		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
+	$this->_gmap_info_class 
+		=& webphoto_inc_gmap_info::getSingleton( $dirname , $trust_dirname );
 
 	$cfg_perm_item_read        = $this->get_config_by_name( 'perm_item_read' );
 	$this->_cfg_perm_cat_read  = $this->get_config_by_name( 'perm_cat_read' );
@@ -63,10 +71,7 @@ function webphoto_gmap( $dirname , $trust_dirname )
 	$this->_cfg_gmap_longitude = $this->get_config_by_name( 'gmap_longitude' );
 	$this->_cfg_gmap_zoom      = $this->get_config_by_name( 'gmap_zoom' );
 
-	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
-
-	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
 
 	$this->preload_init();
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.20 2009/11/06 18:04:17 ohwada Exp $
+// $Id: item_form.php,v 1.21 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// item_detail_onclick
 // 2009-10-25 K.OHWADA
 // BUG: player id is not correctly selected 
 // 2009-06-28 K.OHWADA
@@ -295,15 +297,16 @@ function build_form_admin_by_files( $mode, $files )
 		'item_time_publish_checkbox_checked' => $this->build_checkbox_checked( 'item_time_publish_checkbox' ), 
 		'item_time_expire_checkbox_checked'  => $this->build_checkbox_checked( 'item_time_update_checkbox' ), 
 
-		'item_status_select_options'        => $this->item_status_select_options(),
-		'item_kind_select_options'          => $this->item_kind_select_options(),
-		'item_displaytype_select_options'   => $this->item_displaytype_select_options(),
-		'item_onclick_select_options'       => $this->item_onclick_select_options(),
-		'item_player_id_select_options'     => $this->item_player_id_select_options(),
-		'item_playlist_type_select_options' => $this->item_playlist_type_select_options(),
-		'item_playlist_dir_select_options'  => $this->item_playlist_dir_select_options(),
-		'item_playlist_time_select_options' => $this->item_playlist_time_select_options(),
-
+		'item_status_select_options'         => $this->item_status_select_options(),
+		'item_kind_select_options'           => $this->item_kind_select_options(),
+		'item_displaytype_select_options'    => $this->item_displaytype_select_options(),
+		'item_onclick_select_options'        => $this->item_onclick_select_options(),
+		'item_detail_onclick_select_options' => $this->item_detail_onclick_select_options(),
+		'item_player_id_select_options'      => $this->item_player_id_select_options(),
+		'item_playlist_type_select_options'  => $this->item_playlist_type_select_options(),
+		'item_playlist_dir_select_options'   => $this->item_playlist_dir_select_options(),
+		'item_playlist_time_select_options'  => $this->item_playlist_time_select_options(),
+		'item_embed_type_select_options'     => $this->item_embed_type_select_options(),
 		'show_err_invalid_cat'              => $this->show_err_invalid_cat( $is_edit ) ,
 
 	);
@@ -385,6 +388,13 @@ function item_onclick_select_options()
 {
 	$value   = $this->get_row_by_key( 'item_onclick' ) ; 
 	$options = $this->_item_handler->get_onclick_options();
+	return $this->build_form_options( $value, $options );
+}
+
+function item_detail_onclick_select_options()
+{
+	$value   = $this->get_row_by_key( 'item_detail_onclick' ) ; 
+	$options = $this->_item_handler->get_detail_onclick_options();
 	return $this->build_form_options( $value, $options );
 }
 

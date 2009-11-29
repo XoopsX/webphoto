@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.5 2009/10/20 10:22:38 ohwada Exp $
+// $Id: imagemanager.php,v 1.6 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// /main/header_inc_handler.php
 // 2009-10-20 K.OHWADA
 // Fatal error: Class 'webphoto_lib_multibyte' not found
 // 2008-12-12 K.OHWADA
@@ -29,32 +31,22 @@ include_once XOOPS_ROOT_PATH.'/class/template.php' ;
 //---------------------------------------------------------
 // webphoto files
 //---------------------------------------------------------
-if( !defined("WEBPHOTO_DIRNAME") ) {
-	  define("WEBPHOTO_DIRNAME", $MY_DIRNAME );
-}
-if( !defined("WEBPHOTO_ROOT_PATH") ) {
-	  define("WEBPHOTO_ROOT_PATH", XOOPS_ROOT_PATH.'/modules/'.WEBPHOTO_DIRNAME );
-}
+include_once WEBPHOTO_TRUST_PATH.'/main/header_inc_handler.php';
 
-include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
-include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
-
-webphoto_include_once( 'preload/debug.php' );
-webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/xoops/base.php' );
-webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/public.php' );
 webphoto_include_once( 'class/main/imagemanager.php' );
+
 webphoto_include_language( 'main.php' );
 
 //=========================================================
 // main
 //=========================================================
-$manage =& webphoto_main_imagemanager::getSingleton( WEBPHOTO_DIRNAME );
+$manage =& webphoto_main_imagemanager::getSingleton( WEBPHOTO_DIRNAME, WEBPHOTO_TRUST_DIRNAME );
 
 // exit if error
 $manage->check();

@@ -1,10 +1,16 @@
 <?php
-// $Id: editor_base.php,v 1.1 2009/01/06 09:42:30 ohwada Exp $
+// $Id: editor_base.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// typo _allow_in_not_has_htmll
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -59,7 +65,8 @@ function set_display_br( $val )
 
 function allow_in_not_has_html()
 {
-	return $this->_allow_in_not_has_htmll ;
+// typo
+	return $this->_allow_in_not_has_html ;
 }
 
 function show_display_options()

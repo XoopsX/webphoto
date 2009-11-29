@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.22 2009/11/06 18:04:17 ohwada Exp $
+// $Id: base_this.php,v 1.23 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_base -> webphoto_base_ini
 // 2009-10-25 K.OHWADA
 // _JPEGS_PATH
 // 2009-04-10 K.OHWADA
@@ -58,7 +60,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_base_this
 //=========================================================
-class webphoto_base_this extends webphoto_lib_base
+class webphoto_base_this extends webphoto_base_ini
 {
 	var $_config_class;
 	var $_item_handler;
@@ -142,16 +144,21 @@ class webphoto_base_this extends webphoto_lib_base
 //---------------------------------------------------------
 function webphoto_base_this( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
 
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler =& webphoto_file_handler::getInstance( $dirname );
-	$this->_perm_class   =& webphoto_permission::getInstance( $dirname );
+	$this->_item_handler 
+		=& webphoto_item_handler::getInstance( $dirname, $trust_dirname );
+	$this->_cat_handler  
+		=& webphoto_cat_handler::getInstance( $dirname, $trust_dirname );
+	$this->_file_handler 
+		=& webphoto_file_handler::getInstance( $dirname, $trust_dirname  );
+	$this->_perm_class   
+		=& webphoto_permission::getInstance( $dirname, $trust_dirname  );
+
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
 	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
-	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
 
 	$this->_UPLOADS_PATH = $this->_config_class->get_uploads_path();
 	$this->_MEDIAS_PATH  = $this->_config_class->get_medias_path();
@@ -276,6 +283,11 @@ function is_image_ext( $ext )
 function is_jpeg_ext( $ext )
 {
 	return $this->_kind_class->is_jpeg_ext( $ext ) ;
+}
+
+function is_swf_ext( $ext )
+{
+	return $this->_kind_class->is_swf_ext( $ext ) ;
 }
 
 function is_swfobject_ext( $ext )
@@ -486,6 +498,34 @@ function get_cached_cat_value_by_id( $cat_id, $name, $flag_sanitize=false )
 function get_cat_nice_path_from_id( $sel_id, $title, $funcURL, $path="" )
 {
 	return $this->_cat_handler->get_nice_path_from_id( $sel_id, $title, $funcURL, $path );
+}
+
+//---------------------------------------------------------
+// mime class
+//---------------------------------------------------------
+function ext_to_kind( $ext )
+{
+	return $this->_mime_class->ext_to_kind( $ext );
+}
+
+function ext_to_mime( $ext )
+{
+	return $this->_mime_class->ext_to_mime( $ext );
+}
+
+function mime_to_medium( $mime )
+{
+	return $this->_mime_class->mime_to_medium( $mime );
+}
+
+function get_my_allowed_mimes()
+{
+	return $this->_mime_class->get_my_allowed_mimes();
+}
+
+function is_my_allow_ext( $ext )
+{
+	return $this->_mime_class->is_my_allow_ext( $ext );
 }
 
 //---------------------------------------------------------

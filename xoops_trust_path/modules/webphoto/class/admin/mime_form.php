@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_form.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
+// $Id: mime_form.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_mime_handler
 // 2009-10-25 K.OHWADA
 // mime_kind
 // 2009-04-27 K.OHWADA
@@ -36,7 +38,8 @@ function webphoto_admin_mime_form( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
-	$this->_mime_handler =& webphoto_mime_handler::getInstance( $dirname );
+	$this->_mime_handler =& webphoto_mime_handler::getInstance(
+		$dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

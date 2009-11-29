@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_check.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_check.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_user_handler
 // 2009-01-10 K.OHWADA
 // webphoto_edit_mail_check -> webphoto_edit_mail_check
 // 2008-08-24 K.OHWADA
@@ -64,16 +66,19 @@ class webphoto_edit_mail_check
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_mail_check( $dirname )
+function webphoto_edit_mail_check( $dirname, $trust_dirname )
 {
 	$this->set_deny_title_preg( _WEBPHOTO_MAIL_DENY_TITLE_PREG );
 	$this->set_deny_body_preg(  _WEBPHOTO_MAIL_DENY_TITLE_PREG );
 	$this->push_ad_word_array( _WEBPHOTO_MAIL_AD_WORD_1 );
 	$this->push_ad_word_array( _WEBPHOTO_MAIL_AD_WORD_2 );
 
+	$this->_user_handler  
+		=& webphoto_user_handler::getInstance( $dirname, $trust_dirname );
+	$this->_mime_class    
+		=& webphoto_mime::getInstance( $dirname, $trust_dirname );
+
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_user_handler  =& webphoto_user_handler::getInstance( $dirname );
-	$this->_mime_class    =& webphoto_mime::getInstance( $dirname );
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 
 	$cfg_fsize        = $this->_config_class->get_by_name( 'fsize' );
@@ -86,11 +91,11 @@ function webphoto_edit_mail_check( $dirname )
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_mail_check( $dirname );
+		$instance = new webphoto_edit_mail_check( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

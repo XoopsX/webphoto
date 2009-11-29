@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist_build.php,v 1.3 2009/04/19 11:39:45 ohwada Exp $
+// $Id: playlist_build.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_error -> webphoto_base_ini
 // 2009-04-19 K.OHWADA
 // BUG: Notice [PHP]: Undefined variable: laylist_feed
 // 2009-01-25 K.OHWADA
@@ -19,7 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_edit_playlist_build
 //=========================================================
-class webphoto_edit_playlist_build extends webphoto_lib_error
+class webphoto_edit_playlist_build extends webphoto_base_ini
 {
 	var $_playlist_class ;
 	var $_icon_build_class;
@@ -32,19 +34,20 @@ class webphoto_edit_playlist_build extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_playlist_build( $dirname )
+function webphoto_edit_playlist_build( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_error();
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
 
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname );
+	$this->_playlist_class   =& webphoto_playlist::getInstance( 
+		$dirname , $trust_dirname );
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_playlist_build( $dirname );
+		$instance = new webphoto_edit_playlist_build( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

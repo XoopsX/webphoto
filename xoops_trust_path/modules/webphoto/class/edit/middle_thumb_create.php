@@ -1,10 +1,16 @@
 <?php
-// $Id: middle_thumb_create.php,v 1.3 2009/04/11 14:23:34 ohwada Exp $
+// $Id: middle_thumb_create.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // change log
@@ -41,9 +47,9 @@ class webphoto_edit_middle_thumb_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_middle_thumb_create( $dirname )
+function webphoto_edit_middle_thumb_create( $dirname , $trust_dirname  )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname  );
 
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
 
@@ -57,11 +63,11 @@ function webphoto_edit_middle_thumb_create( $dirname )
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname  )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_middle_thumb_create( $dirname );
+		$instance = new webphoto_edit_middle_thumb_create( $dirname , $trust_dirname  );
 	}
 	return $instance;
 }

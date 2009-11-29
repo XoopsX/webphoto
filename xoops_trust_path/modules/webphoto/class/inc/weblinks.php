@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.3 2009/04/18 02:35:09 ohwada Exp $
+// $Id: weblinks.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// WEBPHOTO_TRUST_DIRNAME in webphoto_inc_catlist
 // 2009-04-18 K.OHWADA
 // Notice [PHP]: Undefined index: use_pathinfo
 //---------------------------------------------------------
@@ -49,7 +51,7 @@ function albums( $opts )
 		return null;
 	}
 
-	$inc_class =& webphoto_inc_catlist::getSingleton( $dirname );
+	$inc_class =& webphoto_inc_catlist::getSingleton( $dirname, WEBPHOTO_TRUST_DIRNAME );
 	return $inc_class->get_cat_titles();
 }
 

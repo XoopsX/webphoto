@@ -1,5 +1,5 @@
 <?php
-// $Id: photomanager.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: photomanager.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_edit_item_delete
 // 2009-01-10 K.OHWADA
 // webphoto_photo_delete -> webphoto_edit_item_delete 
 // 2008-10-01 K.OHWADA
@@ -48,8 +50,10 @@ function webphoto_admin_photomanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_search_class =& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname );
-	$this->_delete_class =& webphoto_edit_item_delete::getInstance( $dirname );
+	$this->_search_class =& webphoto_edit_search_build::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_delete_class =& webphoto_edit_item_delete::getInstance( 
+		$dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )

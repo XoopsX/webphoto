@@ -1,17 +1,24 @@
 <?php
-// $Id: editor.php,v 1.1 2009/01/06 09:42:30 ohwada Exp $
+// $Id: editor.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_plugin -> webphoto_plugin_ini
+// item_editor_fefault
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_editor
 //=========================================================
-class webphoto_editor extends webphoto_lib_plugin
+class webphoto_editor extends webphoto_plugin_ini
 {
 	var $_has_html = false;
 
@@ -20,11 +27,12 @@ class webphoto_editor extends webphoto_lib_plugin
 //---------------------------------------------------------
 function webphoto_editor( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_plugin( $dirname, $trust_dirname );
+	$this->webphoto_plugin_ini( $dirname, $trust_dirname );
 	$this->set_dirname( 'editors' );
 	$this->set_prefix(  'webphoto_editor_' );
 
-	$this->_perm_class =& webphoto_permission::getInstance( $dirname );
+	$this->_perm_class 
+		=& webphoto_permission::getInstance( $dirname, $trust_dirname );
 	$this->_has_html = $this->_perm_class->has_html();
 }
 
@@ -43,7 +51,7 @@ function &getInstance( $dirname, $trust_dirname )
 function display_options( $type )
 {
 	if ( empty($type ) ) {
-		$type = _C_WEBPHOTO_EDITOR_DEFAULT ;
+		$type = $this->get_ini('item_editor_default') ;
 	}
 
 	$class =& $this->get_class_object( $type );

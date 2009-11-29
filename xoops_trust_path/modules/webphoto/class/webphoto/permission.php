@@ -1,5 +1,5 @@
 <?php
-// $Id: permission.php,v 1.4 2009/01/06 09:41:35 ohwada Exp $
+// $Id: permission.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-01-04 K.OHWADA
 // has_html()
 // 2008-12-12 K.OHWADA
@@ -42,9 +44,9 @@ class webphoto_permission extends webphoto_inc_group_permission
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_permission( $dirname )
+function webphoto_permission( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_group_permission( $dirname );
+	$this->webphoto_inc_group_permission( $dirname , $trust_dirname );
 
 	$this->_has_insertable       = $this->has_perm( 'insertable' );
 	$this->_has_superinsert      = $this->has_perm( 'superinsert' );
@@ -63,11 +65,11 @@ function webphoto_permission( $dirname )
 	$this->_has_html             = $this->has_perm( 'html' );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_permission( $dirname );
+		$instance = new webphoto_permission( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.18 2009/11/06 19:05:24 ohwada Exp $
+// $Id: oninstall.php,v 1.19 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
+// getInstance -> getSingleton 
+// _item_add_column_190();
 // 2009-10-25 K.OHWADA
 // _mime_add_column_kind_etc()
 // 2009-08-22 K.OHWADA
@@ -38,7 +42,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_oninstall
 //=========================================================
-class webphoto_inc_oninstall extends webphoto_inc_handler
+class webphoto_inc_oninstall extends webphoto_inc_base_ini
 {
 	var $_table_item ;
 	var $_table_mime ;
@@ -55,24 +59,36 @@ class webphoto_inc_oninstall extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_oninstall()
+function webphoto_inc_oninstall( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
+	$this->init_handler(  $dirname );
+
+	$this->_table_cat    = $this->prefix_dirname( 'cat' );
+	$this->_table_item   = $this->prefix_dirname( 'item' );
+	$this->_table_mime   = $this->prefix_dirname( 'mime' );
+	$this->_table_player = $this->prefix_dirname( 'player' );
+
+// preload
+	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
+		$this->_IS_XOOPS_2018 = (bool)_C_WEBPHOTO_PRELOAD_XOOPS_2018 ;
+	}
 }
 
-function &getInstance()
+function &getSingleton( $dirname , $trust_dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_oninstall();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_oninstall( $dirname , $trust_dirname );
 	}
-	return $instance;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function install( $trust_dirname , &$module )
+function install( &$module )
 {
 	global $ret ; // TODO :-D
 
@@ -80,7 +96,7 @@ function install( $trust_dirname , &$module )
 		$ret = array() ;
 	}
 
-	$this->_init( $trust_dirname , $module );
+	$this->_init( $module );
 	$ret_code = $this->_exec_install();
 
 	$msg_arr = $this->_get_msg_array();
@@ -93,7 +109,7 @@ function install( $trust_dirname , &$module )
 	return $ret_code;
 }
 
-function update( $trust_dirname , &$module )
+function update( &$module )
 {
 	global $msgs ; // TODO :-D
 
@@ -101,7 +117,7 @@ function update( $trust_dirname , &$module )
 		$msgs = array() ;
 	}
 
-	$this->_init( $trust_dirname , $module );
+	$this->_init( $module );
 	$ret_code = $this->_exec_update();
 
 	$msg_arr = $this->_get_msg_array();
@@ -114,7 +130,7 @@ function update( $trust_dirname , &$module )
 	return $ret_code;
 }
 
-function uninstall( $trust_dirname , &$module )
+function uninstall( &$module )
 {
 	global $ret ; // TODO :-D
 
@@ -122,7 +138,7 @@ function uninstall( $trust_dirname , &$module )
 		$ret = array() ;
 	}
 
-	$this->_init( $trust_dirname , $module );
+	$this->_init( $module );
 	$ret_code = $this->_exec_uninstall();
 
 	$msg_arr = $this->_get_msg_array();
@@ -138,25 +154,9 @@ function uninstall( $trust_dirname , &$module )
 //---------------------------------------------------------
 // private
 //---------------------------------------------------------
-function _init( $trust_dirname , &$module )
+function _init( &$module )
 {
-	$dirname          = $module->getVar( 'dirname', 'n' );
 	$this->_MODULE_ID = $module->getVar( 'mid',     'n' );
-
-	$this->_TRUST_DIRNAME = $trust_dirname ;
-	$this->_TRUST_DIR     = XOOPS_TRUST_PATH.'/modules/'. $trust_dirname ;
-
-	$this->init_handler( $dirname );
-
-	$this->_table_cat    = $this->prefix_dirname( 'cat' );
-	$this->_table_item   = $this->prefix_dirname( 'item' );
-	$this->_table_mime   = $this->prefix_dirname( 'mime' );
-	$this->_table_player = $this->prefix_dirname( 'player' );
-
-// preload
-	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
-		$this->_IS_XOOPS_2018 = (bool)_C_WEBPHOTO_PRELOAD_XOOPS_2018 ;
-	}
 }
 
 function _exec_install()
@@ -585,6 +585,7 @@ function _item_update()
 	$this->_item_add_column_100();
 	$this->_item_add_column_110();
 	$this->_item_modify_column_173();
+	$this->_item_add_column_190();
 }
 
 function _item_add_column_050()
@@ -693,8 +694,8 @@ function _item_add_column_070()
 function _item_update_070()
 {
 	$sql  = "UPDATE ". $this->_table_item ." SET " ;
-	$sql .= "item_codeinfo=".  $this->quote( _C_WEBPHOTO_CODEINFO_DEFAULT ) .", " ;
-	$sql .= "item_showinfo=".  $this->quote( _C_WEBPHOTO_SHOWINFO_DEFAULT ) .", " ;
+	$sql .= "item_codeinfo=".  $this->quote( $this->get_ini('item_codeinfo_default') ) .", " ;
+	$sql .= "item_showinfo=".  $this->quote( $this->get_ini('item_showinfo_default') ) .", " ;
 	$sql .= "item_perm_read=". $this->quote( _C_WEBPHOTO_PERM_ALLOW_ALL )   .", " ;
 	$sql .= "item_perm_down=". $this->quote( _C_WEBPHOTO_PERM_ALLOW_ALL ) ;
 
@@ -823,6 +824,30 @@ function _item_modify_column_173()
 
 	if ( $ret ) {
 		$this->_set_msg( 'Modify item_exif in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_190()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_detail_onclick' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_detail_onclick INT(11) UNSIGNED NOT NULL DEFAULT '0', " ;
+	$sql .= "item_weight         INT(11) UNSIGNED NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_content in <b>'. $this->_table_item .'</b>' );
 	} else {
 		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
 		return false;
@@ -1095,6 +1120,12 @@ function _mime_update_record_kind_s()
 	$this->_mime_update_record_kind( 'ram',  _C_WEBPHOTO_MIME_KIND_AUDIO );
 	$this->_mime_update_record_kind( 'mid',  _C_WEBPHOTO_MIME_KIND_AUDIO_MID );
 	$this->_mime_update_record_kind( 'wav',  _C_WEBPHOTO_MIME_KIND_AUDIO_WAV );
+	
+	$this->_mime_update_record_kind( 'doc',  _C_WEBPHOTO_MIME_KIND_OFFICE_DOC );
+	$this->_mime_update_record_kind( 'xls',  _C_WEBPHOTO_MIME_KIND_OFFICE_XLS );
+	$this->_mime_update_record_kind( 'ppt',  _C_WEBPHOTO_MIME_KIND_OFFICE_PPT );
+	$this->_mime_update_record_kind( 'pdf',  _C_WEBPHOTO_MIME_KIND_OFFICE_PDF );
+
 }
 
 function _mime_update_record_option_s()

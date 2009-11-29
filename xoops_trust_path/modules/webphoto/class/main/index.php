@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.10 2009/11/06 18:04:17 ohwada Exp $
+// $Id: index.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// get_ini()
 // 2009-10-25 K.OHWADA
 // webphoto_show_list
 // 2009-09-25 K.OHWADA
@@ -46,7 +48,7 @@ function webphoto_main_index( $dirname , $trust_dirname )
 
 	$this->init_preload();
 
-	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+	if ( $this->get_ini('community_use') ) {
 		$this->set_template_main( 'main_photo.html' );
 		$this->_SHOW_PHOTO_VIEW = true;
 		$this->set_navi_mode( 'kind' );
@@ -83,7 +85,7 @@ function main()
 
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
-	$total = $this->_public_class->get_count();
+	$total = $this->_get_total();
 	$unit  = $this->_post_class->get_get_text('unit');
 	$date  = $this->_post_class->get_get_text('date');
 
@@ -146,21 +148,36 @@ function _get_action()
 {
 	$this->get_pathinfo_param();
 
-	if ( $this->_get_op == 'latest' ) {
-		return 'latest';
-	} elseif ( $this->_get_op == 'popular' ) {
-		return 'popular';
-	} elseif ( $this->_get_op == 'highrate' ) {
-		return 'highrate';
-	} elseif ( $this->_get_op == 'random' ) {
-		return 'random';
-	} elseif ( $this->_get_op == 'map' ) {
-		return 'map';
-	} elseif ( $this->_get_op == 'timeline' ) {
-		return 'timeline';
+	switch ( $this->_get_op )
+	{
+		case 'latest':
+		case 'popular':
+		case 'highrate':
+		case 'random':
+		case 'map':
+		case 'timeline':
+		case 'new':
+		case 'picture':
+		case 'video':
+		case 'audio':
+		case 'office':
+			$action = $this->_get_op;
+			break;
+		
+		default:
+			$action = $this->_ACTION_DEFAULT;
+			break;
 	}
+	return $action;
+}
 
-	return $this->_ACTION_DEFAULT;
+//---------------------------------------------------------
+// total
+//---------------------------------------------------------
+function _get_total()
+{
+	$name = $this->_mode_to_name( $this->_mode );
+	return $this->_public_class->get_count_by_name_param( $name, null );
 }
 
 //---------------------------------------------------------
@@ -168,8 +185,27 @@ function _get_action()
 //---------------------------------------------------------
 function _get_rows_by_mode( $limit, $start )
 {
+	$name    = $this->_mode_to_name( $this->_mode );
 	$orderby = $this->_sort_class->mode_to_orderby( $this->_mode );
-	return $this->_public_class->get_rows_by_orderby( $orderby, $limit, $start );
+	return $this->_public_class->get_rows_by_name_param_orderby( $name, null, $orderby, $limit, $start );
+}
+
+function _mode_to_name( $mode )
+{
+	switch ( $mode )
+	{
+		case 'picture':
+		case 'video':
+		case 'audio':
+		case 'office':
+			$name = $mode ;
+			break;
+
+		default:
+			$name = 'public' ;
+			break;
+	}
+	return $name;
 }
 
 function _build_show_random_more()
@@ -283,8 +319,13 @@ function _build_notification_select_param()
 //---------------------------------------------------------
 function _build_navi_param( $total, $limit )
 {
+	if( $this->_navi_mode == 'kind' ) {
+		$this->_get_sort = null;
+	}
+
 	if ( $this->check_show_navi( $this->_mode, $this->_get_sort ) ) {
-		return $this->build_main_navi( $this->_mode, $total, $limit ) ;
+		$url = $this->_uri_class->build_main_navi_url( $this->_mode, $this->_get_sort );
+		return $this->build_navi( $url, $total, $limit, null );
 	}
 
 	$arr = array(

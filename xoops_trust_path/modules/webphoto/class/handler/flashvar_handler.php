@@ -1,46 +1,42 @@
 <?php
-// $Id: flashvar_handler.php,v 1.1 2008/10/30 00:27:21 ohwada Exp $
+// $Id: flashvar_handler.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-10-01 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// flashvar_autostart_default
+//---------------------------------------------------------
+
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
 // class webphoto_flashvar_handler
 //=========================================================
-class webphoto_flashvar_handler extends webphoto_lib_handler
+class webphoto_flashvar_handler extends webphoto_handler_base_ini
 {
-	var $_AUTOSTART_DEFAULT    = _C_WEBPHOTO_FLASHVAR_AUTOSTART_DEFAULT ;
-	var $_BUFFERLENGTH_DEFAULT = _C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT ;
-	var $_ROTATETIME_DEFAULT   = _C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT ;
-	var $_VOLUME_DEFAULT       = _C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT ;
-	var $_LINKTARGET_DEFAULT   = _C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT ;
-	var $_OVERSTRETCH_DEFAULT  = _C_WEBPHOTO_FLASHVAR_OVERSTRETCH_DEFAULT ;
-	var $_TRANSITION_DEFAULT   = _C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_flashvar_handler( $dirname )
+function webphoto_flashvar_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'flashvar' );
 	$this->set_id_name( 'flashvar_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_flashvar_handler( $dirname );
+		$instance = new webphoto_flashvar_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -58,18 +54,18 @@ function create( $flag_new=false )
 	$linktarget   = '' ;
 	$overstretch  = '' ;
 	$transition   = '' ;
-	$autostart    = $this->_AUTOSTART_DEFAULT ;
+	$autostart    = $this->get_ini('flashvar_autostart_default') ;
 
 	if ( $flag_new ) {
 		$time = time();
 		$time_create  = $time;
 		$time_update  = $time;
-		$bufferlength = $this->_BUFFERLENGTH_DEFAULT ;
-		$rotatetime   = $this->_ROTATETIME_DEFAULT ;
-		$volume       = $this->_VOLUME_DEFAULT ;
-		$linktarget   = $this->_LINKTARGET_DEFAULT ;
-		$overstretch  = $this->_OVERSTRETCH_DEFAULT ;
-		$transition   = $this->_TRANSITION_DEFAULT ;
+		$bufferlength = $this->get_ini('flashvar_bufferlength_default') ;
+		$rotatetime   = $this->get_ini('flashvar_rotatetime_default') ;
+		$volume       = $this->get_ini('flashvar_volume_default') ;
+		$linktarget   = $this->get_ini('flashvar_linktarget_default') ;
+		$overstretch  = $this->get_ini('flashvar_overstretch_default') ;
+		$transition   = $this->get_ini('flashvar_transition_default') ;
 	}
 
 	$arr = array(

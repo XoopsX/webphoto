@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.7 2009/11/06 18:04:17 ohwada Exp $
+// $Id: item_build.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+// item_detail_onclick
 // 2009-10-25 K.OHWADA
 // _C_WEBPHOTO_FILE_LIST
 // BUG: player id is not correctly selected 
@@ -45,14 +48,17 @@ class webphoto_edit_item_build extends webphoto_edit_base_create
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_edit_item_build( $dirname )
+function webphoto_edit_item_build( $dirname , $trust_dirname )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname );
 
 	$this->_xoops_class   =& webphoto_xoops_base::getInstance();
 	$this->_post_class    =& webphoto_lib_post::getInstance();
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_perm_class    =& webphoto_permission::getInstance( $dirname );
+
+	$this->_item_handler  
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_perm_class    
+		=& webphoto_permission::getInstance( $dirname , $trust_dirname );
 
 	$this->_xoops_uid          = $this->_xoops_class->get_my_user_uid() ;
 	$this->_has_superinsert    = $this->_perm_class->has_superinsert();
@@ -62,11 +68,11 @@ function webphoto_edit_item_build( $dirname )
 	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_edit_item_build( $dirname );
+		$instance = new webphoto_edit_item_build( $dirname , $trust_dirname );
 	}
 	return $instance;
 }
@@ -330,6 +336,12 @@ function build_row_files_individual( $row, $file, $file_id )
 
 		case 'swf':
 			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+			break;
+
+		case 'pdf':
+			if ( $this->get_ini( 'item_detail_onclick_pdf' ) ) {
+				$row['item_detail_onclick'] = _C_WEBPHOTO_FILE_KIND_PDF ;
+			}
 			break;
 	}
 

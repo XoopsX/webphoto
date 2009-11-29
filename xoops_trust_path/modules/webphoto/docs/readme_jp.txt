@@ -1,11 +1,74 @@
-$Id: readme_jp.txt,v 1.38 2009/11/06 20:21:36 ohwada Exp $
+$Id: readme_jp.txt,v 1.39 2009/11/29 07:34:23 ohwada Exp $
+
+=================================================
+Version: 1.90
+Date:   2009-11-29
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. main.ini 新設
+従来は PHP 定数として設定していた内部状態を、モジュール単位に変数で設定できるようにした。
+
+下記の順番に読み込まれる。最後の設定された値が有効になる。
+(1) XOOPS_TRUST_PATH /include/main.ini
+(2) XOOPS_TRUST_PATH /preload/main.ini (存在すれば)
+(3) XOOPS_ROOT_PATH  /preload/main.ini (存在すれば)
+
+2. メニューに、静止画、動画、音楽、オフィスを追加した
+
+3. 一覧表示と詳細画面にて、ゲストに対して閲覧制限をしている記事に、グループアイコンを表示した
+
+4. 詳細画面にて、コンテンツ画像をクリックしたときに、表示するファイルを選択可能した
+(1) アップロードしたファイル
+(2) 変換されたPDF
+
+5. 詳細画面にて、Flash Player に表示する動画の画面サイズを自動的に調整する
+
+画面サイズは下記の順番で決定される
+(1) item テーブルの値 (設定されていれば)
+(2) flashvar テーブルの値 (設定されていれば)
+(3) file テーブル (フラッシュ動画) の値があれば、Flash Player の値に収まるように自動調整 (新設)
+(4) Flash Player の値
+
+6. 登録画面にて、ファイルアップロード中はスピンアイコンを表示する
+
+7. 登録画面にて、デフォルトのエディタを変更する
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1046
+
+8. 管理者はプラグイン・タイプを変更可能にした
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1043
+
+9. バグ修正
+(1) typo Radom -> Random
+http://linux2.ohwada.net/modules/newbb/viewtopic.php?topic_id=461&forum=11
+
+(2) Fatal error: ai 形式をアップロードしたとき
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1043
+
+10. データベース構造
+(1) item テーブル: 項目追加 item_detail_onclick item_weight
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+
+
+● 注意
+main.ini の新設に伴い、多くのファイルを変更しました。
+大きな問題はないはずですが、小さな問題はあると思います。
+バグ報告やバグ解決を歓迎します。
+
 
 =================================================
 Version: 1.80
 Date:   2009-11-01
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

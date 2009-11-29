@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.9 2009/11/06 18:04:17 ohwada Exp $
+// $Id: category.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// get_ini()
 // 2009-10-25 K.OHWADA
 // build_photos_param_in_category()
 // 2009-05-30 K.OHWADA
@@ -44,7 +46,7 @@ function webphoto_main_category( $dirname , $trust_dirname )
 
 	$this->init_preload();
 
-	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+	if ( $this->get_ini('community_use') ) {
 		$this->_TEMPLATE_DETAIL = 'main_photo.html';
 		$this->_SHOW_PHOTO_VIEW = true;
 		$this->set_navi_mode( 'kind' );
@@ -124,7 +126,7 @@ function _get_photo_for_list( $cat_id )
 	$photo = null;
 
 	list( $rows, $total, $this_sum ) =
-		$this->_public_class->get_rows_total_by_catid( 
+		$this->get_rows_total_by_catid( 
 			$cat_id, $this->_PHOTO_LIST_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
 
 	if ( is_array($rows) && count($rows) ) {
@@ -145,7 +147,6 @@ function _build_cat_summary_disp( $desc )
 // overwrite
 function list_build_detail( $cat_id )
 {
-
 // BUG : not show cat_id
 	$init_param = $this->list_build_init_param( true, $cat_id );
 
@@ -156,7 +157,6 @@ function list_build_detail( $cat_id )
 	$title_s = $this->sanitize( $title );
 	$param = array(
 		'xoops_pagetitle'   => $title_s ,
-		'title_bread_crumb' => $title_s ,
 	);
 
 	if ( $this->_SHOW_PHOTO_VIEW && isset( $photo_rows[0] ) ) {

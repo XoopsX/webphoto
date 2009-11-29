@@ -1,5 +1,5 @@
 <?php
-// $Id: show_image.php,v 1.4 2009/03/20 04:18:09 ohwada Exp $
+// $Id: show_image.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-03-15 K.OHWADA
 // small_url
 // 2008-12-07 K.OHWADA
@@ -47,13 +49,16 @@ class webphoto_show_image
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_show_image( $dirname )
+function webphoto_show_image( $dirname , $trust_dirname )
 {
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler  =& webphoto_file_handler::getInstance( $dirname );
 	$this->_kind_class    =& webphoto_kind::getInstance();
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
+
+	$this->_item_handler  =& webphoto_item_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_file_handler  =& webphoto_file_handler::getInstance( 
+		$dirname , $trust_dirname  );
 
 	list( $this->_max_middle_width, $this->_max_middle_height )
 		= $this->_config_class->get_middle_wh();
@@ -71,11 +76,11 @@ function webphoto_show_image( $dirname )
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_show_image( $dirname );
+		$instance = new webphoto_show_image( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
+// $Id: notification.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-08-24 K.OHWADA
@@ -30,9 +32,10 @@ class webphoto_inc_notification extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_notification( $dirname )
+function webphoto_inc_notification( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
 	$this->_init_xoops_config( $dirname );
@@ -40,11 +43,11 @@ function webphoto_inc_notification( $dirname )
 	$this->_INDEX_URL = $this->_MODULE_URL .'/index.php';
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_notification( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_notification( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }

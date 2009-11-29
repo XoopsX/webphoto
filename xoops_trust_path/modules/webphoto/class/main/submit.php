@@ -1,10 +1,13 @@
 <?php
-// $Id: submit.php,v 1.16 2009/05/17 08:59:00 ohwada Exp $
+// $Id: submit.php,v 1.17 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//	$this->_header_class =& webphoto_xoops_header::getInstance( $dirname );
+//	$this->_header_class->assign_for_main( $param );
 
 //---------------------------------------------------------
 // change log
@@ -47,6 +50,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_submit extends webphoto_edit_submit
 {
+	var $_header_class;
+
 // submit file
 	var $_post_file = null ;
 
@@ -64,9 +69,10 @@ class webphoto_main_submit extends webphoto_edit_submit
 function webphoto_main_submit( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_submit( $dirname , $trust_dirname );
-
 	$this->set_fct( 'submit' );
 	$this->set_form_mode( 'submit' );
+
+	$this->_header_class =& webphoto_xoops_header::getInstance( $dirname );
 
 	$this->init_preload();
 }
@@ -116,6 +122,11 @@ function check_submit()
 
 function form_param()
 {
+	$param = array(
+		'flag_css' => true ,
+	);
+	$this->_header_class->assign_for_main( $param );
+
 	$this->init_form();
 
 	switch ( $this->_form_action )
@@ -604,7 +615,8 @@ function _build_form_default( $action )
 		'show_form_editor'   => $show_form_editor ,
 		'show_form_embed'    => $show_form_embed ,
 		'show_form_photo'    => true ,
-		'show_submit_select' => true ,
+		'show_submit_select' => $this->get_ini('show_submit_select') ,
+		'show_uploading'     => $this->get_ini('show_uploading') ,
 		'show_select_file'   => $this->get_show_select_file() ,
 	);
 
@@ -620,7 +632,8 @@ function _build_form_default( $action )
 function _build_form_error()
 {
 	$param = array(
-		'error' => $this->get_format_error( true, false ) ,
+		'error'          => $this->get_format_error( true, false ) ,
+		'show_uploading' => $this->get_ini('show_uploading') ,
 	);
 	$arr = array_merge( 
 		$this->_build_form_preview(),
@@ -643,7 +656,8 @@ function _build_form_preview()
 	$param = array(
 		'show_preview'    => true ,
 		'show_form_photo' => true ,
-		'lang_title_sub'  => $this->get_constant('TITLE_SUBMIT_SINGLE')
+		'lang_title_sub'  => $this->get_constant('TITLE_SUBMIT_SINGLE') ,
+		'show_uploading'  => $this->get_ini('show_uploading') ,
 	);
 
 	$arr = array_merge( 

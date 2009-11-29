@@ -1,5 +1,5 @@
 <?php
-// $Id: audio.php,v 1.2 2009/11/06 18:04:17 ohwada Exp $
+// $Id: audio.php,v 1.3 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname 
 // 2009-10-25 K.OHWADA
 // match_ext_kind()
 //---------------------------------------------------------
@@ -24,11 +26,11 @@ class webphoto_ext_audio extends webphoto_ext_base
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_audio( $dirname )
+function webphoto_ext_audio( $dirname, $trust_dirname )
 {
-	$this->webphoto_ext_base( $dirname );
+	$this->webphoto_ext_base( $dirname, $trust_dirname );
 
-	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname );
+	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname, $trust_dirname );
 }
 
 //---------------------------------------------------------

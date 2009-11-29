@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.8 2009/03/19 13:43:25 ohwada Exp $
+// $Id: imagemanager.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname 
 // 2009-03-19 K.OHWADA
 // strip_slash_from_head()
 // 2009-02-20 K.OHWADA
@@ -56,25 +58,27 @@ class webphoto_main_imagemanager extends webphoto_inc_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_main_imagemanager( $dirname )
+function webphoto_main_imagemanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_inc_public();
-	$this->init_handler( $dirname );
+	$this->init_public( $dirname , $trust_dirname );
+
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
 
 	$this->_init_xoops_module( $dirname ) ;
 	$this->_init_xoops_param() ;
 	$this->_init_xoops_config( $dirname );
-	$this->_init_xoops_group_permission( $dirname );
+	$this->_init_xoops_group_permission( $dirname , $trust_dirname );
 
-	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( $dirname );
+	$this->_catlist_class 
+		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_main_imagemanager( $dirname );
+		$singletons[ $dirname ] = new webphoto_main_imagemanager( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }
@@ -387,9 +391,11 @@ function _init_xoops_config( $dirname )
 	$this->_cfg_usesiteimg  = $config_handler->get_by_name( 'usesiteimg' );
 }
 
-function _init_xoops_group_permission( $dirname )
+function _init_xoops_group_permission( $dirname , $trust_dirname )
 {
-	$perm_class =& webphoto_inc_group_permission::getSingleton( $dirname );
+	$perm_class =& webphoto_inc_group_permission::getSingleton( 
+		$dirname , $trust_dirname );
+
 	$this->_has_insertable = $perm_class->has_perm('insertable');
 	$this->_has_editable   = $perm_class->has_perm('editable');
 }

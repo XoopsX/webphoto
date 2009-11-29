@@ -1,5 +1,5 @@
 <?php
-// $Id: embed.php,v 1.4 2009/11/20 23:15:34 ohwada Exp $
+// $Id: embed.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-22 K.OHWADA
+// _WEBPHOTO_EMBED_ENTER 
 // 2009-11-21 K.OHWADA
 // typo
 // 2009-01-04 K.OHWADA
@@ -145,12 +147,12 @@ function build_src_desc( $type, $src )
 
 	$lang = $class->lang_desc();
 	if ( empty($lang) ) {
-		$lang = 'Enter the video id from the url.';
+		$lang = _WEBPHOTO_EMBED_ENTER ;
 	}
 
 // typo
 	$str  = $lang ."<br />\n";
-	$str .= 'Example: ' ."<br />\n";
+	$str .= _WEBPHOTO_EMBED_EXAMPLE ."<br />\n";
 	$str .= $class->desc() ."<br />\n";
 
 	if ( $src ) {

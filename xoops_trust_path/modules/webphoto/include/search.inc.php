@@ -1,5 +1,5 @@
 <?php
-// $Id: search.inc.php,v 1.5 2008/12/20 06:11:27 ohwada Exp $
+// $Id: search.inc.php,v 1.6 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// WEBPHOTO_TRUST_DIRNAME in webphoto_inc_search
+// include/header.php
 // 2008-12-12 K.OHWADA
 // public.php
 // 2008-11-29 K.OHWADA
@@ -22,15 +25,12 @@
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
-include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
-include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
+include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 
-webphoto_include_once( 'class/inc/handler.php',      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/public.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/search.php' ,      $MY_DIRNAME );
-webphoto_include_once( 'preload/search.php' ,        $MY_DIRNAME  );
 
 //=========================================================
 // search functions
@@ -53,7 +53,8 @@ if( !function_exists( 'webphoto_search_base' ) )
 
 function webphoto_search_base( $dirname, $query_array, $andor, $limit, $offset, $uid )
 {
-	$inc_class =& webphoto_inc_search::getSingleton( $dirname );
+	$inc_class =& webphoto_inc_search::getSingleton( 
+		$dirname, WEBPHOTO_TRUST_DIRNAME );
 	return $inc_class->search( $query_array, $andor, $limit, $offset, $uid );
 }
 

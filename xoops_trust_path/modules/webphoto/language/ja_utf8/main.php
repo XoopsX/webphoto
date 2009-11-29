@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.30 2009/11/06 18:04:17 ohwada Exp $
+// $Id: main.php,v 1.31 2009/11/29 07:34:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1387,6 +1387,48 @@ define("_WEBPHOTO_TITLE_IMAGE",   "静止画" ) ;
 define("_WEBPHOTO_TITLE_VIDEO",   "動画" ) ;
 define("_WEBPHOTO_TITLE_MUSIC",   "音楽" ) ;
 define("_WEBPHOTO_TITLE_OFFICE",  "オフィス" ) ;
+
+//---------------------------------------------------------
+// v1.90
+//---------------------------------------------------------
+// menu
+define("_WEBPHOTO_TITLE_PICTURE", "静止画" ) ;
+define("_WEBPHOTO_TITLE_AUDIO",   "音楽" ) ;
+
+// item 
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK", "詳細をクリックしたときの動作");
+define("_WEBPHOTO_ITEM_WEIGHT", "並び順");
+
+// item option
+define("_WEBPHOTO_ITEM_KIND_OFFICE", "オフィス (doc,xls,ppt...)");
+define("_WEBPHOTO_ITEM_KIND_IMAGE_OTHER", "画像 (bmp,tif,wmf...)");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_DEFAULT", "標準 (コンテンツ)");
+
+// file
+define("_WEBPHOTO_FILE_KIND_CONT" ,  "コンテンツ" ) ;
+define("_WEBPHOTO_FILE_KIND_THUMB" ,  "サムネイル" ) ;
+define("_WEBPHOTO_FILE_KIND_MIDDLE" ,  "ミドル" ) ;
+define("_WEBPHOTO_FILE_KIND_FLASH" ,  "Flash ビデオ" ) ;
+define("_WEBPHOTO_FILE_KIND_DOCOMO" ,  "ドコモ ビデオ" ) ;
+define("_WEBPHOTO_FILE_KIND_PDF" ,  "PDF" ) ;
+define("_WEBPHOTO_FILE_KIND_SWF" ,  "Flash swf" ) ;
+define("_WEBPHOTO_FILE_KIND_SMALL" ,  "スモール" ) ;
+define("_WEBPHOTO_FILE_KIND_JPEG" ,  "JPEG" ) ;
+define("_WEBPHOTO_FILE_KIND_MP30" , "MP3" ) ;
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_OFFICE_DOC", "オフィス doc" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_XLS", "オフィス xls" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_PPT", "オフィス ppt" ) ;
+define("_WEBPHOTO_MIME_KIND_OFFICE_PDF", "オフィス pdf" ) ;
+
+// submit
+define("_WEBPHOTO_UPLOADING", "アップロード中..." ) ;
+define("_WEBPHOTO_EMBED_ENTER", "URLの中のビデオIDを入力してください" ) ;
+define("_WEBPHOTO_EMBED_EXAMPLE", "例:" ) ;
+
+// photo
+define("_WEBPHOTO_ICON_GROUP", "グループ内閲覧" ) ;
 
 // === define end ===
 }

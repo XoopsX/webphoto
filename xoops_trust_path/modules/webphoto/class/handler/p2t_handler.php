@@ -1,37 +1,39 @@
 <?php
-// $Id: p2t_handler.php,v 1.1 2008/06/21 12:22:25 ohwada Exp $
+// $Id: p2t_handler.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+//---------------------------------------------------------
+
 //=========================================================
 // class webphoto_p2t_handler
 //=========================================================
-class webphoto_p2t_handler extends webphoto_lib_handler
+class webphoto_p2t_handler extends webphoto_handler_base_ini
 {
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_p2t_handler( $dirname )
+function webphoto_p2t_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'p2t' );
 	$this->set_id_name( 'p2t_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_p2t_handler( $dirname );
+		$instance = new webphoto_p2t_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

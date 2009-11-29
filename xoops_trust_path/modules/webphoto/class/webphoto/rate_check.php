@@ -1,10 +1,16 @@
 <?php
-// $Id: rate_check.php,v 1.1 2008/12/10 19:10:04 ohwada Exp $
+// $Id: rate_check.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-07 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,8 +29,10 @@ function webphoto_rate_check( $dirname, $trust_dirname )
 {
 	$this->webphoto_lib_base( $dirname, $trust_dirname );
 
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_vote_handler =& webphoto_vote_handler::getInstance( $dirname );
+	$this->_item_handler =& webphoto_item_handler::getInstance( 
+		$dirname, $trust_dirname );
+	$this->_vote_handler =& webphoto_vote_handler::getInstance( 
+		$dirname, $trust_dirname  );
 
 }
 

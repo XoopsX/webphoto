@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.6 2009/03/20 04:18:09 ohwada Exp $
+// $Id: file_handler.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
 // 2009-03-15 K.OHWADA
 // get_count_by_kind()
 // 2009-01-10 K.OHWADA
@@ -23,29 +25,25 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_file_handler
 //=========================================================
-class webphoto_file_handler extends webphoto_lib_handler
+class webphoto_file_handler extends webphoto_handler_base_ini
 {
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_file_handler( $dirname )
+function webphoto_file_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
 	$this->set_table_prefix_dirname( 'file' );
 	$this->set_id_name( 'file_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_file_handler( $dirname );
+		$instance = new webphoto_file_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

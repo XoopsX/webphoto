@@ -1,10 +1,16 @@
 <?php
-// $Id: gmap_info.php,v 1.2 2009/02/01 23:58:44 ohwada Exp $
+// $Id: gmap_info.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -34,7 +40,7 @@ class webphoto_inc_gmap_info
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_gmap_info( $dirname )
+function webphoto_inc_gmap_info( $dirname , $trust_dirname )
 {
 	$this->_DIRNAME    = $dirname ;
 	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
@@ -47,14 +53,14 @@ function webphoto_inc_gmap_info( $dirname )
 
 	$this->_init_xoops_param( $dirname );
 	$this->_init_config(      $dirname );
-	$this->_init_permission(  $dirname );
+	$this->_init_permission(  $dirname , $trust_dirname );
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_gmap_info( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_gmap_info( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }
@@ -304,9 +310,10 @@ function _init_config( $dirname )
 //---------------------------------------------------------
 // group_permission
 //---------------------------------------------------------
-function _init_permission( $dirname )
+function _init_permission( $dirname , $trust_dirname )
 {
-	$permission_handler =& webphoto_inc_group_permission::getSingleton( $dirname );
+	$permission_handler =& webphoto_inc_group_permission::getSingleton(
+		$dirname , $trust_dirname );
 
 	$this->_has_editable = $permission_handler->has_perm( 'editable' );
 }

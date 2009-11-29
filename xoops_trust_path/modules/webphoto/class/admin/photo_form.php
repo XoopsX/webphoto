@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.7 2009/01/24 07:10:39 ohwada Exp $
+// $Id: photo_form.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_cat_selbox
 // 2009-01-10 K.OHWADA
 // _check_deadlink()
 // 2008-11-29 K.OHWADA
@@ -55,7 +57,7 @@ function webphoto_admin_photo_form( $dirname , $trust_dirname )
 	$this->init_pagenavi();
 
 	$this->_cat_selbox_class =& webphoto_cat_selbox::getInstance();
-	$this->_cat_selbox_class->init( $dirname );
+	$this->_cat_selbox_class->init( $dirname , $trust_dirname );
 
 	$this->_show_class   =& webphoto_show_photo::getInstance( $dirname , $trust_dirname );
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.8 2009/01/29 04:26:55 ohwada Exp $
+// $Id: header.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// class/inc/ini.php
 // 2008-01-25 K.OHWADA
 // webphoto_include_once_preload_trust()
 // 2008-01-10 K.OHWADA
@@ -37,7 +39,9 @@ include_once XOOPS_ROOT_PATH."/class/xoopsformloader.php";
 //---------------------------------------------------------
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/xoops/base.php' );
+webphoto_include_once( 'class/inc/ini.php' );
 webphoto_include_once( 'class/inc/handler.php' );
+webphoto_include_once( 'class/inc/base_ini.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/admin_menu.php' );
@@ -57,17 +61,22 @@ webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
+webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
+webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
+webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
+webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
+webphoto_include_once( 'class/webphoto/embed.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/base.php' );
 webphoto_include_once( 'class/edit/form.php' );

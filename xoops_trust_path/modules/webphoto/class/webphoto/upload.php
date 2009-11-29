@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.7 2009/05/17 08:59:00 ohwada Exp $
+// $Id: upload.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_mime
 // 2009-05-05 K.OHWADA
 // Notice [PHP]: Undefined index: file_photo
 // 2008-11-16 K.OHWADA
@@ -52,7 +54,8 @@ function webphoto_upload( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_mime_class     =& webphoto_mime::getInstance( $dirname );
+	$this->_mime_class =& webphoto_mime::getInstance( 
+		$dirname , $trust_dirname );
 
 	$this->_uploader_class =& webphoto_lib_uploader::getInstance() ;
 	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;

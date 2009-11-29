@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.7 2009/09/08 16:14:16 ohwada Exp $
+// $Id: photo_public.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
 // 2009-09-06 K.OHWADA
 // add ns ew in get_rows_by_gmap_area()
 // 2009-05-17 K.OHWADA
@@ -40,11 +42,20 @@ class webphoto_photo_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_photo_public( $dirname )
+function webphoto_photo_public( $dirname, $trust_dirname )
 {
-	$this->_config_class  =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler  =& webphoto_item_handler::getInstance( $dirname );
-	$this->_cat_handler   =& webphoto_cat_handler::getInstance( $dirname );
+	$this->_cat_handler   
+		=& webphoto_cat_handler::getInstance( $dirname, $trust_dirname );
+	$this->_item_handler  
+		=& webphoto_item_handler::getInstance( $dirname, $trust_dirname );
+	$this->_item_cat_handler 
+		=& webphoto_item_cat_handler::getInstance( $dirname, $trust_dirname );
+	$this->_catlist_class  
+		=& webphoto_inc_catlist::getSingleton( $dirname, $trust_dirname );
+	$this->_tagcloud_class 
+		=& webphoto_inc_tagcloud::getSingleton( $dirname, $trust_dirname );
+
+	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
 	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
 	$this->_cfg_cat_child     = $this->_config_class->get_by_name( 'cat_child' );
@@ -52,18 +63,14 @@ function webphoto_photo_public( $dirname )
 	$cfg_use_pathinfo         = $this->_config_class->get_by_name( 'use_pathinfo' );
 	$cfg_uploads_path         = $this->_config_class->get_uploads_path();
 
-	$this->_item_cat_handler =& webphoto_item_cat_handler::getInstance( $dirname );
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
-
-	$this->_catlist_class  =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_tagcloud_class =& webphoto_inc_tagcloud::getSingleton( $dirname );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_photo_public( $dirname );
+		$instance = new webphoto_photo_public( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -79,40 +86,6 @@ function get_cat_row( $cat_id )
 function get_cat_all_tree_array()
 {
 	return $this->_catlist_class->get_cat_all_tree_array() ;
-}
-
-function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
-{
-	$rows        = null ; 
-	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id );
-	$this_sum    = $this->get_count_by_catid( $cat_id );
-	$total       = $this->get_count_by_catid_array( $catid_array );
-
-	switch( $this->_cfg_cat_child ) 
-	{
-		case _C_WEBPHOTO_CAT_CHILD_EMPTY :
-			if ( $this_sum > 0 ) {
-				$rows = $this->get_rows_by_catid_orderby( 
-					$cat_id, $orderby, $limit, $offset );
-			} else {
-				$rows = $this->get_rows_by_catid_array_orderby( 
-					$catid_array, $orderby, $limit, $offset );
-			}
-			break;
-
-		case _C_WEBPHOTO_CAT_CHILD_ALWAYS :
-			$rows = $this->get_rows_by_catid_array_orderby( 
-				$catid_array, $orderby, $limit, $offset );
-			break;
-
-		case _C_WEBPHOTO_CAT_CHILD_NON :
-		default:
-			$rows = $this->get_rows_by_catid_orderby( 
-				$cat_id, $orderby, $limit, $offset );
-			break;
-	}
-
-	return array( $rows, $total, $this_sum );
 }
 
 function _check_cat_perm_by_catid( $cat_id )
@@ -137,58 +110,47 @@ function build_cat_show( $cat_row )
 //---------------------------------------------------------
 // count
 //---------------------------------------------------------
-function get_count_by_catid( $param )
-{
-	if ( $this->_cfg_perm_cat_read != _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
-		if ( ! $this->_check_cat_perm_by_catid( $param ) ) {
-			return 0 ;
-		}
-	}
-
-	return $this->_item_cat_handler->get_count_item_by_name_param( 'catid', $param );
-}
-
 function get_count()
 {
-	return $this->_get_count_by_name_param( 'public', null );
+	return $this->get_count_by_name_param( 'public', null );
 }
 
 function get_count_imode()
 {
-	return $this->_get_count_by_name_param( 'imode', null );
+	return $this->get_count_by_name_param( 'imode', null );
 }
 
 function get_count_by_catid_array( $param )
 {
-	return $this->_get_count_by_name_param( 'catid_array', $param );
+	return $this->get_count_by_name_param( 'catid_array', $param );
 }
 
 function get_count_by_like_datetime( $param )
 {
-	return $this->_get_count_by_name_param( 'like_datetime', $param );
+	return $this->get_count_by_name_param( 'like_datetime', $param );
 }
 
 function get_count_by_place( $param )
 {
-	return $this->_get_count_by_name_param( 'place', $param );
+	return $this->get_count_by_name_param( 'place', $param );
 }
 
 function get_count_by_place_array( $param )
 {
-	return $this->_get_count_by_name_param( 'place_array', $param );
+	return $this->get_count_by_name_param( 'place_array', $param );
 }
 
 function get_count_by_search( $param )
 {
-	return $this->_get_count_by_name_param( 'search', $param );
+	return $this->get_count_by_name_param( 'search', $param );
 }
 
 function get_count_by_uid( $param )
 {
-	return $this->_get_count_by_name_param( 'uid', $param );
+	return $this->get_count_by_name_param( 'uid', $param );
 }
 
-function _get_count_by_name_param( $name, $param )
+function get_count_by_name_param( $name, $param )
 {
 	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
 		return $this->_item_cat_handler->get_count_item_by_name_param( 
@@ -203,18 +165,6 @@ function _get_count_by_name_param( $name, $param )
 //---------------------------------------------------------
 // rows
 //---------------------------------------------------------
-function get_rows_by_catid_orderby( $param, $orderby, $limit=0, $offset=0 )
-{
-	if ( $this->_cfg_perm_cat_read != _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
-		if ( ! $this->_check_cat_perm_by_catid( $param ) ) {
-			return false ;
-		}
-	}
-
-	return $this->_item_cat_handler->get_rows_item_by_name_param_orderby( 
-		'catid', $param, $orderby, $limit, $offset );
-}
-
 function get_rows_by_orderby( $orderby, $limit=0, $offset=0, $key=false )
 {
 	return $this->get_rows_by_name_param_orderby( 

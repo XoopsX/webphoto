@@ -1,5 +1,5 @@
 <?php
-// $Id: video_middle_thumb_create.php,v 1.2 2009/03/20 04:18:09 ohwada Exp $
+// $Id: video_middle_thumb_create.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_ffmpeg etc
 // 2009-03-15 K.OHWADA
 // create_small_param()
 //---------------------------------------------------------
@@ -41,9 +43,12 @@ function webphoto_edit_video_middle_thumb_create( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_ffmpeg_class     =& webphoto_ffmpeg::getInstance( $dirname );
-	$this->_item_build_class =& webphoto_edit_item_build::getInstance( $dirname );
-	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( $dirname );
+	$this->_ffmpeg_class     =& webphoto_ffmpeg::getInstance(
+		$dirname , $trust_dirname );
+	$this->_item_build_class =& webphoto_edit_item_build::getInstance(
+		$dirname , $trust_dirname );
+	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance(
+		$dirname , $trust_dirname );
 
 	$this->_cfg_makethumb  = $this->get_config_by_name( 'makethumb' );
 	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );

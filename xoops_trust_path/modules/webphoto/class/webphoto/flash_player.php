@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.10 2009/11/06 18:04:17 ohwada Exp $
+// $Id: flash_player.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_base_ini
+// auto adjust
 // 2009-10-25 K.OHWADA
 // _C_WEBPHOTO_FILE_KIND_MP3
 // 2009-02-20 K.OHWADA
@@ -38,7 +41,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // http://code.jeroenwijering.com/trac/wiki/Flashvars3
 //---------------------------------------------------------
 
-class webphoto_flash_player
+class webphoto_flash_player extends webphoto_base_ini
 {
 	var $_config_class;
 	var $_item_handler;
@@ -46,8 +49,6 @@ class webphoto_flash_player
 	var $_player_handler;
 	var $_flashvar_handler;
 
-	var $_is_module_admin;
-	var $_xoops_groups;
 	var $_cfg_use_callback;
 
 // result
@@ -64,23 +65,12 @@ class webphoto_flash_player
 	var $_width       = 0;
 	var $_height      = 0;
 
-	var $_DIRNAME;
-	var $_MODULE_URL;
-	var $_MODULE_DIR;
 	var $_PLAYLISTS_DIR ;
 	var $_PLAYLISTS_URL ;
 	var $_LOGOS_DIR ;
 	var $_LOGOS_URL ;
 
 	var $_CALLBACK_URL = null;
-
-	var $_FLASH_VERSION        = _C_WEBPHOTO_FLASH_VERSION ;
-	var $_BUFFERLENGTH_DEFAULT = _C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT ;
-	var $_ROTATETIME_DEFAULT   = _C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT ;
-	var $_VOLUME_DEFAULT       = _C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT ;
-	var $_LINKTARGET_DEFAULT   = _C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT ;
-	var $_OVERSTRETCH_DEFAULT  = _C_WEBPHOTO_FLASHVAR_OVERSTRETCH_DEFAULT ;
-	var $_TRANSITION_DEFAULT   = _C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT ;
 
 	var $_CODEBASE = 'http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0';
 	var $_CLASSID  = 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000';
@@ -91,22 +81,22 @@ class webphoto_flash_player
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_flash_player( $dirname )
+function webphoto_flash_player( $dirname , $trust_dirname )
 {
-	$this->_DIRNAME    = $dirname ;
-	$this->_MODULE_URL = XOOPS_URL       .'/modules/'. $dirname;
-	$this->_MODULE_DIR = XOOPS_ROOT_PATH .'/modules/'. $dirname;
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
 
 	$this->_xoops_class      =& webphoto_xoops_base::getInstance();
 	$this->_utility_class    =& webphoto_lib_utility::getInstance();
 	$this->_config_class     =& webphoto_config::getInstance( $dirname );
-	$this->_item_handler     =& webphoto_item_handler::getInstance( $dirname );
-	$this->_file_handler     =& webphoto_file_handler::getInstance( $dirname );
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
 
-	$this->_is_module_admin   = $this->_xoops_class->get_my_user_is_module_admin();
-	$this->_xoops_groups      = $this->_xoops_class->get_my_user_groups();
+	$this->_item_handler     
+		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_file_handler     
+		=& webphoto_file_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_player_handler   
+		=& webphoto_player_handler::getInstance( $dirname , $trust_dirname  );
+	$this->_flashvar_handler 
+		=& webphoto_flashvar_handler::getInstance( $dirname , $trust_dirname  );
 
 	$uploads_path             = $this->_config_class->get_uploads_path();
 	$this->_cfg_use_callback  = $this->_config_class->get_by_name( 'use_callback' );
@@ -120,14 +110,13 @@ function webphoto_flash_player( $dirname )
 	$this->_LOGOS_URL     = XOOPS_URL       . $logos_path ;
 
 	$this->_CALLBACK_URL = $this->_MODULE_URL.'/callback.php';
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_flash_player( $dirname );
+		$instance = new webphoto_flash_player( $dirname , $trust_dirname );
 	}
 	return $instance;
 }
@@ -200,6 +189,7 @@ function build_code_embed( $param )
 
 	$item_row       = $param['item_row']; 
 	$cont_row       = $param['cont_row']; 
+	$flash_row      = $param['flash_row']; 
 	$swf_row        = $param['swf_row']; 
 	$mp3_row        = $param['mp3_row']; 
 	$player_row     = $param['player_row']; 
@@ -223,7 +213,7 @@ function build_code_embed( $param )
 	}
 
 	list( $width, $height ) = 
-		$this->get_width_height( $item_row, $player_row, $flashvar_row ) ;
+		$this->get_width_height( $item_row, $flashvar_row, $flash_row, $player_row ) ;
 
 	$embed   = $this->build_embed(   $item_id, $flashplayer, $width, $height, $config_url );
 	$embedjs = $this->build_embedjs( $item_id, $flashplayer, $width, $height, $config_url );
@@ -403,7 +393,7 @@ function set_variables_in_buffer( $param )
 
 // overwrite by flashvar
 	list( $width, $height ) = 
-		$this->get_width_height( $item_row, $player_row, $flashvar_row ) ;
+		$this->get_width_height( $item_row, $flashvar_row, $flash_row, $player_row ) ;
 
 	if (( $flashvar_displaywidth > 0 )&&( $flashvar_displayheight > 0 )) {
 		$displaywidth   = $flashvar_displaywidth;
@@ -570,7 +560,7 @@ function set_variables_in_buffer( $param )
 		$this->set_variable_buffer( 'logo', $movie_logo, true );
 	}
 
-	if ( $overstretch && ( $overstretch != $this->_OVERSTRETCH_DEFAULT ) ) {
+	if ( $overstretch && ( $overstretch != _C_WEBPHOTO_FLASHVAR_OVERSTRETCH_DEFAULT ) ) {
 		$this->set_variable_buffer( 'overstretch', $overstretch );
 	}
 	if ( $showeq == 1 ) {  
@@ -579,7 +569,7 @@ function set_variables_in_buffer( $param )
 	if ( $showicons == 0 ) {  
 		$this->set_variable_buffer( 'showicons', 'false' );
 	}
-	if ( $transition && ( $transition != $this->_TRANSITION_DEFAULT ) ) {
+	if ( $transition && ( $transition != _C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT ) ) {
 		$this->set_variable_buffer( 'transition', $transition );
 	}
 
@@ -621,7 +611,7 @@ function set_variables_in_buffer( $param )
 			$this->get_movie_autostart( $autostart ) );
 	}
 
-	if ( $bufferlength && ( $bufferlength != $this->_BUFFERLENGTH_DEFAULT ) ) {
+	if ( $bufferlength && ( $bufferlength != _C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT ) ) {
 		$this->set_variable_buffer( 'bufferlength',  $bufferlength );
 	}
 	if( $captions != '' ) {
@@ -633,7 +623,7 @@ function set_variables_in_buffer( $param )
 	if ( $repeat == 1 ) {  
 		$this->set_variable_buffer( 'repeat', 'true' );
 	}
-	if ( $rotatetime && ( $rotatetime != $this->_ROTATETIME_DEFAULT ) ) {
+	if ( $rotatetime && ( $rotatetime != _C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT ) ) {
 		$this->set_variable_buffer( 'rotatetime', $rotatetime );
 	}
 	if ($shuffle == 1) {  
@@ -642,7 +632,7 @@ function set_variables_in_buffer( $param )
 	if ( $smoothing == 0 ) {  
 		$this->set_variable_buffer( 'smoothing', 'false' );
 	}
-	if ( $volume && ($volume != $this->_VOLUME_DEFAULT ) ) {  
+	if ( $volume && ($volume != _C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT ) ) {  
 		$this->set_variable_buffer( 'volume', $volume );
 	}
 
@@ -667,7 +657,7 @@ function set_variables_in_buffer( $param )
 		if ( $linkfromdisplay == 1 ) { 
 			$this->set_variable_buffer( 'linkfromdisplay', 'true' );
 		}
-		if ( $linktarget && ( $linktarget != $this->_LINKTARGET_DEFAULT ) ) {
+		if ( $linktarget && ( $linktarget != _C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT ) ) {
 			$this->set_variable_buffer( 'linktarget', $linktarget );
 		}
 	}
@@ -856,7 +846,7 @@ function build_script_end()
 
 function build_var_swfobject( $flashplayer, $swf_id, $width, $height )
 {
-	$str = 'var s'.$this->_item_id.' = new SWFObject("'.$flashplayer.'","'.$swf_id.'","'.$width.'","'.$height.'","'. $this->_FLASH_VERSION .'"); '."\n";
+	$str = 'var s'.$this->_item_id.' = new SWFObject("'.$flashplayer.'","'.$swf_id.'","'.$width.'","'.$height.'","'. _C_WEBPHOTO_FLASH_VERSION .'"); '."\n";
 	return $str;
 }
 
@@ -903,28 +893,34 @@ function is_color_style( $style )
 	return false;
 }
 
-function get_width_height( $item_row, $player_row, $flashvar_row )
+function get_width_height( $item_row, $flashvar_row, $flash_row, $player_row )
 {
-	$width           = $player_row['player_width'];
-	$height          = $player_row['player_height'];
-	$flashvar_width  = $flashvar_row['flashvar_width'];
-	$flashvar_height = $flashvar_row['flashvar_height'];
 	$item_width      = $item_row['item_page_width'];
 	$item_height     = $item_row['item_page_height'];
+	$flashvar_width  = $flashvar_row['flashvar_width'];
+	$flashvar_height = $flashvar_row['flashvar_height'];
+	$flash_width     = $flash_row['file_width'];
+	$flash_height    = $flash_row['file_height'];
+	$player_width    = $player_row['player_width'];
+	$player_height   = $player_row['player_height'];
 
-// overwrite by item
+// item
 	if (( $item_width > 0 )&&( $item_height > 0 )) {
-		$width   = $item_width;
-		$height  = $item_height;
+		return array( $item_width, $item_height );
 	}
 
-// overwrite by flashvar
+// flashvar
 	if (( $flashvar_width > 0 )&&( $flashvar_height > 0 )) {
-		$width   = $flashvar_width;
-		$height  = $flashvar_height;
+		return array( $flashvar_width, $flashvar_height );
 	}
 
-	return array( $width, $height );
+// auto adjust
+	if (( $flash_width > 0 )&&( $flash_height > 0 )) {
+		return $this->_utility_class->adjust_image_size( 
+			$flash_width, $flash_height, $player_width, $player_height );
+	}
+
+	return array( $player_width, $player_height );
 }
 
 function check_perm_down( $item_row )
@@ -1032,6 +1028,8 @@ function is_type_kind()
 		case _C_WEBPHOTO_ITEM_KIND_IMAGE :
 		case _C_WEBPHOTO_ITEM_KIND_VIDEO :
 		case _C_WEBPHOTO_ITEM_KIND_AUDIO :
+		case _C_WEBPHOTO_ITEM_KIND_OFFICE :
+		case _C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER :
 		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL :
 		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE :
 			return true ;

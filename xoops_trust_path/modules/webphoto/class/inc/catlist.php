@@ -1,5 +1,5 @@
 <?php
-// $Id: catlist.php,v 1.6 2009/05/23 14:57:15 ohwada Exp $
+// $Id: catlist.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-05-17 K.OHWADA
 // _build_cat_summary()
 // 2009-01-25 K.OHWADA
@@ -21,7 +23,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_catlist
 //=========================================================
-class webphoto_inc_catlist extends webphoto_inc_handler
+class webphoto_inc_catlist extends webphoto_inc_base_ini
 {
 	var $_xoops_tree_handler;
 	var $_table_cat ;
@@ -48,9 +50,10 @@ class webphoto_inc_catlist extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_catlist( $dirname )
+function webphoto_inc_catlist( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 	$this->_init_xoops_config( $dirname );
 
@@ -67,11 +70,11 @@ function webphoto_inc_catlist( $dirname )
 	$this->_CATS_URL = XOOPS_URL . $this->_cfg_uploadspath .'/categories' ;
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_catlist( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_catlist( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }

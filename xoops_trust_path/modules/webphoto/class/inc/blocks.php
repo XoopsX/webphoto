@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.19 2009/04/11 14:23:34 ohwada Exp $
+// $Id: blocks.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// getInstance -> getSingleton 
 // 2009-04-10 K.OHWADA
 // timeline_show()
 // 2009-01-25 K.OHWADA
@@ -39,6 +41,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_blocks extends webphoto_inc_public
 {
+	var $_TRUST_DIRNAME ;
+
 	var $_utility_class ;
 	var $_multibyte_class ;
 	var $_catlist_class ;
@@ -87,12 +91,31 @@ class webphoto_inc_blocks extends webphoto_inc_public
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_blocks()
+function webphoto_inc_blocks( $dirname , $trust_dirname )
 {
 	$this->webphoto_inc_public();
+	$this->init_public( $dirname , $trust_dirname );
+	$this->auto_publish();
+
+	$this->_init_xoops_config_for_block( $dirname );
+
+	$this->_catlist_class    
+		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
+	$this->_gmap_info_class  
+		=& webphoto_inc_gmap_info::getSingleton( $dirname , $trust_dirname );
+	$this->_tagcloud_class   
+		=& webphoto_inc_tagcloud::getSingleton( $dirname , $trust_dirname );
+
+	$this->_header_class     =& webphoto_inc_xoops_header::getSingleton( $dirname );
+	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
+
+	$this->_timeline_class   =& webphoto_inc_timeline::getSingleton( $dirname );
+	$this->_init_timeline    = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
 
 	$this->_utility_class   =& webphoto_lib_utility::getInstance();
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+
+	$this->_block_id = isset($_GET['bid']) ? intval($_GET['bid']) : 0 ;
 
 	$this->_YESNO_OPTIONS = array(
 		1 => _YES ,
@@ -114,33 +137,13 @@ function webphoto_inc_blocks()
 	);
 }
 
-function &getInstance()
+function &getSingleton( $dirname , $trust_dirname )
 {
-	static $instance;
-	if (!isset($instance)) {
-		$instance = new webphoto_inc_blocks();
+	static $singletons;
+	if ( !isset( $singletons[ $dirname ] ) ) {
+		$singletons[ $dirname ] = new webphoto_inc_blocks( $dirname , $trust_dirname );
 	}
-	return $instance;
-}
-
-function _init( $options )
-{
-	$dirname = $this->_get_option( $options, 0, null ) ;
-
-	$this->init_public( $dirname );
-	$this->_init_xoops_config_for_block( $dirname );
-	$this->auto_publish( $dirname );
-
-	$this->_header_class     =& webphoto_inc_xoops_header::getSingleton( $dirname );
-	$this->_catlist_class    =& webphoto_inc_catlist::getSingleton( $dirname );
-	$this->_tagcloud_class   =& webphoto_inc_tagcloud::getSingleton( $dirname );
-	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
-	$this->_gmap_info_class  =& webphoto_inc_gmap_info::getSingleton( $dirname );
-
-	$this->_timeline_class   =& webphoto_inc_timeline::getSingleton( $dirname );
-	$this->_init_timeline    = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
-
-	$this->_block_id = isset($_GET['bid']) ? intval($_GET['bid']) : 0 ;
+	return $singletons[ $dirname ];
 }
 
 //---------------------------------------------------------
@@ -166,25 +169,21 @@ function _init( $options )
 //---------------------------------------------------------
 function topnews_show( $options )
 {
-	$this->_init( $options );
 	return $this->_top_show_common( 'topnews', $options );
 }
 
 function topnews_p_show( $options )
 {
-	$this->_init( $options );
 	return $this->_top_show_common( 'topnews_p', $options );
 }
 
 function topnews_edit( $options )
 {
-	$this->_init( $options );
 	return $this->_top_edit_common( 'topnews', $options ) ;
 }
 
 function topnews_p_edit( $options )
 {
-	$this->_init( $options );
 	return $this->_top_edit_common( 'topnews_p', $options ) ;
 }
 
@@ -193,25 +192,21 @@ function topnews_p_edit( $options )
 //---------------------------------------------------------
 function tophits_show( $options )
 {
-	$this->_init( $options );
 	return $this->_top_show_common( 'tophits', $options );
 }
 
 function tophits_p_show( $options )
 {
-	$this->_init( $options );
 	return $this->_top_show_common( 'tophits_p', $options );
 }
 
 function tophits_edit( $options )
 {
-	$this->_init( $options );
 	return $this->_top_edit_common('tophits', $options ) ;
 }
 
 function tophits_p_edit( $options )
 {
-	$this->_init( $options );
 	return $this->_top_edit_common( 'tophits_p', $options ) ;
 }
 
@@ -220,13 +215,11 @@ function tophits_p_edit( $options )
 //---------------------------------------------------------
 function rphoto_show( $options )
 {
-	$this->_init( $options );
 	return $this->_top_show_common( 'rphoto', $options );
 }
 
 function rphoto_edit( $options )
 {
-	$this->_init( $options );
 	return $this->_top_edit_common( 'rphoto', $options ) ;
 }
 
@@ -242,7 +235,6 @@ function rphoto_edit( $options )
 //---------------------------------------------------------
 function catlist_show( $options )
 {
-	$this->_init( $options );
 	$show_sub      = $this->_get_option_int(  $options, 1 ) ;
 	$show_main_img = $this->_get_option_int(  $options, 2 ) ;
 	$show_sub_img  = $this->_get_option_int(  $options, 3 ) ;
@@ -286,7 +278,6 @@ function _assign_block( $mode, $block )
 
 function catlist_edit( $options )
 {
-	$this->_init( $options );
 	$show_sub      = $this->_get_option_int(  $options, 1 ) ;
 	$show_main_img = $this->_get_option_int(  $options, 2 ) ;
 	$show_sub_img  = $this->_get_option_int(  $options, 3 ) ;
@@ -328,7 +319,6 @@ function catlist_edit( $options )
 //---------------------------------------------------------
 function tagcloud_show( $options )
 {
-	$this->_init( $options );
 	$limit = $this->_get_option_int(  $options, 1 ) ;
 
 	$block = array() ;
@@ -340,7 +330,6 @@ function tagcloud_show( $options )
 
 function tagcloud_edit( $options )
 {
-	$this->_init( $options );
 	$limit = $this->_get_option_int( $options, 1 ) ;
 
 	$ret  = '<table border="0"><tr><td>'."\n";
@@ -370,7 +359,6 @@ function tagcloud_edit( $options )
 //---------------------------------------------------------
 function timeline_show( $options )
 {
-	$this->_init( $options );
 	$latest = $this->_get_option_int( $options, 1 ) ;
 	$random = $this->_get_option_int( $options, 2 ) ;
 	$height = $this->_get_option_int( $options, 3 ) ;
@@ -406,7 +394,6 @@ function timeline_show( $options )
 
 function timeline_edit( $options )
 {
-	$this->_init( $options );
 	$latest = $this->_get_option_int( $options, 1 ) ;
 	$random = $this->_get_option_int( $options, 2 ) ;
 	$height = $this->_get_option_int( $options, 3 ) ;

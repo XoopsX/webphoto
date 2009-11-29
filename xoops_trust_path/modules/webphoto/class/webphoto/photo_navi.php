@@ -1,10 +1,16 @@
 <?php
-// $Id: photo_navi.php,v 1.1 2008/11/21 07:56:57 ohwada Exp $
+// $Id: photo_navi.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -32,19 +38,21 @@ class webphoto_photo_navi extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_photo_navi( $dirname )
+function webphoto_photo_navi( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_error();
 
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
-	$this->_image_class  =& webphoto_show_image::getInstance( $dirname );
+	$this->_item_handler =& webphoto_item_handler::getInstance( 
+		$dirname , $trust_dirname );
+	$this->_image_class  =& webphoto_show_image::getInstance( 
+		$dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_photo_navi( $dirname );
+		$instance = new webphoto_photo_navi( $dirname , $trust_dirname );
 	}
 	return $instance;
 }

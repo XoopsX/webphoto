@@ -1,10 +1,16 @@
 <?php
-// $Id: swf_create.php,v 1.1 2009/01/29 04:28:49 ohwada Exp $
+// $Id: swf_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -27,7 +33,7 @@ class webphoto_edit_swf_create extends webphoto_edit_base_create
 //---------------------------------------------------------
 function webphoto_edit_swf_create( $dirname , $trust_dirname )
 {
-	$this->webphoto_edit_base_create( $dirname );
+	$this->webphoto_edit_base_create( $dirname , $trust_dirname );
 
 	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }
@@ -52,10 +58,6 @@ function create_param( $param )
 	$src_file = $param['src_file'];
 	$src_ext  = $param['src_ext'];
 	$src_kind = $param['src_kind'];
-
-	if ( ! $this->is_general_kind( $src_kind ) ) {
-		return null ;
-	}
 
 // return input file is swf 
 	if ( $this->is_swf_ext( $src_ext ) ) {

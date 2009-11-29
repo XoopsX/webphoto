@@ -1,5 +1,5 @@
 <?php
-// $Id: gicon_form.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
+// $Id: gicon_form.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_gicon_handler
 // 2009-01-10 K.OHWADA
 // webphoto_form_this -> webphoto_edit_form
 // 2008-11-08 K.OHWADA
@@ -41,7 +43,8 @@ function webphoto_admin_gicon_form( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
 
-	$this->_gicon_handler =& webphoto_gicon_handler::getInstance( $dirname );
+	$this->_gicon_handler 
+		=& webphoto_gicon_handler::getInstance( $dirname, $trust_dirname );
 
 	$this->_cfg_fsize       = $this->_config_class->get_by_name( 'fsize' );
 	$this->_cfg_gicon_width = $this->_config_class->get_by_name( 'gicon_width' );

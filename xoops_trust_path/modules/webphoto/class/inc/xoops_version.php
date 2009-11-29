@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.28 2009/11/06 18:04:17 ohwada Exp $
+// $Id: xoops_version.php,v 1.29 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-10-25 K.OHWADA
 // use_lame
 // 2009-05-30 K.OHWADA
@@ -57,13 +59,14 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_xoops_version
 //=========================================================
-class webphoto_inc_xoops_version extends webphoto_inc_handler
+class webphoto_inc_xoops_version extends webphoto_inc_base_ini
 {
-	var $_cfg_catonsubmenu = false;
-	var $_cfg_use_pathinfo = false;
-	var $_has_insertable   = false;
-	var $_has_rateview     = false;
-	var $_is_module_admin  = false;
+	var $_cfg_catonsubmenu  = false;
+	var $_cfg_use_pathinfo  = false;
+	var $_has_insertable    = false;
+	var $_has_rateview      = false;
+	var $_is_module_admin   = false;
+	var $_ini_community_use = false;
 
 	var $_show_sub_myphoto    = true;
 	var $_show_sub_popular    = true;
@@ -85,14 +88,16 @@ class webphoto_inc_xoops_version extends webphoto_inc_handler
 //---------------------------------------------------------
 function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
 	$this->_init_xoops_module( $dirname );
 	$this->_init_config( $dirname );
-	$this->_init_group_permission( $dirname );
+	$this->_init_group_permission( $dirname, $trust_dirname );
 	$this->_init_is_module_admin();
 	$this->_init_workdir( $dirname, $trust_dirname );
+	$this->_init_ini(     $dirname, $trust_dirname );
 
 	$this->_TRUST_DIRNAME = $trust_dirname ;
 
@@ -105,7 +110,7 @@ function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
 
-	if ( _C_WEBPHOTO_COMMUNITY_USE ) {
+	if ( $this->_ini_community_use ) {
 		$this->_show_sub_myphoto    = false;
 		$this->_show_sub_popular    = false;
 		$this->_show_sub_highrate   = false;
@@ -1419,9 +1424,10 @@ function _init_config( $dirname )
 //---------------------------------------------------------
 // group_permission
 //---------------------------------------------------------
-function _init_group_permission( $dirname )
+function _init_group_permission( $dirname, $trust_dirname  )
 {
-	$permission_handler =& webphoto_inc_group_permission::getSingleton( $dirname );
+	$permission_handler =& webphoto_inc_group_permission::getSingleton( 
+		$dirname, $trust_dirname );
 
 	$this->_has_insertable = $permission_handler->has_perm( 'insertable' );
 	$this->_has_rateview   = $permission_handler->has_perm( 'rateview' );
@@ -1459,6 +1465,15 @@ function _init_workdir( $dirname, $trust_dirname )
 {
 	$workdir_class =& webphoto_inc_workdir::getSingleton( $dirname, $trust_dirname );
 	$this->_config_workdir_default = $workdir_class->get_config_workdir() ;
+}
+
+//---------------------------------------------------------
+// ini
+//---------------------------------------------------------
+function _init_ini( $dirname, $trust_dirname )
+{
+	$this->init_base_ini( $dirname , $trust_dirname );
+	$this->_ini_community_use = $this->get_ini('community_use');
 }
 
 // --- class end ---

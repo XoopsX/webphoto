@@ -1,5 +1,5 @@
 <?php
-// $Id: group_permission.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
+// $Id: group_permission.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-07-01 K.OHWADA
@@ -20,7 +22,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // class webphoto_inc_group_permission
 // caller webphoto_permission webphoto_inc_xoops_version
 //=========================================================
-class webphoto_inc_group_permission extends webphoto_inc_handler
+class webphoto_inc_group_permission extends webphoto_inc_base_ini
 {
 	var $_cached_perms = array();
 
@@ -31,20 +33,21 @@ class webphoto_inc_group_permission extends webphoto_inc_handler
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_group_permission( $dirname )
+function webphoto_inc_group_permission( $dirname , $trust_dirname )
 {
-	$this->webphoto_inc_handler();
+	$this->webphoto_inc_base_ini();
+	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
 	$this->_init_xoops( $dirname );
 	$this->_init_permission( $dirname );
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_group_permission( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_group_permission( $dirname , $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }

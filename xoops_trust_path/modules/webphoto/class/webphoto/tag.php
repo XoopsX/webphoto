@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
+// $Id: tag.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_tag_handler
 // 2008-12-12 K.OHWADA
 // move build_tagcloud() to webphoto_inc_tag
 // 2008-07-01 K.OHWADA
@@ -39,13 +41,17 @@ class webphoto_tag extends webphoto_lib_error
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_tag( $dirname )
+function webphoto_tag( $dirname, $trust_dirname )
 {
 	$this->webphoto_lib_error();
 
-	$this->_tag_handler       =& webphoto_tag_handler::getInstance(   $dirname );
-	$this->_p2t_handler       =& webphoto_p2t_handler::getInstance(   $dirname );
-	$this->_photo_tag_handler =& webphoto_photo_tag_handler::getInstance( $dirname );
+	$this->_tag_handler       
+		=& webphoto_tag_handler::getInstance(   $dirname, $trust_dirname );
+	$this->_p2t_handler       
+		=& webphoto_p2t_handler::getInstance(   $dirname, $trust_dirname );
+	$this->_photo_tag_handler 
+		=& webphoto_photo_tag_handler::getInstance( $dirname, $trust_dirname );
+
 	$this->_utility_class     =& webphoto_lib_utility::getInstance();
 	$this->_uri_class         =& webphoto_uri::getInstance( $dirname );
 
@@ -55,11 +61,11 @@ function webphoto_tag( $dirname )
 
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_tag( $dirname );
+		$instance = new webphoto_tag( $dirname, $trust_dirname );
 	}
 	return $instance;
 }

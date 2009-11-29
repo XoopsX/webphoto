@@ -1,10 +1,16 @@
 <?php
-// $Id: file_table_manage.php,v 1.1 2008/08/25 19:35:36 ohwada Exp $
+// $Id: file_table_manage.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-24 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_file_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -21,7 +27,8 @@ class webphoto_admin_file_table_manage extends webphoto_lib_manage
 function webphoto_admin_file_table_manage( $dirname , $trust_dirname )
 {
 	$this->webphoto_lib_manage( $dirname , $trust_dirname );
-	$this->set_manage_handler( webphoto_file_handler::getInstance( $dirname ) );
+	$this->set_manage_handler( 
+		webphoto_file_handler::getInstance( $dirname, $trust_dirname ) );
 	$this->set_manage_title_by_name( 'FILE_TABLE_MANAGE' );
 
 	$this->set_manage_list_column_array(

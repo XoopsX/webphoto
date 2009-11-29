@@ -1,5 +1,5 @@
 <?php
-// $Id: tree_handler.php,v 1.4 2008/12/18 13:23:16 ohwada Exp $
+// $Id: tree_handler.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -27,6 +27,8 @@ include_once XOOPS_ROOT_PATH.'/class/xoopstree.php';
 class webphoto_lib_tree_handler extends webphoto_lib_handler
 {
 	var $_xoops_tree_handler;
+
+	var $_cached_perm_in_parent_key_array = array();
 
 	var $_ORDER_DEFAULT = null;
 
@@ -259,6 +261,37 @@ function getAllChild( $sel_id=0, $order="", $parray = array() )
 function getChildTreeArray( $sel_id=0, $order="", $parray = array(), $r_prefix="" )
 {
 	return $this->_xoops_tree_handler->getChildTreeArray( $sel_id, $order, $parray, $r_prefix ) ;
+}
+
+//---------------------------------------------------------
+// permission
+//---------------------------------------------------------
+function check_cached_perm_in_parents_by_id_name_groups_key( $id, $name, $groups=null, $key='0' )
+{
+	if ( isset( $this->_cached_perm_in_parent_key_array[ $id ][ $key ] ) ) {
+		return  $this->_cached_perm_in_parent_key_array[ $id ][ $key ];
+	}
+
+	$ret = $this->check_perm_in_parents_by_id_name_groups_key( $id, $name, $groups, $key );
+	$this->_cached_perm_in_parent_key_array[ $id ][ $key ] = $ret;
+	return $ret;
+}
+
+function check_perm_in_parents_by_id_name_groups_key( $id, $name, $groups=null, $key='0' )
+{
+	$rows = $this->get_parent_path_array( $id );
+	if ( !is_array($rows) || !count($rows) ) {
+		return false;	// error
+	}
+
+	foreach( $rows as $row )
+	{
+		$ret = $this->check_cached_perm_by_row_name_groups_key( $row, $name, $groups, $key ); 
+		if ( !$ret ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // --- class end ---

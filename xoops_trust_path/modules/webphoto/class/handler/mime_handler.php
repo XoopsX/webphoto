@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
+// $Id: mime_handler.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// webphoto_lib_handler -> webphoto_handler_base_ini
+// perm_int_with_like_separetor()
 // 2009-10-25 K.OHWADA
 // mime_kind
 // 2008-10-01 K.OHWADA
@@ -23,32 +26,27 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_mime_handler
 //=========================================================
-class webphoto_mime_handler extends webphoto_lib_handler
+class webphoto_mime_handler extends webphoto_handler_base_ini
 {
 	var $_cached_ext_array = array();
-
-	var $_SEPARATOR = '&';
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_mime_handler( $dirname )
+function webphoto_mime_handler( $dirname, $trust_dirname )
 {
-	$this->webphoto_lib_handler( $dirname );
+	$this->webphoto_handler_base_ini( $dirname, $trust_dirname );
+
 	$this->set_table_prefix_dirname( 'mime' );
 	$this->set_id_name( 'mime_id' );
 
-	$constpref = strtoupper( '_P_' . $dirname. '_' ) ;
-	$this->set_debug_sql_by_const_name(   $constpref.'DEBUG_SQL' );
-	$this->set_debug_error_by_const_name( $constpref.'DEBUG_ERROR' );
-
 }
 
-function &getInstance( $dirname )
+function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {
-		$instance = new webphoto_mime_handler( $dirname );
+		$instance = new webphoto_mime_handler( $dirname, $trust_dirname );
 	}
 	return $instance;
 }
@@ -205,7 +203,7 @@ function get_rows_by_mygroups( $groups, $limit=0, $offset=0 )
 {
 	$arr = array();
 	foreach ( $groups as $group ) {
-		$like  = '%'. $this->_SEPARATOR . intval($group) . $this->_SEPARATOR . '%';
+		$like  = $this->perm_str_with_like_separetor( intval($group) );
 		$arr[] = 'mime_perms LIKE '. $this->quote($like) ;
 	}
 	$where = implode( ' OR ', $arr );
@@ -237,6 +235,10 @@ function get_kind_options()
 		_C_WEBPHOTO_MIME_KIND_AUDIO_MID     => _WEBPHOTO_MIME_KIND_AUDIO_MID ,
 		_C_WEBPHOTO_MIME_KIND_AUDIO_WAV     => _WEBPHOTO_MIME_KIND_AUDIO_WAV ,
 		_C_WEBPHOTO_MIME_KIND_OFFICE        => _WEBPHOTO_MIME_KIND_OFFICE ,
+		_C_WEBPHOTO_MIME_KIND_OFFICE_DOC    => _WEBPHOTO_MIME_KIND_OFFICE_DOC ,
+		_C_WEBPHOTO_MIME_KIND_OFFICE_XLS    => _WEBPHOTO_MIME_KIND_OFFICE_XLS ,
+		_C_WEBPHOTO_MIME_KIND_OFFICE_PPT    => _WEBPHOTO_MIME_KIND_OFFICE_PPT ,
+		_C_WEBPHOTO_MIME_KIND_OFFICE_PDF    => _WEBPHOTO_MIME_KIND_OFFICE_PDF ,
 	);
 	return $arr;
 }
@@ -251,23 +253,14 @@ function build_perms_array_to_str( $arr )
 	}
 
 // array -> &1&2&3&
-	$utility_class =& webphoto_lib_utility::getInstance();
-	$str = $utility_class->array_to_str( $arr, $this->_SEPARATOR );
-	$ret = $this->build_perms_with_separetor( $str ) ;
-	return $ret ;
-}
-
-function build_perms_with_separetor( $str )
-{
-// str -> &1&
-	$ret = $this->_SEPARATOR . $str . $this->_SEPARATOR ;
+	$str = $this->parm_array_to_str( $arr );
+	$ret = $this->perm_str_with_separetor( $str ) ;
 	return $ret ;
 }
 
 function build_perms_row_to_array( $row )
 {
-	$utility_class =& webphoto_lib_utility::getInstance();
-	return $utility_class->str_to_array( $row['mime_perms'], $this->_SEPARATOR );
+	return $this->perm_str_to_array( $row['mime_perms'] );
 }
 
 // --- class end ---

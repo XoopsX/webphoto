@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.14 2009/11/06 18:04:17 ohwada Exp $
+// $Id: checkconfigs.php,v 1.15 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_jodconverter
 // 2009-10-25 K.OHWADA
 // webphoto_lib_lame
 // 2009-08-08 K.OHWADA
@@ -141,7 +143,8 @@ function _check_program()
 	$lame_class         =& webphoto_lib_lame::getInstance();
 	$timidity_class     =& webphoto_lib_timidity::getInstance();
 	$xpdf_class         =& webphoto_lib_xpdf::getInstance();
-	$jodconverter_class =& webphoto_jodconverter::getInstance( $this->_DIRNAME );
+	$jodconverter_class 
+		=& webphoto_jodconverter::getInstance( $this->_DIRNAME, $this->_TRUST_DIRNAME );
 
 	$cfg_imagingpipe  = $this->get_config_by_name('imagingpipe');
 	$cfg_use_ffmpeg   = $this->get_config_by_name('use_ffmpeg');

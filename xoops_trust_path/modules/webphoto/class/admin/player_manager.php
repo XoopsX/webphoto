@@ -1,5 +1,5 @@
 <?php
-// $Id: player_manager.php,v 1.5 2009/03/05 15:45:53 ohwada Exp $
+// $Id: player_manager.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_flash_player
 // 2009-02-20 K.OHWADA
 // BUG: not set player_screencolor
 // 2009-01-25 K.OHWADA
@@ -48,10 +50,14 @@ function webphoto_admin_player_manager( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_player_handler   =& webphoto_player_handler::getInstance( $dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( $dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance( $dirname, $trust_dirname );
-	$this->_player_class     =& webphoto_flash_player::getInstance( $dirname , $trust_dirname  );
+	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( 
+		$dirname, $trust_dirname );
+	$this->_player_handler   =& webphoto_player_handler::getInstance( 
+		$dirname, $trust_dirname  );
+	$this->_playlist_class   =& webphoto_playlist::getInstance( 
+		$dirname, $trust_dirname );
+	$this->_player_class     =& webphoto_flash_player::getInstance( 
+		$dirname , $trust_dirname  );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }

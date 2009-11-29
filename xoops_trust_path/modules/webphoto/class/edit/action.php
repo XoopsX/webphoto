@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.8 2009/05/17 08:58:59 ohwada Exp $
+// $Id: action.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_edit_item_delete
 // 2009-05-05 K.OHWADA
 // edit_form_build_form_param() -> build_form_base_param()
 // 2009-04-10 K.OHWADA
@@ -50,7 +52,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_edit_action extends webphoto_edit_submit
 {
 	var $_delete_class;
-	var $_show_image_class;
 
 //---------------------------------------------------------
 // constructor
@@ -59,8 +60,8 @@ function webphoto_edit_action( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
-	$this->_delete_class     =& webphoto_edit_item_delete::getInstance( $dirname );
-	$this->_show_image_class =& webphoto_show_image::getInstance( $dirname );
+	$this->_delete_class     =& webphoto_edit_item_delete::getInstance( 
+		$dirname , $trust_dirname );
 }
 
 // for admin_photo_manage admin_catmanager

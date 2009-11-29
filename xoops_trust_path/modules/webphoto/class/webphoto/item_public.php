@@ -1,10 +1,16 @@
 <?php
-// $Id: item_public.php,v 1.1 2008/12/18 13:24:21 ohwada Exp $
+// $Id: item_public.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-12-12 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-11-11 K.OHWADA
+// $trust_dirname in webphoto_item_handler
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -31,8 +37,10 @@ function webphoto_item_public( $dirname , $trust_dirname )
 	$this->webphoto_lib_base( $dirname, $trust_dirname );
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
-	$this->_cat_handler  =& webphoto_cat_handler::getInstance( $dirname );
-	$this->_item_handler =& webphoto_item_handler::getInstance( $dirname );
+	$this->_cat_handler  =& webphoto_cat_handler::getInstance( 
+		$dirname, $trust_dirname );
+	$this->_item_handler =& webphoto_item_handler::getInstance( 
+		$dirname, $trust_dirname );
 
 	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' ) ;
 	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' ) ;
