@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.8 2009/04/11 14:23:34 ohwada Exp $
+// $Id: blocks.php,v 1.9 2009/11/29 09:06:30 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-11-11 K.OHWADA
+// class/inc/ini.php
 // 2009-04-10 K.OHWADA
 // timeline.php
 // 2009-01-25 K.OHWADA
@@ -46,8 +48,10 @@ webphoto_include_once( 'class/xoops/base.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/lib/multibyte.php',        $MY_DIRNAME );
 webphoto_include_once( 'class/lib/cloud.php',            $MY_DIRNAME );
 webphoto_include_once( 'class/lib/utility.php',          $MY_DIRNAME );
-webphoto_include_once( 'class/inc/xoops_header.php',     $MY_DIRNAME );
+webphoto_include_once( 'class/inc/ini.php',              $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',          $MY_DIRNAME );
+webphoto_include_once( 'class/inc/base_ini.php',         $MY_DIRNAME );
+webphoto_include_once( 'class/inc/xoops_header.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/catlist.php',          $MY_DIRNAME );
