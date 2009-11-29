@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_info.html,v 1.8 2009/05/23 15:11:06 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_info.html,v 1.9 2009/11/29 07:43:41 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -9,6 +9,11 @@
 <{if $photo.can_edit}>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /></a>
+<{/if}>
+
+<{* GROUP ICON *}>
+<{if !$photo.is_public}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/group.png" border="0" alt="<{$lang_icon_group}>" title="<{$lang_icon_group}>" /></a>
 <{/if}>
 
 <{* PHOTO SUBJECT *}>

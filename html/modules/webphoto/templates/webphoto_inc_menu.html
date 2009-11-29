@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_menu.html,v 1.8 2009/05/17 09:21:57 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_menu.html,v 1.9 2009/11/29 07:43:41 ohwada Exp $ *}>
 
 <div class="webphoto_page_menu">
 
@@ -40,16 +40,6 @@
 
 <{$lang_title_random}></a> | 
 
-<{if $xoops_isuser }>
-  <{if $cfg_use_pathinfo }>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
-  <{else}>
-    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=myphoto">
-  <{/if}>
-
-  <{$lang_title_myphoto}></a> | 
-<{/if}>
-
 <{if $cfg_use_pathinfo }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
 <{else}>
@@ -82,6 +72,54 @@
 </div>
 
 <{* --- 2nd line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/picture/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=picture">
+<{/if}>
+
+<{$lang_title_picture}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/video/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=video">
+<{/if}>
+
+<{$lang_title_video}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/audio/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=audio">
+<{/if}>
+
+<{$lang_title_audio}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/office/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=office">
+<{/if}>
+
+<{$lang_title_office}></a> | 
+
+<{if $xoops_isuser }>
+  <{if $cfg_use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=myphoto">
+  <{/if}>
+
+  <{$lang_title_myphoto}></a> | 
+<{/if}>
+
+</div>
+
+<{* --- 3rd line --- *}>
 <{if $show_menu_map | $show_menu_timeline | $show_menu_mail || $show_menu_file }>
   <div class="webphoto_page_menu_line">
    | 
@@ -119,7 +157,7 @@
   </div>
 <{/if}>
 
-<{* --- 3rd line --- *}>
+<{* --- 4th line --- *}>
 <div class="webphoto_page_menu_line">
  | 
 
@@ -164,7 +202,7 @@
 <{$lang_title_place_list}></a> | 
 </div>
 
-<{* --- 3rd line --- *}>
+<{* --- 5th line --- *}>
 <div class="webphoto_page_menu_line">
 <{$lang_thereare}> 
 </div>

@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.9 2009/11/06 20:05:51 ohwada Exp $ */
+/* $Id: default.css,v 1.10 2009/11/29 07:43:41 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -177,6 +177,13 @@ div.webphoto_list_image
 }
 
 /* photo table */
+div.webphoto_table_box
+{
+	padding: 3px;
+	margin:  3px;
+	text-align: center;
+}
+
 div.webphoto_table_image
 {
 	padding: 3px;
@@ -304,6 +311,11 @@ div.webphoto_close
 	margin: 3px;
 }
 
+#webphoto_uploading
+{
+	display:none;
+}
+
 /* gmap */
 div.webphoto_gmap_normal
 {
@@ -311,8 +323,7 @@ div.webphoto_gmap_normal
 	width:   98%;
 	height:  300px;
 	margin:  5px;
-	padding: 0px;
-	overflow: hidden;
+	padding: 5px;
 }
 
 div.webphoto_gmap_large
@@ -321,8 +332,7 @@ div.webphoto_gmap_large
 	width:   98%;
 	height:  600px;
 	margin:  5px;
-	padding: 0px;
-	overflow: hidden;
+	padding: 5px;
 }
 
 div.webphoto_gmap_navi

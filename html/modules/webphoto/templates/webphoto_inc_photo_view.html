@@ -1,7 +1,7 @@
-<{* $Id: webphoto_inc_photo_view.html,v 1.1 2009/11/06 18:08:07 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_view.html,v 1.2 2009/11/29 07:43:41 ohwada Exp $ *}>
 
 <{* IMAGES *}>
-<{if $photo.displaytype == 1 }>
+<{if $photo.displaytype == $smarty.const._C_WEBPHOTO_DISPLAYTYPE_IMAGE }>
 
   <{if $photo.img_middle_width && $photo.img_middle_height }>
     <a href="<{$photo.media_url_s}>" target="_blank" onClick="window.open('<{$photo.media_url_s}>', '', 'width=<{$photo.window_x}>,height=<{$photo.window_y}>' ); return(false);">
@@ -21,7 +21,7 @@
   <br />
 
 <{* ENBED *}>
-<{elseif $photo.displaytype == 10 }>
+<{elseif $photo.displaytype == $smarty.const._C_WEBPHOTO_DISPLAYTYPE_EMBED }>
   <{$photo.embed_embed}> 
   <br /><br />
   <{if $photo.embed_link != '' }>
@@ -50,7 +50,11 @@
 
 <{* GENERAL *}>
 <{elseif $photo.media_url_s }>
-  <a href="<{$photo.media_url_s}>" target="_blank">
+  <{if ( $photo.detail_onclick == $smarty.const._C_WEBPHOTO_FILE_KIND_PDF ) && $photo.pdf_url_s }>
+    <a href="<{$photo.pdf_url_s}>" target="_blank">
+  <{else}>
+    <a href="<{$photo.media_url_s}>" target="_blank">
+  <{/if}>
 
   <{if $photo.img_middle_src_s && $photo.img_middle_width && $photo.img_middle_height }>
     <img src="<{$photo.img_middle_src_s}>" border="0" align="center" vspace="3" hspace="7" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_middle_width}>" height="<{$photo.img_middle_height}>" />

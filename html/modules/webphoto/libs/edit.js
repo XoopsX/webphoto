@@ -1,5 +1,5 @@
 /* ========================================================
- * $Id: edit.js,v 1.1 2009/04/19 12:01:29 ohwada Exp $
+ * $Id: edit.js,v 1.2 2009/11/29 07:43:41 ohwada Exp $
  * ========================================================
  */
 
@@ -35,4 +35,9 @@ function webphoto_gmap_disp_onoff( onoff )
 function webphoto_set_gmap_iframe( html ) 
 {
 	document.getElementById("webphoto_gmap_iframe").innerHTML = html;
+}
+function webphoto_uploading()
+{
+	document.getElementById('webphoto_uploading').style.display = "block";
+	document.getElementById('webphoto_submit_form').style.display = "none";
 }
