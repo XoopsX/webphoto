@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
+// $Id: redothumbs.php,v 1.12 2009/12/12 13:11:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-12 K.OHWADA
+// Fatal error: cont_ceate_class -> cont_create_class
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_edit_item_delete
 // 2009-01-10 K.OHWADA
@@ -602,18 +604,22 @@ function _update_cont_resize()
 	}
 
 	$cont_path = $cont_row['file_path'];
+	$cont_ext  = $cont_row['file_ext'];
 	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
-	$tmp_file = $this->_TMP_DIR.'/'.uniqid('tmp_') ;
+	$tmp_file = $this->_TMP_DIR.'/'.uniqid('tmp_').'.'.$cont_ext ;
 	$this->unlink_file( $tmp_file ) ;
 
 	$this->rename_file( $cont_file , $tmp_file ) ;
-	$this->_cont_ceate_class->resize_image( $tmp_file , $cont_file );
 
-	$this->unlink_file( $tmp_file ) ;
+// Fatal error: cont_ceate_class -> cont_create_class
+	$this->_cont_create_class->resize_image( $tmp_file , $cont_file );
 
 	$image_param = $this->_get_image_param( $cont_file ) ;
 	if ( !is_array($image_param) ) {
+// recovery
+		$this->rename_file( $tmp_file, $cont_file ) ;
+		$this->set_msg_array( 'resize failed ', true );
 		return false ;
 	}
 
@@ -627,6 +633,8 @@ function _update_cont_resize()
 	if ( !$ret ) {
 		return false;
 	}
+
+	$this->unlink_file( $tmp_file ) ;
 
 	$this->set_msg_array( _AM_WEBPHOTO_PHOTORESIZED.' ' );
 	return $cont_row ;
