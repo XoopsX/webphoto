@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_admin_item.html,v 1.4 2009/11/29 07:43:41 ohwada Exp $ *}>
+<{* $Id: webphoto_form_admin_item.html,v 1.5 2009/12/16 14:05:35 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -498,12 +498,29 @@
 <{/if}>
 <{/foreach}>
 
+<{* item_perm_level *}>
+<{if $show_item_perm_level }>
+  <tr><td class="head"><{$lang_item_perm_level}></td><td class="odd">
+  <input type="radio" name="item_perm_level" value="0" <{$item_perm_level_checked.0}> />
+  <{$lang_item_perm_level_public}> &nbsp;
+  <input type="radio" name="item_perm_level" value="1" <{$item_perm_level_checked.1}> />
+  <{$lang_item_perm_level_group}> &nbsp;
+  </td></tr>
+<{/if}>
+
 <{* item_perm_read *}>
 <{if $show_item_perm_read }>
   <tr><td class="head"><{$lang_item_perm_read}></td><td class="odd">
-  <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
-  <{$lang_group_perm_all}><br />
-  <{$item_perm_read_input_checkboxs}>
+
+<{if $show_item_perm_level }>
+    <{$item_perm_read_list}>
+
+<{else}>
+    <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
+    <{$lang_group_perm_all}><br />
+    <{$item_perm_read_input_checkboxs}>
+<{/if}>
+
   </td></tr>
 <{/if}>
 
@@ -536,11 +553,11 @@
 </td></tr>
 
 <tr><td class="head"></td><td class="head">
-<input type="submit" id="submit" name="submit" value="<{$value_submit}>" />
+<input type="submit" id="submit" name="submit" value="<{$button_submit}>" />
 <input type="reset" id="reset" name="reset" value="<{$lang_cancel}>" />
 
 <{if $is_edit }>
-  <input type="submit" id="conf_delete" name="conf_delete" value="<{$lang_delete}>" />
+  <input type="submit" id="conf_delete" name="conf_delete" value="<{$button_conf_delete}>" />
 <{/if}>
 
 </td></tr>
