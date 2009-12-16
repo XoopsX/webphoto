@@ -1,10 +1,24 @@
 <?php
-// $Id: main.php,v 1.9 2009/11/29 07:34:23 ohwada Exp $
+// $Id: main.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_ITEM_PERM_LEVEL") ) 
+{
+// item 
+define("_WEBPHOTO_ITEM_PERM_LEVEL", "Permission Level");
+define("_WEBPHOTO_ITEM_PERM_LEVEL_PUBLIC", "Public");
+define("_WEBPHOTO_ITEM_PERM_LEVEL_GROUP", "Only in group");
+
+// cat
+define("_WEBPHOTO_CAT_GROUP_ID", "User Group ID");
+}
 
 //---------------------------------------------------------
 // v1.90

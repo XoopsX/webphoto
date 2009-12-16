@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.18 2009/11/29 07:34:23 ohwada Exp $
+# $Id: mysql.sql,v 1.19 2009/12/16 13:32:34 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2009-12-06 K.OHWADA
+# item_perm_level cat_group_id
 # 2009-11-11 K.OHWADA
 # item_detail_onclick
 # mime_kind of doc, xls, ppt, pdf
@@ -132,6 +134,7 @@ CREATE TABLE item (
   item_content TEXT NOT NULL,
   item_detail_onclick INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   item_weight         INT(11) UNSIGNED NOT NULL DEFAULT '0',  
+  item_perm_level TINYINT(2) NOT NULL DEFAULT '0',  
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),
@@ -309,6 +312,7 @@ CREATE TABLE cat (
   cat_text5  VARCHAR(255) NOT NULL DEFAULT '', 
   cat_description TEXT,
   cat_img_name VARCHAR(255) NOT NULL DEFAULT '',
+  cat_group_id INT(5) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (cat_id),
   KEY (cat_pid),
   KEY (cat_gicon_id),

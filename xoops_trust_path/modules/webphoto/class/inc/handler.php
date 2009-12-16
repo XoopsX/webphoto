@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.14 2009/08/22 04:10:07 ohwada Exp $
+// $Id: handler.php,v 1.15 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// save_xoops_config_mod()
 // 2009-08-22 K.OHWADA
 // preg_match_column_type()
 // 2009-04-10 K.OHWADA
@@ -107,6 +109,45 @@ function update_xoops_config()
 	$sql .= " MODIFY `conf_desc`  varchar(255) NOT NULL default '' ";
 
 	return $this->query( $sql );
+}
+
+//---------------------------------------------------------
+// xoops config item table
+//---------------------------------------------------------
+function get_xoops_config_mod_objs( $mid )
+{
+	$config_item_handler =& xoops_gethandler('ConfigItem');
+	$criteria = new CriteriaCompo( new Criteria('conf_modid', $mid) );
+	return $config_item_handler->getObjects($criteria);
+}
+
+function get_xoops_config_mod_obj( $mid, $name )
+{
+	$objs = $this->get_xoops_config_mod_objs( $mid );
+	if ( isset($objs[ $name ] ) ) {
+		return $objs[ $name ];
+	}
+	return false;
+}
+
+function get_xoops_config_mod_val( $mid, $name )
+{
+	$obj = $this->get_xoops_config_mod_obj( $mid, $name );
+	if ( is_object($obj) ) {
+		return $obj->getVar( 'conf_value' );
+	}
+	return false;
+}
+
+function save_xoops_config_mod( $mid, $name, $val )
+{
+	$config_item_handler =& xoops_gethandler('ConfigItem');
+	$obj = intval( $this->get_xoops_config_mod_obj( $mid, $name ) );
+	if ( is_object($obj) ) {
+		$obj->setVar( 'conf_value', $val );
+		return $config_item_handler->update( $obj );
+	}
+	return false;
 }
 
 //---------------------------------------------------------

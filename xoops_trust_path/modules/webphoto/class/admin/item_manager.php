@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_manager.php,v 1.21 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// mail_approve()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_flash_player
 // 2009-05-28 K.OHWADA
@@ -481,12 +483,13 @@ function _print_list_table( $mode, $item_rows )
 		echo '</td>';
 		echo "</tr>\n";
 
-		echo '<tr>';
-		echo '<td colspan="13" align="left">';
-		echo _AM_WEBPHOTO_LABEL_REMOVE ;
-		echo ' <input type="button" value="'. _DELETE .'" '. $onclick_delete .' />';
-		echo '</td>';
-		echo "</tr>\n";
+//		$delete = _DELETE. ' ('. _AM_WEBPHOTO_BUTTON_REFUSE .') ';
+//		echo '<tr>';
+//		echo '<td colspan="13" align="left">';
+//		echo _AM_WEBPHOTO_LABEL_REMOVE ;
+//		echo ' <input type="button" value="'. $delete .'" '. $onclick_delete .' />';
+//		echo '</td>';
+//		echo "</tr>\n";
 	}
 
 	echo "</table>\n";
@@ -990,17 +993,27 @@ function _modify()
 function _approve()
 {
 	$this->_check_token_and_redirect();
-
 	$post_ids = $this->_post_class->get_post('ids');
 
-	$this->_item_handler->update_status_by_id_array( $post_ids );
+	if ( is_array($post_ids) &&count($post_ids) ){
+		$item_rows = $this->_item_handler->get_rows_by_id_array( $post_ids );
+		foreach ( $item_rows as $row ) 
+		{
+			$row['item_status'] = _C_WEBPHOTO_STATUS_APPROVED ;
+			if ( $this->show_perm_level() ) {
+				$row['item_perm_read'] = $this->build_item_perm_read_by_row( $row );
+			}
+			$this->_item_handler->update( $row );
+			$this->notify_new_photo( $row );
+			$this->mail_approve( $row );
+		}
+		$msg = _AM_WEBPHOTO_ADMITTING;
 
-	$item_rows = $this->_item_handler->get_rows_by_id_array( $post_ids );
-	foreach ( $item_rows as $item_row ) {
-		$this->notify_new_photo( $item_row );
+	} else {
+		$msg = _AM_WEBPHOTO_ERR_NO_SELECT;
 	}
 
-	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_ADMITTING ) ;
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , $msg ) ;
 	exit() ;
 }
 
@@ -1037,12 +1050,17 @@ function _delete_all()
 	$this->_check_token_and_redirect();
 
 	$post_ids = $this->_post_class->get_post('ids');
-	foreach( $post_ids as $id ) {
-		$this->_delete_class->delete_photo_by_item_id( $id ) ;
+	if ( is_array($post_ids) &&count($post_ids) ){
+		foreach( $post_ids as $id ) {
+			$this->_delete_class->delete_photo_by_item_id( $id ) ;
+		}
+		$msg = $this->get_constant('DELETED');
+
+	} else {
+		$msg = _AM_WEBPHOTO_ERR_NO_SELECT;
 	}
 
-	redirect_header( $this->_THIS_URL , 
-		$this->_TIME_SUCCESS , $this->get_constant('DELETED') ) ;
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , $msg ) ;
 	exit() ;
 }
 

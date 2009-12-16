@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.19 2009/08/09 05:47:09 ohwada Exp $
+// $Id: admin.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -520,6 +520,29 @@ define( "_AM_WEBPHOTO_FILE_CHECK_DSC" , "必要なファイルがあるかファ
 //---------------------------------------------------------
 define( "_AM_WEBPHOTO_MYSQL_CONFIG" , "MySQL 設定" ) ;
 define( "_AM_WEBPHOTO_MULTIBYTE_CONFIG" , "マルチバイト 設定" ) ;
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// invite
+define("_AM_WEBPHOTO_INVITE_EMAIL", "招待相手のメールアドレス" ) ;
+define("_AM_WEBPHOTO_INVITE_NAME",   "あなたのお名前" ) ;
+define("_AM_WEBPHOTO_INVITE_MESSAGE", "メッセージ" ) ;
+define("_AM_WEBPHOTO_INVITE_SUBMIT", "招待する" ) ;
+define("_AM_WEBPHOTO_INVITE_EXAMPLE", "例：こんにちは、○○です。この前話したサイトの招待状を送ります。<br />△△さんもぜひ登録してみてください。" ) ;
+define("_AM_WEBPHOTO_INVITE_SUBJECT", "%s さんから %s への招待状が届いています" ) ;
+define("_AM_WEBPHOTO_INVITE_ERR_NO_NAME", "名前がない" ) ;
+
+// gperm
+define("_AM_WEBPHOTO_GROUP_MOD_ADMIN" , "このモジュールの管理者グループ" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_USER"  , "このモジュールのユーザ・グループ" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_CATEGORY"  , "このモジュールのカテゴリのグループ" ) ;
+
+// item manage
+define("_AM_WEBPHOTO_BUTTON_REFUSE", "拒否");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "写真が拒否されました");
+define("_AM_WEBPHOTO_ERR_NO_SELECT" , "エラー: アイテムが選択されていない" ) ;
 
 // === define end ===
 }

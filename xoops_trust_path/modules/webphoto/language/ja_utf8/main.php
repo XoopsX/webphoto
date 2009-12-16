@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.31 2009/11/29 07:34:23 ohwada Exp $
+// $Id: main.php,v 1.32 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1429,6 +1429,17 @@ define("_WEBPHOTO_EMBED_EXAMPLE", "例:" ) ;
 
 // photo
 define("_WEBPHOTO_ICON_GROUP", "グループ内閲覧" ) ;
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// item 
+define("_WEBPHOTO_ITEM_PERM_LEVEL", "閲覧レベル");
+define("_WEBPHOTO_ITEM_PERM_LEVEL_PUBLIC", "一般公開");
+define("_WEBPHOTO_ITEM_PERM_LEVEL_GROUP", "グループ内");
+
+// cat
+define("_WEBPHOTO_CAT_GROUP_ID", "ユーザグループID");
 
 // === define end ===
 }

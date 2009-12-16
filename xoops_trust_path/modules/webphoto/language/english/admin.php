@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.19 2009/08/09 05:47:09 ohwada Exp $
+// $Id: admin.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -519,6 +519,29 @@ define("_AM_WEBPHOTO_FILE_CHECK_DSC" , "checks there are necessary files with fi
 //---------------------------------------------------------
 define( "_AM_WEBPHOTO_MYSQL_CONFIG" , "MySQL Config" ) ;
 define( "_AM_WEBPHOTO_MULTIBYTE_CONFIG" , "Multibyte Config" ) ;
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// invite
+define("_AM_WEBPHOTO_INVITE_EMAIL", "Email address of the inviting person" ) ;
+define("_AM_WEBPHOTO_INVITE_NAME",   "Your Name" ) ;
+define("_AM_WEBPHOTO_INVITE_MESSAGE", "Message" ) ;
+define("_AM_WEBPHOTO_INVITE_SUBMIT", "Invite" ) ;
+define("_AM_WEBPHOTO_INVITE_EXAMPLE", "Exsample: Hello, I am John. I send an invitation at the site which was talked about. <br />Jane, too, attempt to register by all means. " ) ;
+define("_AM_WEBPHOTO_INVITE_SUBJECT", "You get the invitation email. from %s to %s " ) ;
+define("_AM_WEBPHOTO_INVITE_ERR_NO_NAME", "No Name" ) ;
+
+// gperm
+define("_AM_WEBPHOTO_GROUP_MOD_ADMIN" , "Admin group of this module" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_USER"  , "User group of this module" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_CATEGORY"  , "Category group of this module" ) ;
+
+// item manage
+define("_AM_WEBPHOTO_BUTTON_REFUSE", "Refuse");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "Approved your photo");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "Refused your photo");
+define("_AM_WEBPHOTO_ERR_NO_SELECT" , "Error: Not select item" ) ;
 
 // === define end ===
 }

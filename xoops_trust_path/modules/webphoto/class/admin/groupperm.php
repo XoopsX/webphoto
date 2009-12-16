@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm.php,v 1.3 2009/01/06 09:41:35 ohwada Exp $
+// $Id: groupperm.php,v 1.4 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// webphoto_lib_groupperm
 // 2009-01-04 K.OHWADA
 // _B_WEBPHOTO_GPERM_HTML
 // 2008-08-01 K.OHWADA
@@ -19,17 +21,30 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_groupperm
 //=========================================================
-class webphoto_admin_groupperm extends webphoto_base_this
+class webphoto_admin_groupperm extends webphoto_edit_base
 {
-	var $_PERM_ARRAY = array();
+	var $_groupperm_class;
+	var $_form_class;
+	var $_def_class;
+
+	var $_THIS_FCT = 'groupperm';
+	var $_THIS_URL;
+
+	var $_TIME_SUCCESS = 1;
+	var $_TIME_FAIL    = 5;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_admin_groupperm( $dirname , $trust_dirname )
 {
-	$this->webphoto_base_this( $dirname , $trust_dirname );
-	$this->_init();
+	$this->webphoto_edit_base( $dirname , $trust_dirname );
+
+	$this->_groupperm_class =& webphoto_lib_groupperm::getInstance();
+	$this->_form_class =& webphoto_lib_groupperm_form::getInstance();
+	$this->_def_class  =& webphoto_inc_gperm_def::getInstance();
+
+	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -41,57 +56,132 @@ function &getInstance( $dirname , $trust_dirname )
 	return $instance;
 }
 
-function _init()
-{
-	$this->_PERM_ARRAY = array(
-		_B_WEBPHOTO_GPERM_INSERTABLE => _AM_WEBPHOTO_GPERM_INSERTABLE ,
-		_B_WEBPHOTO_GPERM_SUPERINSERT | _B_WEBPHOTO_GPERM_INSERTABLE 
-			=> _AM_WEBPHOTO_GPERM_SUPERINSERT ,
-
-//		_B_WEBPHOTO_GPERM_EDITABLE => _AM_WEBPHOTO_GPERM_EDITABLE ,
-		_B_WEBPHOTO_GPERM_SUPEREDIT | _B_WEBPHOTO_GPERM_EDITABLE 
-			=> _AM_WEBPHOTO_GPERM_SUPEREDIT ,
-
-//		_B_WEBPHOTO_GPERM_DELETABLE => _AM_WEBPHOTO_GPERM_DELETABLE ,
-		_B_WEBPHOTO_GPERM_SUPERDELETE | _B_WEBPHOTO_GPERM_DELETABLE 
-			=> _AM_WEBPHOTO_GPERM_SUPERDELETE ,
-
-		_B_WEBPHOTO_GPERM_RATEVIEW => _AM_WEBPHOTO_GPERM_RATEVIEW ,
-		_B_WEBPHOTO_GPERM_RATEVOTE | _B_WEBPHOTO_GPERM_RATEVIEW 
-			=> _AM_WEBPHOTO_GPERM_RATEVOTE ,
-
-		_B_WEBPHOTO_GPERM_TELLAFRIEND => _AM_WEBPHOTO_GPERM_TELLAFRIEND ,
-		_B_WEBPHOTO_GPERM_TAGEDIT     => _AM_WEBPHOTO_GPERM_TAGEDIT ,
-		_B_WEBPHOTO_GPERM_MAIL    => _AM_WEBPHOTO_GPERM_MAIL ,
-		_B_WEBPHOTO_GPERM_FILE    => _AM_WEBPHOTO_GPERM_FILE ,
-		_B_WEBPHOTO_GPERM_HTML    => _AM_WEBPHOTO_GPERM_HTML ,
-	) ;
-}
-
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
 function main()
 {
+	$perms = $this->get_post('perms');
+	if ( is_array($perms) ) {
+		$this->groupperm( $perms );
+		exit();
+	}
+
 	xoops_cp_header() ;
 
 	echo $this->build_admin_menu();
 	echo $this->build_admin_title( 'GROUPPERM' );
-
-	echo $this->_build_list_groups() ;
+	echo $this->build_form();
 
 	xoops_cp_footer() ;
 }
 
-function _build_list_groups()
+//---------------------------------------------------------
+// groupperm
+//---------------------------------------------------------
+function groupperm( $perms )
 {
-	$form = new MyXoopsGroupPermForm( '' , $this->_MODULE_ID , 
-		_C_WEBPHOTO_GPERM_NAME , _AM_WEBPHOTO_GROUPPERM_GLOBALDESC ) ;
-
-	foreach( $this->_PERM_ARRAY as $perm_id => $perm_name ) {
-		$form->addItem( $perm_id , $perm_name ) ;
+	if ( ! $this->check_token() ) {
+		redirect_header( $this->_THIS_URL, $this->_TIME_FAIL, $this->get_token_errors() );
+		exit();
 	}
-	return $form->render() ;
+
+	$this->_groupperm_class->modify( $this->_MODULE_ID, $perms, true );
+	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_GPERMUPDATED );
+	exit() ;
+}
+
+//---------------------------------------------------------
+// form
+//---------------------------------------------------------
+function build_form()
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_groupperm.html';
+
+	$group_list = $this->_form_class->build_group_list(
+		$this->_MODULE_ID , 
+		_C_WEBPHOTO_GPERM_NAME , 
+		$this->_def_class->get_perm_list() );
+
+	$group_list = $this->rebuild_group_list( $group_list );
+
+	$param = $this->_form_class->build_param( $this->_MODULE_ID , $this->_THIS_URL );
+	$param['lang_title_groupperm']    = $this->get_admin_title( 'GROUPPERM' );
+	$param['lang_group_mod_category'] = _AM_WEBPHOTO_GROUP_MOD_CATEGORY ;
+	$param['group_list'] = $group_list ;
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $param ) ;
+	return $tpl->fetch( $template ) ;
+}
+
+function rebuild_group_list( $group_list )
+{
+	list( $groupid_admin, $groupid_user ) 
+		= $this->get_mod_groupid();
+
+	list( $cat_rows, $cat_groupid_array )
+		= $this->get_cat_rows_by_groupid();
+
+	$new_list = array();
+	foreach ( $group_list as $id => $group ) 
+	{
+		$mod_right_name = '';
+		if ( $id == $groupid_admin ) {
+			$mod_right_name = _AM_WEBPHOTO_GROUP_MOD_ADMIN;
+		} elseif ( $id == $groupid_user ) {
+			$mod_right_name = _AM_WEBPHOTO_GROUP_MOD_USER;
+		}
+
+		$cat_id    = 0;
+		$cat_title = '';
+		if ( in_array( $id, $cat_groupid_array ) ) {
+			$cat_row   = $cat_rows[ $id ];
+			$cat_id    = $cat_row['cat_id'];
+			$cat_title = $cat_row['cat_title'];
+		}
+
+		$group['mod_right_name'] = $mod_right_name;
+		$group['cat_id']    = $cat_id;
+		$group['cat_title'] = $cat_title;
+
+		$new_list[ $id ] = $group;
+	}
+
+	return $new_list;
+}
+
+function get_mod_groupid()
+{
+	$groupid_admin = 0;
+	$groupid_user  = 0;
+
+	if ( $this->get_ini('xoops_version_cfg_groupid_admin') ) {
+		$groupid_admin = $this->get_config_by_name('groupid_admin');
+	}
+	if ( $this->get_ini('xoops_version_cfg_groupid_user') ) {
+		$groupid_user  = $this->get_config_by_name('groupid_user');
+	}
+
+	return array( $groupid_admin, $groupid_user );
+}
+
+function get_cat_rows_by_groupid()
+{
+	$groupid_array   = array();
+	$rows_by_groupid = array();
+	$rows = $this->_cat_handler->get_rows_all_asc();
+
+	foreach ( $rows as $row ) 
+	{
+		$id = $row['cat_group_id'];
+		if ( $id > 0 ) {
+			$groupid_array[] = $id;
+			$rows_by_groupid[ $id ] = $row;
+		}
+	}
+
+	return array( $rows_by_groupid, $groupid_array );
 }
 
 // --- class end ---

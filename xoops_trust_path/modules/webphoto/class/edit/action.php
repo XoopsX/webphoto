@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: action.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// mail_approve()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_edit_item_delete
 // 2009-05-05 K.OHWADA
@@ -52,6 +54,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_edit_action extends webphoto_edit_submit
 {
 	var $_delete_class;
+	var $_mail_template_class;
+	var $_mail_send_class;
 
 //---------------------------------------------------------
 // constructor
@@ -60,8 +64,12 @@ function webphoto_edit_action( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_submit( $dirname , $trust_dirname );
 
-	$this->_delete_class     =& webphoto_edit_item_delete::getInstance( 
-		$dirname , $trust_dirname );
+	$this->_delete_class 
+		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname );
+	$this->_mail_template_class 
+		=& webphoto_d3_mail_template::getInstance( $dirname , $trust_dirname );
+
+	$this->_mail_send_class  =& webphoto_lib_mail_send::getInstance();
 }
 
 // for admin_photo_manage admin_catmanager
@@ -287,21 +295,6 @@ function get_array_value_by_key( $array, $key )
 		$this->_utility_class->get_array_value_by_key( $array, $key, 0 ) ) ;
 }
 
-function notify_new_photo_if_appove( $item_row )
-{
-	if ( $this->is_apporved_status( $item_row['item_status'] ) ) {
-		$this->notify_new_photo( $item_row );
-	}
-}
-
-function is_apporved_status( $status )
-{
-	if ( $status == _C_WEBPHOTO_STATUS_APPROVED ) {
-		return true;
-	}
-	return false;
-}
-
 //---------------------------------------------------------
 // update_photo_no_image
 //---------------------------------------------------------
@@ -392,6 +385,10 @@ function delete_exec( $item_row )
 	if ( !$ret ) {
 		$this->set_error( $delete_class->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
+	}
+
+	if ( $this->is_waiting_status( $item_row['item_status'] ) ) {
+		$this->mail_refuse( $item_row );
 	}
 
 	return 0;
@@ -602,6 +599,93 @@ function tag_handler_update_tags( $item_id, $tag_name_array )
 function tag_handler_tag_name_array( $item_id )
 {
 	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
+}
+
+//---------------------------------------------------------
+// notify
+//---------------------------------------------------------
+function notify_new_photo_if_appove( $item_row )
+{
+	if ( $this->is_apporved_status( $item_row['item_status'] ) ) {
+		$this->notify_new_photo( $item_row );
+		$this->mail_approve( $item_row );
+	}
+}
+
+function is_apporved_status( $status )
+{
+	if ( $status == _C_WEBPHOTO_STATUS_APPROVED ) {
+		return true;
+	}
+	return false;
+}
+
+function is_waiting_status( $status )
+{
+	if ( $status == _C_WEBPHOTO_STATUS_WAITING ) {
+		return true;
+	}
+	return false;
+}
+
+function mail_approve( $row )
+{
+	return $this->mail_common( 
+		$row, 
+		_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE, 
+		'submit_approve_notify.tpl' );
+}
+
+function mail_refuse( $row )
+{
+	return $this->mail_common( 
+		$row, 
+		_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE, 
+		'submit_refuse_notify.tpl' );
+}
+
+function mail_common( $row, $subject, $template )
+{
+	$email = $this->get_xoops_email_by_uid( $row['item_uid'] );
+	if ( empty($email) ) {
+		return true;	// no action
+	}
+
+	$param = array(
+		'to_emails'  => $email ,
+		'from_email' => $this->_xoops_adminmail ,
+		'subject'    => $this->build_mail_subject( $subject ) ,
+		'body'       => $this->build_mail_body( $row, $template ),
+		'debug'      => true,
+	);
+
+	$ret = $this->_mail_send_class->send( $param );
+	if ( !$ret ) {
+		$this->set_error( $this->_mail_send_class->get_errors() );
+		return false;
+	}
+	return true;
+}
+
+function build_mail_subject( $subject )
+{
+	$str  = $subject ;
+	$str .= ' ['. $this->_xoops_sitename .'] ';
+	$str .= $this->_MODULE_NAME ;
+	return $str;
+}
+
+function build_mail_body( $row, $template )
+{
+	$tags = array(
+		'PHOTO_TITLE' => $row['item_title'] ,
+		'PHOTO_URL'   => $this->build_uri_photo( $row['item_id'] ),
+		'PHOTO_UNAME' => $this->get_xoops_uname_by_uid( $row['item_uid'] ),
+	);
+
+	$this->_mail_template_class->init_tag_array();
+	$this->_mail_template_class->assign( $tags );
+	return $this->_mail_template_class->replace_tag_array_by_template( $template );
 }
 
 // --- class end ---

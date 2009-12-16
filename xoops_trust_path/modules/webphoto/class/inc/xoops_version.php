@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.29 2009/11/29 07:34:21 ohwada Exp $
+// $Id: xoops_version.php,v 1.30 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// config: groupid_admin
+// event: waiting
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-10-25 K.OHWADA
@@ -68,11 +71,13 @@ class webphoto_inc_xoops_version extends webphoto_inc_base_ini
 	var $_is_module_admin   = false;
 	var $_ini_community_use = false;
 
+	var $_use_cfg_groupid_admin = false;
+	var $_use_cfg_groupid_user  = false;
 	var $_show_sub_myphoto    = true;
 	var $_show_sub_popular    = true;
 	var $_show_sub_highrate   = true;
-	var $_show_sub_cat_prefix = true;
 	var $_show_sub_search     = false;
+	var $_sub_cat_prefix      = null;
 
 	var $_config_workdir_default = null;
 
@@ -110,13 +115,20 @@ function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
 
-	if ( $this->_ini_community_use ) {
-		$this->_show_sub_myphoto    = false;
-		$this->_show_sub_popular    = false;
-		$this->_show_sub_highrate   = false;
-		$this->_show_sub_cat_prefix = false;
-		$this->_show_sub_search     = true;
-	}
+	$this->_use_cfg_groupid_admin
+		= $this->get_ini('xoops_version_cfg_groupid_admin');
+	$this->_use_cfg_groupid_user
+		= $this->get_ini('xoops_version_cfg_groupid_user');
+	$this->_show_sub_myphoto
+		= $this->get_ini('xoops_version_sub_myphoto');
+	$this->_show_sub_popular
+		= $this->get_ini('xoops_version_sub_popular');
+	$this->_show_sub_highrate
+		= $this->get_ini('xoops_version_sub_highrate');
+	$this->_show_sub_search
+		= $this->get_ini('xoops_version_sub_search');
+	$this->_sub_cat_prefix
+		= $this->get_ini('xoops_version_sub_cat_prefix');
 }
 
 function &getSingleton( $dirname, $trust_dirname )
@@ -279,6 +291,15 @@ function _build_notification()
 	$arr['event'][2]['mail_template'] = 'category_newphoto_notify';
 	$arr['event'][2]['mail_subject'] = $this->_constant( 'CATEGORY_NEWPHOTO_NOTIFYSBJ' );
 
+	$arr['event'][3]['name'] = 'waiting';
+	$arr['event'][3]['category'] = 'global';
+	$arr['event'][3]['admin_only'] = 1;
+	$arr['event'][3]['title'] = $this->_constant( 'GLOBAL_WAITING_NOTIFY' );
+	$arr['event'][3]['caption'] = $this->_constant( 'GLOBAL_WAITING_NOTIFYCAP' );
+	$arr['event'][3]['description'] = $this->_constant( 'GLOBAL_WAITING_NOTIFYDSC' );
+	$arr['event'][3]['mail_template'] = 'global_waiting_notify';
+	$arr['event'][3]['mail_subject'] = $this->_constant( 'GLOBAL_WAITING_NOTIFYSBJ' );
+
 	return $arr;
 }
 
@@ -292,6 +313,7 @@ function _build_sub()
 	if ( $this->_has_insertable ) {
 		$arr[] = $this->_build_sub_array_const(
 			'SMNAME_SUBMIT', $this->_build_sub_url_fct( 'submit' ) );
+
 		if ( $this->_show_sub_myphoto ) {
 			$arr[] = $this->_build_sub_array_const(
 				'SMNAME_MYPHOTO', $this->_build_sub_url_fct( 'myphoto' ) );
@@ -308,17 +330,12 @@ function _build_sub()
 			'SMNAME_HIGHRATE', $this->_build_sub_url_op( 'highrate' ) );
 	}
 
-	$name_prefix = '';
-	if ( $this->_show_sub_cat_prefix ) {
-		$name_prefix = ' - ';
-	}
-
 	if ( $this->_cfg_catonsubmenu ) {
 		$rows = $this->_get_cat_rows_by_pid(0) ;
 		if( is_array($rows) && count($rows) ) {
 			foreach ( $rows as $row )
 			{
-				$name  = $name_prefix . $this->sanitize( $row['cat_title'] ) ;
+				$name  = $this->_sub_cat_prefix . $this->sanitize( $row['cat_title'] ) ;
 				$url   = $this->_build_sub_url_category( $row['cat_id'] ) ;
 				$arr[] = $this->_build_sub_array( $name, $url );
 			}
@@ -1288,6 +1305,30 @@ function _build_config()
 			$this->_constant( 'OPT_TIMELINE_SCALE_DECADE' ) => 'decade',
 		)
 	) ;
+
+	if ( $this->_use_cfg_groupid_admin ) {
+		$arr[] = array(
+			'name'			=> 'groupid_admin' ,
+			'title'			=> $this->_constant_name( 'CFG_GROUPID_ADMIN' ) ,
+			'description'	=> $this->_constant_name( 'CFG_GROUPID_ADMIN_DSC' ) ,
+			'formtype'		=> 'text' ,
+			'valuetype'		=> 'int' ,
+			'default'		=> '0' ,
+			'options'		=> array()
+		) ;
+	}
+
+	if ( $this->_use_cfg_groupid_user ) {
+		$arr[] = array(
+			'name'			=> 'groupid_user' ,
+			'title'			=> $this->_constant_name( 'CFG_GROUPID_USER' ) ,
+			'description'	=> $this->_constant_name( 'CFG_GROUPID_USER_DSC' ) ,
+			'formtype'		=> 'text' ,
+			'valuetype'		=> 'int' ,
+			'default'		=> '0' ,
+			'options'		=> array()
+		) ;
+	}
 
 	return $arr;
 }

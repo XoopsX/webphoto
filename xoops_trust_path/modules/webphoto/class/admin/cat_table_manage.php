@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_table_manage.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: cat_table_manage.php,v 1.3 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// cat_group_id
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_cat_handler
 //---------------------------------------------------------
@@ -62,6 +64,7 @@ function _build_row_by_post()
 		'cat_time_update'    => $this->_post_class->get_post_int(   'cat_time_update' ),
 		'cat_gicon_id'       => $this->_post_class->get_post_int(   'cat_gicon_id' ),
 		'cat_forum_id'       => $this->_post_class->get_post_int(   'cat_forum_id' ),
+		'cat_group_id'       => $this->_post_class->get_post_int(   'cat_group_id' ),
 		'cat_pid'            => $this->_post_class->get_post_int(   'cat_pid' ),
 		'cat_title'          => $this->_post_class->get_post_text(  'cat_title' ),
 		'cat_img_path'       => $this->_post_class->get_post_text(  'cat_img_path' ),
@@ -128,6 +131,7 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'cat_allowed_ext' );
 	echo $this->build_comp_text( 'cat_gicon_id' );
 	echo $this->build_comp_text( 'cat_forum_id' );
+	echo $this->build_comp_text( 'cat_group_id' );
 	echo $this->build_comp_text( 'cat_item_type' );
 	echo $this->build_comp_text( 'cat_gmap_mode' );
 	echo $this->build_comp_text( 'cat_gmap_latitude' );

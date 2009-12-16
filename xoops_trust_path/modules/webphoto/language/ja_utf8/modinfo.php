@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.17 2009/11/06 18:04:17 ohwada Exp $
+// $Id: modinfo.php,v 1.18 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -386,6 +386,24 @@ define($constpref."CFG_TIMIDITYPATH"  , "timidity の実行パス" ) ;
 define($constpref."CFG_TIMIDITYPATH_DSC" , "timidity の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「timidity を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
 
 define($constpref."SMNAME_SEARCH","検索");
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// config
+define($constpref."CFG_GROUPID_ADMIN"  , "管理者 グループID" ) ;
+define($constpref."CFG_GROUPID_ADMIN_DSC" , "このモジュールの管理者のユーザグループID。<br />モジュールインストール時に設定される。<br />むやみに変更しないこと" ) ;
+define($constpref."CFG_GROUPID_USER"  , "利用者 グループID" ) ;
+define($constpref."CFG_GROUPID_USER_DSC" , "このモジュールの利用者のユーザグループID。<br />モジュールインストール時に設定される。<br />むやみに変更しないこと" ) ;
+
+// admin menu
+define($constpref."ADMENU_INVITE", "友人を招待する");
+
+// notifications
+define($constpref."GLOBAL_WAITING_NOTIFY", "承認待ちの写真投稿");
+define($constpref."GLOBAL_WAITING_NOTIFYCAP", "承認待ちの写真が投稿された時に通知する (管理者)");
+define($constpref."GLOBAL_WAITING_NOTIFYDSC", "承認待ちの写真が投稿された時に通知する");
+define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 承認待ちの写真が投稿されました");
 
 }
 // === define begin ===

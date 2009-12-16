@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.19 2009/11/06 18:04:17 ohwada Exp $
+// $Id: modinfo.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -385,6 +385,24 @@ define($constpref."CFG_TIMIDITYPATH"  , "Path to timidity" ) ;
 define($constpref."CFG_TIMIDITYPATH_DSC" , "Alhough the full path to 'timidity' should be written, leave it blank in most environments.<br />This configuration is significant only when using timidity" ) ;
 
 define($constpref."SMNAME_SEARCH","Search");
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// config
+define($constpref."CFG_GROUPID_ADMIN"  , "Admin Group ID" ) ;
+define($constpref."CFG_GROUPID_ADMIN_DSC" , "The user group ID of the administrator of this module. <br />This value is set in module installation. <br />Don't change rashly. " ) ;
+define($constpref."CFG_GROUPID_USER"  , "User Group ID" ) ;
+define($constpref."CFG_GROUPID_USER_DSC" , "The user group ID of the user of this module. <br />This value is set in module installation. <br />Don't change rashly. " ) ;
+
+// admin menu
+define($constpref."ADMENU_INVITE", "Invite a friend");
+
+// notifications
+define($constpref."GLOBAL_WAITING_NOTIFY", "Waiting Approval");
+define($constpref."GLOBAL_WAITING_NOTIFYCAP", "Notify me when any new photos waiting approval are posted (Admin)");
+define($constpref."GLOBAL_WAITING_NOTIFYDSC", "Notify me when any new photos waiting approval are posted");
+define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: auto-notify : Waiting Approval");
 
 }
 // === define begin ===

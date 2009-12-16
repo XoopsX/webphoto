@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
+// $Id: cat_form.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// cat_group_id
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_gicon_handler
 // 2009-05-17 K.OHWADA
@@ -36,6 +38,8 @@ class webphoto_admin_cat_form extends webphoto_edit_form
 {
 	var $_gicon_handler;
 
+	var $_ini_use_cat_group_id;
+
 	var $_FORM_NAME = 'catmanager';
 	var $_THIS_FCT  = 'catmanager';
 	var $_THIS_URL;
@@ -63,6 +67,7 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 	$this->_THIS_URL      = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
 	$this->_THIS_URL_EDIT = $this->_THIS_URL .'&amp;disp=edit&amp;cat_id=';
 
+	$this->_ini_use_cat_group_id = $this->get_ini('use_cat_group_id');
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -79,6 +84,22 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function print_form( $row, $param )
 {
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_cat.html';
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_cat_form_by_row( $row, $param ),
+		$this->build_cat_row( $row ) ,
+		$this->build_admin_language()
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_cat_form_by_row( $row, $param )
+{
 	$mode   = $param['mode'] ;
 	$parent = $param['parent'] ;
 
@@ -89,7 +110,7 @@ function print_form( $row, $param )
 	{
 		case 'edit':
 			$title   = _AM_WEBPHOTO_CAT_MENU_EDIT;
-			$action  = 'update';
+			$op      = 'update';
 			$button  = _EDIT;
 			$is_edit = true ;
 			break;
@@ -97,280 +118,64 @@ function print_form( $row, $param )
 		case 'new':
 		default:
 			$title   = _AM_WEBPHOTO_CAT_MENU_NEW;
-			$action  = 'insert';
+			$op      = 'insert';
 			$button  = _ADD;
 			$is_new  = true ;
 			break;
 	}
 
-	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
-
 	$this->set_row( $row );
+	$child_rows = $this->get_child_rows();
 
-	$child_rows = $this->_get_child_rows();
+	list( $show_parent, $parent_cat_id, $parent_cat_title_s ) 
+		= $this->build_parent();
 
-	echo $this->build_script_edit_js();
+	list( $show_children, $children_list, $child_num ) 
+		= $this->build_children_list( $child_rows );
 
-	echo $this->_build_parent();
-	echo $this->_build_children_list( $child_rows );
+	list( $show_parent_note, $parent_note_s )
+		= $this->build_parent_note( $param );
 
-	echo $this->build_form_upload( $this->_FORM_NAME );
-	echo $this->build_html_token();
+	$param = array(
+		'op'        => $op ,
+		'is_edit'   => $is_edit ,
 
-	echo $this->build_input_hidden( 'fct' ,   'catmanager' );
-	echo $this->build_input_hidden( 'action' , $action );
-	echo $this->build_row_hidden(   'cat_id' );
+		'show_parent'         => $show_parent ,
+		'show_children'       => $show_children ,
+		'show_perm_child'     => $show_children ,
+		'show_parent_note'    => $show_parent_note ,
+		'show_cat_prem_read'  => $this->show_cat_prem_read() ,
+		'show_gmap'           => $this->show_gmap() ,
+		'show_cat_group_id'   => $this->show_cat_group_id( $is_edit ) ,
+		'show_child_num'      => $is_edit ,
 
-	echo $this->build_input_hidden( 'max_file_size', $this->_cfg_fsize );
-	echo $this->build_input_hidden( 'fieldCounter',  $this->_FILED_COUNTER_1 );
+		'parent_cat_id'       => $parent_cat_id ,
+		'parent_cat_title_s'  => $parent_cat_title_s ,
+		'parent_note_s'       => $parent_note_s ,
+		'children_list'       => $children_list ,
+		'child_num'           => $child_num ,
 
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $title );
+		'cat_pid_options'         => $this->cat_pid_options() ,
+		'cat_description_ele'     => $this->cat_description_ele() ,
+		'cat_img_name_options'    => $this->cat_img_name_options() ,
+		'cat_perm_read_checkboxs' => $this->cat_perm_read_checkboxs() ,
+		'cat_perm_post_checkboxs' => $this->cat_perm_post_checkboxs() ,
+		'cat_group_id_options'    => $this->cat_group_id_options() ,
+		'cat_gicon_id_options'    => $this->cat_gicon_id_options() ,
 
-	echo $this->build_row_text( $this->get_constant('CAT_TITLE'),
-		'cat_title' );
+		'img_src_s'   => $this->build_img_src() ,
+		'js_img_path' => $this->build_js_img_path() ,
 
-	echo $this->build_line_ele( _AM_WEBPHOTO_CAT_TH_PARENT, 
-		$this->_build_ele_selbox_pid() );
+		'lang_title'  => $title ,
+		'lang_button' => $button ,
+		'lang_delete' => _DELETE ,
+		'lang_cancel' => _CANCEL ,
+	);
 
-	echo $this->build_row_dhtml( $this->get_constant('CAT_DESCRIPTION'), 
-		'cat_description' );
-
-	echo $this->_build_line_category_file();
-
-	echo $this->build_row_text( $this->get_constant('CAT_WEIGHT'), 
-		'cat_weight', $this->_SIZE_WEIGHT );
-
-	if ( $is_new && $parent ) {
-		echo $this->build_line_ele( _AM_WEBPHOTO_CAT_PARENT_CAP , 
-			$this->_build_ele_perm_parent( $parent ) );
-	}
-
-	if ( $this->_cfg_perm_cat_read > 0 ) {
-		echo $this->build_line_ele( $this->get_constant('CAT_PERM_READ'), 
-			$this->_build_ele_perm_read() );
-	}
-
-	echo $this->build_line_ele( $this->get_constant('CAT_PERM_POST'), 
-		$this->_build_ele_perm_post() );
-
-	if ( $is_edit ) {
-		echo $this->build_line_ele( _AM_WEBPHOTO_CAT_CHILD_CAP , 
-			$this->_build_ele_perm_child( $child_rows) );
-	}
-
-	if ( $cfg_gmap_apikey ) {
-		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_LATITUDE'),
-			'cat_gmap_latitude',  'webphoto_gmap_latitude'  );
-
-		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_LONGITUDE'),
-			'cat_gmap_longitude', 'webphoto_gmap_longitude' );
-
-		echo $this->build_row_text_id( $this->get_constant('CAT_GMAP_ZOOM'),
-			'cat_gmap_zoom',      'webphoto_gmap_zoom'      );
-
-		echo $this->build_line_ele( $this->get_constant('GMAP_ICON'), 
-			$this->_build_ele_gicon() );
-	}
-
-	echo $this->build_line_ele( '',  $this->_build_ele_button( $mode ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
-	if ( $cfg_gmap_apikey ) {
-		echo $this->_build_gmap_iframe();
-	}
+	return $param;
 }
 
-function _build_line_category_file()
-{
-	return $this->build_line_cap_ele( 
-		_AM_WEBPHOTO_CAP_CAT_SELECT, 
-		_AM_WEBPHOTO_DSC_CAT_FOLDER, 
-		$this->_build_ele_img() );
-}
-
-function _build_ele_img()
-{
-	$ele  = $this->_build_img_file();
-	$ele .= "<br />\n";
-	$ele .= $this->get_constant('OR') ;
-	$ele .= "<br />\n";
-	$ele .= $this->_build_img_select();
-	$ele .= "<br />\n";
-	$ele .= $this->get_constant('OR') ;
-	$ele .= "<br />\n";
-	$ele .= $this->_build_img_path() ;
-	$ele .= "<br />\n";
-	$ele .= $this->_build_img_show();
-	return $ele;
-}
-
-function _build_img_file()
-{
-	$ele  = $this->get_constant( 'CAP_MAXPIXEL' ) .' ';
-	$ele .= $this->_cfg_cat_width .' x ';
-	$ele .= $this->_cfg_cat_width .' px';
-	$ele .= "<br />\n";
-	$ele .= $this->get_constant( 'DSC_PIXCEL_RESIZE' ) ;
-	$ele .= "<br />\n";
-	$ele .= $this->build_form_file( $this->_CAT_FIELD_NAME );
-	$ele .= "<br />\n";
-	return $ele;
-}
-
-function _build_img_select()
-{
-// xoops.js showImgSelected(imgId, selectId, imgDir, extra, xoopsUrl)
-	$onchange = "showImgSelected('clogo', 'cat_img_name', '". $this->_CATS_PATH ."', '', '". XOOPS_URL ."')" ;
-	$extra    = 'onchange="'. $onchange .'"';
-
-	$name  = 'cat_img_name';
-	$value = $this->get_row_by_key( $name );
-
-	$options = XoopsLists::getImgListAsArray( $this->_CATS_DIR );
-	array_unshift( $options, _NONE );
-
-	$ele  = $this->get_constant( 'CAT_IMG_NAME' ) ;
-	$ele .= "<br />\n";
-	$ele .= $this->build_form_select( $name, $value, $options, 1, $extra );
-	$ele .= "<br />\n";
-
-	return $ele ;
-}
-
-function _build_img_path()
-{
-	$name  = 'cat_img_path';
-	$value = $this->get_row_by_key( $name );
-
-	$ele  = $this->get_constant( 'CAT_IMG_PATH' ) ;
-	$ele .= "<br />\n";
-	$ele .= _AM_WEBPHOTO_DSC_CAT_PATH ;
-	$ele .= "<br />\n";
-	$ele .= $this->build_input_text( $name, $value, $this->_SIZE_IMGPATH );
-	$ele .= "<br />\n";
-
-	return $ele ;
-}
-
-function _build_img_show()
-{
-	$ele = $this->_build_img( $this->get_row(), $this->_IMG_HEIGHT_FORM  );
-	return $ele;
-}
-
-function _build_ele_selbox_pid()
-{
-	$pid = $this->get_row_by_key( 'cat_pid' );
-	return $this->_cat_handler->build_selbox_pid( $pid );
-}
-
-function _build_ele_gicon()
-{
-	$name  = 'cat_gicon_id';
-	$value = $this->get_row_by_key( $name );
-	return $this->build_form_select(
-		$name,  $value, $this->_gicon_handler->get_sel_options(), 1 );
-}
-
-function _build_ele_button( $mode )
-{
-	switch ($mode)
-	{
-		case 'edit':
-			$button = _EDIT;
-			break;
-
-		case 'new':
-		default:
-			$button = _ADD;
-			break;
-	}
-
-	$str  = $this->build_input_submit( 'submit', $button );
-	$str .= ' ';
-	if ( $mode == 'edit' ) {
-		$str .= $this->build_input_submit( 'del_confirm',  _DELETE );
-		$str .= ' ';
-	}
-	$str .= $this->build_input_reset(  'reset',  _CANCEL );
-	return $str;
-}
-
-function _build_gmap_iframe()
-{
-	$cat_id = $this->get_row_by_key( 'cat_id' );
-
-	$src = $this->_MODULE_URL .'/index.php?fct=gmap_location';
-	if ( $cat_id ) {
-		$src .= '&amp;cat_id='.intval($cat_id);
-	}
-
-	$str  = '<iframe src="'. $src .'" width="'. $this->_GMAP_WIDTH .'" height="'. $this->_GMAP_HEIGHT .'" frameborder="0" scrolling="yes" >' ;
-	$str .= $this->get_constant('IFRAME_NOT_SUPPORT') ;
-	$str .= '</iframe>';
-	return $str;
-}
-
-//---------------------------------------------------------
-// permission
-//---------------------------------------------------------
-function _build_ele_perm_read()
-{
-	return $this->build_ele_group_perms_by_key( 'cat_perm_read' );
-}
-
-function _build_ele_perm_post()
-{
-	return $this->build_ele_group_perms_by_key( 'cat_perm_post');
-}
-
-function _build_ele_perm_parent( $parent )
-{
-	$str  = sprintf( _AM_WEBPHOTO_CAT_PARENT_FMT, $this->sanitize( $parent ) );
-	return $str;
-}
-
-function _build_ele_perm_child( $rows )
-{
-	$count  = 0 ;
-	if ( is_array($rows) && count($rows) ) {
-		$count = count($rows) ;
-	}
-
-	$str  = _AM_WEBPHOTO_CAT_CHILD_NUM ;
-	$str .= ' : '. $count ."<br />\n";
-
-	if ( $count > 0 ) {
-		$str .= $this->build_input_checkbox_yes( 'perm_child', _C_WEBPHOTO_YES ) ;
-		$str .= ' ' ;
-		$str .= _AM_WEBPHOTO_CAT_CHILD_PERM ;
-	}
-	return $str;
-}
-
-function _build_parent()
-{
-	$cat_pid = $this->get_row_by_key( 'cat_pid' );
-	$row     = null ;
-	$str     = '';
-
-	if ( $cat_pid > 0 ) {
-		$row = $this->_cat_handler->get_row_by_id( $cat_pid ) ;
-	}
-
-	if ( is_array($row) ) {
-		$str  = "<b>". _AM_WEBPHOTO_PARENT ."</b> ";
-		$str .= $this->_build_edit( $row );
-		$str .= "<br />\n";
-	}
-
-	return $str;
-}
-
-function _get_child_rows()
+function get_child_rows()
 {
 	$cat_id = $this->get_row_by_key( 'cat_id' );
 	$rows   = null ;
@@ -380,25 +185,205 @@ function _get_child_rows()
 	return $rows;
 }
 
-function _build_children_list( $rows )
+function show_cat_prem_read()
 {
-	$str = '';
-	if ( is_array($rows) && count($rows) ) {
-		$str  = "<b>". _AM_WEBPHOTO_CAT_CHILD_CAP ."</b><br />\n";
-		foreach ( $rows as $row ) {
-			$str .= ' &nbsp; '.$this->_build_prefix( $row );
-			$str .= $this->_build_edit( $row );
-		}
+	if ( $this->_cfg_perm_cat_read > 0 ) {
+		return true;
 	}
-	return $str;
+	return false;
 }
 
-function _build_edit( $row )
+function show_cat_group_id( $is_edit )
 {
-	$str  = '<a href="'. $this->_THIS_URL_EDIT . $row['cat_id'] .'">';
-	$str .= $this->sanitize( $row['cat_title'] );
-	$str .= "</a><br />\n";
-	return $str;
+	if ( $is_edit &&( $this->_cfg_perm_item_read > 0 ) && $this->_ini_use_cat_group_id ) {
+		return true;
+	}
+	return false;
+}
+
+function show_gmap()
+{
+	$cfg_gmap_apikey = $this->_config_class->get_by_name( 'gmap_apikey' );
+	if ( $cfg_gmap_apikey ) {
+		return true;
+	}
+	return false;
+}
+
+function build_parent()
+{
+	$cat_pid = $this->get_row_by_key( 'cat_pid' );
+	$row     = null ;
+
+	$show        = false;
+	$cat_id      = 0 ;
+	$cat_title_s = null;
+
+	if ( $cat_pid > 0 ) {
+		$row = $this->_cat_handler->get_row_by_id( $cat_pid ) ;
+	}
+
+	if ( is_array($row) ) {
+		$show        = true;
+		$cat_id      = $row['cat_id'] ;
+		$cat_title_s = $this->sanitize( $row['cat_title'] );
+	}
+
+	return array( $show, $cat_id, $cat_title_s );
+}
+
+function build_parent_note( $param )
+{
+	$mode   = $param['mode'] ;
+	$parent = $param['parent'] ;
+
+	$show = false;
+	$str  = null ;
+
+	if (( $mode != 'edit' ) && $parent ) {
+		$show = true;
+		$str  = sprintf( _AM_WEBPHOTO_CAT_PARENT_FMT, $this->sanitize( $parent ) ) ;
+	}
+
+	return array( $show, $str );
+}
+
+function build_children_list( $rows )
+{
+	$show = false;
+	$arr  = array();
+	$num  = 0;
+
+	if ( !is_array($rows) || !count($rows) ) {
+		return array( $show, $arr, $num );
+	}
+
+	$show = true;
+	$num  = count($rows) ;
+
+	foreach ( $rows as $row ) 
+	{
+		$arr[] = array(
+			'cat_id'      => $row['cat_id'] ,
+			'cat_title_s' => $this->sanitize( $row['cat_title'] ) ,
+			'prefix'      => $this->_build_prefix( $row ) ,
+		);
+	}
+
+	return array( $show, $arr, $num );
+}
+
+function cat_pid_options()
+{
+	$cid = $this->get_row_by_key( 'cat_id' );
+	$pid = $this->get_row_by_key( 'cat_pid' );
+	$options = $this->_cat_handler->build_id_options( true );
+	$disabled_list = null;
+	if ( $cid > 0 ) {
+		$disabled_list = array( $cid ) ;
+	}
+	return $this->build_form_options( $pid, $options, $disabled_list );
+}
+
+function cat_description_ele()
+{
+	$name  = 'cat_description';
+	$value = $this->get_row_by_key( $name );
+	return $this->build_form_dhtml( $name, $value );
+}
+
+function cat_group_id_options()
+{
+	$value   = $this->get_row_by_key( 'cat_group_id' ) ;
+	$options = $this->get_cached_xoops_db_groups( true ) ;
+	$disabled_list = $this->get_system_groups() ;
+	return $this->build_form_options( $value, $options, $disabled_list );
+}
+
+function cat_gicon_id_options()
+{
+	$name    = 'cat_gicon_id';
+	$value   = $this->get_row_by_key( $name );
+	$options = $this->_gicon_handler->get_sel_options( true );
+	return $this->build_form_options( $value, $options );
+}
+
+function cat_img_name_options()
+{
+	$value = $this->get_row_by_key( 'cat_img_name' );
+	$options = XoopsLists::getImgListAsArray( $this->_CATS_DIR );
+	$options = array( '' => '---' ) + $options;
+	return $this->build_form_options( $value, $options );
+}
+
+function cat_perm_read_checkboxs()
+{
+	return $this->build_group_perms_checkboxs_by_key( 'cat_perm_read' );
+}
+
+function cat_perm_post_checkboxs()
+{
+	return $this->build_group_perms_checkboxs_by_key( 'cat_perm_post' );
+}
+
+function build_img_src()
+{
+	$imgsrc_s = null;
+	$row = $this->get_row();
+
+	$imgsrc = $this->build_show_imgurl( $row );
+	if ( $imgsrc ) {
+		$imgsrc_s = $this->sanitize($imgsrc);
+	}
+	return $imgsrc_s;
+}
+
+function build_show_imgurl( $row )
+{
+	$img_name = $row['cat_img_name'] ;
+	if ( $img_name ) {
+		$url = $this->_CATS_URL .'/'. $img_name ;
+	} else {
+		$url = $this->_cat_handler->build_show_img_path( $row );
+	}
+	return $url;
+}
+
+function build_js_img_path()
+{
+	return $this->_utility_class->strip_slash_from_head( $this->_CATS_PATH );
+}
+
+function build_cat_row( $row )
+{
+	$arr = array();
+	foreach ( $row as $k => $v )
+	{
+		$arr[ $k ]      = $v;
+		$arr[ $k.'_s' ] = $this->sanitize( $v );
+	}
+	return $arr;
+}
+
+function build_admin_language()
+{
+	$arr = array(
+		'lang_cat_th_parent'  => _AM_WEBPHOTO_CAT_TH_PARENT ,
+		'lang_cat_parent_cap' => _AM_WEBPHOTO_CAT_PARENT_CAP ,
+		'lang_cat_child_cap'  => _AM_WEBPHOTO_CAT_CHILD_CAP ,
+		'lang_cat_child_num'  => _AM_WEBPHOTO_CAT_CHILD_NUM ,
+		'lang_cat_child_perm' => _AM_WEBPHOTO_CAT_CHILD_PERM ,
+		'lang_cap_cat_select' => _AM_WEBPHOTO_CAP_CAT_SELECT , 
+		'lang_dsc_cat_folder' => _AM_WEBPHOTO_DSC_CAT_FOLDER , 
+		'lang_dsc_cat_path'   => _AM_WEBPHOTO_DSC_CAT_PATH ,
+		'lang_parent'         => _AM_WEBPHOTO_PARENT ,
+	);
+	return $arr;
+}
+
+function _build_prefix( $row )
+{
+	return str_replace( '.' , ' --' , substr( $row['prefix'] , 1 ) ).' ' ;
 }
 
 //---------------------------------------------------------
@@ -511,22 +496,6 @@ function _build_img( $row, $max_height )
 		$ret .= '</a>';
 	}
 	return $ret;
-}
-
-function build_show_imgurl( $row )
-{
-	$img_name = $row['cat_img_name'] ;
-	if ( $img_name ) {
-		$url = $this->_CATS_URL .'/'. $img_name ;
-	} else {
-		$url = $this->_cat_handler->build_show_img_path( $row );
-	}
-	return $url;
-}
-
-function _build_prefix( $row )
-{
-	return str_replace( '.' , ' --' , substr( $row['prefix'] , 1 ) ).' ' ;
 }
 
 //---------------------------------------------------------

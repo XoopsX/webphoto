@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.3 2008/12/20 06:11:27 ohwada Exp $
+// $Id: admin_menu.php,v 1.4 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// $trust_dirname in webphoto_inc_admin_menu
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-10-01 K.OHWADA
@@ -22,6 +24,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_lib_admin_menu
 {
+	var $_menu_class;
+
 	var $_DIRNAME;
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
@@ -73,7 +77,9 @@ function build_menu( $flag_default=true, $flag_hr=true  )
 {
 //	if( defined( 'XOOPS_ORETEKI' ) ) { return null; }
 
-	$admin_menu_class =& webphoto_inc_admin_menu::getSingleton( $this->_DIRNAME );
+	$admin_menu_class 
+		=& webphoto_inc_admin_menu::getSingleton( 
+			$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$admin_menu = $admin_menu_class->build_menu();
 
 	$add_menu = $this->_build_additinal_menu();
@@ -99,7 +105,9 @@ function build_menu( $flag_default=true, $flag_hr=true  )
 
 function build_sub_menu( $flag_default=true, $flag_hr=true )
 {
-	$admin_menu_class =& webphoto_inc_admin_menu::getSingleton( $this->_DIRNAME );
+	$admin_menu_class 
+		=& webphoto_inc_admin_menu::getSingleton( 
+			$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$menu_array = $admin_menu_class->build_sub_menu();
 
 	if ( is_array($menu_array) && count($menu_array) ) {

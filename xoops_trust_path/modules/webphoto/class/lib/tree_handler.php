@@ -1,5 +1,5 @@
 <?php
-// $Id: tree_handler.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: tree_handler.php,v 1.6 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// get_tree_name_list()
+// 2009-11-29
 // remove check_row_perm()
 // 2008-10-01 K.OHWADA
 // used build_form_select_list()
@@ -156,6 +159,19 @@ function get_all_tree_array( $order='', $name_perm=null )
 	}
 
 	return $tree;
+}
+
+function get_tree_name_list( $title_name, $none=false, $none_name='---' )
+{
+	$rows = $this->get_all_tree_array();
+	$arr  = array();
+	if ( $none ) {
+		$arr[0] = $none_name;
+	}
+	foreach ( $rows as $row ) {
+		$arr[ $row[ $this->_id_name ] ] = $row[ $title_name ];
+	}
+	return $arr;
 }
 
 //---------------------------------------------------------

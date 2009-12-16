@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.7 2009/04/19 11:39:45 ohwada Exp $
+// $Id: base.php,v 1.8 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// get_system_groups()
 // 2009-04-19 K.OHWADA
 // get_xoops_themecss()
 // 2009-01-25 K.OHWADA
@@ -34,6 +36,9 @@ class webphoto_xoops_base
 	var $_LANGUAGE;
 
 	var $_STR_JPAPANESE   = 'japanese|japaneseutf|ja_utf8';
+
+	var $_SYSTEM_GROUPS = 
+		array( XOOPS_GROUP_ADMIN, XOOPS_GROUP_USERS, XOOPS_GROUP_ANONYMOUS );
 
 //---------------------------------------------------------
 // constructor
@@ -232,6 +237,16 @@ function get_user_uname_from_id( $uid, $usereal=0 )
 	return XoopsUser::getUnameFromId( $uid, $usereal );
 }
 
+function get_user_email_from_id( $uid )
+{
+	$user_handler =& xoops_gethandler('user');
+	$obj = $user_handler->get( $uid );
+	if ( is_object($obj) ) {
+		return $obj->getVar('email');
+	}
+	return false;
+}
+
 function build_userinfo( $uid, $usereal=0 )
 {
 	$uname = $this->get_user_uname_from_id( $uid, $usereal );
@@ -264,11 +279,13 @@ function get_cached_group_obj()
 	return $this->_cached_group_objs ;
 }
 
-function get_cached_groups( $format='s' )
+function get_cached_groups( $none=false, $none_name='---', $format='s' )
 {
 	$objs = $this->get_cached_group_obj() ;
-
 	$arr = array();
+	if ( $none ) {
+		$arr[0] = $none_name;
+	}
 	foreach ( $objs as $obj )
 	{
 		$groupid = $obj->getVar( 'groupid', $format );
@@ -284,6 +301,19 @@ function get_cached_group_by_id_name( $id, $name, $format='s' )
 
 	if ( isset( $objs[ $id ] ) ) {
 		return  $objs[ $id ]->getVar( $name, $format );
+	}
+	return false;
+}
+
+function get_system_groups()
+{
+	return $this->_SYSTEM_GROUPS;
+}
+
+function is_system_group( $id )
+{
+	if ( in_array( $id, $this->_SYSTEM_GROUPS ) ) {
+		return true;
 	}
 	return false;
 }

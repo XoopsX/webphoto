@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.10 2009/04/19 11:39:45 ohwada Exp $
+// $Id: edit.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// class/d3/mail_template.php
 // 2009-04-19 K.OHWADA
 // template_main
 // 2009-01-10 K.OHWADA
@@ -35,10 +37,15 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'main/header_submit.php' );
+
+webphoto_include_once( 'class/d3/mail_template.php' );
+webphoto_include_once( 'class/lib/mail_send.php' );
+
 webphoto_include_once( 'class/edit/submit.php' );
 webphoto_include_once( 'class/edit/action.php' );
 webphoto_include_once( 'class/edit/photo_form.php' );
 webphoto_include_once( 'class/edit/misc_form.php' );
+
 webphoto_include_once( 'class/main/edit.php' );
 
 //=========================================================

@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.6 2009/05/17 08:58:59 ohwada Exp $
+// $Id: form.php,v 1.7 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// get_system_groups()
 // 2009-05-05 K.OHWADA
 // get_post_text()
 // 2008-11-29 K.OHWADA
@@ -278,9 +280,14 @@ function get_xoops_group_objs()
 	return $this->_xoops_class->get_group_obj();
 }
 
-function get_cached_xoops_db_groups()
+function get_cached_xoops_db_groups( $none=false, $none_name='---', $format='s' )
 {
-	return $this->_xoops_class->get_cached_groups();
+	return $this->_xoops_class->get_cached_groups( $none, $none_name, $format );
+}
+
+function get_system_groups()
+{
+	return $this->_xoops_class->get_system_groups();
 }
 
 function get_xoops_user_name( $uid, $usereal=0 )

@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.4 2009/01/24 07:10:39 ohwada Exp $
+// $Id: catmanager.php,v 1.5 2009/12/16 13:32:33 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// class/inc/group.php
 // 2008-01-10 K.OHWADA
 // class/edit/xxx
 // 2008-11-08 K.OHWADA
@@ -22,11 +24,15 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header.php' );
+webphoto_include_once( 'class/inc/gperm_def.php' );
+webphoto_include_once( 'class/inc/group.php' );
 webphoto_include_once( 'class/lib/uploader.php' );
 webphoto_include_once( 'class/lib/gd.php' );
 webphoto_include_once( 'class/lib/imagemagick.php' );
 webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
+webphoto_include_once( 'class/lib/groupperm.php' );
+webphoto_include_once( 'class/lib/groupperm_form.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/p2t_handler.php' );
@@ -34,6 +40,7 @@ webphoto_include_once( 'class/handler/maillog_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/upload.php' );
+webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/edit/mail_unlink.php' );
 webphoto_include_once( 'class/edit/item_delete.php' );
 webphoto_include_once( 'class/admin/cat_form.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.22 2009/11/29 07:34:23 ohwada Exp $
+// $Id: constants.php,v 1.23 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -402,6 +402,10 @@ define("_C_WEBPHOTO_CAT_CHILD_ALWAYS" , 2 ) ;
 
 // v1.90
 define("_C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT", 0 ) ;
+
+// v2.00
+define("_C_WEBPHOTO_PERM_LEVEL_PUBLIC", 0 ) ;
+define("_C_WEBPHOTO_PERM_LEVEL_GROUP", 1 ) ;
 
 // v1.80
 //define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;

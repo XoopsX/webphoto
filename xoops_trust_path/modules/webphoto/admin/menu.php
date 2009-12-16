@@ -1,5 +1,5 @@
 <?php
-// $Id: menu.php,v 1.2 2008/12/20 06:11:27 ohwada Exp $
+// $Id: menu.php,v 1.3 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// class/inc/ini.php
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 //---------------------------------------------------------
@@ -25,13 +27,15 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 // webphoto files
 //---------------------------------------------------------
 $MY_DIRNAME= $GLOBALS['MY_DIRNAME'];
+webphoto_include_once( 'class/inc/ini.php',        $MY_DIRNAME );
 webphoto_include_once( 'class/inc/admin_menu.php', $MY_DIRNAME );
 webphoto_include_language( 'modinfo.php',          $MY_DIRNAME );
 
 //=========================================================
 // main
 //=========================================================
-$manager =& webphoto_inc_admin_menu::getSingleton( $MY_DIRNAME );
+$manager =& webphoto_inc_admin_menu::getSingleton( 
+	$MY_DIRNAME, WEBPHOTO_TRUST_DIRNAME );
 $adminmenu = $manager->build_menu();
 
 ?>

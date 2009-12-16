@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.19 2009/11/29 07:34:21 ohwada Exp $
+// $Id: oninstall.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// _item_add_column_200()
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // getInstance -> getSingleton 
@@ -44,11 +46,20 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_oninstall extends webphoto_inc_base_ini
 {
+	var $_group_class;
+	var $_gperm_def_class;
+
 	var $_table_item ;
 	var $_table_mime ;
 	var $_table_player;
 
 	var $_IS_XOOPS_2018 = false;
+
+	var $_use_groupperm_module_read_anonymous = false;
+	var $_use_cfg_groupid_admin = false;
+	var $_use_cfg_groupid_user  = false;
+	var $_use_group_create      = false;
+	var $_use_group_delete      = false;
 
 	var $_msg_array = array();
 
@@ -65,10 +76,24 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler(  $dirname );
 
+	$this->_group_class     =& webphoto_inc_group::getSingleton( $dirname );
+	$this->_gperm_def_class =& webphoto_inc_gperm_def::getInstance();
+
 	$this->_table_cat    = $this->prefix_dirname( 'cat' );
 	$this->_table_item   = $this->prefix_dirname( 'item' );
 	$this->_table_mime   = $this->prefix_dirname( 'mime' );
 	$this->_table_player = $this->prefix_dirname( 'player' );
+
+	$this->_use_groupperm_module_read_anonymous 
+		= $this->get_ini('oninstall_groupperm_module_read_anonymous');
+	$this->_use_cfg_groupid_admin
+		= $this->get_ini('xoops_version_cfg_groupid_admin');
+	$this->_use_cfg_groupid_user
+		= $this->get_ini('xoops_version_cfg_groupid_user');
+	$this->_use_group_create
+		= $this->get_ini('oninstall_group_create');
+	$this->_use_group_delete
+		= $this->get_ini('onuninstall_group_delete');
 
 // preload
 	if ( defined("_C_WEBPHOTO_PRELOAD_XOOPS_2018") ) {
@@ -156,7 +181,7 @@ function uninstall( &$module )
 //---------------------------------------------------------
 function _init( &$module )
 {
-	$this->_MODULE_ID = $module->getVar( 'mid',     'n' );
+	$this->_MODULE_ID = $module->getVar( 'mid', 'n' );
 }
 
 function _exec_install()
@@ -174,7 +199,13 @@ function _exec_install()
 	if ( ! $res ) { return false; }
 
 	$this->_template_install();
-	$this->_groupperm_install();
+	$this->_groupperm_webphoto_admin();
+	if ( $this->_use_groupperm_module_read_anonymous ) {
+		$this->_groupperm_module_read_anonymous();
+	}
+	if ( $this->_use_group_create ) {
+		$this->_group_create();
+	}
 
 	return true ;
 }
@@ -212,6 +243,10 @@ function _exec_uninstall()
 
 	$this->_table_uninstall();
 	$this->_template_uninstall();
+
+	if ( $this->_use_group_delete ) {
+		$this->_group_delete();
+	}
 
 	return true ;
 }
@@ -536,40 +571,60 @@ function _parse_ext( $file )
 }
 
 //---------------------------------------------------------
-// groupperm handler
+// group class
 //---------------------------------------------------------
-function _groupperm_install()
+function _group_create()
 {
-	$this->_set_msg( 'Add records to table <b>'. $this->_db->prefix('groupperm') .'</b> ...' );
+	$this->_set_msg( 'Ceate group <b>'. $this->_db->prefix('group') .'</b> ...' );
 
-	$gperm_handler = xoops_gethandler("groupperm");
+	$name = $this->_DIRNAME ;
+	$desc = 'module id: '.$this->_MODULE_ID.' name: '.$this->_DIRNAME;
+	$groupid = $this->_group_class->create_member_group( $name, $desc );
 
-	$global_perms_array = array(
-		_B_WEBPHOTO_GPERM_INSERTABLE ,
-		_B_WEBPHOTO_GPERM_SUPERINSERT | _B_WEBPHOTO_GPERM_INSERTABLE ,
-		_B_WEBPHOTO_GPERM_SUPEREDIT   | _B_WEBPHOTO_GPERM_EDITABLE ,
-		_B_WEBPHOTO_GPERM_SUPERDELETE | _B_WEBPHOTO_GPERM_DELETABLE ,
-		_B_WEBPHOTO_GPERM_RATEVIEW ,
-		_B_WEBPHOTO_GPERM_RATEVOTE    | _B_WEBPHOTO_GPERM_RATEVIEW ,
-		_B_WEBPHOTO_GPERM_TELLAFRIEND ,
-		_B_WEBPHOTO_GPERM_TAGEDIT ,
-		_B_WEBPHOTO_GPERM_MAIL ,
-		_B_WEBPHOTO_GPERM_FILE ,
-		_B_WEBPHOTO_GPERM_HTML ,
-	) ;
-
-	foreach( $global_perms_array as $perms_id ) 
-	{
-		$gperm =& $gperm_handler->create();
-		$gperm->setVar("gperm_groupid", XOOPS_GROUP_ADMIN);
-		$gperm->setVar("gperm_name",    _C_WEBPHOTO_GPERM_NAME );
-		$gperm->setVar("gperm_modid",   $this->_MODULE_ID );
-		$gperm->setVar("gperm_itemid",  $perms_id );
-		$gperm_handler->insert($gperm) ;
-		unset($gperm);
+	if ( $groupid ) {
+		$this->_set_msg( 'Add groupperm to group <b>'. $groupid .'</b> ...' );
+		$this->_group_class->create_gperm_module_admin( $groupid );
+		$this->_group_class->create_gperm_module_read(  $groupid );
+		$this->_group_class->create_gperm_webphoto_groupid( 
+			$groupid, $this->_gperm_def_class->get_perms_admin() );
+		if ( $this->_use_cfg_groupid_admin ) {
+			$this->save_xoops_config_mod( $this->_MODULE_ID, 'groupid_admin', $groupid );
+		}
+		if ( $this->_use_cfg_groupid_user ) {
+			$this->save_xoops_config_mod( $this->_MODULE_ID, 'groupid_user', $groupid );
+		}
+		return true;
 	}
+	return false;
+}
 
-	return true ;
+function _group_delete()
+{
+	$this->_set_msg( 'Delete group <b>'. $this->_db->prefix('group') .'</b> ...' );
+
+	$groupid = 0 ;
+	if ( $this->_use_cfg_groupid_admin ) {
+		$groupid = $this->get_xoops_config_mod_val( $this->_MODULE_ID, 'groupid_admin' );
+	}
+	if (( $groupid = 0 )&& $this->_use_cfg_groupid_user ) {
+		$groupid = $this->get_xoops_config_mod_val( $this->_MODULE_ID, 'groupid_user' );
+	}
+	if ( $groupid ) {
+		$this->_group_class->delete_group( $groupid );
+	}
+}
+
+function _groupperm_webphoto_admin()
+{
+	$this->_set_msg( 'Add groupperm to admin ...' );
+	$this->_group_class->create_gperm_webphoto_groupid( 
+		XOOPS_GROUP_ADMIN, $this->_gperm_def_class->get_perms_admin() );
+}
+
+function _groupperm_module_read_anonymous()
+{
+	$this->_set_msg( 'Add groupperm to anonymous ...' );
+	$this->_group_class->create_gperm_module_read( XOOPS_GROUP_ANONYMOUS );
 }
 
 //---------------------------------------------------------
@@ -586,6 +641,7 @@ function _item_update()
 	$this->_item_add_column_110();
 	$this->_item_modify_column_173();
 	$this->_item_add_column_190();
+	$this->_item_add_column_200();
 }
 
 function _item_add_column_050()
@@ -855,12 +911,36 @@ function _item_add_column_190()
 
 }
 
+function _item_add_column_200()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_perm_level' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_perm_level TINYINT(2) NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_content in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
 //---------------------------------------------------------
 // cat table
 //---------------------------------------------------------
 function _cat_update()
 {
 	$this->_cat_add_column_060();
+	$this->_cat_add_column_200();
 }
 
 function _cat_add_column_060()
@@ -872,12 +952,33 @@ function _cat_add_column_060()
 	}
 
 	$sql  = "ALTER TABLE ". $this->_table_cat ." ADD ( " ;
-
 	$sql  .= "cat_img_name VARCHAR(255) NOT NULL DEFAULT '' " ;
-
 	$sql .= " )";
-	$ret = $this->query( $sql );
 
+	$ret = $this->query( $sql );
+	if ( $ret ) {
+		$this->_set_msg( 'Add cat_img_name in <b>'. $this->_table_cat .'</b>' );
+		return true;
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_cat .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _cat_add_column_200()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_cat, 'cat_group_id' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_cat ." ADD ( " ;
+	$sql  .= "cat_group_id INT(5) UNSIGNED NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
 	if ( $ret ) {
 		$this->_set_msg( 'Add cat_img_name in <b>'. $this->_table_cat .'</b>' );
 		return true;

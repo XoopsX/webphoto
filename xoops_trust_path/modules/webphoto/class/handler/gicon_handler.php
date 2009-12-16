@@ -1,5 +1,5 @@
 <?php
-// $Id: gicon_handler.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: gicon_handler.php,v 1.3 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// $none in get_sel_options()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
 //---------------------------------------------------------
@@ -169,12 +171,14 @@ function update( $row )
 //---------------------------------------------------------
 // get rows
 //---------------------------------------------------------
-function get_sel_options()
+function get_sel_options( $none=false, $none_name='---' )
 {
 	$rows = $this->get_rows_all_asc();
 
 	$arr = array();
-	$arr[0] = '---';
+	if ( $none ) {
+		$arr[0] = $none_name;
+	}
 	foreach ( $rows as $row ) {
 		$arr[ $row['gicon_id'] ] = $row['gicon_title'];
 	}

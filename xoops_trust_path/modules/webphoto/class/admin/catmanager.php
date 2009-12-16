@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
+// $Id: catmanager.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,10 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// cat_group_id
+// _groupperm()
+// BUG: not upload when over image size
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_edit_item_delete
 // 2009-01-25 K.OHWADA
@@ -37,11 +41,16 @@ class webphoto_admin_catmanager extends webphoto_edit_base
 {
 	var $_delete_class;
 	var $_upload_class;
-	var $_image_cmd_class;
+	var $_image_create_class;
+	var $_group_class;
+	var $_gperm_def_class;
+	var $_groupperm_class;
 
 	var $_cfg_cat_width  ;
 	var $_cfg_csub_width ;
 	var $_cfg_perm_cat_read ;
+	var $_cfg_perm_item_read ;
+	var $_ini_use_cat_group_id;
 
 	var $_get_catid;
 
@@ -49,6 +58,7 @@ class webphoto_admin_catmanager extends webphoto_edit_base
 
 	var $_THIS_FCT = 'catmanager';
 	var $_THIS_URL;
+	var $_THIS_URL_FORM;
 
 	var $_CAT_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
 
@@ -62,15 +72,23 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
-	$this->_delete_class    =& webphoto_edit_item_delete::getInstance( 
-		$dirname , $trust_dirname  );
-	$this->_upload_class    =& webphoto_upload::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_image_cmd_class =& webphoto_lib_image_cmd::getInstance();
+	$this->_delete_class    
+		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname  );
+	$this->_upload_class    
+		=& webphoto_upload::getInstance( $dirname , $trust_dirname );
 
-	$this->_cfg_cat_width     = $this->_config_class->get_by_name( 'cat_width' );
-	$this->_cfg_csub_width    = $this->_config_class->get_by_name( 'csub_width' );
-	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
+	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
+
+	$this->_group_class     =& webphoto_inc_group::getSingleton( $dirname );
+	$this->_gperm_def_class =& webphoto_inc_gperm_def::getInstance();
+	$this->_groupperm_class =& webphoto_lib_groupperm::getInstance();
+
+	$this->_cfg_cat_width      = $this->_config_class->get_by_name( 'cat_width' );
+	$this->_cfg_csub_width     = $this->_config_class->get_by_name( 'csub_width' );
+	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
+	$this->_cfg_perm_item_read = $this->_config_class->get_by_name( 'perm_item_read' );
+
+	$this->_ini_use_cat_group_id = $this->get_ini('use_cat_group_id');
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
@@ -111,6 +129,10 @@ function main()
 			$this->_weight();
 			exit();
 
+		case 'groupperm':
+			$this->_groupperm();
+			exit();
+
 		default:
 			break;
 	}
@@ -144,6 +166,13 @@ function _get_action()
 	$confirm = $this->get_post_text('del_confirm');
 	$delcat  = $this->get_post_text('delcat');
 	$cat_id  = $this->get_post_int('cat_id');
+	$perms   = $this->get_post('perms');
+
+	if ( $cat_id > 0 ) {
+		$this->_THIS_URL_FORM = $this->_THIS_URL.'&amp;disp=edit&amp;cat_id='.$cat_id;
+	} else {
+		$this->_THIS_URL_FORM = $this->_THIS_URL;
+	}
 
 	$ret = '';
 	if( $confirm ) {
@@ -156,6 +185,8 @@ function _get_action()
 		$ret = 'delete';
 	} elseif ( $action == 'weight' ) {
 		$ret = 'weight';
+	} elseif ( is_array($perms) ) {
+		$ret = 'groupperm';
 	}
 	return $ret;
 }
@@ -183,6 +214,7 @@ function _insert()
 	$post_title = $this->get_post_text('cat_title');
 
 	$error = null;
+	$flag_update = false;
 
 	if ( ! $this->check_token() ) {
 		$error = $this->get_token_errors() ;
@@ -198,7 +230,7 @@ function _insert()
 	}
 
 	$row = $this->_cat_handler->create( true );
-	$row_insert = $this->_build_row( $row );
+	$row_insert = $this->_build_row_insert( $row );
 
 	$newid = $this->_cat_handler->insert( $row_insert );
 	if ( !$newid ) {
@@ -208,9 +240,32 @@ function _insert()
 		exit();
 	}
 
+	$row_update = $this->_cat_handler->get_row_by_id( $newid );
+
 	// Check if cid == pid
-	if( $newid == $post_pid ) {
-		$this->_cat_handler->update_pid( $newid, 0 );
+	if ( $newid == $post_pid ) {
+		$row_update['cat_pid'] = 0;
+		$flag_update = true;
+	}
+
+// if root category
+	if ( $this->_show_group_id() && ( $row_update['cat_pid'] == 0 ) ) {
+		$name = $row_update['cat_title'] ;
+		$desc = 'cat id: '. $newid .' module id: '.$this->_MODULE_ID.' name: '.$this->_DIRNAME;
+		$group_id = $this->_group_class->create_member_group( $name, $desc );
+
+		if ( $group_id ) {
+			$this->_group_class->create_gperm_module_read( $group_id );
+			$this->_group_class->create_gperm_webphoto_groupid( 
+				$group_id, $this->_gperm_def_class->get_perms_user() );
+			$row_update['cat_group_id']  = $group_id;
+			$row_update['cat_perm_post'] = $this->_build_cat_perm_post( $group_id );
+			$flag_update = true;
+		}
+	}
+
+	if ( $flag_update ) {
+		$this->_cat_handler->update( $row_update );
 	}
 
 	if ( $this->_error_upload ) {
@@ -223,6 +278,25 @@ function _insert()
 
 	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_INSERTED ) ;
 	exit() ;
+}
+
+function _build_row_insert( $row )
+{
+	return $this->_build_row( $row );
+}
+
+function _build_row_update( $row )
+{
+	$row = $this->_build_row( $row );
+	$cat_group_id = $this->get_post_int( 'cat_group_id' );
+
+	if ( $this->_show_group_id() ) {
+// if not system group
+		if ( ! $this->is_system_group( $cat_group_id ) ) {
+			$row['cat_group_id'] = $cat_group_id ;
+		}
+	}
+	return $row;
 }
 
 function _build_row( $row )
@@ -272,16 +346,14 @@ function _build_img_name( $row )
 	$post_img_name  = $this->get_post_text('cat_img_name');
 	$post_img_path  = $this->_build_img_path_by_post();
 
+	$row['cat_img_name'] = '' ;
+	$row['cat_img_path'] = '' ;
+
 	if ( $fetch_img_name ) {
 		$row['cat_img_name'] = $fetch_img_name ;
-		$row['cat_img_path'] = '' ;
-
 	} elseif ( $post_img_name ) {
 		$row['cat_img_name'] = $post_img_name ;
-		$row['cat_img_path'] = '' ;
-
-	} elseif( $post_img_path ) {
-		$row['cat_img_name'] = '' ;
+	} elseif ( $post_img_path ) {
 		$row['cat_img_path'] = $post_img_path ;
 	}
 
@@ -337,6 +409,9 @@ function _fetch_image()
 {
 	$this->_error_upload = false;
 
+// BUG: not upload when over image size
+	$this->_upload_class->set_flag_size_limit( false );
+
 	$ret = $this->_upload_class->fetch_image( $this->_CAT_FIELD_NAME );
 	if ( $ret < 0 ) { 
 		$this->_error_upload = true;
@@ -351,12 +426,27 @@ function _fetch_image()
 	if ( $tmp_name && $media_name ) {
 		$tmp_file = $this->_TMP_DIR   .'/'. $tmp_name;
 		$cat_file = $this->_CATS_DIR  .'/'. $media_name ;
-		$this->_image_cmd_class->resize_rotate( 
+		$this->_image_create_class->cmd_resize_rotate( 
 			$tmp_file, $cat_file, $this->_cfg_cat_width, $this->_cfg_cat_width );
 		return $media_name ;	// success
 	}
 
 	return null ;
+}
+
+function _show_group_id()
+{
+	if (( $this->_cfg_perm_item_read > 0 ) && $this->_ini_use_cat_group_id ) {
+		return true;
+	}
+	return false;
+}
+
+function _build_cat_perm_post( $group_id )
+{
+	$arr = array( XOOPS_GROUP_ADMIN, $group_id );
+	$val = $this->_utility_class->array_to_perm( $arr, _C_WEBPHOTO_PERM_SEPARATOR );
+	return $val;
 }
 
 //---------------------------------------------------------
@@ -390,7 +480,7 @@ function _update()
 	}
 
 	$row = $this->_cat_handler->get_row_by_id( $post_catid );
-	$row_update = $this->_build_row( $row );
+	$row_update = $this->_build_row_update( $row );
 
 	$ret = $this->_cat_handler->update( $row_update );
 	if ( !$ret ) {
@@ -408,17 +498,15 @@ function _update()
 		exit();
 	}
 
-	$url = $this->_THIS_URL.'&amp;disp=edit&amp;cat_id='.$post_catid;
-
 	if ( $this->_error_upload ) {
 		$msg  = $this->get_format_error();
 		$msg .= "<br />\n";
 		$msg .= _AM_WEBPHOTO_CAT_UPDATED ;
-		redirect_header( $url, $this->_TIME_FAIL , $msg ) ;
+		redirect_header( $this->_THIS_URL_FORM, $this->_TIME_FAIL , $msg ) ;
 		exit();
 	}
 
-	redirect_header( $url , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_UPDATED ) ;
+	redirect_header( $this->_THIS_URL_FORM , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CAT_UPDATED ) ;
 	exit() ;
 }
 
@@ -478,24 +566,11 @@ function _delete()
 	//get all categories under the specified category
 	$children = $this->_cat_handler->getAllChildId( $post_catid ) ;
 
-	foreach( $children as $ch_id ) 
-	{
-		$ret = $this->_cat_handler->delete_by_id( $ch_id );
-		if ( !$ret ) {
-			$this->set_error( $this->_cat_handler->get_errors() );
-		}
-
-		xoops_notification_deletebyitem( $this->_MODULE_ID , 'category' , $ch_id ) ;
-		$this->_delete_photos_by_catid( $ch_id );
+	foreach( $children as $ch_id ) {
+		$this->_delete_single_by_catid( $ch_id );
 	}
 
-	$ret = $this->_cat_handler->delete_by_id( $post_catid );
-	if ( !$ret ) {
-		$this->set_error( $this->_cat_handler->get_errors() );
-	}
-
-	xoops_notification_deletebyitem( $this->_MODULE_ID , 'category' , $post_catid ) ;
-	$this->_delete_photos_by_catid( $post_catid );
+	$this->_delete_single_by_catid( $post_catid );
 
 	if ( $this->has_error() ) {
 		$msg  = "DB Error: delete category <br />";
@@ -506,6 +581,27 @@ function _delete()
 
 	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_CATDELETED ) ;
 	exit() ;
+}
+
+function _delete_single_by_catid( $cat_id )
+{
+	$row = $this->_cat_handler->get_row_by_id( $cat_id );
+	$ret = $this->_cat_handler->delete( $row );
+	if ( !$ret ) {
+		$this->set_error( $this->_cat_handler->get_errors() );
+	}
+
+	$group_id = $row['cat_group_id'];
+
+	xoops_notification_deletebyitem( $this->_MODULE_ID , 'category' , $cat_id ) ;
+	$this->_delete_photos_by_catid( $cat_id );
+
+	if ( $this->_show_group_id() ) {
+// if not system group
+		if ( ! $this->is_system_group( $group_id ) ) {
+			$this->_group_class->delete_group( $group_id );
+		}
+	}
 }
 
 // Delete photos hit by the $whr clause
@@ -561,6 +657,21 @@ function _weight()
 }
 
 //---------------------------------------------------------
+// groupperm
+//---------------------------------------------------------
+function _groupperm()
+{
+	if ( ! $this->check_token() ) {
+		redirect_header( $this->_THIS_URL_FORM, $this->_TIME_FAIL, $this->get_token_errors() );
+		exit();
+	}
+
+	$this->_groupperm_class->modify( $this->_MODULE_ID, $this->get_post('perms'), true );
+	redirect_header( $this->_THIS_URL_FORM , $this->_TIME_SUCCESS , _AM_WEBPHOTO_GPERMUPDATED );
+	exit() ;
+}
+
+//---------------------------------------------------------
 // print form
 //---------------------------------------------------------
 function _print_new_form()
@@ -597,12 +708,19 @@ function _print_edit_form()
 		exit();
 	}
 
+	$group_id = $row['cat_group_id'];
+
 	$param = array(
 		'mode'   => 'edit',
 		'parent' => null,
 	);
 
 	$this->_print_cat_form( $row, $param );
+
+	if ( $group_id > 0 ) {
+		$this->_print_gperm_form( $group_id );
+		$this->_print_member( $group_id );
+	}
 }
 
 //---------------------------------------------------------
@@ -678,6 +796,77 @@ function _print_del_confirm()
 
 	xoops_cp_footer();
 	exit();
+}
+
+function _print_gperm_form( $group_id )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_groupperm.html';
+
+	$form_class =& webphoto_lib_groupperm_form::getInstance();
+	$def_class  =& webphoto_inc_gperm_def::getInstance();
+
+	$group_list = $form_class->build_group_list_single( 
+		$this->_MODULE_ID, 
+		$group_id, 
+		$form_class->get_group_name( $group_id ), 
+		_C_WEBPHOTO_GPERM_NAME, 
+		$def_class->get_perm_list() );
+
+	$hidden_list = array(
+		array( 'name' => 'fct' ,    'value' => $this->_THIS_FCT ) ,
+		array( 'name' => 'cat_id' , 'value' => $this->_get_catid ) ,
+	);
+
+	$param = $form_class->build_param( $this->_MODULE_ID , $this->_ADMIN_INDEX_PHP );
+	$param['lang_title_groupperm'] = $this->get_admin_title( 'GROUPPERM' );
+	$param['group_list']  = array( $group_list );
+	$param['hidden_list'] = $hidden_list;
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $param ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function _print_member( $group_id )
+{
+	$this->inculude_lang_file();
+
+	$template = 'db:'. $this->_DIRNAME .'_inc_user_list.html';
+
+	$memberHandler =& xoops_gethandler('member');
+
+	$total = $memberHandler->getUserCountByGroup( $group_id );
+	$users = $memberHandler->getUsersByGroup( $group_id, true );
+
+	$param = array(
+		'groupid' => $group_id ,
+		'total'   => $total ,
+		'users'   => $users ,
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $param ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function inculude_lang_file()
+{
+	global $xoopsConfig;
+	$language = $xoopsConfig['language'];
+
+	$file_xc_lang = XOOPS_ROOT_PATH .'/modules/user/language/'. $language .'/main.php' ;
+	$file_xc_eng  = XOOPS_ROOT_PATH .'/modules/user/language/english/main.php' ;
+
+// for Cube 2.1
+	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
+		if ( file_exists($file_xc_lang) ) {
+			include_once $file_xc_lang;
+		} else {
+			include_once $file_xc_eng;
+		}
+//		$this->set_lang_gperm_admin( _AD_USER_LANG_PERM_ADMIN ) ;
+//		$this->set_lang_gperm_read(  _AD_USER_LANG_PERM_ACCESS ) ;
+	}
 }
 
 // --- class end ---

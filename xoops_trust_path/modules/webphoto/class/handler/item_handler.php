@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.16 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_handler.php,v 1.17 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// item_perm_level
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
 // info_array_to_str()
@@ -157,6 +159,7 @@ function create( $flag_new=false )
 		'item_codeinfo'        => $this->get_ini('item_codeinfo_default') ,
 		'item_perm_read'       => $this->get_ini('item_perm_read_default') ,
 		'item_perm_down'       => $this->get_ini('item_perm_down_default') ,
+		'item_perm_level'      => $this->get_ini('item_perm_level_default') ,
 		'item_editor'          => $this->get_ini('item_editor_default') ,
 		'item_description_html'   => $this->get_ini('item_description_html_default') ,
 		'item_description_smiley' => $this->get_ini('item_description_smiley_default') ,
@@ -259,6 +262,7 @@ function insert( $row, $force=false )
 	$sql .= 'item_content, ';
 	$sql .= 'item_detail_onclick, ';
 	$sql .= 'item_weight, ';
+	$sql .= 'item_perm_level, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= 'item_file_id_'.$i.', ';
@@ -342,6 +346,7 @@ function insert( $row, $force=false )
 	$sql .= $this->quote($item_content).', ';
 	$sql .= intval($item_detail_onclick).', ';
 	$sql .= intval($item_weight).', ';
+	$sql .= intval($item_perm_level).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
 		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
@@ -439,6 +444,7 @@ function update( $row, $force=false )
 	$sql .= 'item_content='.$this->quote($item_content).', ';
 	$sql .= 'item_detail_onclick='.intval($item_detail_onclick).', ';
 	$sql .= 'item_weight='.intval($item_weight).', ';
+	$sql .= 'item_perm_level='.intval($item_perm_level).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -997,6 +1003,15 @@ function get_detail_onclick_options()
 //		_C_WEBPHOTO_FILE_KIND_SMALL        => _WEBPHOTO_FILE_KIND_SMALL ,
 //		_C_WEBPHOTO_FILE_KIND_JPEG         => _WEBPHOTO_FILE_KIND_JPEG ,
 //		_C_WEBPHOTO_FILE_KIND_MP3          => _WEBPHOTO_FILE_KIND_MP3 ,
+	);
+	return $arr;
+}
+
+function get_perm_level_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_PERM_LEVEL_PUBLIC => _WEBPHOTO_ITEM_PERM_LEVEL_PUBLIC ,
+		_C_WEBPHOTO_PERM_LEVEL_GROUP  => _WEBPHOTO_ITEM_PERM_LEVEL_GROUP ,
 	);
 	return $arr;
 }

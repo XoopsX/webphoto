@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.21 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_form.php,v 1.22 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// item_perm_level
 // 2009-11-11 K.OHWADA
 // item_detail_onclick
 // 2009-10-25 K.OHWADA
@@ -161,6 +163,7 @@ function build_form_admin_by_files( $mode, $files )
 	$has_rotate     = $this->_has_image_rotate ;
 	$allowed_exts   = $this->_allowed_exts ;
 	$max_photo_file = $this->_MAX_PHOTO_FILE ;
+	$delete         = _DELETE ;
 
 	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
 
@@ -185,6 +188,12 @@ function build_form_admin_by_files( $mode, $files )
 
 	$this->set_row( $item_row );
 	$this->init_editor();
+
+	$show_valid = $this->show_valid();
+	if ( $show_valid ) {
+		$submit .= ' ('. _AM_WEBPHOTO_BUTTON_ADMIT .') ';
+		$delete .= ' ('. _AM_WEBPHOTO_BUTTON_REFUSE .') ';
+	}
 
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
@@ -248,6 +257,8 @@ function build_form_admin_by_files( $mode, $files )
 		'item_codeinfo_select_options'   => $this->item_codeinfo_select_options() ,
 		'item_perm_read_input_checkboxs' => $this->item_perm_read_input_checkboxs() ,
 		'item_perm_down_input_checkboxs' => $this->item_perm_down_input_checkboxs() ,
+		'item_perm_read_list'            => $this->item_perm_read_list() ,
+		'item_perm_level_checked'        => $this->item_perm_level_checked() ,
 
 		'item_text_array'     => $this->item_text_array() ,
 		'item_file_array'     => $this->item_file_array( $is_edit ) ,
@@ -269,7 +280,8 @@ function build_form_admin_by_files( $mode, $files )
 		'embed_src_dsc' => $this->embed_src_dsc() ,
 		'editor_js'     => $this->_editor_js ,
 
-		'value_submit' => $submit ,
+		'button_submit'      => $submit ,
+		'button_conf_delete' => $delete ,
 
 // for admin
 		'show_file_photo'          => $this->show_admin_file_photo(),
@@ -286,6 +298,7 @@ function build_form_admin_by_files( $mode, $files )
 		'show_item_playlist_time_hidden' => ! $show_item_playlist_time ,
 		'show_item_playlist_feed_hidden' => ! $show_item_playlist_feed ,
 		'show_item_playlist_dir_hidden'  => ! $show_item_playlist_dir ,
+		'show_item_perm_level'           => $this->show_item_perm_level() ,
 
 		'time_now'               => $this->time_now() ,
 		'item_time_create_disp'  => $this->build_time_disp( 'item_time_create',  true ) ,
@@ -296,6 +309,7 @@ function build_form_admin_by_files( $mode, $files )
 		'item_time_update_checkbox_checked'  => $this->build_checkbox_checked( 'item_time_update_checkbox' ), 
 		'item_time_publish_checkbox_checked' => $this->build_checkbox_checked( 'item_time_publish_checkbox' ), 
 		'item_time_expire_checkbox_checked'  => $this->build_checkbox_checked( 'item_time_update_checkbox' ), 
+		'item_perm_level_checked'            => $this->item_perm_level_checked() ,
 
 		'item_status_select_options'         => $this->item_status_select_options(),
 		'item_kind_select_options'           => $this->item_kind_select_options(),
@@ -307,7 +321,7 @@ function build_form_admin_by_files( $mode, $files )
 		'item_playlist_dir_select_options'   => $this->item_playlist_dir_select_options(),
 		'item_playlist_time_select_options'  => $this->item_playlist_time_select_options(),
 		'item_embed_type_select_options'     => $this->item_embed_type_select_options(),
-		'show_err_invalid_cat'              => $this->show_err_invalid_cat( $is_edit ) ,
+		'show_err_invalid_cat'               => $this->show_err_invalid_cat( $is_edit ) ,
 
 	);
 

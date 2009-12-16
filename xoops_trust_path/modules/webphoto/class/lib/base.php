@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.16 2009/11/29 07:34:21 ohwada Exp $
+// $Id: base.php,v 1.17 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// get_system_groups()
 // 2009-11-11 K.OHWADA
 // get_files_in_dir()
 // 2009-01-10 K.OHWADA
@@ -567,6 +569,11 @@ function get_xoops_uname_by_uid( $uid, $usereal=0 )
 	return $this->_xoops_class->get_user_uname_from_id( $uid, $usereal );
 }
 
+function get_xoops_email_by_uid( $uid )
+{
+	return $this->_xoops_class->get_user_email_from_id( $uid );
+}
+
 function get_xoops_module_by_dirname( $dirname )
 {
 	return $this->_xoops_class->get_module_by_dirname( $dirname );
@@ -577,14 +584,24 @@ function get_xoops_group_objs()
 	return $this->_xoops_class->get_group_obj();
 }
 
-function get_cached_xoops_db_groups()
+function get_cached_xoops_db_groups( $none=false, $none_name='---', $format='s' )
 {
-	return $this->_xoops_class->get_cached_groups();
+	return $this->_xoops_class->get_cached_groups( $none, $none_name, $format );
 }
 
 function get_xoops_group_name( $id, $format='s' )
 {
 	return $this->_xoops_class->get_cached_group_by_id_name( $id, 'name', $format );
+}
+
+function get_system_groups()
+{
+	return $this->_xoops_class->get_system_groups();
+}
+
+function is_system_group( $id )
+{
+	return $this->_xoops_class->get_system_groups( $id );
 }
 
 //---------------------------------------------------------

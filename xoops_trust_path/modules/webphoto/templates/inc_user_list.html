@@ -1,0 +1,37 @@
+<{* $Id: inc_user_list.html,v 1.1 2009/12/16 13:36:20 ohwada Exp $ *}>
+
+<{$smarty.const._AD_USER_LANG_GROUP_AMMO}>: <{$total}> <br />
+<a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupMember&groupid=<{$groupid}>">
+<img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/members.gif" alt="<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}>" title="<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}>" />
+<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}></a>
+<br /><br />
+
+<table class="outer">
+  <tr>
+    <th>&nbsp;</th>
+    <th><{$smarty.const._MD_USER_LANG_UID}></th>
+    <th><{$smarty.const._MD_USER_LANG_UNAME}></th>
+    <th><{$smarty.const._MD_USER_LANG_NAME}></th>
+    <th><{$smarty.const._AD_USER_LANG_REGDATE}></th>
+    <th><{$smarty.const._AD_USER_LANG_LASTLOGIN}></th>
+    <th><{$smarty.const._MD_USER_LANG_POSTS}></th>
+    <th><{$smarty.const._MD_USER_LANG_LEVEL}></th>
+    <th><{$smarty.const._AD_USER_LANG_CONTROL}></th>
+  </tr>
+  <{foreach from=$users item=user }>
+    <tr class="<{cycle values="odd,even"}>">
+      <td class="user_list_image"><img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/user.gif" alt="<{$smarty.const._AD_USER_LANG_USER}>" title="<{$smarty.const._AD_USER_LANG_USER}>" /></td>
+      <td class="user_list_id"><{$user->getShow('uid')}></td>
+      <td class="user_list_title"><{$user->getShow('uname')}></td>
+      <td class="user_list_name"><{$user->getShow('name')}></td>
+      <td class="user_list_date"><{$user->getShow('user_regdate')|xoops_formattimestamp}></td>
+      <td class="user_list_date"><{$user->getShow('last_login')|xoops_formattimestamp:l}></td>
+      <td class="user_list_number"><{$user->getShow('posts')}></td>
+      <td class="user_list_order"><{$user->getShow('level')}></td>
+      <td class="user_list_control">
+        <a href="<{$xoops_url}>/modules/user/admin/index.php?action=UserEdit&amp;uid=<{$user->getShow('uid')}>">
+        <img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/edit.gif" alt="<{$smarty.const._EDIT}>" title="<{$smarty.const._EDIT}>" /></a> 
+      </td>
+    </tr>
+  <{/foreach}>
+</table>

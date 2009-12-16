@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
+// $Id: cat_handler.php,v 1.13 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// cat_group_id
 // 2009-11-11 K.OHWADA
 // webphoto_lib_tree_handler -> webphoto_handler_base_ini
 // cat_allowed_ext_default
@@ -101,6 +103,7 @@ function create( $flag_new=false )
 		'cat_perm_read'      => $this->get_ini('cat_perm_read_default') ,
 		'cat_perm_post'      => $this->get_ini('cat_perm_post_default') ,
 		'cat_description'    => '',
+		'cat_group_id'       => '0',
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
@@ -149,6 +152,7 @@ function insert( $row )
 	$sql .= 'cat_gmap_type, ';
 	$sql .= 'cat_perm_read, ';
 	$sql .= 'cat_perm_post, ';
+	$sql .= 'cat_group_id, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$sql .= 'cat_text'.$i.', ';
@@ -188,6 +192,7 @@ function insert( $row )
 	$sql .= intval($cat_gmap_type).', ';
 	$sql .= $this->quote($cat_perm_read).', ';
 	$sql .= $this->quote($cat_perm_post).', ';
+	$sql .= intval($cat_group_id).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$sql .= $this->quote( $row[ 'cat_text'.$i ] ).', ';
@@ -237,6 +242,7 @@ function update( $row )
 	$sql .= 'cat_gmap_type='.intval($cat_gmap_type).', ';
 	$sql .= 'cat_perm_read='.$this->quote($cat_perm_read).', ';
 	$sql .= 'cat_perm_post='.$this->quote($cat_perm_post).', ';
+	$sql .= 'cat_group_id='.intval($cat_group_id).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$name = 'cat_text'.$i;
@@ -433,6 +439,10 @@ function build_options_with_perm_post( $value, $show=false )
 	return  $this->build_form_select_options_with_perm_post( $rows, 'cat_title', $value, 'cat_perm_post', 'cat_perm_read', $show );
 }
 
+function build_id_options( $none=false, $none_name='---' )
+{
+	return $this->get_tree_name_list( 'cat_title', $none, $none_name );
+}
 
 // --- class end ---
 }

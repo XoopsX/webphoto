@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.10 2009/05/16 00:16:06 ohwada Exp $
+// $Id: element.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// function build_form_select_extra()
 // 2009-05-15 K.OHWADA
 // typo
 // 2009-04-19 K.OHWADA
@@ -67,6 +69,7 @@ class webphoto_lib_element extends webphoto_lib_error
 
 	var $_SELECTED = 'selected="selected"';
 	var $_CHECKED  = 'checked="checked"';
+	var $_DISABLED = 'disabled="disabled"';
 
 	var $_TIME_FORMAT = 'Y/m/d H:i';
 	var $_TEXT_EMPTY_SUBSUTITUTE = '---';
@@ -324,16 +327,16 @@ function build_form_options_multi( $values, $options )
 	return $text;
 }
 
-function build_form_options( $value, $options )
+function build_form_options( $value, $options, $disabled_list=null )
 {
 	if ( !is_array($options) || !count($options) ) {
 		return null;
 	}
 
 	$text = '';
-	$list = $this->build_form_option_list( $value, $options );
+	$list = $this->build_form_option_list( $value, $options, $disabled_list );
 	foreach ( $list as $opt ) {
-		$text .= $this->build_form_option( $opt['value'], $opt['caption'], $opt['selected'] );
+		$text .= $this->build_form_option( $opt['value'], $opt['caption'], $opt['extra'] );
 	}
 	return $text;
 }
@@ -359,7 +362,7 @@ function build_form_option_list_multi( $values, $options )
 	return $arr;
 }
 
-function build_form_option_list( $value, $options )
+function build_form_option_list( $value, $options, $disabled_list=null )
 {
 	if ( !is_array($options) || !count($options) ) {
 		return null;
@@ -369,17 +372,17 @@ function build_form_option_list( $value, $options )
 	foreach ( $options as $k => $v )
 	{
 		$arr[] = array(
-			'value'    => $k,
-			'caption'  => $v,
-			'selected' => $this->build_form_selected( $value, $k ),
+			'value'   => $k,
+			'caption' => $v,
+			'extra'   => $this->build_form_select_extra( $k, $value, $disabled_list ),
 		);
 	}
 	return $arr;
 }
 
-function build_form_option( $value, $caption, $selected=null )
+function build_form_option( $value, $caption, $extra=null )
 {
-	$str  = '<option value="'. $value .'" '. $selected .' >';
+	$str  = '<option value="'. $value .'" '. $extra .' >';
 	$str .= $caption ;
 	$str .= '</option >'."\n";
 	return $str;
@@ -405,6 +408,16 @@ function build_form_selected_multi( $values, $val2 )
 function build_form_selected( $val1, $val2 )
 {
 	if ( $val1 == $val2 ) {
+		return $this->_SELECTED;
+	}
+	return '';
+}
+
+function build_form_select_extra( $key, $value, $disabled_list=null )
+{
+	if ( is_array($disabled_list) && in_array( $key, $disabled_list ) ) {
+		return $this->_DISABLED;
+	} elseif ( $key == $value ) {
 		return $this->_SELECTED;
 	}
 	return '';

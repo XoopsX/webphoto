@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: header_edit.php,v 1.9 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// class/d3/mail_template.php
 // 2009-11-11 K.OHWADA
 // class/inc/ini.php
 // 2009-10-25 K.OHWADA
@@ -64,6 +66,7 @@ webphoto_include_once( 'class/inc/admin_menu.php' );
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_event.php' );
 webphoto_include_once( 'class/d3/preload.php' );
+webphoto_include_once( 'class/d3/mail_template.php' );
 
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/msg.php' );
@@ -92,6 +95,7 @@ webphoto_include_once( 'class/lib/timidity.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
+webphoto_include_once( 'class/lib/mail_send.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
 
 webphoto_include_once( 'class/handler/base_ini.php' );

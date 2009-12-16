@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.9 2009/11/29 10:30:31 ohwada Exp $
+// $Id: item_build.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// item_perm_level
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // item_detail_onclick
@@ -33,12 +35,15 @@ class webphoto_edit_item_build extends webphoto_edit_base_create
 	var $_xoops_class;
 	var $_post_class;
 	var $_item_handler;
+	var $_cat_handler;
 	var $_perm_class;
 
 	var $_xoops_uid;
 	var $_cfg_perm_item_read ;
 	var $_has_superinsert ;
 	var $_has_html ;
+
+	var $_use_item_perm_level = false;
 
 	var $_FILE_LIST;
 	var $_FLAG_ADMIN = false;
@@ -57,6 +62,8 @@ function webphoto_edit_item_build( $dirname , $trust_dirname )
 
 	$this->_item_handler  
 		=& webphoto_item_handler::getInstance( $dirname , $trust_dirname );
+	$this->_cat_handler  
+		=& webphoto_cat_handler::getInstance( $dirname , $trust_dirname );
 	$this->_perm_class    
 		=& webphoto_permission::getInstance( $dirname , $trust_dirname );
 
@@ -64,6 +71,8 @@ function webphoto_edit_item_build( $dirname , $trust_dirname )
 	$this->_has_superinsert    = $this->_perm_class->has_superinsert();
 	$this->_has_html           = $this->_perm_class->has_html();
 	$this->_cfg_perm_item_read = $this->get_config_by_name( 'perm_item_read' );
+
+	$this->_use_item_perm_level = $this->get_ini('use_item_perm_level');
 
 	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
@@ -123,6 +132,10 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 // perm
 	if ( $this->_cfg_perm_item_read > 0 ) {
 		$row['item_perm_read'] = $this->get_group_perms_str_by_post( 'item_perm_read_ids' );
+	}
+
+	if ( $this->show_perm_level() ) {
+		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
 	}
 
 // description option
@@ -198,6 +211,11 @@ function build_row_modify_by_post( $row, $flag_status=true )
 		$row['item_time_publish']   = $time_publish ;
 		$row['item_time_expire']    = $time_expire ;
 		$row['item_detail_onclick'] = $post_detail_onclick ;
+
+		if ( $this->show_perm_level() ) {
+			$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
+			$row['item_perm_read']  = $this->build_item_perm_by_post_level();
+		}
 
 // user
 	} else {
@@ -289,6 +307,53 @@ function get_server_time_by_post( $key )
 {
 	$time = $this->get_post_time( $key );
 	return $this->_xoops_class->user_to_server_time( $time );
+}
+
+function show_perm_level()
+{
+	if (( $this->_cfg_perm_item_read > 0 ) && $this->_use_item_perm_level ) {
+		return true;
+	}
+	return false;
+}
+
+function build_item_perm_by_post_level()
+{
+	$level  = $this->get_post_int( 'item_perm_level' );
+	$cat_id = $this->get_post_int( 'item_cat_id' );
+	return $this->build_item_perm_by_level_catid( $level, $cat_id );
+}
+
+function build_item_perm_by_level_catid( $level, $cat_id )
+{
+	switch ( $level ) 
+	{
+		case _C_WEBPHOTO_PERM_LEVEL_GROUP:
+			$val = $this->build_item_perm_group_by_catid( $cat_id );
+			break;
+
+		case _C_WEBPHOTO_PERM_LEVEL_PUBLIC:
+		default:
+			$val = _C_WEBPHOTO_PERM_ALLOW_ALL ;
+			break;
+	}
+	return $val;
+}
+
+function build_item_perm_group_by_catid( $cat_id )
+{
+	$arr = array( XOOPS_GROUP_ADMIN );
+
+	$cat_row = $this->_cat_handler->get_cached_row_by_id( $cat_id );
+	if ( is_array($cat_row) ) {
+		$cat_group_id = $cat_row['cat_group_id'] ;
+		if ( $cat_group_id > 0 ) {
+			$arr[] = $cat_group_id;
+		}
+	}
+
+	$val = $this->_utility_class->array_to_perm( $arr, _C_WEBPHOTO_PERM_SEPARATOR );
+	return $val;
 }
 
 //---------------------------------------------------------

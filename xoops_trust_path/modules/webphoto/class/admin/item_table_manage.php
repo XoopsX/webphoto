@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_table_manage.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// item_perm_level
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // item_detail_onclick
@@ -50,10 +52,10 @@ function webphoto_admin_item_table_manage( $dirname , $trust_dirname )
 	$this->set_manage_list_column_array(
 		array( 'item_title', 'item_uid' ) );
 
-	$this->_search_class  =& webphoto_edit_search_build::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_delete_class  =& webphoto_edit_item_delete::getInstance( 
-		$dirname , $trust_dirname  );
+	$this->_search_class  
+		=& webphoto_edit_search_build::getInstance( $dirname , $trust_dirname );
+	$this->_delete_class  
+		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname  );
 
 }
 
@@ -132,6 +134,7 @@ function _build_row_by_post()
 		'item_description'     => $this->_post_class->get_post_text(  'item_description' ),
 		'item_perm_read'       => $this->_post_class->get_post_text(  'item_perm_read' ),
 		'item_perm_down'       => $this->_post_class->get_post_text(  'item_perm_down' ),
+		'item_perm_level'      => $this->_post_class->get_post_int(   'item_perm_level' ),
 		'item_gmap_latitude'   => $this->_post_class->get_post_float( 'item_gmap_latitude' ),
 		'item_gmap_longitude'  => $this->_post_class->get_post_float( 'item_gmap_longitude' ),
 		'item_gmap_zoom'       => $this->_post_class->get_post_int(   'item_gmap_zoom' ),
@@ -248,6 +251,7 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_gmap_type' );
 	echo $this->build_comp_text( 'item_perm_read' );
 	echo $this->build_comp_text( 'item_perm_down' );
+	echo $this->build_comp_text( 'item_perm_level' );
 	echo $this->build_comp_text( 'item_chain' );
 	echo $this->build_comp_text( 'item_status' );
 	echo $this->build_comp_text( 'item_hits' );

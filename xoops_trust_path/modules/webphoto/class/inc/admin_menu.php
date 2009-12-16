@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.7 2009/03/06 03:54:16 ohwada Exp $
+// $Id: admin_menu.php,v 1.8 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// webphoto_inc_ini
 // 2009-03-01 K.OHWADA
 // rss_manager
 // 2009-01-10 K.OHWADA
@@ -31,21 +33,31 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_admin_menu
 {
+	var $_ini_class ;
+
 	var $_DIRNAME;
+
+	var $_ini_admin_menu_invite = false;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_inc_admin_menu( $dirname )
+function webphoto_inc_admin_menu( $dirname, $trust_dirname )
 {
 	$this->_DIRNAME = $dirname;
+
+	$this->_ini_class 
+		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
+	$this->_ini_class->read_main_ini();
+
+	$this->_ini_admin_menu_invite = $this->get_ini('admin_menu_invite');
 }
 
-function &getSingleton( $dirname )
+function &getSingleton( $dirname, $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {
-		$singletons[ $dirname ] = new webphoto_inc_admin_menu( $dirname );
+		$singletons[ $dirname ] = new webphoto_inc_admin_menu( $dirname, $trust_dirname );
 	}
 	return $singletons[ $dirname ];
 }
@@ -95,6 +107,11 @@ function define_menu()
 	$menu[15]['fct']   = 'checktables';
 	$menu[16]['title'] = 'UPDATE' ;
 	$menu[16]['fct']   = 'update';
+
+	if ( $this->_ini_admin_menu_invite ) {
+		$menu[17]['title'] = 'INVITE' ;
+		$menu[17]['fct']   = 'invite';
+	}
 
 	return $menu;
 }
@@ -189,6 +206,19 @@ function _constant( $name )
 function _constant_name( $name )
 {
 	return strtoupper( '_MI_' . $this->_DIRNAME . '_ADMENU_' . $name );
+}
+
+//---------------------------------------------------------
+// ini class
+//---------------------------------------------------------
+function get_ini( $name )
+{
+	return $this->_ini_class->get_ini( $name );
+}
+
+function explode_ini( $name )
+{
+	return $this->_ini_class->explode_ini( $name );
 }
 
 // --- class end ---

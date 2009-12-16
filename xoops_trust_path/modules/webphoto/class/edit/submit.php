@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.13 2009/11/29 07:34:21 ohwada Exp $
+// $Id: submit.php,v 1.14 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// notify_waiting()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_show_image
 // item_editor_default
@@ -230,6 +232,14 @@ function create_item_row_by_post()
 	return $row;
 }
 
+function build_item_perm_read_by_row( $row )
+{
+	$level  = $row['item_perm_level'];
+	$cat_id = $row['item_cat_id'];
+	return $this->_factory_create_class->_item_build_class->build_item_perm_read_by_level_catid( 
+		$level, $cat_id );
+}
+
 //---------------------------------------------------------
 // submit
 //---------------------------------------------------------
@@ -390,11 +400,11 @@ function submit_exec_post_count()
 
 function submit_exec_notify( $item_row )
 {
-	if ( ! $this->_has_superinsert ) {
-		return;
+	if ( $this->_has_superinsert ) {
+		$this->notify_new_photo( $item_row );
+	} else {
+		$this->notify_waiting( $item_row );
 	}
-
-	$this->notify_new_photo( $item_row );
 }
 
 function notify_new_photo( $item_row )
@@ -403,6 +413,14 @@ function notify_new_photo( $item_row )
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$notification_class->notify_new_photo( 
 		$item_row['item_id'],  $item_row['item_cat_id'],  $item_row['item_title'] );
+}
+
+function notify_waiting( $item_row )
+{
+	$notification_class =& webphoto_notification_event::getInstance(
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$notification_class->notify_waiting( 
+		$item_row['item_id'], $item_row['item_title'] );
 }
 
 //---------------------------------------------------------

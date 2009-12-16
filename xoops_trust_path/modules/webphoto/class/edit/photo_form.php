@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photo_form.php,v 1.9 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// item_perm_level
+// BUG: not show maxsize
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_mime
 // submit_rotate_default
@@ -74,6 +77,7 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 
 	var $_xoops_db_groups  = null;
 
+	var $_ini_use_item_perm_level = false;
 	var $_editor_show = false ;
 	var $_editor_js   = null ;
 	var $_editor_desc = null ;
@@ -125,6 +129,9 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 		= $this->_mime_class->get_my_allowed_mimes();
 
 	$this->_tag_class->set_is_japanese( $this->_is_japanese );
+
+	$this->_ini_use_item_perm_level = $this->get_ini('use_item_perm_level');
+
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -337,6 +344,9 @@ function build_form_photo( $item_row )
 		'max_file_size'   => $this->_cfg_fsize ,
 		'field_counter'   => $field_counter ,
 
+// BUG: not show maxsize
+		'show_maxsize'                => $show_maxsize ,
+
 		'show_desc_options'           => $this->_editor_show ,
 		'show_desc_options_hidden'    => ! $this->_editor_show ,
 		'show_item_embed_type'        => $show_item_embed_type ,
@@ -348,6 +358,7 @@ function build_form_photo( $item_row )
 		'show_item_siteurl_1st'       => $show_item_embed_text ,
 		'show_item_siteurl_2nd'       => ! $show_item_embed_text ,
 		'show_item_perm_read'         => $this->show_item_perm_read() ,
+		'show_item_perm_level'        => $this->show_item_perm_level() ,
 
 		'show_file_photo'         => $show_file_photo ,
 		'show_file_thumb'         => $show_file_thumb ,
@@ -384,6 +395,7 @@ function build_form_photo( $item_row )
 		'item_codeinfo_select_options'   => $this->item_codeinfo_select_options() ,
 		'item_perm_read_input_checkboxs' => $this->item_perm_read_input_checkboxs() ,
 		'item_perm_down_input_checkboxs' => $this->item_perm_down_input_checkboxs() ,
+		'item_perm_level_checked'        => $this->item_perm_level_checked() ,
 
 		'item_text_array'     => $this->item_text_array() ,
 		'item_file_array'     => $this->item_file_array( $is_edit ) ,
@@ -450,6 +462,14 @@ function show_item_perm_read()
 	return false;
 }
 
+function show_item_perm_level()
+{
+	if (( $this->_cfg_perm_item_read > 0 ) && $this->_ini_use_item_perm_level ) {
+		return true;
+	}
+	return false;
+}
+
 function show_thumb_dsc()
 {
 	$type = $this->get_row_by_key( 'item_embed_type' );
@@ -466,6 +486,8 @@ function show_thumb_dsc()
 
 	return array( false, false );
 }
+
+
 
 function show_gmap()
 {
@@ -560,6 +582,61 @@ function item_perm_read_input_checkboxs()
 function item_perm_down_input_checkboxs()
 {
 	return $this->build_group_perms_checkboxs_by_key( 'item_perm_down' );
+}
+
+function item_perm_read_list()
+{
+	return $this->build_perm_list( 'item_perm_read' );
+}
+
+function build_perm_list( $name )
+{
+	$id_name = $name .'_ids';
+	$groups  = $this->get_cached_xoops_db_groups() ;
+	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+	$options = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
+	return $this->build_options_list( $options );
+}
+
+function build_options_list( $options, $del='<br />' )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$str = '';
+	foreach ( $options as $opt )
+	{
+		list( $name, $val, $cap ) = $opt;
+		$str .= $this->build_options_list_span( $val );
+		$str .= $cap ;
+		$str .= '</span>';
+		$str .= $del;
+	}
+	return $str;
+}
+
+function build_options_list_span( $value )
+{
+	if ( $value == $this->_C_YES ) {
+		$color = "menutext";
+	} else {
+		$color = "graytext";
+	}
+	$str = '<span style="color:'. $color .';">';
+	return $str;
+}
+
+function item_perm_level_checked()
+{
+	$value = $this->get_row_by_key( 'item_perm_level' );
+	$checked = array(
+		'0' => '', 
+		'1' => '', 
+	);
+	$checked[ $value ] = $this->_CHECKED ;
+	return $checked;
 }
 
 function rotate_checked( $rotate )

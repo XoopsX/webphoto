@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.19 2009/08/09 05:47:09 ohwada Exp $
+// $Id: admin.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -519,6 +519,29 @@ define( "_AM_WEBPHOTO_FILE_CHECK_DSC" , "É¬Í×¤Ê¥Õ¥¡¥¤¥ë¤¬¤¢¤ë¤«¥Õ¥¡¥¤¥ë¥µ¥¤¥º¤Ç¥
 //---------------------------------------------------------
 define( "_AM_WEBPHOTO_MYSQL_CONFIG" , "MySQL ÀßÄê" ) ;
 define( "_AM_WEBPHOTO_MULTIBYTE_CONFIG" , "¥Þ¥ë¥Á¥Ð¥¤¥È ÀßÄê" ) ;
+
+//---------------------------------------------------------
+// v2.00
+//---------------------------------------------------------
+// invite
+define("_AM_WEBPHOTO_INVITE_EMAIL", "¾·ÂÔÁê¼ê¤Î¥á¡¼¥ë¥¢¥É¥ì¥¹" ) ;
+define("_AM_WEBPHOTO_INVITE_NAME",   "¤¢¤Ê¤¿¤Î¤ªÌ¾Á°" ) ;
+define("_AM_WEBPHOTO_INVITE_MESSAGE", "¥á¥Ã¥»¡¼¥¸" ) ;
+define("_AM_WEBPHOTO_INVITE_SUBMIT", "¾·ÂÔ¤¹¤ë" ) ;
+define("_AM_WEBPHOTO_INVITE_EXAMPLE", "Îã¡§¤³¤ó¤Ë¤Á¤Ï¡¢¡û¡û¤Ç¤¹¡£¤³¤ÎÁ°ÏÃ¤·¤¿¥µ¥¤¥È¤Î¾·ÂÔ¾õ¤òÁ÷¤ê¤Þ¤¹¡£<br />¢¤¢¤¤µ¤ó¤â¤¼¤ÒÅÐÏ¿¤·¤Æ¤ß¤Æ¤¯¤À¤µ¤¤¡£" ) ;
+define("_AM_WEBPHOTO_INVITE_SUBJECT", "%s ¤µ¤ó¤«¤é %s ¤Ø¤Î¾·ÂÔ¾õ¤¬ÆÏ¤¤¤Æ¤¤¤Þ¤¹" ) ;
+define("_AM_WEBPHOTO_INVITE_ERR_NO_NAME", "Ì¾Á°¤¬¤Ê¤¤" ) ;
+
+// gperm
+define("_AM_WEBPHOTO_GROUP_MOD_ADMIN" , "¤³¤Î¥â¥¸¥å¡¼¥ë¤Î´ÉÍý¼Ô¥°¥ë¡¼¥×" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_USER"  , "¤³¤Î¥â¥¸¥å¡¼¥ë¤Î¥æ¡¼¥¶¡¦¥°¥ë¡¼¥×" ) ;
+define("_AM_WEBPHOTO_GROUP_MOD_CATEGORY"  , "¤³¤Î¥â¥¸¥å¡¼¥ë¤Î¥«¥Æ¥´¥ê¤Î¥°¥ë¡¼¥×" ) ;
+
+// item manage
+define("_AM_WEBPHOTO_BUTTON_REFUSE", "µñÈÝ");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "¼Ì¿¿¤¬¾µÇ§¤µ¤ì¤Þ¤·¤¿");
+define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "¼Ì¿¿¤¬µñÈÝ¤µ¤ì¤Þ¤·¤¿");
+define("_AM_WEBPHOTO_ERR_NO_SELECT" , "¥¨¥é¡¼: ¥¢¥¤¥Æ¥à¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ê¤¤" ) ;
 
 // === define end ===
 }
