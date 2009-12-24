@@ -1,10 +1,12 @@
 <?php
-// $Id: catmanager.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
+// $Id: catmanager.php,v 1.12 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//function _build_member_xc21( $group_id )
 
 //---------------------------------------------------------
 // change log
@@ -61,6 +63,8 @@ class webphoto_admin_catmanager extends webphoto_edit_base
 	var $_THIS_URL_FORM;
 
 	var $_CAT_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
+
+	var $_USERLIST_LIMIT = 10;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -800,73 +804,44 @@ function _print_del_confirm()
 
 function _print_gperm_form( $group_id )
 {
-	$template = 'db:'. $this->_DIRNAME .'_form_admin_groupperm.html';
+	$form_class =& webphoto_admin_groupperm_form::getInstance(
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
-	$form_class =& webphoto_lib_groupperm_form::getInstance();
-	$def_class  =& webphoto_inc_gperm_def::getInstance();
-
-	$group_list = $form_class->build_group_list_single( 
-		$this->_MODULE_ID, 
-		$group_id, 
-		$form_class->get_group_name( $group_id ), 
-		_C_WEBPHOTO_GPERM_NAME, 
-		$def_class->get_perm_list() );
-
-	$hidden_list = array(
-		array( 'name' => 'fct' ,    'value' => $this->_THIS_FCT ) ,
-		array( 'name' => 'cat_id' , 'value' => $this->_get_catid ) ,
-	);
-
-	$param = $form_class->build_param( $this->_MODULE_ID , $this->_ADMIN_INDEX_PHP );
-	$param['lang_title_groupperm'] = $this->get_admin_title( 'GROUPPERM' );
-	$param['group_list']  = array( $group_list );
-	$param['hidden_list'] = $hidden_list;
-
-	$tpl = new XoopsTpl() ;
-	$tpl->assign( $param ) ;
-	echo $tpl->fetch( $template ) ;
+	echo $form_class->build_form_by_groupid( 
+		$group_id, $this->_THIS_FCT,  $this->_get_catid );
 }
 
 function _print_member( $group_id )
 {
-	$this->inculude_lang_file();
-
 	$template = 'db:'. $this->_DIRNAME .'_inc_user_list.html';
 
-	$memberHandler =& xoops_gethandler('member');
-
-	$total = $memberHandler->getUserCountByGroup( $group_id );
-	$users = $memberHandler->getUsersByGroup( $group_id, true );
-
-	$param = array(
-		'groupid' => $group_id ,
-		'total'   => $total ,
-		'users'   => $users ,
-	);
+	$userlist_class =& webphoto_lib_userlist::getInstance();
+	$param = $userlist_class->build_param_by_groupid( $group_id, $this->_USERLIST_LIMIT );
+	$param['xoops_dirname'] = $this->_DIRNAME ;
 
 	$tpl = new XoopsTpl() ;
 	$tpl->assign( $param ) ;
+	$tpl->assign( $this->get_user_lang() ) ;
 	echo $tpl->fetch( $template ) ;
 }
 
-function inculude_lang_file()
+function get_user_lang()
 {
-	global $xoopsConfig;
-	$language = $xoopsConfig['language'];
-
-	$file_xc_lang = XOOPS_ROOT_PATH .'/modules/user/language/'. $language .'/main.php' ;
-	$file_xc_eng  = XOOPS_ROOT_PATH .'/modules/user/language/english/main.php' ;
-
-// for Cube 2.1
-	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
-		if ( file_exists($file_xc_lang) ) {
-			include_once $file_xc_lang;
-		} else {
-			include_once $file_xc_eng;
-		}
-//		$this->set_lang_gperm_admin( _AD_USER_LANG_PERM_ADMIN ) ;
-//		$this->set_lang_gperm_read(  _AD_USER_LANG_PERM_ACCESS ) ;
-	}
+	$arr = array(
+		'lang_user_uid'          => _AM_WEBPHOTO_USER_UID ,
+		'lang_user_uname'        => _AM_WEBPHOTO_USER_UNAME ,
+		'lang_user_name'         => _AM_WEBPHOTO_USER_NAME ,
+		'lang_user_regdate'      => _AM_WEBPHOTO_USER_REGDATE,
+		'lang_user_lastlogin'    => _AM_WEBPHOTO_USER_LASTLOGIN ,
+		'lang_user_post'         => _AM_WEBPHOTO_USER_POSTS ,
+		'lang_user_level'        => _AM_WEBPHOTO_USER_LEVEL ,
+		'lang_user_control'      => _AM_WEBPHOTO_USER_CONTROL ,
+		'lang_user_group_ammo'   => _AM_WEBPHOTO_USER_GROUP_AMMO ,
+		'lang_user_group_assign' => _AM_WEBPHOTO_USER_GROUP_ASSIGN ,
+		'lang_user_user'         => _AM_WEBPHOTO_USER_USER ,
+		'lang_user_edit'         => _EDIT ,
+	);
+	return $arr;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: notification.php,v 1.6 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// Fatal error: Call to undefined method webphoto_inc_base_ini()
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
@@ -23,7 +25,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_inc_notification
 //=========================================================
-class webphoto_inc_notification extends webphoto_inc_handler
+// Fatal error: Call to undefined method webphoto_inc_base_ini()
+class webphoto_inc_notification extends webphoto_inc_base_ini
 {
 	var $_cfg_use_pathinfo = false;
 

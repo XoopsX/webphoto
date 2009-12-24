@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm.php,v 1.2 2009/12/16 13:32:34 ohwada Exp $
+// $Id: groupperm.php,v 1.3 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,7 @@ webphoto_include_once( 'admin/header.php' );
 webphoto_include_once( 'class/inc/gperm_def.php' );
 webphoto_include_once( 'class/lib/groupperm.php' );
 webphoto_include_once( 'class/lib/groupperm_form.php' );
+webphoto_include_once( 'class/admin/groupperm_form.php' );
 webphoto_include_once( 'class/admin/groupperm.php' );
 
 $manager =& webphoto_admin_groupperm::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );

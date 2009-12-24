@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.21 2009/12/16 13:32:34 ohwada Exp $
+// $Id: item_manager.php,v 1.22 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -752,6 +752,17 @@ function _modify_form()
 	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$kind        = $item_row['item_kind'] ;
 
+// if use prem_level
+	if ( $this->use_item_perm_level() ) {
+		$perm = $this->build_item_perm_by_row( $item_row );
+		$item_row['item_perm_read'] = $perm;
+
+// if waiting
+		if ( $this->is_waiting_status( $item_row['item_status'] ) ) {
+			$item_row['item_perm_down'] = $perm;
+		}
+	}
+
 	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
 
@@ -1000,8 +1011,10 @@ function _approve()
 		foreach ( $item_rows as $row ) 
 		{
 			$row['item_status'] = _C_WEBPHOTO_STATUS_APPROVED ;
-			if ( $this->show_perm_level() ) {
-				$row['item_perm_read'] = $this->build_item_perm_read_by_row( $row );
+			if ( $this->use_item_perm_level() ) {
+				$perm = $this->build_item_perm_by_row( $row );
+				$row['item_perm_read'] = $perm;
+				$row['item_perm_down'] = $perm;
 			}
 			$this->_item_handler->update( $row );
 			$this->notify_new_photo( $row );
@@ -1015,6 +1028,19 @@ function _approve()
 
 	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , $msg ) ;
 	exit() ;
+}
+
+function build_item_perm_by_row( $row )
+{
+	$level  = $row['item_perm_level'];
+	$cat_id = $row['item_cat_id'];
+	return $this->_factory_create_class->build_item_perm_by_level_catid( 
+		$level, $cat_id );
+}
+
+function use_item_perm_level()
+{
+	return $this->_factory_create_class->use_item_perm_level();
 }
 
 //---------------------------------------------------------

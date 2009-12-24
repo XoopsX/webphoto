@@ -1,4 +1,4 @@
-<{* $Id: form_admin_item.html,v 1.5 2009/12/16 13:32:34 ohwada Exp $ *}>
+<{* $Id: form_admin_item.html,v 1.6 2009/12/24 06:32:22 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -397,7 +397,7 @@
 <{/if}>
 
 <{* rotate *}>
-<{if $show_file_photo && $has_rotate }>
+<{if $show_rotate }>
   <tr><td class="head"><{$lang_radio_rotatetitle}></td><td class="odd">
   <input type="radio" name="rotate" value="rot0" <{$rotate_checked.rot0}> />
   <{$lang_radio_rotate0}> &nbsp; 
@@ -512,13 +512,14 @@
 <{if $show_item_perm_read }>
   <tr><td class="head"><{$lang_item_perm_read}></td><td class="odd">
 
-<{if $show_item_perm_level }>
-    <{$item_perm_read_list}>
-
-<{else}>
+<{if $show_input_item_perm_read }>
     <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
     <{$lang_group_perm_all}><br />
     <{$item_perm_read_input_checkboxs}>
+
+<{else}>
+    <{$item_perm_read_list}>
+    <{$item_perm_read_hiddens}>
 <{/if}>
 
   </td></tr>

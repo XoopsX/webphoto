@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.30 2009/12/16 13:32:34 ohwada Exp $
+// $Id: xoops_version.php,v 1.31 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -69,15 +69,14 @@ class webphoto_inc_xoops_version extends webphoto_inc_base_ini
 	var $_has_insertable    = false;
 	var $_has_rateview      = false;
 	var $_is_module_admin   = false;
-	var $_ini_community_use = false;
 
-	var $_use_cfg_groupid_admin = false;
-	var $_use_cfg_groupid_user  = false;
-	var $_show_sub_myphoto    = true;
-	var $_show_sub_popular    = true;
-	var $_show_sub_highrate   = true;
-	var $_show_sub_search     = false;
-	var $_sub_cat_prefix      = null;
+	var $_ini_cfg_groupid_admin = false;
+	var $_ini_cfg_groupid_user  = false;
+	var $_ini_sub_myphoto    = true;
+	var $_ini_sub_popular    = true;
+	var $_ini_sub_highrate   = true;
+	var $_ini_sub_search     = false;
+	var $_ini_sub_cat_prefix = null;
 
 	var $_config_workdir_default = null;
 
@@ -114,21 +113,6 @@ function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
-
-	$this->_use_cfg_groupid_admin
-		= $this->get_ini('xoops_version_cfg_groupid_admin');
-	$this->_use_cfg_groupid_user
-		= $this->get_ini('xoops_version_cfg_groupid_user');
-	$this->_show_sub_myphoto
-		= $this->get_ini('xoops_version_sub_myphoto');
-	$this->_show_sub_popular
-		= $this->get_ini('xoops_version_sub_popular');
-	$this->_show_sub_highrate
-		= $this->get_ini('xoops_version_sub_highrate');
-	$this->_show_sub_search
-		= $this->get_ini('xoops_version_sub_search');
-	$this->_sub_cat_prefix
-		= $this->get_ini('xoops_version_sub_cat_prefix');
 }
 
 function &getSingleton( $dirname, $trust_dirname )
@@ -314,18 +298,18 @@ function _build_sub()
 		$arr[] = $this->_build_sub_array_const(
 			'SMNAME_SUBMIT', $this->_build_sub_url_fct( 'submit' ) );
 
-		if ( $this->_show_sub_myphoto ) {
+		if ( $this->_ini_sub_myphoto ) {
 			$arr[] = $this->_build_sub_array_const(
 				'SMNAME_MYPHOTO', $this->_build_sub_url_fct( 'myphoto' ) );
 		}
 	}
 
-	if ( $this->_show_sub_popular ) {
+	if ( $this->_ini_sub_popular ) {
 		$arr[] = $this->_build_sub_array_const(
 		'SMNAME_POPULAR', $this->_build_sub_url_op( 'popular' ) );
 	}
 
-	if ( $this->_show_sub_highrate && $this->_has_rateview ) {
+	if ( $this->_ini_sub_highrate && $this->_has_rateview ) {
 		$arr[] = $this->_build_sub_array_const(
 			'SMNAME_HIGHRATE', $this->_build_sub_url_op( 'highrate' ) );
 	}
@@ -335,14 +319,14 @@ function _build_sub()
 		if( is_array($rows) && count($rows) ) {
 			foreach ( $rows as $row )
 			{
-				$name  = $this->_sub_cat_prefix . $this->sanitize( $row['cat_title'] ) ;
+				$name  = $this->_ini_sub_cat_prefix . $this->sanitize( $row['cat_title'] ) ;
 				$url   = $this->_build_sub_url_category( $row['cat_id'] ) ;
 				$arr[] = $this->_build_sub_array( $name, $url );
 			}
 		}
 	}
 
-	if ( $this->_show_sub_search ) {
+	if ( $this->_ini_sub_search ) {
 		$arr[] = $this->_build_sub_array_const(
 		'SMNAME_SEARCH', $this->_build_sub_url_op( 'search' ) );
 	}
@@ -1306,7 +1290,7 @@ function _build_config()
 		)
 	) ;
 
-	if ( $this->_use_cfg_groupid_admin ) {
+	if ( $this->_ini_cfg_groupid_admin ) {
 		$arr[] = array(
 			'name'			=> 'groupid_admin' ,
 			'title'			=> $this->_constant_name( 'CFG_GROUPID_ADMIN' ) ,
@@ -1318,7 +1302,7 @@ function _build_config()
 		) ;
 	}
 
-	if ( $this->_use_cfg_groupid_user ) {
+	if ( $this->_ini_cfg_groupid_user ) {
 		$arr[] = array(
 			'name'			=> 'groupid_user' ,
 			'title'			=> $this->_constant_name( 'CFG_GROUPID_USER' ) ,
@@ -1514,7 +1498,21 @@ function _init_workdir( $dirname, $trust_dirname )
 function _init_ini( $dirname, $trust_dirname )
 {
 	$this->init_base_ini( $dirname , $trust_dirname );
-	$this->_ini_community_use = $this->get_ini('community_use');
+
+	$this->_ini_cfg_groupid_admin
+		= $this->get_ini('xoops_version_cfg_groupid_admin');
+	$this->_ini_cfg_groupid_user
+		= $this->get_ini('xoops_version_cfg_groupid_user');
+	$this->_ini_sub_myphoto
+		= $this->get_ini('xoops_version_sub_myphoto');
+	$this->_ini_sub_popular
+		= $this->get_ini('xoops_version_sub_popular');
+	$this->_ini_sub_highrate
+		= $this->get_ini('xoops_version_sub_highrate');
+	$this->_ini_sub_search
+		= $this->get_ini('xoops_version_sub_search');
+	$this->_ini_sub_cat_prefix
+		= $this->get_ini('xoops_version_sub_cat_prefix');
 }
 
 // --- class end ---

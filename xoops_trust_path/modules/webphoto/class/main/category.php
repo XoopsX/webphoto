@@ -1,10 +1,12 @@
 <?php
-// $Id: category.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
+// $Id: category.php,v 1.11 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//	$this->_SHOW_PHOTO_VIEW = $this->get_ini('show_photo_in_category');
 
 //---------------------------------------------------------
 // change log
@@ -44,13 +46,11 @@ function webphoto_main_category( $dirname , $trust_dirname )
 	$this->webphoto_show_list( $dirname , $trust_dirname );
 	$this->set_mode( 'category' );
 
-	$this->init_preload();
+	$this->set_navi_mode( $this->get_ini('navi_mode') );
+	$this->_SHOW_PHOTO_VIEW = $this->get_ini('show_photo_in_category');
+	$this->_TEMPLATE_DETAIL = $this->get_ini('template_category_detail');
 
-	if ( $this->get_ini('community_use') ) {
-		$this->_TEMPLATE_DETAIL = 'main_photo.html';
-		$this->_SHOW_PHOTO_VIEW = true;
-		$this->set_navi_mode( 'kind' );
-	}
+	$this->init_preload();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -153,10 +153,12 @@ function list_build_detail( $cat_id )
 	$photo_param = $this->build_photos_param_in_category( $cat_id );
 	$title       = $photo_param['cat_title'] ;
 	$photo_rows  = $photo_param['cat_photo_rows'];
+	$show_sort   = $photo_param['cat_show_sort'];
 
 	$title_s = $this->sanitize( $title );
 	$param = array(
-		'xoops_pagetitle'   => $title_s ,
+		'xoops_pagetitle' => $title_s ,
+		'show_sort'       => $show_sort ,
 	);
 
 	if ( $this->_SHOW_PHOTO_VIEW && isset( $photo_rows[0] ) ) {

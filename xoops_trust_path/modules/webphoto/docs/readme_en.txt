@@ -1,11 +1,53 @@
-$Id: readme_en.txt,v 1.39 2009/11/29 07:34:23 ohwada Exp $
+$Id: readme_en.txt,v 1.40 2009/12/24 06:32:22 ohwada Exp $
+
+=================================================
+Version: 2.00
+Date:   2009-12-24
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Global Permissions
+(1) added a link to the user group management to the group name.
+(2) added access and management to the setting item.
+
+2. notification of wating approval
+(1) when the user submit the photo which needs approval, notify the wating approval to the admin with PM or email.
+(2) when the admin approve it, send the approved email to the submitter.
+(3) when the adinm refuse it,  send the refused email to the submitter.
+
+3. separated "File Valid Check" from "Check Configuration"
+
+4. The community feature
+This feature is experimental.
+It make the area of the member limitation like the community of SNS for each of the modules and the categories.
+
+5. bug fix
+(1) Fatal error in "Rebuild Thumbnails" 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1054
+
+(2) Fatal error in "Notifications"
+(3) not show "Max file size" in the submit form.
+(4) not upload in the category form, when the image size is big 
+
+6. Database structure
+(1) item table: add field item_perm_level
+(2) cat  table: add field cat_group_id
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+
 
 =================================================
 Version: 1.90
 Date:   2009-11-29
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

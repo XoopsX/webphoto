@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.21 2009/11/06 18:04:17 ohwada Exp $
+// $Id: index.php,v 1.22 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// change _print_file_check()
 // 2009-10-25 K.OHWADA
 // JPEGS_DIR
 // 2009-04-19 K.OHWADA
@@ -50,7 +52,6 @@ class webphoto_admin_index extends webphoto_base_this
 	var $_checkconfig_class;
 	var $_update_check_class;
 	var $_workdir_class ;
-	var $_file_check_class;
 
 	var $_DIR_TRUST_MOD_UPLOADS;
 	var $_FILE_INSTALL ;
@@ -70,8 +71,6 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 		$dirname , $trust_dirname );
 	$this->_workdir_class =& webphoto_inc_workdir::getSingleton( 
 		$dirname, $trust_dirname );
-	$this->_file_check_class =& webphoto_lib_file_check::getInstance(
-		$dirname , $trust_dirname );
 
 	$this->_DIR_TRUST_MOD_UPLOADS 
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname .'/';
@@ -228,27 +227,13 @@ function _workdir_file()
 
 function _print_file_check()
 {
+	$url = $this->_MODULE_URL.'/admin/index.php?fct=check_file';
+
 	echo "<h4>". _AM_WEBPHOTO_FILE_CHECK ."</h4>\n";
-	echo _AM_WEBPHOTO_FILE_CHECK_DSC ."<br />\n";
-
-	$flag_error = false;
-
-	$msg = $this->_file_check_class->check_list( 'trust' );
-	if ( $msg ) {
-		$flag_error = true;
-		echo $this->highlight( $msg );
-	}
-
-	$msg = $this->_file_check_class->check_list( 'root' );
-	if ( $msg ) {
-		$flag_error = true;
-		echo $this->highlight( $msg );
-	}
-
-	if ( !$flag_error ) {
-		echo "OK <br />\n";
-	}
-	echo "<br/>\n";
+	echo _AM_WEBPHOTO_FILE_CHECK_DSC ."<br /><br />\n";
+	echo '<a href="'.$url.'">';
+	echo _AM_WEBPHOTO_FILE_CHECK;
+	echo "</a><br /><br/>\n";
 }
 
 function _print_timeline()

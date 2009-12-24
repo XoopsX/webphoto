@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.22 2009/12/16 13:32:34 ohwada Exp $
+// $Id: item_form.php,v 1.23 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2009-12-06 K.OHWADA
 // item_perm_level
+// build_form_common()
 // 2009-11-11 K.OHWADA
 // item_detail_onclick
 // 2009-10-25 K.OHWADA
@@ -155,12 +156,6 @@ function build_form_admin_by_files( $mode, $files )
 	$pdf_row       = $files['pdf_row']; 
 	$swf_row       = $files['swf_row']; 
 
-	$preview_name   = $this->_preview_name ;
-	$tag_name_array = $this->_tag_name_array ;
-	$rotate         = $this->_rotate ;
-
-	$has_resize     = $this->_has_image_resize ;
-	$has_rotate     = $this->_has_image_rotate ;
 	$allowed_exts   = $this->_allowed_exts ;
 	$max_photo_file = $this->_MAX_PHOTO_FILE ;
 	$delete         = _DELETE ;
@@ -198,93 +193,27 @@ function build_form_admin_by_files( $mode, $files )
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
 
-	list ( $show_thumb_dsc_select, $show_thumb_dsc_embed )
-		= $this->show_thumb_dsc();
-
-	list( $photo_url, $show_file_photo_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_CONT, 'item_external_url' );
-
-	list( $thumb_url, $show_file_thumb_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_THUMB, 'item_external_thumb' );
-
-	list( $middle_url, $show_file_middle_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_MIDDLE, 'item_external_middle' );
-
-	list( $small_url, $show_file_small_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_SMALL, '' );
-
 	$show_item_kind  = $this->show_item_kind( $is_edit ) ;
+	$show_file_photo = $this->show_admin_file_photo() ;
 
-	list( $show_item_playlist_type, $show_item_playlist_time, $show_item_playlist_feed, $show_item_playlist_dir )
+	list( $show_item_playlist_type, $show_item_playlist_time, 
+	      $show_item_playlist_feed, $show_item_playlist_dir )
 		= $this->show_item_playlist();
 
-	$param = array( 
+	$arr1 = $this->build_form_common( $is_edit );
+
+	$arr2 = array( 
 		'op_edit'         => $op ,
-		'preview_name'    => $preview_name ,
 		'is_submit'       => $is_submit ,
 		'is_edit'         => $is_edit ,
 		'max_file_size'   => $this->_cfg_fsize ,
-		'has_rotate'      => $has_rotate ,
-
-		'show_desc_options'        => $this->_editor_show ,
-		'show_desc_options_hidden' => ! $this->_editor_show ,
-//		'show_item_embed_type'        => $show_item_embed_type ,
-//		'show_item_embed_text'        => $show_item_embed_text ,
-//		'show_item_embed_src'         => $show_item_embed_src ,
-//		'show_item_embed_type_hidden' => ! $show_item_embed_type ,
-//		'show_item_embed_text_hidden' => ! $show_item_embed_text ,
-//		'show_item_embed_src_hidden'  => ! $show_item_embed_src ,
-//		'show_item_siteurl_1st'       => $show_item_embed_text ,
-//		'show_item_siteurl_2nd'       => ! $show_item_embed_text ,
-		'show_item_perm_read'      => $this->show_item_perm_read() ,
-//		'show_file_photo'          => $this->is_upload_type(),
-		'show_gmap'                => $this->show_gmap() ,
-		'show_thumb_dsc_select'    => $show_thumb_dsc_select ,
-		'show_thumb_dsc_embed'     => $show_thumb_dsc_embed ,
-		'show_file_photo_delete'   => $show_file_photo_delete ,
-		'show_file_thumb_delete'   => $show_file_thumb_delete ,
-		'show_file_middle_delete'  => $show_file_middle_delete ,
-		'show_file_small_delete'   => $show_file_small_delete ,
-
-		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
-		'ele_maxsize'          => $this->ele_maxsize() ,
-		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,
-		'ele_item_description' => $this->_editor_desc ,
-
-		'item_uid_options'               => $this->item_uid_options() ,
-		'item_cat_id_options'            => $this->item_cat_id_options() ,
-		'item_gicon_id_select_options'   => $this->item_gicon_id_select_options() ,
-		'item_codeinfo_select_options'   => $this->item_codeinfo_select_options() ,
-		'item_perm_read_input_checkboxs' => $this->item_perm_read_input_checkboxs() ,
-		'item_perm_down_input_checkboxs' => $this->item_perm_down_input_checkboxs() ,
-		'item_perm_read_list'            => $this->item_perm_read_list() ,
-		'item_perm_level_checked'        => $this->item_perm_level_checked() ,
-
-		'item_text_array'     => $this->item_text_array() ,
-		'item_file_array'     => $this->item_file_array( $is_edit ) ,
-		'item_datetime_val_s' => $this->item_datetime_val_s() ,
-
-		'item_description_html_checked'   => $this->build_row_checked( 'item_description_html' ),
-		'item_description_smiley_checked' => $this->build_row_checked( 'item_description_smiley' ),
-		'item_description_xcode_checked'  => $this->build_row_checked( 'item_description_xcode' ),
-		'item_description_image_checked'  => $this->build_row_checked( 'item_description_image' ),
-		'item_description_br_checked'     => $this->build_row_checked( 'item_description_br' ),
-		'item_datetime_checkbox_checked'  => $this->build_checkbox_checked( 'item_datetime_checkbox' ) ,
-		'rotate_checked'                  => $this->rotate_checked( $rotate ) ,
-
-		'photo_url_s'   => $this->sanitize( $photo_url ), 
-		'thumb_url_s'   => $this->sanitize( $thumb_url ), 
-		'middle_url_s'  => $this->sanitize( $middle_url ), 
-		'small_url_s'   => $this->sanitize( $small_url ), 
-		'tags_val_s'    => $this->tags_val_s( $tag_name_array ) ,
-		'embed_src_dsc' => $this->embed_src_dsc() ,
-		'editor_js'     => $this->_editor_js ,
 
 		'button_submit'      => $submit ,
 		'button_conf_delete' => $delete ,
 
 // for admin
-		'show_file_photo'          => $this->show_admin_file_photo(),
+		'show_file_photo'          => $show_file_photo,
+		'show_rotate'              => $this->show_rotate( $show_file_photo ) ,
 		'show_valid'               => $this->show_valid(),
 		'show_item_kind'           => $show_item_kind ,
 		'show_item_kind_hidden'    => ! $show_item_kind ,
@@ -298,18 +227,15 @@ function build_form_admin_by_files( $mode, $files )
 		'show_item_playlist_time_hidden' => ! $show_item_playlist_time ,
 		'show_item_playlist_feed_hidden' => ! $show_item_playlist_feed ,
 		'show_item_playlist_dir_hidden'  => ! $show_item_playlist_dir ,
-		'show_item_perm_level'           => $this->show_item_perm_level() ,
 
 		'time_now'               => $this->time_now() ,
 		'item_time_create_disp'  => $this->build_time_disp( 'item_time_create',  true ) ,
-		'item_time_update_disp'  => $this->build_time_disp( 'item_time_update',  true ) ,
 		'item_time_publish_disp' => $this->build_time_disp( 'item_time_publish', false ) ,
 		'item_time_expire_disp'  => $this->build_time_disp( 'item_time_expire',  false ) ,
 
 		'item_time_update_checkbox_checked'  => $this->build_checkbox_checked( 'item_time_update_checkbox' ), 
 		'item_time_publish_checkbox_checked' => $this->build_checkbox_checked( 'item_time_publish_checkbox' ), 
 		'item_time_expire_checkbox_checked'  => $this->build_checkbox_checked( 'item_time_update_checkbox' ), 
-		'item_perm_level_checked'            => $this->item_perm_level_checked() ,
 
 		'item_status_select_options'         => $this->item_status_select_options(),
 		'item_kind_select_options'           => $this->item_kind_select_options(),
@@ -325,7 +251,7 @@ function build_form_admin_by_files( $mode, $files )
 
 	);
 
-	return $param ;
+	return array_merge( $arr1, $arr2 );
 }
 
 function show_item_kind( $is_edit )

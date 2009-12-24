@@ -1,4 +1,4 @@
-<{* $Id: inc_photo_info.html,v 1.9 2009/11/29 07:34:23 ohwada Exp $ *}>
+<{* $Id: inc_photo_info.html,v 1.10 2009/12/24 06:32:22 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -208,7 +208,13 @@
 
 <{* 5TH LINE OF INFORMATION *}>
 
-<{if $show_photo_desc && $photo.show_desc }>
+<{* SUMMARY *}>
+<{if $list_type && $show_photo_summary && ($photo.summary != '')}>
+  <div class="webphoto_description">
+  <{$photo.summary}>
+  </div>
+
+<{elseif $show_photo_desc && $photo.show_desc }>
   <div class="webphoto_description">
 
 <{* DESCRIPTION *}>
@@ -238,18 +244,12 @@
   <{/foreach}>
 
   </div>
-
-<{* SUMMARY *}>
-<{elseif $show_photo_summary && ($photo.summary != '')}>
-  <div class="webphoto_description">
-  <{$photo.summary}>
-  </div>
 <{/if}>
 
 <{* 6TH LINE OF INFORMATION *}>
 
 <{* CONTENT *}>
-<{if $show_photo_content && ($photo.content_disp != '')}>
+<{if $detail_type && $show_photo_content && ($photo.content_disp != '')}>
   <div class="webphoto_description">
   <{$photo.content_disp}> <br />
   </div>
@@ -258,7 +258,7 @@
 <{* 7TH LINE OF INFORMATION *}>
 
 <{* EXIF *}>
-<{if $show_photo_exif && $photo.is_owner && ($photo.exif_disp != '') }>
+<{if $detail_type && $show_photo_exif && $photo.is_owner && ($photo.exif_disp != '') }>
   <div class="webphoto_description">
   <{$photo.exif_disp}> <br />
   </div>

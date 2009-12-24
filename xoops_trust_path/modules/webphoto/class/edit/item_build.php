@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
+// $Id: item_build.php,v 1.11 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -43,8 +43,6 @@ class webphoto_edit_item_build extends webphoto_edit_base_create
 	var $_has_superinsert ;
 	var $_has_html ;
 
-	var $_use_item_perm_level = false;
-
 	var $_FILE_LIST;
 	var $_FLAG_ADMIN = false;
 	var $_NO_TITLE   = 'no title' ;
@@ -71,8 +69,6 @@ function webphoto_edit_item_build( $dirname , $trust_dirname )
 	$this->_has_superinsert    = $this->_perm_class->has_superinsert();
 	$this->_has_html           = $this->_perm_class->has_html();
 	$this->_cfg_perm_item_read = $this->get_config_by_name( 'perm_item_read' );
-
-	$this->_use_item_perm_level = $this->get_ini('use_item_perm_level');
 
 	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
@@ -126,15 +122,16 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	$row['item_label']            = $this->get_post_text( 'item_label' );
 
 	$row['item_datetime']  = $this->get_item_datetime_by_post( $item_datetime_checkbox );
-	$row['item_perm_down'] = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
 	$row['item_codeinfo']  = $this->build_info_by_post( 'item_codeinfo' );
+	$row['item_perm_down'] = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
 
-// perm
-	if ( $this->_cfg_perm_item_read > 0 ) {
+// perm read
+	if ( $this->use_item_perm_read() ) {
 		$row['item_perm_read'] = $this->get_group_perms_str_by_post( 'item_perm_read_ids' );
 	}
 
-	if ( $this->show_perm_level() ) {
+// perm level
+	if ( $this->use_item_perm_level() ) {
 		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
 	}
 
@@ -212,14 +209,21 @@ function build_row_modify_by_post( $row, $flag_status=true )
 		$row['item_time_expire']    = $time_expire ;
 		$row['item_detail_onclick'] = $post_detail_onclick ;
 
-		if ( $this->show_perm_level() ) {
-			$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
-			$row['item_perm_read']  = $this->build_item_perm_by_post_level();
-		}
-
 // user
 	} else {
 		$row['item_time_update'] = time();
+	}
+
+	if ( $this->use_item_perm_level_admin() ) {
+		$perm  = $this->build_item_perm_by_post_level();
+		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
+		$row['item_perm_read']  = $perm;
+
+	} elseif ( $this->use_item_perm_level_user() ) {
+		$perm  = $this->build_item_perm_by_post_level();
+		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
+		$row['item_perm_read']  = $perm;
+		$row['item_perm_down']  = $perm;
 	}
 
 	if ( $flag_status ) {
@@ -309,9 +313,35 @@ function get_server_time_by_post( $key )
 	return $this->_xoops_class->user_to_server_time( $time );
 }
 
-function show_perm_level()
+function use_item_perm_read()
 {
-	if (( $this->_cfg_perm_item_read > 0 ) && $this->_use_item_perm_level ) {
+	if ( $this->_cfg_perm_item_read > 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function use_item_perm_level_admin()
+{
+	if ( $this->_FLAG_ADMIN && $this->use_item_perm_level() ) {
+		return true;
+	}
+	return false;
+}
+
+function use_item_perm_level_user()
+{
+	if ( $this->use_item_perm_level() &&
+	     $this->get_ini('editable_item_perm_level') ) {
+		return true;
+	}
+	return false;
+}
+
+function use_item_perm_level()
+{
+	if (( $this->_cfg_perm_item_read > 0 ) && 
+	      $this->get_ini('use_item_perm_level') ) {
 		return true;
 	}
 	return false;

@@ -1,4 +1,4 @@
-<{* $Id: form_photo.html,v 1.6 2009/12/16 13:32:34 ohwada Exp $ *}>
+<{* $Id: form_photo.html,v 1.7 2009/12/24 06:32:22 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -59,6 +59,10 @@ function webphoto_gmap_disp_on()
   <input type="hidden" id="item_embed_text" name="item_embed_text" value="<{$item_embed_text_s}>" />
 <{/if}>
 
+<{if $show_item_codeinfo_hiddens }>
+  <{$item_codeinfo_hiddens}>
+<{/if}>
+
 <{* === basic table === *}>
 <table class="outer" cellpadding="4" cellspacing="1" width="100%">
 <tr align="center"><th colspan="2"><{$lang_title_photoupload}></th></tr>
@@ -86,10 +90,18 @@ function webphoto_gmap_disp_on()
 <{* item_perm_level *}>
 <{if $show_item_perm_level }>
   <tr><td class="head" width="20%"><{$lang_item_perm_level}></td><td class="odd">
-  <input type="radio" name="item_perm_level" value="0" <{$item_perm_level_checked.0}> />
-  <{$lang_item_perm_level_public}> &nbsp;
-  <input type="radio" name="item_perm_level" value="1" <{$item_perm_level_checked.1}> />
-  <{$lang_item_perm_level_group}> &nbsp;
+
+<{if $show_input_item_perm_level }>
+    <input type="radio" name="item_perm_level" value="0" <{$item_perm_level_checked.0}> />
+    <{$lang_item_perm_level_public}> &nbsp;
+    <input type="radio" name="item_perm_level" value="1" <{$item_perm_level_checked.1}> />
+    <{$lang_item_perm_level_group}> &nbsp;
+
+<{else}>
+    <{$item_perm_level_disp}>
+    <input type="hidden" id="item_perm_level" name="item_perm_level" value="<{$item_perm_level}>" />
+<{/if}>
+
   </td></tr>
 <{/if}>
 
@@ -421,25 +433,43 @@ function webphoto_gmap_disp_on()
 <{* item_perm_read *}>
 <{if $show_item_perm_read }>
   <tr><td class="head" width="20%"><{$lang_item_perm_read}></td><td class="odd">
-  <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
-  <{$lang_group_perm_all}><br />
-  <{$item_perm_read_input_checkboxs}>
+
+<{if $show_input_item_perm_read }>
+    <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
+    <{$lang_group_perm_all}><br />
+    <{$item_perm_read_input_checkboxs}>
+
+<{else}>
+    <{$item_perm_read_list}>
+    <{$item_perm_read_hiddens}>
+<{/if}>
+
   </td></tr>
 <{/if}>
 
 <{* item_perm_down *}>
 <tr><td class="head" width="20%"><{$lang_item_perm_down}></td><td class="odd">
-<input type="checkbox" name="item_perm_down_all" id="item_perm_down_all" value="1" onclick="webphoto_check_all(this, 'item_perm_down_ids')" />
-<{$lang_group_perm_all}><br />
-<{$item_perm_down_input_checkboxs}>
+
+<{if $show_input_item_perm_down }>
+  <input type="checkbox" name="item_perm_down_all" id="item_perm_down_all" value="1" onclick="webphoto_check_all(this, 'item_perm_down_ids')" />
+  <{$lang_group_perm_all}><br />
+  <{$item_perm_down_input_checkboxs}>
+
+<{else}>
+  <{$item_perm_down_list}>
+  <{$item_perm_down_hiddens}>
+<{/if}>
+
 </td></tr>
 
 <{* item_codeinfo *}>
-<tr><td class="head" width="20%"><{$lang_item_codeinfo}></td><td class="odd">
-<select id="item_codeinfo" name="item_codeinfo[]" size="5" multiple="multiple">
-<{$item_codeinfo_select_options}>
-</select>
-</td></tr>
+<{if $show_item_codeinfo }>
+  <tr><td class="head" width="20%"><{$lang_item_codeinfo}></td><td class="odd">
+  <select id="item_codeinfo" name="item_codeinfo[]" size="5" multiple="multiple">
+  <{$item_codeinfo_select_options}>
+  </select>
+  </td></tr>
+<{/if}>
 
 <{* item_gmap *}>
 <{if $show_gmap }>
@@ -499,7 +529,7 @@ function webphoto_gmap_disp_on()
 <{* === submit table === *}>
 <table class="outer" cellpadding="4" cellspacing="1" width="100%">
 <tr><td class="head" width="20%"></td><td class="head">
-<input type="submit" id="webphoto_photo_submit" name="submit" value="<{$value_submit}>" />
+<input type="submit" id="webphoto_photo_submit" name="submit" value="<{$button_submit}>" />
 
 <{if $show_button_preview }>
   <input type="submit" id="webphoto_photo_preview" name="preview" value="<{$lang_preview}>" />

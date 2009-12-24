@@ -1,4 +1,4 @@
-<{* $Id: inc_photo_in_list.html,v 1.9 2009/05/17 08:59:00 ohwada Exp $ *}>
+<{* $Id: inc_photo_in_list.html,v 1.10 2009/12/24 06:32:22 ohwada Exp $ *}>
 
 <table><tr>
 
@@ -50,6 +50,8 @@
 </td>
 
 <{* INFORMATION PART *}>
+<{assign var="list_type"   value="1" }>
+<{assign var="detail_type" value="0" }>
 <td class="webphoto_list_td_info">
   <{include file="db:`$mydirname`_inc_photo_info.html"}>
 </td>

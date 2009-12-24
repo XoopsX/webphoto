@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm_form.php,v 1.1 2009/12/16 13:36:20 ohwada Exp $
+// $Id: groupperm_form.php,v 1.2 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -20,9 +20,6 @@ class webphoto_lib_groupperm_form
 	var $_groupperm_handler;
 
 	var $_CHECKED = 'checked="checked"';
-
-	var $_LANG_GPERM_ADMIN = null;
-	var $_LANG_GPERM_READ  = null;
 
 //---------------------------------------------------------
 // constructor
@@ -48,23 +45,14 @@ function &getInstance()
 //---------------------------------------------------------
 function build_param( $mod_id, $action=null )
 {
-	$this->inculude_lang_file();
-
 	$arr = array( 
-		'cols'        => 4 ,
-		'modid'       => $mod_id ,
-		'action'      => $action ,
-		'lang_none'   => _NONE,
-		'lang_all'    => _ALL,
-		'lang_submit' => _SUBMIT,
-		'lang_cancel' => _CANCEL,
-		'lang_module_admin' => $this->_LANG_GPERM_ADMIN ,
-		'lang_module_read'  => $this->_LANG_GPERM_READ ,
+		'cols'          => 4 ,
+		'modid'         => $mod_id ,
+		'action'        => $action ,
 		'g_ticket'      => $this->get_token() ,
 		'xoops_dirname' => $this->get_dirname( $mod_id ) ,
 	);
-
-	return $arr;
+	return array_merge( $arr , $this->get_lang() );
 }
 
 function build_group_list( $mod_id, $perm_name, $item_array )
@@ -131,26 +119,6 @@ function build_checked_array( $val, $array )
 	return $str;
 }
 
-function inculude_lang_file()
-{
-	global $xoopsConfig;
-	$language = $xoopsConfig['language'];
-
-	$file_xc_lang = XOOPS_ROOT_PATH .'/modules/user/language/'. $language .'/admin.php' ;
-	$file_xc_eng  = XOOPS_ROOT_PATH .'/modules/user/language/english/admin.php' ;
-
-// for Cube 2.1
-	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
-		if ( file_exists($file_xc_lang) ) {
-			include_once $file_xc_lang;
-		} else {
-			include_once $file_xc_eng;
-		}
-		$this->set_lang_gperm_admin( _AD_USER_LANG_PERM_ADMIN ) ;
-		$this->set_lang_gperm_read(  _AD_USER_LANG_PERM_ACCESS ) ;
-	}
-}
-
 function get_dirname( $id )
 {
 	$obj = $this->_module_handler->get( $id );
@@ -178,16 +146,15 @@ function get_token()
 	return false;
 }
 
-
-
-function set_lang_gperm_admin( $val )
+function get_lang()
 {
-	$this->_LANG_GPERM_ADMIN = $val ;
-}
-
-function set_lang_gperm_read( $val )
-{
-	$this->_LANG_GPERM_READ = $val ;
+	$arr = array( 
+		'lang_none'   => _NONE,
+		'lang_all'    => _ALL,
+		'lang_submit' => _SUBMIT,
+		'lang_cancel' => _CANCEL,
+	);
+	return $arr;
 }
 
 // --- class end ---

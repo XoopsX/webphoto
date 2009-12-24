@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
+// $Id: index.php,v 1.12 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -44,16 +44,13 @@ class webphoto_main_index extends webphoto_show_list
 function webphoto_main_index( $dirname , $trust_dirname )
 {
 	$this->webphoto_show_list( $dirname , $trust_dirname );
-	$this->set_template_main( 'main_index.html' );
+
+	$this->set_template_main( $this->get_ini('template_index') );
+	$this->set_navi_mode( $this->get_ini('navi_mode') );
 
 	$this->init_preload();
 
-	if ( $this->get_ini('community_use') ) {
-		$this->set_template_main( 'main_photo.html' );
-		$this->_SHOW_PHOTO_VIEW = true;
-		$this->set_navi_mode( 'kind' );
-	}
-
+	$this->_SHOW_PHOTO_VIEW = $this->get_ini('show_photo_in_index');
 }
 
 function &getInstance( $dirname , $trust_dirname )

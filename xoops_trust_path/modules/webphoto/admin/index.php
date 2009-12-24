@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
+// $Id: index.php,v 1.13 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// remove class/lib/file_check.php
 // 2009-11-11 K.OHWADA
 // class/webphoto/cmd_base.php
 // 2009-10-25 K.OHWADA
@@ -48,7 +50,6 @@ webphoto_include_once( 'class/lib/timidity.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/dir.php' );
-webphoto_include_once( 'class/lib/file_check.php' );
 webphoto_include_once( 'class/handler/player_handler.php' );
 webphoto_include_once( 'class/handler/photo_handler.php' );
 webphoto_include_once( 'class/webphoto/cmd_base.php' );
@@ -60,7 +61,8 @@ webphoto_include_once( 'class/admin/index.php' );
 //=========================================================
 // main
 //=========================================================
-$manager =& webphoto_admin_index::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
+$manager =& webphoto_admin_index::getInstance( 
+	WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
 $manager->main();
 exit();
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.5 2009/12/16 13:32:33 ohwada Exp $
+// $Id: catmanager.php,v 1.6 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -33,6 +33,7 @@ webphoto_include_once( 'class/lib/netpbm.php' );
 webphoto_include_once( 'class/lib/image_cmd.php' );
 webphoto_include_once( 'class/lib/groupperm.php' );
 webphoto_include_once( 'class/lib/groupperm_form.php' );
+webphoto_include_once( 'class/lib/userlist.php' );
 webphoto_include_once( 'class/handler/gicon_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/p2t_handler.php' );
@@ -43,6 +44,7 @@ webphoto_include_once( 'class/webphoto/upload.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/edit/mail_unlink.php' );
 webphoto_include_once( 'class/edit/item_delete.php' );
+webphoto_include_once( 'class/admin/groupperm_form.php' );
 webphoto_include_once( 'class/admin/cat_form.php' );
 webphoto_include_once( 'class/admin/catmanager.php' );
 

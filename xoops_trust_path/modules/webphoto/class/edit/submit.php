@@ -1,10 +1,13 @@
 <?php
-// $Id: submit.php,v 1.14 2009/12/16 13:32:34 ohwada Exp $
+// $Id: submit.php,v 1.15 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
+
+// function build_item_perm_by_row( $row )
+// function use_perm_level()
 
 //---------------------------------------------------------
 // change log
@@ -230,14 +233,6 @@ function create_item_row_by_post()
 	$row['item_cat_id'] = $this->get_post_cat_id() ;
 	$row = $this->_factory_create_class->build_row_submit_by_post( $row, $checkbox );
 	return $row;
-}
-
-function build_item_perm_read_by_row( $row )
-{
-	$level  = $row['item_perm_level'];
-	$cat_id = $row['item_cat_id'];
-	return $this->_factory_create_class->_item_build_class->build_item_perm_read_by_level_catid( 
-		$level, $cat_id );
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
+// $Id: element.php,v 1.12 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -310,6 +310,21 @@ function build_form_select_end()
 	return $str;
 }
 
+function build_form_hiddens_select_multi( $name, $values )
+{
+	if ( !is_array($values) ) {
+		return null;
+	}
+
+	$text = '';
+	foreach ( $values as $v )
+	{
+		$text .= $this->build_input_hidden_without_id( $name, $v );
+		$text .= ' ';
+	}
+	return $text;
+}
+
 function build_form_options_multi( $values, $options )
 {
 	if ( !is_array($values) ) {
@@ -503,13 +518,19 @@ function build_form_name_rand()
 //---------------------------------------------------------
 // group perms
 //---------------------------------------------------------
-function build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes=false, $del='' )
+function build_form_checkboxs_group_perms( $id_name, $groups, $perms, $all_yes=false, $del='' )
 {
 	$options  = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
-	return $this->build_form_checkbox_list( $options, $this->_C_YES, $del );
+	return $this->build_form_checkboxs_yes( $options, $del );
 }
 
-function build_form_checkbox_list( $options, $value, $del='' )
+function build_form_checkbox_hiddens_group_perms( $id_name, $groups, $perms, $all_yes=false )
+{
+	$options  = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
+	return $this->build_form_hiddens_yes( $options );
+}
+
+function build_form_checkboxs_yes( $options, $del='' )
 {
 	if ( !is_array($options) || !count($options) ) {
 		return null;
@@ -526,6 +547,24 @@ function build_form_checkbox_list( $options, $value, $del='' )
 		$str .= $del;
 	}
 	return $str;
+}
+
+function build_form_hiddens_yes( $options )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$text = '';
+	foreach ( $options as $opt ) 
+	{
+		list( $name, $val, $cap ) = $opt;
+		if ( $val == $this->_C_YES ) {
+			$text .= $this->build_input_hidden( $name, $val );
+			$text .= ' ';
+		}
+	}
+	return $text;
 }
 
 function build_options_group_perms( $id_name, $groups, $perms, $all_yes=false )
@@ -818,6 +857,15 @@ function build_input_hidden( $name, $value, $flag_sanitaize=false )
 	}
 
 	$text = '<input type="hidden" id="'. $name .'" name="'. $name .'"  value="'. $value .'" />'."\n";
+	return $text;
+}
+
+function build_input_hidden_without_id( $name, $value, $flag_sanitaize=false )
+{
+	if ( $flag_sanitaize ) {
+		$value = $this->sanitize( $value );
+	}
+	$text = '<input type="hidden" name="'. $name .'"  value="'. $value .'" />'."\n";
 	return $text;
 }
 

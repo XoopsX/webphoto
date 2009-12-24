@@ -1,5 +1,5 @@
 <?php
-// $Id: show_main.php,v 1.23 2009/11/29 07:34:21 ohwada Exp $
+// $Id: show_main.php,v 1.24 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// Fatal error: Call to undefined method build_uri_list_navi_url()
+// build_uri_list_navi_url()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_photo_public
 // 2009-10-25 K.OHWADA
@@ -736,6 +739,13 @@ function get_uri_list_pathinfo_param()
 {
 // list_mode for myphoto
 	return $this->_uri_class->get_list_pathinfo_param( $this->_list_mode );
+}
+
+// Fatal error: Call to undefined method build_uri_list_navi_url()
+function build_uri_list_navi_url( $mode, $param, $kind )
+{
+	return $this->_uri_class->build_list_navi_url( 
+		$mode, $param, $kind );
 }
 
 function build_uri_list_navi_url_kind( $mode, $param, $kind )

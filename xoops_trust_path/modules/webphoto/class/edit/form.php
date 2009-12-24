@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
+// $Id: form.php,v 1.13 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// build_group_perms_param_by_key()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // webphoto_embed
@@ -407,13 +409,45 @@ function build_group_perms_check_all_by_key( $name )
 	return $this->build_input_checkbox_js_check_all( $all_name, $id_name );
 }
 
+function build_group_perms_param_by_key( $name )
+{
+	$id_name = $name .'_ids';
+	$groups  = $this->get_cached_xoops_db_groups() ;
+	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+	$options = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
+	$ret1    = $this->build_form_checkboxs_yes( $options );
+	$ret2    = $this->build_list_select_multi( $options );
+	$ret3    = $this->build_form_hiddens_yes( $options );
+	return array( $ret1, $ret2, $ret3 );
+}
+
 function build_group_perms_checkboxs_by_key( $name )
 {
 	$id_name = $name .'_ids';
 	$groups  = $this->get_cached_xoops_db_groups() ;
 	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
 	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
-	return $this->build_form_checkbox_group_perms( $id_name, $groups, $perms, $all_yes );
+	return $this->build_form_checkboxs_group_perms( $id_name, $groups, $perms, $all_yes );
+}
+
+function build_group_perms_hiddens_by_key( $name )
+{
+	$id_name = $name .'_ids';
+	$groups  = $this->get_cached_xoops_db_groups() ;
+	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+	return $this->build_form_hiddens_group_perms( $id_name, $groups, $perms, $all_yes );
+}
+
+function build_group_perms_list( $name )
+{
+	$id_name = $name .'_ids';
+	$groups  = $this->get_cached_xoops_db_groups() ;
+	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
+	$options = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
+	return $this->build_list_select_multi( $options );
 }
 
 function get_group_perms_array_by_row_name( $row, $name )
@@ -428,6 +462,35 @@ function get_group_perms_array_by_row_name( $row, $name )
 function get_group_perms_array( $val )
 {
 	return $this->str_to_array( $val, $this->_PERM_SEPARATOR );
+}
+
+function build_list_select_multi( $options, $del='<br />' )
+{
+	if ( !is_array($options) || !count($options) ) {
+		return null;
+	}
+
+	$str = '';
+	foreach ( $options as $opt )
+	{
+		list( $name, $val, $cap ) = $opt;
+		$str .= $this->build_list_select_multi_span( $val );
+		$str .= $cap ;
+		$str .= '</span>';
+		$str .= $del;
+	}
+	return $str;
+}
+
+function build_list_select_multi_span( $value )
+{
+	if ( $value == $this->_C_YES ) {
+		$color = "menutext";
+	} else {
+		$color = "graytext";
+	}
+	$str = '<span style="color:'. $color .';">';
+	return $str;
 }
 
 //---------------------------------------------------------

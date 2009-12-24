@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.7 2009/12/16 13:32:34 ohwada Exp $
+// $Id: admin.php,v 1.8 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -24,12 +24,28 @@ define("_AM_WEBPHOTO_INVITE_ERR_NO_NAME", "No Name" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_ADMIN" , "Admin group of this module" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_USER"  , "User group of this module" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_CATEGORY"  , "Category group of this module" ) ;
+define("_AM_WEBPHOTO_GPERM_MODULE_ADMIN" , "Module Admin" ) ;
+define("_AM_WEBPHOTO_GPERM_MODULE_READ"  , "Module Access" ) ;
 
 // item manage
 define("_AM_WEBPHOTO_BUTTON_REFUSE", "Refuse");
 define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "Approved your photo");
 define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "Refused your photo");
 define("_AM_WEBPHOTO_ERR_NO_SELECT" , "Error: Not select item" ) ;
+
+// user list
+define('_AM_WEBPHOTO_USER_UID', "UID");
+define('_AM_WEBPHOTO_USER_UNAME', "User Name");
+define('_AM_WEBPHOTO_USER_NAME', "Real Name");
+define('_AM_WEBPHOTO_USER_POSTS', "Comments/Posts");
+define('_AM_WEBPHOTO_USER_LEVEL', "Level");
+define('_AM_WEBPHOTO_USER_REGDATE', "Member Since");
+define('_AM_WEBPHOTO_USER_LASTLOGIN', "Last Login");
+define('_AM_WEBPHOTO_USER_CONTROL', "Control");
+define('_AM_WEBPHOTO_USER_TOTAL', "Total of member");
+define('_AM_WEBPHOTO_USER_ASSIGN', "Assign a member");
+define('_AM_WEBPHOTO_USER_USER', "User");
+
 }
 
 //---------------------------------------------------------

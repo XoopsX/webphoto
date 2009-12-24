@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
+// $Id: admin.php,v 1.21 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -536,12 +536,27 @@ define("_AM_WEBPHOTO_INVITE_ERR_NO_NAME", "名前がない" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_ADMIN" , "このモジュールの管理者グループ" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_USER"  , "このモジュールのユーザ・グループ" ) ;
 define("_AM_WEBPHOTO_GROUP_MOD_CATEGORY"  , "このモジュールのカテゴリのグループ" ) ;
+define("_AM_WEBPHOTO_GPERM_MODULE_ADMIN" , "モジュール管理" ) ;
+define("_AM_WEBPHOTO_GPERM_MODULE_READ"  , "モジュール・アクセス" ) ;
 
 // item manage
 define("_AM_WEBPHOTO_BUTTON_REFUSE", "拒否");
 define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
 define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "写真が拒否されました");
 define("_AM_WEBPHOTO_ERR_NO_SELECT" , "エラー: アイテムが選択されていない" ) ;
+
+// user list
+define('_AM_WEBPHOTO_USER_UID', "UID");
+define('_AM_WEBPHOTO_USER_UNAME', "ユーザー名");
+define('_AM_WEBPHOTO_USER_NAME', "本名");
+define('_AM_WEBPHOTO_USER_POSTS', "投稿数");
+define('_AM_WEBPHOTO_USER_LEVEL', "レベル");
+define('_AM_WEBPHOTO_USER_REGDATE', "登録日");
+define('_AM_WEBPHOTO_USER_LASTLOGIN', "最終ログイン");
+define('_AM_WEBPHOTO_USER_CONTROL', "操作");
+define('_AM_WEBPHOTO_USER_TOTAL', "メンバー数");
+define('_AM_WEBPHOTO_USER_ASSIGN', "メンバーの登録");
+define('_AM_WEBPHOTO_USER_USER', "ユーザー");
 
 // === define end ===
 }

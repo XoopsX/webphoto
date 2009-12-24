@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photo.php,v 1.21 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// $_SHOW_PHOTO_SUMMARY
 // 2009-11-11 K.OHWADA
 // webphoto_show_list -> webphoto_show_main_photo
 // 2009-10-25 K.OHWADA
@@ -60,12 +62,10 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 	$this->set_flag_highlight( true );
 	$this->set_template_main( 'main_photo.html' );
 
-	$this->init_preload();
+	$this->set_navi_mode( $this->get_ini('navi_mode') );
+	$this->_SHOW_PHOTOS_IN_CAT = $this->get_ini('show_photos_in_cat_in_photo');
 
-	if ( $this->get_ini('community_use') ) {
-		$this->_SHOW_PHOTOS_IN_CAT = true;
-		$this->set_navi_mode( 'kind' );
-	}
+	$this->init_preload();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -134,6 +134,7 @@ function main()
 
 	if ( $this->_SHOW_PHOTOS_IN_CAT ) {
 		$photos_param = $this->build_photos_param_in_category( $cat_id ) ;
+		$this->_SHOW_PHOTO_SUMMARY = true;
 	}
 
 // BUG: not show description

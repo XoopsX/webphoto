@@ -1,10 +1,16 @@
 <?php
-// $Id: show_main_photo.php,v 1.1 2009/11/29 07:37:03 ohwada Exp $
+// $Id: show_main_photo.php,v 1.2 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-11-11 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2009-12-06 K.OHWADA
+// build_uri_list_navi_url()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -655,11 +661,10 @@ function build_photos_param_in_category( $cat_id )
 	$limit = $this->_MAX_PHOTOS;
 	$start = $this->pagenavi_calc_start( $limit );
 
-	$cat_param = $this->build_photos_in_category( $cat_id, $limit, $start );
+	$cat_param  = $this->build_photos_in_category( $cat_id, $limit, $start );
 	$title      = $cat_param['cat_title'] ;
 	$total      = $cat_param['cat_photo_total'] ;
 	$photo_rows = $cat_param['cat_photo_rows'] ;
-	$show_sort  = $cat_param['cat_show_sort'] ;
 
 	$show_photo = false ; 
 	$photos     = null;
@@ -677,7 +682,6 @@ function build_photos_param_in_category( $cat_id )
 		'show_photo'        => $show_photo , 
 		'photo_total'       => $total ,
 		'photos'            => $photos ,
-		'show_sort'         => $show_sort ,
 		'show_nomatch'      => $this->build_show_nomatch( $total ) ,
 		'random_more_url_s' => $this->list_build_random_more( $total ) ,
 		'param_kind'        => $this->build_uri_list_kind( 'category', $cat_id ) ,
@@ -802,7 +806,7 @@ function build_photos_navi_in_category( $cat_id, $total, $limit )
 	if ( $this->_navi_mode == 'kind' ) {
 		$url = $this->build_uri_list_navi_url_kind( 'category', $cat_id, $this->_get_kind );
 	} else {
-		$url = $this->build_uri_list_navi_url( $this->_get_sort );
+		$url = $this->build_uri_list_navi_url( $this->_mode, $cat_id, $this->_get_sort );
 	}
 	return $this->build_navi( $url, $total, $limit, $this->_get_page );
 }

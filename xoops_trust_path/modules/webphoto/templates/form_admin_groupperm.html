@@ -1,4 +1,4 @@
-<{* $Id: form_admin_groupperm.html,v 1.1 2009/12/16 13:36:20 ohwada Exp $ *}>
+<{* $Id: form_admin_groupperm.html,v 1.2 2009/12/24 06:32:22 ohwada Exp $ *}>
 
 <form name="groupperm_form" id="groupperm_form" action="<{$action}>" method="post">
 <input type="hidden" name="modid" id="modid" value="<{$modid}>" />
@@ -17,7 +17,13 @@
 <tr valign="top" align="left">
 <td class="head">
 
-<a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupProperty&groupid=<{$g.group_id}>">
+<{* link to group manager *}>
+<{if $smarty.const.XOOPS_CUBE_LEGACY }>
+  <a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupProperty&groupid=<{$g.group_id}>">
+<{else}>
+  <a href="<{$xoops_url}>/modules/system/admin.php?fct=groups&op=modify&g_id=<{$g.group_id}>">
+<{/if}>
+
 <{$g.group_name}>
 </a><br /><br />
 
@@ -40,15 +46,15 @@
 <table class="outer">
 
 <td class="odd">
-<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" value="1" <{$g.module_read_checked}>" ><{$lang_module_read}> 
+<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" value="1" <{$g.module_read_checked}>" ><{$lang_gperm_module_read}> 
 <input type="hidden" name="perms[parents][module_read][<{$modid}>]" value="" />
-<input type="hidden" name="perms[itemname][module_read][<{$modid}>]" value="<{$lang_module_read}>" /><br />
+<input type="hidden" name="perms[itemname][module_read][<{$modid}>]" value="<{$lang_gperm_module_read}>" /><br />
 </td>
 
 <td class="odd">
-<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" value="1" <{$g.module_admin_checked}>" ><{$lang_module_admin}> 
+<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" value="1" <{$g.module_admin_checked}>" ><{$lang_gperm_module_admin}> 
 <input type="hidden" name="perms[parents][module_admin][<{$modid}>]" value="" />
-<input type="hidden" name="perms[itemname][module_admin][<{$modid}>]" value="<{$lang_module_admin}>" /><br />
+<input type="hidden" name="perms[itemname][module_admin][<{$modid}>]" value="<{$lang_gperm_module_admin}>" /><br />
 </td>
 
 </table>

@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: factory_create.php,v 1.10 2009/12/24 06:32:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-12-06 K.OHWADA
+// build_item_perm_by_level_catid()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_edit_cont_create etc
 // 2009-10-25 K.OHWADA
@@ -445,6 +447,17 @@ function build_row_title_media( $row, $media_name )
 		$row['item_title'] = $this->strip_ext( $media_name ) ;
 	}
 	return $row;
+}
+
+function build_item_perm_by_level_catid( $level, $cat_id )
+{
+	return $this->_item_build_class->build_item_perm_by_level_catid( 
+		$level, $cat_id );
+}
+
+function use_item_perm_level()
+{
+	return $this->_item_build_class->use_item_perm_level();
 }
 
 //---------------------------------------------------------
