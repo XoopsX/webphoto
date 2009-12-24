@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.18 2009/11/06 18:08:07 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.19 2009/12/24 06:55:22 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -85,6 +85,8 @@
   </div><br />
 <{/if}>
 
+<{assign var="list_type"   value="0" }>
+<{assign var="detail_type" value="1" }>
 <div align="left">
   <{include file="db:`$mydirname`_inc_photo_info.html"}>
 </div>

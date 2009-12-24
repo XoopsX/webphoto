@@ -1,37 +1,59 @@
-<{* $Id: webphoto_inc_user_list.html,v 1.1 2009/12/16 14:05:49 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_user_list.html,v 1.2 2009/12/24 06:55:22 ohwada Exp $ *}>
 
-<{$smarty.const._AD_USER_LANG_GROUP_AMMO}>: <{$total}> <br />
-<a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupMember&groupid=<{$groupid}>">
-<img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/members.gif" alt="<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}>" title="<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}>" />
-<{$smarty.const._AD_USER_LANG_GROUP_ASSIGN}></a>
+<{$lang_user_total}>: <{$total}> <br />
+
+<{* link to group manager *}>
+<{if $smarty.const.XOOPS_CUBE_LEGACY }>
+  <a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupMember&groupid=<{$group_id}>">
+<{else}>
+  <a href="<{$xoops_url}>/modules/system/admin.php?fct=groups&op=modify&g_id=<{$group_id}>">
+<{/if}>
+
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/user/members.gif" alt="<{$lang_user_assign}>" title="<{$lang_user_assign}>" />
+<{$lang_user_assign}></a>
+
 <br /><br />
 
 <table class="outer">
-  <tr>
-    <th>&nbsp;</th>
-    <th><{$smarty.const._MD_USER_LANG_UID}></th>
-    <th><{$smarty.const._MD_USER_LANG_UNAME}></th>
-    <th><{$smarty.const._MD_USER_LANG_NAME}></th>
-    <th><{$smarty.const._AD_USER_LANG_REGDATE}></th>
-    <th><{$smarty.const._AD_USER_LANG_LASTLOGIN}></th>
-    <th><{$smarty.const._MD_USER_LANG_POSTS}></th>
-    <th><{$smarty.const._MD_USER_LANG_LEVEL}></th>
-    <th><{$smarty.const._AD_USER_LANG_CONTROL}></th>
+<tr>
+<th>&nbsp;</th>
+<th><{$lang_user_uid}></th>
+<th><{$lang_user_uname}></th>
+<th><{$lang_user_name}></th>
+<th><{$lang_user_regdate}></th>
+<th><{$lang_user_lastlogin}></th>
+<th><{$lang_user_posts}></th>
+<th><{$lang_user_level}></th>
+<th><{$lang_user_control}></th>
+</tr>
+
+<{* user list *}>
+<{foreach from=$user_list item=user }>
+  <tr class="<{cycle values="odd,even"}>">
+  <td class="user_list_image">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/user/user.gif" alt="<{$lang_user_user}>" title="<{$lang_user_user}>" />
+  </td>
+  <td class="user_list_id"><{$user.uid}></td>
+  <td class="user_list_title"><{$user.uname_s}></td>
+  <td class="user_list_name"><{$user.name_s}></td>
+  <td class="user_list_date"><{$user.user_regdate_disp}></td>
+  <td class="user_list_date"><{$user.last_login_disp}></td>
+  <td class="user_list_number"><{$user.posts}></td>
+  <td class="user_list_order"><{$user.level}></td>
+  <td class="user_list_control">
+
+<{* link to group manager *}>
+  <{if $smarty.const.XOOPS_CUBE_LEGACY }>
+    <a href="<{$xoops_url}>/modules/user/admin/index.php?action=UserEdit&amp;uid=<{$user.uid}>">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/system/admin.php?fct=usersop=modifyUser&amp;uid=<{$user.uid}>">
+  <{/if}>
+
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/user/edit.gif" alt="<{$lang_user_edit}>" title="<{$lang_user_edit}>" />
+  </a> 
+
+  </td>
   </tr>
-  <{foreach from=$users item=user }>
-    <tr class="<{cycle values="odd,even"}>">
-      <td class="user_list_image"><img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/user.gif" alt="<{$smarty.const._AD_USER_LANG_USER}>" title="<{$smarty.const._AD_USER_LANG_USER}>" /></td>
-      <td class="user_list_id"><{$user->getShow('uid')}></td>
-      <td class="user_list_title"><{$user->getShow('uname')}></td>
-      <td class="user_list_name"><{$user->getShow('name')}></td>
-      <td class="user_list_date"><{$user->getShow('user_regdate')|xoops_formattimestamp}></td>
-      <td class="user_list_date"><{$user->getShow('last_login')|xoops_formattimestamp:l}></td>
-      <td class="user_list_number"><{$user->getShow('posts')}></td>
-      <td class="user_list_order"><{$user->getShow('level')}></td>
-      <td class="user_list_control">
-        <a href="<{$xoops_url}>/modules/user/admin/index.php?action=UserEdit&amp;uid=<{$user->getShow('uid')}>">
-        <img src="<{$xoops_url}>/modules/legacy/admin/theme/icons/edit.gif" alt="<{$smarty.const._EDIT}>" title="<{$smarty.const._EDIT}>" /></a> 
-      </td>
-    </tr>
-  <{/foreach}>
+<{/foreach}>
+
 </table>
