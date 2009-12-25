@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.12 2009/12/24 06:32:22 ohwada Exp $
+// $Id: catmanager.php,v 1.13 2009/12/25 04:03:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -828,18 +828,18 @@ function _print_member( $group_id )
 function get_user_lang()
 {
 	$arr = array(
-		'lang_user_uid'          => _AM_WEBPHOTO_USER_UID ,
-		'lang_user_uname'        => _AM_WEBPHOTO_USER_UNAME ,
-		'lang_user_name'         => _AM_WEBPHOTO_USER_NAME ,
-		'lang_user_regdate'      => _AM_WEBPHOTO_USER_REGDATE,
-		'lang_user_lastlogin'    => _AM_WEBPHOTO_USER_LASTLOGIN ,
-		'lang_user_post'         => _AM_WEBPHOTO_USER_POSTS ,
-		'lang_user_level'        => _AM_WEBPHOTO_USER_LEVEL ,
-		'lang_user_control'      => _AM_WEBPHOTO_USER_CONTROL ,
-		'lang_user_group_ammo'   => _AM_WEBPHOTO_USER_GROUP_AMMO ,
-		'lang_user_group_assign' => _AM_WEBPHOTO_USER_GROUP_ASSIGN ,
-		'lang_user_user'         => _AM_WEBPHOTO_USER_USER ,
-		'lang_user_edit'         => _EDIT ,
+		'lang_user_uid'       => _AM_WEBPHOTO_USER_UID ,
+		'lang_user_uname'     => _AM_WEBPHOTO_USER_UNAME ,
+		'lang_user_name'      => _AM_WEBPHOTO_USER_NAME ,
+		'lang_user_regdate'   => _AM_WEBPHOTO_USER_REGDATE,
+		'lang_user_lastlogin' => _AM_WEBPHOTO_USER_LASTLOGIN ,
+		'lang_user_post'      => _AM_WEBPHOTO_USER_POSTS ,
+		'lang_user_level'     => _AM_WEBPHOTO_USER_LEVEL ,
+		'lang_user_control'   => _AM_WEBPHOTO_USER_CONTROL ,
+		'lang_user_total'     => _AM_WEBPHOTO_USER_TOTAL ,
+		'lang_user_assign'    => _AM_WEBPHOTO_USER_ASSIGN ,
+		'lang_user_user'      => _AM_WEBPHOTO_USER_USER ,
+		'lang_user_edit'      => _EDIT ,
 	);
 	return $arr;
 }
