@@ -1,10 +1,16 @@
 <?php
-// $Id: ini.php,v 1.1 2009/11/29 07:37:03 ohwada Exp $
+// $Id: ini.php,v 1.2 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-11-11 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-01-10 K.OHWADA
+// hash_ini()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -101,6 +107,14 @@ function read_ini( $file, $debug=false )
 	return true;
 }
 
+function isset_ini( $name )
+{
+	if ( isset( $this->_array_ini[ $name ] ) ) {
+		return true;
+	}
+	return false;
+}
+
 function get_ini( $name )
 {
 	if ( isset( $this->_array_ini[ $name ] ) ) {
@@ -111,15 +125,38 @@ function get_ini( $name )
 
 function explode_ini( $name, $grue='|', $prefix=null )
 {
-	$arr = explode( $grue, $this->get_ini( $name ) );
+	return $this->str_to_array( 
+		$this->get_ini( $name ), $grue, $prefix );
+}
 
-	if ( empty($prefix) ) {
-		return $arr;
+function hash_ini( $name, $grue1='|', $grue2=':' )
+{
+	$arr = $this->str_to_array( 
+		$this->get_ini( $name ), $grue1, null );
+	if ( !is_array($arr) ) {
+		return false;
 	}
 
 	$ret = array();
-	foreach( $arr as $a ) {
-		$ret[] = $prefix . $a;
+	foreach ( $arr as $a )
+	{
+		$t = $this->str_to_array( $a, $grue2, null );
+		if ( isset($t[0]) && isset($t[1]) ) {
+			$ret[ $t[0] ] = $t[1];
+		}
+	}
+	return $ret;
+}
+
+function str_to_array( $str, $grue, $prefix )
+{
+	$arr = explode( $grue, $str );
+	$ret = array();
+	foreach ( $arr as $a )
+	{
+		$a = trim($a);
+		if ($a == '') { continue; }
+		$ret[] = $prefix .$a;
 	}
 	return $ret;
 }

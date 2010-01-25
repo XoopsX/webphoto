@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.17 2009/11/29 07:34:23 ohwada Exp $
+// $Id: header.php,v 1.18 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// class/webphoto/factory.php
 // 2009-11-11 K.OHWADA
 // main/header_item_handler.php
 // 2009-10-25 K.OHWADA
@@ -87,6 +89,7 @@ webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
+webphoto_include_once( 'class/lib/search.php' );
 
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
@@ -100,7 +103,6 @@ webphoto_include_once( 'class/handler/flashvar_handler.php' );
 webphoto_include_once( 'class/handler/vote_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );
 
-webphoto_include_once( 'class/webphoto/xoops_header.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
@@ -108,7 +110,8 @@ webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
-webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/xoops_header.php' );
+webphoto_include_once( 'class/webphoto/tag_build.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
 webphoto_include_once( 'class/webphoto/photo_public.php' );
@@ -122,10 +125,19 @@ webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/photo_navi.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
-webphoto_include_once( 'class/webphoto/show_main.php' );
-webphoto_include_once( 'class/webphoto/show_main_photo.php' );
-webphoto_include_once( 'class/webphoto/show_list.php' );
 webphoto_include_once( 'class/webphoto/timeline.php' );
+webphoto_include_once( 'class/webphoto/qr.php' );
+webphoto_include_once( 'class/webphoto/pagenavi.php' );
+webphoto_include_once( 'class/webphoto/notification_select.php' );
+webphoto_include_once( 'class/webphoto/main.php' );
+webphoto_include_once( 'class/webphoto/category.php' );
+webphoto_include_once( 'class/webphoto/date.php' );
+webphoto_include_once( 'class/webphoto/photo.php' );
+webphoto_include_once( 'class/webphoto/place.php' );
+webphoto_include_once( 'class/webphoto/search.php' );
+webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/user.php' );
+webphoto_include_once( 'class/webphoto/factory.php' );
 
 webphoto_include_language( 'modinfo.php' );
 webphoto_include_language( 'main.php' );

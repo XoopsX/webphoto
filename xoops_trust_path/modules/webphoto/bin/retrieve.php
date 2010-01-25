@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.10 2009/11/29 07:34:21 ohwada Exp $
+// $Id: retrieve.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// class/webphoto/tag.php -> tag_build.php
 // 2009-11-11 K.OHWADA
 // class/inc/ini.php
 // 2009-05-15 K.OHWADA
@@ -114,7 +116,7 @@ webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/gmap_info.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
-webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/tag_build.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );

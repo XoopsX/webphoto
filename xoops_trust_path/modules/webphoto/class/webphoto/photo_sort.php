@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_sort.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photo_sort.php,v 1.6 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// get_photo_kind_name()
 // 2009-11-11 K.OHWADA
 // picture
 // 2009-03-15 K.OHWADA
@@ -25,28 +27,54 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_photo_sort
 {
+	var $_config_class;
+	var $_ini_class;
+
 	var $_DIRNAME       = null;
 	var $_TRUST_DIRNAME = null;
 	var $_MODULE_URL;
 	var $_MODULE_DIR;
 	var $_TRUST_DIR;
 
-	var $_PHOTO_SORT_ARRAY   = null;
-	var $_MODE_TO_SORT_ARRAY = null;
+	var $_PHOTO_SORT_ARRAY;
 
-	var $_PHOTO_SORT_DEFAULT = 'dated';
+	var $_PHOTO_SORT_DEFAULT;
 	var $_ORDERBY_RANDOM = 'rand()';
+
+	var $_SORT_TO_ORDER_ARRAY ;
+	var $_MODE_TO_KIND_ARRAY ;
+	var $_MODE_TO_SORT_ARRAY ;
+	var $_KIND_TO_NAME_ARRAY ;
+	var $_PHOTO_KIND_ARRAY   ;
+	var $_NAME_DEFAULT       ;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_photo_sort( $dirname, $trust_dirname )
 {
+	$this->_config_class =& webphoto_config::getInstance( $dirname );
+
+	$this->_ini_class 
+		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
+	$this->_ini_class->read_main_ini();
+
 	$this->set_trust_dirname( $trust_dirname );
 	$this->_init_d3_language( $dirname, $trust_dirname );
 
-	$this->set_photo_sort_array(   $this->photo_sort_array_default() );
-	$this->set_mode_to_sort_array( $this->mode_to_sort_array_default() );
+//	$this->set_photo_sort_array(   $this->photo_sort_array_default() );
+
+	$cfg_sort = $this->_config_class->get_by_name('sort');
+	$this->set_photo_sort_default( $cfg_sort );
+
+	$this->_SORT_TO_ORDER_ARRAY       = $this->_ini_class->hash_ini('sort_to_order');
+	$this->_SORT_TO_ORDER_ADMIN_ARRAY = $this->_ini_class->hash_ini('sort_to_order_admin');
+	$this->_MODE_TO_KIND_ARRAY = $this->_ini_class->hash_ini('mode_to_kind');
+	$this->_MODE_TO_SORT_ARRAY = $this->_ini_class->hash_ini('mode_to_sort');
+	$this->_KIND_TO_NAME_ARRAY = $this->_ini_class->hash_ini('kind_to_name');
+	$this->_NAME_DEFAULT       = $this->_ini_class->get_ini('name_default');
+
+	$this->_PHOTO_KIND_ARRAY   = array_keys( $this->_KIND_TO_NAME_ARRAY );
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -59,39 +87,37 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// function
+// init
 //---------------------------------------------------------
-function mode_to_orderby( $mode )
+function init_for_admin()
 {
-	return $this->sort_to_orderby( $this->mode_to_sort( $mode ) );
+	$this->_SORT_TO_ORDER_ARRAY = $this->_SORT_TO_ORDER_ADMIN_ARRAY;
 }
 
 //---------------------------------------------------------
 // mode
 //---------------------------------------------------------
-function mode_to_sort_array_default()
+function mode_to_orderby( $mode, $sort_in )
 {
-	$arr = array(
-		'latest'   => 'dated' ,
-		'popular'  => 'hitsd' ,
-		'highrate' => 'ratingd' ,
-		'random'   => 'random' ,
-		'map'      => 'random' ,
-		'timeline' => 'random' ,
-		'new'      => 'dated' ,
-		'picture'  => 'dated' ,
-		'video'    => 'dated' ,
-		'audio'    => 'dated' ,
-		'office'   => 'dated' ,
-	);
-	return $arr;
+	$sort = $this->mode_to_sort( $mode );
+	if ( empty($sort) ) {
+		$sort = $this->get_photo_sort_name( $sort_in, true );
+	}
+	return $this->sort_to_orderby( $sort );
 }
 
-function set_mode_to_sort_array( $arr )
+function mode_to_name( $mode )
 {
-	if ( is_array($arr) && count($arr) ) {
-		$this->_MODE_TO_SORT_ARRAY = $arr;
+	$kind = $this->mode_to_kind( $mode );
+	return $this->kind_to_name( $kind );
+}
+
+function mode_to_kind( $mode )
+{
+	if ( isset( $this->_MODE_TO_KIND_ARRAY[ $mode ] ) ){
+		return  $this->_MODE_TO_KIND_ARRAY[ $mode ];
 	}
+	return null;
 }
 
 function mode_to_sort( $mode )
@@ -105,89 +131,46 @@ function mode_to_sort( $mode )
 //---------------------------------------------------------
 // photo sort
 //---------------------------------------------------------
-function photo_sort_array_basic()
+function get_sort_to_order_array()
 {
-	$arr = array(
-		'ida'     => array( 'item_id ASC' ,           $this->get_constant('SORT_IDA') ) ,
-		'idd'     => array( 'item_id DESC' ,          $this->get_constant('SORT_IDD') ) ,
-		'titlea'  => array( 'item_title ASC' ,        $this->get_constant('SORT_TITLEA') ) ,
-		'titled'  => array( 'item_title DESC' ,       $this->get_constant('SORT_TITLED') ) ,
-		'datea'   => array( 'item_time_update ASC' ,  $this->get_constant('SORT_DATEA') ) ,
-		'dated'   => array( 'item_time_update DESC' , $this->get_constant('SORT_DATED') ) ,
-		'hitsa'   => array( 'item_hits ASC' ,         $this->get_constant('SORT_HITSA') ) ,
-		'hitsd'   => array( 'item_hits DESC' ,        $this->get_constant('SORT_HITSD') ) ,
-		'ratinga' => array( 'item_rating ASC' ,       $this->get_constant('SORT_RATINGA') ) ,
-		'ratingd' => array( 'item_rating DESC' ,      $this->get_constant('SORT_RATINGD') ) ,
-	) ;
-	return $arr;
-}
-
-function photo_sort_array_default()
-{
-	$arr = $this->photo_sort_array_basic() ;
-
-	$arr['random'] = array( $this->_ORDERBY_RANDOM , $this->get_constant('SORT_RANDOM') ) ;
-
-	return $arr;
-}
-
-function photo_sort_array_admin()
-{
-	$arr = $this->photo_sort_array_basic() ;
-
-	$arr['votesa']   = array( 'item_votes ASC' ,   $this->get_constant('SORT_VOTESA') ) ;
-	$arr['votesd']   = array( 'item_votes DESC' ,  $this->get_constant('SORT_VOTESD') ) ;
-	$arr['viewsa']   = array( 'item_views ASC' ,   $this->get_constant('SORT_VIEWSA') ) ;
-	$arr['viewsd']   = array( 'item_views DESC' ,  $this->get_constant('SORT_VIEWSD') ) ;
-
-	return $arr;
-}
-
-function set_photo_sort_array( $arr )
-{
-	if ( is_array($arr) && count($arr) ) {
-		$this->_PHOTO_SORT_ARRAY = $arr;
-	}
+	return $this->_SORT_TO_ORDER_ARRAY;
 }
 
 function sort_to_orderby( $sort )
 {
-	$orderby = $this->get_photo_sort( $sort, 0 );
-
-	if (($orderby != 'item_id DESC')&&( $orderby != 'rand()')) {
-		$orderby = $orderby.', item_id DESC';
+	$order = null;
+	if ( isset(  $this->_SORT_TO_ORDER_ARRAY[ $sort ] ) ){
+		$order = $this->_SORT_TO_ORDER_ARRAY[ $sort ];
+	} elseif ( isset(  $this->_SORT_TO_ORDER_ARRAY[ $this->_PHOTO_SORT_DEFAULT ] ) ){
+		$order = $this->_SORT_TO_ORDER_ARRAY[ $this->_PHOTO_SORT_DEFAULT ];
 	}
-	return $orderby;
+
+	if (($order != 'item_id DESC')&&( $order != 'rand()')) {
+		$order = $order.', item_id DESC';
+	}
+	return $order;
 }
 
 function sort_to_lang( $sort )
 {
-	return $this->get_photo_sort( $sort, 1 );
+	return $this->get_constant( 'sort_'.$sort );
 }
 
-function get_lang_sortby( $name )
+function get_lang_sortby( $sort )
 {
 	return sprintf( 
 		$this->get_constant('SORT_S_CURSORTEDBY') , 
-		$this->sort_to_lang( $name ) );
+		$this->sort_to_lang( $sort ) );
 }
 
-function get_photo_sort_name( $name )
+function get_photo_sort_name( $name, $flag=false )
 {
-	if( $name && isset( $this->_PHOTO_SORT_ARRAY[ $name ] ) ) {
+	if( $name && isset( $this->_SORT_TO_ORDER_ARRAY[ $name ] ) ) {
 		return $name ;
-	} elseif( isset( $this->_PHOTO_SORT_ARRAY[ $this->_PHOTO_SORT_DEFAULT ] ) ) {
+	} elseif( $flag && isset( $this->_SORT_TO_ORDER_ARRAY[ $this->_PHOTO_SORT_DEFAULT ] ) ) {
 		return $this->_PHOTO_SORT_DEFAULT ;
 	}
 	return false;
-}
-
-function get_photo_sort( $name, $num )
-{
-	if ( isset( $this->_PHOTO_SORT_ARRAY[ $name ][ $num ] ) ) {
-		return  $this->_PHOTO_SORT_ARRAY[ $name ][ $num ];
-	}
-	return $this->_PHOTO_SORT_ARRAY[ $this->_PHOTO_SORT_DEFAULT ][ $num ];
 }
 
 function set_photo_sort_default( $val )
@@ -198,6 +181,25 @@ function set_photo_sort_default( $val )
 function get_random_orderby()
 {
 	return $this->_ORDERBY_RANDOM;
+}
+
+//---------------------------------------------------------
+// kind
+//---------------------------------------------------------
+function kind_to_name( $kind )
+{
+	if ( isset( $this->_KIND_TO_NAME_ARRAY[ $kind ] ) ) {
+		return  $this->_KIND_TO_NAME_ARRAY[ $kind ];
+	}
+	return $this->_NAME_DEFAULT;
+}
+
+function get_photo_kind_name( $name )
+{
+	if ( $name && in_array( $name, $this->_PHOTO_KIND_ARRAY ) ) {
+		return $name ;
+	}
+	return null;
 }
 
 //---------------------------------------------------------

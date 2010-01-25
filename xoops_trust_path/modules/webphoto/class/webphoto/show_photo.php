@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.25 2009/11/29 07:34:21 ohwada Exp $
+// $Id: show_photo.php,v 1.26 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_tag -> webphoto_tag_build
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_show_image
 // get_show_file_url()
@@ -51,7 +53,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_show_photo extends webphoto_base_this
 {
-	var $_tag_class;
+	var $_tag_build_class;
 	var $_highlight_class;
 	var $_image_class;
 	var $_multibyte_class;
@@ -110,12 +112,12 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 
 	$this->_image_class 
 		=& webphoto_show_image::getInstance( $dirname, $trust_dirname );
-	$this->_tag_class 
-		=& webphoto_tag::getInstance( $dirname, $trust_dirname );
+	$this->_tag_build_class 
+		=& webphoto_tag_build::getInstance( $dirname, $trust_dirname );
 
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
-	$this->_tag_class->set_is_japanese( $this->_is_japanese );
+	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
 
 	$this->_highlight_class =& webphoto_lib_highlight::getInstance();
 	$this->_highlight_class->set_replace_callback( 'webphoto_highlighter_by_class' );
@@ -123,7 +125,6 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 
 	$this->_cfg_newdays      = $this->get_config_by_name('newdays');
 	$this->_cfg_popular      = $this->get_config_by_name('popular');
-	$this->_cfg_nameoruname  = $this->get_config_by_name('nameoruname');
 	$this->_cfg_thumb_width  = $this->get_config_by_name('thumb_width' ) ;
 	$this->_cfg_middle_width = $this->get_config_by_name('middle_width' ) ;
 	$this->_cfg_item_summary = $this->get_config_by_name('item_summary' ) ;
@@ -149,7 +150,6 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_item_text_type_array = $this->_item_handler->get_text_type_array();
 
 	$this->_time_newdays = time() - 86400 * $this->_cfg_newdays ;
-	$this->_usereal = ( $this->_cfg_nameoruname == 'name' ) ? 1 : 0 ;
 
 	$this->_URL_DEFAULT_IMAGE  = $this->_MODULE_URL .'/images/exts/default.png';
 	$this->_URL_PIXEL_IMAGE    = $this->_MODULE_URL .'/images/icons/pixel_trans.png';
@@ -172,6 +172,10 @@ function &getInstance( $dirname, $trust_dirname )
 // Get photo's array to assign into template (light version)
 function build_photo_show_basic( $row, $tag_name_array=null )
 {
+//	if ( !is_array($row) ) {
+//		debug_print_backtrace();
+//	}
+
 	extract( $row ) ;
 
 	$show_arr = array();
@@ -454,16 +458,6 @@ function build_show_is_popularphoto( $hits )
 	return false;
 }
 
-function build_show_info_morephotos( $uid )
-{
-	return sprintf( $this->get_constant('S_MOREPHOTOS') , $this->build_show_uname( $uid ) );
-}
-
-function build_show_uname( $uid )
-{
-	return $this->get_xoops_uname_by_uid( $uid, $this->_usereal );
-}
-
 function build_show_taf_target_uri( $photo_id )
 {
 	$str = $this->_INDEX_PHP.'/photo/'. $photo_id .'/subject='. $this->get_constant('SUBJECT4TAF');
@@ -640,12 +634,12 @@ function has_file_url( $url )
 //---------------------------------------------------------
 function build_show_tags_from_tag_name_array( $tag_name_array )
 {
-	return $this->_tag_class->build_show_tags_from_tag_name_array( $tag_name_array );
+	return $this->_tag_build_class->build_show_tags_from_tag_name_array( $tag_name_array );
 }
 
 function get_tag_name_array_by_photoid( $photo_id )
 {
-	return $this->_tag_class->get_tag_name_array_by_photoid( $photo_id );
+	return $this->_tag_build_class->get_tag_name_array_by_photoid( $photo_id );
 }
 
 //---------------------------------------------------------

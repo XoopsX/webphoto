@@ -1,13 +1,17 @@
 <?php
-// $Id: uri.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
+// $Id: uri.php,v 1.7 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-07-01 K.OHWADA
 //=========================================================
 
+//	var $_UID_DEFAULT = -1;	// not set
+
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_navi_url()
 // 2009-10-25 K.OHWADA
 // build_list_navi_url_kind()
 // 2009-03-15 K.OHWADA
@@ -29,7 +33,7 @@ class webphoto_uri extends webphoto_inc_uri
 	var $_config_class;
 	var $_pathinfo_class;
 
-	var $_UID_DEFAULT = -1;	// not set
+//	var $_UID_DEFAULT = -1;	// not set
 
 //---------------------------------------------------------
 // constructor
@@ -58,21 +62,21 @@ function &getInstance( $dirname )
 //---------------------------------------------------------
 // parse uri
 //---------------------------------------------------------
-function get_list_pathinfo_param( $mode )
+function get_pathinfo_param( $mode_orig )
 {
 	$isset = $this->_pathinfo_class->isset_param( $this->_PARAM_NAME  );
 	$p     = $this->_pathinfo_class->get(         $this->_PARAM_NAME );
 
 	$path_second = $this->_pathinfo_class->get_path( $this->_PATH_SECOND );
 
-	switch ( $mode )
+	switch ( $mode_orig )
 	{
 		case 'category':
 			$p = $this->get_pathinfo_id( 'cat_id' );
 			break;
 
 		case 'user':
-			$uid = $this->_UID_DEFAULT;	// not set
+			$uid = _C_WEBPHOTO_UID_DEFAULT;	// not set
 			if ( $isset ) {
 				$uid = $p;
 			} elseif ( !$isset && ( $path_second !== false ) ) {
@@ -180,39 +184,61 @@ function build_param( $param )
 //---------------------------------------------------------
 // buiid uri for show_main
 //---------------------------------------------------------
-function build_main_navi_url( $mode, $sort, $viewtype=null )
+function build_navi_url( $mode, $param, $sort, $kind, $viewtype=null )
 {
 	$str  = $this->_MODULE_URL .'/index.php';
-	$str .= $this->build_main_op( $mode, true );
+	$str .= $this->build_mode_param( $mode, $param, true );
 	$str .= $this->build_sort( $sort );
+	$str .= $this->build_kind( $kind );
 	$str .= $this->build_viewtype( $viewtype );
 	return $str ;
 }
 
-function build_main_sort( $mode, $viewtype=null )
+function build_param_sort( $mode, $param, $kind, $viewtype=null )
 {
-	$str  = $this->build_main_op( $mode, true );
+	$str  = $this->build_mode_param( $mode, $param, true );
+	$str .= $this->build_kind( $kind );
 	$str .= $this->build_viewtype( $viewtype );
 	$str .= $this->get_separator();
 	return $str ;
 }
 
-function build_main_op( $op, $flag_head_slash=false )
+function build_mode_param( $mode, $param, $flag_head_slash=false )
 {
-	$str = '';
-	if ( $op ) {
-		if ( $this->_cfg_use_pathinfo ) {
-			if ( $flag_head_slash ) {
-				$str = '/' ;
-			}
-			$str .= $this->sanitize($op);
-		} else {
-			$str = '?op='. $this->sanitize($op) ;
-		}
+	switch ( $mode )
+	{
+		case 'category':
+		case 'user':
+			$str_1 = $mode .'/'. intval($param) ;
+			$str_2 = '?fct='. $mode .'&amp;p='. intval($param);
+			break;
+
+		case 'tags':
+		case 'date':
+		case 'place':
+		case 'search':
+			$str_1 = $mode .'/'. rawurlencode($param) ;
+			$str_2 = '?fct='. $mode .'&amp;p='. rawurlencode($param) ;
+			break;
+
+		default:
+			$str_1 = $this->sanitize($mode) ;
+			$str_2 = '?op='. $this->sanitize($mode);
+			break;
 	}
+
+	if ( $this->_cfg_use_pathinfo ) {
+		if ( $flag_head_slash ) {
+			$str = '/'. $str_1;
+		} else {
+			$str = $str_1 ;
+		}
+	} else {
+		$str = $str_2 ;
+	}
+
 	return $str;
 }
-
 
 function build_sort( $val )
 {
@@ -256,69 +282,6 @@ function build_param_int( $name, $val )
 //---------------------------------------------------------
 // buiid uri for show_list
 //---------------------------------------------------------
-function build_list_navi_url( $mode, $param, $sort, $viewtype=null )
-{
-	$str  = $this->_MODULE_URL .'/index.php';
-	$str .= $this->build_list_param( $mode, $param, true );
-	$str .= $this->build_sort( $sort );
-	$str .= $this->build_viewtype( $viewtype );
-	return $str ;
-}
-
-function build_list_navi_url_kind( $mode, $param, $kind, $viewtype=null )
-{
-	$str  = $this->_MODULE_URL .'/index.php';
-	$str .= $this->build_list_param( $mode, $param, true );
-	$str .= $this->build_kind( $kind );
-	$str .= $this->build_viewtype( $viewtype );
-	return $str ;
-}
-
-function build_list_sort( $mode, $param, $viewtype=null )
-{
-	$str  = $this->build_list_param( $mode, $param, true );
-	$str .= $this->build_viewtype( $viewtype );
-	$str .= $this->get_separator();
-	return $str ;
-}
-
-function build_list_param( $mode, $param, $flag_head_slash=false )
-{
-	$str_1 = '' ;
-	if ( $flag_head_slash ) {
-		$str_1 = '/' ;
-	}
-
-	$str_1 .= $mode .'/' ;
-	$str_2  = '?fct='. $mode .'&amp;';
-
-	switch ( $mode )
-	{
-		case 'category':
-		case 'user':
-			$str_1 .= intval($param) ;
-			$str_2 .= 'p='. intval($param);
-			break;
-
-		case 'tags':
-		case 'date':
-		case 'place':
-		case 'search':
-		default:
-			$str_1 .= rawurlencode($param) ;
-			$str_2 .= 'p='. rawurlencode($param) ;
-			break;
-	}
-
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = $str_1 ;
-	} else {
-		$str = $str_2 ;
-	}
-
-	return $str;
-}
-
 function build_list_link( $mode, $param )
 {
 // not sanitize

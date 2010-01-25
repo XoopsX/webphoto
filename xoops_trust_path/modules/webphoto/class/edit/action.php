@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
+// $Id: action.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// _tag_class -> _tag_build_class
 // 2009-12-06 K.OHWADA
 // mail_approve()
 // 2009-11-11 K.OHWADA
@@ -593,12 +595,12 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 //---------------------------------------------------------
 function tag_handler_update_tags( $item_id, $tag_name_array )
 {
-	return $this->_tag_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
+	return $this->_tag_build_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
 }
 
 function tag_handler_tag_name_array( $item_id )
 {
-	return $this->_tag_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
+	return $this->_tag_build_class->get_tag_name_array_by_photoid_uid( $item_id, $this->_xoops_uid );
 }
 
 //---------------------------------------------------------

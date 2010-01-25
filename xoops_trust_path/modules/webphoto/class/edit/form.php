@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.13 2009/12/24 06:32:22 ohwada Exp $
+// $Id: form.php,v 1.14 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// show_form_editor -> submit_show_form_editor
 // 2009-12-06 K.OHWADA
 // build_group_perms_param_by_key()
 // 2009-11-11 K.OHWADA
@@ -651,7 +653,7 @@ function is_show_form_editor_option( $options )
 
 function is_show_form_editor()
 {
-	if ( !$this->get_ini('show_form_editor') ) {
+	if ( !$this->get_ini('submit_show_form_editor') ) {
 		return false;
 	}
 	return $this->_is_show_form( $this->_post_form_editor );
@@ -659,7 +661,7 @@ function is_show_form_editor()
 
 function is_show_form_embed()
 {
-	if ( !$this->get_ini('show_form_embed') ) {
+	if ( !$this->get_ini('submit_show_form_embed') ) {
 		return false;
 	}
 	return $this->_is_show_form( $this->_post_form_embed );

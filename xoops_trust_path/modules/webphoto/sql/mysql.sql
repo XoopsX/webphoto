@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.19 2009/12/16 13:32:34 ohwada Exp $
+# $Id: mysql.sql,v 1.20 2010/01/25 10:03:07 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2010-01-10 K.OHWADA
+# item_description_scroll 
 # 2009-12-06 K.OHWADA
 # item_perm_level cat_group_id
 # 2009-11-11 K.OHWADA
@@ -135,6 +137,7 @@ CREATE TABLE item (
   item_detail_onclick INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   item_weight         INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   item_perm_level TINYINT(2) NOT NULL DEFAULT '0',  
+  item_description_scroll INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),

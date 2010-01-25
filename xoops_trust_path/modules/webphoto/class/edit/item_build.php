@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.11 2009/12/24 06:32:22 ohwada Exp $
+// $Id: item_build.php,v 1.12 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// item_description_scroll
 // 2009-12-06 K.OHWADA
 // item_perm_level
 // 2009-11-11 K.OHWADA
@@ -134,6 +136,9 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	if ( $this->use_item_perm_level() ) {
 		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
 	}
+
+// description scroll
+	$row['item_description_scroll']     = $this->get_post_int( 'item_description_scroll' );
 
 // description option
 	if ( $this->_has_html ) {
@@ -528,6 +533,32 @@ function get_new_displaytype( $row )
 
 	} elseif ( $this->is_mediaplayer_ext( $item_ext ) ) {
 		$str = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+	}
+	return $str ;
+}
+
+//---------------------------------------------------------
+// detail_onclick
+//---------------------------------------------------------
+function build_row_detail_onclick_if_empty( $row )
+{
+	if ( empty($row['item_detail_onclick']) ) {
+		 $row['item_detail_onclick'] = $this->get_new_detail_onclick( $row ) ;
+	}
+	return $row;
+}
+
+function get_new_detail_onclick( $row )
+{
+	$item_ext = $row['item_ext'] ;
+
+	$str = _C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT ;
+	if ( $this->is_image_ext( $item_ext ) ) {
+		if ( $this->get_ini('use_lightbox') ) {
+			$str = _C_WEBPHOTO_DETAIL_ONCLICK_LIGHTBOX ;
+		} else {
+			$str = _C_WEBPHOTO_DETAIL_ONCLICK_IMAGE ;
+		}
 	}
 	return $str ;
 }

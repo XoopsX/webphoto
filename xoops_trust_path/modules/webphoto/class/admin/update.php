@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.9 2009/04/19 16:07:42 ohwada Exp $
+// $Id: update.php,v 1.10 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// get_url('210')
 // 2009-04-19 K.OHWADA
 // create_file_check
 // 2009-03-15 K.OHWADA
@@ -58,10 +60,15 @@ function main()
 	$url_040  = $this->_update_check_class->get_url('040');
 	$url_050  = $this->_update_check_class->get_url('050');
 	$url_130  = $this->_update_check_class->get_url('130');
+	$url_210  = $this->_update_check_class->get_url('210');
 	$url_file = $this->_MODULE_URL .'/admin/index.php?fct=create_file_list' ;
 
 	echo $this->_update_check_class->build_msg();
 	echo "<br />\n";
+
+	echo ' - <a href="'. $url_210 .'">';
+	echo "Update v2.00 to v2.10";
+	echo "</a><br /><br />\n";
 
 	echo ' - <a href="'. $url_130 .'">';
 	echo "Update v1.20 to v1.30";

@@ -1,5 +1,5 @@
 <?php
-// $Id: header_submit.php,v 1.10 2009/11/29 07:34:23 ohwada Exp $
+// $Id: header_submit.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// class/webphoto/base_this.php
 // 2009-11-11 K.OHWADA
 // main/header_item_handler.php
 // 2009-10-25 K.OHWADA
@@ -91,6 +93,8 @@ webphoto_include_once( 'class/handler/item_cat_handler.php' );
 webphoto_include_once( 'class/handler/photo_tag_handler.php' );
 
 webphoto_include_once( 'class/webphoto/plugin_ini.php' );
+webphoto_include_once( 'class/webphoto/base_ini.php' );
+webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/xoops_header.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
@@ -100,7 +104,7 @@ webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
-webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/tag_build.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );

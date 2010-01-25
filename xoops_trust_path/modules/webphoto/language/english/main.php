@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.37 2009/12/16 13:32:34 ohwada Exp $
+// $Id: main.php,v 1.38 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1439,6 +1439,18 @@ define("_WEBPHOTO_ITEM_PERM_LEVEL_GROUP", "Only in group");
 
 // cat
 define("_WEBPHOTO_CAT_GROUP_ID", "User Group ID");
+
+//---------------------------------------------------------
+// v2.10
+//---------------------------------------------------------
+// item 
+define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL", "Scroll view of Photo Description");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL_DSC", "Enter the height of the scroll by the px unit.
+ <br />When 0, it is usual view without the scroll.");
+
+// item option
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "Show photo in new window");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "Show photo with lightbox");
 
 // === define end ===
 }

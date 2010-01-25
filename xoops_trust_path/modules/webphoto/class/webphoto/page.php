@@ -1,5 +1,5 @@
 <?php
-// $Id: page.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: page.php,v 1.3 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_xoops_param()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_photo_public
 //---------------------------------------------------------
@@ -24,7 +26,7 @@ class webphoto_page
 	var $_config_class ;
 	var $_perm_class ;
 	var $_public_class ;
-	var $_timeline_class ;
+	var $_timeline_class;
 
 	var $_cfg_file_dir;
 	var $_cfg_is_set_mail;
@@ -35,35 +37,6 @@ class webphoto_page
 
 	var $_DIRNAME ;
 	var $_TRUST_DIRNAME ;
-
-// check show
-	var $_USE_BOX_JS = true;
-
-	var $_ARRAY_DENY_MENU         = array( 'map','timeline' );
-	var $_ARRAY_DENY_SEARCH       = array( 'map','timeline' );
-	var $_ARRAY_DENY_CATLIST      = array( 'map','timeline' );
-	var $_ARRAY_DENY_TAGCLOUD     = array( 'map','timeline' );
-	var $_ARRAY_DENY_GMAP         = array( 'timeline' );
-	var $_ARRAY_DENY_TIMELINE     = array( 'map' );
-	var $_ARRAY_DENY_DESC         = array();
-	var $_ARRAY_DENY_NOTIFICATION = array();
-	var $_ARRAY_DENY_NAVI         = array( 'map','timeline','random' );	// except random
-	var $_ARRAY_DENY_NAVI_SORT    = array( 'map','timeline','random' );
-	var $_ARRAY_DENY_QR           = array( 'map','timeline' );
-
-	var $_ARRAY_ALLOW_MENU         = '*' ;	// all
-	var $_ARRAY_ALLOW_SEARCH       = '*' ;	// all
-	var $_ARRAY_ALLOW_CATLIST      = '*' ;	// all
-	var $_ARRAY_ALLOW_TAGCLOUD     = '*' ;	// all
-	var $_ARRAY_ALLOW_GMAP         = '*' ;	// all
-	var $_ARRAY_ALLOW_TIMELINE     = '*' ;	// all
-	var $_ARRAY_ALLOW_DESC         = array( 'latest' );
-	var $_ARRAY_ALLOW_NOTIFICATION = array( 'latest' );
-	var $_ARRAY_ALLOW_NAVI         = '*';	// all
-	var $_ARRAY_ALLOW_NAVI_SORT    = '*';	// all
-	var $_ARRAY_ALLOW_QR           = '*';	// all
-
-	var $_ARRAY_CHECKSORT_NAVI     = array();
 
 //---------------------------------------------------------
 // constructor
@@ -105,39 +78,47 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // build main param
 //---------------------------------------------------------
-function build_main_param( $mode=null, $cat_id=0 )
+function build_xoops_param()
 {
-	$qrs_path = $this->_cfg_uploads_path.'/qrs' ;
-	$qrs_url  = XOOPS_URL . $qrs_path ;
+	$arr = array(
+		'mydirname'        => $this->_DIRNAME ,
 
-	$param = array(
-		'mode'            => $mode,
-		'cfg_is_set_mail' => $this->_cfg_is_set_mail ,
-		'qrs_path'        => $qrs_path ,
-		'qrs_url'         => $qrs_url ,
-		'use_box_js'      => $this->_USE_BOX_JS ,
-		'show_menu'       => $this->check_show_common( $mode, 'menu' ) ,
-		'show_search'     => $this->check_show_common( $mode, 'search' ) ,
-		'show_qr'         => $this->check_show_common( $mode, 'qr' ) ,
-		'is_taf_module'   => $this->get_is_taf_module() ,
+// for XOOPS 2.0.18
+		'xoops_dirname'    => $this->_DIRNAME ,
+		'xoops_modulename' => $this->xoops_module_name( 's' ) ,
 	);
 
-	$arr = array_merge( 
-		$param, 
-		$this->build_base_param(), 
-		$this->build_menu_param( $cat_id ), 
-		$this->build_footer_param() ,
-		$this->get_lang_array()
+	return $arr;
+}
+
+function build_config_param()
+{
+	$config_array = $this->get_config_array();
+	foreach ( $config_array as $k => $v ) {
+		$arr[ 'cfg_'.$k ] = $v ;
+	}
+	$arr['cfg_is_set_mail'] = $this->_cfg_is_set_mail ;
+	return $arr;
+}
+
+function build_perm_param()
+{
+	$arr = array(
+		'has_rateview'     => $this->_perm_class->has_rateview() ,
+		'has_ratevote'     => $this->_perm_class->has_ratevote() ,
+		'has_tellafriend'  => $this->_perm_class->has_tellafriend() ,
+		'has_insertable'   => $this->_perm_class->has_insertable(),
+		'has_mail'         => $this->_has_mail ,
+		'has_file'         => $this->_has_file ,
 	);
 	return $arr;
 }
 
-function build_menu_param( $cat_id )
+function build_menu_param()
 {
 	$total = $this->get_public_total();
 
 	$arr = array(
-		'cat_id'             => $cat_id ,
 		'photo_total_all'    => $total ,
 		'lang_thereare'      => $this->build_lang_thereare( $total ) ,
 		'show_menu_mail'     => $this->get_show_menu_mail() ,
@@ -149,32 +130,6 @@ function build_menu_param( $cat_id )
 	return $arr;
 }
 
-function build_base_param()
-{
-	$arr = array(
-		'mydirname'        => $this->_DIRNAME ,
-		'cfg_is_set_mail'  => $this->_cfg_is_set_mail ,
-		'has_rateview'     => $this->_perm_class->has_rateview() ,
-		'has_ratevote'     => $this->_perm_class->has_ratevote() ,
-		'has_tellafriend'  => $this->_perm_class->has_tellafriend() ,
-		'has_insertable'   => $this->_perm_class->has_insertable(),
-		'has_mail'         => $this->_has_mail ,
-		'has_file'         => $this->_has_file ,
-
-// for XOOPS 2.0.18
-		'xoops_dirname'    => $this->_DIRNAME ,
-		'xoops_modulename' => $this->xoops_module_name( 's' ) ,
-	);
-
-// config
-	$config_array = $this->get_config_array();
-	foreach ( $config_array as $k => $v ) {
-		$arr[ 'cfg_'.$k ] = $v ;
-	}
-
-	return $arr;
-}
-
 function build_footer_param()
 {
 	$arr = array(
@@ -182,6 +137,18 @@ function build_footer_param()
 		'execution_time'  => $this->get_execution_time() ,
 		'memory_usage'    => $this->get_memory_usage() ,
 		'happy_linux_url' => $this->get_happy_linux_url() ,
+	);
+	return $arr;
+}
+
+function build_qrs_param()
+{
+	$qrs_path = $this->_cfg_uploads_path.'/qrs' ;
+	$qrs_url  = XOOPS_URL . $qrs_path ;
+
+	$arr = array(
+		'qrs_path'        => $qrs_path ,
+		'qrs_url'         => $qrs_url ,
 	);
 	return $arr;
 }
@@ -223,6 +190,11 @@ function get_is_taf_module()
 // show JavaScript
 //---------------------------------------------------------
 function add_show_js_windows( $param )
+{
+	return array_merge( $param, $this->build_show_js_windows( $param ) );
+}
+
+function build_show_js_windows( $param )
 {
 	$use_box_js    = isset($param['use_box_js'])    ? (bool)$param['use_box_js']    : false ;
 	$show_gmap     = isset($param['show_gmap'])     ? (bool)$param['show_gmap']     : false ;
@@ -278,17 +250,18 @@ function add_show_js_windows( $param )
 	}
 
 	$boxlist = $this->build_box_list( $param );
-	$param['box_list']   = $boxlist;
-	$param['js_boxlist'] = $boxlist;
-
-	$param['show_js_window']  = $show_js_window;
-	$param['show_js_boxlist'] = $show_js_boxlist;
-	$param['show_js_load']    = $show_js_load;
-	$param['show_js_unload']  = $show_js_unload;
-	$param['js_load']         = $js_load;
-	$param['js_unload']       = 'GUnload';
-
-	return $param;
+	
+	$arr = array(
+		'box_list'        => $boxlist ,
+		'js_boxlist'      => $boxlist ,
+		'show_js_window'  => $show_js_window ,
+		'show_js_boxlist' => $show_js_boxlist ,
+		'show_js_load'    => $show_js_load ,
+		'show_js_unload'  => $show_js_unload ,
+		'js_load'         => $js_load ,
+		'js_unload'       => 'GUnload' ,
+	);
+	return $arr;
 }
 
 function build_box_list( $param )
@@ -315,53 +288,6 @@ function build_box_list( $param )
 		}
 	}
 	return '';
-}
-
-//---------------------------------------------------------
-// check show
-//---------------------------------------------------------
-function check_show_navi( $mode, $sort )
-{
-	if ( $this->check_show_common( $mode, 'navi' ) ) {
-		if ( $this->is_in_array( $mode, $this->_ARRAY_CHECKSORT_NAVI ) ) {
-			if ( $this->check_show_navi_sort( $sort ) ) {
-				return true;
-			}
-		} else {
-			return true;
-		}
-	}
-	return false;
-}
-
-function check_show_common( $mode, $name )
-{
-	$allow_name = strtoupper( '_ARRAY_ALLOW_'.$name );
-	$deny_name  = strtoupper( '_ARRAY_DENY_'. $name );
-	$allow_arr  = $this->$allow_name;
-	$deny_arr   = $this->$deny_name;
-
-	if ( $this->is_in_array( $mode, $deny_arr ) ) {
-		return false;
-	}
-	if ( $this->is_in_array( $mode, $allow_arr ) ) {
-		return true;
-	}
-	return false;
-}
-
-function is_in_array( $needle, $haystack )
-{
-	if ( is_array($haystack) ) {
-		if ( in_array( $needle, $haystack ) ) {
-			return true;
-		}
-	} else {
-		if ( $haystack == '*' ) {
-			return true;
-		}
-	}
-	return false;
 }
 
 //---------------------------------------------------------
@@ -485,14 +411,6 @@ function get_memory_usage()
 function get_happy_linux_url()
 {
 	return $this->_utility_class->get_happy_linux_url( $this->xoops_is_japanese() ) ;
-}
-
-//---------------------------------------------------------
-// get param
-//---------------------------------------------------------
-function get_use_box_js()
-{
-	return $this->_USE_BOX_JS;
 }
 
 // --- class end ---

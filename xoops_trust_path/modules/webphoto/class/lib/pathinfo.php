@@ -1,5 +1,5 @@
 <?php
-// $Id: pathinfo.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: pathinfo.php,v 1.3 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// function get_op_or_0()
 // 2008-07-01 K.OHWADA
 // added isset_param()
 //---------------------------------------------------------
@@ -21,6 +23,8 @@ class webphoto_lib_pathinfo
 {
 	var $_get_param      = null;
 	var $_pathinfo_array = null;
+
+	var $_PAGE_DEFAULT  = 1;
 
 //---------------------------------------------------------
 // constructor
@@ -65,6 +69,34 @@ function _init()
 //---------------------------------------------------------
 // function
 //---------------------------------------------------------
+function get_fct_op_0()
+{
+	$fct = $this->get('fct');
+	if ( $fct ) { return $fct ; }
+
+	$op = $this->get('op');
+	if ( $op ) { return $op ; }
+
+	return $this->get_path( 0 ) ;
+}
+
+function get_op_or_0()
+{
+	$op = $this->get('op');
+	if ( $op ) { return $op ; }
+
+	return $this->get_path( 0 ) ;
+}
+
+function get_page()
+{
+	$page = $this->get_int('page');
+	if ( $page < $this->_PAGE_DEFAULT ) {
+		 $page = $this->_PAGE_DEFAULT ;
+	}
+	return $page ;
+}
+
 function isset_param( $key )
 {
 	$ret = isset( $this->_get_param[ $key ] ) ? true : false;

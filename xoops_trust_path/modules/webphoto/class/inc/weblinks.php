@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: weblinks.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// BUG: Fatal error: Call to undefined function: getinstance()
 // 2009-11-11 K.OHWADA
 // WEBPHOTO_TRUST_DIRNAME in webphoto_inc_catlist
 // 2009-04-18 K.OHWADA
@@ -84,7 +86,9 @@ function photos( $opts )
 		'disable_renderer' => $disable_renderer , 
 	);
 
-	$inc_class =& webphoto_inc_blocks::getInstance();
+// BUG: Fatal error: Call to undefined function: getinstance()
+	$inc_class =& webphoto_inc_blocks::getSingleton( $dirname, WEBPHOTO_TRUST_DIRNAME );
+
 	$block = $inc_class->rphoto_show( $options );
 
 	if ( !is_array($block) || !count($block) ) {

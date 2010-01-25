@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.10 2009/12/16 13:32:34 ohwada Exp $
+// $Id: item_table_manage.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// item_description_scroll
 // 2009-12-06 K.OHWADA
 // item_perm_level
 // 2009-11-11 K.OHWADA
@@ -164,6 +166,7 @@ function _build_row_by_post()
 		'item_description_xcode'  => $this->_post_class->get_post_int( 'item_description_xcode' ),
 		'item_description_image'  => $this->_post_class->get_post_int( 'item_description_image' ),
 		'item_description_br'     => $this->_post_class->get_post_int( 'item_description_br' ),
+		'item_description_scroll' => $this->_post_class->get_post_int( 'item_description_scroll' ),
 
 //		'item_rating'         => $this->_post_class->get_post_float( 'item_rating' ),
 //		'item_votes'          => $this->_post_class->get_post_int(   'item_votes' ),
@@ -269,6 +272,7 @@ function _print_form( $row )
 	echo $this->build_comp_text(     'item_description_xcode' );
 	echo $this->build_comp_text(     'item_description_image' );
 	echo $this->build_comp_text(     'item_description_br' );
+	echo $this->build_comp_text(     'item_description_scroll' );
 
 	echo $this->build_comp_textarea( 'item_exif' );
 	echo $this->build_comp_textarea( 'item_content' );

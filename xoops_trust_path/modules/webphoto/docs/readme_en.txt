@@ -1,4 +1,77 @@
-$Id: readme_en.txt,v 1.40 2009/12/24 06:32:22 ohwada Exp $
+$Id: readme_en.txt,v 1.41 2010/01/25 10:03:07 ohwada Exp $
+
+=================================================
+Version: 2.10
+Date:   2010-01-20
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Customize of view 
+The admin can customize easily to show or hidden the map, the timeline and etc
+the map, the timeline and etc are made in component part.
+The admin can set  to show or hidden them with main.ini.
+
+(1) added the map in the tag and user page
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1004&forum=13
+
+2. Scrolling view of the description of photo
+The submitter can choice the full text view or the scrolling view.
+The scrolling view is effective when the description is long.
+The submitter can set in every item.
+
+3. Action when click in detail page
+The submitter can choice the action when a guest click the photo in detail page
+The submitter can set every item.
+
+(1) general view
+show the uploaded file in new window.
+this is default.
+
+(2) photo in new window ( conventional )
+show the full-scale photo in new window.
+it is valid when the uploaded file is a picture image.
+
+(3) popup ( new )
+show the full-scale photo in popup style by lightbox2.
+it is valid when the uploaded file is a picture image.
+- http://www.lokeshdhakar.com/projects/lightbox2/
+
+(4) PDF ( added in v1.90 )
+show the PDF file in new window.
+It is valid when the PDF file is generated from the uploaded file.
+
+4. bug fix
+(1) Fatal error in weblink module
+(2) wrong URL in the approval waiting email when in bulk submit
+
+5. Database structure
+(1) item table: add field item_description_scroll
+item_perm_level
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) and execute "Update" in webphoto's admin cp
+  set the action when click in detail page for the items which already exist
+
+
+* Notice *
+In this version, I changed many files, for "Customize of view".
+Although there are no big problem, but I think that there are any small problem. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
+
+* Special Thanks *
+Special thanks to the author of lightbox2 
+- http://www.lokeshdhakar.com/projects/lightbox2/
+
 
 =================================================
 Version: 2.00

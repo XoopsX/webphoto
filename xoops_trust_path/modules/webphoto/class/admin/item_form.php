@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.23 2009/12/24 06:32:22 ohwada Exp $
+// $Id: item_form.php,v 1.24 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// init_for_admin()
 // 2009-12-06 K.OHWADA
 // item_perm_level
 // build_form_common()
@@ -57,8 +59,6 @@ class webphoto_admin_item_form extends webphoto_edit_photo_form
 {
 	var $_sort_class ;
 
-	var $_sort_array = null ;
-
 	var $_THIS_FCT = 'item_manager' ;
 	var $_THIS_URL;
 	var $_URL_ADMIN_INDEX ;
@@ -73,9 +73,10 @@ function webphoto_admin_item_form( $dirname, $trust_dirname )
 {
 	$this->webphoto_edit_photo_form( $dirname, $trust_dirname );
 
-	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
-	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
-	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
+	$this->_sort_class 
+		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
+
+	$this->_sort_class->init_for_admin();
 
 	$this->_show_delete_button = true;
 
@@ -538,10 +539,11 @@ function _build_sort_select( $sort_in )
 	$str .= $this->_sort_class->get_lang_sortby( $sort_in ) ;
 	$str .= "</option>\n";
 
-	foreach ( $this->_sort_array as $k => $v ) 
+	$sort_array = $this->_sort_class->get_sort_to_order_array();
+	foreach ( $sort_array as $k => $v ) 
 	{
 		$str .= '<option value="'. $url.$k .'">';
-		$str .= $v[1] ;
+		$str .= $this->_sort_class->sort_to_lang( $k ) ;
 		$str .= "</option>\n";
 	}
 

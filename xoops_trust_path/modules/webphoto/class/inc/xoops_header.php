@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.4 2009/01/31 19:12:49 ohwada Exp $
+// $Id: xoops_header.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_envelop_css()
 // 2009-01-25 K.OHWADA
 // assign_or_check_gmap_api()
 // 2008-12-12 K.OHWADA
@@ -201,7 +203,7 @@ function build_link_css_libs( $css )
 
 function build_link_css( $herf )
 {
-	$str = '<link id="lnkStyleSheet" rel="stylesheet" type="text/css" href="'. $herf .'" />'."\n";
+	$str = '<link rel="stylesheet" type="text/css" href="'. $herf .'" />'."\n";
 	return $str;
 }
 
@@ -216,20 +218,32 @@ function build_script_js( $src )
 	return $str;
 }
 
-function build_envelop_js( $text )
-{
-	$str  = '<script type="text/javascript">'."\n";
-	$str .= '//<![CDATA['."\n";
-	$str .= $text ."\n";
-	$str .= '//]]>'."\n";
-	$str .= '</script>'."\n";
-	return $str;
-}
-
 function build_link_rss( $url )
 {
 	$str = '<link rel="alternate" type="application/rss+xml" title="RSS" href="'. $url .'" />'."\n";
 	return $str;
+}
+
+function build_envelop_js( $text )
+{
+	$ret = <<< EOF
+<script type="text/javascript">
+//<![CDATA[
+$text 
+//]]>
+</script> 
+EOF;
+	return $ret;
+}
+
+function build_envelop_css( $text )
+{
+	$ret = <<< EOF
+<style type="text/css">
+$text 
+</style> 
+EOF;
+	return $ret;
 }
 
 //--------------------------------------------------------

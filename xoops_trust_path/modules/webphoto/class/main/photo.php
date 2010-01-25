@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.21 2009/12/24 06:32:22 ohwada Exp $
+// $Id: photo.php,v 1.22 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_show_list -> webphoto_factory
 // 2009-12-06 K.OHWADA
 // $_SHOW_PHOTO_SUMMARY
 // 2009-11-11 K.OHWADA
@@ -46,7 +48,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_main_photo
 //=========================================================
-class webphoto_main_photo extends webphoto_show_main_photo
+class webphoto_main_photo extends webphoto_factory
 {
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
@@ -56,16 +58,7 @@ class webphoto_main_photo extends webphoto_show_main_photo
 //---------------------------------------------------------
 function webphoto_main_photo( $dirname , $trust_dirname )
 {
-	$this->webphoto_show_main_photo( $dirname , $trust_dirname );
-
-	$this->set_mode( 'photo' );
-	$this->set_flag_highlight( true );
-	$this->set_template_main( 'main_photo.html' );
-
-	$this->set_navi_mode( $this->get_ini('navi_mode') );
-	$this->_SHOW_PHOTOS_IN_CAT = $this->get_ini('show_photos_in_cat_in_photo');
-
-	$this->init_preload();
+	$this->webphoto_factory( $dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -78,11 +71,23 @@ function &getInstance( $dirname , $trust_dirname )
 }
 
 //---------------------------------------------------------
+// init
+//---------------------------------------------------------
+function init()
+{
+	$this->init_factory();
+	$this->set_mode( 'photo' );
+	$this->set_template_main( 'main_photo.html' );
+
+	$this->init_preload();
+}
+
+//---------------------------------------------------------
 // check
 //---------------------------------------------------------
 function check_edittag()
 {
-	$this->check_photo_edittag();
+	$this->_photo_class->check_photo_edittag();
 }
 
 //---------------------------------------------------------
@@ -90,62 +95,77 @@ function check_edittag()
 //---------------------------------------------------------
 function main()
 {
-	$photos_param = array();
+	$this->init();
 
-	$this->get_pathinfo_param();
+	$mode = $this->_mode;
 
 // load row
-	$row = $this->_photo_row;
+	$row = $this->_photo_class->get_photo_row();
 	$photo_id  = $row['item_id'];
 	$photo_uid = $row['item_uid'];
 
 // for xoops comment & notification
 	$_GET['photo_id'] = $photo_id;
 
-	$this->set_keyword_array_by_get();
+	$this->_photo_class->set_flag_highlight( true );
+	$this->_photo_class->set_keyword_array_by_get();
 
 // countup hits
-	if ( $this->check_not_owner( $row['item_uid'] ) ) {
+	if ( $this->_photo_class->check_not_owner( $row['item_uid'] ) ) {
 		$this->_item_handler->countup_hits( $photo_id, true );
 	}
 
-	$photo      = $this->build_photo_show_photo( $row );
-	$gmap_param = $this->build_photo_gmap_param( $row );
-	$show_gmap  = $gmap_param['show_gmap'];
-	$cat_id     = $this->get_photo_catid_row_or_post( $row ) ;
+	$photo  = $this->build_photo_for_photo( $row );
+	$title  = $photo['title_s'];
 
-	$this->assign_xoops_header( 'category', $cat_id, $show_gmap );
+	$cat_id = $this->_photo_class->get_photo_catid_row_or_post( $row ) ;
 
-	$this->create_mobile_qr( $photo_id );
+	$this->show_array_set_detail_by_mode( $mode );
 
-	$param = array(
-		'xoops_pagetitle'    => $photo['title_s'],
-		'photo'              => $photo,
-		'catpath'            => $this->build_cat_path( $cat_id ) ,
-		'photo_nav'          => $this->build_photo_navi( $photo_id, $cat_id ),
-		'show_comment'       => true ,
-		'show_photo_desc'    => true ,
-		'show_photo_exif'    => true ,
-		'show_photo_content' => $this->_SHOW_PHOTO_CONTENT ,
-		'mobile_email'       => $this->get_mobile_email() ,
-		'mobile_url'         => $this->build_mobile_url( $photo_id ) ,
-		'mobile_qr_image'    => $this->build_mobile_filename( $photo_id ) ,
-	);
+	$show_gmap = $this->set_tpl_gmap_for_photo_with_check( $row );
 
-	if ( $this->_SHOW_PHOTOS_IN_CAT ) {
-		$photos_param = $this->build_photos_param_in_category( $cat_id ) ;
-		$this->_SHOW_PHOTO_SUMMARY = true;
+	$this->xoops_header_array_set_by_mode( $mode ) ;
+	$this->xoops_header_param();
+	$this->xoops_header_rss_with_check(  'category', $cat_id );
+	$this->xoops_header_gmap_with_check( $show_gmap );
+	$this->xoops_header_assign();
+
+// same as main
+	$this->show_param();
+	$this->set_tpl_common();
+	$this->set_tpl_mode( $mode );
+	$this->set_tpl_title( $title );
+	$this->set_tpl_qr_with_check( $photo_id );
+	$this->set_tpl_notification_select_with_check();
+	$this->set_tpl_tagcloud_with_check( $this->_cfg_tags );
+	$this->set_tpl_cat_id(  $cat_id );
+	$this->set_tpl_catpath( $cat_id );
+	$this->set_tpl_catlist_with_check( $cat_id );
+
+// for photo
+	$this->set_tpl_photo( $photo );
+	$this->set_tpl_photo_tags( $photo_id );
+	$this->set_tpl_photo_nav( $photo_id, $cat_id );
+
+	if ( $this->show_check('photo_list') ) {
+		list( $title, $total, $rows, $phpto_sum ) 
+			= $this->category_build_rows_for_detail( $cat_id );
+		$photo_list = $this->build_photo_list_for_detail( $rows );
+		$this->set_tpl_photo_list( $photo_list );
+		$this->set_tpl_total_for_detail( $mode, $total );
+		$this->set_tpl_timeline_with_check( $mode, $rows );
 	}
 
-// BUG: not show description
-	$arr = array_merge( 
-		$param, $gmap_param, $photos_param, 
-		$this->build_main_param( $this->_mode, $this->_SHOW_PHOTO_SUMMARY ) ,
-		$this->build_photo_tags_param( $photo_id ) ,
-		$this->build_notification_select() 
-	);
+	$this->set_tpl_show_js_windows();
+	return $this->tpl_get();
+}
 
-	return $this->add_show_js_windows( $arr );
+//---------------------------------------------------------
+// xoops comment
+//---------------------------------------------------------
+function comment_view()
+{
+	$this->_photo_class->comment_view();
 }
 
 // --- class end ---

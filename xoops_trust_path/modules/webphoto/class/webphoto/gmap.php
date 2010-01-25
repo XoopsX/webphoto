@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
+// $Id: gmap.php,v 1.13 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_for_category()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_cat_handler
 // 2009-04-10 K.OHWADA
@@ -37,16 +39,21 @@ class webphoto_gmap extends webphoto_base_this
 	var $_item_cat_handler;
 	var $_gmap_info_class;
 	var $_catlist_class;
+	var $_public_class;
 
 	var $_cfg_perm_cat_read ;
 	var $_cfg_gmap_apikey ;
 	var $_cfg_gmap_latitude  ;
 	var $_cfg_gmap_longitude ;
 	var $_cfg_gmap_zoom      ;
+	var $_cfg_gmap_photos ;
 
 	var $_GMAP_ORDERBY_ASC    = 'item_id ASC';
 	var $_GMAP_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
 	var $_GMAP_KEY_NAME = 'item_id' ;
+
+	var $_OFFSET_ZERO = 0 ;
+	var $_KEY_TRUE    = true ;
 
 //---------------------------------------------------------
 // constructor
@@ -63,6 +70,8 @@ function webphoto_gmap( $dirname , $trust_dirname )
 		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
 	$this->_gmap_info_class 
 		=& webphoto_inc_gmap_info::getSingleton( $dirname , $trust_dirname );
+	$this->_public_class
+		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname  );
 
 	$cfg_perm_item_read        = $this->get_config_by_name( 'perm_item_read' );
 	$this->_cfg_perm_cat_read  = $this->get_config_by_name( 'perm_cat_read' );
@@ -70,6 +79,7 @@ function webphoto_gmap( $dirname , $trust_dirname )
 	$this->_cfg_gmap_latitude  = $this->get_config_by_name( 'gmap_latitude' );
 	$this->_cfg_gmap_longitude = $this->get_config_by_name( 'gmap_longitude' );
 	$this->_cfg_gmap_zoom      = $this->get_config_by_name( 'gmap_zoom' );
+	$this->_cfg_gmap_photos    = $this->get_config_by_name( 'gmap_photos');
 
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 
@@ -83,6 +93,115 @@ function &getInstance( $dirname , $trust_dirname )
 		$instance = new webphoto_gmap( $dirname , $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// category
+//---------------------------------------------------------
+function build_for_category( $mode, $cat_id=0 )
+{
+	$rows = $this->_public_class->get_rows_by_gmap( $cat_id, $this->_cfg_gmap_photos );
+	return $this->build_gmap_from_rows( $mode, $rows, $cat_id );
+}
+
+function build_for_rows( $mode, $rows )
+{
+	$latest_rows = $this->_public_class->get_rows_by_gmap_latest( 
+		$this->_cfg_gmap_photos, $this->_OFFSET_ZERO, $this->_KEY_TRUE );
+
+	$all_rows = $this->array_merge_unique( $latest_rows, $rows );
+
+	if ( is_array($all_rows) && count($all_rows)  ) {
+		return $this->build_gmap_from_rows( $mode, $all_rows );
+	}
+
+	$arr = array(
+		'show_gmap' => false ,
+	);
+	return $arr;
+}
+
+function build_gmap_from_rows( $mode, $rows, $cat_id=0 )
+{
+	$show  = false;
+	$icons = null;
+
+// Undefined variable: photos 
+	$photos = null;
+
+	list( $code, $latitude, $longitude, $zoom ) =
+		$this->get_gmap_center( 0, $cat_id );
+
+	if ( is_array($rows) && count($rows) ) {
+		$photos = $this->build_show_from_rows( $rows );
+		if ( is_array($photos) && count($photos) ) {
+			$show  = true;
+			$icons = $this->build_icon_list();
+		}
+	}
+
+	$arr = array(
+		'show_gmap'       => $show ,
+		'gmap_photos'     => $photos ,
+		'gmap_icons'      => $icons ,
+		'gmap_latitude'   => $latitude,
+		'gmap_longitude'  => $longitude,
+		'gmap_zoom'       => $zoom,
+		'gmap_class'      => $this->get_gmap_class( $mode ) ,
+		'show_map_large'  => ! $this->is_map_mode(  $mode ) ,
+		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
+	);
+	return $arr;
+}
+
+function get_gmap_class( $mode )
+{
+	if ( $this->is_map_mode( $mode ) ) {
+		return 'webphoto_gmap_large';
+	}
+	return 'webphoto_gmap_normal';
+}
+
+function is_map_mode( $mode )
+{
+	if ( $mode == 'map' ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
+// photo
+//---------------------------------------------------------
+function build_for_photo( $row )
+{
+	$show  = false;
+	$icons = null;
+
+	$photo = $this->build_show( $row );
+	if ( is_array($photo) ) {
+		$show  = true;
+		$icons = $this->build_icon_list();
+	}
+
+	$arr = array(
+		'show_gmap'       => $show,
+		'gmap_photo'      => $photo,
+		'gmap_icons'      => $icons ,
+		'gmap_latitude'   => $row['item_gmap_latitude'] ,
+		'gmap_longitude'  => $row['item_gmap_longitude'] ,
+		'gmap_zoom'       => $row['item_gmap_zoom'] ,
+		'gmap_lang_not_compatible' => $this->get_constant('GMAP_NOT_COMPATIBLE') ,
+	);
+	return $arr;
+}
+
+function build_show( $item_row )
+{
+	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
+	if ( ! $this->exist_gmap_item( $item_row ) ) { return null; } 
+
+	return $this->_build_show_from_single_row( $item_row );
 }
 
 //---------------------------------------------------------
@@ -162,17 +281,6 @@ function _build_cat_gicon_id( $item_row )
 {
 	return $this->_cat_handler->get_cached_value_by_id_name( 
 		$item_row['item_cat_id'], 'cat_gicon_id' );
-}
-
-//---------------------------------------------------------
-// photo
-//---------------------------------------------------------
-function build_show( $item_row )
-{
-	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
-	if ( ! $this->exist_gmap_item( $item_row ) ) { return null; } 
-
-	return $this->_build_show_from_single_row( $item_row );
 }
 
 //---------------------------------------------------------

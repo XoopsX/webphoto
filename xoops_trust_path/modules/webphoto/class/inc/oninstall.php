@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
+// $Id: oninstall.php,v 1.21 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// _item_add_column_210()
 // 2009-12-06 K.OHWADA
 // _item_add_column_200()
 // 2009-11-11 K.OHWADA
@@ -642,6 +644,7 @@ function _item_update()
 	$this->_item_modify_column_173();
 	$this->_item_add_column_190();
 	$this->_item_add_column_200();
+	$this->_item_add_column_210();
 }
 
 function _item_add_column_050()
@@ -921,6 +924,29 @@ function _item_add_column_200()
 
 	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
 	$sql .= "item_perm_level TINYINT(2) NOT NULL DEFAULT '0' " ;
+	$sql .= " )";
+
+	$ret = $this->query( $sql );
+
+	if ( $ret ) {
+		$this->_set_msg( 'Add item_content in <b>'. $this->_table_item .'</b>' );
+	} else {
+		$this->_set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_item .'</b>.' ) );
+		return false;
+	}
+
+}
+
+function _item_add_column_210()
+{
+
+// return if already exists
+	if ( $this->exists_column( $this->_table_item, 'item_description_scroll' ) ) {
+		return true;
+	}
+
+	$sql  = "ALTER TABLE ". $this->_table_item ." ADD ( " ;
+	$sql .= "item_description_scroll INT(11) UNSIGNED NOT NULL DEFAULT '0' " ;
 	$sql .= " )";
 
 	$ret = $this->query( $sql );
@@ -1312,6 +1338,11 @@ function _mime_add_record_list( $mime_list )
 function _mime_update_record_kind( $ext, $kind )
 {
 	$row = $this->_mime_get_row_by_ext( $ext );
+
+// no acton if not exist
+	if ( !is_array($row) ) {
+		return;
+	}
 
 // no acton if already set
 	if ( $row['mime_kind'] ) {

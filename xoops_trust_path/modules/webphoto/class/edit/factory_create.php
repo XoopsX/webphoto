@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.10 2009/12/24 06:32:22 ohwada Exp $
+// $Id: factory_create.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_row_detail_onclick()
 // 2009-12-06 K.OHWADA
 // build_item_perm_by_level_catid()
 // 2009-11-11 K.OHWADA
@@ -334,6 +336,7 @@ function build_item_row_from_file( $row, $src_file )
 	$row = $this->build_row_status( $row );
 	$row = $this->build_row_uid( $row );
 	$row = $this->build_row_displaytype( $row );
+	$row = $this->build_row_detail_onclick( $row );
 	$row = $this->build_row_icon_if_empty( $row );
 	$row = $this->build_row_title_if_empty( $row );
 	$row = $this->build_row_search( $row );
@@ -359,6 +362,7 @@ function build_item_row_submit_insert( $row, $tag_name_array=null )
 	$row = $this->build_row_status( $row );
 	$row = $this->build_row_uid( $row );
 	$row = $this->build_row_displaytype( $row );
+	$row = $this->build_row_detail_onclick( $row );
 	$row = $this->build_row_title_if_empty( $row );
 	$row = $this->build_row_search( $row, $tag_name_array );
 	return $row;
@@ -434,6 +438,11 @@ function build_row_uid( $row )
 function build_row_displaytype( $row )
 {
 	return $this->_item_build_class->build_row_displaytype_if_empty( $row );
+}
+
+function build_row_detail_onclick( $row )
+{
+	return $this->_item_build_class->build_row_detail_onclick_if_empty( $row );
 }
 
 function build_row_title_if_empty( $row )

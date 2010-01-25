@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.9 2009/12/16 13:32:34 ohwada Exp $
+// $Id: header_edit.php,v 1.10 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// class/webphoto/tag.php -> tag_build.php
 // 2009-12-06 K.OHWADA
 // class/d3/mail_template.php
 // 2009-11-11 K.OHWADA
@@ -124,7 +126,7 @@ webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/gmap.php' );
-webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/tag_build.php' );
 webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/playlist.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );

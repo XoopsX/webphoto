@@ -1,5 +1,5 @@
 <?php
-// $Id: update_check.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: update_check.php,v 1.6 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_lib_base -> webphoto_base_ini
+// check_210()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // 2009-03-15 K.OHWADA
@@ -19,19 +22,21 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_admin_update_check 
 //=========================================================
-class webphoto_admin_update_check extends webphoto_lib_base
+class webphoto_admin_update_check extends webphoto_base_ini
 {
 	var $_item_handler;
 	var $_file_handler;
 	var $_player_handler;
 	var $_photo_handler;
 
+	var $_item_count_all;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_admin_update_check ( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname , $trust_dirname );
+	$this->webphoto_base_ini( $dirname , $trust_dirname );
 
 	$this->_item_handler   =& webphoto_item_handler::getInstance(
 		$dirname , $trust_dirname );
@@ -40,6 +45,9 @@ function webphoto_admin_update_check ( $dirname , $trust_dirname )
 	$this->_player_handler =& webphoto_player_handler::getInstance( 
 		$dirname , $trust_dirname );
 	$this->_photo_handler  =& webphoto_photo_handler::getInstance( $dirname );
+
+	$this->_item_count_all = $this->_item_handler->get_count_all();
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -75,6 +83,12 @@ function build_msg()
 		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
 		$msg .= '</a>';
 		$str  = $this->build_error_msg( $msg, '', false );
+
+	} elseif ( $this->check_210() ) {
+		$msg  = '<a href="'. $this->get_url('210') .'">';
+		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
+		$msg .= '</a>';
+		$str  = $this->build_error_msg( $msg, '', false );
 	}
 
 	return $str;
@@ -82,7 +96,7 @@ function build_msg()
 
 function check_040()
 {
-	if ( $this->_item_handler->get_count_all() > 0 ) {
+	if ( $this->_item_count_all > 0 ) {
 		return false;
 	}
 	if ( $this->_photo_handler->get_count_all() > 0 ) {
@@ -101,10 +115,24 @@ function check_050()
 
 function check_130()
 {
-	if ( $this->_item_handler->get_count_all() == 0 ) {
+	if ( $this->_item_count_all == 0 ) {
 		return false;
 	}
 	if ( $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL ) == 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function check_210()
+{
+	if ( $this->_item_count_all == 0 ) {
+		return false;
+	}
+	if ( $this->_item_handler->get_count_photo() == 0 ) {
+		return false;
+	}
+	if ( $this->_item_handler->get_count_photo_detail_onclick() == 0 ) {
 		return true;
 	}
 	return false;

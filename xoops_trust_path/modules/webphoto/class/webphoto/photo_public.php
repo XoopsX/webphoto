@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photo_public.php,v 1.9 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_cat_path()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-09-06 K.OHWADA
@@ -35,9 +37,17 @@ class webphoto_photo_public
 
 	var $_cfg_perm_cat_read ;
 	var $_cfg_cat_child ;
+	var $_cfg_cat_main_width ;
+	var $_cfg_cat_sub_width ;
+	var $_cfg_use_pathinfo ;
 
 	var $_ORDERBY_ASC    = 'item_id ASC';
 	var $_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
+
+// show
+	var $_SHOW_CAT_SUB      = true;
+	var $_SHOW_CAT_MAIN_IMG = true;
+	var $_SHOW_CAT_SUB_IMG  = true;
 
 //---------------------------------------------------------
 // constructor
@@ -57,11 +67,12 @@ function webphoto_photo_public( $dirname, $trust_dirname )
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
-	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name( 'perm_cat_read' );
-	$this->_cfg_cat_child     = $this->_config_class->get_by_name( 'cat_child' );
-	$cfg_perm_item_read       = $this->_config_class->get_by_name( 'perm_item_read' );
-	$cfg_use_pathinfo         = $this->_config_class->get_by_name( 'use_pathinfo' );
-	$cfg_uploads_path         = $this->_config_class->get_uploads_path();
+	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
+	$this->_cfg_cat_child      = $this->_config_class->get_by_name( 'cat_child' );
+	$this->_cfg_cat_main_width = $this->_config_class->get_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width  = $this->_config_class->get_by_name('cat_sub_width');
+	$this->_cfg_use_pathinfo   = $this->_config_class->get_by_name('use_pathinfo');
+	$cfg_perm_item_read        = $this->_config_class->get_by_name( 'perm_item_read' );
 
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
 }
@@ -73,6 +84,67 @@ function &getInstance( $dirname, $trust_dirname )
 		$instance = new webphoto_photo_public( $dirname, $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// cat path
+//---------------------------------------------------------
+function build_cat_path( $cat_id )
+{
+	$rows = $this->_cat_handler->get_parent_path_array( $cat_id );
+	if ( !is_array($rows) || !count($rows) ) {
+		return false;
+	}
+
+	$arr   = array();
+	$count = count($rows);
+	$last  = $count - 1;
+
+	for ( $i = $last ; $i >= 0; $i-- ) {
+		$arr[] = $this->build_cat_show( $rows[ $i ] );
+	}
+
+	$ret = array();
+	$ret['list']  = $arr;
+	$ret['first'] = $arr[ 0 ];
+	$ret['last']  = $arr[ $last ];
+
+	return $ret;
+}
+
+//---------------------------------------------------------
+// catlist
+//---------------------------------------------------------
+function build_catlist_for_category( $cat_id, $cols, $delmita )
+{
+	$show = false ;
+
+	list( $cats, $cols, $width ) =
+		$this->build_catlist( $cat_id, $this->_SHOW_CAT_SUB, $cols ) ;
+
+	if ( is_array($cats) && count($cats) ) {
+		$show = true ;
+	}
+
+	$catlist = array(
+		'cats'            => $cats ,
+		'cols'            => $cols ,
+		'width'           => $width ,
+		'delmita'         => $delmita ,
+		'show_sub'        => $this->_SHOW_CAT_SUB ,
+		'show_main_img'   => $this->_SHOW_CAT_MAIN_IMG ,
+		'show_sub_img'    => $this->_SHOW_CAT_SUB_IMG ,
+		'main_width'      => $this->_cfg_cat_main_width ,
+		'sub_width'       => $this->_cfg_cat_sub_width ,
+	);
+
+	$arr = array(
+		'show_catlist'     => $show,
+		'cfg_use_pathinfo' => $this->_cfg_use_pathinfo ,
+		'catlist'          => $catlist,
+	);
+
+	return $arr ;
 }
 
 //---------------------------------------------------------

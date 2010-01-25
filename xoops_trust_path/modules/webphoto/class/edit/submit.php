@@ -1,16 +1,15 @@
 <?php
-// $Id: submit.php,v 1.15 2009/12/24 06:32:22 ohwada Exp $
+// $Id: submit.php,v 1.16 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
 
-// function build_item_perm_by_row( $row )
-// function use_perm_level()
-
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_tag -> webphoto_tag_build
 // 2009-12-06 K.OHWADA
 // notify_waiting()
 // 2009-11-11 K.OHWADA
@@ -43,7 +42,7 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 {
 	var $_page_class ;
 	var $_editor_class ;
-	var $_tag_class;
+	var $_tag_build_class;
 	var $_show_image_class;
 	var $_external_build_class ;
 	var $_embed_build_class ;
@@ -109,10 +108,10 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 		=& webphoto_edit_playlist_build::getInstance( $dirname, $trust_dirname );
 	$this->_external_build_class 
 		=& webphoto_edit_external_build::getInstance( $dirname, $trust_dirname  );
-	$this->_tag_class  
-		=& webphoto_tag::getInstance( $dirname, $trust_dirname  );
+	$this->_tag_build_class  
+		=& webphoto_tag_build::getInstance( $dirname, $trust_dirname  );
 
-	$this->_tag_class->set_is_japanese( $this->_is_japanese );
+	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
 
 	$this->_cfg_addposts       = $this->get_config_by_name( 'addposts' );
 	$this->_cfg_makethumb      = $this->get_config_by_name( 'makethumb' ) ;
@@ -154,7 +153,7 @@ function get_post_param()
 	$this->set_checkbox_by_post( 'item_datetime_checkbox' );
 
 	$this->set_tag_name_array( 
-		$this->_tag_class->str_to_tag_name_array( 
+		$this->_tag_build_class->str_to_tag_name_array( 
 			$this->get_post_text( 'tags' ) ) );
 }
 
@@ -379,7 +378,7 @@ function submit_exec_fetch( $row )
 
 function submit_exec_tag_save( $item_row )
 {
-	$ret = $this->_tag_class->add_tags( 
+	$ret = $this->_tag_build_class->add_tags( 
 		$item_row['item_id'], $this->_xoops_uid, $this->get_tag_name_array() );
 	if ( !$ret ) { 
 		return _C_WEBPHOTO_ERR_DB; 
@@ -757,14 +756,18 @@ function build_no_image_preview()
 function build_preview_template( $row )
 {
 	$tpl = new XoopsTpl() ;
-	$tpl->assign( $this->_page_class->build_base_param() ) ;
+
+	$tpl->assign( $this->_page_class->build_xoops_param() ) ;
+	$tpl->assign( $this->_page_class->build_config_param() ) ;
+	$tpl->assign( $this->_page_class->build_perm_param() ) ;
+
+// BUG: not show img alt
+	$tpl->assign( $this->get_lang_array() ) ;
+
 	$tpl->assign( 'photo' , $row ) ;
 
 // BUG: not show description in preview
 	$tpl->assign( 'show_photo_summary' , true ) ;
-
-// BUG: not show img alt
-	$tpl->assign( $this->get_lang_array() ) ;
 
 	$template = 'db:'. $this->_DIRNAME .'_inc_photo_in_list.html';
 	return $tpl->fetch( $template ) ;
@@ -804,14 +807,7 @@ function build_submit_redirect_url_success( $cat_id )
 	return $this->build_uri_category( $cat_id, $param );
 }
 
-//---------------------------------------------------------
-// menu
-//---------------------------------------------------------
-function get_show_select_file()
-{
-	$show = ( $this->_cfg_file_dir && $this->_has_file );
-	return $show;
-}
+
 
 //---------------------------------------------------------
 // build form

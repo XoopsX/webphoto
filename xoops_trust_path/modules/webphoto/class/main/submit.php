@@ -1,16 +1,15 @@
 <?php
-// $Id: submit.php,v 1.17 2009/11/29 07:34:21 ohwada Exp $
+// $Id: submit.php,v 1.18 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-//	$this->_header_class =& webphoto_xoops_header::getInstance( $dirname );
-//	$this->_header_class->assign_for_main( $param );
-
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// set_flag_css()
 // 2009-05-05 K.OHWADA
 // _build_form_submit_param() -> build_form_base_param()
 // _submit_bulk()
@@ -55,10 +54,6 @@ class webphoto_main_submit extends webphoto_edit_submit
 // submit file
 	var $_post_file = null ;
 
-// preload
-	var $_SHOW_FORM_EMBED  = true;
-	var $_SHOW_FORM_EDITOR = true;
-
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_PENDING = 3;
 	var $_TIME_FAILED  = 5;
@@ -72,7 +67,8 @@ function webphoto_main_submit( $dirname , $trust_dirname )
 	$this->set_fct( 'submit' );
 	$this->set_form_mode( 'submit' );
 
-	$this->_header_class =& webphoto_xoops_header::getInstance( $dirname );
+	$this->_header_class 
+		=& webphoto_xoops_header::getInstance( $dirname , $trust_dirname );
 
 	$this->init_preload();
 }
@@ -122,10 +118,8 @@ function check_submit()
 
 function form_param()
 {
-	$param = array(
-		'flag_css' => true ,
-	);
-	$this->_header_class->assign_for_main( $param );
+	$this->_header_class->set_flag_css( true );
+	$this->_header_class->assign_for_main();
 
 	$this->init_form();
 
@@ -600,12 +594,15 @@ function _build_form_default( $action )
 	$param_editor     = array();
 	$param_embed      = array();
 
-	if ( $this->_SHOW_FORM_EDITOR ) {
+	$submit_show_form_editor = $this->get_ini('submit_show_form_editor');
+	$submit_show_form_embed  = $this->get_ini('submit_show_form_embed');
+
+	if ( $submit_show_form_editor ) {
 		list( $show_form_editor, $param_editor ) =
 			$this->build_form_editor( $item_row );
 	}
 
-	if ( $this->_SHOW_FORM_EMBED && $flag_embed ) {
+	if ( $submit_show_form_embed && $flag_embed ) {
 		list( $show_form_embed, $param_embed ) =
 			$this->build_form_embed( $item_row );
 	}
@@ -615,9 +612,10 @@ function _build_form_default( $action )
 		'show_form_editor'   => $show_form_editor ,
 		'show_form_embed'    => $show_form_embed ,
 		'show_form_photo'    => true ,
-		'show_submit_select' => $this->get_ini('show_submit_select') ,
-		'show_uploading'     => $this->get_ini('show_uploading') ,
-		'show_select_file'   => $this->get_show_select_file() ,
+		'show_uploading'     => $this->_show_uploading() ,
+		'show_submit_select' => $this->_show_submit_select() ,
+		'show_menu_select_file' => $this->_show_menu_select_file() ,
+		'show_menu_select_bulk' => $this->_show_menu_select_bulk() ,
 	);
 
 	$arr = array_merge( 
@@ -633,7 +631,7 @@ function _build_form_error()
 {
 	$param = array(
 		'error'          => $this->get_format_error( true, false ) ,
-		'show_uploading' => $this->get_ini('show_uploading') ,
+		'show_uploading' => $this->_show_uploading ,
 	);
 	$arr = array_merge( 
 		$this->_build_form_preview(),
@@ -657,7 +655,7 @@ function _build_form_preview()
 		'show_preview'    => true ,
 		'show_form_photo' => true ,
 		'lang_title_sub'  => $this->get_constant('TITLE_SUBMIT_SINGLE') ,
-		'show_uploading'  => $this->get_ini('show_uploading') ,
+		'show_uploading'  => $this->_show_uploading ,
 	);
 
 	$arr = array_merge( 
@@ -672,6 +670,33 @@ function _build_form_preview()
 function _build_form_video_thumb()
 {
 	return $this->build_form_video_thumb( $this->get_created_row() );
+}
+
+//---------------------------------------------------------
+// menu
+//---------------------------------------------------------
+function _show_submit_select()
+{
+	return $this->get_ini('submit_show_submit_select') ;
+}
+
+function _show_menu_select_file()
+{
+	$show_menu = $this->get_ini('submit_show_menu_select_file') ;
+	$show = ( $show_menu && $this->_cfg_file_dir && $this->_has_file );
+	return $show;
+}
+
+function _show_menu_select_bulk()
+{
+	$show_menu = $this->get_ini('submit_show_menu_select_bulk') ;
+	$show = ( $show_menu && $this->_has_superinsert );
+	return $show;
+}
+
+function _show_uploading()
+{
+	return $this->get_ini('submit_show_uploading') ;
 }
 
 // --- class end ---

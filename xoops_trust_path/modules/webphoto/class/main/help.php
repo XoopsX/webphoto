@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.9 2009/04/11 14:23:34 ohwada Exp $
+// $Id: help.php,v 1.10 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// set_flag_css()
 // 2009-04-10 K.OHWADA
 // webphoto_page
 // 2009-02-16 K.OHWADA
@@ -28,8 +30,6 @@ class webphoto_main_help extends webphoto_base_this
 {
 	var $_show_menu_mail   = false ;
 	var $_show_menu_file   = false ;
-
-	var $_MAIL_RETRIEVE_AUTO_TIME = 0 ;
 
 //---------------------------------------------------------
 // constructor
@@ -61,7 +61,15 @@ function main()
 {
 	$this->_assign_xoops_header();
 
-	$main_param = $this->_page_class->build_main_param();
+	$main_param = array_merge( 
+		$this->_page_class->build_xoops_param(), 
+		$this->_page_class->build_config_param(),
+		$this->_page_class->build_perm_param(),
+		$this->_page_class->build_menu_param(), 
+		$this->_page_class->build_footer_param() ,
+		$this->_page_class->get_lang_array()
+	);
+
 	$this->_show_menu_mail = $main_param['show_menu_mail'] ;
 	$this->_show_menu_file = $main_param['show_menu_file'] ;
 	$cfg_is_set_mail       = $main_param['cfg_is_set_mail'] ;
@@ -132,10 +140,11 @@ function _build_mail_post()
 function _build_mail_retrieve()
 {
 	$text = $this->get_constant('HELP_MAIL_SUBTITLE_RETRIEVE');
+	$auto_time = $this->get_ini('mail_retrieve_auto_time') ;
 
-	if ( $this->_MAIL_RETRIEVE_AUTO_TIME > 0 ) {
-		$text .= sprintf( $this->get_constant('HELP_MAIL_RETRIEVE_AUTO_FMT'), 
-			$this->_MAIL_RETRIEVE_AUTO_TIME );
+	if ( $auto_time > 0 ) {
+		$text .= sprintf( 
+			$this->get_constant('HELP_MAIL_RETRIEVE_AUTO_FMT'), $auto_time );
 	} else {
 		$str   = $this->get_constant('HELP_MAIL_RETRIEVE_FMT');
 		$text .= str_replace('{MODULE_URL}', $this->_MODULE_URL, $str );
@@ -191,13 +200,11 @@ function _build_perm( $perm )
 
 function _assign_xoops_header()
 {
-	$param = array(
-		'flag_css' => true ,
-	);
-
 // Fatal error: Call to undefined method webphoto_inc_xoops_header::assign_for_main() 
-	$header_class =& webphoto_xoops_header::getInstance( $this->_DIRNAME );
-	$header_class->assign_for_main( $param );
+	$header_class 
+		=& webphoto_xoops_header::getInstance( $this->_DIRNAME, $this->_TRUST_DIRNAME );
+	$header_class->set_flag_css( true );
+	$header_class->assign_for_main();
 }
 
 // --- class end ---

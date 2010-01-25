@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.32 2009/12/16 13:32:34 ohwada Exp $
+// $Id: main.php,v 1.33 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1440,6 +1440,17 @@ define("_WEBPHOTO_ITEM_PERM_LEVEL_GROUP", "グループ内");
 
 // cat
 define("_WEBPHOTO_CAT_GROUP_ID", "ユーザグループID");
+
+//---------------------------------------------------------
+// v2.10
+//---------------------------------------------------------
+// item 
+define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL", "写真説明文のスクロール表示");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL_DSC", "スクロールの高さを px単位で指定する <br />0 のときはスクロールなしの通常の表示");
+
+// item option
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "写真を別画面に表示する");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "写真を lightbox で表示する");
 
 // === define end ===
 }

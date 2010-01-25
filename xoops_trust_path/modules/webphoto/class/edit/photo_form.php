@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.10 2009/12/24 06:32:22 ohwada Exp $
+// $Id: photo_form.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_tag -> webphoto_tag_build
+// item_description_scroll
 // 2009-12-06 K.OHWADA
 // item_perm_level
 // build_form_common()
@@ -68,7 +71,7 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_embed_class;
 	var $_editor_class;
 	var $_kind_class;
-	var $_tag_class;
+	var $_tag_build_class;
 	var $_mime_class;
 	var $_image_create_class;
 
@@ -82,21 +85,13 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_editor_js   = null ;
 	var $_editor_desc = null ;
 
-// preload
-	var $_ARRAY_PHOTO_TEXT = null;
-	var $_SHOW_EXTERNAL_URL    = true;
-	var $_SHOW_EXTERNAL_THUMB  = true;
-	var $_SHOW_EXTERNAL_MIDDLE = true;
+// constant
+	var $_FLAG_ITEM_ROW  = true ;
+	var $_MAX_PHOTO_FILE = _C_WEBPHOTO_MAX_PHOTO_FILE ;
 
 	var $_ARRAY_FILE_ID = array(
 		_C_WEBPHOTO_FILE_KIND_VIDEO_FLASH, _C_WEBPHOTO_FILE_KIND_PDF, _C_WEBPHOTO_FILE_KIND_SWF
 	);
-
-	var $_DESCRIPTION_ROWS  = 5;
-	var $_DESCRIPTION_COLS  = 50;
-
-	var $_FLAG_ITEM_ROW  = true ;
-	var $_MAX_PHOTO_FILE = _C_WEBPHOTO_MAX_PHOTO_FILE ;
 
 //---------------------------------------------------------
 // constructor
@@ -116,8 +111,8 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 		=& webphoto_editor::getInstance( $dirname, $trust_dirname );
 	$this->_mime_class     
 		=& webphoto_mime::getInstance( $dirname, $trust_dirname  );
-	$this->_tag_class      
-		=& webphoto_tag::getInstance( $dirname, $trust_dirname );
+	$this->_tag_build_class      
+		=& webphoto_tag_build::getInstance( $dirname, $trust_dirname );
 
 	$this->_kind_class     =& webphoto_kind::getInstance();
 	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
@@ -128,7 +123,7 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 	list ( $types, $this->_allowed_exts ) 
 		= $this->_mime_class->get_my_allowed_mimes();
 
-	$this->_tag_class->set_is_japanese( $this->_is_japanese );
+	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -304,7 +299,10 @@ function build_form_photo( $item_row )
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
 
-	$show_item_codeinfo = $this->get_ini('use_item_codeinfo');
+	$show_item_codeinfo        = $this->get_ini('submit_show_item_codeinfo');
+	$show_item_external_url    = $this->get_ini('submit_show_item_external_url');
+	$show_item_external_middle = $this->get_ini('submit_show_item_external_middle');
+	$show_item_external_thumb  = $this->get_ini('submit_show_item_external_thumb');
 
 	$arr1 = $this->build_form_common( $is_edit );
 
@@ -319,14 +317,23 @@ function build_form_photo( $item_row )
 // BUG: not show maxsize
 		'show_maxsize'                => $show_maxsize ,
 
-		'show_item_embed_type'        => $show_item_embed_type ,
-		'show_item_embed_text'        => $show_item_embed_text ,
-		'show_item_embed_src'         => $show_item_embed_src ,
+		'show_item_embed_type'        =>   $show_item_embed_type ,
+		'show_item_embed_text'        =>   $show_item_embed_text ,
+		'show_item_embed_src'         =>   $show_item_embed_src ,
 		'show_item_embed_type_hidden' => ! $show_item_embed_type ,
 		'show_item_embed_text_hidden' => ! $show_item_embed_text ,
 		'show_item_embed_src_hidden'  => ! $show_item_embed_src ,
-		'show_item_siteurl_1st'       => $show_item_embed_text ,
+		'show_item_siteurl_1st'       =>    $show_item_embed_text ,
 		'show_item_siteurl_2nd'       => ! $show_item_embed_text ,
+
+		'show_item_codeinfo'               =>   $show_item_codeinfo ,
+		'show_item_external_url'           =>   $show_item_external_url ,
+		'show_item_external_middle'        =>   $show_item_external_middle ,
+		'show_item_external_thumb'         =>   $show_item_external_thumb ,
+		'show_item_codeinfo_hiddens'       => ! $show_item_codeinfo ,
+		'show_item_external_url_hidden'    => ! $show_item_external_url ,
+		'show_item_external_middle_hidden' => ! $show_item_external_middle ,
+		'show_item_external_thumb_hidden'  => ! $show_item_external_thumb ,
 
 		'show_input_item_perm_down'   => $this->show_input_item_perm_down() ,
 
@@ -337,9 +344,6 @@ function build_form_photo( $item_row )
 		'show_file_ids'           => $show_file_ids ,
 		'show_file_ftp'           => $show_file_ftp ,
 
-		'show_external_url'       => $this->_SHOW_EXTERNAL_URL ,
-		'show_external_middle'    => $this->_SHOW_EXTERNAL_MIDDLE ,
-		'show_external_thumb'     => $this->_SHOW_EXTERNAL_THUMB ,
 		'show_rotate'             => $this->show_rotate( $show_file_photo ) ,
 		'show_gmap'               => $show_gmap ,
 		'show_gmap_onoff'         => $show_gmap_onoff ,
@@ -350,9 +354,7 @@ function build_form_photo( $item_row )
 		'show_button_preview'     => $show_button_preview ,
 		'show_button_delete'      => $show_button_delete ,
 
-		'show_input_item_perm_level' => $this->show_input_item_perm_level( $is_submit, $is_edit ) ,
-		'show_item_codeinfo'         => $show_item_codeinfo ,
-		'show_item_codeinfo_hiddens' => !$show_item_codeinfo ,
+		'show_input_item_perm_level' => $this->show_input_item_perm_level( $is_submit, $is_edit, $is_bulk ) ,
 
 		'batch_dir_s'         => $this->batch_dir_s() ,
 		'file_id_array'       => $file_id_array ,
@@ -380,6 +382,8 @@ function build_form_common( $is_edit )
 
 	$has_resize     = $this->_has_image_resize ;
 	$allowed_exts   = $this->_allowed_exts ;
+
+	$show_item_description_scroll = $this->get_ini('submit_show_item_description_scroll');
 
 	list( $photo_url, $show_file_photo_delete ) 
 		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_CONT, 'item_external_url' );
@@ -410,8 +414,10 @@ function build_form_common( $is_edit )
 	$arr = array( 
 		'preview_name'    => $preview_name ,
 
-		'show_desc_options'           => $this->_editor_show ,
-		'show_desc_options_hidden'    => ! $this->_editor_show ,
+		'show_desc_options'        => $this->_editor_show ,
+		'show_desc_options_hidden' => ! $this->_editor_show ,
+		'show_item_description_scroll'         =>   $show_item_description_scroll ,
+		'show_item_description_scroll_hidden'  => ! $show_item_description_scroll ,
 
 		'show_file_photo_delete'  => $show_file_photo_delete ,
 		'show_file_thumb_delete'  => $show_file_thumb_delete ,
@@ -520,9 +526,9 @@ function show_item_perm_level_common()
 	return false;
 }
 
-function show_input_item_perm_level( $is_submit, $is_edit )
+function show_input_item_perm_level( $is_submit, $is_edit, $is_bulk )
 {
-	if ( $is_submit ) {
+	if ( $is_submit || $is_bulk ) {
 		return true;
 	}
 	if ( $is_edit && $this->get_ini('editable_item_perm_level') ) {
@@ -566,6 +572,8 @@ function show_gmap()
 
 function item_text_array()
 {
+	$item_text_array = $this->explode_ini('submit_item_text_list');
+
 	$arr = array();
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
 	{
@@ -574,7 +582,7 @@ function item_text_array()
 		$title   = null;
 		$value_s = null;
 
-		if ( is_array($this->_ARRAY_PHOTO_TEXT) && in_array( $name, $this->_ARRAY_PHOTO_TEXT) ) {
+		if ( is_array($item_text_array) && in_array( $name, $item_text_array) ) {
 			$show    = true;
 			$title   = $this->get_constant( $name );
 			$value_s = $this->get_row_by_key( $name );
@@ -695,7 +703,7 @@ function rotate_checked( $rotate )
 function tags_val_s( $tag_name_array )
 {
 	return $this->sanitize(
-		$this->_tag_class->tag_name_array_to_str( $tag_name_array ) );
+		$this->_tag_build_class->tag_name_array_to_str( $tag_name_array ) );
 }
 
 function embed_src_dsc()
@@ -808,7 +816,9 @@ function init_editor()
 	$value1 = $this->get_row_by_key( $name1 );
 	$editor = $this->get_row_by_key( $name2 );
 	$arr    = $this->_editor_class->init_form( 
-		$editor, $name1, $name1, $value1, $this->_DESCRIPTION_ROWS, $this->_DESCRIPTION_COLS );
+		$editor, $name1, $name1, $value1, 
+		$this->get_ini('submit_item_description_rows'), 
+		$this->get_ini('submit_item_description_cols') );
 
 	if ( is_array($arr) ) {
 		$this->_editor_show = $arr['show'];

@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: rss.php,v 1.4 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// $_ORDERBY_RANDOM
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // 2009-08-30 K.OHWADA
@@ -70,6 +72,7 @@ class webphoto_rss extends webphoto_lib_rss
 
 	var $_MAX_SUMMARY  = 500;
 	var $_MODE_DEFAULT = 'latest';
+	var $_ORDERBY_RANDOM = 'rand()';
 
 	var $_CACHE_TIME_RAMDOM = 60;	// 1 min
 	var $_CACHE_TIME_LATEST = 3600;	// 1 hour
@@ -459,7 +462,7 @@ function _get_photo_rows()
 
 // only photo for slide show
 		case 'random':
-			$orderby = $this->_sort_class->get_random_orderby();
+			$orderby = $this->_ORDERBY_RANDOM;
 			if ( $param_int > 0 ) {
 				$rows = $this->_public_class->get_rows_photo_by_catid_orderby(
 					$param_int, $orderby, $limit );

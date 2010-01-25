@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.14 2009/10/20 10:24:51 ohwada Exp $
+// $Id: utility.php,v 1.15 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// array_remove()
 // 2009-10-20 K.OHWADA
 // array_to_key_value()
 // 2009-04-21 K.OHWADA
@@ -202,7 +204,16 @@ function get_array_value_by_key( $array, $key, $default=null )
 	return $default ;
 }
 
-function array_merge_unique( $arr1, $arr2, $key_name )
+function array_merge_unique( $arr1, $arr2, $key_name=null )
+{
+	if ( $key_name ) {
+		return $this->array_merge_unique_1( $arr1, $arr2, $key_name );
+	} else {
+		return $this->array_merge_unique_2( $arr1, $arr2 );
+	}
+}
+
+function array_merge_unique_1( $arr1, $arr2, $key_name )
 {
 	$arr_ret = null;
 	if ( is_array($arr1) && count($arr1)  ) {
@@ -239,6 +250,41 @@ function array_to_key_value( $arr, $key_name )
 		$arr_ret[ $key_val ] = $a ;
 	}
 	return $arr_ret;
+}
+
+function array_merge_unique_2( $arr1, $arr2 )
+{
+	if ( !is_array($arr1) || !count($arr1) ) {
+		if ( is_array($arr2) ) {
+			return $arr2;
+		}
+	}
+
+	if ( !is_array($arr2) || !count($arr2) ) {
+		if ( is_array($arr1) ) {
+			return $arr1;
+		}
+	}
+
+	return array_unique( array_merge( $arr1 , $arr2 ) );
+}
+
+function array_remove( $arr1, $arr2 )
+{
+	if ( !is_array($arr1) || !count($arr1) ) {
+		return $arr1;
+	}
+	if ( !is_array($arr2) || !count($arr2) ) {
+		return $arr1;
+	}
+
+	$arr = array();
+	foreach ( $arr1 as $a ) {
+		if ( !in_array( $a, $arr2 ) ) {
+			$arr[] = $a;
+		}
+	}
+	return $arr;
 }
 
 //---------------------------------------------------------

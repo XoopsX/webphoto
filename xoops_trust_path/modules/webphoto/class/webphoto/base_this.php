@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.23 2009/11/29 07:34:21 ohwada Exp $
+// $Id: base_this.php,v 1.24 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// build_show_info_morephotos()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_base -> webphoto_base_ini
 // 2009-10-25 K.OHWADA
@@ -73,6 +75,9 @@ class webphoto_base_this extends webphoto_base_ini
 	var $_kind_class;
 
 	var $_cfg_uploads_path ;
+	var $_cfg_nameoruname;
+
+	var $_usereal     = false;
 	var $_is_japanese = false;
 
 	var $_flag_force_db = false;
@@ -139,6 +144,9 @@ class webphoto_base_this extends webphoto_base_ini
 
 	var $_C_YES = 1;
 
+	var $_PHOTO_LIST_LIMIT        = 1;
+	var $_PHOTO_LIST_UPDATE_ORDER = 'item_time_update DESC, item_id DESC';
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -160,10 +168,11 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_uri_class    =& webphoto_uri::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
 
-	$this->_UPLOADS_PATH = $this->_config_class->get_uploads_path();
-	$this->_MEDIAS_PATH  = $this->_config_class->get_medias_path();
-	$this->_WORK_DIR     = $this->_config_class->get_by_name( 'workdir' );
-	$this->_FILE_DIR     = $this->_config_class->get_by_name( 'file_dir' );
+	$this->_UPLOADS_PATH    = $this->_config_class->get_uploads_path();
+	$this->_MEDIAS_PATH     = $this->_config_class->get_medias_path();
+	$this->_WORK_DIR        = $this->_config_class->get_by_name( 'workdir' );
+	$this->_FILE_DIR        = $this->_config_class->get_by_name( 'file_dir' );
+	$this->_cfg_nameoruname = $this->_config_class->get_by_name('nameoruname');
 
 	$this->_PHOTOS_PATH     = $this->_UPLOADS_PATH.'/photos' ;
 	$this->_THUMBS_PATH     = $this->_UPLOADS_PATH.'/thumbs' ;
@@ -225,6 +234,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_ROOT_EXTS_URL = $this->_MODULE_URL .'/images/exts';
 	$this->_ROOT_EXTS_DIR = $this->_MODULE_DIR .'/images/exts';
 
+	$this->_usereal = ( $this->_cfg_nameoruname == 'name' ) ? 1 : 0 ;
 	$this->_is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 }
 
@@ -526,6 +536,19 @@ function get_my_allowed_mimes()
 function is_my_allow_ext( $ext )
 {
 	return $this->_mime_class->is_my_allow_ext( $ext );
+}
+
+//---------------------------------------------------------
+// user
+//---------------------------------------------------------
+function build_show_info_morephotos( $uid )
+{
+	return sprintf( $this->get_constant('S_MOREPHOTOS') , $this->build_show_uname( $uid ) );
+}
+
+function build_show_uname( $uid )
+{
+	return $this->get_xoops_uname_by_uid( $uid, $this->_usereal );
 }
 
 //---------------------------------------------------------

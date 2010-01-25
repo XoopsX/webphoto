@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.5 2009/11/06 18:04:17 ohwada Exp $
+// $Id: photo.php,v 1.6 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// init()
 // 2009-10-25 K.OHWADA
 // get_template_main()
 // 2009-04-10 K.OHWADA
@@ -30,6 +32,7 @@ webphoto_include_once( 'class/main/photo.php' );
 // main
 //=========================================================
 $manage =& webphoto_main_photo::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
+$manage->init();
 
 // exit if execute edittag
 $manage->check_edittag();

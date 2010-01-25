@@ -1,5 +1,5 @@
 <?php
-// $Id: search_build.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: search_build.php,v 1.3 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// webphoto_tag -> webphoto_tag_build
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-01-10 K.OHWADA
@@ -28,7 +30,7 @@ class webphoto_edit_search_build
 	var $_file_handler;
 	var $_cat_handler;
 	var $_syno_handler;
-	var $_tag_class;
+	var $_tag_build_class;
 
 	var $_DIRNAME;
 	var $_MODULE_URL;
@@ -53,8 +55,8 @@ function webphoto_edit_search_build( $dirname , $trust_dirname )
 		=& webphoto_file_handler::getInstance( $dirname , $trust_dirname  );
 	$this->_syno_handler  
 		=& webphoto_syno_handler::getInstance( $dirname , $trust_dirname  );
-	$this->_tag_class     
-		=& webphoto_tag::getInstance( $dirname , $trust_dirname );
+	$this->_tag_build_class     
+		=& webphoto_tag_build::getInstance( $dirname , $trust_dirname );
 
 }
 
@@ -72,7 +74,7 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function build_with_tag( $row )
 {
-	$tag_array = $this->_tag_class->get_tag_name_array_by_photoid( $row['item_id'] );
+	$tag_array = $this->_tag_build_class->get_tag_name_array_by_photoid( $row['item_id'] );
 	return $this->build_search( $row, $tag_array );
 }
 

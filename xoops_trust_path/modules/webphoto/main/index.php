@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.4 2009/11/06 18:04:17 ohwada Exp $
+// $Id: index.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,7 @@ webphoto_include_once( 'class/main/index.php' );
 // main
 //=========================================================
 $manage =& webphoto_main_index::getInstance( WEBPHOTO_DIRNAME , WEBPHOTO_TRUST_DIRNAME );
+$manage->init();
 
 $xoopsOption['template_main'] = $manage->get_template_main() ;
 include XOOPS_ROOT_PATH . "/header.php" ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.3 2008/11/11 12:50:34 ohwada Exp $
+// $Id: update_040.php,v 1.4 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// get_ini()
 // 2008-11-08 K.OHWADA
 // create_thumb() -> resize_rotate() 
 // 2008-10-01 K.OHWADA
@@ -62,6 +64,7 @@ function webphoto_admin_update_040( $dirname , $trust_dirname )
 	$this->preload_init();
 	$this->preload_constant();
 
+	$this->_FLAG_FDIVING = $this->get_ini('update_fdiving');
 	echo "flag: ".$this->_FLAG_FDIVING ;
 }
 

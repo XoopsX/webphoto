@@ -1,11 +1,94 @@
-$Id: readme_jp.txt,v 1.40 2009/12/24 06:32:22 ohwada Exp $
+$Id: readme_jp.txt,v 1.41 2010/01/25 10:03:07 ohwada Exp $
+
+http://linux.ohwada.jp/modules/weblinks/singlelink.php?lid=275 にアクセスすると
+Fatal error: Call to undefined function: getinstance() in /home/linux-ohwada-jp/xoops_trust_path/modules/webphoto/class/inc/weblinks.php on line 87
+
+tepia
+> 一括登録ではグループ内しかありません。
+
+> 説明文下にヘッダー情報っぽいものが表示されているのですが
+これは EXIF の情報です。
+
+# item_description_scroll 
+
+
+バグ 一括登録のとき承認待ちメール内のURLが正しくない
+
+
+=================================================
+Version: 2.10
+Date:   2010-01-20
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. 表示方法のカスタマイズ
+地図やタイムラインなどの表示/非表示のカスタマイズを簡単にした
+地図やタイムラインなどをコンポーネント部品化した。
+main.ini により表示/非表示を設定できるようにした。
+
+(1) タグと投稿者のページに地図を表示した。
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1004&forum=13
+
+2. 説明文のスクロール表示
+説明文が長いときに、スクロール表示にすることが選択できる
+アイテム毎の設定が可能
+
+3. 詳細画面のクリック時の動作
+詳細画面 (photo) にて、写真をクリックしたときの動作が選択できる
+アイテム毎の設定が可能
+
+(1) 一般的な表示
+別画面にアップロードしたファイルを表示する
+これがデフォルトの設定
+
+(2) 別画面での写真表示 (従来のもの) 
+別画面に原寸大の写真をその大きさの画面サイズで表示する
+アップロードしたファイルが静止画像のときに有効
+
+(3) ポップアップ表示 (新設)
+lightbox2 にて原寸大の写真をポップアップ表示する
+アップロードしたファイルが静止画像のときに有効
+- http://www.lokeshdhakar.com/projects/lightbox2/
+
+(4) PDF表示 (v1.90で追加)
+別画面にPDFファイルを表示する
+アップロードしたファイルから PDF が生成されたときに有効
+
+4. バグ修正
+(1) weblink モジュールとの連携にて Fatal error
+(2) 一括登録のとき承認待ちメール内のURLが正しくない
+
+5. データベース構造
+(1) item テーブル: 項目追加 item_description_scroll
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて「アップデート」を実行する。
+  すでにあるアイテムについて、詳細画面のクリック時の動作を設定します。
+
+
+● 注意
+表示方法のカスタマイズに伴い、多くのファイルを変更しました。
+大きな問題はないはずですが、小さな問題はあると思います。
+バグ報告やバグ解決を歓迎します。
+
+
+● 謝辞
+lightbox2 の作者に感謝します
+- http://www.lokeshdhakar.com/projects/lightbox2/
+
 
 =================================================
 Version: 2.00
 Date:   2009-12-24
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

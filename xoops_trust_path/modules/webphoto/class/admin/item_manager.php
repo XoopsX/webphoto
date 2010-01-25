@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.22 2009/12/24 06:32:22 ohwada Exp $
+// $Id: item_manager.php,v 1.23 2010/01/25 10:03:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// init_for_admin()
 // 2009-12-06 K.OHWADA
 // mail_approve()
 // 2009-11-11 K.OHWADA
@@ -60,7 +62,6 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 	var $_sort_class ;
 	var $_admin_item_form_class;
 
-	var $_sort_array      = null;
 	var $_player_id       = 0 ;
 	var $_player_title    = null;
 	var $_alternate_class = 'even';
@@ -85,22 +86,22 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->set_flag_admin( true );
 	$this->set_fct( 'item_manager' );
 
-	$this->_log_class        =& webphoto_flash_log::getInstance( $dirname );
+	$this->_log_class =& webphoto_flash_log::getInstance( $dirname );
 
-	$this->_vote_handler     =& webphoto_vote_handler::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_flashvar_handler =& webphoto_flashvar_handler::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_playlist_class   =& webphoto_playlist::getInstance(
-		$dirname , $trust_dirname  );
-	$this->_flash_class      =& webphoto_flash_player::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_admin_item_form_class =& webphoto_admin_item_form::getInstance( 
-		$dirname , $trust_dirname );
+	$this->_vote_handler     
+		=& webphoto_vote_handler::getInstance( $dirname , $trust_dirname );
+	$this->_flashvar_handler 
+		=& webphoto_flashvar_handler::getInstance( $dirname , $trust_dirname );
+	$this->_playlist_class   
+		=& webphoto_playlist::getInstance( $dirname , $trust_dirname  );
+	$this->_flash_class      
+		=& webphoto_flash_player::getInstance( $dirname , $trust_dirname );
+	$this->_admin_item_form_class 
+		=& webphoto_admin_item_form::getInstance( $dirname , $trust_dirname );
+	$this->_sort_class 
+		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 
-	$this->_sort_class =& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
-	$this->_sort_array = $this->_sort_class->photo_sort_array_admin();
-	$this->_sort_class->set_photo_sort_array( $this->_sort_array );
+	$this->_sort_class->init_for_admin();
 
 	$this->init_preload();
 }
@@ -279,8 +280,10 @@ function _menu()
 	$start   = $this->_post_class->get_get_int('start');
 	$sort    = $this->_post_class->get_get_text('sort');
 
-	$perpage = $this->_get_perpage();
+	$sort    = $this->_sort_class->get_photo_sort_name( $sort, true );
 	$orderby = $this->_sort_class->sort_to_orderby( $sort ) ;
+
+	$perpage = $this->_get_perpage();
 
 	$total_all = $this->_item_handler->get_count_all();
 	$item_rows = $this->_item_handler->get_rows_by_orderby( $orderby, $perpage, $start );
@@ -506,6 +509,8 @@ function _print_list_navi( $total_all, $perpage )
 	$op    = $this->_post_class->get_post_get_text('op' );
 	$start = $this->_post_class->get_get_int('start');
 	$sort  = $this->_post_class->get_get_text('sort');
+
+	$sort  = $this->_sort_class->get_photo_sort_name( $sort, true );
 	$navi_extra = 'fct='.$this->_THIS_FCT.'&amp;op='.$op.'&amp;sort='.$sort.'&amp;perpage='.$perpage;
 
 	$pagenavi_class =& webphoto_lib_pagenavi::getInstance();
