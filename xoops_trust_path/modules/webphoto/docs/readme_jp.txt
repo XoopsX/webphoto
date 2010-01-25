@@ -1,19 +1,4 @@
-$Id: readme_jp.txt,v 1.41 2010/01/25 10:03:07 ohwada Exp $
-
-http://linux.ohwada.jp/modules/weblinks/singlelink.php?lid=275 にアクセスすると
-Fatal error: Call to undefined function: getinstance() in /home/linux-ohwada-jp/xoops_trust_path/modules/webphoto/class/inc/weblinks.php on line 87
-
-tepia
-> 一括登録ではグループ内しかありません。
-
-> 説明文下にヘッダー情報っぽいものが表示されているのですが
-これは EXIF の情報です。
-
-# item_description_scroll 
-
-
-バグ 一括登録のとき承認待ちメール内のURLが正しくない
-
+$Id: readme_jp.txt,v 1.42 2010/01/25 10:45:10 ohwada Exp $
 
 =================================================
 Version: 2.10
