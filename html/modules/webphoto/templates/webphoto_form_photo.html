@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_photo.html,v 1.7 2009/12/24 06:55:22 ohwada Exp $ *}>
+<{* $Id: webphoto_form_photo.html,v 1.8 2010/01/25 10:56:24 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -47,6 +47,10 @@ function webphoto_gmap_disp_on()
   <input type="hidden" id="item_description_br" name="item_description_br" value="<{$item_description_br_s}>" />
 <{/if}>
 
+<{if $show_item_description_scroll_hidden }>
+  <input type="hidden" id="item_description_scroll" name="item_description_scroll" value="<{$item_description_scroll}>" />
+<{/if}>
+
 <{if $show_item_embed_type_hidden }>
   <input type="hidden" id="item_embed_type" name="item_embed_type" value="<{$item_embed_type_s}>" />
 <{/if}>
@@ -57,6 +61,18 @@ function webphoto_gmap_disp_on()
 
 <{if $show_item_embed_text_hidden }>
   <input type="hidden" id="item_embed_text" name="item_embed_text" value="<{$item_embed_text_s}>" />
+<{/if}>
+
+<{if $show_item_external_url_hidden }>
+  <input tyep="hidden" id="item_external_url" name="item_external_url" value="<{$item_external_url_s}>" />
+<{/if}>
+
+<{if $show_item_external_middle_hidden }>
+  <input tyep="hidden" id="item_external_middle" name="item_external_middle" value="<{$item_external_middle_s}>" />
+<{/if}>
+
+<{if $show_item_external_thumb_hidden }>
+  <input tyep="hidden" id="item_external_thumb" name="item_external_thumb" value="<{$item_external_thumb_s}>" />
 <{/if}>
 
 <{if $show_item_codeinfo_hiddens }>
@@ -121,16 +137,25 @@ function webphoto_gmap_disp_on()
 <{* item description options *}>
 <{if $show_desc_options }>
   <tr><td class="head" width="20%"><{$lang_cap_description_option}></td><td class="odd">
-  <input type="checkbox" name="item_description_html" id="item_description_html" value="1" <{$item_description_html_checked}> />
+  <input type="checkbox" id="item_description_html" name="item_description_html" value="1" <{$item_description_html_checked}> />
   <{$lang_cap_html}><br />
-  <input type="checkbox" name="item_description_smiley" id="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
+  <input type="checkbox" id="item_description_smiley" name="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
   <{$lang_cap_smiley}><br />
-  <input type="checkbox" name="item_description_xcode" id="item_description_xcode" value="1" <{$item_description_xcode_checked}> />
+  <input type="checkbox" id="item_description_xcode" name="item_description_xcode" value="1" <{$item_description_xcode_checked}> />
   <{$lang_cap_xcode}><br />
-  <input type="checkbox" name="item_description_image" id="item_description_image" value="1" <{$item_description_image_checked}> />
+  <input type="checkbox" id="item_description_image" name="item_description_image" value="1" <{$item_description_image_checked}> />
   <{$lang_cap_image}><br />
-  <input type="checkbox" name="item_description_br" id="item_description_br" value="1" <{$item_description_br_checked}> />
+  <input type="checkbox" id="item_description_br" name="item_description_br" value="1" <{$item_description_br_checked}> />
   <{$lang_cap_br}><br />
+  </td></tr>
+<{/if}>
+
+<{* item description scroll *}>
+<{if $show_item_description_scroll }>
+  <tr><td class="head" width="20%"><{$lang_item_description_scroll}></td><td class="odd">
+  <input type="text" id="item_description_scroll" name="item_description_scroll" value="<{$item_description_scroll}>" />
+  <br />
+  <{$lang_item_description_scroll_dsc}>
   </td></tr>
 <{/if}>
 
@@ -174,7 +199,7 @@ function webphoto_gmap_disp_on()
   <input type="file" id="file_photo" name="file_photo" size="50" />
   <br /><br />
 
-<{if $show_external_url }>
+<{if $show_item_external_url }>
   <{$lang_or}> <{$lang_item_external_url}><br />
   <input tyep="text" id="item_external_url" name="item_external_url" value="<{$item_external_url_s}>" size="80" />
   <br /><br />
@@ -339,7 +364,7 @@ function webphoto_gmap_disp_on()
   <input type="file" id="file_thumb" name="file_thumb" size="50" />
   <br /><br />
 
-<{if $show_external_thumb }>
+<{if $show_item_external_thumb }>
   <{$lang_or}> <{$lang_item_external_thumb}><br />
   <input tyep="text" id="item_external_thumb" name="item_external_thumb" value="<{$item_external_thumb_s}>" size="80" />
   <br /><br />
@@ -378,7 +403,7 @@ function webphoto_gmap_disp_on()
   <input type="file" id="file_middle" name="file_middle" size="50" />
  <br /><br />
 
-<{if $show_external_middle }>
+<{if $show_item_external_middle }>
   <{$lang_or}> <{$lang_item_external_middle}><br />
   <input tyep="text" id="item_external_middle" name="item_external_middle" value="<{$item_external_middle_s}>" size="80" />
   <br /><br />

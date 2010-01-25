@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_admin_item.html,v 1.6 2009/12/24 06:55:22 ohwada Exp $ *}>
+<{* $Id: webphoto_form_admin_item.html,v 1.7 2010/01/25 10:56:24 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -219,18 +219,25 @@
 <{* item description options *}>
 <{if $show_desc_options }>
   <tr><td class="head"><{$lang_cap_description_option}></td><td class="odd">
-  <input type="checkbox" name="item_description_html" id="item_description_html" value="1" <{$item_description_html_checked}> />
+  <input type="checkbox" id="item_description_html" name="item_description_html" value="1" <{$item_description_html_checked}> />
   <{$lang_cap_html}><br />
-  <input type="checkbox" name="item_description_smiley" id="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
+  <input type="checkbox" id="item_description_smiley" name="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
   <{$lang_cap_smiley}><br />
-  <input type="checkbox" name="item_description_xcode" id="item_description_xcode" value="1" <{$item_description_xcode_checked}> />
+  <input type="checkbox" id="item_description_xcode" name="item_description_xcode" value="1" <{$item_description_xcode_checked}> />
   <{$lang_cap_xcode}><br />
-  <input type="checkbox" name="item_description_image" id="item_description_image" value="1" <{$item_description_image_checked}> />
+  <input type="checkbox" id="item_description_image" name="item_description_image" value="1" <{$item_description_image_checked}> />
   <{$lang_cap_image}><br />
-  <input type="checkbox" name="item_description_br" id="item_description_br" value="1" <{$item_description_br_checked}> />
+  <input type="checkbox" id="item_description_br" name="item_description_br" value="1" <{$item_description_br_checked}> />
   <{$lang_cap_br}><br />
   </td></tr>
 <{/if}>
+
+<{* item description scroll *}>
+<tr><td class="head"><{$lang_item_description_scroll}></td><td class="odd">
+<input type="text" id="item_description_scroll" name="item_description_scroll" value="<{$item_description_scroll}>" />
+<br />
+<{$lang_item_description_scroll_dsc}>
+</td></tr>
 
 <{if $is_edit }>
   <tr><td class="head"><{$lang_item_exif}></td><td class="odd">
