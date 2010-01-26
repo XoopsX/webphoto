@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: date.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -174,8 +174,11 @@ function build_rows_for_list()
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $datetime, $orderby, $limit, $start )
+function build_rows_for_detail( $datetime_in, $orderby, $limit, $start )
 {
+	$datetime = $this->decode_uri_str( $datetime_in );
+	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
+
 	$title = $this->build_title( $datetime );
 	$rows  = null ;
 	$total = $this->_public_class->get_count_by_like_datetime( $datetime );
@@ -185,7 +188,7 @@ function build_rows_for_detail( $datetime, $orderby, $limit, $start )
 			$datetime, $orderby, $limit, $start );
 	}
 
-	return array( $title, $total, $rows );
+	return array( $title, $total, $rows, $datetime );
 }
 
 function build_title( $datetime )

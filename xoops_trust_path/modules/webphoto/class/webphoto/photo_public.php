@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.9 2010/01/25 10:03:07 ohwada Exp $
+// $Id: photo_public.php,v 1.10 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -62,8 +62,6 @@ function webphoto_photo_public( $dirname, $trust_dirname )
 		=& webphoto_item_cat_handler::getInstance( $dirname, $trust_dirname );
 	$this->_catlist_class  
 		=& webphoto_inc_catlist::getSingleton( $dirname, $trust_dirname );
-	$this->_tagcloud_class 
-		=& webphoto_inc_tagcloud::getSingleton( $dirname, $trust_dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
@@ -359,53 +357,6 @@ function get_id_array_by_catid_orderby( $param, $orderby, $limit=0, $offset=0 )
 {
 	return $this->_item_cat_handler->get_id_array_item_by_name_param_orderby(
 		'catid', $param, $orderby, $limit, $offset ) ;
-}
-
-//---------------------------------------------------------
-// tagcloud class
-//---------------------------------------------------------
-function build_tagcloud( $limit=0 )
-{
-	return $this->_tagcloud_class->build_tagcloud( $limit );
-}
-
-function build_tagcloud_by_rows( $rows )
-{
-	return $this->_tagcloud_class->build_tagcloud_by_rows( $rows );
-}
-
-function get_tag_rows( $limit=0, $offset=0 )
-{
-	return $this->_tagcloud_class->get_tag_rows( $limit, $offset );
-}
-
-function get_count_by_tag( $param )
-{
-	return $this->_tagcloud_class->get_item_count_by_tag( $param );
-}
-
-function get_rows_by_tag_orderby( $param, $orderby, $limit=0, $offset=0 )
-{
-	$rows   = null ;
-	$id_arr = $this->_tagcloud_class->get_item_id_array_by_tag( 
-		$param, $orderby, $limit, $offset );
-
-	if ( is_array($id_arr) && count($id_arr) ) {
-		$rows = $this->_item_handler->get_rows_from_id_array( $id_arr );
-	}
-	return $rows;
-}
-
-function get_first_row_by_tag_orderby( $param, $orderby, $limit=0, $offset=0 )
-{
-	$row    = null ;
-	$id_arr = $this->_tagcloud_class->get_item_id_array_by_tag( 
-		$param, $orderby, $limit, $offset );
-
-	if ( isset( $id_arr[0] ) ) {
-		$row = $this->_item_handler->get_row_by_id( $id_arr[0] );
-	}
-	return $row;
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: factory.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -26,6 +26,7 @@ class webphoto_factory extends webphoto_base_this
 	var $_pagenavi_class;
 	var $_timeline_class;
 	var $_auto_publish_class;
+	var $_tagcloud_class;
 
 // config
 	var $_cfg_cat_summary;
@@ -83,6 +84,9 @@ function webphoto_factory( $dirname, $trust_dirname )
 		=& webphoto_notification_select::getInstance( $dirname );
 	$this->_sort_class 
 		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
+	$this->_tagcloud_class 
+		=& webphoto_inc_tagcloud::getSingleton( $dirname, $trust_dirname );
+
 	$this->_auto_publish_class 
 		=& webphoto_inc_auto_publish::getSingleton( $dirname, $trust_dirname  );
 	$this->_auto_publish_class->set_workdir( $this->_WORK_DIR );
@@ -624,7 +628,7 @@ function set_tpl_photo_tags( $photo_id )
 function set_tpl_tagcloud_with_check( $limit )
 {
 	if ( $this->show_check('tagcloud') ) {
-		$tagcloud = $this->_public_class->build_tagcloud( $this->_cfg_tags );
+		$tagcloud = $this->_tagcloud_class->build_tagcloud( $limit );
 		if ( is_array($tagcloud) && count($tagcloud) ) {
 			$this->tpl_set( 'show_tagcloud', true );
 			$this->tpl_set( 'tagcloud', $tagcloud );

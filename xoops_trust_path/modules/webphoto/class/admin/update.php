@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.10 2010/01/25 10:03:07 ohwada Exp $
+// $Id: update.php,v 1.11 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -66,6 +66,8 @@ function main()
 	echo $this->_update_check_class->build_msg();
 	echo "<br />\n";
 
+	$this->_print_file_check();
+
 	echo ' - <a href="'. $url_210 .'">';
 	echo "Update v2.00 to v2.10";
 	echo "</a><br /><br />\n";
@@ -88,6 +90,16 @@ function main()
 
 	xoops_cp_footer();
 	exit();
+}
+
+
+function _print_file_check()
+{
+	$url = $this->_MODULE_URL.'/admin/index.php?fct=check_file';
+
+	echo '- <a href="'.$url.'">';
+	echo _AM_WEBPHOTO_FILE_CHECK;
+	echo "</a><br /><br/>\n";
 }
 
 // --- class end ---

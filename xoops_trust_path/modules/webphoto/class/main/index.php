@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.13 2010/01/25 10:03:07 ohwada Exp $
+// $Id: index.php,v 1.14 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -259,7 +259,7 @@ function build_page_detail( $mode, $param )
 	$this->show_array_set_detail_by_mode( $mode );
 	$this->set_tpl_show_page_detail( true );
 
-	list( $title, $total, $rows, $phpto_sum ) 
+	list( $title, $total, $rows, $photo_sum ) 
 		= $this->build_rows_for_detail( $mode, $param );
 
 	if ( $mode == 'search' ) {
@@ -315,45 +315,62 @@ function build_page_detail( $mode, $param )
 
 function build_rows_for_detail( $mode, $param )
 {
+	$orderby = $this->_orderby;
+	$limit   = $this->_PHOTO_LIMIT;
+	$start   = $this->_start;
+
+	$param_out = null;
+	$photo_sum = null;
+
 	switch( $mode )
 	{
 		case 'category':
-			return $this->category_build_rows_for_detail( $param );
+			list( $title, $total, $rows, $photo_sum )
+				= $this->category_build_rows_for_detail( $param );
 			break;
 
 		case 'date':
-			$ret = $this->_date_class->build_rows_for_detail(
-				$param, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows, $param_out ) 
+				= $this->_date_class->build_rows_for_detail(
+					$param, $orderby, $limit, $start );
 			break;
 
 		case 'place':
-			$ret = $this->_place_class->build_rows_for_detail( 
-				$param, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows ) 
+				= $this->_place_class->build_rows_for_detail( 
+					$param, $orderby, $limit, $start );
 			break;
 
 		case 'tag':
-			$ret = $this->_tag_class->build_rows_for_detail( 
-				$param, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows ) 
+				= $this->_tag_class->build_rows_for_detail( 
+					$param, $orderby, $limit, $start );
 			break;
 
 		case 'user':
-			$ret = $this->_user_class->build_rows_for_detail( 
-				$param, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows ) 
+				= $this->_user_class->build_rows_for_detail( 
+					$param, $orderby, $limit, $start );
 			break;
 
 		case 'search':
-			$ret = $this->_search_class->build_rows_for_detail( 
-				$param, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows ) 
+				= $this->_search_class->build_rows_for_detail( 
+					$param, $orderby, $limit, $start );
 			break;
 
 		default:
-			$ret = $this->_main_class->build_rows_for_detail( 
-				$mode, $this->_get_sort, $this->_PHOTO_LIMIT, $this->_start );
+			list( $title, $total, $rows ) 
+				= $this->_main_class->build_rows_for_detail( 
+					$mode, $this->_get_sort, $limit, $start );
 			break;
 	}
 
-	list( $title, $total, $rows ) = $ret;
-	return array( $title, $total, $rows, null );
+	if ( $param_out ) {
+		$this->set_param_out( $param_out );
+	}
+
+	return array( $title, $total, $rows, $photo_sum );
 }
 
 // --- class end ---

@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.41 2010/01/25 10:03:07 ohwada Exp $
+$Id: readme_en.txt,v 1.42 2010/01/26 08:25:45 ohwada Exp $
 
 =================================================
 Version: 2.10
@@ -47,7 +47,8 @@ It is valid when the PDF file is generated from the uploaded file.
 
 4. bug fix
 (1) Fatal error in weblink module
-(2) wrong URL in the approval waiting email when in bulk submit
+(2) wrong link to user group in group permission
+(3) wrong URL in the approval waiting email when in bulk submit
 
 5. Database structure
 (1) item table: add field item_description_scroll
@@ -58,7 +59,9 @@ item_perm_level
 (1) When you unzip the zip file, there are two directories html and xoops_trust_path.
 Please copy and overwrite in the directory which XOOPS correspond
 (2) Execute the module update in the admin cp
-(3) and execute "Update" in webphoto's admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+(4) Execute "Update" in webphoto's admin control
   set the action when click in detail page for the items which already exist
 
 

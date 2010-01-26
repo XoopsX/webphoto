@@ -1,10 +1,16 @@
 <?php
-// $Id: groupperm_form.php,v 1.2 2009/12/24 06:32:22 ohwada Exp $
+// $Id: groupperm_form.php,v 1.3 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-01-20 K.OHWADA
+// XOOPS_CUBE_LEGACY
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -52,6 +58,9 @@ function build_param( $mod_id, $action=null )
 		'g_ticket'      => $this->get_token() ,
 		'xoops_dirname' => $this->get_dirname( $mod_id ) ,
 	);
+	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
+		$arr['xoops_cube_legacy'] = XOOPS_CUBE_LEGACY;
+	}
 	return array_merge( $arr , $this->get_lang() );
 }
 

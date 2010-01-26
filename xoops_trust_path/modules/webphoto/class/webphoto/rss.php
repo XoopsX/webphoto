@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.4 2010/01/25 10:03:07 ohwada Exp $
+// $Id: rss.php,v 1.5 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2010-01-10 K.OHWADA
-// $_ORDERBY_RANDOM
+// webphoto_tag
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // 2009-08-30 K.OHWADA
@@ -61,6 +61,7 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_search_class;
 	var $_utility_class;
 	var $_public_class;
+	var $_tag_class;
 
 	var $_cfg_use_pathinfo ;
 
@@ -100,6 +101,8 @@ function webphoto_rss( $dirname, $trust_dirname )
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 	$this->_sort_class     
 		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
+	$this->_tag_class 
+		=& webphoto_tag::getInstance( $dirname , $trust_dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
@@ -483,7 +486,7 @@ function _get_photo_rows()
 
 		case 'tag':
 			if ( $param ) {
-				$rows = $this->_public_class->get_rows_by_tag_orderby(
+				$rows = $this->_tag_class->get_rows_by_tag_orderby(
 					$param, $orderby_default, $limit );
 			}
 			break;

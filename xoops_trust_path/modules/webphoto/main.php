@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.2 2008/07/05 12:54:16 ohwada Exp $
+// $Id: main.php,v 1.3 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// $FCT_UNUSE
 // 2008-07-01 K.OHWADA
 // $fct -> $WEBPHOTO_FCT
 //---------------------------------------------------------
@@ -33,7 +35,13 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 webphoto_include_once( 'preload/debug.php' );
 
 // fork each pages
-$WEBPHOTO_FCT     = webphoto_fct() ;
+$FCT_UNUSE = array('category','date','myphoto','place','search','tag','user');
+$fct = webphoto_fct() ;
+if ( in_array( $fct, $FCT_UNUSE ) ) {
+	$fct = '';
+}
+
+$WEBPHOTO_FCT     = $fct;
 $file_trust_fct   = WEBPHOTO_TRUST_PATH .'/main/'. $WEBPHOTO_FCT .'.php' ;
 $file_root_fct    = WEBPHOTO_ROOT_PATH  .'/main/'. $WEBPHOTO_FCT .'.php' ;
 $file_trust_index = WEBPHOTO_TRUST_PATH .'/main/index.php' ;

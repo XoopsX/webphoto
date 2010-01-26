@@ -1,10 +1,16 @@
 <?php
-// $Id: check_file.php,v 1.1 2009/12/24 06:33:24 ohwada Exp $
+// $Id: check_file.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-01-10 K.OHWADA
+// green()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,6 +20,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_check_file extends webphoto_base_this
 {
 	var $_file_check_class;
+
+// color: green;
+	var $_SPAN_STYLE_GREEN = 'color: #00ff00;';
 
 //---------------------------------------------------------
 // constructor
@@ -44,8 +53,8 @@ function main()
 
 	echo $this->build_admin_menu();
 	echo "<h3>". _AM_WEBPHOTO_FILE_CHECK ."</h3>\n";
-	echo _AM_WEBPHOTO_FILE_CHECK_DSC ."<br /><br />\n";
 
+	echo _AM_WEBPHOTO_FILE_CHECK_DSC ."<br /><br />\n";
 	$this->_print_file_check();
 
 	xoops_cp_footer();
@@ -71,9 +80,17 @@ function _print_file_check()
 	}
 
 	if ( !$flag_error ) {
-		echo "OK <br />\n";
+		echo $this->green( "OK" );
 	}
 	echo "<br/>\n";
+}
+
+function green( $msg )
+{
+	$str  = '<span style="'. $this->_SPAN_STYLE_GREEN .'">';
+	$str .= $msg;
+	$str .= "</span>\n";
+	return $str;
 }
 
 // --- class end ---

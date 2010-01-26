@@ -1,12 +1,10 @@
 <?php
-// $Id: uri.php,v 1.7 2010/01/25 10:03:07 ohwada Exp $
+// $Id: uri.php,v 1.8 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-07-01 K.OHWADA
 //=========================================================
-
-//	var $_UID_DEFAULT = -1;	// not set
 
 //---------------------------------------------------------
 // change log
@@ -213,7 +211,7 @@ function build_mode_param( $mode, $param, $flag_head_slash=false )
 			$str_2 = '?fct='. $mode .'&amp;p='. intval($param);
 			break;
 
-		case 'tags':
+		case 'tag':
 		case 'date':
 		case 'place':
 		case 'search':

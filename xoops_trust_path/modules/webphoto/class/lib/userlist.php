@@ -1,10 +1,16 @@
 <?php
-// $Id: userlist.php,v 1.1 2009/12/24 06:33:24 ohwada Exp $
+// $Id: userlist.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-01-20 K.OHWADA
+// XOOPS_CUBE_LEGACY
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -42,6 +48,9 @@ function build_param_by_groupid( $group_id, $limit=0, $start=0 )
 		'total'     => $this->get_user_count_by_groupid( $group_id ) ,
 		'user_list' => $this->get_users_by_groupid( $group_id, $limit, $start ) ,
 	);
+	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
+		$arr['xoops_cube_legacy'] = XOOPS_CUBE_LEGACY;
+	}
 	return $arr;
 }
 
