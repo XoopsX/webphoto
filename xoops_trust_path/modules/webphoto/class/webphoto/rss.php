@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.5 2010/01/26 08:25:45 ohwada Exp $
+// $Id: rss.php,v 1.6 2010/01/26 10:58:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -433,7 +433,8 @@ function _get_photo_rows()
 	$orderby = null;
 	$rows    = null;
 
-	$orderby_default = $this->_sort_class->sort_to_orderby( null );
+	$sort = null;
+	$orderby_default = $this->_sort_class->sort_to_orderby( $sort );
 	$orderby         = $orderby_default ;
 
 	switch ( $this->_mode )
@@ -502,7 +503,7 @@ function _get_photo_rows()
 		case 'popular':
 		case 'highrate':
 		default:
-			$orderby = $this->_sort_class->mode_to_orderby( $this->_mode );
+			$orderby = $this->_sort_class->mode_to_orderby( $this->_mode, $sort );
 			if ( $param_int > 0 ) {
 				$rows = $this->_public_class->get_rows_by_catid_orderby(
 					$param_int, $orderby, $limit );
