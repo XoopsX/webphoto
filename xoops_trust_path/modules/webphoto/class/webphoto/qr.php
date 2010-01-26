@@ -1,5 +1,5 @@
 <?php
-// $Id: qr.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: qr.php,v 1.2 2010/01/26 09:34:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -14,6 +14,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_qr extends webphoto_base_this
 {
 	var $_user_handler;
+
+	var $_QR_MODULE_SIZE = 3;
 
 //---------------------------------------------------------
 // constructor
