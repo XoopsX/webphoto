@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.43 2010/01/26 08:25:45 ohwada Exp $
+$Id: readme_jp.txt,v 1.44 2010/01/28 20:20:50 ohwada Exp $
 
 =================================================
 Version: 2.10
-Date:   2010-01-20
+Date:   2010-01-29
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -20,11 +20,11 @@ main.ini により表示/非表示を設定できるようにした。
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1004&forum=13
 
 2. 説明文のスクロール表示
-説明文が長いときに、スクロール表示にすることが選択できる
+投稿者は、説明文が長いときに、スクロール表示にすることが選択できる
 アイテム毎の設定が可能
 
 3. 詳細画面のクリック時の動作
-詳細画面 (photo) にて、写真をクリックしたときの動作が選択できる
+管理者は、詳細画面 (photo) にて、写真をクリックしたときの動作が選択できる
 アイテム毎の設定が可能
 
 (1) 一般的な表示

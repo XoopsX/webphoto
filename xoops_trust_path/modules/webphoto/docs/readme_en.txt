@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.42 2010/01/26 08:25:45 ohwada Exp $
+$Id: readme_en.txt,v 1.43 2010/01/28 20:20:50 ohwada Exp $
 
 =================================================
 Version: 2.10
-Date:   2010-01-20
+Date:   2010-01-29
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -25,8 +25,8 @@ The scrolling view is effective when the description is long.
 The submitter can set in every item.
 
 3. Action when click in detail page
-The submitter can choice the action when a guest click the photo in detail page
-The submitter can set every item.
+The admin can choice the action when a guest click the photo in detail page
+The admin can set every item.
 
 (1) general view
 show the uploaded file in new window.

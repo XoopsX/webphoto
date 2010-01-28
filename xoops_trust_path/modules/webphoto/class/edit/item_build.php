@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.12 2010/01/25 10:03:07 ohwada Exp $
+// $Id: item_build.php,v 1.13 2010/01/28 20:20:50 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -554,7 +554,7 @@ function get_new_detail_onclick( $row )
 
 	$str = _C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT ;
 	if ( $this->is_image_ext( $item_ext ) ) {
-		if ( $this->get_ini('use_lightbox') ) {
+		if ( $this->get_ini('item_detail_onclick_lightbox') ) {
 			$str = _C_WEBPHOTO_DETAIL_ONCLICK_LIGHTBOX ;
 		} else {
 			$str = _C_WEBPHOTO_DETAIL_ONCLICK_IMAGE ;
