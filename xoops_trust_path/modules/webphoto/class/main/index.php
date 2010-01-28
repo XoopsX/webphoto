@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.14 2010/01/26 08:25:45 ohwada Exp $
+// $Id: index.php,v 1.15 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -159,7 +159,7 @@ function build_page_list( $mode )
 
 	list( $photo_list, $photo_rows, $category_photo_list, $error ) 
 		= $this->build_photo_list_for_list( $mode );
-	$show_gmap = $this->set_tpl_gmap_for_list_with_check( $mode, $photo_rows );
+	$show_gmap = $this->set_tpl_gmap_for_list_with_check( $photo_rows );
 
 	$this->xoops_header_array_set_by_mode( $mode ) ;
 	$this->xoops_header_param();
@@ -174,7 +174,7 @@ function build_page_list( $mode )
 	$this->set_tpl_photo_list( $photo_list );
 	$this->set_tpl_error( $error );
 	$this->set_tpl_category_photo_list( $category_photo_list );
-	$this->set_tpl_timeline_with_check( $mode, $photo_rows );
+	$this->set_tpl_timeline_with_check( $photo_rows );
 	$this->set_tpl_tagcloud_with_check( $this->_ini_tagcloud_list_limit );
 
 	$this->set_tpl_show_js_windows();
@@ -288,12 +288,13 @@ function build_page_detail( $mode, $param )
 	$this->set_tpl_notification_select_with_check();
 	$this->set_tpl_tagcloud_with_check( $this->_cfg_tags );
 	$this->set_tpl_photo_list( $photo_list );
+	$this->set_tpl_photo_sum(  $photo_sum );
 	$this->set_tpl_cat_id( $this->_cat_id );
-	$this->set_tpl_catpath( $this->_cat_id );
+	$this->set_tpl_catpath_with_check( $this->_cat_id );
 	$this->set_tpl_catlist_with_check( $this->_cat_id );
 
 // for detail
-	$this->set_tpl_timeline_with_check( $mode, $rows );
+	$this->set_tpl_timeline_with_check( $rows );
 	$this->set_tpl_total_for_detail( $mode, $total );
 
 	if ( $mode == 'search' ) {

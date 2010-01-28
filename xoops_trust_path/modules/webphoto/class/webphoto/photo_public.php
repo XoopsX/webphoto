@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.10 2010/01/26 08:25:45 ohwada Exp $
+// $Id: photo_public.php,v 1.11 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2010-01-10 K.OHWADA
-// build_cat_path()
+// remove build_tagcloud()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-09-06 K.OHWADA
@@ -30,15 +30,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_photo_public
 {
 	var $_config_class;
-	var $_item_handler ;
-	var $_cat_handler ;
 	var $_item_cat_handler ;
-	var $_tagcloud_class;
 
 	var $_cfg_perm_cat_read ;
-	var $_cfg_cat_child ;
-	var $_cfg_cat_main_width ;
-	var $_cfg_cat_sub_width ;
 	var $_cfg_use_pathinfo ;
 
 	var $_ORDERBY_ASC    = 'item_id ASC';
@@ -54,21 +48,12 @@ class webphoto_photo_public
 //---------------------------------------------------------
 function webphoto_photo_public( $dirname, $trust_dirname )
 {
-	$this->_cat_handler   
-		=& webphoto_cat_handler::getInstance( $dirname, $trust_dirname );
-	$this->_item_handler  
-		=& webphoto_item_handler::getInstance( $dirname, $trust_dirname );
 	$this->_item_cat_handler 
 		=& webphoto_item_cat_handler::getInstance( $dirname, $trust_dirname );
-	$this->_catlist_class  
-		=& webphoto_inc_catlist::getSingleton( $dirname, $trust_dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
 	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
-	$this->_cfg_cat_child      = $this->_config_class->get_by_name( 'cat_child' );
-	$this->_cfg_cat_main_width = $this->_config_class->get_by_name('cat_main_width');
-	$this->_cfg_cat_sub_width  = $this->_config_class->get_by_name('cat_sub_width');
 	$this->_cfg_use_pathinfo   = $this->_config_class->get_by_name('use_pathinfo');
 	$cfg_perm_item_read        = $this->_config_class->get_by_name( 'perm_item_read' );
 
@@ -82,99 +67,6 @@ function &getInstance( $dirname, $trust_dirname )
 		$instance = new webphoto_photo_public( $dirname, $trust_dirname );
 	}
 	return $instance;
-}
-
-//---------------------------------------------------------
-// cat path
-//---------------------------------------------------------
-function build_cat_path( $cat_id )
-{
-	$rows = $this->_cat_handler->get_parent_path_array( $cat_id );
-	if ( !is_array($rows) || !count($rows) ) {
-		return false;
-	}
-
-	$arr   = array();
-	$count = count($rows);
-	$last  = $count - 1;
-
-	for ( $i = $last ; $i >= 0; $i-- ) {
-		$arr[] = $this->build_cat_show( $rows[ $i ] );
-	}
-
-	$ret = array();
-	$ret['list']  = $arr;
-	$ret['first'] = $arr[ 0 ];
-	$ret['last']  = $arr[ $last ];
-
-	return $ret;
-}
-
-//---------------------------------------------------------
-// catlist
-//---------------------------------------------------------
-function build_catlist_for_category( $cat_id, $cols, $delmita )
-{
-	$show = false ;
-
-	list( $cats, $cols, $width ) =
-		$this->build_catlist( $cat_id, $this->_SHOW_CAT_SUB, $cols ) ;
-
-	if ( is_array($cats) && count($cats) ) {
-		$show = true ;
-	}
-
-	$catlist = array(
-		'cats'            => $cats ,
-		'cols'            => $cols ,
-		'width'           => $width ,
-		'delmita'         => $delmita ,
-		'show_sub'        => $this->_SHOW_CAT_SUB ,
-		'show_main_img'   => $this->_SHOW_CAT_MAIN_IMG ,
-		'show_sub_img'    => $this->_SHOW_CAT_SUB_IMG ,
-		'main_width'      => $this->_cfg_cat_main_width ,
-		'sub_width'       => $this->_cfg_cat_sub_width ,
-	);
-
-	$arr = array(
-		'show_catlist'     => $show,
-		'cfg_use_pathinfo' => $this->_cfg_use_pathinfo ,
-		'catlist'          => $catlist,
-	);
-
-	return $arr ;
-}
-
-//---------------------------------------------------------
-// catlist class
-//---------------------------------------------------------
-function get_cat_row( $cat_id )
-{
-	return $this->_catlist_class->get_cat_row_by_catid_perm( $cat_id ) ;
-}
-
-function get_cat_all_tree_array()
-{
-	return $this->_catlist_class->get_cat_all_tree_array() ;
-}
-
-function _check_cat_perm_by_catid( $cat_id )
-{
-	return $this->_catlist_class->check_cat_perm_by_catid( $cat_id ) ;
-}
-
-function build_catlist( $parent_id, $flag_sub, $cols )
-{
-	$catlist = $this->_catlist_class->build_catlist( $parent_id, $flag_sub ) ;
-	list( $cols, $width ) =
-		$this->_catlist_class->calc_width( $cols ) ;
-
-	return array( $catlist, $cols, $width );
-}
-
-function build_cat_show( $cat_row )
-{
-	return $this->_catlist_class->build_cat_show( $cat_row );
 }
 
 //---------------------------------------------------------
@@ -295,25 +187,8 @@ function get_rows_by_search_orderby( $param, $orderby, $limit=0, $offset=0 )
 		'search', $param, $orderby, $limit, $offset ) ;
 }
 
-function get_rows_by_gmap( $cat_id, $limit=0, $offset=0 )
+function get_rows_by_gmap_catid_array( $catid_array, $limit=0, $offset=0 )
 {
-	$cat_id = intval($cat_id);
-	if ( $cat_id > 0 ) {
-		$rows = $this->get_rows_by_gmap_catid(
-			$cat_id, $limit, $offset );
-
-	} else {
-		$rows = $this->get_rows_by_gmap_latest(
-			$limit, $offset );
-	}
-
-	return $rows ;
-}
-
-function get_rows_by_gmap_catid( $cat_id, $limit=0, $offset=0 )
-{
-	$catid_array = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id ) ;
-
 	return $this->get_rows_by_name_param_orderby( 
 		'gmap_catid_array', $catid_array, $this->_ORDERBY_LATEST, $limit, $offset ) ;
 }

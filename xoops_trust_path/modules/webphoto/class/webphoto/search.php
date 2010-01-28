@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: search.php,v 1.2 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -64,7 +64,8 @@ function build_rows_for_detail( $query, $orderby, $limit, $start )
 	$total     = $this->_public_class->get_count_by_search( $sql_query );
 
 	if ( $total > 0 ) {
-		$rows = $this->_public_class->get_rows_by_search_orderby( 
+		$title = _SR_SEARCH.' : '.$this->_search_class->get_query_raw('s');
+		$rows  = $this->_public_class->get_rows_by_search_orderby( 
 			$sql_query, $orderby, $limit, $start );
 	}
 

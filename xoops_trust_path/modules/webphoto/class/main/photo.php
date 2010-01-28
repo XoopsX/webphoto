@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.22 2010/01/25 10:03:07 ohwada Exp $
+// $Id: photo.php,v 1.23 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -139,7 +139,7 @@ function main()
 	$this->set_tpl_notification_select_with_check();
 	$this->set_tpl_tagcloud_with_check( $this->_cfg_tags );
 	$this->set_tpl_cat_id(  $cat_id );
-	$this->set_tpl_catpath( $cat_id );
+	$this->set_tpl_catpath_with_check( $cat_id );
 	$this->set_tpl_catlist_with_check( $cat_id );
 
 // for photo
@@ -153,7 +153,7 @@ function main()
 		$photo_list = $this->build_photo_list_for_detail( $rows );
 		$this->set_tpl_photo_list( $photo_list );
 		$this->set_tpl_total_for_detail( $mode, $total );
-		$this->set_tpl_timeline_with_check( $mode, $rows );
+		$this->set_tpl_timeline_with_check( $rows );
 	}
 
 	$this->set_tpl_show_js_windows();

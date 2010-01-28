@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
+// $Id: factory.php,v 1.3 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -446,6 +446,9 @@ function show_param_common()
 
 function show_param_with_check()
 {
+	if ( $this->show_check('title') ) {
+		$this->tpl_set( 'show_title', true );
+	}
 	if ( $this->show_check('menu') ) {
 		$this->tpl_set( 'show_menu', true );
 	}
@@ -551,29 +554,9 @@ function set_tpl_title( $title )
 {
 	$pagetitle = $title .' - '.$this->sanitize( $this->_MODULE_NAME );
 
-	$this->set_tpl_xoops_pagetitle( $pagetitle );
-	$this->set_tpl_title_bread_crumb( $title );
-	$this->set_tpl_sub_title( $title );
-}
-
-function set_tpl_xoops_pagetitle( $val )
-{
-	$this->tpl_set( 'xoops_pagetitle', $val );
-}
-
-function set_tpl_title_bread_crumb( $val )
-{
-	$this->tpl_set( 'title_bread_crumb' , $val );
-}
-
-function set_tpl_total_bread_crumb( $val )
-{
-	$this->tpl_set( 'total_bread_crumb' , $val );
-}
-
-function set_tpl_sub_title( $val )
-{
-	$this->tpl_set( 'sub_title_s', $val );
+	$this->tpl_set( 'xoops_pagetitle',   $pagetitle );
+	$this->tpl_set( 'title_bread_crumb', $title );
+	$this->tpl_set( 'sub_title_s',       $title );
 }
 
 function set_tpl_photo( $val )
@@ -587,6 +570,11 @@ function set_tpl_photo_list( $val )
 	$this->tpl_set( 'photo_list', $val );
 }
 
+function set_tpl_photo_sum( $val )
+{
+	$this->tpl_set( 'photo_sum', $val );
+}
+
 function set_tpl_category_photo_list( $val )
 {
 	$this->tpl_set( 'category_photo_list', $val );
@@ -594,13 +582,33 @@ function set_tpl_category_photo_list( $val )
 
 function set_tpl_cat_id( $cat_id )
 {
-	$this->tpl_set( 'cat_id' , $cat_id );
+	$this->tpl_set( 'cat_id', $cat_id );
 }
 
-function set_tpl_catpath(  $cat_id )
+function set_tpl_catpath_with_check( $cat_id )
 {
-	$this->tpl_set( 'catpath', 
-		$this->_public_class->build_cat_path( $cat_id ) );
+	if ( $this->show_check('catpth') ) {
+		$catpath = $this->_category_class->build_catpath( $cat_id );
+		$this->tpl_set( 'catpath', $catpath );
+		$this->tpl_set( 'show_catpath', true ); 
+	}
+}
+
+function set_tpl_catlist_with_check( $cat_id )
+{
+	if ( $this->show_check('catlist') ) {
+		if ( $cat_id > 0 ) {
+			$cols    = $this->get_ini('view_cat_catlist_cols');
+			$delmita = $this->get_ini('view_cat_catlist_delmita');
+		} else {
+			$cols    = $this->get_ini('view_top_catlist_cols');
+			$delmita = $this->get_ini('view_top_catlist_delmita');
+		}
+	
+		$param = $this->_category_class->build_catlist(
+			$cat_id, $cols, $delmita );
+		$this->tpl_merge( $param );
+	}
 }
 
 function set_tpl_photo_nav( $photo_id, $cat_id )
@@ -636,10 +644,11 @@ function set_tpl_tagcloud_with_check( $limit )
 	}
 }
 
-function set_tpl_gmap_for_list_with_check( $mode, $rows )
+function set_tpl_gmap_for_list_with_check( $rows )
 {
-	if ( $this->show_check('gmap') ) {
-		$param = $this->_gmap_class->build_for_rows( $mode, $rows );
+	$gmap_large = $this->show_check('gmap_large');
+	if ( $this->show_check('gmap') || $gmap_large ) {
+		$param = $this->_gmap_class->build_for_main( $rows, $gmap_large );
 		$this->tpl_merge( $param );
 		return $param['show_gmap'];
 	}
@@ -648,11 +657,12 @@ function set_tpl_gmap_for_list_with_check( $mode, $rows )
 
 function set_tpl_gmap_for_detail_with_check( $mode, $rows, $cat_id )
 {
-	if ( $this->show_check('gmap') ) {
+	$gmap_large = $this->show_check('gmap_large');
+	if ( $this->show_check('gmap') || $gmap_large ) {
 		if ( $mode == 'category' ) {
-			$param = $this->_gmap_class->build_for_category( $mode, $cat_id );
+			$param = $this->_gmap_class->build_for_category( $rows, $cat_id, $gmap_large );
 		} else {
-			$param = $this->_gmap_class->build_for_rows( $mode, $rows );
+			$param = $this->_gmap_class->build_for_main( $rows, $gmap_large );
 		}
 		$this->tpl_merge( $param );
 		return $param['show_gmap'];
@@ -670,13 +680,13 @@ function set_tpl_gmap_for_photo_with_check( $row )
 	return false;
 }
 
-function set_tpl_timeline_with_check( $mode, $rows )
+function set_tpl_timeline_with_check( $rows )
 {
-	if ( $this->show_check('timeline') ) {
+	if ( $this->show_check('timeline') || $this->show_check('timeline_large') ) {
 		$unit  = $this->_post_class->get_get_text('unit');
 		$date  = $this->_post_class->get_get_text('date');
 		$param = $this->_timeline_class->build_timeline_by_rows(
-			$mode, $unit, $date, $rows );
+			$unit, $date, $rows , $this->show_check('timeline_large') );
 		$this->tpl_merge( $param );
 	}
 }
@@ -689,23 +699,6 @@ function set_tpl_notification_select_with_check( $cat_id=0 )
 			$this->tpl_set( 'show_notification_select', true );
 			$this->tpl_set( 'notification_select', $param );
 		}
-	}
-}
-
-function set_tpl_catlist_with_check( $cat_id )
-{
-	if ( $this->show_check('catlist') ) {
-		if ( $cat_id > 0 ) {
-			$cols    = $this->get_ini('view_cat_catlist_cols');
-			$delmita = $this->get_ini('view_cat_catlist_delmita');
-		} else {
-			$cols    = $this->get_ini('view_top_catlist_cols');
-			$delmita = $this->get_ini('view_top_catlist_delmita');
-		}
-	
-		$param = $this->_public_class->build_catlist_for_category(
-			$cat_id, $cols, $delmita );
-		$this->tpl_merge( $param );
 	}
 }
 

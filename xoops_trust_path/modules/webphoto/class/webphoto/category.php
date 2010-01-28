@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: category.php,v 1.2 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -27,9 +27,6 @@ function webphoto_category( $dirname , $trust_dirname )
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 	$this->_catlist_class  
 		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
-
-	$this->_cfg_cat_child     = $this->_config_class->get_by_name('cat_child');
-	$this->_cfg_perm_cat_read = $this->_config_class->get_by_name('perm_cat_read');
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -46,7 +43,7 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function build_photo_list_for_list()
 {
-	$cat_rows = $this->_public_class->get_cat_all_tree_array();
+	$cat_rows = $this->_catlist_class->get_cat_all_tree_array();
 	if ( !is_array($cat_rows) || !count($cat_rows) ) {
 		return false;
 	}
@@ -59,7 +56,7 @@ function build_photo_list_for_list()
 		$show_catpath = false;
 		$photo        = null;
 
-		$catpath = $this->_public_class->build_cat_path( $cat_id );
+		$catpath = $this->build_catpath( $cat_id );
 		if ( is_array($catpath) && count($catpath) ) {
 			$show_catpath = true;
 		}
@@ -116,7 +113,7 @@ function build_cat_summary_disp( $desc )
 //---------------------------------------------------------
 function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
 {
-	$row = $this->_public_class->get_cat_row( $cat_id );
+	$row = $this->_catlist_class->get_cat_row_by_catid_perm( $cat_id );
 
 	if ( !is_array( $row ) ) {
 		$arr = array(
@@ -146,6 +143,8 @@ function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
 
 function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 {
+	$cfg_cat_child      = $this->_config_class->get_by_name('cat_child');
+
 	$rows     = null ; 
 	$total    = 0;
 	$this_sum = 0;
@@ -161,7 +160,7 @@ function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 	$this_sum = $this->_public_class->get_count_by_name_param( $name, $array_cat_id );
 	$total    = $this->_public_class->get_count_by_name_param( $name, $catid_array );
 
-	switch( $this->_cfg_cat_child ) 
+	switch( $cfg_cat_child ) 
 	{
 		case _C_WEBPHOTO_CAT_CHILD_EMPTY :
 			if ( $this_sum > 0 ) {
@@ -189,13 +188,83 @@ function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 
 function check_cat_perm_read_by_catid( $cat_id )
 {
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
+	$cfg_perm_cat_read = $this->_config_class->get_by_name('perm_cat_read');
+
+	if ( $cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
 		return true;
 	}
 	if ( $this->_catlist_class->check_cat_perm_by_catid( $cat_id ) ) {
 		return true ;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// catpath
+//---------------------------------------------------------
+function build_catpath( $cat_id )
+{
+	$rows = $this->_cat_handler->get_parent_path_array( $cat_id );
+	if ( !is_array($rows) || !count($rows) ) {
+		return false;
+	}
+
+	$arr   = array();
+	$count = count($rows);
+	$last  = $count - 1;
+
+	for ( $i = $last ; $i >= 0; $i-- ) {
+		$arr[] = $this->_catlist_class->build_cat_show( $rows[ $i ] );
+	}
+
+	$ret = array();
+	$ret['list']  = $arr;
+	$ret['first'] = $arr[ 0 ];
+	$ret['last']  = $arr[ $last ];
+
+	return $ret;
+}
+
+//---------------------------------------------------------
+// catlist
+//---------------------------------------------------------
+function build_catlist( $cat_id, $cols_in, $delmita )
+{
+	$main_width = $this->_config_class->get_by_name('cat_main_width');
+	$sub_width  = $this->_config_class->get_by_name('cat_sub_width');
+
+	$show_sub      = $this->get_ini('category_show_sub');
+	$show_main_img = $this->get_ini('category_show_main_img');
+	$show_sub_img  = $this->get_ini('category_show_sub_img');
+
+	$show = false ;
+
+	$cats = $this->_catlist_class->build_catlist( $cat_id, $show_sub ) ;
+	list( $cols, $width ) =
+		$this->_catlist_class->calc_width( $cols_in ) ;
+
+	if ( is_array($cats) && count($cats) ) {
+		$show = true ;
+	}
+
+	$catlist = array(
+		'cats'            => $cats ,
+		'cols'            => $cols ,
+		'width'           => $width ,
+		'delmita'         => $delmita ,
+		'show_sub'        => $show_sub ,
+		'show_main_img'   => $show_main_img ,
+		'show_sub_img'    => $show_sub_img ,
+		'main_width'      => $main_width ,
+		'sub_width'       => $sub_width ,
+	);
+
+	$arr = array(
+		'show_catlist' => $show,
+		'catlist'      => $catlist,
+	);
+
+	return $arr ;
 }
 
 // --- class end ---

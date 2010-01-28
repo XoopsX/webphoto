@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
+// $Id: timeline.php,v 1.6 2010/01/28 02:08:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -60,7 +60,7 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // timeline class
 //---------------------------------------------------------
-function build_timeline_by_rows( $mode, $unit, $date, $rows )
+function build_timeline_by_rows( $unit, $date, $rows, $flag_large )
 {
 	$latest = $this->_config_class->get_by_name('timeline_latest');
 	$random = $this->_config_class->get_by_name('timeline_random');
@@ -73,7 +73,7 @@ function build_timeline_by_rows( $mode, $unit, $date, $rows )
 
 	if ( is_array($all_rows) && count($all_rows)  ) {
 		$photos = $this->build_photo_show_from_rows( $all_rows );
-		return $this->build_timeline_by_photos( $mode, $unit, $date, $photos );
+		return $this->build_timeline_by_photos( $unit, $date, $photos, $flag_large );
 	}
 
 	$arr = array(
@@ -82,7 +82,7 @@ function build_timeline_by_rows( $mode, $unit, $date, $rows )
 	return $arr;
 }
 
-function build_timeline_by_photos( $mode, $unit, $date, $photos )
+function build_timeline_by_photos( $unit, $date, $photos, $flag_large )
 {
 	$show    = false ;
 	$js      = null ;
@@ -96,33 +96,23 @@ function build_timeline_by_photos( $mode, $unit, $date, $photos )
 		$show    = true ;
 	}
 
-	$is_timeline_mode = $this->is_timeline_mode( $mode );
-
 	$arr = array(
 		'show_timeline'       => $show ,
-		'show_timeline_large' => ! $is_timeline_mode ,
-		'show_timeline_unit'  => $is_timeline_mode ,
-		'timeline_class'      => $this->get_timeline_class( $mode ) ,
+		'show_timeline_large' => ! $flag_large ,
+		'show_timeline_unit'  =>   $flag_large ,
+		'timeline_class'      => $this->get_timeline_class( $flag_large ) ,
 		'timeline_js'         => $js ,
 		'timeline_element'    => $element ,
 	);
 	return $arr;
 }
 
-function get_timeline_class( $mode )
+function get_timeline_class( $flag_large )
 {
-	if ( $this->is_timeline_mode( $mode ) ) {
+	if ( $flag_large ) {
 		return 'webphoto_timeline_large';
 	}
 	return 'webphoto_timeline_normal';
-}
-
-function is_timeline_mode( $mode )
-{
-	if ( $mode == 'timeline' ) {
-		return true;
-	}
-	return false;
 }
 
 function get_rows_by_orderby( $orderby, $limit )
