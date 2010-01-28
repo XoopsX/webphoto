@@ -1,10 +1,10 @@
-<{* $Id: webphoto_main_photo.html,v 1.20 2010/01/25 10:56:24 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.21 2010/01/28 02:15:17 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
 <{include file="db:`$mydirname`_inc_catpath.html" }>
  &gt; <b><{$photo.title_s}></b>
-<br />
+<br /><br />
 
 <{* === gmap js === *}>
 <{if $show_gmap }>
@@ -39,11 +39,6 @@
 <{/if}>
 <{* === windows js end === *}>
 
-<div class="webphoto_page_title">
-  <{include file="db:`$mydirname`_inc_catpath.html" }>
-  &gt; <{$photo.title_s}>
-</div>
-
 <{* === menue === *}>
 <{include file="db:`$mydirname`_inc_menu.html" }>
 
@@ -69,6 +64,11 @@
 
   <br />
 <{/if}>
+
+<div class="webphoto_page_title">
+  <{include file="db:`$mydirname`_inc_catpath.html" }>
+  &gt; <{$photo.title_s}>
+</div>
 
 <div align="center">
   <{$photo_nav}>

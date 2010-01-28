@@ -1,11 +1,11 @@
-<{* $Id: webphoto_page_detail.html,v 1.1 2010/01/25 10:56:24 ohwada Exp $ *}>
+<{* $Id: webphoto_page_detail.html,v 1.2 2010/01/28 02:15:17 ohwada Exp $ *}>
 <!--- page detail --->
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
 
 <{* === title for normal === *}>
-<{if $title_bread_crumb }>
+<{if $show_title && $title_bread_crumb }>
   &gt;&gt; <{$title_bread_crumb}> ( <{$total_bread_crumb}> )
 <{/if}>
 
@@ -189,6 +189,15 @@
   <br />
 <{/if}>
 
+<{* === title for normal === *}>
+<{if $show_title && $sub_title_s }>
+  <div class="webphoto_sub_title_total">
+  <span class="webphoto_sub_title"><{$sub_title_s}></span>
+  Total <{$photo_total}>
+  </div>
+<{/if}>
+<{* === title end === *}>
+
 <{* === catpath for category === *}>
 <{if $show_catpath }>
   <div class="webphoto_catpath">
@@ -197,15 +206,6 @@
   </div>
 <{/if}>
 <{* === catpath end === *}>
-
-<{* === title for normal === *}>
-<{if $sub_title_s != '' }>
-  <div class="webphoto_sub_title_total">
-  <span class="webphoto_sub_title"><{$sub_title_s}></span>
-  Total <{$photo_total}>
-  </div>
-<{/if}>
-<{* === title end === *}>
 
 <{if $cat_desc_disp != '' }>
   <div class="webphoto_cat_desc"><{$cat_desc_disp}></div>
