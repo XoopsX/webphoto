@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.17 2009/12/16 13:32:34 ohwada Exp $
+// $Id: base.php,v 1.18 2010/01/30 02:32:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// is_system_group()
 // 2009-12-06 K.OHWADA
 // get_system_groups()
 // 2009-11-11 K.OHWADA
@@ -601,7 +603,7 @@ function get_system_groups()
 
 function is_system_group( $id )
 {
-	return $this->_xoops_class->get_system_groups( $id );
+	return $this->_xoops_class->is_system_group( $id );
 }
 
 //---------------------------------------------------------

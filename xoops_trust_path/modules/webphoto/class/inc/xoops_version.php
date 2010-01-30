@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.31 2009/12/24 06:32:22 ohwada Exp $
+// $Id: xoops_version.php,v 1.32 2010/01/30 02:32:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// xoops_version_cfg_perm_item_read_default
 // 2009-12-06 K.OHWADA
 // config: groupid_admin
 // event: waiting
@@ -530,7 +532,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCIMAGINGPIPE' ) ,
 		'formtype'		=> 'select' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> _C_WEBPHOTO_PIPEID_GD ,
+		'default'		=> $this->get_ini('xoops_version_cfg_imagingpipe_default') ,
 		'options'		=> array( 
 			'GD'          => _C_WEBPHOTO_PIPEID_GD , 
 			'ImageMagick' => _C_WEBPHOTO_PIPEID_IMAGICK , 
@@ -565,7 +567,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCIMAGICKPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> '' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_imagickpath_default') ,
 		'options'		=> array()
 	) ;
 
@@ -586,7 +588,7 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> 0 ,
+		'default'		=> $this->get_ini('xoops_version_cfg_use_ffmpeg_default') ,
 		'options'		=> array()
 	) ;
 
@@ -597,7 +599,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_DESCFFMPEGPATH' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> '' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_ffmpegpath_default') ,
 		'options'		=> array()
 	) ;
 
@@ -650,7 +652,7 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> 0 ,
+		'default'		=> $this->get_ini('xoops_version_cfg_use_xpdf_default') ,
 		'options'		=> array()
 	) ;
 
@@ -660,7 +662,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_XPDFPATH_DSC' ) ,
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'text' ,
-		'default'		=> '' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_xpdfpath_default') ,
 		'options'		=> array()
 	) ;
 
@@ -1238,7 +1240,7 @@ function _build_config()
 		'description'	=> $this->_constant_name( 'CFG_PERM_ITEM_READ_DSC' ) ,
 		'formtype'		=> 'select' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '0' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_perm_item_read_default') ,
 		'options'		=> array(
 			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
 			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
