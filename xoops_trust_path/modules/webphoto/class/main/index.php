@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.15 2010/01/28 02:08:13 ohwada Exp $
+// $Id: index.php,v 1.16 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -274,10 +274,16 @@ function build_page_detail( $mode, $param )
 	$show_gmap = $this->set_tpl_gmap_for_detail_with_check( 
 		$mode, $rows, $this->_cat_id );
 
+	$show_ligthtbox = false;
+	if ( $this->show_check('photo') && isset($rows[0]) ) {
+		$show_ligthtbox = $this->set_tpl_photo_for_detail( $rows[0] );
+	}
+
 	$this->xoops_header_array_set_by_mode( $mode ) ;
 	$this->xoops_header_param();
 	$this->xoops_header_rss_with_check(  $mode, null );
 	$this->xoops_header_gmap_with_check( $show_gmap );
+	$this->xoops_header_lightbox_with_check( $show_ligthtbox );
 	$this->xoops_header_assign();
 
 	$this->show_param();
@@ -299,15 +305,6 @@ function build_page_detail( $mode, $param )
 
 	if ( $mode == 'search' ) {
 		$this->tpl_merge( $query_param );
-	}
-
-	if ( $this->show_check('photo') && isset($rows[0]) ) {
-		$row     = $rows[0];
-		$item_id = $row['item_id'];
-		$photo = $this->build_photo_by_row( $row );
-		$this->set_tpl_photo( $photo );
-		$this->set_tpl_photo_tags( $item_id );
-		$this->set_tpl_photo_nav( $item_id, $this->_cat_id );
 	}
 
 	$this->set_tpl_show_js_windows();

@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
+// $Id: edit.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// class/webphoto/mail_send.php
 // 2009-12-06 K.OHWADA
 // class/d3/mail_template.php
 // 2009-04-19 K.OHWADA
@@ -40,6 +42,7 @@ webphoto_include_once( 'main/header_submit.php' );
 
 webphoto_include_once( 'class/d3/mail_template.php' );
 webphoto_include_once( 'class/lib/mail_send.php' );
+webphoto_include_once( 'class/webphoto/mail_send.php' );
 
 webphoto_include_once( 'class/edit/submit.php' );
 webphoto_include_once( 'class/edit/action.php' );

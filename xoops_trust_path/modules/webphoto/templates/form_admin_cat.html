@@ -1,4 +1,4 @@
-<{* $Id: form_admin_cat.html,v 1.1 2009/12/16 13:36:20 ohwada Exp $ *}>
+<{* $Id: form_admin_cat.html,v 1.2 2010/02/07 12:20:02 ohwada Exp $ *}>
 
 <script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js"></script>
 
@@ -45,12 +45,14 @@
 <input type="text" id="cat_title" name="cat_title" value="<{$cat_title_s}>" size="50" />
 </td></tr>
 
-<tr><td class="head"><{$lang_cat_th_parent}></td>
-<td class="odd">
-<select name="cat_pid" >
-<{$cat_pid_options}>
-</select>
-</td></tr>
+<{if $show_cat_pid}>
+  <tr><td class="head"><{$lang_cat_th_parent}></td>
+  <td class="odd">
+  <select name="cat_pid" >
+  <{$cat_pid_options}>
+  </select>
+  </td></tr>
+<{/if}>
 
 <tr><td class="head"><{$lang_cat_description}></td>
 <td class="odd"><{$cat_description_ele}></td></tr>

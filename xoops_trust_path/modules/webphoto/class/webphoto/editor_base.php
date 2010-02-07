@@ -1,5 +1,5 @@
 <?php
-// $Id: editor_base.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: editor_base.php,v 1.3 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// sanitize()
 // 2009-11-11 K.OHWADA
 // typo _allow_in_not_has_htmll
 //---------------------------------------------------------
@@ -21,13 +23,11 @@ class webphoto_editor_base
 {
 	var $_allow_in_not_has_html = false;
 	var $_show_display_options  = false;
+	var $_display_html   = 0 ;
 	var $_display_smiley = 0 ;
 	var $_display_xcode  = 0 ;
 	var $_display_image  = 0 ;
 	var $_display_br     = 0 ;
-
-// html is dummy, set in webphoto_photo_action
-	var $_display_html   = 0 ;
 
 function webphoto_editor_base()
 {
@@ -99,6 +99,11 @@ function build_js()
 function build_textarea( $id, $name, $value, $rows, $cols )
 {
 	return null;
+}
+
+function sanitize( $str )
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
 }
 
 // --- class end ---

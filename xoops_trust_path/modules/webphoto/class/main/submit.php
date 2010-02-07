@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.18 2010/01/25 10:03:07 ohwada Exp $
+// $Id: submit.php,v 1.19 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -631,7 +631,7 @@ function _build_form_error()
 {
 	$param = array(
 		'error'          => $this->get_format_error( true, false ) ,
-		'show_uploading' => $this->_show_uploading ,
+		'show_uploading' => $this->_show_uploading() ,
 	);
 	$arr = array_merge( 
 		$this->_build_form_preview(),
@@ -655,7 +655,7 @@ function _build_form_preview()
 		'show_preview'    => true ,
 		'show_form_photo' => true ,
 		'lang_title_sub'  => $this->get_constant('TITLE_SUBMIT_SINGLE') ,
-		'show_uploading'  => $this->_show_uploading ,
+		'show_uploading'  => $this->_show_uploading() ,
 	);
 
 	$arr = array_merge( 

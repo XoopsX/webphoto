@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.26 2009/05/28 11:39:49 ohwada Exp $
+// $Id: edit.php,v 1.27 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// _check_public()
 // 2009-05-28 K.OHWADA
 // BUG: not show tag
 // 2009-05-05 K.OHWADA
@@ -106,6 +108,10 @@ function check_action()
 		case 'confirm':
 			$this->_check_delete_perm_or_redirect();
 			break;
+
+		case 'cont_delete':
+			$this->_cont_delete();
+			exit();
 
 		case 'thumb_delete':
 			$this->_thumb_delete();
@@ -210,6 +216,10 @@ function _exec_check()
 		return _C_WEBPHOTO_ERR_NO_PERM; 
 	}
 
+	if ( ! $this->_check_public( $item_row ) ) {
+		return _C_WEBPHOTO_ERR_NO_PERM; 
+	}
+
 // save
 	$this->_row_current = $item_row;
 	return 0;
@@ -240,10 +250,19 @@ function _check_playlist( $item_row )
 	return false;
 }
 
+function _check_public( $item_row )
+{
+	if ( $item_row['item_status'] > 0 ) {
+		return true;
+	}
+	return false;
+}
+
 function _get_action()
 {
 	$post_op            = $this->_post_class->get_post_get_text('op' );
 	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
+	$post_cont_delete   = $this->_post_class->get_post_text('file_photo_delete' );
 	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
 	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
 	$post_small_delete  = $this->_post_class->get_post_text('file_small_delete' );
@@ -251,6 +270,8 @@ function _get_action()
 
 	if ( $post_conf_delete ) {
 		return 'confirm';
+	} elseif ( $post_cont_delete ) {
+		return 'cont_delete';
 	} elseif ( $post_thumb_delete ) {
 		return 'thumb_delete';
 	} elseif ( $post_middle_delete ) {
@@ -421,8 +442,14 @@ function _check_delete_perm_or_redirect()
 }
 
 //---------------------------------------------------------
-// thumb delete
+// file delete
 //---------------------------------------------------------
+function _cont_delete()
+{
+	list($item_row, $url_redirect) = $this->_delete_common();
+	$this->cont_delete( $item_row, $url_redirect );
+}
+
 function _thumb_delete()
 {
 	list($item_row, $url_redirect) = $this->_delete_common();

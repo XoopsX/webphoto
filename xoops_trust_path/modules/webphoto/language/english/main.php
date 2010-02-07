@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.38 2010/01/25 10:03:07 ohwada Exp $
+// $Id: main.php,v 1.39 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1451,6 +1451,11 @@ define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL_DSC", "Enter the height of the scroll 
 // item option
 define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "Show photo in new window");
 define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "Show photo with lightbox");
+
+// submit
+define("_WEBPHOTO_MAIL_SUBMIT_WAITING", "Waiting Approval");
+define("_WEBPHOTO_MAIL_SUBMIT_APPROVE", "Approved your photo");
+define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "Refused your photo");
 
 // === define end ===
 }

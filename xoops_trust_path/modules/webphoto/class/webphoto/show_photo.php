@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.26 2010/01/25 10:03:07 ohwada Exp $
+// $Id: show_photo.php,v 1.27 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -58,6 +58,7 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_image_class;
 	var $_multibyte_class;
 
+// config
 	var $_cfg_newdays;
 	var $_cfg_popular;
 	var $_cfg_nameoruname;
@@ -79,6 +80,14 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_cfg_cat_sub_width;
 	var $_cfg_timeline_dirname;
 
+// ini
+	var $_ini_misc_array;
+	var $_ini_window_mergin;
+	var $_ini_content_length;
+	var $_ini_exif_length;
+	var $_ini_rating_decimals;
+	var $_ini_filesize_precision;
+
 	var $_item_text_type_array;
 	var $_time_newdays;
 	var $_usereal;
@@ -89,19 +98,6 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_URL_DEFAULT_IMAGE;
 	var $_URL_PIXEL_IMAGE;
 	var $_URL_CATEGORY_IMAGE;
-
-	var $_DEFAULT_IMAGE_WIDTH  = 64;
-	var $_DEFAULT_IMAGE_HEIGHT = 64;
-
-	var $_WINDOW_MERGIN = 16;
-	var $_MAX_CONTENT   = 500;
-	var $_MAX_EXIF      = 500;
-	var $_SUMMARY_TAIL  = ' ...';
-	var $_RATING_DECIMALS    = 2;
-	var $_FILESIZE_PRECISION = 1;
-
-	var $_SHOW_DESC_ARRAY = array(
-		'description_disp', 'siteurl', 'artist', 'album', 'label' );
 
 //---------------------------------------------------------
 // constructor
@@ -146,6 +142,14 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 
 // caregory.php
 	$this->_cfg_cat_summary  = $this->get_config_by_name('cat_summary');
+
+// ini
+	$this->_ini_misc_array         = $this->explode_ini('view_photo_misc_list');
+	$this->_ini_window_mergin      = $this->get_ini('view_photo_window_mergin');
+	$this->_ini_content_length     = $this->get_ini('view_photo_content_length');
+	$this->_ini_exif_length        = $this->get_ini('view_photo_exif_length');
+	$this->_ini_rating_decimals    = $this->get_ini('view_photo_rating_decimals');
+	$this->_ini_filesize_precision = $this->get_ini('view_photo_filesize_precision');
 
 	$this->_item_text_type_array = $this->_item_handler->get_text_type_array();
 
@@ -218,11 +222,11 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$show_arr['duration_disp']       = $this->format_time( $item_duration ) ;
 	$show_arr['photo_uri']           = $this->build_uri_photo( $item_id, false ) ;
 
-	$show_desc = false;
-	foreach ( $this->_SHOW_DESC_ARRAY as $key ) 
+	$show_misc = false;
+	foreach ( $this->_ini_misc_array as $key ) 
 	{
 		if ( $show_arr[ $key ] ) {
-			$show_desc = true;
+			$show_misc = true;
 		}
 	}
 
@@ -235,7 +239,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		$text_i_s    = $this->sanitize( $text_i );
 
 		if ( $text_i ) {
-			$show_desc = true;
+			$show_misc = true;
 		}
 
 		$show_arr[ $name_i ]      = $text_i ;
@@ -252,7 +256,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 		$show_arr['texts'] = $arr2;
 	}
 
-	$show_arr['show_desc'] = $show_desc;
+	$show_arr['show_misc'] = $show_misc;
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
@@ -337,8 +341,8 @@ function build_photo_show( $row )
 		'taf_mailto'       => $this->build_show_taf_mailto( $item_id ) ,
 		'info_morephotos'  => $this->build_show_info_morephotos( $item_uid ),
 
-		'window_x'         => $arr1['img_photo_width']  + $this->_WINDOW_MERGIN ,
-		'window_y'         => $arr1['img_photo_height'] + $this->_WINDOW_MERGIN ,
+		'window_x'         => $arr1['img_photo_width']  + $this->_ini_window_mergin ,
+		'window_y'         => $arr1['img_photo_height'] + $this->_ini_window_mergin ,
 		
 	) ;
 
@@ -350,7 +354,7 @@ function build_show_filesize( $size )
 {
 	if ( $size > 0 ) {
 		return $this->_utility_class->format_filesize(
-			$size, $this->_FILESIZE_PRECISION ) ;
+			$size, $this->_ini_filesize_precision ) ;
 	}
 	return null;
 }
@@ -386,7 +390,7 @@ function build_show_desc_summary( $row, $flag_highlight=false, $keyword_array=nu
 function build_show_content( $row, $flag_highlight=false, $keyword_array=null )
 {
 	$str = $this->_multibyte_class->build_summary_with_search( 
-		$row['item_content'], $keyword_array, $this->_MAX_CONTENT );
+		$row['item_content'], $keyword_array, $this->_ini_content_length );
 
 	if ( $flag_highlight ) {
 		$str = $this->_highlight_class->build_highlight_keyword_array( $str, $keyword_array );
@@ -398,8 +402,8 @@ function build_show_content( $row, $flag_highlight=false, $keyword_array=null )
 function build_show_exif( $row )
 {
 	$str = $row['item_exif'] ;
-	if ( strlen($str) > $this->_MAX_EXIF ) {
-		$str  = $this->_multibyte_class->shorten( $row['item_exif'], $this->_MAX_EXIF, '' );
+	if ( strlen($str) > $this->_ini_exif_length ) {
+		$str  = $this->_multibyte_class->shorten( $row['item_exif'], $this->_ini_exif_length, '' );
 		$str .= "\n ... ";
 	}
 	return nl2br( $str ) ;
@@ -427,10 +431,9 @@ function build_show_info_vote( $rating, $votes )
 	return $info_votes;
 }
 
-
 function build_show_rating( $rating )
 {
-	return number_format( $rating , $this->_RATING_DECIMALS ) ;
+	return number_format( $rating , $this->_ini_rating_decimals ) ;
 }
 
 function build_show_is_new_updated( $time_update, $status )

@@ -1,10 +1,16 @@
 <?php
-// $Id: fckeditor.php,v 1.1 2009/01/06 09:42:30 ohwada Exp $
+// $Id: fckeditor.php,v 1.2 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-01 K.OHWADA
+// set_display_html()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -23,6 +29,8 @@ class webphoto_editor_fckeditor extends webphoto_editor_base
 function webphoto_editor_fckeditor()
 {
 	$this->webphoto_editor_base();
+
+	$this->set_display_html( 1 ) ;
 }
 
 function exists()

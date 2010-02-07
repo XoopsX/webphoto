@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.8 2009/12/24 06:32:22 ohwada Exp $
+// $Id: admin.php,v 1.9 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -29,8 +29,8 @@ define("_AM_WEBPHOTO_GPERM_MODULE_READ"  , "Module Access" ) ;
 
 // item manage
 define("_AM_WEBPHOTO_BUTTON_REFUSE", "Refuse");
-define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "Approved your photo");
-define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "Refused your photo");
+//define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "Approved your photo");
+//define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "Refused your photo");
 define("_AM_WEBPHOTO_ERR_NO_SELECT" , "Error: Not select item" ) ;
 
 // user list

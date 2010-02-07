@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.23 2010/01/25 10:03:07 ohwada Exp $
+// $Id: item_manager.php,v 1.24 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -178,6 +178,10 @@ function main()
 		$this->_redo();
 		break;
 
+	case 'cont_delete':
+		$this->_cont_delete();
+		exit();
+
 	case 'thumb_delete':
 		$this->_thumb_delete();
 		exit();
@@ -187,7 +191,7 @@ function main()
 		exit();
 
 	case 'small_delete':
-		$this->_middle_small();
+		$this->_small_delete();
 		exit();
 
 	case 'flash_delete':
@@ -243,6 +247,7 @@ function _get_action()
 {
 	$post_op            = $this->_post_class->get_post_get_text('op' );
 	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
+	$post_cont_delete   = $this->_post_class->get_post_text('file_photo_delete' );
 	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
 	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
 	$post_small_delete  = $this->_post_class->get_post_text('file_small_delete' );
@@ -251,6 +256,8 @@ function _get_action()
 
 	if ( $post_conf_delete ) {
 		return 'confirm_form';
+	} elseif ( $post_cont_delete ) {
+		return 'cont_delete';
 	} elseif ( $post_thumb_delete ) {
 		return 'thumb_delete';
 	} elseif ( $post_middle_delete ) {
@@ -1162,8 +1169,14 @@ function _redo()
 
 
 //---------------------------------------------------------
-// thumb delete
+// file delete
 //---------------------------------------------------------
+function _cont_delete()
+{
+	list($item_row, $url_redirect) = $this->_delete_common();
+	$this->cont_delete( $item_row, $url_redirect );
+}
+
 function _thumb_delete()
 {
 	list($item_row, $url_redirect) = $this->_delete_common();

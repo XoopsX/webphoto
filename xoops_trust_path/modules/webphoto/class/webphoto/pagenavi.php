@@ -1,5 +1,5 @@
 <?php
-// $Id: pagenavi.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: pagenavi.php,v 1.2 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -69,7 +69,7 @@ function build_navi_page( $url, $page, $limit, $total )
 
 function build_navi_info( $page, $limit, $total )
 {
-	$start = $this->calc_navi_start( $limit, $page );
+	$start = $this->calc_navi_start( $page, $limit );
 	$end   = $this->calc_navi_end( $start, $limit, $total );
 
 	return sprintf( $this->get_constant('S_NAVINFO') , $start + 1 , $end , $total ) ;

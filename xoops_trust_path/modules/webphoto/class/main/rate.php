@@ -1,5 +1,5 @@
 <?php
-// $Id: rate.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: rate.php,v 1.8 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-01-10 K.OHWADA
+// $trust_dirname in webphoto_show_image
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_vote_handler
 // 2009-05-15 K.OHWADA
@@ -244,7 +246,8 @@ function main()
 
 function get_photo()
 {
-	$show_class =& webphoto_show_image::getInstance( $this->_DIRNAME );
+	$show_class =& webphoto_show_image::getInstance( 
+		$this->_DIRNAME, $this->_TRUST_DIRNAME );
 
 	$arr = array(
 		'photo'          => $show_class->build_image_title_by_item_row( $this->_item_row ) ,

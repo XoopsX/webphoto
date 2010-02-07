@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.9 2009/12/16 13:32:34 ohwada Exp $
+// $Id: modinfo.php,v 1.10 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,14 @@ if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v2.10
+//---------------------------------------------------------
+if( !defined($constpref."CFG_USE_LIGHTBOX") ) 
+{
+define($constpref."CFG_USE_LIGHTBOX","Use LightBox");
+}
 
 //---------------------------------------------------------
 // v2.00

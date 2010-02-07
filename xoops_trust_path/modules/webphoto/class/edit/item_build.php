@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.13 2010/01/28 20:20:50 ohwada Exp $
+// $Id: item_build.php,v 1.14 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -39,14 +39,16 @@ class webphoto_edit_item_build extends webphoto_edit_base_create
 	var $_item_handler;
 	var $_cat_handler;
 	var $_perm_class;
+	var $_use_item_class;
 
 	var $_xoops_uid;
 	var $_cfg_perm_item_read ;
 	var $_has_superinsert ;
 	var $_has_html ;
 
+	var $_flag_admin = false;
+
 	var $_FILE_LIST;
-	var $_FLAG_ADMIN = false;
 	var $_NO_TITLE   = 'no title' ;
 	var $_PLAYER_ID_FLASH_DEFAULT = 1;
 
@@ -66,6 +68,8 @@ function webphoto_edit_item_build( $dirname , $trust_dirname )
 		=& webphoto_cat_handler::getInstance( $dirname , $trust_dirname );
 	$this->_perm_class    
 		=& webphoto_permission::getInstance( $dirname , $trust_dirname );
+	$this->_use_item_class      
+		=& webphoto_edit_use_item::getInstance( $dirname, $trust_dirname );
 
 	$this->_xoops_uid          = $this->_xoops_class->get_my_user_uid() ;
 	$this->_has_superinsert    = $this->_perm_class->has_superinsert();
@@ -89,7 +93,8 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function set_flag_admin( $val )
 {
-	$this->_FLAG_ADMIN = (bool)$val;
+	$this->_flag_admin = (bool)$val;
+	$this->_use_item_class->set_flag_admin( $val );
 }
 
 //---------------------------------------------------------
@@ -97,35 +102,95 @@ function set_flag_admin( $val )
 //---------------------------------------------------------
 function build_row_submit_by_post( $row, $item_datetime_checkbox )
 {
-	$row['item_cat_id']           = $this->get_post_int(   'item_cat_id' );
-	$row['item_title']            = $this->get_post_text(  'item_title' ) ;
-	$row['item_duration']         = $this->get_post_int(   'item_duration' );
-	$row['item_exif']             = $this->get_post_text(  'item_exif' );
-	$row['item_content']          = $this->get_post_text(  'item_content' );
-	$row['item_embed_type']       = $this->get_post_text(  'item_embed_type' );
-	$row['item_embed_src']        = $this->get_post_text(  'item_embed_src' );
-	$row['item_embed_text']       = $this->get_post_text(  'item_embed_text' );
-	$row['item_external_url']     = $this->get_post_text(  'item_external_url' );
-	$row['item_external_thumb']   = $this->get_post_text(  'item_external_thumb' );
-	$row['item_external_middle']  = $this->get_post_text(  'item_external_middle' );
-	$row['item_gmap_latitude']    = $this->get_post_float( 'item_gmap_latitude' );
-	$row['item_gmap_longitude']   = $this->get_post_float( 'item_gmap_longitude' );
-	$row['item_gmap_zoom']        = $this->get_post_int(   'item_gmap_zoom' );
-	$row['item_page_width']       = $this->get_post_int(   'item_page_width' );
-	$row['item_page_height']      = $this->get_post_int(   'item_page_height' );
-	$row['item_equipment']        = $this->get_post_text( 'item_equipment' ) ;
-	$row['item_description']      = $this->get_post_text( 'item_description' );
-	$row['item_editor']           = $this->get_post_text( 'item_editor' );
-	$row['item_gicon_id']         = $this->get_post_int(  'item_gicon_id' );
-	$row['item_place']            = $this->get_post_text( 'item_place' );
-	$row['item_siteurl']          = $this->get_post_text( 'item_siteurl' );
-	$row['item_artist']           = $this->get_post_text( 'item_artist' );
-	$row['item_album']            = $this->get_post_text( 'item_album' );
-	$row['item_label']            = $this->get_post_text( 'item_label' );
+// basic
+	$row['item_cat_id']             = $this->get_post_int(  'item_cat_id' );
+	$row['item_title']              = $this->get_post_text( 'item_title' ) ;
+	$row['item_editor']             = $this->get_post_text( 'item_editor' );
+	$row['item_description']        = $this->get_post_text( 'item_description' );
+	$row['item_description_smiley'] = $this->get_post_int(  'item_description_smiley' );
+	$row['item_description_xcode']  = $this->get_post_int(  'item_description_xcode' );
+	$row['item_description_image']  = $this->get_post_int(  'item_description_image' );
+	$row['item_description_br']     = $this->get_post_int(  'item_description_br' );
+	$row['item_embed_type']         = $this->get_post_text( 'item_embed_type' );
+	$row['item_embed_src']          = $this->get_post_text( 'item_embed_src' );
+	$row['item_embed_text']         = $this->get_post_text( 'item_embed_text' );
 
-	$row['item_datetime']  = $this->get_item_datetime_by_post( $item_datetime_checkbox );
-	$row['item_codeinfo']  = $this->build_info_by_post( 'item_codeinfo' );
-	$row['item_perm_down'] = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
+	if ( $this->use_item('description_scroll') ) {
+		$row['item_description_scroll'] = $this->get_post_int('item_description_scroll');
+	}
+
+	if ( $this->use_item('codeinfo') ) {
+		$row['item_codeinfo'] = $this->build_info_by_post('item_codeinfo');
+	}
+
+	if ( $this->use_item('external_url') ) {
+		$row['item_external_url'] = $this->get_post_text('item_external_url');
+	}
+
+	if ( $this->use_item('external_thumb') ) {
+		$row['item_external_thumb'] = $this->get_post_text('item_external_thumb');
+	}
+
+	if ( $this->use_item('external_middle') ) {
+		$row['item_external_middle'] = $this->get_post_text('item_external_middle');
+	}
+
+	if ( $this->use_item('datetime') ) {
+		$row['item_datetime'] = $this->get_item_datetime_by_post( $item_datetime_checkbox );
+	}
+
+	if ( $this->use_item('place') ) {
+		$row['item_place'] = $this->get_post_text('item_place');
+	}
+
+	if ( $this->use_item('equipment') ) {
+		$row['item_equipment'] = $this->get_post_text('item_equipment') ;
+	}
+
+	if ( $this->use_item('duration') ) {
+		$row['item_duration'] = $this->get_post_int('item_duration');
+	}
+
+	if ( $this->use_item('siteurl') ) {
+		$row['item_siteurl'] = $this->get_post_text('item_siteurl');
+	}
+
+	if ( $this->use_item('artist') ) {
+		$row['item_artist'] = $this->get_post_text('item_artist');
+	}
+
+	if ( $this->use_item('album') ) {
+		$row['item_album'] = $this->get_post_text('item_album');
+	}
+
+	if ( $this->use_item('label') ) {
+		$row['item_label'] = $this->get_post_text('item_label');
+	}
+
+	if ( $this->use_item('exif') ) {
+		$row['item_exif'] = $this->get_post_text('item_exif');
+	}
+
+	if ( $this->use_item('content') ) {
+		$row['item_content'] = $this->get_post_text('item_content');
+	}
+
+	if ( $this->use_item('page_width') ) {
+		$row['item_page_width'] = $this->get_post_int('item_page_width');
+	}
+
+	if ( $this->use_item('page_height') ) {
+		$row['item_page_height'] = $this->get_post_int('item_page_height');
+	}
+
+	if ( $this->use_item('perm_down') ) {
+		$row['item_perm_down'] = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
+	}
+
+// description html
+	if ( $this->_has_html ) {
+		$row['item_description_html']   = $this->get_post_int( 'item_description_html' );
+	}
 
 // perm read
 	if ( $this->use_item_perm_read() ) {
@@ -137,19 +202,15 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
 	}
 
-// description scroll
-	$row['item_description_scroll']     = $this->get_post_int( 'item_description_scroll' );
-
-// description option
-	if ( $this->_has_html ) {
-		$row['item_description_html']   = $this->get_post_int( 'item_description_html' );
-		$row['item_description_smiley'] = $this->get_post_int( 'item_description_smiley' );
-		$row['item_description_xcode']  = $this->get_post_int( 'item_description_xcode' );
-		$row['item_description_image']  = $this->get_post_int( 'item_description_image' );
-		$row['item_description_br']     = $this->get_post_int( 'item_description_br' );
+// gmap
+	if ( $this->use_gmap() ) {
+		$row['item_gmap_latitude']  = $this->get_post_float( 'item_gmap_latitude' );
+		$row['item_gmap_longitude'] = $this->get_post_float( 'item_gmap_longitude' );
+		$row['item_gmap_zoom']      = $this->get_post_int(   'item_gmap_zoom' );
+		$row['item_gicon_id']       = $this->get_post_int(   'item_gicon_id' );
 	}
 
-	if ( $this->_FLAG_ADMIN ) {
+	if ( $this->_flag_admin ) {
 		$row['item_uid']           = $this->get_post_int(   'item_uid' );
 
 // kind
@@ -197,7 +258,7 @@ function build_row_modify_by_post( $row, $flag_status=true )
 	}
 
 // admin
-	if ( $this->_FLAG_ADMIN ) {
+	if ( $this->_flag_admin ) {
 		if ( $post_time_update_checkbox ) {
 			$row['item_time_update'] = $post_time_update ;
 		}
@@ -238,6 +299,8 @@ function build_row_modify_by_post( $row, $flag_status=true )
 	return $row;
 }
 
+
+
 function get_item_datetime_by_post( $checkbox )
 {
 	if ( $checkbox == _C_WEBPHOTO_YES ) {
@@ -254,7 +317,7 @@ function build_modify_status( $row )
 	$current_status = $row['item_status'] ;
 	$time_publish   = $row['item_time_publish'] ;
 
-	if ( $this->_FLAG_ADMIN ) {
+	if ( $this->_flag_admin ) {
 		$new_status = $post_status ;
 	} else {
 		$new_status = $current_status ;
@@ -263,7 +326,7 @@ function build_modify_status( $row )
 	switch ( $current_status ) 
 	{
 		case _C_WEBPHOTO_STATUS_WAITING : 
-			if ( $this->_FLAG_ADMIN && ( $post_valid == _C_WEBPHOTO_YES ) )  {
+			if ( $this->_flag_admin && ( $post_valid == _C_WEBPHOTO_YES ) )  {
 				$new_status = _C_WEBPHOTO_STATUS_APPROVED ;
 			}
 			break;
@@ -283,7 +346,7 @@ function build_modify_status( $row )
 	{
 		case _C_WEBPHOTO_STATUS_APPROVED : 
 		case _C_WEBPHOTO_STATUS_UPDATED :
-			if (   $this->_FLAG_ADMIN  &&
+			if (   $this->_flag_admin  &&
 			     ( $time_publish > 0 ) &&
 				 ( $time_publish > time() ) ) {
 				$new_status = _C_WEBPHOTO_STATUS_OFFLINE ;
@@ -318,17 +381,9 @@ function get_server_time_by_post( $key )
 	return $this->_xoops_class->user_to_server_time( $time );
 }
 
-function use_item_perm_read()
-{
-	if ( $this->_cfg_perm_item_read > 0 ) {
-		return true;
-	}
-	return false;
-}
-
 function use_item_perm_level_admin()
 {
-	if ( $this->_FLAG_ADMIN && $this->use_item_perm_level() ) {
+	if ( $this->_flag_admin && $this->use_item_perm_level() ) {
 		return true;
 	}
 	return false;
@@ -336,20 +391,7 @@ function use_item_perm_level_admin()
 
 function use_item_perm_level_user()
 {
-	if ( $this->use_item_perm_level() &&
-	     $this->get_ini('editable_item_perm_level') ) {
-		return true;
-	}
-	return false;
-}
-
-function use_item_perm_level()
-{
-	if (( $this->_cfg_perm_item_read > 0 ) && 
-	      $this->get_ini('use_item_perm_level') ) {
-		return true;
-	}
-	return false;
+	return $this->editable_item_perm_level();
 }
 
 function build_item_perm_by_post_level()
@@ -389,6 +431,34 @@ function build_item_perm_group_by_catid( $cat_id )
 
 	$val = $this->_utility_class->array_to_perm( $arr, _C_WEBPHOTO_PERM_SEPARATOR );
 	return $val;
+}
+
+//---------------------------------------------------------
+// use item class 
+//---------------------------------------------------------
+function use_item( $key )
+{
+	return $this->_use_item_class->use_item_or_admin( $key );
+}
+
+function use_item_perm_read()
+{
+	return $this->_use_item_class->use_item_perm_read();
+}
+
+function use_item_perm_level()
+{
+	return $this->_use_item_class->use_item_perm_level();
+}
+
+function editable_item_perm_level()
+{
+	return $this->_use_item_class->editable_item_perm_level();
+}
+
+function use_gmap()
+{
+	return $this->_use_item_class->use_gmap();
 }
 
 //---------------------------------------------------------

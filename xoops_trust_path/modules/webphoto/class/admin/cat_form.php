@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.11 2009/12/16 13:32:34 ohwada Exp $
+// $Id: cat_form.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// build_cat_list_form()
 // 2009-12-06 K.OHWADA
 // cat_group_id
 // 2009-11-11 K.OHWADA
@@ -144,10 +146,11 @@ function build_cat_form_by_row( $row, $param )
 		'show_children'       => $show_children ,
 		'show_perm_child'     => $show_children ,
 		'show_parent_note'    => $show_parent_note ,
-		'show_cat_prem_read'  => $this->show_cat_prem_read() ,
 		'show_gmap'           => $this->show_gmap() ,
-		'show_cat_group_id'   => $this->show_cat_group_id( $is_edit ) ,
 		'show_child_num'      => $is_edit ,
+		'show_cat_pid'        => $this->show_cat_pid() ,
+		'show_cat_prem_read'  => $this->show_cat_prem_read() ,
+		'show_cat_group_id'   => $this->show_cat_group_id( $is_edit ) ,
 
 		'parent_cat_id'       => $parent_cat_id ,
 		'parent_cat_title_s'  => $parent_cat_title_s ,
@@ -183,6 +186,11 @@ function get_child_rows()
 		$rows = $this->_cat_handler->getChildTreeArray( $cat_id ) ;
 	}
 	return $rows;
+}
+
+function show_cat_pid()
+{
+	return $this->get_ini('use_cat_pid');
 }
 
 function show_cat_prem_read()
@@ -368,6 +376,7 @@ function build_cat_row( $row )
 function build_admin_language()
 {
 	$arr = array(
+// form
 		'lang_cat_th_parent'  => _AM_WEBPHOTO_CAT_TH_PARENT ,
 		'lang_cat_parent_cap' => _AM_WEBPHOTO_CAT_PARENT_CAP ,
 		'lang_cat_child_cap'  => _AM_WEBPHOTO_CAT_CHILD_CAP ,
@@ -377,6 +386,13 @@ function build_admin_language()
 		'lang_dsc_cat_folder' => _AM_WEBPHOTO_DSC_CAT_FOLDER , 
 		'lang_dsc_cat_path'   => _AM_WEBPHOTO_DSC_CAT_PATH ,
 		'lang_parent'         => _AM_WEBPHOTO_PARENT ,
+
+// list
+		'lang_cat_th_photos'    => _AM_WEBPHOTO_CAT_TH_PHOTOS ,
+		'lang_cat_th_operation' => _AM_WEBPHOTO_CAT_TH_OPERATION ,
+		'lang_cat_th_image'     => _AM_WEBPHOTO_CAT_TH_IMAGE ,
+		'lang_cat_link_edit'    => _AM_WEBPHOTO_CAT_LINK_EDIT ,
+		'lang_cat_link_makesubcat' => _AM_WEBPHOTO_CAT_LINK_MAKESUBCAT ,
 	);
 	return $arr;
 }
@@ -391,111 +407,56 @@ function _build_prefix( $row )
 //---------------------------------------------------------
 function print_list( $cat_tree_array )
 {
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_cat_list.html';
 
-// --- form ---
-	echo "<form name='MainForm' action='' method='post' style='margin:10px;'>\n";
-	echo $this->build_html_token();
-	echo $this->build_input_hidden( 'action', 'weight' );
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_cat_list_form( $cat_tree_array ),
+		$this->build_admin_language()
+	);
 
-// --- table ---
-	echo '<table width="95%" class="outer" cellpadding="4" cellspacing="1">'."\n";
-
-	echo '<tr valign="middle">';
-	echo '<th>'. _EDIT .'</th>';
-	echo '<th  width="80%">'. $this->get_constant('CAT_TITLE') .'</th>';
-	echo '<th>'. _AM_WEBPHOTO_CAT_TH_PHOTOS .'</th>';
-	echo '<th nowrap="nowrap" >'. _AM_WEBPHOTO_CAT_TH_OPERATION .'</th>';
-	echo '<th>'. $this->get_constant('CAT_WEIGHT').'</th>';
-	echo '<th nowrap="nowrap" >'. _AM_WEBPHOTO_CAT_TH_IMAGE .'</th>';
-	echo '</tr>'."\n";
-
-	foreach( $cat_tree_array as $row ) {
-		$this->_print_line( $row );
-	}
-
-	echo '<tr class="foot">';
-	echo '<td colspan="4"></td>';
-	echo '<td colspan="2">';
-	echo $this->build_input_submit( 'submit', _EDIT );
-	echo '</td></tr>'."\n";
-
-	echo "</table></form>\n" ;
-// --- table form end ---
-
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
 }
 
-function _print_line( $row )
+function build_cat_list_form( $cat_tree_array )
 {
-	$oddeven = $this->get_alternate_class();
+	$arr = array();
+	foreach ( $cat_tree_array as $row )
+	{
+		$cat_id = $row['cat_id'];
 
-	$cat_id  = intval( $row['cat_id'] ) ;
-	$weight  = intval( $row['cat_weight'] ) ;
-	$title_s = $this->sanitize( $row['cat_title'] ) ;
+		$tmp = $row;
+		$tmp['tree_photo_num'] = $this->_item_handler->get_count_by_catid( $cat_id );
+		$tmp['tree_prefix']    = $this->_build_prefix( $row );
 
-	$photos_num  = $this->_item_handler->get_count_by_catid( $cat_id );
-
-	echo '<tr>';
-	echo '<td class="'. $oddeven .'" nowrap="nowrap">';
-	echo '<a href="'. $this->_THIS_URL_EDIT . $cat_id .'">';
-	echo $this->build_img_catedit();
-	echo sprintf("%03d",$cat_id) ;
-	echo '</a>';
-	echo "</td>\n";
-	echo '<td class="'. $oddeven .'" width="80%">';
-	if ( $this->_cfg_use_pathinfo ) {
-		echo '<a href="'. $this->_MODULE_URL .'/index.php/category/'. $cat_id .'/">';
-	} else {
-		echo '<a href="'. $this->_MODULE_URL .'/index.php?fct=category&amp;cat_id='. $cat_id .'">';
-	}
-	echo $this->_build_prefix( $row ) ;
-	echo $title_s .'</a>';
-	echo "</td>\n";
-
-	echo '<td class="'. $oddeven .'" nowrap="nowrap" align="right">';
-	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=photomanager&amp;cat_id='. $cat_id .'">';
-	echo $photos_num;
-	echo '</a> &nbsp; ';
-	echo '<a href="'. $this->_MODULE_URL .'/admin/index.php?fct=item_manager&amp;op=submit_form&amp;cat_id='. $cat_id. '">';
-	echo $this->build_img_pictadd();
-	echo '</a>';
-	echo "</td>\n";
-
-	echo '<td class="'. $oddeven .'" nowrap="nowrap" align="center">';
-	echo '<a href="'. $this->_THIS_URL .'&amp;disp=new&amp;cat_id='. $cat_id .'">';
-	echo $this->build_img_catadd();
-	echo '</a>';
-	echo "</td>\n";
-
-	echo '<td class="'. $oddeven .'" align="center">';
-	echo $this->build_input_hidden( 'oldweight['. $cat_id .']' , $weight );
-	echo $this->build_input_text(   'weight['.    $cat_id .']' , $weight , $this->_SIZE_WEIGHT );
-	echo "</td>\n";
-
-	echo '<td class="'. $oddeven .'" nowrap="nowrap" align="center">';
-	echo $this->_build_img( $row, $this->_IMG_HEIGHT_LIST ) ;
-	echo "</td>\n";
-
-	echo "</tr>\n" ;
-
-}
-
-function _build_img( $row, $max_height )
-{
-	$ret    = '';
-	$imgsrc = $this->build_show_imgurl( $row );
-	if ( $imgsrc ) {
-		$imgsrc_s = $this->sanitize($imgsrc);
-		$height = $row['cat_orig_height'];
-		if ( $height <= 0 ) {
-			 $height = $max_height;
-		} elseif ( $height > $max_height ) {
-			 $height = $max_height;
+		$imgurl = $this->build_show_imgurl( $row );
+		if ( $imgurl ) {
+			$tmp['img_show']   = true;
+			$tmp['img_src']    = $imgurl;
+			$tmp['img_height'] = $this->build_img_height( $row );
 		}
-		$ret  = '<a href="'.  $imgsrc_s .'" target="_blank">';
-		$ret .= '<img src="'. $imgsrc_s .'" height="'. $height .'" />';
-		$ret .= '</a>';
+
+		$arr[] = $tmp;
 	}
-	return $ret;
+
+	$param = array(
+		'cat_list'     => $arr ,
+		'show_cat_add' => $this->show_cat_pid() ,
+	);
+	return $param;
+}
+
+function build_img_height( $row )
+{
+	$height = $row['cat_orig_height'];
+	if ( $height <= 0 ) {
+		 $height = $this->_IMG_HEIGHT_LIST;
+	} elseif ( $height > $this->_IMG_HEIGHT_LIST ) {
+		 $height = $this->_IMG_HEIGHT_LIST;
+	}
+	return $height;
 }
 
 //---------------------------------------------------------

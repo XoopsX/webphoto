@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.24 2010/01/25 10:03:07 ohwada Exp $
+// $Id: item_form.php,v 1.25 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -182,6 +182,7 @@ function build_form_admin_by_files( $mode, $files )
 			break;
 	}
 
+	$this->set_flag_admin( true );
 	$this->set_row( $item_row );
 	$this->init_editor();
 

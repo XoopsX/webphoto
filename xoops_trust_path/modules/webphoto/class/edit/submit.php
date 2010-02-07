@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.16 2010/01/25 10:03:07 ohwada Exp $
+// $Id: submit.php,v 1.17 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -49,6 +49,7 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_playlist_build_class ;
 	var $_photo_form_class ;
 	var $_misc_form_class ;
+	var $_mail_send_class ;
 
 	var $_cfg_addposts ;
 	var $_cfg_makethumb ;
@@ -57,6 +58,10 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_cfg_allownoimage ;
 	var $_cfg_file_dir ;
 	var $_cfg_file_size ;
+
+	var $_ini_file_thumb;
+	var $_ini_file_middle;
+	var $_ini_file_small;
 
 // post
 	var $_post_form_embed    = 0;
@@ -110,6 +115,8 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 		=& webphoto_edit_external_build::getInstance( $dirname, $trust_dirname  );
 	$this->_tag_build_class  
 		=& webphoto_tag_build::getInstance( $dirname, $trust_dirname  );
+	$this->_mail_send_class  
+		=& webphoto_mail_send::getInstance( $dirname, $trust_dirname  );
 
 	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
 
@@ -120,6 +127,10 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_cfg_allownoimage   = $this->get_config_by_name( 'allownoimage' ) ;
 	$this->_cfg_file_dir       = $this->get_config_by_name( 'file_dir' ) ;
 	$this->_cfg_file_size      = $this->get_config_by_name( 'file_size' ) ;
+
+	$this->_ini_file_thumb     = $this->check_show('file_thumb');
+	$this->_ini_file_middle    = $this->check_show('file_middle');
+	$this->_ini_file_small     = $this->check_show('file_small');
 
 	$this->_URL_DAFAULT_IMAGE = $this->_MODULE_URL .'/images/exts/default.png' ;
 	$this->_URL_PIXEL_IMAGE   = $this->_MODULE_URL .'/images/icons/pixel_trans.png' ;
@@ -180,15 +191,15 @@ function create_item_row_default()
 // description option
 	$options = $this->_editor_class->display_options( $row['item_editor'] );
 
-	if ( $this->_has_html ) {
-		$row['item_description_html'] = _C_WEBPHOTO_YES  ;
-	}
-
 	if ( is_array($options) ) {
 		$row['item_description_smiley'] = $options['smiley']  ;
 		$row['item_description_xcode']  = $options['xcode']  ;
 		$row['item_description_image']  = $options['image']  ;
 		$row['item_description_br']     = $options['br']  ;
+
+		if ( $this->_has_html ) {
+			$row['item_description_html'] = $options['html']  ;
+		}
 	}
 
 	if ( $item_embed_type ) {
@@ -339,7 +350,7 @@ function submit_exec_fetch( $row )
 	}
 
 // Check if upload file name specified
-	if ( ! $this->check_xoops_upload_file( $flag_thumb=true ) ) {
+	if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
 		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
 	}
 
@@ -350,9 +361,15 @@ function submit_exec_fetch( $row )
 	}
 
 // fetch thumb middle
-	$this->upload_fetch_thumb();
-	$this->upload_fetch_middle();
-	$this->upload_fetch_small();
+	if ( $this->_ini_file_thumb ) {
+		$this->upload_fetch_thumb();
+	}
+	if ( $this->_ini_file_middle ) {
+		$this->upload_fetch_middle();
+	}
+	if ( $this->_ini_file_small ) {
+		$this->upload_fetch_small();
+	}
 
 // upload
 	if ( $this->_photo_tmp_name ) {
@@ -397,7 +414,11 @@ function submit_exec_notify( $item_row )
 	if ( $this->_has_superinsert ) {
 		$this->notify_new_photo( $item_row );
 	} else {
-		$this->notify_waiting( $item_row );
+		if ( $this->get_ini('submit_notify_waiting_by_mail') ) {
+			$this->mail_waiting( $item_row );
+		} else {
+			$this->notify_waiting( $item_row );
+		}
 	}
 }
 
@@ -415,6 +436,24 @@ function notify_waiting( $item_row )
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 	$notification_class->notify_waiting( 
 		$item_row['item_id'], $item_row['item_title'] );
+}
+
+//---------------------------------------------------------
+// mail send 
+//---------------------------------------------------------
+function mail_waiting( $item_row )
+{
+	return $this->_mail_send_class->send_waiting( $item_row );
+}
+
+function mail_approve( $item_row )
+{
+	return $this->_mail_send_class->send_approve( $item_row ); 
+}
+
+function mail_refuse( $item_row )
+{
+	return $this->_mail_send_class->send_refuse( $item_row );
 }
 
 //---------------------------------------------------------
@@ -865,6 +904,11 @@ function build_form_embed( $item_row )
 function build_form_redo( $item_row )
 {
 	return $this->_misc_form_class->build_form_redo_by_item_row( $item_row );
+}
+
+function check_show( $key )
+{
+	return $this->_photo_form_class->check_show( $key ) ;
 }
 
 //---------------------------------------------------------

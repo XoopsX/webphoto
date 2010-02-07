@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.23 2010/01/28 02:08:13 ohwada Exp $
+// $Id: photo.php,v 1.24 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -103,6 +103,8 @@ function main()
 	$row = $this->_photo_class->get_photo_row();
 	$photo_id  = $row['item_id'];
 	$photo_uid = $row['item_uid'];
+	$cat_id    = $row['item_cat_id'];
+	$title     = $this->sanitize( $row['item_title'] );
 
 // for xoops comment & notification
 	$_GET['photo_id'] = $photo_id;
@@ -115,19 +117,16 @@ function main()
 		$this->_item_handler->countup_hits( $photo_id, true );
 	}
 
-	$photo  = $this->build_photo_for_photo( $row );
-	$title  = $photo['title_s'];
-
-	$cat_id = $this->_photo_class->get_photo_catid_row_or_post( $row ) ;
-
 	$this->show_array_set_detail_by_mode( $mode );
 
-	$show_gmap = $this->set_tpl_gmap_for_photo_with_check( $row );
+	$show_gmap      = $this->set_tpl_gmap_for_photo_with_check( $row );
+	$show_ligthtbox = $this->set_tpl_photo_for_detail( $row );
 
 	$this->xoops_header_array_set_by_mode( $mode ) ;
 	$this->xoops_header_param();
-	$this->xoops_header_rss_with_check(  'category', $cat_id );
+	$this->xoops_header_rss_with_check( 'category', $cat_id );
 	$this->xoops_header_gmap_with_check( $show_gmap );
+	$this->xoops_header_lightbox_with_check( $show_ligthtbox );
 	$this->xoops_header_assign();
 
 // same as main
@@ -142,8 +141,7 @@ function main()
 	$this->set_tpl_catpath_with_check( $cat_id );
 	$this->set_tpl_catlist_with_check( $cat_id );
 
-// for photo
-	$this->set_tpl_photo( $photo );
+// photo
 	$this->set_tpl_photo_tags( $photo_id );
 	$this->set_tpl_photo_nav( $photo_id, $cat_id );
 

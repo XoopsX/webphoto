@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.32 2010/01/30 02:32:21 ohwada Exp $
+// $Id: xoops_version.php,v 1.33 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2010-01-10 K.OHWADA
+// use_lightbox
 // xoops_version_cfg_perm_item_read_default
 // 2009-12-06 K.OHWADA
 // config: groupid_admin
@@ -1063,7 +1064,17 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '1' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_use_popbox_default') ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'use_lightbox' ,
+		'title'			=> $this->_constant_name( 'CFG_USE_LIGHTBOX' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'yesno' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_use_lightbox_default') ,
 		'options'		=> array()
 	) ;
 
@@ -1242,8 +1253,8 @@ function _build_config()
 		'valuetype'		=> 'int' ,
 		'default'		=> $this->get_ini('xoops_version_cfg_perm_item_read_default') ,
 		'options'		=> array(
-			$this->_constant( 'OPT_PERM_READ_ALL'  )    => '0',
-			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => '1',
+			$this->_constant( 'OPT_PERM_READ_ALL'  )    => _C_WEBPHOTO_OPT_PERM_READ_ALL ,
+			$this->_constant( 'OPT_PERM_READ_NO_ITEM' ) => _C_WEBPHOTO_OPT_PERM_READ_NO_ITEM ,
 		)
 	) ;
 

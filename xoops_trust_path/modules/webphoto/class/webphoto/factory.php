@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.3 2010/01/28 02:08:13 ohwada Exp $
+// $Id: factory.php,v 1.4 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -276,9 +276,6 @@ function xoops_header_param()
 	if ( $this->xoops_header_check('popbox') ) { 
 		$this->_header_class->set_flag_popbox( true );
 	}
-	if ( $this->xoops_header_check('lightbox') ) { 
-		$this->_header_class->set_flag_lightbox( true );
-	}
 	if ( $this->xoops_header_check('timeline') ) { 
 		$this->_header_class->set_flag_timeline( true );
 	}
@@ -288,6 +285,13 @@ function xoops_header_gmap_with_check( $flag )
 {
 	if ( $this->xoops_header_check('gmap') ) { 
 		$this->_header_class->set_flag_gmap( $flag );
+	}
+}
+
+function xoops_header_lightbox_with_check( $flag )
+{
+	if ( $this->xoops_header_check('lightbox') ) { 
+		$this->_header_class->set_flag_lightbox( $flag );
 	}
 }
 
@@ -424,6 +428,12 @@ function show_param()
 
 function show_param_common()
 {
+	$this->tpl_set( 'show_photo_edit_link',  true );
+	$this->tpl_set( 'show_photo_title_link', true );
+	$this->tpl_set( 'show_photo_uid_link',   true );
+	$this->tpl_set( 'show_photo_rate_link',  true );
+	$this->tpl_set( 'show_photo_taf_link',   true );
+
 	if ( $this->get_ini('show_photo_category_link') ) {
 		$this->tpl_set( 'show_photo_category_link', true );
 	}
@@ -470,6 +480,9 @@ function show_param_with_check()
 	if ( $this->show_check('photo_summary') ) {
 		$this->tpl_set( 'show_photo_summary', true );
 	}
+	if ( $this->show_check('photo_misc') ) {
+		$this->tpl_set( 'show_photo_misc', true );
+	}
 	if ( $this->show_check('photo_exif') ) {
 		$this->tpl_set( 'show_photo_exif', true );
 	}
@@ -498,13 +511,8 @@ function set_tpl_common()
 	$this->set_tpl_is_taf_module();
 	$this->set_tpl_photo_total_all();
 
-	$this->tpl_merge( $this->_page_class->build_xoops_param() );
-	$this->tpl_merge( $this->_page_class->build_config_param() );
-	$this->tpl_merge( $this->_page_class->build_perm_param() );
-	$this->tpl_merge( $this->_page_class->build_menu_param() );
-	$this->tpl_merge( $this->_page_class->build_footer_param() );
+	$this->tpl_merge( $this->_page_class->build_main_param() );
 	$this->tpl_merge( $this->_page_class->build_qrs_param() );
-	$this->tpl_merge( $this->_page_class->get_lang_array() );
 }
 
 function set_tpl_get_param()
@@ -559,12 +567,6 @@ function set_tpl_title( $title )
 	$this->tpl_set( 'sub_title_s',       $title );
 }
 
-function set_tpl_photo( $val )
-{
-	$this->tpl_set( 'photo', $val );
-	$this->tpl_set( 'show_photo', true );
-}
-
 function set_tpl_photo_list( $val )
 {
 	$this->tpl_set( 'photo_list', $val );
@@ -583,6 +585,18 @@ function set_tpl_category_photo_list( $val )
 function set_tpl_cat_id( $cat_id )
 {
 	$this->tpl_set( 'cat_id', $cat_id );
+}
+
+function set_tpl_photo_nav( $photo_id, $cat_id )
+{
+	$this->tpl_set( 'photo_nav', 
+		$this->_photo_class->build_photo_navi( $photo_id, $cat_id ) );
+}
+
+function set_tpl_photo_tags( $photo_id )
+{
+	$this->tpl_merge( 
+		$this->_photo_class->build_photo_tags_param( $photo_id ) );
 }
 
 function set_tpl_catpath_with_check( $cat_id )
@@ -611,12 +625,6 @@ function set_tpl_catlist_with_check( $cat_id )
 	}
 }
 
-function set_tpl_photo_nav( $photo_id, $cat_id )
-{
-	$this->tpl_set( 'photo_nav', 
-		$this->_photo_class->build_photo_navi( $photo_id, $cat_id ) );
-}
-
 function set_tpl_qr_with_check( $photo_id )
 {
 	if ( $this->show_check('qr') ) {
@@ -625,12 +633,6 @@ function set_tpl_qr_with_check( $photo_id )
 			$this->_qr_class->build_mobile_param( $photo_id ) );
 		$this->tpl_set( 'show_qr', true ); 
 	}
-}
-
-function set_tpl_photo_tags( $photo_id )
-{
-	$this->tpl_merge( 
-		$this->_photo_class->build_photo_tags_param( $photo_id ) );
 }
 
 function set_tpl_tagcloud_with_check( $limit )
@@ -728,6 +730,14 @@ function set_tpl_total_for_detail( $mode, $total )
 	}
 }
 
+function set_tpl_photo_for_detail( $row )
+{
+	$this->tpl_set( 'photo', $this->build_photo_for_photo( $row ) );
+	$this->tpl_set( 'show_photo', true );
+
+	return $this->show_ligthtbox( $row );
+}
+
 function set_tpl_error( $val )
 {
 	$this->tpl_set( 'error', $val );
@@ -806,6 +816,16 @@ function build_photo_by_row( $row )
 function build_photo_for_photo( $row )
 {
 	return $this->_photo_class->build_photo_for_photo( $row );
+}
+
+function show_ligthtbox( $row )
+{
+	$show = false;
+	if (( $row['item_displaytype'] == _C_WEBPHOTO_DISPLAYTYPE_IMAGE ) &&
+	    ( $row['item_detail_onclick'] == _C_WEBPHOTO_DETAIL_ONCLICK_LIGHTBOX )) {
+		$show = true;
+	}
+	return $show;
 }
 
 // --- class end ---

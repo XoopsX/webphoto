@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.20 2009/12/16 13:32:34 ohwada Exp $
+// $Id: modinfo.php,v 1.21 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -403,6 +403,11 @@ define($constpref."GLOBAL_WAITING_NOTIFY", "Waiting Approval");
 define($constpref."GLOBAL_WAITING_NOTIFYCAP", "Notify me when any new photos waiting approval are posted (Admin)");
 define($constpref."GLOBAL_WAITING_NOTIFYDSC", "Notify me when any new photos waiting approval are posted");
 define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: auto-notify : Waiting Approval");
+
+//---------------------------------------------------------
+// v2.10
+//---------------------------------------------------------
+define($constpref."CFG_USE_LIGHTBOX","Use LightBox");
 
 }
 // === define begin ===

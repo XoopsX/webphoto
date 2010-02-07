@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: photo.php,v 1.2 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -134,7 +134,7 @@ function check_photo_init()
 
 	$row = $this->_item_public_class->get_item_row( $this->_get_photo_id ) ;
 	if( !is_array($row) ) {
-		redirect_header( $this->_MODULE_URL.'/' , $this->_TIME_FAIL , $this->get_constant('NOMATCH_PHOTO') ) ;
+		redirect_header( $this->_MODULE_URL.'/' , $this->_TIME_FAILED , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit();
 	}
 
@@ -161,7 +161,7 @@ function photo_edittag()
 	switch ( $ret )
 	{
 		case _C_WEBPHOTO_ERR_NO_PERM:
-			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAIL , _NOPERM ) ;
+			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , _NOPERM ) ;
 			exit ;
 
 		case _C_WEBPHOTO_ERR_TOKEN:
@@ -169,7 +169,7 @@ function photo_edittag()
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_token_errors();
 			}
-			redirect_header( $redirect_this_url, $this->_TIME_FAIL , $msg );
+			redirect_header( $redirect_this_url, $this->_TIME_FAILED , $msg );
 			exit();
 
 		case _C_WEBPHOTO_ERR_DB:
@@ -177,7 +177,7 @@ function photo_edittag()
 			if ( $this->_is_module_admin ) {
 				$msg .= '<br />'.$this->get_format_error();
 			}
-			redirect_header( $redirect_this_url, $this->_TIME_FAIL, $msg ) ;
+			redirect_header( $redirect_this_url, $this->_TIME_FAILED, $msg ) ;
 			exit();
 
 		case 0:
@@ -252,30 +252,25 @@ function build_photo_flash_player( $item_row, $show_arr )
 	$displaytype = $item_row['item_displaytype'] ;
 	$uid         = $item_row['item_uid'] ;
 
-	$flag  = false ;
 	$flash = null ;
 	$embed = null ;
 	$js    = null ;
 
-	if ( $displaytype < _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) {
-		return array( $flag, $flash, $embed, $js );
-	}
-
-	$flag  = true;
+	if ( $displaytype >= _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ) {
 
 // countup views if not submitter or admin.
-	if ( $this->check_not_owner( $uid ) ) {
-		$this->_item_handler->countup_views( $item_id, true );
+		if ( $this->check_not_owner( $uid ) ) {
+			$this->_item_handler->countup_views( $item_id, true );
+		}
+
+		$flash              = $this->_flash_class->build_movie_by_item_row(     $item_row );
+		list( $embed, $js ) = $this->_flash_class->build_code_embed_by_item_row( $item_row );
 	}
 
-	$flash              = $this->_flash_class->build_movie_by_item_row(     $item_row );
-	list( $embed, $js ) = $this->_flash_class->build_code_embed_by_item_row( $item_row );
-
 	$arr = array(
-		'displaytype_flash' => $flag ,
-		'flash_player'      => $flash ,
-		'code_embed'        => $embed  ,
-		'code_js'           => $js ,
+		'flash_player' => $flash ,
+		'code_embed'   => $embed  ,
+		'code_js'      => $js ,
 	);
 	return $arr;
 }

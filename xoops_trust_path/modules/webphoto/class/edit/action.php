@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
+// $Id: action.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -56,8 +56,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_edit_action extends webphoto_edit_submit
 {
 	var $_delete_class;
-	var $_mail_template_class;
-	var $_mail_send_class;
 
 //---------------------------------------------------------
 // constructor
@@ -68,10 +66,6 @@ function webphoto_edit_action( $dirname , $trust_dirname )
 
 	$this->_delete_class 
 		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname );
-	$this->_mail_template_class 
-		=& webphoto_d3_mail_template::getInstance( $dirname , $trust_dirname );
-
-	$this->_mail_send_class  =& webphoto_lib_mail_send::getInstance();
 }
 
 // for admin_photo_manage admin_catmanager
@@ -221,9 +215,9 @@ function modify_exec( $item_row )
 		case _C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR  :
 			break;
 
-// upload
+// fetch photo
 		default:
-			if ( ! $this->check_xoops_upload_file( $flag_thumb=true ) ) {
+			if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
 				return _C_WEBPHOTO_ERR_NO_SPECIFIED;
 			}
 			$ret = $this->upload_fetch_photo( true );
@@ -233,9 +227,16 @@ function modify_exec( $item_row )
 			break;
 	}
 
-	$this->upload_fetch_thumb();
-	$this->upload_fetch_middle();
-	$this->upload_fetch_small();
+// fetch thumb middle
+	if ( $this->_ini_file_thumb ) {
+		$this->upload_fetch_thumb();
+	}
+	if ( $this->_ini_file_middle ) {
+		$this->upload_fetch_middle();
+	}
+	if ( $this->_ini_file_small ) {
+		$this->upload_fetch_small();
+	}
 
 	$photo_name  = $this->_photo_tmp_name;
 	$thumb_name  = $this->_thumb_tmp_name;
@@ -532,6 +533,12 @@ function video_flash_delete( $item_row, $url_redirect )
 	exit();
 }
 
+function cont_delete( $item_row, $url_redirect )
+{
+	$this->file_delete_common( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_CONT, $url_redirect, true );
+}
+
 function thumb_delete( $item_row, $url_redirect )
 {
 	$this->file_delete_common( 
@@ -628,66 +635,6 @@ function is_waiting_status( $status )
 		return true;
 	}
 	return false;
-}
-
-function mail_approve( $row )
-{
-	return $this->mail_common( 
-		$row, 
-		_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE, 
-		'submit_approve_notify.tpl' );
-}
-
-function mail_refuse( $row )
-{
-	return $this->mail_common( 
-		$row, 
-		_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE, 
-		'submit_refuse_notify.tpl' );
-}
-
-function mail_common( $row, $subject, $template )
-{
-	$email = $this->get_xoops_email_by_uid( $row['item_uid'] );
-	if ( empty($email) ) {
-		return true;	// no action
-	}
-
-	$param = array(
-		'to_emails'  => $email ,
-		'from_email' => $this->_xoops_adminmail ,
-		'subject'    => $this->build_mail_subject( $subject ) ,
-		'body'       => $this->build_mail_body( $row, $template ),
-		'debug'      => true,
-	);
-
-	$ret = $this->_mail_send_class->send( $param );
-	if ( !$ret ) {
-		$this->set_error( $this->_mail_send_class->get_errors() );
-		return false;
-	}
-	return true;
-}
-
-function build_mail_subject( $subject )
-{
-	$str  = $subject ;
-	$str .= ' ['. $this->_xoops_sitename .'] ';
-	$str .= $this->_MODULE_NAME ;
-	return $str;
-}
-
-function build_mail_body( $row, $template )
-{
-	$tags = array(
-		'PHOTO_TITLE' => $row['item_title'] ,
-		'PHOTO_URL'   => $this->build_uri_photo( $row['item_id'] ),
-		'PHOTO_UNAME' => $this->get_xoops_uname_by_uid( $row['item_uid'] ),
-	);
-
-	$this->_mail_template_class->init_tag_array();
-	$this->_mail_template_class->assign( $tags );
-	return $this->_mail_template_class->replace_tag_array_by_template( $template );
 }
 
 // --- class end ---

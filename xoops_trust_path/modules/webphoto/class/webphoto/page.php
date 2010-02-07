@@ -1,5 +1,5 @@
 <?php
-// $Id: page.php,v 1.3 2010/01/25 10:03:07 ohwada Exp $
+// $Id: page.php,v 1.4 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2010-01-10 K.OHWADA
-// build_xoops_param()
+// webphoto_base_this
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_photo_public
 //---------------------------------------------------------
@@ -19,12 +19,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_page
 //=========================================================
-class webphoto_page
+class webphoto_page extends webphoto_base_this
 {
-	var $_xoops_class ;
-	var $_utility_class ;
-	var $_config_class ;
-	var $_perm_class ;
 	var $_public_class ;
 	var $_timeline_class;
 
@@ -35,33 +31,21 @@ class webphoto_page
 	var $_has_mail;
 	var $_has_file;
 
-	var $_DIRNAME ;
-	var $_TRUST_DIRNAME ;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_page( $dirname, $trust_dirname )
 {
-	$this->_DIRNAME       = $dirname ;
-	$this->_TRUST_DIRNAME = $trust_dirname;
+	$this->webphoto_base_this( $dirname , $trust_dirname );
 
-	$this->_init_d3_language( $dirname, $trust_dirname );
-
-	$this->_xoops_class    =& webphoto_xoops_base::getInstance();
-	$this->_utility_class  =& webphoto_lib_utility::getInstance();
-	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 	$this->_timeline_class =& webphoto_inc_timeline::getSingleton( $dirname );
-
-	$this->_perm_class     
-		=& webphoto_permission::getInstance( $dirname, $trust_dirname );
 	$this->_public_class   
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 
 	$this->_cfg_file_dir     = $this->_config_class->get_by_name('file_dir') ;
 	$this->_cfg_is_set_mail  = $this->_config_class->is_set_mail() ;
 	$this->_cfg_uploads_path = $this->_config_class->get_uploads_path();
-	
+
 	$this->_has_mail        = $this->_perm_class->has_mail() ;
 	$this->_has_file        = $this->_perm_class->has_file() ;
 }
@@ -78,6 +62,20 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // build main param
 //---------------------------------------------------------
+function build_main_param()
+{
+	$arr = array_merge( 
+		$this->build_xoops_param(), 
+		$this->build_config_param(),
+		$this->build_perm_param(),
+		$this->build_show_param(),
+		$this->build_menu_param(), 
+		$this->build_footer_param() ,
+		$this->get_lang_array()
+	);
+	return $arr;
+}
+
 function build_xoops_param()
 {
 	$arr = array(
@@ -110,6 +108,27 @@ function build_perm_param()
 		'has_insertable'   => $this->_perm_class->has_insertable(),
 		'has_mail'         => $this->_has_mail ,
 		'has_file'         => $this->_has_file ,
+	);
+	return $arr;
+}
+
+function build_show_param()
+{
+	$show_rateview    = false ;
+	$show_ratevote    = false ;
+	$show_tellafriend = false ;
+	if ( $this->get_ini('use_rating') ) {
+		$show_rateview = $this->_perm_class->has_rateview() ;
+		$show_ratevote = $this->_perm_class->has_ratevote() ;
+	}
+	if ( $this->get_ini('use_tellafriend') ) {
+		$show_tellafriend =  $this->_perm_class->has_tellafriend() ;
+	}
+
+	$arr = array(
+		'show_rateview'    => $show_rateview ,
+		'show_ratevote'    => $show_ratevote ,
+		'show_tellafriend' => $show_tellafriend ,
 	);
 	return $arr;
 }

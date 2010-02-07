@@ -1,5 +1,5 @@
 <?php
-// $Id: help.php,v 1.10 2010/01/25 10:03:07 ohwada Exp $
+// $Id: help.php,v 1.11 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -61,14 +61,7 @@ function main()
 {
 	$this->_assign_xoops_header();
 
-	$main_param = array_merge( 
-		$this->_page_class->build_xoops_param(), 
-		$this->_page_class->build_config_param(),
-		$this->_page_class->build_perm_param(),
-		$this->_page_class->build_menu_param(), 
-		$this->_page_class->build_footer_param() ,
-		$this->_page_class->get_lang_array()
-	);
+	$main_param = $this->_page_class->build_main_param(); 
 
 	$this->_show_menu_mail = $main_param['show_menu_mail'] ;
 	$this->_show_menu_file = $main_param['show_menu_file'] ;

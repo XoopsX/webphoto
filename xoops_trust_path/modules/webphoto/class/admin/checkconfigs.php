@@ -1,5 +1,5 @@
 <?php
-// $Id: checkconfigs.php,v 1.15 2009/11/29 07:34:21 ohwada Exp $
+// $Id: checkconfigs.php,v 1.16 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// _module_version()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_jodconverter
 // 2009-10-25 K.OHWADA
@@ -94,6 +96,7 @@ function _check_server()
 
 	echo "<h4>". _AM_WEBPHOTO_H4_ENVIRONMENT ."</h4>\n" ;
 	echo $this->_server_class->build_server();
+	echo $this->_module_version();
 
 	echo '<h4>'. _AM_WEBPHOTO_MYSQL_CONFIG ."</h4>\n";
 	$handler = new webphoto_lib_handler();
@@ -111,6 +114,14 @@ function _check_server()
 	echo $this->_multibyte_class->build_config_mbstring();
 	echo "<br />\n";
 	echo $this->_multibyte_class->build_config_iconv();
+}
+
+function _module_version()
+{
+	$str  = "Webphoto: ";
+	$str .= $this->_xoops_class->get_my_module_version( true );
+	$str .= "<br />\n"; 
+	return $str;
 }
 
 function _check_mulitibyte_link()

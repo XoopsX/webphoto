@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.22 2009/12/24 06:32:22 ohwada Exp $
+// $Id: index.php,v 1.23 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// _check_module_version()
 // 2009-12-06 K.OHWADA
 // change _print_file_check()
 // 2009-10-25 K.OHWADA
@@ -109,7 +111,6 @@ function main()
 	echo $this->build_admin_title( 'CHECKCONFIGS' );
 
 	$this->_print_check();
-	echo $this->_update_check_class->build_msg();
 	$this->_checkconfig_class->check();
 	$this->_print_file_check();
 	$this->_print_timeline();
@@ -148,6 +149,15 @@ function _print_check()
 
 	$this->_workdir_file();
 
+	if ( ! $this->_check_module_version() ) {
+		$msg  = '<a href="'. $this->_get_module_update_url() .'">';
+		$msg .= _AM_WEBPHOTO_MUST_UPDATE ;
+		$msg .= '</a>';
+		echo $this->build_error_msg( $msg, '', false );
+	}
+
+	echo $this->_update_check_class->build_msg();
+
 	if ( $this->_cat_handler->get_count_all() == 0 ) {
 		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';
 		$msg .= _WEBPHOTO_ERR_MUSTADDCATFIRST ;
@@ -159,6 +169,27 @@ function _print_check()
 	echo $this->build_check_waiting();
 
 	echo "<br />\n";
+}
+
+function _check_module_version()
+{
+	$ver1 = $this->_xoops_class->get_my_module_version();
+	$ver2 = $this->_xoops_class->get_module_info_version_by_dirname( $this->_DIRNAME, true );
+
+	if ( $ver1 == $ver2 ) {
+		return true;
+	}
+	return false;
+}
+
+function _get_module_update_url()
+{
+	if ( defined( 'XOOPS_CUBE_LEGACY' ) ) {
+		$str = XOOPS_URL ."/modules/legacy/admin/index.php?action=ModuleUpdate&amp;dirname=". $this->_DIRNAME;
+	} else {
+		$str = XOOPS_URL ."/modules/system/admin.php?fct=modulesadmin&amp;op=update&amp;module=". $this->_DIRNAME;
+	}
+	return $str;
 }
 
 function _make_dir( $dir, $check_writable=true )

@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.43 2010/01/28 20:20:50 ohwada Exp $
+$Id: readme_en.txt,v 1.44 2010/02/07 12:20:02 ohwada Exp $
 
 =================================================
 Version: 2.10
-Date:   2010-01-29
+Date:   2010-02-06
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -45,12 +45,21 @@ it is valid when the uploaded file is a picture image.
 show the PDF file in new window.
 It is valid when the PDF file is generated from the uploaded file.
 
-4. bug fix
+4. Submit form
+(1) added plain (simple textbox) in editor type of description
+(2) removed link from thumbnail in preview
+
+5. Admin page
+(1) show version of webphoto in "Check Configuration"
+
+6. bug fix
 (1) Fatal error in weblink module
 (2) wrong link to user group in group permission
 (3) wrong URL in the approval waiting email when in bulk submit
+(4) the user can not delete the main photo in edit
+(5) error in rate
 
-5. Database structure
+7. Database structure
 (1) item table: add field item_description_scroll
 item_perm_level
 

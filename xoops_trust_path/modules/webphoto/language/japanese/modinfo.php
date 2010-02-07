@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.19 2009/12/16 13:32:34 ohwada Exp $
+// $Id: modinfo.php,v 1.20 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -403,6 +403,11 @@ define($constpref."GLOBAL_WAITING_NOTIFY", "承認待ちの写真投稿");
 define($constpref."GLOBAL_WAITING_NOTIFYCAP", "承認待ちの写真が投稿された時に通知する (管理者)");
 define($constpref."GLOBAL_WAITING_NOTIFYDSC", "承認待ちの写真が投稿された時に通知する");
 define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 承認待ちの写真が投稿されました");
+
+//---------------------------------------------------------
+// v2.10
+//---------------------------------------------------------
+define($constpref."CFG_USE_LIGHTBOX","LightBox を使用する");
 
 }
 // === define begin ===

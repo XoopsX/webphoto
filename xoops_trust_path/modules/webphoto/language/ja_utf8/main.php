@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.33 2010/01/25 10:03:07 ohwada Exp $
+// $Id: main.php,v 1.34 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1451,6 +1451,11 @@ define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL_DSC", "スクロールの高さを px�
 // item option
 define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "写真を別画面に表示する");
 define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "写真を lightbox で表示する");
+
+// submit
+define("_WEBPHOTO_MAIL_SUBMIT_WAITING", "承認待ちの写真が投稿されました");
+define("_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
+define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "写真が拒否されました");
 
 // === define end ===
 }

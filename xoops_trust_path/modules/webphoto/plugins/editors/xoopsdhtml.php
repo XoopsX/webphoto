@@ -1,10 +1,16 @@
 <?php
-// $Id: xoopsdhtml.php,v 1.1 2009/01/06 09:42:30 ohwada Exp $
+// $Id: xoopsdhtml.php,v 1.2 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-04 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-01 K.OHWADA
+// set_display_html()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -22,6 +28,7 @@ function webphoto_editor_xoopsdhtml()
 
 	$this->set_allow_in_not_has_html( true );
 	$this->set_show_display_options(  true );
+	$this->set_display_html(   1 ) ;
 	$this->set_display_smiley( 1 ) ;
 	$this->set_display_xcode(  1 ) ;
 	$this->set_display_image(  1 ) ;

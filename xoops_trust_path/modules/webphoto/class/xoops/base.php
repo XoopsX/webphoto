@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.8 2009/12/16 13:32:34 ohwada Exp $
+// $Id: base.php,v 1.9 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-01 K.OHWADA
+// get_module_info_value_by_dirname()
 // 2009-12-06 K.OHWADA
 // get_system_groups()
 // 2009-04-19 K.OHWADA
@@ -103,6 +105,15 @@ function get_my_module_id( $format='s' )
 function get_my_module_name( $format='s' )
 {
 	return $this->get_my_module_value_by_name( 'name', $format );
+}
+
+function get_my_module_version( $flag_format=false )
+{
+	$ver = $this->get_my_module_value_by_name( 'version' );
+	if ( $flag_format ) {
+		$ver = sprintf("%.2f", $ver/100 );
+	}
+	return $ver;
 }
 
 function get_my_module_value_by_name( $name, $format='s' )
@@ -224,7 +235,26 @@ function get_module_value_by_dirname( $dirname, $name, $format='s' )
 	$module_handler =& xoops_gethandler('module');
 	$module = $module_handler->getByDirname( $dirname );
 	if ( is_object($module) ) {
-		return $module->getVar( $name, $format='s' );
+		return $module->getVar( $name, $format );
+	}
+	return false;
+}
+
+function get_module_info_version_by_dirname( $dirname, $flag_format=false )
+{
+	$ver = $this->get_module_info_value_by_dirname( $dirname, 'version' );
+	if ( $ver && $flag_format ) {
+		$ver = 100 * $ver;
+	}
+	return $ver;
+}
+
+function get_module_info_value_by_dirname( $dirname, $name )
+{
+	$module_handler =& xoops_gethandler('module');
+	$module = $module_handler->getByDirname( $dirname );
+	if ( is_object($module) ) {
+		return $module->getInfo( $name );
 	}
 	return false;
 }
@@ -330,6 +360,12 @@ function get_member_user_list( $limit=0, $start=0 )
 
 	$member_handler =& xoops_gethandler('member');
 	return $member_handler->getUserList( $criteria );
+}
+
+function get_member_users_by_group( $group_id, $asobject=false, $limit=0, $start=0 )
+{
+	$member_handler =& xoops_gethandler('member');
+    return $member_handler->getUsersByGroup( $group_id, $asobject, $limit, $start );
 }
 
 //--------------------------------------------------------

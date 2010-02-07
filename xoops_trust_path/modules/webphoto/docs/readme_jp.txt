@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.44 2010/01/28 20:20:50 ohwada Exp $
+$Id: readme_jp.txt,v 1.45 2010/02/07 12:20:02 ohwada Exp $
 
 =================================================
 Version: 2.10
-Date:   2010-01-29
+Date:   2010-02-06
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -44,12 +44,21 @@ lightbox2 にて原寸大の写真をポップアップ表示する
 別画面にPDFファイルを表示する
 アップロードしたファイルから PDF が生成されたときに有効
 
-4. バグ修正
+4. 登録画面
+(1) 説明文のエディタ形式に plain (普通のtextbox) を追加した
+(2) プレビュー時のサムネイルからリンクを削除した
+
+5. 管理者画面
+(1) 動作チェッカーに webphoto のバージョンを表示した
+
+6. バグ修正
 (1) weblink モジュールとの連携にて Fatal error
 (2) 各グループの権限にてユーザグループのリンク先がおかしい
 (3) 一括登録のとき承認待ちメール内のURLが正しくない
+(4) 編集画面にて メイン画像が削除できない
+(5) 投票にて error
 
-5. データベース構造
+7. データベース構造
 (1) item テーブル: 項目追加 item_description_scroll
 
 

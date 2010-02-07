@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.2 2010/01/25 10:03:07 ohwada Exp $
+// $Id: xoops_header.php,v 1.3 2010/02/07 12:20:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -23,9 +23,8 @@ class webphoto_xoops_header extends webphoto_base_this
 
 	var $_cfg_gmap_apikey;
 	var $_cfg_use_popbox;
+	var $_cfg_use_lightbox;
 	var $_cfg_timeline_dirname;
-
-	var $_ini_use_lightbox;
 
 	var $_flag_css      = false;
 	var $_flag_box      = false;
@@ -52,9 +51,8 @@ function webphoto_xoops_header( $dirname, $trust_dirname )
 
 	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
 	$this->_cfg_use_popbox       = $this->get_config_by_name('use_popbox');
+	$this->_cfg_use_lightbox     = $this->get_config_by_name('use_lightbox');
 	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');
-
-	$this->_ini_use_lightbox = $this->get_ini('use_lightbox');
 	
 	$this->_LIGHTBOX_URL = $this->_MODULE_URL .'/images/lightbox';
 }
@@ -140,7 +138,7 @@ function _build_xoops_header()
 		$str .= $this->_build_header_once( 'cookiemanager_js' );
 		$str .= $this->_build_header_once( 'box_js' );
 	}
-	if ( $this->_flag_lightbox && $this->_ini_use_lightbox ) {
+	if ( $this->_flag_lightbox && $this->_cfg_use_lightbox ) {
 		$str .= $this->_build_header_once( 'prototype_js' );
 		$str .= $this->_build_header_once( 'scriptaculous_js' );
 		$str .= $this->_build_once_lightbox();
