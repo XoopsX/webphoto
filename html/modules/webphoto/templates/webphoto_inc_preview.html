@@ -1,0 +1,22 @@
+<{* $Id: webphoto_inc_preview.html,v 1.1 2010/02/07 12:46:40 ohwada Exp $ *}>
+
+<table><tr>
+
+<{* IMAGE PART *}>
+<td class="webphoto_list_td_image">
+<div class="webphoto_list_image">
+<img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" />
+</div>
+</td>
+
+<{* INFORMATION PART *}>
+<td class="webphoto_list_td_info">
+  <{include file="db:`$mydirname`_inc_photo_info.html"}>
+  <{if $photo.summary != '' }>
+    <div class="webphoto_description">
+    <{$photo.summary}>
+    </div>
+  <{/if}>
+</td>
+
+</tr></table>

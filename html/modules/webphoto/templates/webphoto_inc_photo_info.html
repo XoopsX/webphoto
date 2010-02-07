@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_info.html,v 1.11 2010/01/25 10:56:24 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_info.html,v 1.12 2010/02/07 12:46:40 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -7,8 +7,13 @@
 
 <{* EDIT ICON *}>
 <{if $photo.can_edit}>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" /></a>
+  <{if $show_photo_edit_link }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=edit&amp;photo_id=<{$photo.photo_id}>">
+  <{/if}>
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/edit.png" border="0" alt="<{$lang_title_edit}>" title="<{$lang_title_edit}>" />
+  <{if $show_photo_edit_link }>
+    </a>
+  <{/if}>
 <{/if}>
 
 <{* GROUP ICON *}>
@@ -17,17 +22,21 @@
 <{/if}>
 
 <{* PHOTO SUBJECT *}>
-<{if $cfg_use_pathinfo && $search_merged_urlencode }>
-  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/keywords=<{$search_merged_urlencode}>/">
-<{elseif $cfg_use_pathinfo }>
-  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
-<{elseif $search_merged_urlencode }>
-  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>&amp;keywords=<{$search_merged_urlencode}>">
-<{else}>
-  <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+<{if $show_photo_title_link }>
+  <{if $cfg_use_pathinfo && $search_merged_urlencode }>
+    <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/keywords=<{$search_merged_urlencode}>/">
+  <{elseif $cfg_use_pathinfo }>
+    <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{elseif $search_merged_urlencode }>
+    <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>&amp;keywords=<{$search_merged_urlencode}>">
+  <{else}>
+    <a id="webphoto_list_link_<{$webphoto_list_num}>" href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <{/if}>
 <{/if}>
-
-<b><{$photo.title_s}></b></a>
+<b><{$photo.title_s}></b>
+<{if $show_photo_title_link }>
+  </a>
+<{/if}>
 
 <{* NEW ICON *}>
 <{if $photo.is_newphoto}>
@@ -51,9 +60,13 @@
 <{* SUBMITTER *}>
 <{* user *}>
 <{if $photo.uid > 0}>
-  <a href="<{$xoops_url}>/userinfo.php?uid=<{$photo.uid}>">
+  <{if $show_photo_uid_link }>
+    <a href="<{$xoops_url}>/userinfo.php?uid=<{$photo.uid}>">
+  <{/if}>
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/submitter.png" width="16" height="16" alt="<{$lang_submitter}>" title="<{$lang_submitter}>" border="0" />
-  </a>
+  <{if $show_photo_uid_link }>
+    </a>
+  <{/if}>
 
   <{if $show_photo_user_link }>
     <{if $cfg_use_pathinfo }>
@@ -62,10 +75,8 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user&amp;p=<{$photo.uid}>">
     <{/if}>
   <{/if}>
-
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/myphotos.png" width="16" height="16" alt="<{$photo.info_morephotos}>" title="<{$photo.info_morephotos}>" border="0" /> 
   <{$photo.uname_s}>
-
   <{if $show_photo_user_link }>
     </a>
   <{/if}>
@@ -86,7 +97,6 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date&amp;p=<{$photo.datetime_urlencode}>">
     <{/if}>
   <{/if}>
-
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/datetime.png" width="16" height="16" alt="<{$lang_photo_datetime}>" title="<{$lang_photo_datetime}>" />
   <{$photo.datetime_disp}>
   <{if $show_photo_date_link }>
@@ -103,7 +113,6 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place&amp;p=<{$photo.place_urlencode}>">
     <{/if}>
   <{/if}>
-
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/place.png" width="16" height="16" alt="<{$lang_photo_place}>" title="<{$lang_photo_place}>" />
   <{$photo.place_s}>
   <{if $show_photo_place_link }>
@@ -120,10 +129,8 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=search&amp;p=<{$photo.equipment_urlencode}>">
     <{/if}>
   <{/if}>
-
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/equipment.png" width="16" height="16" alt="<{$lang_photo_equipment}>" title="<{$lang_photo_equipment}>" />
   <{$photo.equipment_s}>
-
   <{if $show_photo_equipment_link }>
     </a> 
   <{/if}>
@@ -153,13 +160,10 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=tag&amp;p=<{$tag.urlencoded}>">
     <{/if}>
   <{/if}>
-
   <{$tag.tag_name_s}>
-
   <{if $show_photo_tag_link }>  
     </a>
   <{/if}>
-
   <{if ! $smarty.foreach.webphoto_tags.last }>
       , 
   <{/if}>
@@ -167,7 +171,6 @@
 
 <{* CATEGORY *}>
 <{if $photo.cat_title_s}>
-
   <{if $show_photo_category_link }>
     <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/<{$photo.cat_id}>/">
@@ -175,14 +178,11 @@
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category&amp;p=<{$photo.cat_id}>">
     <{/if}>
   <{/if}>
-
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/category.png" width="16" height="16" alt="<{$lang_category}>" title="<{$lang_category}>" border="0" />
   <{$photo.cat_title_s}>
-  
   <{if $show_photo_category_link }>
     </a>
   <{/if}>
-
   &nbsp; &nbsp;
 <{/if}>
 
@@ -209,7 +209,7 @@
 <{$photo.comments}> &nbsp; &nbsp;
 
 <{* RANK & RATING *}>
-<{if $has_rateview}>
+<{if $show_rateview}>
   <{if $photo.rating > 0}>
     <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rank<{$photo.rank}>.png" alt="<{$photo.rating}>" title="<{$photo.rating}>" border="0" />
     <{$photo.info_votes}>
@@ -220,22 +220,31 @@
 <{/if}>
 
 <{* VOTE BUTTON *}>
-<{if $has_ratevote && $photo.can_rate }>
+<{if $show_ratevote && $photo.can_rate }>
+  <{if $show_photo_rate_link }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rate&amp;photo_id=<{$photo.photo_id}>">
+  <{/if}>
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/vote.png" alt="<{$lang_votethis}>" title="<{$lang_votethis}>" border="0" />
-  <{$lang_votethis}></a>
+  <{$lang_votethis}>
+  <{if $show_photo_rate_link }>
+    </a>
+  <{/if}>
 <{/if}>
 
 <{* TELL A FRIEND *}>
-<{if $has_tellafriend}>
-  <{if $is_taf_module }>
-    <a href="<{$xoops_url}>/modules/tellafriend/index.php?target_uri=<{$photo.taf_target_uri}>" >
-  <{else}>
-    <a target="_top" href="mailto:?<{$photo.taf_mailto}>">
+<{if $show_tellafriend}>
+  <{if $show_photo_taf_link }>
+    <{if $is_taf_module }>
+      <a href="<{$xoops_url}>/modules/tellafriend/index.php?target_uri=<{$photo.taf_target_uri}>" >
+    <{else}>
+      <a target="_top" href="mailto:?<{$photo.taf_mailto}>">
+    <{/if}>
   <{/if}>
-  
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/tellafriend.png" width="24" height="16" alt="<{$lang_tellafriend}>" title="<{$lang_tellafriend}>" />
-  <{$lang_tellafriend}></a>
+  <{$lang_tellafriend}>
+  <{if $show_photo_taf_link }>
+    </a>
+  <{/if}>
 <{/if}>
 
 <br />

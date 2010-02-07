@@ -1,6 +1,6 @@
-<{* $Id: webphoto_inc_photo_desc.html,v 1.1 2010/01/25 10:56:24 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_desc.html,v 1.2 2010/02/07 12:46:40 ohwada Exp $ *}>
 
-<{if $show_photo_desc && $photo.show_desc }>
+<{if $show_photo_desc && ($photo.description_disp != '') }>
   <div class="webphoto_description">
 
 <{* DESCRIPTION *}>
@@ -11,6 +11,12 @@
   <{else}>
     <{$photo.description_disp}> <br />
   <{/if}>
+
+  </div>
+<{/if}>
+
+<{if $show_photo_misc && $photo.show_misc }>
+  <div class="webphoto_description">
 
   <{if $photo.siteurl_s != '' }>
     <{$lang_item_siteurl}>: <a href="<{$photo.siteurl_s}>" target="_blank"><{$photo.siteurl_s}></a> <br /> 
