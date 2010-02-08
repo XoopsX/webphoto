@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_send.php,v 1.1 2010/02/07 12:22:11 ohwada Exp $
+// $Id: mail_send.php,v 1.2 2010/02/08 01:42:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -44,51 +44,49 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function send_waiting( $row )
 {
-	$param = array(
-		'to_emails'  => $this->build_waiting_emails( $row ) ,
-		'from_email' => $this->_xoops_adminmail ,
-		'subject'    => $this->build_subject( $this->get_constant('MAIL_SUBMIT_WAITING') ) ,
-		'body'       => $this->build_waiting_body( $row, 'global_waiting_notify.tpl' ),
-		'debug'      => true,
-	);
+	$from_email = $this->_xoops_adminmail ;
+	$subject    = $this->build_subject( $this->get_constant('MAIL_SUBMIT_WAITING') ) ;
+	$body       = $this->build_waiting_common_body( $row, 'global_waiting_notify.tpl' ) ;
 
-	return $this->send_by_param( $param );
+	$users = $this->build_waiting_users( $row );
+	foreach ( $users as $user )
+	{
+		$param = array(
+			'to_emails'  => $user->getVar('email','n') ,
+			'from_email' => $from_email ,
+			'subject'    => $subject ,
+			'body'       => $this->build_waiting_body( $user, $body ),
+			'debug'      => true,
+		);
+
+		$this->send_by_param( $param );
+	}
 }
 
-function build_waiting_emails( $item_row )
+function build_waiting_users( $item_row )
 {
-	$emails = null;
+	$users = null;
 
-// cat group
-	$cat_row = $this->_cat_handler->get_cached_row_by_id( $item_row['item_cat_id'] );
-	if ( isset($cat_row['cat_group_id']) && $cat_row['cat_group_id'] ) {
-		$emails = $this->get_emails_by_groupid( $cat_row['cat_group_id'] );
+// module admin
+	$groupid_admin = $this->get_config_by_name('groupid_admin');
+	if ( $groupid_admin ) {
+		$users = $this->get_users_by_groupid( $groupid_admin );
 	}
 
-// admin group
-	if ( !is_array($emails) || !count($emails) ) {
-		$emails = $this->get_emails_by_groupid( XOOPS_GROUP_ADMIN );
-	}
-
-	return $emails;
-}
-
-function get_emails_by_groupid( $group_id )
-{
-	$users = $this->_xoops_class->get_member_users_by_group( $group_id, true );
+// xoops admin
 	if ( !is_array($users) || !count($users) ) {
-		return false;
+		$users = $this->get_users_by_groupid( XOOPS_GROUP_ADMIN );
 	}
 
-	$emails = array();
-	foreach ( $users as $user ) {
-		$emails[] = $user->getVar('email', 'n');
-	}
-
-	return $emails;
+	return $users;
 }
 
-function build_waiting_body( $row, $template )
+function get_users_by_groupid( $group_id )
+{
+	return $this->_xoops_class->get_member_users_by_group( $group_id, true );
+}
+
+function build_waiting_common_body( $row, $template )
 {
 	$url = $this->_MODULE_URL .'/admin/index.php?fct=item_manager&op=modify_form&item_id='. $row['item_id'] ;
 	$tags = array( 
@@ -97,6 +95,15 @@ function build_waiting_body( $row, $template )
 	 );
 
 	return $this->build_body_by_tags( $tags, $template );
+}
+
+function build_waiting_body( $user, $str )
+{
+	$tags = array( 
+		'X_UNAME' => $user->getVar('uname') ,
+	 );
+
+	return $this->_mail_template_class->replace_str_by_tags( $str, $tags );
 }
 
 //---------------------------------------------------------

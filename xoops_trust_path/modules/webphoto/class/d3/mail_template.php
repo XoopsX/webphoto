@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_template.php,v 1.1 2009/12/16 13:36:20 ohwada Exp $
+// $Id: mail_template.php,v 1.2 2010/02/08 01:42:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-01 K.OHWADA
+// replace_str_by_tags()
+//---------------------------------------------------------
 
 //=========================================================
 // class webphoto_d3_mail_template
@@ -144,7 +150,12 @@ function assign($tag, $value=null)
 
 function replace_tag_array( $str ) 
 {
-	foreach ( $this->_tag_array as $k => $v ) {
+	return $this->replace_str_by_tags( $str, $this->_tag_array );
+}
+
+function replace_str_by_tags( $str, $tags ) 
+{
+	foreach ( $tags as $k => $v ) {
 		$str = str_replace("{".$k."}", $v, $str);
 	}
 	return $str;

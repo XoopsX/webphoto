@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.34 2010/02/07 12:20:02 ohwada Exp $
+// $Id: main.php,v 1.35 2010/02/08 01:42:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1455,6 +1455,9 @@ define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "写真を lightbox で表示する");
 define("_WEBPHOTO_MAIL_SUBMIT_WAITING", "承認待ちの写真が投稿されました");
 define("_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
 define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "写真が拒否されました");
+
+// edit
+define("_WEBPHOTO_LOOK_PHOTO","写真を見る");
 
 // === define end ===
 }
