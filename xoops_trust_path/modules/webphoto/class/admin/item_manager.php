@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.24 2010/02/07 12:20:02 ohwada Exp $
+// $Id: item_manager.php,v 1.25 2010/02/08 01:51:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -763,6 +763,7 @@ function _modify_form()
 	$item_id     = $item_row['item_id'] ;
 	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$kind        = $item_row['item_kind'] ;
+	$title_s     = $this->sanitize( $item_row['item_title'] ) ;
 
 // if use prem_level
 	if ( $this->use_item_perm_level() ) {
@@ -778,15 +779,24 @@ function _modify_form()
 	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
 
+	$edit_url  = $this->_MODULE_URL .'/index.php?fct=edit&amp;photo_id='. $item_id ;
 	$table_url = $this->_MODULE_URL .'/admin/index.php?fct=item_table_manage&amp;op=form&amp;id='. $item_id ;
 
 	echo $this->build_preview_template( 
 		$show_class->build_photo_show( $item_row, $this->get_tag_name_array() ) ) ;
-	echo "<br />\n";
+	echo "<br /><br />\n";
 
-	echo '<a href="'. $table_url .'">';
+	echo ' - <a href="'. $this->build_uri_photo( $item_id ) .'">';;
+	echo $this->get_constant('LOOK_PHOTO').' : '. $title_s ;
+	echo "</a> <br />\n";
+
+	echo ' - <a href="'. $edit_url .'">';
+	echo $this->get_constant('TITLE_EDIT').' : '. $item_id ;
+	echo "</a> <br />\n";
+
+	echo ' - <a href="'. $table_url .'">';
 	echo $this->get_admin_title( 'ITEM_TABLE_MANAGE' ).' : '. $item_id ;
-	echo "</a><br /><br />\n";
+	echo "</a> <br /><br />\n";
 
 	$options = $this->_editor_class->build_list_options( true );
 

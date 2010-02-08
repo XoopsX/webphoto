@@ -1,4 +1,4 @@
-<{* $Id: main_edit.html,v 1.1 2009/04/19 11:41:45 ohwada Exp $ *}>
+<{* $Id: main_edit.html,v 1.2 2010/02/08 01:54:49 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -23,12 +23,22 @@
 
 <{if $show_preview }>
   <{include file="db:`$mydirname`_inc_photo_in_list.html"}>
+  <br />
+  - 
+  <{if $cfg_use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/photo/<{$photo.photo_id}>/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=photo&amp;p=<{$photo.photo_id}>">
+  <{/if}>
+  <{$lang_look_photo}> : <{$photo.title_s}>
+  </a> <br />
 <{/if}>
 
 <{if $show_admin_manager }>
+  - 
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=item_manager&amp;op=modify_form&amp;item_id=<{$item_id}>">
-  goto admin item manager: <{$item_id}></a>
-  <br /><br />
+  goto admin item manager: <{$item_id}>
+  </a>  <br /><br />
 <{/if}>
 
 <{if $show_form_photo }>
