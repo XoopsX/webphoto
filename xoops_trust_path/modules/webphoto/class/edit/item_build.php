@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.14 2010/02/07 12:20:02 ohwada Exp $
+// $Id: item_build.php,v 1.15 2010/02/09 14:40:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -102,6 +102,21 @@ function set_flag_admin( $val )
 //---------------------------------------------------------
 function build_row_submit_by_post( $row, $item_datetime_checkbox )
 {
+	$row = $this->build_row_common_by_post( $row, $item_datetime_checkbox );
+	$row = $this->build_row_perm_by_post( $row, true );
+	return $row;
+}
+
+function build_row_modify_by_post( $row, $item_datetime_checkbox, $flag_status=true )
+{
+	$row = $this->build_row_common_by_post( $row, $item_datetime_checkbox );
+	$row = $this->build_row_edit_by_post( $row, $flag_status );
+	$row = $this->build_row_perm_by_post( $row, false );
+	return $row;
+}
+
+function build_row_common_by_post( $row, $item_datetime_checkbox )
+{
 // basic
 	$row['item_cat_id']             = $this->get_post_int(  'item_cat_id' );
 	$row['item_title']              = $this->get_post_text( 'item_title' ) ;
@@ -183,23 +198,9 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 		$row['item_page_height'] = $this->get_post_int('item_page_height');
 	}
 
-	if ( $this->use_item('perm_down') ) {
-		$row['item_perm_down'] = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
-	}
-
 // description html
 	if ( $this->_has_html ) {
 		$row['item_description_html']   = $this->get_post_int( 'item_description_html' );
-	}
-
-// perm read
-	if ( $this->use_item_perm_read() ) {
-		$row['item_perm_read'] = $this->get_group_perms_str_by_post( 'item_perm_read_ids' );
-	}
-
-// perm level
-	if ( $this->use_item_perm_level() ) {
-		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
 	}
 
 // gmap
@@ -239,7 +240,7 @@ function build_row_submit_by_post( $row, $item_datetime_checkbox )
 	return $row;
 }
 
-function build_row_modify_by_post( $row, $flag_status=true )
+function build_row_edit_by_post( $row, $flag_status=true )
 {
 	$item_id = $row['item_id'] ;
 
@@ -280,18 +281,6 @@ function build_row_modify_by_post( $row, $flag_status=true )
 		$row['item_time_update'] = time();
 	}
 
-	if ( $this->use_item_perm_level_admin() ) {
-		$perm  = $this->build_item_perm_by_post_level();
-		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
-		$row['item_perm_read']  = $perm;
-
-	} elseif ( $this->use_item_perm_level_user() ) {
-		$perm  = $this->build_item_perm_by_post_level();
-		$row['item_perm_level'] = $this->get_post_int( 'item_perm_level' );
-		$row['item_perm_read']  = $perm;
-		$row['item_perm_down']  = $perm;
-	}
-
 	if ( $flag_status ) {
 		$row['item_status'] = $this->build_modify_status( $row );
 	}
@@ -299,7 +288,45 @@ function build_row_modify_by_post( $row, $flag_status=true )
 	return $row;
 }
 
+function build_row_perm_by_post( $row, $flag_submit )
+{
+	$item_perm       = $this->build_item_perm_by_post_level();
+	$item_perm_level = $this->get_post_int( 'item_perm_level' );
+	$item_perm_read  = $this->get_group_perms_str_by_post( 'item_perm_read_ids' );
+	$item_perm_down  = $this->get_group_perms_str_by_post( 'item_perm_down_ids' );
 
+// admin
+	if ( $this->use_item_perm_level_admin() ) {
+		$row['item_perm_level'] = $item_perm_level ;
+		$row['item_perm_read']  = $item_perm;
+
+		if ( $this->use_item('perm_down') ) {
+			$row['item_perm_down'] = $item_perm_down ;
+		}
+
+// user
+	} elseif ( $flag_submit && $this->use_item_perm_level() ) {
+		$row['item_perm_level'] = $item_perm_level;
+		$row['item_perm_read']  = $item_perm;
+		$row['item_perm_down']  = $item_perm;
+
+	} elseif ( !$flag_submit && $this->editable_item_perm_level() ) {
+		$row['item_perm_level'] = $item_perm_level;
+		$row['item_perm_read']  = $item_perm;
+		$row['item_perm_down']  = $item_perm;
+
+// not use item_level
+	} else {
+		if ( $this->use_item_perm_read() ) {
+			$row['item_perm_read'] = $item_perm_read ;
+		}
+		if ( $this->use_item('perm_down') ) {
+			$row['item_perm_down'] = $item_perm_down ;
+		}
+	}
+
+	return $row;
+}
 
 function get_item_datetime_by_post( $checkbox )
 {
@@ -389,10 +416,10 @@ function use_item_perm_level_admin()
 	return false;
 }
 
-function use_item_perm_level_user()
-{
-	return $this->editable_item_perm_level();
-}
+//function use_item_perm_level_user()
+//{
+//	return $this->editable_item_perm_level();
+//}
 
 function build_item_perm_by_post_level()
 {

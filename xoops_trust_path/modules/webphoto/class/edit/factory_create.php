@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
+// $Id: factory_create.php,v 1.12 2010/02/09 14:40:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -386,9 +386,7 @@ function build_item_row_submit_small( $row )
 
 function build_item_row_modify_post( $row, $checkbox )
 {
-	$row = $this->build_row_submit_by_post( $row, $checkbox );
-	$row = $this->build_row_modify_by_post( $row );
-	return $row;
+	return $this->_item_build_class->build_row_modify_by_post( $row, $checkbox );
 }
 
 function build_item_row_modify_update( $row, $file_id_array, $tag_name_array )
@@ -405,7 +403,7 @@ function build_row_submit_by_post( $row, $checkbox )
 	return $this->_item_build_class->build_row_submit_by_post( $row, $checkbox );
 }
 
-function build_row_modify_by_post( $row, $flag_status=true )
+function XXXbuild_row_modify_by_post( $row, $flag_status=true )
 {
 	return $this->_item_build_class->build_row_modify_by_post( $row, $flag_status );
 }

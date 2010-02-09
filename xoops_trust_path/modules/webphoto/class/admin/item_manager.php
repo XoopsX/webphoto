@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.25 2010/02/08 01:51:54 ohwada Exp $
+// $Id: item_manager.php,v 1.26 2010/02/09 14:40:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -764,17 +764,6 @@ function _modify_form()
 	$flashvar_id = $item_row['item_flashvar_id'] ;
 	$kind        = $item_row['item_kind'] ;
 	$title_s     = $this->sanitize( $item_row['item_title'] ) ;
-
-// if use prem_level
-	if ( $this->use_item_perm_level() ) {
-		$perm = $this->build_item_perm_by_row( $item_row );
-		$item_row['item_perm_read'] = $perm;
-
-// if waiting
-		if ( $this->is_waiting_status( $item_row['item_status'] ) ) {
-			$item_row['item_perm_down'] = $perm;
-		}
-	}
 
 	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
