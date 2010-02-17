@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_submit.html,v 1.4 2010/02/07 12:46:40 ohwada Exp $ *}>
+<{* $Id: webphoto_main_submit.html,v 1.5 2010/02/17 04:51:43 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -16,6 +16,7 @@
   </div>
 <{/if}>
 
+<{* div *}>
 <div id="webphoto_submit_form">
 
 <{if $message != '' }>
@@ -61,9 +62,16 @@
   <br />
 <{/if}>
 
-</div>
+<hr />
+<div class="webphoto_execution_time">execution time : <{$execution_time}> sec </div>
+<{if $is_module_admin && ($memory_usage > 0)}>
+	<div class="webphoto_memory_usage">memory usage : <{$memory_usage}> MB </div>
+<{/if}>
 
 <{if $is_module_admin }>
   <br />
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php"><{$lang_goto_admin}></a>
 <{/if}>
+
+</div>
+<{* div end *}>

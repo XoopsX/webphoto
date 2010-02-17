@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_photo.html,v 1.9 2010/02/07 12:46:40 ohwada Exp $ *}>
+<{* $Id: webphoto_form_photo.html,v 1.10 2010/02/17 04:51:43 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -41,6 +41,10 @@ function webphoto_gmap_disp_on()
   <input type="hidden" id="item_content" name="item_content" value="<{$item_content_s}>" />
 <{/if}>
 
+<{if $show_item_cat_id_hidden }>
+  <input type="hidden" id="item_cat_id" name="item_cat_id" value="<{$item_cat_id}>" />
+<{/if}>
+
 <{if $show_desc_options_hidden }>
   <input type="hidden" id="item_description_html" name="item_description_html" value="<{$item_description_html}>" />
   <input type="hidden" id="item_description_smiley" name="item_description_smiley" value="<{$item_description_smiley}>" />
@@ -63,21 +67,23 @@ function webphoto_gmap_disp_on()
 
 <{* === basic table === *}>
 <table class="outer" cellpadding="4" cellspacing="1" width="100%">
-<tr align="center"><th colspan="2"><{$lang_title_photoupload}></th></tr>
+<tr align="center"><th colspan="2"><{$form_title}></th></tr>
 
 <{* item id *}>
 <{if $is_edit && $is_module_admin }>
   <tr><td class="head" width="20%"><{$lang_item_id}></td><td class="odd"><{$item_id}></td></tr>
 <{/if}>
 
-<tr><td class="head" width="20%">
-<{$lang_cap_maxpixel}>
-<{if $lang_submit_dsc_maxpixel != "" }>
-  <br /><br />
-  <span class="webphoto_submit_dsc"><{$lang_submit_dsc_maxpixel}></span>
+<{if $show_maxpixel }>
+  <tr><td class="head" width="20%">
+  <{$lang_cap_maxpixel}>
+  <{if $lang_submit_dsc_maxpixel != "" }>
+    <br /><br />
+    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_maxpixel}></span>
+  <{/if}>
+  </td>
+  <td class="odd"><{$ele_maxpixel}></td></tr>
 <{/if}>
-</td>
-<td class="odd"><{$ele_maxpixel}></td></tr>
 
 <{if $show_maxsize }>
   <tr><td class="head" width="20%">
@@ -90,28 +96,32 @@ function webphoto_gmap_disp_on()
   <td class="odd"><{$ele_maxsize}></td></tr>
 <{/if}>
 
-<tr><td class="head" width="20%">
-<{$lang_cap_allowed_exts}>
-<{if $lang_submit_dsc_allowed_exts != "" }>
-  <br /><br />
-  <span class="webphoto_submit_dsc"><{$lang_submit_dsc_allowed_exts}></span>
-<{/if}> 
-</td>
-<td class="odd"><{$ele_allowed_exts}></td></tr>
+<{if $show_allowed_exts }>
+  <tr><td class="head" width="20%">
+  <{$lang_cap_allowed_exts}>
+  <{if $lang_submit_dsc_allowed_exts != "" }>
+    <br /><br />
+    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_allowed_exts}></span>
+  <{/if}> 
+  </td>
+  <td class="odd"><{$ele_allowed_exts}></td></tr>
+<{/if}>
 
 <{* item cat id *}>
-<tr><td class="head" width="20%">
-<{$lang_category}>
-<{if $lang_submit_dsc_category != "" }>
-  <br /><br />
-  <span class="webphoto_submit_dsc"><{$lang_submit_dsc_category}></span>
+<{if $show_item_cat_id }>
+  <tr><td class="head" width="20%">
+  <{$lang_category}>
+  <{if $lang_submit_dsc_category != "" }>
+    <br /><br />
+    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_category}></span>
+  <{/if}>
+  </td>
+  <td class="odd">
+  <select id="item_cat_id" name="item_cat_id" size="1">
+  <{$item_cat_id_options}>
+  </select>
+  </td></tr>
 <{/if}>
-</td>
-<td class="odd">
-<select id="item_cat_id" name="item_cat_id" size="1">
-<{$item_cat_id_options}>
-</select>
-</td></tr>
 
 <{* item_perm_level *}>
 <{if $show_item_perm_level }>
@@ -123,12 +133,8 @@ function webphoto_gmap_disp_on()
   </td>
   <td class="odd">
 
-  <{if $show_input_item_perm_level }>
-    <input type="radio" name="item_perm_level" value="0" <{$item_perm_level_checked.0}> />
-    <{$lang_item_perm_level_public}> &nbsp;
-    <input type="radio" name="item_perm_level" value="1" <{$item_perm_level_checked.1}> />
-    <{$lang_item_perm_level_group}> &nbsp;
-
+  <{if $show_item_perm_level_options }>
+    <{$item_perm_level_options}>
   <{else}>
     <{$item_perm_level_disp}>
     <input type="hidden" id="item_perm_level" name="item_perm_level" value="<{$item_perm_level}>" />
