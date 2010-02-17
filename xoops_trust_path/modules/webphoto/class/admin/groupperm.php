@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm.php,v 1.5 2009/12/24 06:32:22 ohwada Exp $
+// $Id: groupperm.php,v 1.6 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// get_errors()
 // 2009-12-06 K.OHWADA
 // webphoto_lib_groupperm
 // 2009-01-04 K.OHWADA
@@ -26,11 +28,16 @@ class webphoto_admin_groupperm extends webphoto_edit_base
 	var $_groupperm_class;
 	var $_form_class;
 
+	var $_FLAG_SYSTEM = true;
+
 	var $_THIS_FCT = 'groupperm';
 	var $_THIS_URL;
 
 	var $_TIME_SUCCESS = 1;
 	var $_TIME_FAIL    = 5;
+	var $_TIME_DEBUG   = 60;
+
+	var $_DEBUG = false;
 
 //---------------------------------------------------------
 // constructor
@@ -86,8 +93,26 @@ function groupperm( $perms )
 		exit();
 	}
 
-	$this->_groupperm_class->modify( $this->_MODULE_ID, $perms, true );
-	redirect_header( $this->_THIS_URL , $this->_TIME_SUCCESS , _AM_WEBPHOTO_GPERMUPDATED );
+	$this->_groupperm_class->modify( $this->_MODULE_ID, $perms, $this->_FLAG_SYSTEM );
+	$errors = $this->_groupperm_class->get_errors();
+	$msgs   = $this->_groupperm_class->get_msg_array();
+
+	if ( $this->_DEBUG && is_array($errors) && count($errors) ) {
+		$msg  = implode( "<br />\n", $errors );
+		$msg  = $this->highlight( $msg );
+		$time = $this->_TIME_FAIL;
+
+	} else {
+		$msg  = _AM_WEBPHOTO_GPERMUPDATED;
+		$time = $this->_TIME_SUCCESS;
+	}
+
+	if ( $this->_DEBUG && is_array($msgs) && count($msgs) ) {
+		$msg .= "<br />\n". implode( "<br />\n", $msgs );
+		$time = $this->_TIME_DEBUG;
+	}
+
+	redirect_header( $this->_THIS_URL , $time , $msg );
 	exit() ;
 }
 

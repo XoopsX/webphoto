@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
+// $Id: cat_form.php,v 1.13 2010/02/17 04:34:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// $_FLAG_PERM_ADMIN
 // 2010-02-01 K.OHWADA
 // build_cat_list_form()
 // 2009-12-06 K.OHWADA
@@ -53,6 +55,7 @@ class webphoto_admin_cat_form extends webphoto_edit_form
 	var $_SIZE_WEIGHT     = 5;
 	var $_GMAP_WIDTH      = '100%';
 	var $_GMAP_HEIGHT     = '650px';
+	var $_FLAG_PERM_ADMIN = false;
 
 	var $_CAT_FIELD_NAME = _C_WEBPHOTO_UPLOAD_FIELD_CATEGORY ;
 
@@ -326,12 +329,14 @@ function cat_img_name_options()
 
 function cat_perm_read_checkboxs()
 {
-	return $this->build_group_perms_checkboxs_by_key( 'cat_perm_read' );
+	return $this->build_group_perms_checkboxs_by_key( 
+		'cat_perm_read', $this->_FLAG_PERM_ADMIN );
 }
 
 function cat_perm_post_checkboxs()
 {
-	return $this->build_group_perms_checkboxs_by_key( 'cat_perm_post' );
+	return $this->build_group_perms_checkboxs_by_key( 
+		'cat_perm_post', $this->_FLAG_PERM_ADMIN );
 }
 
 function build_img_src()

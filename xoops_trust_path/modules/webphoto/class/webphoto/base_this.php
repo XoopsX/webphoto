@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.24 2010/01/25 10:03:07 ohwada Exp $
+// $Id: base_this.php,v 1.25 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// build_admin_footer()
 // 2010-01-10 K.OHWADA
 // build_show_info_morephotos()
 // 2009-11-11 K.OHWADA
@@ -604,6 +606,14 @@ function preload_error( $flag_debug )
 			echo "</pre><br />\n";
 		}
 	}
+}
+
+function build_admin_footer()
+{
+	$str  = "<br /><hr />\n";
+	$str .= $this->_utility_class->build_execution_time( WEBPHOTO_TIME_START );
+	$str .= $this->_utility_class->build_memory_usage();
+	return $str;
 }
 
 //---------------------------------------------------------

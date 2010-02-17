@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.22 2010/02/07 12:20:02 ohwada Exp $
+// $Id: admin.php,v 1.23 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -420,8 +420,8 @@ define("_AM_WEBPHOTO_LOG_EMPT","ログファイルを空にする");
 define("_AM_WEBPHOTO_PLAYLIST_PATH","プレイリストのパス");
 define("_AM_WEBPHOTO_PLAYLIST_REFRESH","プレイリストのキャッシュの再生成");
 define("_AM_WEBPHOTO_STATUS_CHANGE","ステータスの変更");
-define("_AM_WEBPHOTO_STATUS_OFFLINE","オンライン");
-define("_AM_WEBPHOTO_STATUS_ONLINE","オフライン");
+define("_AM_WEBPHOTO_STATUS_OFFLINE","オフライン");
+define("_AM_WEBPHOTO_STATUS_ONLINE","オンライン");
 define("_AM_WEBPHOTO_STATUS_AUTO","自動発行");
 
 // item form

@@ -1,10 +1,16 @@
 <?php
-// $Id: groupperm_form.php,v 1.1 2009/12/24 06:33:24 ohwada Exp $
+// $Id: groupperm_form.php,v 1.2 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-15 K.OHWADA
+// $_FLAG_PERM_ADMIN
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,6 +23,7 @@ class webphoto_admin_groupperm_form extends webphoto_edit_base
 	var $_form_class;
 
 	var $_TEMPLATE;
+	var $_FLAG_PERM_ADMIN = false;
 
 //---------------------------------------------------------
 // constructor
@@ -48,7 +55,8 @@ function build_form( $fct )
 	$group_list = $this->_form_class->build_group_list(
 		$this->_MODULE_ID , 
 		_C_WEBPHOTO_GPERM_NAME , 
-		$this->_def_class->get_perm_list() );
+		$this->_def_class->get_perm_list(),
+		$this->_FLAG_PERM_ADMIN );
 
 	$group_list = $this->rebuild_group_list( $group_list );
 

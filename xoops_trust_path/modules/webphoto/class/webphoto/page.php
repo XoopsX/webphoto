@@ -1,5 +1,5 @@
 <?php
-// $Id: page.php,v 1.4 2010/02/07 12:20:02 ohwada Exp $
+// $Id: page.php,v 1.5 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// change build_footer_param()
 // 2010-01-10 K.OHWADA
 // webphoto_base_this
 // 2009-11-11 K.OHWADA
@@ -153,8 +155,6 @@ function build_footer_param()
 {
 	$arr = array(
 		'is_module_admin' => $this->xoops_is_module_admin() ,
-		'execution_time'  => $this->get_execution_time() ,
-		'memory_usage'    => $this->get_memory_usage() ,
 		'happy_linux_url' => $this->get_happy_linux_url() ,
 	);
 	return $arr;

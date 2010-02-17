@@ -1,5 +1,5 @@
 <?php
-// $Id: version.php,v 1.31 2010/01/25 10:03:07 ohwada Exp $
+// $Id: version.php,v 1.32 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,7 +11,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // --- define version begin ---
 if( !defined("_C_WEBPHOTO_VERSION") ) 
 {
-	define("_C_WEBPHOTO_VERSION", "2.10" ) ;
+	define("_C_WEBPHOTO_VERSION", "2.11" ) ;
 	define("_C_WEBPHOTO_TIMELINE_VERSION", "0.11" ) ;
 }
 // --- define version end ---

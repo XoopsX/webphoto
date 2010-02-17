@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.16 2010/02/07 12:20:02 ohwada Exp $
+// $Id: index.php,v 1.17 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// build_footer_param()
 // 2010-01-10 K.OHWADA
 // webphoto_show_list -> webphoto_factory
 // 2009-11-11 K.OHWADA
@@ -116,7 +118,11 @@ function main()
 			$ret = $this->build_page_detail( $this->_mode, $this->_param );
 			break;
 	}
-	return $ret;
+	$arr = array_merge(
+		$ret ,
+		$this->_page_class->build_footer_param()
+	);
+	return $arr;
 }
 
 function page_main()

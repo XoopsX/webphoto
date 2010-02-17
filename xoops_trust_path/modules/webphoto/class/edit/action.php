@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
+// $Id: action.php,v 1.13 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// modify_fetch_photo()
 // 2010-01-10 K.OHWADA
 // _tag_class -> _tag_build_class
 // 2009-12-06 K.OHWADA
@@ -217,10 +219,7 @@ function modify_exec( $item_row )
 
 // fetch photo
 		default:
-			if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
-				return _C_WEBPHOTO_ERR_NO_SPECIFIED;
-			}
-			$ret = $this->upload_fetch_photo( true );
+			$ret = $this->modify_fetch_photo();
 			if ( $ret < 0 ) { 
 				return $ret;	// failed
 			}
@@ -282,6 +281,21 @@ function modify_exec( $item_row )
 	$this->_row_update = $item_row ;
 
 	return 0;
+}
+
+function modify_fetch_photo()
+{
+	if ( ! $this->check_edit('file_photo') ) {
+		return 0;	// no action
+	}
+	if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
+		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
+	}
+	$ret = $this->upload_fetch_photo( true );
+	if ( $ret < 0 ) { 
+		return $ret;	// failed
+	}
+	return 0;	// ok
 }
 
 function update_all_file_duration_if_not_cont( $item_row, $file_id_array )

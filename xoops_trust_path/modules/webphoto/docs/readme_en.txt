@@ -1,11 +1,34 @@
-$Id: readme_en.txt,v 1.44 2010/02/07 12:20:02 ohwada Exp $
+$Id: readme_en.txt,v 1.45 2010/02/17 04:34:47 ohwada Exp $
+
+=================================================
+Version: 2.11
+Date:   2010-02-17
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. added excution time and memory usage in admin page.
+
+2. bug fix
+(1) typo in Japanese language file
+(2) wrong "Module Admin" in "group permission"
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.10
 Date:   2010-02-06
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -88,9 +111,6 @@ Special thanks to the author of lightbox2
 =================================================
 Version: 2.00
 Date:   2009-12-24
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

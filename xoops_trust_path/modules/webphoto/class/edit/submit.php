@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.17 2010/02/07 12:20:02 ohwada Exp $
+// $Id: submit.php,v 1.18 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// check_edit()
 // 2010-01-10 K.OHWADA
 // webphoto_tag -> webphoto_tag_build
 // 2009-12-06 K.OHWADA
@@ -909,6 +911,20 @@ function build_form_redo( $item_row )
 function check_show( $key )
 {
 	return $this->_photo_form_class->check_show( $key ) ;
+}
+
+function check_edit( $key )
+{
+	return $this->_photo_form_class->check_edit( $key ) ;
+}
+
+function build_footer_param()
+{
+	$arr = array(
+		'execution_time'  => $this->_utility_class->get_execution_time( WEBPHOTO_TIME_START ) ,
+		'memory_usage'    => $this->_utility_class->get_memory_usage() ,
+	);
+	return $arr;
 }
 
 //---------------------------------------------------------

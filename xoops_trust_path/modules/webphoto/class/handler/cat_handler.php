@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.13 2009/12/16 13:32:34 ohwada Exp $
+// $Id: cat_handler.php,v 1.14 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// add $flag_admin in check_perm_by_row_name_groups()
 // 2009-12-06 K.OHWADA
 // cat_group_id
 // 2009-11-11 K.OHWADA
@@ -332,26 +334,26 @@ function get_perm_post_array( $row )
 	return $this->get_perm_array_by_row_name( $row, 'cat_perm_post' );
 }
 
-function check_perm_read_by_id( $id )
+function check_perm_read_by_id( $id, $flag_admin=false  )
 {
 	$row = $this->get_row_by_id( $id );
-	return $this->check_perm_read_by_row( $row ) ;
+	return $this->check_perm_read_by_row( $row, $flag_admin ) ;
 }
 
-function check_perm_post_by_id( $id )
+function check_perm_post_by_id( $id, $flag_admin=false  )
 {
 	$row = $this->get_row_by_id( $id );
-	return $this->check_post_read_by_row( $row ) ;
+	return $this->check_post_read_by_row( $row, $flag_admin ) ;
 }
 
-function check_perm_read_by_row( $row )
+function check_perm_read_by_row( $row, $flag_admin=false )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_read' );
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_read', $flag_admin );
 }
 
-function check_perm_post_by_row( $row )
+function check_perm_post_by_row( $row, $flag_admin=false )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post' );
+	return $this->check_perm_by_row_name_groups( $row, 'cat_perm_post', $flag_admin );
 }
 
 function is_cached_public_read_in_all_parents_by_id( $id )
@@ -422,21 +424,21 @@ function build_selbox_pid( $pid )
 	return $this->make_my_sel_box( 'cat_title', '', $pid, 1, 'cat_pid' );
 }
 
-function build_selbox_with_perm_post( $cat_id, $sel_name, $show=false )
+function build_selbox_with_perm_post( $cat_id, $sel_name, $show=false, $flag_admin=false )
 {
 	$str  = $this->build_form_select_tag( $sel_name );
 
 // Warning [PHP]: Missing argument
-	$str .= $this->build_options_with_perm_post( $cat_id, $show );
+	$str .= $this->build_options_with_perm_post( $cat_id, $show, $flag_admin );
 
 	$str .= $this->build_form_select_tag_close();
 	return $str;
 }
 
-function build_options_with_perm_post( $value, $show=false )
+function build_options_with_perm_post( $value, $show=false, $flag_admin=false )
 {
 	$rows = $this->get_all_tree_array();
-	return  $this->build_form_select_options_with_perm_post( $rows, 'cat_title', $value, 'cat_perm_post', 'cat_perm_read', $show );
+	return  $this->build_form_select_options_with_perm_post( $rows, 'cat_title', $value, 'cat_perm_post', 'cat_perm_read', $show, $flag_admin );
 }
 
 function build_id_options( $none=false, $none_name='---' )

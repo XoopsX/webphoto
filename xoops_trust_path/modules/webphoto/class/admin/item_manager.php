@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.26 2010/02/09 14:40:29 ohwada Exp $
+// $Id: item_manager.php,v 1.27 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// print_list_table()
 // 2010-01-10 K.OHWADA
 // init_for_admin()
 // 2009-12-06 K.OHWADA
@@ -315,6 +317,7 @@ function _menu()
 	$this->_print_list_table( 'all', $item_rows );
 	$this->_print_list_navi( $total_all, $perpage );
 
+	echo $this->build_admin_footer();
 	xoops_cp_footer();
 	exit();
 }
@@ -359,158 +362,6 @@ function _build_mene_link( $url, $title, $flag_br )
 	return $str;
 }
 
-function _print_list_table( $mode, $item_rows )
-{
-	$this->_cat_handler->set_path_separator( ' ' );
-	$kind_options = $this->_item_handler->get_kind_options();
-
-	$player_url   = $this->_MODULE_URL.'/admin/index.php?fct=player_manager&amp;op=modPlayer&amp;player_id=' ;
-
-	$FORM_NAME = 'item_manager';
-	$action = $this->_MODULE_URL.'/admin/index.php';
-	$onclick_all    = ' onclick="with(document.'. $FORM_NAME .'){for(i=0;i<length;i++){if(elements[i].type==\'checkbox\'){elements[i].checked=this.checked;}}}" ';
-	$onclick_admin  = ' onclick="document.'. $FORM_NAME .'.op.value=\'approve\'; submit();" ';
-	$onclick_delete = ' onclick="if(confirm(\''. _AM_WEBPHOTO_JS_REMOVECONFIRM .'\')){document.'. $FORM_NAME .'.op.value=\'delete_all\'; submit();}" ';
-
-	$is_all     = false;
-	$is_waiting = false;
-
-	switch ( $mode )
-	{
-		case 'waiting':
-			$is_waiting = true;
-			break;
-
-		case 'all':
-		default:
-			$is_all = true;
-			break;
-	}
-
-	if ( $is_waiting ) {
-		echo '<form name="'. $FORM_NAME .'" action="'. $action .'" method="post" >'."\n";
-		echo '<input type="hidden" name="'. $this->get_token_name() .'" value="'. $this->get_token() .'" />'."\n";
-		echo '<input type="hidden" name="fct" value="'. $this->_THIS_FCT .'" />'."\n";
-		echo '<input type="hidden" name="op"  value="" />'."\n";
-	}
-
-// item table
-	echo '<table border="1" cellspacing="0" cellpadding="1" style="font-size: 90%;">'."\n";
-	echo '<tr class="head" align="center" colspan="13">'."\n";
-
-	if ( $is_waiting ) {
-		echo '<th width="5px">';
-		echo '<input type="checkbox" name="dummy" '. $onclick_all .' />';
-		echo "</th>\n";
-
-	} else {
-		echo '<th width="10%">'. $this->get_constant('ITEM_STATUS') .'</th>'."\n";
-	}
-
-	echo '<th>'. $this->get_constant('ITEM_ID') .'</th>'."\n";
-	echo '<th width="18%">'. $this->get_constant('ITEM_TITLE') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_KIND') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_EXT') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('CATEGORY') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_PLAYER_ID') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_TIME_CREATE') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_TIME_UPDATE') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_HITS') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_VIEWS') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_RATING') .'</th>'."\n";
-	echo '<th>'. $this->get_constant('ITEM_VOTES') .'</th>'."\n";
-	echo '</tr>'."\n";
-
-	foreach ( $item_rows as $row )
-	{
-		$item_id   = $row['item_id'];
-		$cat_id    = $row['item_cat_id'];
-		$player_id = $row['item_player_id'];
-		$ext       = $row['item_ext'] ;
-		
-		if ( $ext ) {
-			$ext_disp = $ext ;
-		} else {
-			$ext_disp = '---' ;
-		}
-
-		list( $is_online, $status_report, $status_link, $status_icon )
-			= $this->_build_status( $row );
-
-		$photo_url_s  = $this->sanitize( $this->_get_photo_url( $row, $is_online ) );
-		$player_link  = '<a href="'. $player_url.'/'.$player_id .'" title="'. _AM_WEBPHOTO_PLAYER_MOD .'">';
-		$player_link .= $player_id.'</a>'."\n";
-
-		echo '<tr class="even" colspan="13">'."\n";
-		echo '<td align="center">';
-
-		if ( $is_waiting ) {
-			echo '<input type="checkbox" name="ids[]" value="'. $item_id .'" />';
-
-		} else {
-//			echo $this->_build_link_icon( $item_id, 'modify_form', 'edit.png',   _EDIT );
-//			echo $this->_build_link_icon( $item_id, 'delete',      'delete.png', _DELETE );
-			echo '<a href="'.$status_link.'" title="'.$status_report.'">';
-			echo $this->_build_img_icon( $status_icon );
-			echo '</a>'."\n";
-		}
-
-		echo '</td>'."\n";
-
-		echo '<td>';
-		echo $this->_build_link_icon( $item_id, 'modify_form', 'edit.png',   _EDIT );
-		echo $this->_build_ahref_onclick( $item_id, 'modify_form', _EDIT, $item_id );
-		echo '</td>'."\n";
-
-		echo '<td width="18%">';
-		echo '<a href="'. $photo_url_s .'" title="'. _AM_WEBPHOTO_ITEM_LISTING .'" target="_blank">';
-		echo $this->sanitize( $row['item_title'] ) ;
-		echo '</a>'."\n";
-		echo '</td>'."\n";
-
-		echo '<td>'. $kind_options[ $row['item_kind'] ] .'</td>'."\n";
-		echo '<td>'. $this->sanitize( $ext_disp ).'</td>'."\n";
-		echo '<td nowrap="nowrap">'. $this->_build_cat_title( $cat_id ) .'</td>'."\n";
-		echo '<td>'. $player_link.'</td>'."\n";
-		echo '<td>'. $this->format_timestamp( $row['item_time_create'] , 'm' ).'</td>'."\n";
-		echo '<td>'. $this->format_timestamp( $row['item_time_update'] , 'm' ).'</td>'."\n";
-		echo '<td>'. $row['item_hits'] .'</td>'."\n";
-		echo '<td>'. $row['item_views'] .'</td>'."\n";
-		echo '<td>'. $row['item_rating'] .'</td>'."\n";
-
-		echo '<td>';
-		echo $this->_build_ahref_onclick( $item_id, 'vote_stats', _AM_WEBPHOTO_VOTE_STATS, $row['item_votes'] );
-		echo '</td>'."\n";
-
-		echo '</tr>'."\n";     
-	}
-
-	if ( $is_waiting ) {
-		echo '<tr>';
-		echo '<td colspan="13" align="left">';
-		echo _AM_WEBPHOTO_LABEL_ADMIT;
-		echo ' <input type="button" value="'. _AM_WEBPHOTO_BUTTON_ADMIT .'" '. $onclick_admin .' />';
-		echo '</td>';
-		echo "</tr>\n";
-
-//		$delete = _DELETE. ' ('. _AM_WEBPHOTO_BUTTON_REFUSE .') ';
-//		echo '<tr>';
-//		echo '<td colspan="13" align="left">';
-//		echo _AM_WEBPHOTO_LABEL_REMOVE ;
-//		echo ' <input type="button" value="'. $delete .'" '. $onclick_delete .' />';
-//		echo '</td>';
-//		echo "</tr>\n";
-	}
-
-	echo "</table>\n";
-
-	if ( $is_waiting ) {
-		echo "</form>\n";
-	}
-
-	echo "<br />\n";
-}
-
 function _print_list_navi( $total_all, $perpage )
 {
 	$op    = $this->_post_class->get_post_get_text('op' );
@@ -523,151 +374,6 @@ function _print_list_navi( $total_all, $perpage )
 	$pagenavi_class =& webphoto_lib_pagenavi::getInstance();
 	$pagenavi_class->XoopsPageNav( $total_all, $perpage, $start, 'start', $navi_extra );
 	echo $pagenavi_class->renderNav();
-}
-
-function _get_photo_url( $item_row, $is_online )
-{
-	$item_id      = $item_row['item_id'] ;
-	$external_url = $item_row['item_external_url'] ;
-
-	if ( $is_online ) {
-		$url = $this->_MODULE_URL.'/index.php?fct=photo&photo_id='.$item_id ;
-	} else {
-		$url = $this->_get_cont_url( $item_row );
-		if ( empty( $url ) ) {
-			$url = $external_url ;
-		}
-	}
-	return $url;
-}
-
-function _get_cont_url( $item_row )
-{
-	$url = null ;
-	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( is_array($cont_row) ) {
-		$url  = $cont_row['file_url'] ;
-		$path = $cont_row['file_path'] ;
-		if ( $path ) {
-			$url = XOOPS_URL .'/'. $path ;
-		}
-	}
-	return $url;
-}
-
-function _build_status( $row )
-{
-	$item_id = $row['item_id'];
-	$status  = $row['item_status'];
-	$publish = $row['item_time_publish'];
-	$expire  = $row['item_time_expire'];
-
-	$is_online = false ;
-	$report = '';
-	$link   = '';
-	$icon   = '';
-
-	$photo_url  = $this->_MODULE_URL.'/index.php?fct=photo&amp;photo_id='.$item_id;
-	$modify_url = $this->_THIS_URL.'&amp;op=modify_form&amp;item_id='.$item_id;
-
-// online
-	switch ( $status )
-	{
-	case _C_WEBPHOTO_STATUS_WAITING :
-		$report = _WEBPHOTO_ITEM_STATUS_WAITING;
-		$link   = $this->_THIS_URL.'&amp;op=list_waiting';
-		$icon   = 'waiting.png';
-		break;
-
-	case _C_WEBPHOTO_STATUS_OFFLINE :
-// Entry will Auto-Publish
-		if ( ($publish > 0) && ($publish < time()) ) {
-			$is_online = true ;
-			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($publish,'m');
-			$link   = $photo_url ;
-			$icon   = 'online.png';
-			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_UPDATED, true ) ;
-
-		} else {
-			$report = _AM_WEBPHOTO_STATUS_OFFLINE ;
-			$link   = $this->_THIS_URL.'&amp;op=list_offline';
-			$icon   = 'offline.png';   	           
-		}
-		break;
-
-	case _C_WEBPHOTO_STATUS_EXPIRED :
-		$report = _WEBPHOTO_ITEM_STATUS_EXPIRED.' : '. $this->format_timestamp($expire,'m');
-		$link   = $this->_THIS_URL.'&amp;op=list_expired';
-		$icon   = 'offline.png'; 
-		break;
-
-	case _C_WEBPHOTO_STATUS_APPROVED :
-	case _C_WEBPHOTO_STATUS_UPDATED  :
-	default :
-// Entry has Expired
-		if ( ($expire > 0) && ($expire < time()) ) {
-			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($expire,'m');
-			$link   = $this->_THIS_URL.'&amp;op=list_expired';
-			$icon   = 'offline.png';   
-			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, true ) ;
-
-// online
-		} else {
-			$is_online = true ;
-			$report = _AM_WEBPHOTO_STATUS_ONLINE;
-			$link   = $photo_url ;
-			$icon   = 'online.png';
-		}
-		break;
-	}
-
-	return array( $is_online, $report, $link, $icon );
-}
-
-function _build_link_icon( $item_id, $op, $icon, $title )
-{
-	$str = $this->_build_ahref_onclick( $item_id, $op, $title, $this->_build_img_icon( $icon ) ) ;
-	return $str;
-}
-
-function _build_ahref_onclick( $item_id, $op, $title, $value )
-{
-	$url  = $this->_THIS_URL.'&amp;op='.$op.'&amp;item_id='.$item_id ;
-	$str  = '<a href="'. $url .'" onClick="location=\''. $url .'\'" title="'. $title .'">';
-	$str .= $value ;
-	$str .= '</a>'."\n";
-	return $str;
-}
-
-function _build_img_icon( $icon )
-{
-	$src = $this->_MODULE_URL.'/images/icons/'.$icon ;
-	$str = '<img src="'. $src .'" border="0" />'."\n";
-	return $str;
-}
-
-function _build_button( $op, $value )
-{
-	$onclick = "location='".$this->_THIS_URL."&amp;op=".$op."'" ;
-	$str = '<input type="button" value="'. $value .'" onClick="'. $onclick .'" />'."\n";   
-	return $str;
-} 
-
-function _build_cat_title( $cat_id )
-{
-	$row = $this->_cat_handler->get_row_by_id( $cat_id );
-	if ( is_array($row) ) {
-		$href = $this->_MODULE_URL .'/admin/index.php?fct=catmanager&amp;disp=edit&amp;cat_id='. $row['cat_id'] ;
-
-		$title  = '<a href="'. $href .'">';
-		$title .= $this->sanitize( $row['cat_title'] );
-		$title .= '</a>';
-
-	} else {
-		$title = $this->highlight( $this->get_constant('ERR_INVALID_CAT') );
-	}
-
-	return $title;
 }
 
 //---------------------------------------------------------
@@ -730,6 +436,7 @@ function _submit_form()
 
 	$this->_print_form_admin( $mode, $item_row );
 
+	echo $this->build_admin_footer();
 	xoops_cp_footer();
 	exit();
 }
@@ -817,6 +524,7 @@ function _modify_form()
 		$this->_show_flash_player( $item_row );
 	}
 
+	echo $this->build_admin_footer();
 	xoops_cp_footer();
 	exit();
 }
@@ -1015,7 +723,7 @@ function _modify()
 function _approve()
 {
 	$this->_check_token_and_redirect();
-	$post_ids = $this->_post_class->get_post('ids');
+	$post_ids = $this->_post_class->get_post('item_list_form_id');
 
 	if ( is_array($post_ids) &&count($post_ids) ){
 		$item_rows = $this->_item_handler->get_rows_by_id_array( $post_ids );
@@ -1536,6 +1244,13 @@ function _vote_text_form( $item_id, $vote_id )
 	return $str;
 }
 
+function _build_button( $op, $value )
+{
+	$onclick = "location='".$this->_THIS_URL."&amp;op=".$op."'" ;
+	$str = '<input type="button" value="'. $value .'" onClick="'. $onclick .'" />'."\n";   
+	return $str;
+} 
+
 function _alternate_class()
 {
 	if ( $this->_alternate_class == 'even' ) {
@@ -1666,6 +1381,11 @@ function _refresh_cache()
 //---------------------------------------------------------
 // form
 //---------------------------------------------------------
+function _print_list_table( $mode, $item_rows )
+{
+	$this->_admin_item_form_class->print_list_table( $mode, $item_rows );
+}
+
 function _init_form()
 {
 	$this->init_admin_item_form();

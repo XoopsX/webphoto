@@ -1,5 +1,5 @@
 <?php
-// $Id: groupperm_form.php,v 1.3 2010/01/26 08:25:45 ohwada Exp $
+// $Id: groupperm_form.php,v 1.4 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// check_right()
 // 2010-01-20 K.OHWADA
 // XOOPS_CUBE_LEGACY
 //---------------------------------------------------------
@@ -64,7 +66,7 @@ function build_param( $mod_id, $action=null )
 	return array_merge( $arr , $this->get_lang() );
 }
 
-function build_group_list( $mod_id, $perm_name, $item_array )
+function build_group_list( $mod_id, $perm_name, $item_array, $flag_admin=false )
 {
 	$system_list = $this->_member_handler->getGroupList();
 
@@ -72,14 +74,19 @@ function build_group_list( $mod_id, $perm_name, $item_array )
 	foreach (array_keys($system_list) as $id) 
 	{
 		$group_list[ $id ] = $this->build_group_list_single( 
-			$mod_id, $id, $system_list[ $id ], $perm_name, $item_array  );
+			$mod_id, $id, $system_list[ $id ], $perm_name, $item_array, $flag_admin );
 	}
 
 	return $group_list;
 }
 
-function build_group_list_single( $mod_id, $group_id, $group_name, $perm_name, $item_array )
+function build_group_list_single( $mod_id, $group_id, $group_name, $perm_name, $item_array, $flag_admin=false )
 {
+	$module_admin_right = $this->check_right( 'module_admin', $mod_id, $group_id ) ;
+	$module_read_right  = $this->check_right( 'module_read',  $mod_id, $group_id ) ;
+
+	$all_checked = ( $flag_admin && $module_admin_right );
+
 	$item_id_array = $this->_groupperm_handler->getItemIds( $perm_name, $group_id, $mod_id );
 
 	$item_list = array();
@@ -88,7 +95,7 @@ function build_group_list_single( $mod_id, $group_id, $group_name, $perm_name, $
 		$item_list[ $item_id ] = array(
 			'item_id'   => $item_id ,
 			'item_name' => $item_name ,
-			'checked'   => $this->build_checked_array( $item_id, $item_id_array ) ,
+			'checked'   => $this->build_checked_array( $item_id, $item_id_array, $all_checked ) ,
 		);
 	}
 
@@ -97,35 +104,35 @@ function build_group_list_single( $mod_id, $group_id, $group_name, $perm_name, $
 		'group_name' => $group_name ,
 		'perm_name'  => $perm_name , 
 		'item_list'  => $item_list ,
-		'module_admin_checked' => $this->get_checked_module( 'module_admin', $group_id ) ,
-		'module_read_checked'  => $this->get_checked_module( 'module_read',  $group_id ) ,
+		'module_admin_checked' => $this->build_checked( $module_admin_right ) ,
+		'module_read_checked'  => $this->build_checked( $module_read_right ) ,
 	);
 
 	return $group_list;
 }
 
-function get_checked_module( $perm_name, $id )
+function check_right( $perm_name, $mod_id, $group_id )
 {
-	$item_id_array = $this->_groupperm_handler->getItemIds( $perm_name, $id, 1 );
-	return $this->build_checked_module( $item_id_array ) ;
+	return $this->_groupperm_handler->checkRight( $perm_name, $mod_id, $group_id );
 }
 
-function build_checked_module( $array )
+function build_checked_array( $val, $array, $all_checked )
 {
-	$str = '';
-	if ( isset( $array[0] ) && $array[0] ) {
-		$str = $this->_CHECKED ;
+	if ( $all_checked ) {
+		return $this->_CHECKED;
 	}
-	return $str;
-}
-
-function build_checked_array( $val, $array )
-{
-	$str = '';
 	if ( is_array($array) && in_array( $val, $array ) ) {
-		$str = $this->_CHECKED ;
+		return $this->_CHECKED ;
 	}
-	return $str;
+	return '';
+}
+
+function build_checked( $val )
+{
+	if ( $val ) {
+		return $this->_CHECKED ;
+	}
+	return '';
 }
 
 function get_dirname( $id )

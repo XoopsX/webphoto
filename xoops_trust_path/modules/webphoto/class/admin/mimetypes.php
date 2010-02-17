@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mimetypes.php,v 1.8 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// $_GLUE_ALLOWED
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_mime_handler
 // 2009-10-25 K.OHWADA
@@ -38,6 +40,11 @@ class webphoto_admin_mimetypes extends webphoto_base_this
 
 	var $_ADMIN_MIME_PHP;
 	var $_PERPAGE = 20;
+
+	var $_STYLE_LEGEND  = 'font-weight:bold; color:#900;' ;
+	var $_STYLE_PADDING  = 'padding:8px;' ;
+	var $_STYLE_NAVI     = 'text-align:right; padding:8px;' ;
+	var $_GLUE_ALLOWED   = ' ';	// space
 
 //---------------------------------------------------------
 // constructor
@@ -321,8 +328,12 @@ function _print_list()
 	echo $this->build_admin_title( 'MIMETYPES' );
 
 	echo "<fieldset>";
-	echo "<legend style='font-weight: bold; color: #900;'>" . _AM_WEBPHOTO_MIME_MODIFYF . "</legend>\n";
-	echo "<div style='padding: 8px;'>" . _AM_WEBPHOTO_MIME_INFOTEXT . "</div>\n";
+	echo '<legend style="'. $this->_STYLE_LEGEND .'">' ;
+	echo _AM_WEBPHOTO_MIME_MODIFYF ;
+	echo "</legend>\n";
+	echo '<div style="'. $this->_STYLE_PADDING .'">' ;
+	echo _AM_WEBPHOTO_MIME_INFOTEXT ;
+	echo "</div>\n";
 	echo "</fieldset><br />\n";
 
 	$this->_print_show_allowed_mime_all();
@@ -331,18 +342,18 @@ function _print_list()
 	echo "<table border='0' width='100%' cellpadding ='2' cellspacing='1' class='outer'>\n";
 
 	echo "<tr>\n";
-	echo "<td align='left'   class='bg3'><b>" . _WEBPHOTO_MIME_ID . "</b></td>";
-	echo "<td align='center' class='bg3'><b>" . _WEBPHOTO_MIME_EXT . "</b></td>";
-	echo "<td align='center' class='bg3'><b>" . _WEBPHOTO_MIME_NAME . "</b></td>";
-	echo "<td align='center' class='bg3'><b>";
+	echo "<th align='left'>" . _WEBPHOTO_MIME_ID . "</th>";
+	echo "<th align='center'>" . _WEBPHOTO_MIME_EXT . "</th>";
+	echo "<th align='center'>" . _WEBPHOTO_MIME_NAME . "</th>";
+	echo "<th align='center'>";
 	echo $this->get_xoops_group_name( XOOPS_GROUP_ADMIN );
-	echo "</b></td>";
-	echo "<td align='center' class='bg3'><b>";
+	echo "</th>";
+	echo "<th align='center'>";
 	echo $this->get_xoops_group_name( XOOPS_GROUP_USERS );
-	echo "</b></td>";
-	echo "<td align='center' class='bg3'><b>";
+	echo "</th>";
+	echo "<th align='center'>";
 	echo $this->get_xoops_group_name( $group_id );
-	echo "</b></td>";
+	echo "</th>";
 	echo "</tr>";
 
 	foreach ( $rows_sel as $row ) 
@@ -388,7 +399,7 @@ function _print_list()
 	$pagenavi_class->XoopsPageNav( $mime_total_all, $this->_PERPAGE, $get_start, 'start', 'fct=mimetypes' );
 	$navi = $pagenavi_class->renderNav();
 
-	echo "<div align='right' style='padding: 8px;'>";
+	echo '<div style="'. $this->_STYLE_NAVI .'">' ;
 	echo $navi;
 	echo "</div>\n";
 
@@ -412,7 +423,8 @@ function _build_image( $icon, $alt )
 //---------------------------------------------------------
 function _print_show_allowed_mime_all()
 {
-	echo "<fieldset><legend style='font-weight: bold; color: #900;'>";
+	echo '<fieldset>' ;
+	echo '<legend style="'. $this->_STYLE_LEGEND .'">' ;
 	echo _AM_WEBPHOTO_MIME_ALLOWED;
 	echo "</legend>\n";
 
@@ -439,10 +451,12 @@ function _build_show_allowed_mime_single( $group_id, $name_s )
 	$text .= $name_s ;
 	$text .= "</a><br />\n";
 
+	$div = '<div style="'. $this->_STYLE_PADDING .'">';
+
 	if ( is_array($mimes) && count($mimes) ) {
-		$text .= "<div style='padding: 8px;'>" . implode('|', $mimes) . "</div>\n";
+		$text .= $div . implode($this->_GLUE_ALLOWED, $mimes) . "</div>\n";
 	} else {
-		$text .= "<div style='padding: 8px;'>" . _AM_WEBPHOTO_MIME_NOMIMEINFO . "</div>";
+		$text .= $div . _AM_WEBPHOTO_MIME_NOMIMEINFO . "</div>\n";
 	}
 	return $text;
 }

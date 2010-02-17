@@ -1,4 +1,4 @@
-<{* $Id: main_edit.html,v 1.2 2010/02/08 01:54:49 ohwada Exp $ *}>
+<{* $Id: main_edit.html,v 1.3 2010/02/17 04:34:47 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a>
@@ -59,6 +59,12 @@
 <{if $show_form_confirm }>
   <{include file="db:`$mydirname`_form_confirm.html" }>
   <br />
+<{/if}>
+
+<hr />
+<div class="webphoto_execution_time">execution time : <{$execution_time}> sec </div>
+<{if $is_module_admin && ($memory_usage > 0)}>
+	<div class="webphoto_memory_usage">memory usage : <{$memory_usage}> MB </div>
 <{/if}>
 
 <{if $is_module_admin }>

@@ -1,4 +1,4 @@
-<{* $Id: form_admin_item.html,v 1.8 2010/02/07 12:20:02 ohwada Exp $ *}>
+<{* $Id: form_admin_item.html,v 1.9 2010/02/17 04:34:47 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -77,7 +77,7 @@
 <tr align="center"><th colspan="2"><{$lang_title_photoupload}></th></tr>
 
 <{* item_id *}>
-<tr><td class="head"><{$lang_item_id}></td><td class="odd">
+<tr><td style="<{$cap_style.item_id}>"><{$lang_item_id}></td><td class="odd">
 <{if $item_id > 0 }>
   <{$item_id}>
 <{else}>
@@ -86,7 +86,7 @@
 </td></tr>
 
 <{* item_flashvar_id *}>
-<tr><td class="head"><{$lang_flashvar_id}></td><td class="odd">
+<tr><td style="<{$cap_style.item_flashvar_id}>"><{$lang_flashvar_id}></td><td class="odd">
 <{if $item_flashvar_id > 0 }>
   <{$item_flashvar_id}>
 <{else}>
@@ -94,16 +94,16 @@
 <{/if}>
 </td></tr>
 
-<tr><td class="head"><{$lang_cap_maxpixel}></td><td class="odd"><{$ele_maxpixel}></td></tr>
-<tr><td class="head"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
-<tr><td class="head"><{$lang_cap_allowed_exts}></td><td class="odd"><{$ele_allowed_exts}></td></tr>
+<tr><td style="<{$cap_style.maxpixel}>"><{$lang_cap_maxpixel}></td><td class="odd"><{$ele_maxpixel}></td></tr>
+<tr><td style="<{$cap_style.maxsize}>"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
+<tr><td style="<{$cap_style.allowed_exts}>"><{$lang_cap_allowed_exts}></td><td class="odd"><{$ele_allowed_exts}></td></tr>
 
 <{if $is_edit }>
 <{* item_time_create *}>
-  <tr><td class="head"><{$lang_item_time_create}></td><td class="odd"><{$item_time_create_disp}></td></tr>
+  <tr><td style="<{$cap_style.item_time_create}>"><{$lang_item_time_create}></td><td class="odd"><{$item_time_create_disp}></td></tr>
 
 <{* item_time_update *}>
-  <tr><td class="head"><{$lang_item_time_update}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_time_update}>"><{$lang_item_time_update}></td><td class="odd">
   <input type="checkbox" name="item_time_update_checkbox" id="item_time_update_checkbox" value="1" <{$item_time_update_checkbox_checked}> />
   <{$lang_dsc_set_item_time_update}><br />
   <input type="text" id="item_time_update" name="item_time_update" value="<{$item_time_update_disp}>" size="50" />
@@ -112,21 +112,21 @@
   </td></tr>
 
 <{* item_time_publish *}>
-  <tr><td class="head"><{$lang_item_time_publish}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_time_publish}>"><{$lang_item_time_publish}></td><td class="odd">
   <input type="checkbox" name="item_time_publish_checkbox" id="item_time_publish_checkbox" value="1" <{$item_time_publish_checkbox_checked}> />
   <{$lang_dsc_set_item_time_publish}><br />
   <input type="text" id="item_time_publish" name="item_time_publish" value="<{$item_time_publish_disp}>" size="50" />
   </td></tr>
 
 <{* item_time_expire *}>
-  <tr><td class="head"><{$lang_item_time_expire}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_time_expire}>"><{$lang_item_time_expire}></td><td class="odd">
   <input type="checkbox" name="item_time_expire_checkbox" id="item_time_expire_checkbox" value="1" <{$item_time_expire_checkbox_checked}> />
   <{$lang_dsc_set_item_time_expire}><br />
   <input type="text" id="item_time_expire" name="item_time_expire" value="<{$item_time_expire_disp}>" size="50" />
   </td></tr>
 
 <{* item_status *}>
-  <tr><td class="head"><{$lang_item_status}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_status}>"><{$lang_item_status}></td><td class="odd">
 
 <{if $show_valid }>
   <input type="checkbox" name="valid" id="valid" value="1" checked="checked" />
@@ -140,14 +140,14 @@
 <{/if}>
 
 <{* item uid *}>
-<tr><td class="head"><{$lang_submitter}></td><td class="odd">
+<tr><td style="<{$cap_style.item_uid}>"><{$lang_submitter}></td><td class="odd">
 <select name="item_uid">
 <{$item_uid_options}>
 </select>
 </td></tr>
 
 <{* item cat id *}>
-<tr><td class="head"><{$lang_category}></td><td class="odd">
+<tr><td style="<{$cap_style.item_cat_id}>"><{$lang_category}></td><td class="odd">
 <select id="item_cat_id" name="item_cat_id" size="1">
 <{$item_cat_id_options}>
 </select>
@@ -159,66 +159,21 @@
 </td></tr>
 
 <{* item title *}>
-<tr><td class="head"><{$lang_item_title}></td><td class="odd">
+<tr><td style="<{$cap_style.item_title}>"><{$lang_item_title}></td><td class="odd">
 <input type="text" id="item_title" name="item_title" value="<{$item_title_s}>" size="50" />
 <br /><{$lang_dsc_title_blank}></td></tr>
 
-<{* item_datetime *}>
-<tr><td class="head"><{$lang_item_datetime}></td><td class="odd">
-<input type="checkbox" name="item_datetime_checkbox" id="item_datetime_checkbox" value="1" <{$item_datetime_checkbox_checked}> />
-<{$lang_dsc_set_datetime}><br />
-<input type="text" id="item_datetime" name="item_datetime" value="<{$item_datetime_val_s}>" size="50" />
-</td></tr>
-
-<tr><td class="head"><{$lang_item_place}></td><td class="odd">
-<input type="text" id="item_place" name="item_place" value="<{$item_place_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_equipment}></td><td class="odd">
-<input type="text" id="item_equipment" name="item_equipment" value="<{$item_equipment_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_duration}> ( <{$lang_second}> ) </td><td class="odd">
-<input type="text" id="item_duration" name="item_duration" value="<{$item_duration_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_siteurl}></td><td class="odd">
-<input type="text" id="item_siteurl" name="item_siteurl" value="<{$item_siteurl_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_artist}></td><td class="odd">
-<input type="text" id="item_artist" name="item_artist" value="<{$item_artist_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_album}></td><td class="odd">
-<input type="text" id="item_album" name="item_album" value="<{$item_album_s}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_label}></td><td class="odd">
-<input type="text" id="item_label" name="item_label" value="<{$item_label_s}>" size="50" />
-</td></tr>
-
-<{* item_text 1 - 10 *}>
-<{foreach item=item_text from=$item_text_array}>
-<{if $item_text.show }>
-  <tr><td class="head"><{$item_text.title_s}></td><td class="odd">
-  <input type="text" id="<{$item_text.name}>" name="<{$item_text.name}>" value="<{$item_text.value_s}>" size="50" />
-  </td></tr>
-<{/if}>
-<{/foreach}>
-
-<tr><td class="head"><{$lang_item_page_width}></td><td class="odd">
-<input type="text" id="item_page_width" name="item_page_width" value="<{$item_page_width}>" size="50" />
-</td></tr>
-<tr><td class="head"><{$lang_item_page_height}></td><td class="odd">
-<input type="text" id="item_page_height" name="item_page_height" value="<{$item_page_height}>" size="50" />
-</td></tr>
-
 <{* item editor *}>
-<tr><td class="head"><{$lang_item_editor}></td><td class="odd">
+<tr><td style="<{$cap_style.item_editor}>"><{$lang_item_editor}></td><td class="odd">
 <{$item_editor_s}> 
 <input type="hidden" id="item_editor" name="item_editor" value="<{$item_editor_s}>" />
 </td></tr>
 
-<tr><td class="head"><{$lang_item_description}></td><td class="odd"><{$ele_item_description}></td></tr>
+<tr><td style="<{$cap_style.item_description}>"><{$lang_item_description}></td><td class="odd"><{$ele_item_description}></td></tr>
 
 <{* item description options *}>
 <{if $show_desc_options }>
-  <tr><td class="head"><{$lang_cap_description_option}></td><td class="odd">
+  <tr><td style="<{$cap_style.desc_options}>"><{$lang_cap_description_option}></td><td class="odd">
   <input type="checkbox" id="item_description_html" name="item_description_html" value="1" <{$item_description_html_checked}> />
   <{$lang_cap_html}><br />
   <input type="checkbox" id="item_description_smiley" name="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
@@ -233,40 +188,85 @@
 <{/if}>
 
 <{* item description scroll *}>
-<tr><td class="head"><{$lang_item_description_scroll}></td><td class="odd">
+<tr><td style="<{$cap_style.item_description_scroll}>"><{$lang_item_description_scroll}></td><td class="odd">
 <input type="text" id="item_description_scroll" name="item_description_scroll" value="<{$item_description_scroll}>" />
 <br />
 <{$lang_item_description_scroll_dsc}>
 </td></tr>
 
 <{if $is_edit }>
-  <tr><td class="head"><{$lang_item_exif}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_exif}>"><{$lang_item_exif}></td><td class="odd">
   <textarea id="item_exif" name="item_exif" rows="5" cols="50"><{$item_exif_s}></textarea>
   </td></tr>
-  <tr><td class="head"><{$lang_item_content}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_content}>"><{$lang_item_content}></td><td class="odd">
   <textarea id="item_content" name="item_content" rows="5" cols="80"><{$item_content_s}></textarea>
   </td></tr>
 <{/if}>
 
+<{* item_datetime *}>
+<tr><td style="<{$cap_style.item_datetime}>"><{$lang_item_datetime}></td><td class="odd">
+<input type="checkbox" name="item_datetime_checkbox" id="item_datetime_checkbox" value="1" <{$item_datetime_checkbox_checked}> />
+<{$lang_dsc_set_datetime}><br />
+<input type="text" id="item_datetime" name="item_datetime" value="<{$item_datetime_val_s}>" size="50" />
+</td></tr>
+
+<tr><td style="<{$cap_style.item_place}>"><{$lang_item_place}></td><td class="odd">
+<input type="text" id="item_place" name="item_place" value="<{$item_place_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_equipment}>"><{$lang_item_equipment}></td><td class="odd">
+<input type="text" id="item_equipment" name="item_equipment" value="<{$item_equipment_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_duration}>"><{$lang_item_duration}> ( <{$lang_second}> ) </td><td class="odd">
+<input type="text" id="item_duration" name="item_duration" value="<{$item_duration_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_siteurl}>"><{$lang_item_siteurl}></td><td class="odd">
+<input type="text" id="item_siteurl" name="item_siteurl" value="<{$item_siteurl_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_artist}>"><{$lang_item_artist}></td><td class="odd">
+<input type="text" id="item_artist" name="item_artist" value="<{$item_artist_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_album}>"><{$lang_item_album}></td><td class="odd">
+<input type="text" id="item_album" name="item_album" value="<{$item_album_s}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_label}>"><{$lang_item_label}></td><td class="odd">
+<input type="text" id="item_label" name="item_label" value="<{$item_label_s}>" size="50" />
+</td></tr>
+
+<{* item_text 1 - 10 *}>
+<{foreach item=item_text from=$item_text_array}>
+<{if $item_text.show }>
+  <tr><td style="<{$cap_style.text}>"><{$item_text.title_s}></td><td class="odd">
+  <input type="text" id="<{$item_text.name}>" name="<{$item_text.name}>" value="<{$item_text.value_s}>" size="50" />
+  </td></tr>
+<{/if}>
+<{/foreach}>
+
+<tr><td style="<{$cap_style.item_page_width}>"><{$lang_item_page_width}></td><td class="odd">
+<input type="text" id="item_page_width" name="item_page_width" value="<{$item_page_width}>" size="50" />
+</td></tr>
+<tr><td style="<{$cap_style.item_page_height}>"><{$lang_item_page_height}></td><td class="odd">
+<input type="text" id="item_page_height" name="item_page_height" value="<{$item_page_height}>" size="50" />
+</td></tr>
+
 <{* tags *}>
-<tr><td class="head"><{$lang_tags}></td><td class="odd">
+<tr><td style="<{$cap_style.tags}>"><{$lang_tags}></td><td class="odd">
 <input type="text" id="tags" name="tags" value="<{$tags_val_s}>" size="80" />
 <br /><{$lang_dsc_tag_divid}></td></tr>
 
 <{* item_gmap *}>
 <{if $show_gmap }>
-  <tr><td class="head"><{$lang_item_gmap_latitude}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_gmap_latitude}>"><{$lang_item_gmap_latitude}></td><td class="odd">
   <input type="text" id="webphoto_gmap_latitude" name="item_gmap_latitude" value="<{$item_gmap_latitude}>" size="50" />
   </td></tr>
-  <tr><td class="head"><{$lang_item_gmap_longitude}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_gmap_longitude}>"><{$lang_item_gmap_longitude}></td><td class="odd">
   <input type="text" id="webphoto_gmap_longitude" name="item_gmap_longitude" value="<{$item_gmap_longitude}>" size="50" />
   </td></tr>
-  <tr><td class="head"><{$lang_item_gmap_zoom}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_gmap_zoom}>"><{$lang_item_gmap_zoom}></td><td class="odd">
   <input type="text" id="webphoto_gmap_zoom" name="item_gmap_zoom" value="<{$item_gmap_zoom}>" size="50" />
   </td></tr>
 
 <{* item_gicon_id *}>
-  <tr><td class="head"><{$lang_gmap_icon}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_gicon_id}>"><{$lang_gmap_icon}></td><td class="odd">
   <select id="item_gicon_id" name="item_gicon_id" size="1">
   <{$item_gicon_id_select_options}>
   </select>
@@ -275,7 +275,7 @@
 
 <{* item_kind *}>
 <{if $show_item_kind }>
-  <tr><td class="head"><{$lang_item_kind}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_kind}>"><{$lang_item_kind}></td><td class="odd">
   <select id="item_kind" name="item_kind" size="1" >
   <{$item_kind_select_options}>
   </select>
@@ -284,28 +284,28 @@
 
 <{if $is_edit }>
 <{* item_displaytype *}>
-  <tr><td class="head"><{$lang_item_displaytype}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_displaytype}>"><{$lang_item_displaytype}></td><td class="odd">
   <select id="item_displaytype" name="item_displaytype" size="1" >
   <{$item_displaytype_select_options}>
   </select>
   </td></tr>
 
 <{* item_detail_onclick *}>
-  <tr><td class="head"><{$lang_item_detail_onclick}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_detail_onclick}>"><{$lang_item_detail_onclick}></td><td class="odd">
   <select id="item_kind" name="item_detail_onclick" size="1" >
   <{$item_detail_onclick_select_options}>
   </select>
   </td></tr>
 
 <{* item_onclick *}>
-  <tr><td class="head"><{$lang_item_onclick}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_onclick}>"><{$lang_item_onclick}></td><td class="odd">
   <select id="item_kind" name="item_onclick" size="1" >
   <{$item_onclick_select_options}>
   </select>
   </td></tr>
 
 <{* item_player_id *}>
-  <tr><td class="head"><{$lang_player}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_player_id}>"><{$lang_player}></td><td class="odd">
   <select id="item_player_id" name="item_player_id" size="1" >
   <{$item_player_id_select_options}>
   </select>
@@ -314,14 +314,14 @@
 
 <{if $show_item_embed }>
 <{* item embed type *}>
-  <tr><td class="head"><{$lang_item_embed_type}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_embed_type}>"><{$lang_item_embed_type}></td><td class="odd">
   <select id="item_embed_type" name="item_embed_type" size="1">
   <{$item_embed_type_select_options}>
   </select>
   </td></tr>
 
 <{* item embed src *}>
-  <tr><td class="head"><{$lang_item_embed_src}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_embed_src}>"><{$lang_item_embed_src}></td><td class="odd">
   <input type="text" id="item_embed_src" name="item_embed_src" value="<{$item_embed_src_s}>" size="50" />
 
 <{if $embed_src_dsc != '' }>
@@ -331,14 +331,14 @@
   </td></tr>
 
 <{* item embed text *}>
-  <tr><td class="head"><{$lang_item_embed_text}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_embed_text}>"><{$lang_item_embed_text}></td><td class="odd">
   <textarea id="item_embed_text" name="item_embed_text" rows="5" cols="80"><{$item_embed_text_s}></textarea>
   </td></tr>
 <{/if}>
 
 <{if $show_item_playlist_type }>
 <{* item playlist type *}>
-  <tr><td class="head"><{$lang_item_playlist_type}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_playlist_type}>"><{$lang_item_playlist_type}></td><td class="odd">
   <select id="item_playlist_type" name="item_playlist_type" size="1">
   <{$item_playlist_type_select_options}>
   </select>
@@ -347,7 +347,7 @@
 
 <{if $show_item_playlist_feed }>
 <{* item playlist feed *}>
-  <tr><td class="head"><{$lang_item_playlist_feed}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_playlist_feed}>"><{$lang_item_playlist_feed}></td><td class="odd">
   <input type="text" id="item_playlist_feed" name="item_playlist_feed" value="<{$item_playlist_feed_s}>" size="80" />
   <br /><{$lang_playlist_feed_dsc}>
 
@@ -361,7 +361,7 @@
 
 <{if $show_item_playlist_dir }>
 <{* item playlist time *}>
-  <tr><td class="head"><{$lang_item_playlist_dir}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_playlist_dir}>"><{$lang_item_playlist_dir}></td><td class="odd">
   <{if $item_playlist_dir_select_options != '' }>
     <{$lang_playlist_dir_dsc}><br />
     <select id="item_playlist_dir" name="item_playlist_dir" size="1">
@@ -375,7 +375,7 @@
 
 <{if $show_item_playlist_time }>
 <{* item playlist time *}>
-  <tr><td class="head"><{$lang_item_playlist_time}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_playlist_time}>"><{$lang_item_playlist_time}></td><td class="odd">
   <select id="item_playlist_time" name="item_playlist_time" size="1">
   <{$item_playlist_time_select_options}>
   </select>
@@ -384,7 +384,7 @@
 
 <{* file photo *}>
 <{if $show_file_photo }>
-  <tr><td class="head"><{$lang_cap_photo_select}></td><td class="odd">
+  <tr><td style="<{$cap_style.file_photo}>"><{$lang_cap_photo_select}></td><td class="odd">
   <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_photo" />
   <input type="file" id="file_photo" name="file_photo" size="50" />
   <br /><br />
@@ -405,7 +405,7 @@
 
 <{* rotate *}>
 <{if $show_rotate }>
-  <tr><td class="head"><{$lang_radio_rotatetitle}></td><td class="odd">
+  <tr><td style="<{$cap_style.rotate}>"><{$lang_radio_rotatetitle}></td><td class="odd">
   <input type="radio" name="rotate" value="rot0" <{$rotate_checked.rot0}> />
   <{$lang_radio_rotate0}> &nbsp; 
   <input type="radio" name="rotate" value="rot90" <{$rotate_checked.rot90}>  />
@@ -420,7 +420,7 @@
 <{/if}>
 
 <{* thumb file *}>
-<tr><td class="head"><{$lang_cap_thumb_select}></td><td class="odd">
+<tr><td style="<{$cap_style.file_thumb}>"><{$lang_cap_thumb_select}></td><td class="odd">
 <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_thumb" />
 <input type="file" id="file_thumb" name="file_thumb" size="50" />
 <br /><br />
@@ -454,7 +454,7 @@
 </td></tr>
 
 <{* middle file *}>
-<tr><td class="head"><{$lang_cap_middle_select}></td><td class="odd">
+<tr><td style="<{$cap_style.file_middle}>"><{$lang_cap_middle_select}></td><td class="odd">
 <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_middle" />
 <input type="file" id="file_middle" name="file_middle" size="50" />
 <br /><br />
@@ -477,7 +477,7 @@
 </td></tr>
 
 <{* small file *}>
-<tr><td class="head"><{$lang_cap_small_select}></td><td class="odd">
+<tr><td style="<{$cap_style.file_small}>"><{$lang_cap_small_select}></td><td class="odd">
 <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_small" />
 <input type="file" id="file_small" name="file_small" size="50" />
 <br /><br />
@@ -499,7 +499,7 @@
 <{* item file others *}>
 <{foreach item=item_file from=$item_file_array}>
 <{if $item_file.url_s != '' }>
-  <tr><td class="head"><{$item_file.title_s}></td><td class="odd">  
+  <tr><td style="<{$cap_style.file}>"><{$item_file.title_s}></td><td class="odd">  
   <a href="<{$item_file.url_s}>" target="_blank"><{$item_file.url_s}></a>
   </td></tr>
 <{/if}>
@@ -507,17 +507,14 @@
 
 <{* item_perm_level *}>
 <{if $show_item_perm_level }>
-  <tr><td class="head"><{$lang_item_perm_level}></td><td class="odd">
-  <input type="radio" name="item_perm_level" value="0" <{$item_perm_level_checked.0}> />
-  <{$lang_item_perm_level_public}> &nbsp;
-  <input type="radio" name="item_perm_level" value="1" <{$item_perm_level_checked.1}> />
-  <{$lang_item_perm_level_group}> &nbsp;
+  <tr><td style="<{$cap_style.item_perm_level}>"><{$lang_item_perm_level}></td><td class="odd">
+  <{$item_perm_level_options}>
   </td></tr>
 <{/if}>
 
 <{* item_perm_read *}>
 <{if $show_item_perm_read }>
-  <tr><td class="head"><{$lang_item_perm_read}></td><td class="odd">
+  <tr><td style="<{$cap_style.item_perm_read}>"><{$lang_item_perm_read}></td><td class="odd">
 
 <{if $show_input_item_perm_read }>
     <input type="checkbox" name="item_perm_read_all" id="item_perm_read_all" value="1" onclick="webphoto_check_all(this, 'item_perm_read_ids')" />
@@ -533,25 +530,25 @@
 <{/if}>
 
 <{* item_perm_down *}>
-<tr><td class="head"><{$lang_item_perm_down}></td><td class="odd">
+<tr><td style="<{$cap_style.item_perm_down}>"><{$lang_item_perm_down}></td><td class="odd">
 <input type="checkbox" name="item_perm_down_all" id="item_perm_down_all" value="1" onclick="webphoto_check_all(this, 'item_perm_down_ids')" />
 <{$lang_group_perm_all}><br />
 <{$item_perm_down_input_checkboxs}>
 </td></tr>
 
 <{* item_codeinfo *}>
-<tr><td class="head"><{$lang_item_codeinfo}></td><td class="odd">
+<tr><td style="<{$cap_style.item_codeinfo}>"><{$lang_item_codeinfo}></td><td class="odd">
 <select id="item_codeinfo" name="item_codeinfo[]" size="5" multiple="multiple">
 <{$item_codeinfo_select_options}>
 </select>
 </td></tr>
 
-<tr><td class="head"><{$lang_item_hits}></td><td class="odd"><{$item_hits}></td></tr>
-<tr><td class="head"><{$lang_item_views}></td><td class="odd"><{$item_views}></td></tr>
-<tr><td class="head"><{$lang_item_rating}></td><td class="odd"><{$item_rating}></td></tr>
+<tr><td style="<{$cap_style.item_hits}>"><{$lang_item_hits}></td><td class="odd"><{$item_hits}></td></tr>
+<tr><td style="<{$cap_style.item_views}>"><{$lang_item_views}></td><td class="odd"><{$item_views}></td></tr>
+<tr><td style="<{$cap_style.item_rating}>"><{$lang_item_rating}></td><td class="odd"><{$item_rating}></td></tr>
 
 <{* item_votes *}>
-<tr><td class="head"><{$lang_item_votes}></td><td class="odd">
+<tr><td style="<{$cap_style.item_votes}>"><{$lang_item_votes}></td><td class="odd">
 <{if $item_votes > 0 }>
   <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=item_manager&amp;op=vote_stats&amp;item_id=<{$item_id}>" >
   <{$lang_vote_stats}>: <{$item_votes}></a>

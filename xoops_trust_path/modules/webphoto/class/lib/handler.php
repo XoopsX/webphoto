@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
+// $Id: handler.php,v 1.12 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// add $flag_admin in check_perm_by_row_name_groups()
 // 2009-11-11 K.OHWADA
 // Notice [PHP]: Undefined index: prefix 
 // 2009-08-08 K.OHWADA
@@ -630,7 +632,7 @@ function check_perm_by_id_name_groups( $id, $name, $groups=null )
 	return $this->check_perm_by_row_name_groups( $row, $name, $groups );
 }
 
-function check_perm_by_row_name_groups( $row, $name, $groups=null )
+function check_perm_by_row_name_groups( $row, $name, $groups=null, $flag_admin=false )
 {
 	if ( empty($name) ) {
 		return true ;
@@ -641,6 +643,10 @@ function check_perm_by_row_name_groups( $row, $name, $groups=null )
 	}
 
 	$val = $row[ $name ] ;
+
+	if ( $flag_admin && $this->_is_module_admin ) {
+		return true;
+	}
 
 	if ( $this->_PERM_ALLOW_ALL && ( $val == $this->_PERM_ALLOW_ALL ) ) {
 		return true;
@@ -771,7 +777,7 @@ function build_form_select_options( $rows, $title_name='', $preset_id=0 )
 	return $str;
 }
 
-function build_form_select_options_with_perm_post( $rows, $title_name, $preset_id, $perm_post, $perm_read, $show )
+function build_form_select_options_with_perm_post( $rows, $title_name, $preset_id, $perm_post, $perm_read, $show, $flag_admin=false )
 {
 	if ( !is_array($rows) || !count($rows) ) {
 		return null;
@@ -793,7 +799,7 @@ function build_form_select_options_with_perm_post( $rows, $title_name, $preset_i
 		$disabled = false;
 
 // not permit read
-		if ( !$this->check_perm_by_row_name_groups( $row, $perm_read ) ) {
+		if ( !$this->check_perm_by_row_name_groups( $row, $perm_read, null, $flag_admin ) ) {
 			if ( $show ) {
 				$disabled = true;
 			} else {
@@ -807,13 +813,13 @@ function build_form_select_options_with_perm_post( $rows, $title_name, $preset_i
 		}
 
 // not permit post
-		if ( !$this->check_perm_by_row_name_groups( $row, $perm_post ) ) {
+		if ( !$this->check_perm_by_row_name_groups( $row, $perm_post, null, $flag_admin ) ) {
 			$disabled = true;
 		}
 
 // both
 		if ( $selected && $disabled ) {
-			if ( $this->_is_module_admin ) {
+			if (  $flag_admin  && $this->_is_module_admin ) {
 				$disabled = false;
 			} else {
 				$selected = false;

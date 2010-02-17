@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.18 2010/01/25 10:03:07 ohwada Exp $
+// $Id: item_handler.php,v 1.19 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// add $flag_admin in check_perm_by_row_name_groups()
 // 2010-01-10 K.OHWADA
 // item_description_scroll
 // 2009-12-06 K.OHWADA
@@ -843,14 +845,14 @@ function get_perm_down_array( $row )
 	return $this->get_perm_array( $row['item_perm_down'] );
 }
 
-function check_perm_read_by_row( $row, $groups=null )
+function check_perm_read_by_row( $row, $groups=null, $flag_admin=false )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read', $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_read', $groups, $flag_admin );
 }
 
-function check_perm_down_by_row( $row, $groups=null )
+function check_perm_down_by_row( $row, $groups=null, $flag_admin=false )
 {
-	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down', $groups );
+	return $this->check_perm_by_row_name_groups( $row, 'item_perm_down', $groups, $flag_admin );
 }
 
 function is_public_read_by_row( $row )

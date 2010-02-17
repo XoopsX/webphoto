@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.14 2010/01/26 08:25:45 ohwada Exp $
+// $Id: catmanager.php,v 1.15 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// build_admin_footer()
 // 2009-12-06 K.OHWADA
 // cat_group_id
 // _groupperm()
@@ -158,6 +160,7 @@ function main()
 			break;
 	}
 
+	echo $this->build_admin_footer();
 	xoops_cp_footer();
 	exit();
 }

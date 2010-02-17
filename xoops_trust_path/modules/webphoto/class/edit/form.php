@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.14 2010/01/25 10:03:07 ohwada Exp $
+// $Id: form.php,v 1.15 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// get_group_perms_for_group_perms_checkboxs()
 // 2010-01-10 K.OHWADA
 // show_form_editor -> submit_show_form_editor
 // 2009-12-06 K.OHWADA
@@ -135,6 +137,8 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_THIS_FCT_EDIT   = 'edit';
 	var $_THIS_FCT_ADMIN  = 'item_manager';
 	var $_THIS_FCT_ADMIN_BATCH = 'batch';
+
+	var $_FLAG_PERM_ADMIN = true;
 
 	var $_FORM_ACTION = null;
 	var $_THIS_FCT    = null;
@@ -272,7 +276,7 @@ function item_cat_id_options()
 		$show = false;
 	}
 
-	return $this->_cat_handler->build_options_with_perm_post( $value, $show );
+	return $this->_cat_handler->build_options_with_perm_post( $value, $show, $this->_FLAG_PERM_ADMIN );
 }
 
 function show_err_invalid_cat( $is_edit )
@@ -424,11 +428,11 @@ function build_group_perms_param_by_key( $name )
 	return array( $ret1, $ret2, $ret3 );
 }
 
-function build_group_perms_checkboxs_by_key( $name )
+function build_group_perms_checkboxs_by_key( $name, $flag_admin=false )
 {
 	$id_name = $name .'_ids';
 	$groups  = $this->get_cached_xoops_db_groups() ;
-	$perms   = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	$perms   = $this->get_group_perms_for_group_perms_checkboxs( $name, $groups, $flag_admin );
 	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
 	return $this->build_form_checkboxs_group_perms( $id_name, $groups, $perms, $all_yes );
 }
@@ -450,6 +454,41 @@ function build_group_perms_list( $name )
 	$all_yes = $this->get_all_yes_group_perms_by_key( $name );
 	$options = $this->build_options_group_perms( $id_name, $groups, $perms, $all_yes );
 	return $this->build_list_select_multi( $options );
+}
+
+function get_group_perms_for_group_perms_checkboxs( $name, $groups, $flag_admin=false )
+{
+	$arr1 = $this->get_group_perms_array_by_row_name( $this->get_row(), $name ) ;
+	if ( ! $flag_admin ) {
+		return $arr1;
+	}
+	$arr2 = $this->get_group_perms_of_module_admin( $groups );
+	$arr3 = array_merge( $arr1, $arr2 );
+	$arr4 = array_unique( $arr3 );
+	return $arr4;
+}
+
+function get_group_perms_of_module_admin( $groups )
+{
+	$arr = array();
+	foreach ( $groups as $id => $name )
+	{
+		if ( $this->get_module_admin_value( $id ) ) {
+			$arr[] = $id;
+		}
+	}
+	print_r( $arr );
+	return $arr;
+}
+
+function get_module_admin_value( $group_id )
+{
+	$this->_groupperm_handler =& xoops_gethandler('groupperm');
+	$arr = $this->_groupperm_handler->getItemIds( 'module_admin', $group_id, 1 );
+	if ( isset( $arr[0] ) ) {
+		return $arr[0] ;
+	}
+	return false;
 }
 
 function get_group_perms_array_by_row_name( $row, $name )

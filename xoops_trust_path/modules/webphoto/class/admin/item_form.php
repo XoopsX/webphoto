@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.25 2010/02/07 12:20:02 ohwada Exp $
+// $Id: item_form.php,v 1.26 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// print_list_table()
 // 2010-01-10 K.OHWADA
 // init_for_admin()
 // 2009-12-06 K.OHWADA
@@ -65,6 +67,12 @@ class webphoto_admin_item_form extends webphoto_edit_photo_form
 
 	var $_PLAYLIST_FEED_SIZE = 80;
 	var $_PLAYLIST_TYPE_DEFAULT = _C_WEBPHOTO_PLAYLIST_TYPE_AUDIO ;
+
+	var $_CAP_ARRAY = array(
+		'maxpixel','maxsize','allowed_exts',
+		'desc_options','rotate','tags','text','file',
+		'file_photo','file_thumb','file_middle','file_small'
+	);
 
 //---------------------------------------------------------
 // constructor
@@ -214,6 +222,7 @@ function build_form_admin_by_files( $mode, $files )
 		'button_conf_delete' => $delete ,
 
 // for admin
+		'cap_style'                => $this->cap_style(),
 		'show_file_photo'          => $show_file_photo,
 		'show_rotate'              => $this->show_rotate( $show_file_photo ) ,
 		'show_valid'               => $this->show_valid(),
@@ -254,6 +263,27 @@ function build_form_admin_by_files( $mode, $files )
 	);
 
 	return array_merge( $arr1, $arr2 );
+}
+
+function cap_style()
+{
+	$arr = array();
+
+	$style_default   = $this->get_ini('style_cap_default');
+	$style_highlight = $this->get_ini('style_cap_highlight');
+	$highlight_array = $this->explode_ini('item_manager_highlight_list');
+
+	$row = $this->get_row();
+	foreach ( $row as $k => $v ) {
+		$arr[ $k ] = $style_default;
+	}
+	foreach ( $this->_CAP_ARRAY as $k ) {
+		$arr[ $k ] = $style_default;
+	}
+	foreach ( $highlight_array as $k ) {
+		$arr[ $k ] = $style_highlight;
+	}
+	return $arr;
 }
 
 function show_item_kind( $is_edit )
@@ -413,10 +443,18 @@ function is_playlist_dir_kind()
 function build_admin_language()
 {
 	$arr = array(
+// form
 		'lang_playlist_feed_dsc' => _AM_WEBPHOTO_PLAYLIST_FEED_DSC ,
 		'lang_playlist_dir_dsc'  => _AM_WEBPHOTO_PLAYLIST_DIR_DSC ,
 		'lang_time_now'          => _AM_WEBPHOTO_TIME_NOW ,
 		'lang_vote_stats'        => _AM_WEBPHOTO_VOTE_STATS ,
+
+// list
+		'lang_item_listing' => _AM_WEBPHOTO_ITEM_LISTING ,
+		'lang_player_mod'   => _AM_WEBPHOTO_PLAYER_MOD ,
+		'lang_vote_stats'   => _AM_WEBPHOTO_VOTE_STATS ,
+		'lang_label_admit'  => _AM_WEBPHOTO_LABEL_ADMIT ,
+		'lang_button_admit' => _AM_WEBPHOTO_BUTTON_ADMIT ,
 	);
 	return $arr;
 }
@@ -558,6 +596,168 @@ function _build_button( $op, $value )
 	$str = '<input type="button" value="'. $value .'" onClick="'. $onclick .'" />'."\n";   
 	return $str;
 } 
+
+//---------------------------------------------------------
+// list
+//---------------------------------------------------------
+function print_list_table( $mode, $item_rows )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_item_list.html';
+
+	$is_waiting = ( $mode == 'waiting' ) ? true : false;
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_admin_language()
+	);
+
+	$arr['show_waiting']    = $this->build_list_show_waiting( $mode );
+	$arr['show_perm_level'] = $this->use_item_perm_level();
+	$arr['item_list']       = $this->build_item_list( $item_rows );
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_list_show_waiting( $mode )
+{
+	if ( $mode == 'waiting' ) {
+		return true;
+	}
+	return false;
+}
+
+function build_item_list( $item_rows )
+{
+	$this->_cat_handler->set_path_separator( ' ' );
+	$kind_options = $this->_item_handler->get_kind_options();
+
+	$arr = array();
+	foreach ( $item_rows as $row )
+	{
+		$temp = $row;
+
+		list( $is_online, $status_report, $status_link, $status_icon )
+			= $this->build_list_status( $row );
+		$temp['status_report'] = $status_report;
+		$temp['status_link']   = $status_link;
+		$temp['status_icon']   = $status_icon;
+
+		$temp['kind_options'] = $kind_options[ $row['item_kind'] ];
+		$temp['photo_url']    = $this->build_list_photo_url( $row, $is_online );
+		$temp['cat_title']    = $this->build_list_cat_title( $row['item_cat_id'] );
+		$temp['uname']        = $this->get_xoops_user_name( $row['item_uid'] );
+		$temp['perm_level']   = $this->item_perm_level_value( $row['item_perm_level'] );
+
+		$arr[] = $temp;
+	}
+	return $arr;
+}
+
+function build_list_status( $row )
+{
+	$item_id = $row['item_id'];
+	$status  = $row['item_status'];
+	$publish = $row['item_time_publish'];
+	$expire  = $row['item_time_expire'];
+
+	$is_online = false ;
+	$report = '';
+	$link   = '';
+	$icon   = '';
+
+	$photo_url  = $this->_MODULE_URL.'/index.php?fct=photo&amp;photo_id='.$item_id;
+	$modify_url = $this->_THIS_URL.'&amp;op=modify_form&amp;item_id='.$item_id;
+
+// online
+	switch ( $status )
+	{
+	case _C_WEBPHOTO_STATUS_WAITING :
+		$report = _WEBPHOTO_ITEM_STATUS_WAITING;
+		$link   = $this->_THIS_URL.'&amp;op=list_waiting';
+		$icon   = 'waiting.png';
+		break;
+
+	case _C_WEBPHOTO_STATUS_OFFLINE :
+// Entry will Auto-Publish
+		if ( ($publish > 0) && ($publish < time()) ) {
+			$is_online = true ;
+			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($publish,'m');
+			$link   = $photo_url ;
+			$icon   = 'online.png';
+			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_UPDATED, true ) ;
+
+		} else {
+			$report = _AM_WEBPHOTO_STATUS_OFFLINE ;
+			$link   = $this->_THIS_URL.'&amp;op=list_offline';
+			$icon   = 'offline.png';   	           
+		}
+		break;
+
+	case _C_WEBPHOTO_STATUS_EXPIRED :
+		$report = _WEBPHOTO_ITEM_STATUS_EXPIRED.' : '. $this->format_timestamp($expire,'m');
+		$link   = $this->_THIS_URL.'&amp;op=list_expired';
+		$icon   = 'offline.png'; 
+		break;
+
+	case _C_WEBPHOTO_STATUS_APPROVED :
+	case _C_WEBPHOTO_STATUS_UPDATED  :
+	default :
+// Entry has Expired
+		if ( ($expire > 0) && ($expire < time()) ) {
+			$report = _AM_WEBPHOTO_STATUS_CHANGE.' : '. $this->format_timestamp($expire,'m');
+			$link   = $this->_THIS_URL.'&amp;op=list_expired';
+			$icon   = 'offline.png';   
+			$this->_item_handler->update_status( $item_id, _C_WEBPHOTO_STATUS_EXPIRED, true ) ;
+
+// online
+		} else {
+			$is_online = true ;
+			$report = _AM_WEBPHOTO_STATUS_ONLINE;
+			$link   = $photo_url ;
+			$icon   = 'online.png';
+		}
+		break;
+	}
+
+	return array( $is_online, $report, $link, $icon );
+}
+
+function build_list_photo_url( $item_row, $is_online )
+{
+	$item_id      = $item_row['item_id'] ;
+	$external_url = $item_row['item_external_url'] ;
+
+	if ( $is_online ) {
+		$url = $this->_MODULE_URL.'/index.php?fct=photo&photo_id='.$item_id ;
+	} else {
+		$url = $this->build_list_cont_url( $item_row );
+		if ( empty( $url ) ) {
+			$url = $external_url ;
+		}
+	}
+	return $url;
+}
+
+function build_list_cont_url( $item_row )
+{
+	$url = null ;
+	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( is_array($cont_row) ) {
+		$url  = $cont_row['file_url'] ;
+		$path = $cont_row['file_path'] ;
+		if ( $path ) {
+			$url = XOOPS_URL .'/'. $path ;
+		}
+	}
+	return $url;
+}
+
+function build_list_cat_title( $cat_id )
+{
+	return $this->_cat_handler->get_cached_value_by_id_name( $cat_id, 'cat_title' );
+}
 
 // --- class end ---
 }

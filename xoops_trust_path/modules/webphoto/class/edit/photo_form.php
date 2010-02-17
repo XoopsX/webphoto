@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.12 2010/02/07 12:20:02 ohwada Exp $
+// $Id: photo_form.php,v 1.13 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// check_edit()
 // 2010-01-10 K.OHWADA
 // webphoto_tag -> webphoto_tag_build
 // item_description_scroll
@@ -202,8 +204,8 @@ function build_form_photo( $item_row )
 	$is_bulk   = false ;
 	$is_file   = false ;
 
-	$show_maxsize        = false;
-	$show_file_photo     = false;
+	$show_maxsize_mode = false;
+	$show_file_photo_mode  = false;
 	$show_file_thumb_mode  = false;
 	$show_file_middle_mode = false;
 	$show_file_small_mode  = false;
@@ -278,14 +280,14 @@ function build_form_photo( $item_row )
 	switch ($mode)
 	{
 		case 'bulk':
-			$show_maxsize  = true;
+			$show_maxsize_mode  = true;
 			$show_file_ids = true;
 			$field_counter = $max_photo_file;
 			$file_id_array = range( 1, $max_photo_file );
 			break;
 
 		case 'file':
-			$show_maxsize     = true;
+			$show_maxsize_mode     = true;
 			$show_file_ftp = true;
 			$max_file_size = $this->_cfg_file_size ;
 			break;
@@ -299,14 +301,16 @@ function build_form_photo( $item_row )
 		case 'submit':
 		case 'edit':
 		default:
-			$show_maxsize     = true;
-			$show_file_photo  = $this->is_upload_type() ;
+			$show_maxsize_mode = true;
+			$show_file_photo_mode  = $this->is_upload_type() ;
 			$show_file_thumb_mode  = true;
 			$show_file_middle_mode = true;
 			$show_file_small_mode  = true;
 			$field_counter    = 4;
 			break;
 	}
+
+	$show_item_cat_id = $this->show_item_cat_id(  $is_edit );
 
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
@@ -322,8 +326,12 @@ function build_form_photo( $item_row )
 		'field_counter'   => $field_counter ,
 
 // BUG: not show maxsize
-		'show_maxsize'                => $show_maxsize ,
+		'show_maxsize'      => $this->show_maxsize( $show_maxsize_mode, $is_edit ) ,
+		'show_maxpixel'     => $this->show_maxpixel( $is_edit ) ,
+		'show_allowed_exts' => $this->show_allowed_exts( $is_edit ) ,
 
+		'show_item_cat_id'            =>   $show_item_cat_id ,
+		'show_item_cat_id_hidden'     => ! $show_item_cat_id ,
 		'show_item_embed_type'        =>   $show_item_embed_type ,
 		'show_item_embed_text'        =>   $show_item_embed_text ,
 		'show_item_embed_src'         =>   $show_item_embed_src ,
@@ -354,14 +362,14 @@ function build_form_photo( $item_row )
 
 		'show_input_item_perm_down'   => $this->show_input_item_perm_down() ,
 
-		'show_file_photo'         => $show_file_photo ,
+		'show_file_photo'         => $this->show_file_photo(  $show_file_photo_mode, $is_submit, $is_edit ),
 		'show_file_thumb'         => $this->show_file_thumb(  $show_file_thumb_mode ) ,
 		'show_file_middle'        => $this->show_file_middle( $show_file_middle_mode ) ,
 		'show_file_small'         => $this->show_file_small(  $show_file_small_mode ) ,
 		'show_file_ids'           => $show_file_ids ,
 		'show_file_ftp'           => $show_file_ftp ,
 
-		'show_rotate'             => $this->show_rotate( $show_file_photo ) ,
+		'show_rotate'             => $this->show_rotate( $show_file_photo_mode ) ,
 		'show_tags'               => $this->check_show('tags') ,
 		'show_gmap_ele'           => $show_gmap ,
 		'show_gmap_table'         => $show_gmap ,
@@ -374,8 +382,9 @@ function build_form_photo( $item_row )
 		'show_button_preview'     => $show_button_preview ,
 		'show_button_delete'      => $show_button_delete ,
 
-		'show_input_item_perm_level' => $this->show_input_item_perm_level( $is_submit, $is_edit, $is_bulk ) ,
+		'show_item_perm_level_options' => $this->show_item_perm_options( $is_submit, $is_edit, $is_bulk ) ,
 
+		'form_title'          => $this->get_form_title( $is_edit ) ,
 		'batch_dir_s'         => $this->batch_dir_s() ,
 		'file_id_array'       => $file_id_array ,
 		'file_select_options' => $this->file_select_options() ,
@@ -442,7 +451,7 @@ function build_form_common( $is_edit )
 		'show_thumb_dsc_select'   => $show_thumb_dsc_select ,
 		'show_thumb_dsc_embed'    => $show_thumb_dsc_embed ,
 
-		'show_item_perm_level'        => $this->show_item_perm_level() ,
+		'show_item_perm_level'        => $this->show_item_perm_level( $is_edit ) ,
 		'show_item_perm_read'         => $this->show_item_perm_read() ,
 		'show_input_item_perm_read'   => $this->show_input_item_perm_read() ,
 
@@ -461,6 +470,7 @@ function build_form_common( $is_edit )
 		'item_perm_down_input_checkboxs' => $item_perm_down_input_checkboxs ,
 		'item_perm_down_list'            => $item_perm_down_list ,
 		'item_perm_down_hiddens'         => $item_perm_down_hiddens ,
+		'item_perm_level_options'        => $this->item_perm_level_options() ,
 		'item_perm_level_checked'        => $this->item_perm_level_checked() ,
 		'item_perm_level_disp'           => $this->item_perm_level_disp() ,
 
@@ -492,6 +502,54 @@ function build_form_common( $is_edit )
 	return $arr ;
 }
 
+function show_maxsize( $show_maxsize_mode, $is_edit )
+{
+	if ( $show_maxsize_mode ) {
+		if ( $is_edit && $this->check_edit('maxsize') ) {
+			return true;
+		}
+		if ( !$is_edit ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function show_maxpixel( $is_edit )
+{
+	if ( $is_edit && $this->check_edit('maxpixel') ) {
+		return true;
+	}
+	if ( !$is_edit ) {
+		return true;
+	}
+	return false;
+}
+
+function show_allowed_exts( $is_edit )
+{
+	if ( $is_edit && $this->check_edit('allowed_exts') ) {
+		return true;
+	}
+	if ( !$is_edit ) {
+		return true;
+	}
+	return false;
+}
+
+function show_item_perm_level( $is_edit )
+{
+	if ( $this->use_item_perm_level() ) {
+		if ( $is_edit && $this->editable_item_perm_level() ) {
+			return true;
+		}
+		if ( !$is_edit ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function show_item_embed()
 {
 	$show_type = false;
@@ -512,15 +570,15 @@ function show_item_embed()
 
 function show_input_item_perm_read()
 {
-	return !$this->show_item_perm_level();
+	return !$this->use_item_perm_level();
 }
 
 function show_input_item_perm_down()
 {
-	return !$this->show_item_perm_level();
+	return !$this->use_item_perm_level();
 }
 
-function show_input_item_perm_level( $is_submit, $is_edit, $is_bulk )
+function show_item_perm_options( $is_submit, $is_edit, $is_bulk )
 {
 	if ( $is_submit || $is_bulk ) {
 		return true;
@@ -542,6 +600,17 @@ function show_item_siteurl_1st( $show_item_embed_text )
 function show_item_siteurl_2nd( $show_item_embed_text )
 {
 	if ( !$show_item_embed_text && $this->use_item('siteurl') ) {
+		return true;
+	}
+	return false;
+}
+
+function show_item_cat_id( $is_edit )
+{
+	if ( $is_edit && $this->check_edit('cat_id') ) {
+		return true;
+	}
+	if ( !$is_edit ) {
 		return true;
 	}
 	return false;
@@ -609,6 +678,19 @@ function show_rotate( $show_file_photo )
 	return false;
 }
 
+function show_file_photo( $show_file_photo_mode, $is_submit, $is_edit )
+{
+	if ( $show_file_photo_mode ) {
+		if ( $is_submit ) {
+			return true;
+		}
+		if ( $is_edit && $this->check_edit('file_photo') ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function show_file_thumb( $show_file_thumb_mode )
 {
 	if ( $show_file_thumb_mode && $this->check_show('file_thumb') ) {
@@ -631,6 +713,15 @@ function show_file_small( $show_file_small_mode )
 		return true;
 	}
 	return false;
+}
+
+function get_form_title( $is_edit )
+{
+	if ( $is_edit ) {
+		return $this->get_constant('TITLE_EDIT');
+	} else {
+		return $this->get_constant('TITLE_PHOTOUPLOAD');
+	}
 }
 
 function item_text_array()
@@ -726,6 +817,15 @@ function item_perm_down_param()
 	return $this->build_group_perms_param_by_key( 'item_perm_down' );
 }
 
+function item_perm_level_options()
+{
+	$name    = 'item_perm_level';
+	$value   = $this->get_row_by_key( $name );
+	$options = array_flip( $this->_item_handler->get_perm_level_options() );
+	$delmita = ' &nbsp ';
+	return $this->build_form_radio( $name, $value, $options, $delmita );
+}
+
 function item_perm_level_checked()
 {
 	$value = $this->get_row_by_key( 'item_perm_level' );
@@ -739,13 +839,18 @@ function item_perm_level_checked()
 
 function item_perm_level_disp()
 {
-	$value = $this->get_row_by_key( 'item_perm_level' );
-	if ( $value ) {
-		$str = $this->get_constant('ITEM_PERM_LEVEL_GROUP');
-	} else {
-		$str = $this->get_constant('ITEM_PERM_LEVEL_PUBLIC');
-	}
+	$key = $this->get_row_by_key( 'item_perm_level' );
+	$str = $this->item_perm_level_value( $key );
 	return $this->sanitize($str);
+}
+
+function item_perm_level_value( $key )
+{
+	$options = $this->_item_handler->get_perm_level_options();
+	if ( isset($options[ $key ]) ) {
+		return $options[ $key ];
+	}
+	return false;
 }
 
 function rotate_checked( $rotate )
@@ -882,12 +987,17 @@ function check_show( $key )
 	return $this->_use_item_class->check_show_or_admin( $key );
 }
 
+function check_edit( $key )
+{
+	return $this->_use_item_class->check_edit_or_admin( $key );
+}
+
 function show_item_perm_read()
 {
 	return $this->_use_item_class->use_item_perm_read();
 }
 
-function show_item_perm_level()
+function use_item_perm_level()
 {
 	return $this->_use_item_class->use_item_perm_level();
 }

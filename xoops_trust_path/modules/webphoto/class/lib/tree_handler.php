@@ -1,5 +1,5 @@
 <?php
-// $Id: tree_handler.php,v 1.6 2009/12/16 13:32:34 ohwada Exp $
+// $Id: tree_handler.php,v 1.7 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// change get_tree_name_list()
 // 2009-12-06 K.OHWADA
 // get_tree_name_list()
 // 2009-11-29
@@ -165,6 +167,9 @@ function get_tree_name_list( $title_name, $none=false, $none_name='---' )
 {
 	$rows = $this->get_all_tree_array();
 	$arr  = array();
+	if ( !is_array($rows) || !count($rows) ) {
+		return $arr;
+	}
 	if ( $none ) {
 		$arr[0] = $none_name;
 	}

@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.23 2010/02/07 12:20:02 ohwada Exp $
+// $Id: index.php,v 1.24 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// build_admin_footer()
 // 2010-02-01 K.OHWADA
 // _check_module_version()
 // 2009-12-06 K.OHWADA
@@ -116,6 +118,7 @@ function main()
 	$this->_print_timeline();
 	$this->_print_command_url();
 
+	echo $this->build_admin_footer();
 	xoops_cp_footer();
 }
 

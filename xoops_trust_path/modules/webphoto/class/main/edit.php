@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.27 2010/02/07 12:20:02 ohwada Exp $
+// $Id: edit.php,v 1.28 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// build_footer_param()
 // 2010-02-01 K.OHWADA
 // _check_public()
 // 2009-05-28 K.OHWADA
@@ -168,7 +170,9 @@ function form_param()
 			$param = $this->_build_form_modify();
 			break;
 	}
-	return $param;
+
+	$ret = array_merge( $param, $this->build_footer_param() );
+	return $ret;
 }
 
 //---------------------------------------------------------

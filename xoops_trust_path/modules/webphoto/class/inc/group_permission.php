@@ -1,5 +1,5 @@
 <?php
-// $Id: group_permission.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: group_permission.php,v 1.6 2010/02/17 04:34:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-15 K.OHWADA
+// add $flag_admin in has_perm()
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
@@ -29,6 +31,7 @@ class webphoto_inc_group_permission extends webphoto_inc_base_ini
 	var $_xoops_mid = 0;
 	var $_xoops_uid = 0;
 	var $_xoops_groups = null;
+	var $_is_module_adimin = false;
 
 //---------------------------------------------------------
 // constructor
@@ -55,8 +58,11 @@ function &getSingleton( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // has permit
 //---------------------------------------------------------
-function has_perm( $name )
+function has_perm( $name, $flag_admin=false )
 {
+	if ( $flag_admin && $this->_is_module_adimin ) {
+		return true;
+	}
 	$bit = constant( strtoupper( '_B_WEBPHOTO_GPERM_' .$name ) );
 	return $this->_has_perm_by_bit( $bit );
 }
@@ -133,6 +139,7 @@ function _init_xoops( $dirname )
 	if ( is_object($xoopsUser) ) {
 		$this->_xoops_uid    = $xoopsUser->getVar( 'uid' );
 		$this->_xoops_groups = $xoopsUser->getGroups();
+		$this->_is_module_adimin = $xoopsUser->isAdmin( $this->_xoops_mid );
 	}
 }
 
