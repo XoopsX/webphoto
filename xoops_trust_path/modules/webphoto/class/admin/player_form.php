@@ -1,5 +1,5 @@
 <?php
-// $Id: player_form.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: player_form.php,v 1.4 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-20 K.OHWADA
+// build_form_by_row()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_player_handler
 // 2009-01-10 K.OHWADA
@@ -24,25 +26,15 @@ class webphoto_admin_player_form extends webphoto_edit_form
 {
 	var $_player_handler;
 
-	var $_THIS_FCT = 'player_manager';
-	var $_THIS_URL;
-
-	var $_SIZE_TITLE   = 20;
-	var $_SIZE_COLOR   = 10;
-	var $_SIZE_DISPLAY =  4;
-
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_admin_player_form( $dirname , $trust_dirname )
 {
 	$this->webphoto_edit_form( $dirname , $trust_dirname );
-	$this->set_path_color_pickup( $this->_MODULE_URL.'/libs' );
 
 	$this->_player_handler  =& webphoto_player_handler::getInstance( 
 		$dirname , $trust_dirname );
-
-	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -58,6 +50,21 @@ function &getInstance( $dirname , $trust_dirname )
 // main
 //---------------------------------------------------------
 function print_form( $row, $param )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_player.html';
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_form_by_row( $row, $param ),
+		$this->build_item_row( $row )
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_form_by_row( $row, $param )
 {
 	$mode         = $param['mode'] ;
 	$item_id      = $param['item_id'] ;
@@ -83,56 +90,28 @@ function print_form( $row, $param )
 			break;
 	}
 
-	$op      = $mode ;
-	$op_form = $mode.'_form';
+	$show_color_style = $this->show_color_style( $player_style );
 
-	$this->set_row( $row );
-
-	echo $this->build_form_tag( 'playerform', null, 'post', 'enctype="multipart/form-data"' );
-	echo $this->build_html_token();
-
-	echo $this->build_input_hidden( 'fct',       $this->_THIS_FCT );
-	echo $this->build_input_hidden( 'op',        $op );
-	echo $this->build_input_hidden( 'player_id', $row['player_id'] );
-	echo $this->build_input_hidden( 'item_id',   $item_id );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $title );
-
-	echo $this->build_row_label( _WEBPHOTO_PLAYER_ID, 'player_id' );
-
-	echo $this->build_line_ele( _WEBPHOTO_PLAYER_STYLE, 
-		$this->_build_ele_style( $op_form, $player_style ) );
-
-	echo $this->build_row_text( _WEBPHOTO_PLAYER_TITLE, 'player_title', $this->_SIZE_TITLE );
-
-// color
-	if ( $this->_is_color_style( $player_style ) ) {
-		echo $this->_build_line_color( 'player_screencolor' );
-		echo $this->_build_line_color( 'player_backcolor' );
-		echo $this->_build_line_color( 'player_frontcolor' );
-		echo $this->_build_line_color( 'player_lightcolor' );
-
-// mono
-	} else {
-		echo $this->build_row_hidden( 'player_screencolor'    );
-		echo $this->build_row_hidden( 'player_backcolor'  );
-		echo $this->build_row_hidden( 'player_frontcolor' );
-		echo $this->build_row_hidden( 'player_lightcolor' );
-	}
-
-	echo $this->_build_line_display( 'player_height' );
-	echo $this->_build_line_display( 'player_width' );
-	echo $this->_build_line_display( 'player_displayheight' );
-	echo $this->_build_line_display( 'player_displaywidth' );
-
-	echo $this->build_line_submit( 'submit', $submit);
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
+	$arr = array( 
+		'title'    => $title ,
+		'op'       => $mode ,
+		'submit'   => $submit ,
+		'item_id'  => $item_id ,
+		'show_color_style'        =>  $show_color_style ,
+		'show_color_style_hidden' => !$show_color_style ,
+		'op_player_style'         => $mode.'_form' ,
+		'player_style_options'    => $this->player_style_options( $player_style ),
+	);
+	return $arr;
 }
 
-function _is_color_style( $style )
+function player_style_options( $value )
+{
+	$options   = $this->_player_handler->get_style_options();
+	return $this->build_form_options( $value, $options );
+}
+
+function show_color_style( $style )
 {
 	if ( $style == _C_WEBPHOTO_PLAYER_STYLE_PLAYER ) {
 		return true;
@@ -141,51 +120,6 @@ function _is_color_style( $style )
 		return true;
 	}
 	return false;
-}
-
-function _build_ele_style( $op_form, $style )
-{
-	$player_id = $this->get_row_by_key( 'player_id' );
-	$options   = $this->_player_handler->get_style_options();
-	$extra     = $this->_build_style_extra( $op_form, $player_id );
-
-	return $this->build_form_select( 'player_style', $style, $options, 1, $extra );
-}
-
-function _build_style_extra( $op, $player_id )
-{
-	$location = $this->_THIS_URL.'&amp;op='. $op .'&amp;player_id='. $player_id .'&amp;style=';
-	$onchange = "window.location='". $location ."'+this.value";
-	$str = 'onchange="'. $onchange .'"';
-	return $str;
-}
-
-function _build_line_display( $name )
-{
-	$title = $this->get_constant( $name );
-	$value = $this->get_row_by_key( $name );
-	$ele   = $this->build_input_text( $name, $value, $this->_SIZE_DISPLAY );
-	$desc  = $this->_get_caption_desc( $name );
-
-	return $this->build_line_cap_ele( $title, $desc, $ele );
-}
-
-function _build_line_color( $name )
-{
-	$title = $this->get_constant( $name );
-	$value = $this->get_row_by_key( $name );
-	$desc  = $this->_get_caption_desc( $name );
-
-	$ele  = $this->build_form_color_pickup( 
-		$name, $value, $this->get_constant('BUTTON_COLOR_PICKUP'), $this->_SIZE_COLOR ) ;
-
-	return $this->build_line_cap_ele( $title, $desc, $ele );
-}
-
-function _get_caption_desc( $name )
-{
-	$desc_name = str_replace( 'player_', '', $name );
-	return $this->get_constant('FLASHVAR_'. $desc_name .'_DSC') ;
 }
 
 // --- class end ---

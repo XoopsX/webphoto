@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.18 2010/02/17 04:34:47 ohwada Exp $
+// $Id: submit.php,v 1.19 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -80,7 +80,10 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_row_update   = null ;
 
 	var $_URL_DAFAULT_IMAGE;
+	var $_URL_PREVIEW_IMAGE;
 	var $_URL_PIXEL_IMAGE ;
+	var $_PREVIEW_IMAGE_WIDTH  = 64;
+	var $_PREVIEW_IMAGE_HEIGHT = 64;
 
 	var $_THIS_FCT    = null;
 	var $_THIS_URL    = null;
@@ -135,6 +138,7 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_ini_file_small     = $this->check_show('file_small');
 
 	$this->_URL_DAFAULT_IMAGE = $this->_MODULE_URL .'/images/exts/default.png' ;
+	$this->_URL_PREVIEW_IMAGE = $this->_MODULE_URL .'/images/exts/preview.png' ;
 	$this->_URL_PIXEL_IMAGE   = $this->_MODULE_URL .'/images/icons/pixel_trans.png' ;
 
 	$this->_FLAG_FETCH_ALLOW_ALL = true ;
@@ -768,7 +772,9 @@ function build_preview( $preview_name )
 
 // other type
 	} else {
-		$img_thumb_src = $this->_URL_DAFAULT_IMAGE;
+		$img_thumb_src = $this->_URL_PREVIEW_IMAGE;
+		$thumb_width   = $this->_PREVIEW_IMAGE_WIDTH;
+		$thumb_height  = $this->_PREVIEW_IMAGE_HEIGHT;
 	}
 
 	$arr = array(

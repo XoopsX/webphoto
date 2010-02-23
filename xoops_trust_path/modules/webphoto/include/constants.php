@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.24 2010/01/25 10:03:07 ohwada Exp $
+// $Id: constants.php,v 1.25 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -102,6 +102,14 @@ define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL", 101 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE"  , 102 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED" , 200 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_PLAYLIST_DIR"  , 201 ) ;
+
+// v2.11
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED", 0 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_IMAGE",  1 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_VIDEO",  2 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_AUDIO",  3 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", 4 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", 9999 ) ;
 
 // v1.80
 //define("_C_WEBPHOTO_MIME_KIND_LIST_IMAGE", "10|11" ) ;

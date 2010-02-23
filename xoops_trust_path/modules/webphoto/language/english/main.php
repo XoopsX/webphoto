@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.40 2010/02/08 01:42:02 ohwada Exp $
+// $Id: main.php,v 1.41 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1459,6 +1459,16 @@ define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "Refused your photo");
 
 // edit
 define("_WEBPHOTO_LOOK_PHOTO","Look Photo");
+
+//---------------------------------------------------------
+// v2.11
+//---------------------------------------------------------
+define("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED", "Undefined" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_IMAGE", "Image" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "Video" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "Audio" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "Office" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "Others" ) ;
 
 // === define end ===
 }

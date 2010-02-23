@@ -1,10 +1,23 @@
 <?php
-// $Id: main.php,v 1.13 2010/02/08 01:42:02 ohwada Exp $
+// $Id: main.php,v 1.14 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v2.11
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED") ) 
+{
+define("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED", "Undefined" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_IMAGE", "Image" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "Video" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "Audio" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "Office" ) ;
+define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "Others" ) ;
+}
 
 //---------------------------------------------------------
 // v2.10

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.26 2010/02/17 04:34:47 ohwada Exp $
+// $Id: item_form.php,v 1.27 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -647,6 +647,7 @@ function build_item_list( $item_rows )
 		$temp['kind_options'] = $kind_options[ $row['item_kind'] ];
 		$temp['photo_url']    = $this->build_list_photo_url( $row, $is_online );
 		$temp['cat_title']    = $this->build_list_cat_title( $row['item_cat_id'] );
+		$temp['player_title'] = $this->build_list_player_title( $row['item_player_id'] );
 		$temp['uname']        = $this->get_xoops_user_name( $row['item_uid'] );
 		$temp['perm_level']   = $this->item_perm_level_value( $row['item_perm_level'] );
 
@@ -757,6 +758,11 @@ function build_list_cont_url( $item_row )
 function build_list_cat_title( $cat_id )
 {
 	return $this->_cat_handler->get_cached_value_by_id_name( $cat_id, 'cat_title' );
+}
+
+function build_list_player_title( $player_id )
+{
+	return $this->_player_handler->get_cached_value_by_id_name( $player_id, 'player_title' );
 }
 
 // --- class end ---

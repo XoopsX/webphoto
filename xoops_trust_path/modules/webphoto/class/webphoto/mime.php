@@ -1,5 +1,5 @@
 <?php
-// $Id: mime.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mime.php,v 1.10 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-20 K.OHWADA
+// get_my_allowed_ext_array_groupby_kind()
 // 2009-11-11 K.OHWADA
 // webphoto_base_ini
 // 2009-10-25 K.OHWADA
@@ -70,6 +72,11 @@ function webphoto_mime( $dirname, $trust_dirname )
 	$this->_mime_kind_office_array = $this->explode_ini( 'mime_kind_list_office' );
 	$this->_mime_kind_image_other_array = $this->explode_ini( 'mime_kind_list_image_other' );
 
+	$this->_item_kind_image_array  = $this->explode_ini('item_kind_list_image');
+	$this->_item_kind_video_array  = $this->explode_ini('item_kind_list_video');
+	$this->_item_kind_audio_array  = $this->explode_ini('item_kind_list_audio');
+	$this->_item_kind_office_array = $this->explode_ini('item_kind_list_office');
+
 	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 }
 
@@ -118,6 +125,103 @@ function get_image_mimes( $limit=0, $offset=0 )
 	$type_arr = array_unique( $type_arr );
 
 	return $type_arr ;
+}
+
+//---------------------------------------------------------
+// get ext type
+//---------------------------------------------------------
+function get_my_item_kind_group_array( $limit=0, $offset=0 )
+{
+	$ext_array = $this->get_my_item_kind_group_array_groupby_item_kind( $limit, $offset );
+
+	$arr = array();
+	foreach ( $ext_array as $k => $v )
+	{
+		if ( !is_array($v) || !count($v) ) {
+			continue;
+		}
+
+		$kind = $this->build_item_kind_group( $k );
+		if ( isset( $arr[ $kind ] ) ) {
+			$arr[ $kind ] = array_merge( $arr[ $kind ] , $v );
+		} else {
+			$arr[ $kind ] = $v;
+		}
+	}
+	ksort( $arr, SORT_NUMERIC );
+	return $arr;
+}
+
+function build_item_kind_group( $k )
+{
+	$str = '';
+	if ( in_array( $k, $this->_item_kind_image_array ) ) {
+		$str = _C_WEBPHOTO_ITEM_KIND_GROUP_IMAGE ;
+	} elseif ( in_array( $k, $this->_item_kind_video_array ) ) {
+		$str = _C_WEBPHOTO_ITEM_KIND_GROUP_VIDEO ;
+	} elseif ( in_array( $k, $this->_item_kind_audio_array ) ) {
+		$str = _C_WEBPHOTO_ITEM_KIND_GROUP_AUDIO ;
+	} elseif ( in_array( $k, $this->_item_kind_office_array ) ) {
+		$str = _C_WEBPHOTO_ITEM_KIND_GROUP_OFFICE ;
+	} else {
+		$str = _C_WEBPHOTO_ITEM_KIND_GROUP_OTHERS ;
+	}
+	return $str;
+}
+
+function get_item_kind_group_name( $kind )
+{
+	$str = '';
+	switch ( $kind )
+	{
+		case _C_WEBPHOTO_ITEM_KIND_GROUP_IMAGE :
+			$str = $this->get_constant('ITEM_KIND_GROUP_IMAGE');
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_GROUP_VIDEO :
+			$str = $this->get_constant('ITEM_KIND_GROUP_VIDEO');
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_GROUP_AUDIO :
+			$str = $this->get_constant('ITEM_KIND_GROUP_AUDIO');
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_GROUP_OFFICE :
+			$str = $this->get_constant('ITEM_KIND_GROUP_OFFICE');
+			break;
+
+		case _C_WEBPHOTO_ITEM_KIND_GROUP_OTHERS :
+		default:
+			$str = $this->get_constant('ITEM_KIND_GROUP_OTHERS');
+			break;
+	}
+	return $str;
+}
+
+function get_item_kind_group_value( $v, $glue=' ' )
+{
+	return implode( $glue, $v );
+}
+
+function get_my_item_kind_group_array_groupby_item_kind( $limit=0, $offset=0 )
+{
+	$rows = $this->_mime_handler->get_rows_by_mygroups(
+		$this->_xoops_groups, $limit, $offset );
+
+	if ( !is_array($rows) || !count($rows) ) {
+		return false;
+	}
+
+	$arr  = array();
+
+	foreach ( $rows as $row )
+	{
+		$ext  = $row['mime_ext'];
+		$kind = $this->ext_to_kind( $ext );
+
+		$arr[ $kind ][] = $ext;
+	}
+	return $arr;
 }
 
 //---------------------------------------------------------

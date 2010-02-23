@@ -1,5 +1,5 @@
 <?php
-// $Id: player_manager.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: player_manager.php,v 1.7 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-02-20 K.OHWADA
+// set_path_color_pickup()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_flash_player
 // 2009-02-20 K.OHWADA
@@ -213,6 +215,7 @@ function _print_player_table( $mode, $player_row )
 {
 	$form =& webphoto_admin_player_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+	$form->set_path_color_pickup( $this->_MODULE_URL.'/libs' );
 
 	$style = $this->_post_class->get_get_int( 'style', $this->_STYLE_NOT_SET );
 	if ( $style != $this->_STYLE_NOT_SET ) {

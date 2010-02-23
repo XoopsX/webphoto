@@ -1,10 +1,12 @@
 <?php
-// $Id: photo_form.php,v 1.13 2010/02/17 04:34:47 ohwada Exp $
+// $Id: photo_form.php,v 1.14 2010/02/23 01:10:59 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+// build_allowed_exts()
 
 //---------------------------------------------------------
 // change log
@@ -127,9 +129,7 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 	$this->_has_image_resize  = $this->_image_create_class->has_resize();
 	$this->_has_image_rotate  = $this->_image_create_class->has_rotate();
 
-	list ( $types, $this->_allowed_exts ) 
-		= $this->_mime_class->get_my_allowed_mimes();
-
+	$this->_item_kind_group_array = $this->_mime_class->get_my_item_kind_group_array();
 	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
 }
 
@@ -408,9 +408,7 @@ function build_form_common( $is_edit )
 	$preview_name   = $this->_preview_name ;
 	$tag_name_array = $this->_tag_name_array ;
 	$rotate         = $this->_rotate ;
-
 	$has_resize     = $this->_has_image_resize ;
-	$allowed_exts   = $this->_allowed_exts ;
 
 	$show_desc_options = $this->show_desc_options();
 
@@ -457,7 +455,7 @@ function build_form_common( $is_edit )
 
 		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
 		'ele_maxsize'          => $this->ele_maxsize() ,
-		'ele_allowed_exts'     => $this->ele_allowed_exts( $allowed_exts ) ,
+		'ele_allowed_exts'     => $this->build_allowed_exts() ,
 		'ele_item_description' => $this->_editor_desc ,
 
 		'item_cat_id_options'            => $this->item_cat_id_options() ,
@@ -972,6 +970,23 @@ function build_time_disp( $name, $flag_now )
 		$date = $this->format_timestamp( $value, $this->get_constant('DTFMT_YMDHI') );
 	}
 	return $date ;
+}
+
+function build_allowed_exts()
+{
+	$str = '';
+	foreach ( $this->_item_kind_group_array as $k => $v )
+	{
+		if ( !is_array($v) || !count($v) ) {
+			continue;
+		}
+
+		$str .= $this->_mime_class->get_item_kind_group_name( $k );
+		$str .= ' : ';
+		$str .= $this->_mime_class->get_item_kind_group_value( $v );
+		$str .= "<br />\n";
+	}
+	return $str;
 }
 
 //---------------------------------------------------------
