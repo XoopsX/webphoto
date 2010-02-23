@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.14 2010/02/23 01:10:59 ohwada Exp $
+// $Id: main.php,v 1.15 2010/02/23 23:24:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -11,12 +11,15 @@
 //---------------------------------------------------------
 if( !defined("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED") ) 
 {
+// submit
 define("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED", "Undefined" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_IMAGE", "Image" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "Video" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "Audio" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "Office" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "Others" ) ;
+// search
+define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "Keywords must be at least <b>%s</b> characters long");
 }
 
 //---------------------------------------------------------

@@ -1,10 +1,16 @@
 <?php
-// $Id: factory.php,v 1.4 2010/02/07 12:20:02 ohwada Exp $
+// $Id: factory.php,v 1.5 2010/02/23 23:24:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-20 K.OHWADA
+// build_execution_time()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -434,6 +440,12 @@ function show_param_common()
 	$this->tpl_set( 'show_photo_rate_link',  true );
 	$this->tpl_set( 'show_photo_taf_link',   true );
 
+	if ( $this->get_ini('show_powered') ) {
+		$this->tpl_set( 'show_powered', true );
+	}
+	if ( $this->get_ini('show_photo_user_icon') ) {
+		$this->tpl_set( 'show_photo_user_icon', true );
+	}
 	if ( $this->get_ini('show_photo_category_link') ) {
 		$this->tpl_set( 'show_photo_category_link', true );
 	}
@@ -443,15 +455,14 @@ function show_param_common()
 	if ( $this->get_ini('show_photo_tag_link') ) {
 		$this->tpl_set( 'show_photo_tag_link', true );
 	}
-	if ( $this->get_ini('show_photo_user_link') ) {
-		$this->tpl_set( 'show_photo_user_link', true );
-	}
+
 	if ( $this->get_ini('show_photo_date_link') ) {
 		$this->tpl_set( 'show_photo_date_link', true );
 	}
 	if ( $this->get_ini('show_photo_place_link') ) {
 		$this->tpl_set( 'show_photo_place_link', true );
 	}
+
 }
 
 function show_param_with_check()
@@ -826,6 +837,15 @@ function show_ligthtbox( $row )
 		$show = true;
 	}
 	return $show;
+}
+
+function build_execution_time()
+{
+	$arr = array(
+		'execution_time' => $this->_page_class->get_execution_time() ,
+		'memory_usage'   => $this->_page_class->get_memory_usage() ,
+	);
+	return $arr;
 }
 
 // --- class end ---

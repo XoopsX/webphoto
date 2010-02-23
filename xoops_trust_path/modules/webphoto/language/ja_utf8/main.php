@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.36 2010/02/23 01:10:59 ohwada Exp $
+// $Id: main.php,v 1.37 2010/02/23 23:24:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1463,12 +1463,16 @@ define("_WEBPHOTO_LOOK_PHOTO","写真を見る");
 //---------------------------------------------------------
 // v2.11
 //---------------------------------------------------------
+// submit
 define("_WEBPHOTO_ITEM_KIND_GROUP_UNDEFINED", "未定義" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_IMAGE", "静止画" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "動画" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "音楽" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "オフィス" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "その他" ) ;
+
+// search
+define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "キーワードは半角 %s 文字以上で指定してください");
 
 // === define end ===
 }

@@ -1,10 +1,16 @@
 <?php
-// $Id: search.php,v 1.2 2010/01/28 02:08:13 ohwada Exp $
+// $Id: search.php,v 1.3 2010/02/23 23:24:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-02-20 K.OHWADA
+// build_lang_keytooshort()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,6 +21,8 @@ class webphoto_search extends webphoto_base_this
 {
 	var $_public_class;
 	var $_search_class;
+
+	var $_min_keyword;
 
 //---------------------------------------------------------
 // constructor
@@ -27,10 +35,13 @@ function webphoto_search( $dirname , $trust_dirname )
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 
 	$this->_search_class =& webphoto_lib_search::getInstance();
+
+	$this->_min_keyword =
+		$this->_search_class->get_xoops_config_search_keyword_min();
+
 	$this->_search_class->set_lang_zenkaku( $this->get_constant('SR_ZENKAKU') );
 	$this->_search_class->set_lang_hankaku( $this->get_constant('SR_HANKAKU') );
-	$this->_search_class->set_min_keyword( 
-		$this->_search_class->get_xoops_config_search_keyword_min() );
+	$this->_search_class->set_min_keyword( $this->_min_keyword );
 	$this->_search_class->set_is_japanese( $this->_is_japanese );
 }
 
@@ -75,11 +86,24 @@ function build_rows_for_detail( $query, $orderby, $limit, $start )
 function build_query_param( $total )
 {
 	$param  = $this->_search_class->get_query_param();
-	$param['show_search'] = true ;
-	if ( $total == 0 ) {
-		$param['show_search_lang_keytooshort'] = true ;
-	}
+	$param['show_search']           = true ;
+	$param['lang_keytooshort']      = $this->build_lang_keytooshort();
+	$param['show_lang_keytooshort'] = $this->build_show_lang_keytooshort( $total, $param );
 	return $param;
+}
+
+function build_lang_keytooshort()
+{
+	$str = sprintf( $this->get_constant('SEARCH_KEYTOOSHORT') , $this->_min_keyword );
+	return $str;	
+}
+
+function build_show_lang_keytooshort( $total, $param )
+{
+	if ( $param['search_query'] && ( $total == 0 ) ) {
+		return true;
+	}
+	return false;
 }
 
 // --- class end ---
