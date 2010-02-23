@@ -29,7 +29,7 @@
 <{/if}>
 
 <th><{$lang_submitter}></th>
-<th><{$lang_item_player_id}></th>
+<th><{$lang_player}></th>
 <th><{$lang_item_time_create}></th>
 <th><{$lang_item_time_update}></th>
 <th><{$lang_item_hits}></th>
@@ -93,9 +93,13 @@
   </a>
   </td>
   <td>
-  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=player_manager&amp;op=modPlayer&amp;player_id=<{$i.item_player_id}>" title="<{$lang_player_mod}>">
-  <{$i.item_player_id}>
-  </a>
+  <{if $i.player_title == false }>
+    ---
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=player_manager&amp;op=modify_form&amp;player_id=<{$i.item_player_id}>&amp;item_id=<{$i.item_id}>" title="<{$lang_player_mod}>">
+    <{$i.player_title|escape}>
+    </a>
+  <{/if}>
   </td>
   <td><{$i.item_time_create|date_format:"%Y-%m-%d"}></td>
   <td><{$i.item_time_update|date_format:"%Y-%m-%d"}></td>
