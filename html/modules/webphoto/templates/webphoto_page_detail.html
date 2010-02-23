@@ -1,4 +1,4 @@
-<{* $Id: webphoto_page_detail.html,v 1.2 2010/01/28 02:15:17 ohwada Exp $ *}>
+<{* $Id: webphoto_page_detail.html,v 1.3 2010/02/23 23:37:51 ohwada Exp $ *}>
 <!--- page detail --->
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
@@ -246,8 +246,8 @@
   <br />
 <{/if}>
 
-<{if $show_search_lang_keytooshort }>
-  <div class="webphoto_error"><{$search_lang_keytooshort}></div>
+<{if $show_lang_keytooshort }>
+  <div class="webphoto_error"><{$lang_keytooshort}></div>
 <{/if}>
 
 <{if $show_nomatch }>
@@ -338,15 +338,17 @@
 
 <div class="webphoto_execution_time">execution time : <{$execution_time}> sec </div>
 <{if $is_module_admin && ($memory_usage > 0)}>
-	<div class="webphoto_memory_usage">memory usage : <{$memory_usage}> MB </div>
+  <div class="webphoto_memory_usage">memory usage : <{$memory_usage}> MB </div>
 <{/if}>
 
 <{* this is NOT copyright. you can remove this. *}>
-<div class="webphoto_footer">
+<{if $show_powered }>
+  <div class="webphoto_footer">
   <a href="<{$happy_linux_url}>" target="_blank">Powered by Happy Linux</a> | 
   <a href="http://www.peak.ne.jp/xoops/" target="_blank">myAlbum-P</a> | 
   <a href="http://bluetopia.homeip.net/" target="_blank">original</a>
-</div>
+  </div>
+<{/if}>
 
 <{if $is_module_admin }>
   <br />

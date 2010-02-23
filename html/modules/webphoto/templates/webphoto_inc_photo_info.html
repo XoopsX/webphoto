@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_info.html,v 1.12 2010/02/07 12:46:40 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_info.html,v 1.13 2010/02/23 23:37:51 ohwada Exp $ *}>
 
 <{* 1ST LINE OF INFORMATION *}>
 
@@ -64,20 +64,21 @@
     <a href="<{$xoops_url}>/userinfo.php?uid=<{$photo.uid}>">
   <{/if}>
   <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/submitter.png" width="16" height="16" alt="<{$lang_submitter}>" title="<{$lang_submitter}>" border="0" />
+  <{if !$show_photo_user_icon }>
+    <{$photo.uname_s}>
+  <{/if}>
   <{if $show_photo_uid_link }>
     </a>
   <{/if}>
 
-  <{if $show_photo_user_link }>
+  <{if $show_photo_user_icon }>
     <{if $cfg_use_pathinfo }>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/<{$photo.uid}>/">
     <{else}>
       <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user&amp;p=<{$photo.uid}>">
     <{/if}>
-  <{/if}>
-  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/myphotos.png" width="16" height="16" alt="<{$photo.info_morephotos}>" title="<{$photo.info_morephotos}>" border="0" /> 
-  <{$photo.uname_s}>
-  <{if $show_photo_user_link }>
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/myphotos.png" width="16" height="16" alt="<{$photo.info_morephotos}>" title="<{$photo.info_morephotos}>" border="0" /> 
+    <{$photo.uname_s}>
     </a>
   <{/if}>
 
