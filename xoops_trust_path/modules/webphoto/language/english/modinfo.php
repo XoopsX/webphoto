@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.21 2010/02/07 12:20:02 ohwada Exp $
+// $Id: modinfo.php,v 1.22 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -211,7 +211,7 @@ define($constpref."ADMENU_PHOTOMANAGER","Photo Management");
 define($constpref."ADMENU_CATMANAGER","Add/Edit Categories");
 define($constpref."ADMENU_CHECKCONFIGS","Check Configuration");
 define($constpref."ADMENU_BATCH","Batch Register");
-define($constpref."ADMENU_REDOTHUMB","Rebuild Thumbnails");
+//define($constpref."ADMENU_REDOTHUMB","Rebuild Thumbnails");
 define($constpref."ADMENU_GROUPPERM","Global Permissions");
 define($constpref."ADMENU_IMPORT","Import Images");
 define($constpref."ADMENU_EXPORT","Export Images");
@@ -408,6 +408,11 @@ define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: auto-n
 // v2.10
 //---------------------------------------------------------
 define($constpref."CFG_USE_LIGHTBOX","Use LightBox");
+
+//---------------------------------------------------------
+// v2.11
+//---------------------------------------------------------
+define($constpref."ADMENU_REDOTHUMBS","Rebuild Thumbnails");
 
 }
 // === define begin ===

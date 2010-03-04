@@ -1,5 +1,5 @@
 <?php
-// $Id: admin_menu.php,v 1.8 2009/12/16 13:32:34 ohwada Exp $
+// $Id: admin_menu.php,v 1.9 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-03 K.OHWADA
+// build_menu_array()
 // 2009-12-06 K.OHWADA
 // webphoto_inc_ini
 // 2009-03-01 K.OHWADA
@@ -36,8 +38,7 @@ class webphoto_inc_admin_menu
 	var $_ini_class ;
 
 	var $_DIRNAME;
-
-	var $_ini_admin_menu_invite = false;
+	var $_TRUST_DIR;
 
 //---------------------------------------------------------
 // constructor
@@ -45,12 +46,12 @@ class webphoto_inc_admin_menu
 function webphoto_inc_admin_menu( $dirname, $trust_dirname )
 {
 	$this->_DIRNAME = $dirname;
+	$this->_TRUST_DIR = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 
 	$this->_ini_class 
 		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
 	$this->_ini_class->read_main_ini();
 
-	$this->_ini_admin_menu_invite = $this->get_ini('admin_menu_invite');
 }
 
 function &getSingleton( $dirname, $trust_dirname )
@@ -65,145 +66,68 @@ function &getSingleton( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // main
 //---------------------------------------------------------
-function define_menu()
-{
-// base on myalbum
-	$menu[0]['title'] = 'CHECKCONFIGS' ;
-	$menu[0]['fct']   = '';
-	$menu[1]['title'] = 'CATMANAGER' ;
-	$menu[1]['fct']   = 'catmanager';
-	$menu[2]['title'] = 'ITEM_MANAGER' ;
-	$menu[2]['fct']   = 'item_manager';
-	$menu[3]['title'] = 'PHOTOMANAGER' ;
-	$menu[3]['fct']   = 'photomanager';
-	$menu[4]['title'] = 'REDOTHUMB' ;
-	$menu[4]['fct']   = 'redothumbs';
-	$menu[5]['title'] = 'GROUPPERM' ;
-	$menu[5]['fct']   = 'groupperm';
-
-// added for webphoto
-	$menu[6]['title'] = 'GICONMANAGER' ;
-	$menu[6]['fct']   = 'giconmanager';
-	$menu[7]['title'] = 'MIMETYPES' ;
-	$menu[7]['fct']   = 'mimetypes';
-	$menu[8]['title'] = 'MAILLOG_MANAGER' ;
-	$menu[8]['fct']   = 'maillog_manager';
-	$menu[9]['title'] = 'PLAYER_MANAGER' ;
-	$menu[9]['fct']   = 'player_manager';
-
-	$menu[10]['title'] = 'BATCH' ;
-	$menu[10]['fct']   = 'batch';
-	$menu[11]['title'] = 'IMPORT' ;
-	$menu[11]['fct']   = 'import';
-	$menu[12]['title'] = 'EXPORT' ;
-	$menu[12]['fct']   = 'export';
-
-// added for webphoto
-	$menu[13]['title'] = 'IMPORT_MYALBUM' ;
-	$menu[13]['fct']   = 'import_myalbum';
-	$menu[14]['title'] = 'RSS_MANAGER' ;
-	$menu[14]['fct']   = 'rss_manager';
-	$menu[15]['title'] = 'CHECKTABLES' ;
-	$menu[15]['fct']   = 'checktables';
-	$menu[16]['title'] = 'UPDATE' ;
-	$menu[16]['fct']   = 'update';
-
-	if ( $this->_ini_admin_menu_invite ) {
-		$menu[17]['title'] = 'INVITE' ;
-		$menu[17]['fct']   = 'invite';
-	}
-
-	return $menu;
-}
-
-function define_sub_menu()
-{
-	$menu[1]['title'] = 'ITEM_TABLE_MANAGE' ;
-	$menu[1]['fct']   = 'item_table_manage';
-	$menu[2]['title'] = 'FILE_TABLE_MANAGE' ;
-	$menu[2]['fct']   = 'file_table_manage';
-	$menu[3]['title'] = 'CAT_TABLE_MANAGE' ;
-	$menu[3]['fct']   = 'cat_table_manage';
-	$menu[4]['title'] = 'VOTE_TABLE_MANAGE' ;
-	$menu[4]['fct']   = 'vote_table_manage';
-	$menu[5]['title'] = 'GICON_TABLE_MANAGE' ;
-	$menu[5]['fct']   = 'gicon_table_manage';
-	$menu[6]['title'] = 'MIME_TABLE_MANAGE' ;
-	$menu[6]['fct']   = 'mime_table_manage';
-	$menu[7]['title'] = 'TAG_TABLE_MANAGE' ;
-	$menu[7]['fct']   = 'tag_table_manage';
-	$menu[8]['title'] = 'P2T_TABLE_MANAGE' ;
-	$menu[8]['fct']   = 'p2t_table_manage';
-	$menu[9]['title'] = 'SYNO_TABLE_MANAGE' ;
-	$menu[9]['fct']   = 'syno_table_manage';
-	$menu[10]['title'] = 'USER_TABLE_MANAGE' ;
-	$menu[10]['fct']   = 'user_table_manage';
-	$menu[11]['title'] = 'MAILLOG_TABLE_MANAGE' ;
-	$menu[11]['fct']   = 'maillog_table_manage';
-	$menu[12]['title'] = 'PLAYER_TABLE_MANAGE' ;
-	$menu[12]['fct']   = 'player_table_manage';
-	$menu[13]['title'] = 'FLASHVAR_TABLE_MANAGE' ;
-	$menu[13]['fct']   = 'flashvar_table_manage';
-
-//	$menu[20]['title'] = 'PHOTO_TABLE_MANAGE' ;
-//	$menu[20]['fct']   = 'photo_table_manage';
-
-	return $menu;
-}
-
 function build_menu()
 {
-	$menu = $this->define_menu();
-
-	foreach( $menu as $k => $v )
-	{
-		$title = $this->_constant( $v['title'] ) ;
-		$link  = 'admin/index.php' ;
-		if ( $v['fct'] ) {
-			$link .= '?fct='. $v['fct'] ;
-		}
-		$arr[ $k ] = array(
-			'title' => $title ,
-			'link'  => $link ,
-		);
-	}
-
-	return $arr;
+	$menu_array = $this->explode_ini('admin_menu_list');
+	return $this->build_menu_array( $menu_array );
 }
 
 function build_sub_menu( )
 {
-	$menu = $this->define_sub_menu();
+	$menu_array = $this->explode_ini('admin_sub_menu_list');
+	return $this->build_menu_array( $menu_array );
+}
 
-	foreach( $menu as $k => $v )
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function build_menu_array( $array )
+{
+	$arr = array();
+	foreach( $array as $fct ) 
 	{
-		$title = $this->_constant( $v['title'] ) ;
-		$link  = 'admin/index.php' ;
-		if ( $v['fct'] ) {
-			$link .= '?fct='. $v['fct'] ;
-		}
-		$arr[ $k ] = array(
-			'title' => $title ,
-			'link'  => $link ,
+		$arr[] =  array(
+			'title' => $this->build_title( $fct ) ,
+			'link'  => $this->build_link(  $fct ) ,
 		);
 	}
-
 	return $arr;
+}
+
+function build_title( $fct )
+{
+	return $this->get_constant( $fct ) ;
+}
+
+function build_link( $fct )
+{
+	$link  = 'admin/index.php' ;
+	if ( $this->file_fct_exists( $fct ) ) {
+		$link .= '?fct='. $fct ;
+	}
+	return $link;
+}
+
+function file_fct_exists( $fct )
+{
+	$file = $this->_TRUST_DIR .'/admin/'.$fct.'.php' ;
+	return file_exists( $file );
 }
 
 //---------------------------------------------------------
 // langauge
 //---------------------------------------------------------
-function _constant( $name )
+function get_constant( $name )
 {
-	$const_name = $this->_constant_name( $name );
+	$const_name = $this->get_constant_name( $name );
 	if ( defined($const_name) ) {
-		return constant( $this->_constant_name( $name ) );
+		return constant( $const_name );
 	}
 	return $const_name;
 }
 
-function _constant_name( $name )
+function get_constant_name( $name )
 {
 	return strtoupper( '_MI_' . $this->_DIRNAME . '_ADMENU_' . $name );
 }

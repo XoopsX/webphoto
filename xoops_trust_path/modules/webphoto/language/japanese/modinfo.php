@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.20 2010/02/07 12:20:02 ohwada Exp $
+// $Id: modinfo.php,v 1.21 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -211,7 +211,7 @@ define($constpref."ADMENU_PHOTOMANAGER","画像管理");
 define($constpref."ADMENU_CATMANAGER","カテゴリ管理");
 define($constpref."ADMENU_CHECKCONFIGS","動作チェッカー");
 define($constpref."ADMENU_BATCH","画像一括登録");
-define($constpref."ADMENU_REDOTHUMB","サムネイルの再構築");
+//define($constpref."ADMENU_REDOTHUMB","サムネイルの再構築");
 define($constpref."ADMENU_GROUPPERM","各グループの権限");
 define($constpref."ADMENU_IMPORT","画像インポート");
 define($constpref."ADMENU_EXPORT","画像エクスポート");
@@ -408,6 +408,11 @@ define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 承認待
 // v2.10
 //---------------------------------------------------------
 define($constpref."CFG_USE_LIGHTBOX","LightBox を使用する");
+
+//---------------------------------------------------------
+// v2.11
+//---------------------------------------------------------
+define($constpref."ADMENU_REDOTHUMBS","サムネイルの再構築");
 
 }
 // === define begin ===

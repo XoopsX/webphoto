@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.10 2010/02/07 12:20:02 ohwada Exp $
+// $Id: modinfo.php,v 1.11 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -25,6 +25,14 @@ if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v2.11
+//---------------------------------------------------------
+if( !defined($constpref."ADMENU_REDOTHUMBS") ) 
+{
+define($constpref."ADMENU_REDOTHUMBS","Rebuild Thumbnails");
+}
 
 //---------------------------------------------------------
 // v2.10

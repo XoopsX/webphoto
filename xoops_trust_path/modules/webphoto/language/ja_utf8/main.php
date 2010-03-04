@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.37 2010/02/23 23:24:06 ohwada Exp $
+// $Id: main.php,v 1.38 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1470,6 +1470,8 @@ define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "動画" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "音楽" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "オフィス" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "その他" ) ;
+
+define("_WEBPHOTO_CONFIRM_PHOTODEL_DSC","説明文やコメントなど関連する全ての情報が削除されます");
 
 // search
 define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "キーワードは半角 %s 文字以上で指定してください");

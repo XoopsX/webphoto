@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.42 2010/02/23 23:24:06 ohwada Exp $
+// $Id: main.php,v 1.43 2010/03/04 02:17:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1470,6 +1470,8 @@ define("_WEBPHOTO_ITEM_KIND_GROUP_VIDEO", "Video" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_AUDIO", "Audio" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OFFICE", "Office" ) ;
 define("_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", "Others" ) ;
+
+define("_WEBPHOTO_CONFIRM_PHOTODEL_DSC","All information, description comment and etc, are deleted");
 
 // search
 define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "Keywords must be at least <b>%s</b> characters long");
