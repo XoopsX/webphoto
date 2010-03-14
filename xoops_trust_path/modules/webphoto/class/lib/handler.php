@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.12 2010/02/17 04:34:47 ohwada Exp $
+// $Id: handler.php,v 1.13 2010/03/14 17:19:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-14 K.OHWADA
+// BUG: echo sql always if error
 // 2010-02-15 K.OHWADA
 // add $flag_admin in check_perm_by_row_name_groups()
 // 2009-11-11 K.OHWADA
@@ -484,6 +486,9 @@ function get_first_rows_by_sql( $sql, $limit=0, $offset=0 )
 
 function query( $sql, $limit=0, $offset=0, $force=false )
 {
+// BUG: echo sql always if error
+	$flag_echo_sql = false;
+
 	if ( $force ) {
 		return $this->queryF( $sql, $limit, $offset );
 	}
@@ -491,6 +496,7 @@ function query( $sql, $limit=0, $offset=0, $force=false )
 	$sql_full = $sql .': limit='. $limit .' :offset='. $offset ;
 
 	if ( $this->_DEBUG_SQL ) {
+		$flag_echo_sql = true;
 		echo $this->sanitize( $sql_full )."<br />\n";
 	}
 
@@ -501,7 +507,7 @@ function query( $sql, $limit=0, $offset=0, $force=false )
 			$error = 'Database update not allowed during processing of a GET request';
 		}
 		$this->set_error( $error );
-		if ( ! $this->_DEBUG_SQL ) {
+		if ( $this->_DEBUG_SQL && !$flag_echo_sql ) {
 			echo $this->sanitize( $sql_full )."<br />\n";
 		}
 		if ( $this->_DEBUG_ERROR ) {
