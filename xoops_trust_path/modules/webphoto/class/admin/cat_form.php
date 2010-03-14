@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.13 2010/02/17 04:34:46 ohwada Exp $
+// $Id: cat_form.php,v 1.14 2010/03/14 14:30:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-14 K.OHWADA
+// BUG: typo prem -> perm
 // 2010-02-15 K.OHWADA
 // $_FLAG_PERM_ADMIN
 // 2010-02-01 K.OHWADA
@@ -152,7 +154,10 @@ function build_cat_form_by_row( $row, $param )
 		'show_gmap'           => $this->show_gmap() ,
 		'show_child_num'      => $is_edit ,
 		'show_cat_pid'        => $this->show_cat_pid() ,
-		'show_cat_prem_read'  => $this->show_cat_prem_read() ,
+
+// BUG: typo prem -> perm
+		'show_cat_perm_read'  => $this->show_cat_perm_read() ,
+
 		'show_cat_group_id'   => $this->show_cat_group_id( $is_edit ) ,
 
 		'parent_cat_id'       => $parent_cat_id ,
@@ -196,7 +201,7 @@ function show_cat_pid()
 	return $this->get_ini('use_cat_pid');
 }
 
-function show_cat_prem_read()
+function show_cat_perm_read()
 {
 	if ( $this->_cfg_perm_cat_read > 0 ) {
 		return true;

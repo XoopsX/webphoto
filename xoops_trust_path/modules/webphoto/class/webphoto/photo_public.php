@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.11 2010/01/28 02:08:13 ohwada Exp $
+// $Id: photo_public.php,v 1.12 2010/03/14 14:30:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-14 K.OHWADA
+// set_perm_cat_read()
 // 2010-01-10 K.OHWADA
 // remove build_tagcloud()
 // 2009-11-11 K.OHWADA
@@ -53,11 +55,12 @@ function webphoto_photo_public( $dirname, $trust_dirname )
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
+	$this->_cfg_use_pathinfo   = $this->_config_class->get_by_name( 'use_pathinfo');
 	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
-	$this->_cfg_use_pathinfo   = $this->_config_class->get_by_name('use_pathinfo');
 	$cfg_perm_item_read        = $this->_config_class->get_by_name( 'perm_item_read' );
 
 	$this->_item_cat_handler->set_perm_item_read( $cfg_perm_item_read );
+	$this->_item_cat_handler->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 }
 
 function &getInstance( $dirname, $trust_dirname )

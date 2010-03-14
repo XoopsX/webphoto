@@ -1,5 +1,5 @@
 <?php
-// $Id: item_cat_handler.php,v 1.6 2010/02/17 04:34:47 ohwada Exp $
+// $Id: item_cat_handler.php,v 1.7 2010/03/14 14:30:45 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-14 K.OHWADA
+// set_perm_cat_read()
 // 2010-02-15 K.OHWADA
 // $_FLAG_PERM_ADMIN
 // 2009-11-11 K.OHWADA
@@ -32,6 +34,9 @@ class webphoto_item_cat_handler extends webphoto_handler_base_ini
 	var $_p2t_table;
 
 	var $_cfg_perm_item_read = false;
+
+// Undefined property: $_cfg_perm_cat_read
+	var $_cfg_perm_cat_read  = false;
 
 	var $_FLAG_PERM_ADMIN = false;
 
@@ -63,6 +68,11 @@ function &getInstance( $dirname, $trust_dirname )
 function set_perm_item_read( $val )
 {
 	$this->_cfg_perm_item_read = (bool)$val ;
+}
+
+function set_perm_cat_read( $val )
+{
+	$this->_cfg_perm_cat_read = (bool)$val ;
 }
 
 //---------------------------------------------------------
