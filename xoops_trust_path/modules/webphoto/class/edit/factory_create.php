@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.13 2010/03/14 17:13:17 ohwada Exp $
+// $Id: factory_create.php,v 1.14 2010/03/14 18:06:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -92,6 +92,8 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_FILE_LIST;
 	var $_TITLE_DEFAULT = 'no title';
 	var $_JPEG_EXT = 'jpg';
+
+	var $_CONTENT_LENGTH = 65000; // 64KB
 
 	var $_FLAG_ADMIN = false ;
 
@@ -882,9 +884,15 @@ function build_row_content( $row, $file_id_array )
 
 function format_content( $str )
 {
-	if ( ! $this->_is_japanese ) {
-		return $str;
+	$str = substr( $str, 0, $this->_CONTENT_LENGTH );
+	if ( $this->_is_japanese ) {
+		$str = $this->format_content_japanese( $str );
 	}
+	return $str;
+}
+
+function format_content_japanese( $str )
+{
 	switch ( _CHARSET )
 	{
 	case 'EUC-JP';
