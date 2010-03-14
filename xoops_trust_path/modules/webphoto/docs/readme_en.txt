@@ -1,11 +1,35 @@
-$Id: readme_en.txt,v 1.45 2010/02/17 04:34:47 ohwada Exp $
+$Id: readme_en.txt,v 1.46 2010/03/14 17:31:17 ohwada Exp $
+
+=================================================
+Version: 2.12
+Date:   2010-03-14
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bug fix
+(1) NOT set cateogry read permission
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
+
+(2) DB error when submit
+item_content : Incorrect string value
+item_exif : Data too long
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.11
 Date:   2010-02-17
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

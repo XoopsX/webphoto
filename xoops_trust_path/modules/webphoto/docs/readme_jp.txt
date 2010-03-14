@@ -1,11 +1,39 @@
-$Id: readme_jp.txt,v 1.46 2010/02/17 04:34:47 ohwada Exp $
+$Id: readme_jp.txt,v 1.47 2010/03/14 17:31:17 ohwada Exp $
+
+
+=================================================
+Version: 2.12
+Date:   2010-03-14
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ修正
+(1) カテゴリーの閲覧権限が設定できない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
+
+(2) 登録時のDBエラー
+item_content : Incorrect string value
+item_exif : Data too long
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて、
+  「アップデート」の「ファイルの妥当性の検査」を実行し、
+  必要なファイルが設置されているかを確認する
+
+
 
 =================================================
 Version: 2.11
 Date:   2010-02-17
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
