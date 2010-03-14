@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.12 2010/02/09 14:40:29 ohwada Exp $
+// $Id: factory_create.php,v 1.13 2010/03/14 17:13:17 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-14 K.OHWADA
+// format_content()
 // 2010-01-10 K.OHWADA
 // build_row_detail_onclick()
 // 2009-12-06 K.OHWADA
@@ -51,6 +53,7 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_exif_class;
 	var $_msg_main_class;
 	var $_msg_sub_class;
+	var $_multibyte_class;
 
 // config
 	var $_cfg_use_pathinfo = false;
@@ -126,8 +129,9 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 	$this->_ext_class  
 		=& webphoto_ext::getInstance( $dirname , $trust_dirname );
 
-	$this->_icon_build_class    =& webphoto_edit_icon_build::getInstance( $dirname );
-	$this->_exif_class =& webphoto_exif::getInstance();
+	$this->_icon_build_class  =& webphoto_edit_icon_build::getInstance( $dirname );
+	$this->_exif_class        =& webphoto_exif::getInstance();
+	$this->_multibyte_class   =& webphoto_lib_multibyte::getInstance();
 
 	$this->_msg_main_class = new webphoto_lib_msg();
 	$this->_msg_sub_class  = new webphoto_lib_msg();
@@ -401,11 +405,6 @@ function build_item_row_modify_update( $row, $file_id_array, $tag_name_array )
 function build_row_submit_by_post( $row, $checkbox )
 {
 	return $this->_item_build_class->build_row_submit_by_post( $row, $checkbox );
-}
-
-function XXXbuild_row_modify_by_post( $row, $flag_status=true )
-{
-	return $this->_item_build_class->build_row_modify_by_post( $row, $flag_status );
 }
 
 function build_row_files( $row, $file_id_array )
@@ -871,7 +870,7 @@ function build_row_content( $row, $file_id_array )
 
 	$extra_param = $this->_ext_class->get_text_content( $param );
 	if ( isset( $extra_param['content'] ) ) {
-		$row['item_content'] = $extra_param['content'] ;
+		$row['item_content'] = $this->format_content( $extra_param['content'] );
 		$this->_msg_sub_class->set_msg( 'get content' )  ;
 
 	} elseif ( isset( $extra_param['errors'] ) ) {
@@ -879,6 +878,31 @@ function build_row_content( $row, $file_id_array )
 	}
 
 	return $row ;
+}
+
+function format_content( $str )
+{
+	if ( ! $this->_is_japanese ) {
+		return $str;
+	}
+	switch ( _CHARSET )
+	{
+	case 'EUC-JP';
+		$str = $this->convert_encoding_content( $str, 'UTF-8' );
+		break;
+
+	case 'UTF-8';
+		$str = $this->convert_encoding_content( $str, 'EUC-JP' );
+		break;
+	}
+	return $str;
+}
+
+function convert_encoding_content( $str, $encode )
+{
+	$str = $this->_multibyte_class->convert_encoding( $str, $encode,  _CHARSET );
+	$str = $this->_multibyte_class->convert_encoding( $str, _CHARSET, $encode );
+	return $str;
 }
 
 //---------------------------------------------------------
