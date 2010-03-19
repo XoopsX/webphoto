@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.19 2010/02/17 04:34:47 ohwada Exp $
+// $Id: item_handler.php,v 1.20 2010/03/19 00:39:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// change insert update
 // 2010-02-15 K.OHWADA
 // add $flag_admin in check_perm_by_row_name_groups()
 // 2010-01-10 K.OHWADA
@@ -190,10 +192,6 @@ function create( $flag_new=false )
 function insert( $row, $force=false )
 {
 	extract( $row ) ;
-
-	if ( empty($item_datetime) ) {
-		$item_datetime = $this->get_ini('item_datetime_default') ;
-	}
 
 	$sql  = 'INSERT INTO '.$this->_table.' (';
 
@@ -379,10 +377,6 @@ function insert( $row, $force=false )
 function update( $row, $force=false )
 {
 	extract( $row ) ;
-
-	if ( empty($item_datetime) ) {
-		$item_datetime = $this->get_ini('item_datetime_default') ;
-	}
 
 	$sql  = 'UPDATE '.$this->_table.' SET ';
 	$sql .= 'item_time_create='.intval($item_time_create).', ';
