@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.25 2010/02/23 01:10:59 ohwada Exp $
+// $Id: constants.php,v 1.26 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -62,6 +62,10 @@ define("_B_WEBPHOTO_GPERM_FILE",            8192 ) ;
 define("_B_WEBPHOTO_GPERM_HTML",           16368 ) ;
 
 define("_C_WEBPHOTO_GPERM_NAME", "webphoto" ) ;
+
+// v2.12
+define("_C_WEBPHOTO_MYSQL_TEXT_LENGTH",       "65000" ) ;	// 64KB
+define("_C_WEBPHOTO_MYSQL_MEDIUMTEXT_LENGTH", "16000000" ) ;	// 16MB
 
 // constants
 define("_C_WEBPHOTO_IMAGE_EXTS" , "jpg|jpeg|gif|png" ) ;

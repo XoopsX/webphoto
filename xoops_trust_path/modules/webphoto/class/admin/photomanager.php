@@ -1,5 +1,5 @@
 <?php
-// $Id: photomanager.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photomanager.php,v 1.6 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_update_item()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_edit_item_delete
 // 2009-01-10 K.OHWADA
@@ -151,7 +153,7 @@ function _update()
 	}
 
 	$post_new_datetime_checkbox = $this->_post_class->get_post_int( 'new_datetime_checkbox');
-	$post_new_datetime          = $this->_item_handler->build_datetime_by_post( 'new_datetime' );
+	$post_new_datetime          = $this->_item_create_class->build_datetime_by_post( 'new_datetime' );
 
 	$post_new_time_update_checkbox = $this->_post_class->get_post_int( 'new_time_update_checkbox');
 	$post_new_time_update          = $this->_post_class->get_post_text('new_time_update');
@@ -206,7 +208,7 @@ function _update()
 
 	foreach( $_POST[ 'ids' ] as $id ) 
 	{
-		$row = $this->_item_handler->get_row_by_id( $id );
+		$row = $this->_item_create_class->get_row_by_id( $id );
 		if ( !is_array($row) ) {	continue;	}
 
 		if ( $flag_cat_id ) {
@@ -249,7 +251,7 @@ function _update()
 
 		$row['item_search']  = $this->_search_class->build_with_tag( $row );
 
-		$this->_item_handler->update( $row );
+		$this->format_and_update_item( $row );
 	}
 
 	$url  = 'index.php?fct=photomanager&amp;perpage='. $this->_get_perpage;
@@ -268,19 +270,19 @@ function _print_form()
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$keyword_array = $this->str_to_array( $this->_get_txt, ' ' );
-	$where = $this->_item_handler->build_where_by_keyword_array_catid(
+	$where = $this->_item_create_class->build_where_by_keyword_array_catid(
 		$keyword_array, $this->_get_catid );
 
 	$limit = $this->_get_perpage;
 	$start = $this->_get_pos;
 
 	if ( $where ) {
-		$total = $this->_item_handler->get_count_by_where( $where );
-		$rows  = $this->_item_handler->get_rows_by_where( $where, $limit, $start );
+		$total = $this->_item_create_class->get_count_by_where( $where );
+		$rows  = $this->_item_create_class->get_rows_by_where( $where, $limit, $start );
 
 	} else {
-		$total = $this->_item_handler->get_count_all();
-		$rows  = $this->_item_handler->get_rows_all_asc( $limit, $start );
+		$total = $this->_item_create_class->get_count_all();
+		$rows  = $this->_item_create_class->get_rows_all_asc( $limit, $start );
 	}
 
 // Information of page navigating

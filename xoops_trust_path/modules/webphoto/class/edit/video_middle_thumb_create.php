@@ -1,5 +1,5 @@
 <?php
-// $Id: video_middle_thumb_create.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: video_middle_thumb_create.php,v 1.4 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_update_item()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_ffmpeg etc
 // 2009-03-15 K.OHWADA
@@ -122,9 +124,8 @@ function update_video_thumb_by_item_row( $item_row, $num )
 	$row_update = $this->_item_build_class->build_row_files( $item_row, $file_id_array );
 
 // --- update item ---
-	$ret = $this->_item_handler->update( $row_update, $this->_flag_force_db );
+	$ret = $this->format_and_update_item( $row_update, $this->_flag_force_db );
 	if ( !$ret ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB ;
 	}
 
@@ -222,7 +223,7 @@ function create_update_video_thumb_common( $item_row, $src_file, $kind )
 
 	$flag_update = false;
 
-	$file_id = $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
+	$file_id = $this->_item_create_class->build_value_fileid_by_kind( $item_row, $kind );
 	if ( $file_id > 0 ) {
 		$file_row = $this->_file_handler->get_row_by_id( $file_id );
 

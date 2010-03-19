@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.4 2010/01/25 10:03:07 ohwada Exp $
+// $Id: update_040.php,v 1.5 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// webphoto_edit_item_create
 // 2010-01-10 K.OHWADA
 // get_ini()
 // 2008-11-08 K.OHWADA
@@ -23,6 +25,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_update_040 extends webphoto_base_this
 {
+	var $_item_create_class;
 	var $_photo_handler;
 	var $_image_class;
 	var $_image_cmd_class;
@@ -47,11 +50,14 @@ function webphoto_admin_update_040( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
+	$this->_item_create_class  
+		=& webphoto_edit_item_create::getInstance( $dirname , $trust_dirname  );
+
 	$this->_photo_handler =& webphoto_photo_handler::getInstance( $dirname );
 	$this->_image_class   =& webphoto_image_info::getInstance( $dirname , $trust_dirname );
 	$this->_form_class    =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
 
-	$this->_item_handler->set_debug_error( true );
+	$this->_item_create_class->set_debug_error( true );
 	$this->_file_handler->set_debug_error( true );
 
 	$this->_cfg_middle_width  = $this->get_config_by_name( 'middle_width' ) ;
@@ -113,7 +119,7 @@ function main()
 		echo $this->build_admin_menu();
 		echo $this->build_admin_title( 'UPDATE' );
 
-		if ( $this->_item_handler->get_count_all() > 0 ) {
+		if ( $this->_item_create_class->get_count_all() > 0 ) {
 			$msg = 'You dont need update.<br />already exists item records';
 		} elseif ( $this->_photo_handler->get_count_all() > 0 ) {
 			$msg = _AM_WEBPHOTO_MUST_UPDATE ;
@@ -216,7 +222,7 @@ function _update_photo()
 		$item_row['item_file_id_4']  = $file_id_flash ;
 		$item_row['item_file_id_5']  = $file_id_docomo ;
 		$item_row['item_file_id_10'] = $file_id_10 ;
-		$this->_item_handler->update( $item_row );
+		$this->_item_create_class->format_and_update( $item_row );
 
 		echo "<br />\n";
 	}
@@ -230,7 +236,7 @@ function _update_photo()
 
 function _insert_item( $photo_row )
 {
-	$row = $this->_item_handler->create();
+	$row = $this->_item_create_class->create();
 	$row['item_id']             = $photo_row['photo_id'] ;
 	$row['item_time_create']    = $photo_row['photo_time_create'] ;
 	$row['item_time_update']    = $photo_row['photo_time_update'] ;
@@ -267,7 +273,7 @@ function _insert_item( $photo_row )
 	$row['item_text_10']        = $photo_row['photo_text10'] ;
 	$row['item_kind']           = $this->_build_item_kind( $photo_row ) ;
 
-	$newid = $this->_item_handler->insert( $row );
+	$newid = $this->_item_create_class->format_and_insert( $row );
 	if ( !$newid ) {
 		return false;
 	}

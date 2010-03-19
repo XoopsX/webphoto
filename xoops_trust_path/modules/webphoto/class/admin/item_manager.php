@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.27 2010/02/17 04:34:47 ohwada Exp $
+// $Id: item_manager.php,v 1.28 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_update_item()
 // 2010-02-15 K.OHWADA
 // print_list_table()
 // 2010-01-10 K.OHWADA
@@ -294,8 +296,8 @@ function _menu()
 
 	$perpage = $this->_get_perpage();
 
-	$total_all = $this->_item_handler->get_count_all();
-	$item_rows = $this->_item_handler->get_rows_by_orderby( $orderby, $perpage, $start );
+	$total_all = $this->_item_create_class->get_count_all();
+	$item_rows = $this->_item_create_class->get_rows_by_orderby( $orderby, $perpage, $start );
 
 	$this->_admin_item_form_class->print_form_refresh_cache();
 	echo "<br />\n";
@@ -334,7 +336,7 @@ function _get_perpage()
 function _print_menu_status( $status, $mode, $flag_br )
 {
 	$url   = $this->_THIS_URL.'&amp;op=list_'.$mode ;
-	$count = $this->_item_handler->get_count_status( $status );
+	$count = $this->_item_create_class->get_count_status( $status );
 
 	$str  = $this->_build_mene_link(
 		$url, $this->get_admin_title( $mode ), false );
@@ -399,7 +401,7 @@ function _list_status( $status, $mode )
 	$start   = $this->_post_class->get_get_int('start');
 	$perpage = $this->_get_perpage();
 
-	$total = $this->_item_handler->get_count_status( $status );
+	$total = $this->_item_create_class->get_count_status( $status );
 
 	xoops_cp_header();
 	echo $this->_build_bread_crumb();
@@ -409,7 +411,7 @@ function _list_status( $status, $mode )
 		echo _AM_WEBPHOTO_ERR_NO_RECORD ."<br />\n";
 
 	} else {
-		$item_rows = $this->_item_handler->get_rows_status( $status, $perpage, $start );
+		$item_rows = $this->_item_create_class->get_rows_status( $status, $perpage, $start );
 		$this->_print_list_table( $mode, $item_rows );
 		$this->_print_list_navi( $total, $perpage );
 	}
@@ -532,7 +534,7 @@ function _modify_form()
 function _get_item_row_or_redirect()
 {
 	$item_id  = $this->_post_class->get_post_get_int('item_id') ;
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
 	if ( !is_array($item_row) ) {
 		redirect_header( $this->_THIS_URL , $this->_TIME_FAILED , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit() ;
@@ -558,7 +560,7 @@ function _show_flash_player( $item_row )
 function _confirm_form()
 {
 	$item_id  = $this->_post_class->get_post_get_int('item_id') ;
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
 	if ( !is_array($item_row) ) {
 		redirect_header( $this->_THIS_URL , $this->_TIME_FAILED , $this->get_constant('NOMATCH_PHOTO') ) ;
 		exit() ;
@@ -726,7 +728,7 @@ function _approve()
 	$post_ids = $this->_post_class->get_post('item_list_form_id');
 
 	if ( is_array($post_ids) &&count($post_ids) ){
-		$item_rows = $this->_item_handler->get_rows_by_id_array( $post_ids );
+		$item_rows = $this->_item_create_class->get_rows_by_id_array( $post_ids );
 		foreach ( $item_rows as $row ) 
 		{
 			$row['item_status'] = _C_WEBPHOTO_STATUS_APPROVED ;
@@ -735,7 +737,7 @@ function _approve()
 				$row['item_perm_read'] = $perm;
 				$row['item_perm_down'] = $perm;
 			}
-			$this->_item_handler->update( $row );
+			$this->format_and_update_item( $row );
 			$this->notify_new_photo( $row );
 			$this->mail_approve( $row );
 		}
@@ -959,11 +961,10 @@ function _flashvar_submit()
 	$ret1 = $edit_class->submit();
 	if ( $ret1 == 0 ) {
 		$item_row['item_flashvar_id'] = $edit_class->get_newid() ;
-		$ret2 = $this->_item_handler->update( $item_row );
+		$ret2 = $this->format_and_update_item( $item_row );
 		if ( $ret2 ) {
 			$ret = 0 ;
 		} else {
-			$this->set_error( $this->_item_handler->get_errors() );
 			$ret = _C_WEBPHOTO_ERR_DB ;
 		}
 	} else {
@@ -1072,7 +1073,7 @@ function _vote_stats()
 	$flag_item = false ;
 
 	if ( $item_id > 0 ) {
-		$item_row = $this->_item_handler->get_row_by_id( $item_id );
+		$item_row = $this->_item_create_class->get_row_by_id( $item_id );
 		if ( is_array($item_row) ) {
 			$flag_item = true;
 		}
@@ -1083,7 +1084,7 @@ function _vote_stats()
 	if ( ! $flag_item ) {
 		$location = $this->_THIS_URL ."&amp;op=vote_stats&amp;item_id=" ;
 		$onchange = "window.location='". $location ."'+this.value";
-		$selbox   = $this->_item_handler->build_form_selbox( 'item_id', $item_id, 1, $onchange );
+		$selbox   = $this->_item_create_class->build_form_selbox( 'item_id', $item_id, 1, $onchange );
 
 		echo _AM_WEBPHOTO_ITEM_SELECT .' ' ;  
 		echo $selbox ;
@@ -1273,7 +1274,7 @@ function _delete_vote()
 	list( $votes, $total, $rating )
 		= $this->_vote_handler->calc_rating_by_photoid( $item_id );
 
-	$this->_item_handler->update_rating_by_id( $item_id, $votes, $rating );
+	$this->_item_create_class->update_rating_by_id( $item_id, $votes, $rating );
 
 	$url = $this->_THIS_URL .'&amp;op=vote_stats&item_id='. $item_id;
 	redirect_header( $url, $this->_TIME_SUCCESS, _AM_WEBPHOTO_VOTE_DELETED );

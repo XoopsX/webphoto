@@ -1,5 +1,5 @@
 <?php
-// $Id: update_130.php,v 1.5 2009/11/06 18:04:17 ohwada Exp $
+// $Id: update_130.php,v 1.6 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// webphoto_edit_item_create
 // 2009-10-25 K.OHWADA
 // BUG: Notice [PHP]: Undefined variable: item_id
 // 2009-04-10 K.OHWADA
@@ -21,6 +23,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_update_130 extends webphoto_base_this
 {
+	var $_item_create_class;
 	var $_form_class;
 	var $_small_create_class;
 
@@ -39,10 +42,12 @@ function webphoto_admin_update_130( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
+	$this->_item_create_class  
+		=& webphoto_edit_item_create::getInstance( $dirname , $trust_dirname  );
 	$this->_form_class =& webphoto_lib_form::getInstance(   $dirname , $trust_dirname );
 	$this->_small_create_class =& webphoto_edit_small_create::getInstance( $dirname );
 
-	$this->_item_handler->set_debug_error( true );
+	$this->_item_create_class->set_debug_error( true );
 	$this->_file_handler->set_debug_error( true );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
@@ -84,7 +89,7 @@ function main()
 		echo $this->build_admin_menu();
 		echo $this->build_admin_title( 'UPDATE' );
 
-		$item_count  = $this->_item_handler->get_count_all();
+		$item_count  = $this->_item_create_class->get_count_all();
 		$small_count = $this->_file_handler->get_count_by_kind( _C_WEBPHOTO_FILE_KIND_SMALL );
 		echo 'There are '. $item_count .' items and '. $small_count .' small images';
 		echo "<br /><br />\n";
@@ -130,8 +135,8 @@ function _update_item()
 {
 	$offset = $this->get_post_offset();
 
-	$total     = $this->_item_handler->get_count_all();
-	$item_rows = $this->_item_handler->get_rows_all_asc( $this->_LIMIT, $offset );
+	$total     = $this->_item_create_class->get_count_all();
+	$item_rows = $this->_item_create_class->get_rows_all_asc( $this->_LIMIT, $offset );
 
 	$next = $this->_next;
 	if ( $this->_next > $total ) {
@@ -181,12 +186,12 @@ function _update_item()
 
 // update item
 		$item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ]  = $file_newid ;
-		$ret = $this->_item_handler->update( $item_row );
+		$ret = $this->_item_create_class->format_and_update( $item_row );
 		if ( $ret ) {
 			echo ' OK ';
 		} else {
 			echo ' failed to update item table <br />';
-			echo $this->_item_handler->get_format_error() ;
+			echo $this->_item_create_class->get_format_error() ;
 		}
 
 		echo "<br />\n";

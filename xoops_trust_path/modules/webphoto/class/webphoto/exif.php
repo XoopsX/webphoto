@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.3 2010/03/14 17:14:27 ohwada Exp $
+// $Id: exif.php,v 1.4 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-03-14 K.OHWADA
-// webphoto_lib_multibyte
+// 2010-03-18 K.OHWADA
+// nothing to do
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -22,19 +22,16 @@ class webphoto_exif
 {
 	var $_exif_class;
 	var $_utility_class;
-	var $_multibyte_class;
 
 	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
-	var $_EXIF_LENGTH = 65000 ; // 64KB
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_exif()
 {
-	$this->_exif_class      =& webphoto_lib_exif::getInstance();
-	$this->_utility_class   =& webphoto_lib_utility::getInstance();
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_exif_class    =& webphoto_lib_exif::getInstance();
+	$this->_utility_class =& webphoto_lib_utility::getInstance();
 }
 
 function &getInstance()
@@ -76,7 +73,7 @@ function build_row_exif( $row, $file )
 		$row['item_gmap_zoom']      = $this->_GMAP_ZOOM ;
 	}
 	if ( $exif ) {
-		$row['item_exif'] = $this->format_exif( $exif ) ;
+		$row['item_exif'] = $exif ;
 		$flag = 2 ;
 	}
 
@@ -100,17 +97,6 @@ function exif_to_mysql_datetime( $exif )
 	if ( $time <= 0 ) { return false; }
 
 	return $this->time_to_mysql_datetime( $time );
-}
-
-function format_exif( $str )
-{
-	if ( strlen($str) < $this->_EXIF_LENGTH ) {
-		return $str ;
-	}
-
-	$str = $this->_multibyte_class->convert_encoding( $str, 'ASCII', 'UTF-8' );
-	$str = substr( $str, 0, $this->_EXIF_LENGTH );
-	return $str;
 }
 
 function get_row()

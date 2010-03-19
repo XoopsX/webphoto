@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.12 2009/12/12 13:11:21 ohwada Exp $
+// $Id: redothumbs.php,v 1.13 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_update_item()
 // 2009-12-12 K.OHWADA
 // Fatal error: cont_ceate_class -> cont_create_class
 // 2009-11-11 K.OHWADA
@@ -148,7 +150,7 @@ function main()
 // Render forms
 	xoops_cp_header() ;
 	echo $this->build_admin_menu();
-	echo $this->build_admin_title( 'REDOTHUMB' );
+	echo $this->build_admin_title( 'REDOTHUMBS' );
 
 	$param['start']   = $start;
 	$param['counter'] = $counter;
@@ -214,7 +216,7 @@ function _submit( $param )
 	$this->_post_resize    = $param['resize'];
 	$this->_post_exif      = $param['exif'];
 
-	$item_rows = $this->_item_handler->get_rows_all_asc( $post_size, $post_start );
+	$item_rows = $this->_item_create_class->get_rows_all_asc( $post_size, $post_start );
 
 	$counter = 0 ;
 
@@ -520,7 +522,7 @@ function _update_exif( $item_id )
 	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
 	$flag = null;
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
 
 	$param = $this->_exif_class->build_row_exif( $item_row, $cont_file );
 	if ( isset( $param['row'] ) ) {
@@ -789,15 +791,12 @@ function _get_image_param( $file, $flag_msg=true )
 //---------------------------------------------------------
 function _update_item_thumbid( $item_id, $thumb_id )
 {
-	$row = $this->_item_handler->get_row_by_id( $item_id );
+	$row = $this->_item_create_class->get_row_by_id( $item_id );
 	$row['item_file_id_2'] = $thumb_id ;
 
-	$ret = $this->_item_handler->update( $row );
+	$ret = $this->format_and_update_item( $row );
 	if ( !$ret ) {
-		$errors = $this->_item_handler->get_errors() ;
 		$this->build_set_msg( 'DB Error' , true , true ) ;
-		$this->set_msg_array( $errors ) ;
-		$this->set_error( $errors ) ;
 		return false ;
 	}
 
@@ -806,19 +805,16 @@ function _update_item_thumbid( $item_id, $thumb_id )
 
 function _update_item_by_param( $item_id, $param )
 {
-	$item_row = $this->_item_handler->get_row_by_id( $item_id );
+	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
 	$item_row = array_merge( $item_row, $param );
 	return $this->_update_item_by_row( $item_row );
 }
 
 function _update_item_by_row( $item_row )
 {
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$errors = $this->_item_handler->get_errors() ;
 		$this->build_set_msg( 'DB Error' , true , true ) ;
-		$this->set_msg_array( $errors ) ;
-		$this->set_error( $errors ) ;
 		return false ;
 	}
 

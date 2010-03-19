@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.13 2010/02/17 04:34:47 ohwada Exp $
+// $Id: action.php,v 1.14 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_update_item()
 // 2010-02-15 K.OHWADA
 // modify_fetch_photo()
 // 2010-01-10 K.OHWADA
@@ -267,9 +269,8 @@ function modify_exec( $item_row )
 		$item_row, $file_id_array, $this->_tag_name_array ) ;
 
 // --- update item
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
 	}
 
@@ -323,9 +324,8 @@ function update_photo_no_image( $item_row )
 // search
 	$item_row = $this->_factory_create_class->build_item_row_modify_update( 
 		$item_row, null, $this->_tag_name_array ) ;
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
 	}
 
@@ -506,9 +506,8 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 			$row_update[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = $flash_id ;
 			$row_update['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
 
-			$ret = $this->_item_handler->update( $row_update );
+			$ret = $this->format_and_update_item( $row_update );
 			if ( !$ret ) {
-				$this->set_error( $this->_item_handler->get_errors() );
 				return _C_WEBPHOTO_ERR_DB;
 			}
 
@@ -535,10 +534,10 @@ function video_flash_delete( $item_row, $url_redirect )
 	$item_id  = $item_row['item_id'] ;
 	$item_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
 
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
 		$msg  = "DB Error <br />\n" ;
-		$msg .= $this->_item_handler->get_format_error() ;
+		$msg .= $this->get_format_error() ;
 		redirect_header( $url_redirect, $this->_TIME_FAILED, $msg );
 		exit();
 	}
@@ -592,9 +591,9 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 
 // BUG: not clear file id when delete file
 	$item_row[ $item_name ] = 0 ;
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$error .= $this->_item_handler->get_format_error() ;
+		$error .= $this->get_format_error() ;
 	}
 
 	if ( $error ) {

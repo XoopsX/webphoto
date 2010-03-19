@@ -1,5 +1,5 @@
 <?php
-// $Id: update_050.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: update_050.php,v 1.4 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// webphoto_edit_item_create
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_player_handler
 //---------------------------------------------------------
@@ -19,6 +21,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_update_050 extends webphoto_base_this
 {
+	var $_item_create_class;
 	var $_player_handler;
 	var $_form_class;
 	var $_mime_class;
@@ -38,6 +41,9 @@ function webphoto_admin_update_050( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
 
+	$this->_item_create_class  
+		=& webphoto_edit_item_create::getInstance( $dirname , $trust_dirname  );
+
 	$this->_player_handler =& webphoto_player_handler::getInstance( 
 		$dirname , $trust_dirname );
 	$this->_form_class     =& webphoto_lib_form::getInstance(   
@@ -45,7 +51,7 @@ function webphoto_admin_update_050( $dirname , $trust_dirname )
 	$this->_mime_class     =& webphoto_mime::getInstance(   
 		$dirname , $trust_dirname );
 
-	$this->_item_handler->set_debug_error( true );
+	$this->_item_create_class->set_debug_error( true );
 	$this->_player_handler->set_debug_error( true );
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
@@ -131,8 +137,8 @@ function _update_item()
 {
 	$offset = $this->get_post_offset();
 
-	$total     = $this->_item_handler->get_count_all();
-	$item_rows = $this->_item_handler->get_rows_all_asc( $this->_LIMIT, $offset );
+	$total     = $this->_item_create_class->get_count_all();
+	$item_rows = $this->_item_create_class->get_rows_all_asc( $this->_LIMIT, $offset );
 
 	$next = $this->_next;
 	if ( $this->_next > $total ) {
@@ -155,7 +161,7 @@ function _update_item()
 		$item_row['item_onclick']     = $this->get_onclick( $item_row );
 		$item_row['item_duration']    = $this->get_duration( $item_row );
 
-		$this->_item_handler->update( $item_row );
+		$this->_item_create_class->format_and_update( $item_row );
 
 		echo "update <br />\n";
 	}

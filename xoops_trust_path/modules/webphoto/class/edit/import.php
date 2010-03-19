@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: import.php,v 1.3 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_vote_handler
 // get_ini()
@@ -72,7 +74,7 @@ function webphoto_edit_import( $dirname , $trust_dirname )
 	$this->webphoto_edit_base( $dirname , $trust_dirname );
 
 	$this->_cat_handler->set_debug_error( 1 );
-	$this->_item_handler->set_debug_error( 1 );
+	$this->_item_create_class->set_debug_error( 1 );
 
 	$this->_vote_handler  =& webphoto_vote_handler::getInstance( 
 		$dirname , $trust_dirname );
@@ -100,7 +102,7 @@ function webphoto_edit_import( $dirname , $trust_dirname )
 	$val = $this->get_ini( _C_WEBPHOTO_NAME_DEBUG_SQL );
 	if ( $val ) {
 		$this->_cat_handler->set_debug_sql( $val );
-		$this->_item_handler->set_debug_sql( $val );
+		$this->_item_create_class->set_debug_sql( $val );
 		$this->_vote_handler->set_debug_sql( $val );
 		$this->_xoops_comments_handler->set_debug_sql( $val );
 		$this->_myalbum_handler->set_debug_sql( $val );
@@ -236,10 +238,9 @@ function add_photo_from_myalbum( $myalbum_id, $new_cid, $myalbum_row )
 
 // --- insert item ---
 	$item_row = $this->create_photo_row_from_myalbum( $myalbum_id, $new_cid, $myalbum_row );
-	$newid = $this->_item_handler->insert( $item_row );
+	$newid = $this->format_and_insert_item( $item_row );
 	if ( !$newid ) {
 		echo ' DB error ' ;
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
@@ -269,10 +270,9 @@ function add_photo_from_myalbum( $myalbum_id, $new_cid, $myalbum_row )
 // --- update item ---
 	$item_row = $this->_factory_create_class->build_item_row_submit_update( 
 		$item_row, $file_id_array );
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
 		echo ' DB error ' ;
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
@@ -284,7 +284,7 @@ function create_photo_row_from_myalbum( $photo_id, $cat_id, $myalbum_row )
 	list( $src_id, $src_ext, $src_file )
 		= $this->build_myalbum_filename( $myalbum_row );
 
-	$row = $this->_item_handler->create();
+	$row = $this->_item_create_class->create();
 	$row['item_id']            = $photo_id;
 	$row['item_cat_id']        = $cat_id;
 	$row['item_title']         = $myalbum_row['title'];

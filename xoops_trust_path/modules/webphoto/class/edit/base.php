@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: base.php,v 1.5 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_mime
 // 2009-05-05 K.OHWADA
@@ -23,6 +25,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_base extends webphoto_base_this
 {
+	var $_item_create_class;
 	var $_mime_class ;
 	var $_icon_build_class ;
 
@@ -33,7 +36,10 @@ function webphoto_edit_base( $dirname, $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 
-	$this->_mime_class =& webphoto_mime::getInstance( $dirname, $trust_dirname );
+	$this->_item_create_class  
+		=& webphoto_edit_item_create::getInstance( $dirname , $trust_dirname  );
+	$this->_mime_class 
+		=& webphoto_mime::getInstance( $dirname, $trust_dirname );
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 
@@ -71,6 +77,31 @@ function get_post_float( $key, $default=0 )
 function get_post( $key, $default=null )
 {
 	return $this->_post_class->get_post( $key, $default );
+}
+
+//---------------------------------------------------------
+// item create class
+//---------------------------------------------------------
+function format_and_insert_item( $row , $flag_force=false )
+{
+	$newid = $this->_item_create_class->format_and_insert( 
+		$row , $flag_force );
+	if ( ! $newid ) {
+		$this->set_error( $this->_item_create_class->get_errors() );
+		return false ;
+	}
+	return $newid ;
+}
+
+function format_and_update_item( $row , $flag_force=false )
+{
+	$ret = $this->_item_create_class->format_and_update( 
+		$row , $flag_force );
+	if ( ! $ret ) {
+		$this->set_error( $this->_item_create_class->get_errors() );
+		return false ;
+	}
+	return true ;
 }
 
 //---------------------------------------------------------

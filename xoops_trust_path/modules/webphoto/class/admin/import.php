@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: import.php,v 1.8 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 // get_ini()
@@ -40,7 +42,7 @@ class webphoto_admin_import extends webphoto_edit_import
 	var $_webphoto_photos_path ;
 	var $_webphoto_thumbs_path ;
 	var $_webphoto_cat_handler   ;
-	var $_webphoto_item_handler ;
+	var $_webphoto_item_create_class ;
 	var $_webphoto_file_handler ;
 	var $_webphoto_vote_handler  ;
 
@@ -193,7 +195,7 @@ function _import_image_photos( $src_cid, $new_cid )
 		return false;
 	}
 
-	$item_row = $this->_item_handler->create();
+	$item_row = $this->_item_create_class->create();
 	$item_row['item_cat_id'] = $new_cid ;
 	$item_row['item_uid']    = $this->_xoops_uid ;
 
@@ -415,7 +417,7 @@ function _init_webphoto( $src_dirname )
 	$this->_webphoto_photos_path = $config_class->get_by_name( 'photospath' );
 	$this->_webphoto_thumbs_path = $config_class->get_by_name( 'thumbspath' );
 
-	$this->_webphoto_item_handler = new webphoto_item_handler( $src_dirname, $this->_TRUST_DIRNAME );
+	$this->_webphoto_item_create_class = new webphoto_item_create_class( $src_dirname, $this->_TRUST_DIRNAME );
 	$this->_webphoto_cat_handler  = new webphoto_cat_handler(  $src_dirname, $this->_TRUST_DIRNAME );
 	$this->_webphoto_file_handler = new webphoto_file_handler( $src_dirname, $this->_TRUST_DIRNAME );
 	$this->_webphoto_vote_handler = new webphoto_vote_handler( $src_dirname, $this->_TRUST_DIRNAME );
@@ -442,7 +444,7 @@ function _import_webphoto_photos( $src_cid, $new_cid )
 {
 	echo "<h4>photo</h4>\n";
 
-	$webphoto_item_rows = $this->_webphoto_item_handler->get_rows_by_catid( $src_cid );
+	$webphoto_item_rows = $this->_webphoto_item_create_class->get_rows_by_catid( $src_cid );
 
 	$import_count = 0;
 
@@ -476,10 +478,9 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 	$item_row['item_id']     = 0 ;
 	$item_row['item_cat_id'] = $new_cid ;
 
-	$newid = $this->_item_handler->insert( $item_row );
+	$newid = $this->format_and_insert_item( $item_row );
 	if ( !$newid ) {
 		echo ' db error ' ;
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 
@@ -501,10 +502,9 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 		}
 	}
 
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
 		echo ' db error ' ;
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false;
 	}
 

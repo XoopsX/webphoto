@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.14 2010/03/14 18:06:20 ohwada Exp $
+// $Id: factory_create.php,v 1.15 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-03-14 K.OHWADA
-// format_content()
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2010-01-10 K.OHWADA
 // build_row_detail_onclick()
 // 2009-12-06 K.OHWADA
@@ -191,7 +191,6 @@ function create_item_from_param( $item_row, $param )
 			$msg = $item_row['item_title'] .' : '. $this->get_msg_sub_str();
 			$this->_msg_main_class->set_msg( $msg ) ;
 		}
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB ;
 	}
 
@@ -872,7 +871,7 @@ function build_row_content( $row, $file_id_array )
 
 	$extra_param = $this->_ext_class->get_text_content( $param );
 	if ( isset( $extra_param['content'] ) ) {
-		$row['item_content'] = $this->format_content( $extra_param['content'] );
+		$row['item_content'] = $extra_param['content'] ;
 		$this->_msg_sub_class->set_msg( 'get content' )  ;
 
 	} elseif ( isset( $extra_param['errors'] ) ) {
@@ -880,37 +879,6 @@ function build_row_content( $row, $file_id_array )
 	}
 
 	return $row ;
-}
-
-function format_content( $str )
-{
-	$str = substr( $str, 0, $this->_CONTENT_LENGTH );
-	if ( $this->_is_japanese ) {
-		$str = $this->format_content_japanese( $str );
-	}
-	return $str;
-}
-
-function format_content_japanese( $str )
-{
-	switch ( _CHARSET )
-	{
-	case 'EUC-JP';
-		$str = $this->convert_encoding_content( $str, 'UTF-8' );
-		break;
-
-	case 'UTF-8';
-		$str = $this->convert_encoding_content( $str, 'EUC-JP' );
-		break;
-	}
-	return $str;
-}
-
-function convert_encoding_content( $str, $encode )
-{
-	$str = $this->_multibyte_class->convert_encoding( $str, $encode,  _CHARSET );
-	$str = $this->_multibyte_class->convert_encoding( $str, _CHARSET, $encode );
-	return $str;
 }
 
 //---------------------------------------------------------
@@ -934,10 +902,9 @@ function build_row_search( $row, $tag_name_array=null )
 //---------------------------------------------------------
 function insert_item( $row )
 {
-	$newid = $this->_item_handler->insert( $row, $this->_flag_force_db );
+	$newid = $this->format_and_insert_item( $row , $this->_flag_force_db );
 	if ( ! $newid ) {
 		$this->_msg_sub_class->set_msg( 'DB Error', true ) ;
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false ;
 	}
 	return $newid ;
@@ -945,10 +912,9 @@ function insert_item( $row )
 
 function update_item( $row )
 {
-	$ret = $this->_item_handler->update( $row, $this->_flag_force_db );
+	$ret = $this->format_and_update_item( $row , $this->_flag_force_db );
 	if ( ! $ret ) {
 		$this->_msg_sub_class->set_msg( 'DB Error', true );
-		$this->set_error( $this->_item_handler->get_errors() );
 		return false ;
 	}
 	return true ;

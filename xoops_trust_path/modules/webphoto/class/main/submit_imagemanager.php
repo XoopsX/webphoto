@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.9 2009/04/19 11:39:45 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.10 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2009-04-19 K.OHWADA
 // use template
 // 2009-01-10 K.OHWADA
@@ -87,14 +89,14 @@ function main()
 //---------------------------------------------------------
 function _create_item_row_default()
 {
-	$row = $this->_item_handler->create( true );
+	$row = $this->_item_create_class->create( true );
 	$row['item_cat_id'] = $this->get_post_cat_id() ;
 	return $row ;
 }
 
 function _create_item_row_by_post()
 {
-	$row = $this->_item_handler->create( true );
+	$row = $this->_item_create_class->create( true );
 	$row['item_cat_id'] = $this->get_post_cat_id() ;
 	$row['item_title']  = $this->get_post_text( 'item_title' ) ;
 	return $row ;
@@ -144,9 +146,8 @@ function _submit_exec()
 
 // --- insert item ---
 	$item_row = $this->build_item_row_submit_insert( $item_row );
-	$item_id  = $this->_item_handler->insert( $item_row );
+	$item_id  = $this->format_and_insert_item( $item_row );
 	if ( !$item_id ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB ;
 	}
 
@@ -161,9 +162,8 @@ function _submit_exec()
 
 // --- update item ---
 	$item_row = $this->build_item_row_submit_update( $item_row);
-	$ret = $this->_item_handler->update( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB;
 	}
 	$this->_row_create = $item_row;

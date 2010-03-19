@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.19 2010/02/23 01:10:59 ohwada Exp $
+// $Id: submit.php,v 1.20 2010/03/19 00:23:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-18 K.OHWADA
+// format_and_insert_item()
 // 2010-02-15 K.OHWADA
 // check_edit()
 // 2010-01-10 K.OHWADA
@@ -183,7 +185,7 @@ function create_item_row_default()
 	$item_embed_type    = $this->get_post_text( 'item_embed_type' );
 	$item_playlist_type = $this->get_post_int(  'item_playlist_type' );
 
-	$row = $this->_item_handler->create( true );
+	$row = $this->_item_create_class->create( true );
 	$row['item_cat_id']        = $this->get_post_cat_id() ;
 	$row['item_editor']        = $this->get_post_text( 'item_editor' );
 	$row['item_embed_type']    = $item_embed_type ;
@@ -245,7 +247,7 @@ function create_item_row_preview()
 function create_item_row_by_post()
 {
 	$checkbox = $this->get_checkbox_by_name( 'item_datetime_checkbox' );
-	$row = $this->_item_handler->create( true );
+	$row = $this->_item_create_class->create( true );
 	$row['item_cat_id'] = $this->get_post_cat_id() ;
 	$row = $this->_factory_create_class->build_row_submit_by_post( $row, $checkbox );
 	return $row;
@@ -278,9 +280,8 @@ function submit_exec()
 
 // --- insert item ---
 	$item_row = $this->build_item_row_submit_insert( $item_row );
-	$item_id  = $this->_item_handler->insert( $item_row );
+	$item_id  = $this->format_and_insert_item( $item_row );
 	if ( !$item_id ) {
-		$this->set_error( $this->_item_handler->get_errors() );
 		return _C_WEBPHOTO_ERR_DB ;
 	}
 
@@ -299,9 +300,8 @@ function submit_exec()
 
 // --- update item ---
 		$item_row = $this->build_item_row_submit_update( $item_row );
-		$ret = $this->_item_handler->update( $item_row );
+		$ret = $this->format_and_update_item( $item_row );
 		if ( !$ret ) {
-			$this->set_error( $this->_item_handler->get_errors() );
 			return _C_WEBPHOTO_ERR_DB;
 		}
 		$this->set_created_row( $item_row );
@@ -317,10 +317,7 @@ function submit_exec()
 
 // --- update item ---
 			$item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ] = $newid ;
-			$ret = $this->_item_handler->update( $item_row );
-			if ( !$ret ) {
-				$this->set_error( $this->_item_handler->get_errors() );
-			}
+			$this->format_and_update_item( $item_row );
 			$this->set_created_row( $item_row );
 		}
 	}
