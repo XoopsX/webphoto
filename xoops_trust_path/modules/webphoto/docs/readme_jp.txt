@@ -1,9 +1,8 @@
-$Id: readme_jp.txt,v 1.47 2010/03/14 17:31:17 ohwada Exp $
-
+$Id: readme_jp.txt,v 1.48 2010/03/31 03:01:42 ohwada Exp $
 
 =================================================
 Version: 2.12
-Date:   2010-03-14
+Date:   2010-03-31
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -12,7 +11,10 @@ Email:  webmaster@ohwada.jp
 写真や動画を管理するアルバム・モジュールです。
 
 ● 主な変更
-1. バグ修正
+1. CentOS5 対応
+(1) PDFのサムネイル生成を pdftoppm から pdftops に変更した
+
+2. バグ修正
 (1) カテゴリーの閲覧権限が設定できない
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
 

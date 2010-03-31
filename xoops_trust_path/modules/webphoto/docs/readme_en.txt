@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.46 2010/03/14 17:31:17 ohwada Exp $
+$Id: readme_en.txt,v 1.47 2010/03/31 03:01:42 ohwada Exp $
 
 =================================================
 Version: 2.12
-Date:   2010-03-14
+Date:   2010-03-31
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -11,6 +11,9 @@ Email:  webmaster@ohwada.net
 This is the album module which manages photos and videos.
 
 * Changes *
+1. support CentOS5
+(1) changed from pdftoppm to pdftops creating the thumbnail of PDF.
+
 1. bug fix
 (1) NOT set cateogry read permission
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
