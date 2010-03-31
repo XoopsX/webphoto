@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: pdf.php,v 1.7 2010/03/31 02:49:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-24 K.OHWADA
+// create_jpeg_by_pdftops()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_error -> webphoto_cmd_base
 // 2009-04-21 K.OHWADA
@@ -24,21 +26,18 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_pdf extends webphoto_cmd_base
 {
-	var $_config_class;
 	var $_multibyte_class;
 	var $_xpdf_class;
 	var $_imagemagick_class;
 
-	var $_ini_safe_mode ;
 	var $_cfg_use_xpdf;
+	var $_cfg_xpdfpath;
+	var $_ini_cmd_pdf_jpeg ;
 
 	var $_cached = array();
 
-	var $_TMP_DIR;
-
-	var $_PDF_EXT    = 'pdf';
-	var $_JPEG_EXT   = 'jpg';
-	var $_TEXT_EXT   = 'txt';
+	var $_PDF_EXT = 'pdf';
+	var $_PS_EXT  = 'ps';
 
 //---------------------------------------------------------
 // constructor
@@ -47,14 +46,13 @@ function webphoto_pdf( $dirname, $trust_dirname )
 {
 	$this->webphoto_cmd_base( $dirname, $trust_dirname );
 
-	$this->_config_class      =& webphoto_config::getInstance( $dirname );
 	$this->_xpdf_class        =& webphoto_lib_xpdf::getInstance();
 	$this->_imagemagick_class =& webphoto_lib_imagemagick::getInstance();
 	$this->_multibyte_class   =& webphoto_multibyte::getInstance();
 
-	$this->_cfg_use_xpdf = $this->_config_class->get_by_name( 'use_xpdf' );
-	$this->_cfg_xpdfpath = $this->_config_class->get_dir_by_name(  'xpdfpath' );
-	$this->_TMP_DIR      = $this->_config_class->get_work_dir( 'tmp' );
+	$this->_cfg_use_xpdf = $this->get_config_by_name( 'use_xpdf' );
+	$this->_cfg_xpdfpath = $this->get_config_dir_by_name( 'xpdfpath' );
+	$this->_ini_cmd_pdf_jpeg = $this->get_ini( 'cmd_pdf_jpeg' );
 
 	$this->_xpdf_class->set_cmd_path( $this->_cfg_xpdfpath );
 
@@ -121,9 +119,23 @@ function create_jpeg( $item_id, $pdf_file )
 		return false;
 	}
 
-	$prefix   = 'tmp_'. sprintf("%04d", $item_id );
+	switch( $this->_ini_cmd_pdf_jpeg )
+	{
+	case 'pdftoppm':
+		$ret = $this->create_jpeg_by_pdftoppm( $item_id, $pdf_file );
+
+	case 'pdftops':
+	default:
+		$ret = $this->create_jpeg_by_pdftops( $item_id, $pdf_file );
+	}
+	return $ret;
+}
+
+function create_jpeg_by_pdftoppm( $item_id, $pdf_file )
+{
+	$prefix   = $this->build_prefix( $item_id );
 	$root     = $this->_TMP_DIR .'/'. $prefix;
-	$jpg_file = $this->_TMP_DIR .'/'. $prefix .'.'. $this->_JPEG_EXT;
+	$jpeg_file = $this->build_jpeg_file( $item_id );
 	$ppm_file = $this->_xpdf_class->pdf_to_ppm( $pdf_file, $root );
 
 	if ( !is_file($ppm_file) ) {
@@ -131,13 +143,37 @@ function create_jpeg( $item_id, $pdf_file )
 		return false;
 	}
 
-	$this->_imagemagick_class->convert( $ppm_file, $jpg_file );
-	unlink( $ppm_file );
-	if ( $this->_flag_chmod ) {
-		$this->chmod_file( $jpg_file );
+	return $this->convert_to_jpeg( $ppm_file, $jpeg_file );
+}
+
+function create_jpeg_by_pdftops( $item_id, $pdf_file )
+{
+	$jpeg_file = $this->build_jpeg_file( $item_id );
+	$ps_file   = $this->build_ps_file( $item_id );
+	$this->_xpdf_class->pdf_to_ps( $pdf_file, $ps_file );
+
+	if ( !is_file($ps_file) ) {
+		$this->set_error( $this->_xpdf_class->get_msg_array() );
+		return false;
 	}
 
-	return $jpg_file;
+	return $this->convert_to_jpeg( $ps_file, $jpeg_file );
+}
+
+function build_ps_file( $item_id )
+{
+	return $this->build_file_by_prefix_ext( 
+		$this->build_prefix( $item_id ), $this->_PS_EXT );
+}
+
+function convert_to_jpeg( $src_file, $jpeg_file )
+{
+	$this->_imagemagick_class->convert( $src_file, $jpeg_file );
+	unlink( $src_file );
+	if ( $this->_flag_chmod ) {
+		$this->chmod_file( $jpeg_file );
+	}
+	return $jpeg_file;
 }
 
 //---------------------------------------------------------

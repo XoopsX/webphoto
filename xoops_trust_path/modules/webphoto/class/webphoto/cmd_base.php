@@ -1,5 +1,5 @@
 <?php
-// $Id: cmd_base.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: cmd_base.php,v 1.3 2010/03/31 02:49:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-03-24 K.OHWADA
+// build_ipeg_file -> build_jpeg_file
 // 2009-11-11 K.OHWADA
 // webphoto_lib_error -> webphoto_base_ini
 //---------------------------------------------------------
@@ -74,7 +76,7 @@ function get_cmd_option( $file, $cmd )
 	return '';
 }
 
-function build_ipeg_file( $item_id )
+function build_jpeg_file( $item_id )
 {
 	return $this->build_file_by_prefix_ext( 
 		$this->build_prefix( $item_id ), $this->_JPEG_EXT );
