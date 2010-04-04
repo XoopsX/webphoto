@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.33 2010/02/07 12:20:02 ohwada Exp $
+// $Id: xoops_version.php,v 1.34 2010/04/04 01:42:57 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-02 K.OHWADA
+// xoops_version_cfg_catonsubmenu_default
 // 2010-01-10 K.OHWADA
 // use_lightbox
 // xoops_version_cfg_perm_item_read_default
@@ -694,6 +696,7 @@ function _build_config()
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '102400' , // 100 KB
+		'default'		=> $this->get_ini('xoops_version_cfg_fsize_default') ,
 		'options'		=> array()
 	) ;
 
@@ -916,7 +919,7 @@ function _build_config()
 		'description'	=> '' ,
 		'formtype'		=> 'yesno' ,
 		'valuetype'		=> 'int' ,
-		'default'		=> '0' ,
+		'default'		=> $this->get_ini('xoops_version_cfg_catonsubmenu_default') ,
 		'options'		=> array()
 	) ;
 
