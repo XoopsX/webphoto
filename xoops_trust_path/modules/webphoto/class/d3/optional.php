@@ -1,5 +1,5 @@
 <?php
-// $Id: optional.php,v 1.6 2009/03/07 07:39:15 ohwada Exp $
+// $Id: optional.php,v 1.7 2010/04/04 01:33:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-04 K.OHWADA
+// chage include_language()
 // 2009-03-01 K.OHWADA
 // include_language_compatible()
 // 2009-01-10 K.OHWADA
@@ -160,6 +162,8 @@ function include_once_file( $file )
 
 function include_once_language( $file, $debug )
 {
+	$MY_DIRNAME = $this->_DIRNAME;
+
 	$file_trust_lang = $this->_TRUST_DIR  .'/language/'. $this->_xoops_language .'/'.$file;
 	$file_trust_eng  = $this->_TRUST_DIR  .'/language/english/'.                     $file;
 	$file_root_lang  = $this->_MODULE_DIR .'/language/'. $this->_xoops_language .'/'.$file;
@@ -192,7 +196,7 @@ function include_once_language( $file, $debug )
 
 function include_language( $file )
 {
-	$GLOBALS['MY_DIRNAME'] = $this->_DIRNAME;
+	$MY_DIRNAME = $this->_DIRNAME;
 
 	$file_trust_lang = $this->_TRUST_DIR  .'/language/'. $this->_xoops_language .'/'.$file;
 	$file_trust_eng  = $this->_TRUST_DIR  .'/language/english/'.                     $file;

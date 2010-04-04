@@ -1,12 +1,36 @@
 <?php
-// $Id: blocks.php,v 1.7 2009/04/11 14:23:35 ohwada Exp $
+// $Id: blocks.php,v 1.8 2010/04/04 01:33:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-$constpref = strtoupper( '_BL_' . $GLOBALS['MY_DIRNAME']. '_' ) ;
+//---------------------------------------------------------
+// change log
+// 2010-04-04 K.OHWADA
+// use $mydirname
+//---------------------------------------------------------
+
+// test
+if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
+	$MY_DIRNAME = 'webphoto' ;
+}
+
+if ( !isset( $MY_DIRNAME ) ) {
+// call by altsys D3LanguageManager
+	if ( isset( $mydirname ) ) {
+		$MY_DIRNAME = $mydirname;
+
+// probably error
+	} elseif ( isset( $GLOBALS['MY_DIRNAME'] ) ) {
+			$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
+	} else {
+		$MY_DIRNAME = 'webphoto' ;
+	}
+}
+
+$constpref = strtoupper( '_BL_' . $MY_DIRNAME. '_' ) ;
 
 // === define begin ===
 if( !defined($constpref."LANG_LOADED") ) 

@@ -1,27 +1,33 @@
 <?php
-// $Id: modinfo.php,v 1.11 2010/03/04 02:17:26 ohwada Exp $
+// $Id: modinfo.php,v 1.12 2010/04/04 01:33:56 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2010-04-04 K.OHWADA
+// remove echo
+//---------------------------------------------------------
+
 // test
 if ( defined( 'FOR_XOOPS_LANG_CHECKER' ) ) {
 	$MY_DIRNAME = 'webphoto' ;
+}
 
-// normal
-} elseif (  isset($GLOBALS['MY_DIRNAME']) ) {
-	$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
-
-// call by altsys/mytplsadmin.php
-} elseif ( $mydirname ) {
-	$MY_DIRNAME = $mydirname;
+if ( !isset( $MY_DIRNAME ) ) {
+// call by altsys D3LanguageManager
+	if ( isset( $mydirname ) ) {
+		$MY_DIRNAME = $mydirname;
 
 // probably error
-} else {
-	echo "not set dirname in ". __FILE__ ." <br />\n";
-	$MY_DIRNAME = 'webphoto' ;
+	} elseif ( isset( $GLOBALS['MY_DIRNAME'] ) ) {
+			$MY_DIRNAME = $GLOBALS['MY_DIRNAME'];
+	} else {
+		$MY_DIRNAME = 'webphoto' ;
+	}
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
