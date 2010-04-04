@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.47 2010/03/31 03:01:42 ohwada Exp $
+$Id: readme_en.txt,v 1.48 2010/04/04 01:46:25 ohwada Exp $
 
 =================================================
 Version: 2.12
-Date:   2010-03-31
+Date:   2010-04-04
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -18,7 +18,12 @@ This is the album module which manages photos and videos.
 (1) NOT set cateogry read permission
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
 
-(2) DB error when submit
+(2) NOT show embed video in other site
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1087&forum=13
+
+(3) Notice when altsys call language file
+
+(4) DB error when submit
 item_content : Incorrect string value
 item_exif : Data too long
 

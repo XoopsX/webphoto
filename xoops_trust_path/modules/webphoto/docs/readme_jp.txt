@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.48 2010/03/31 03:01:42 ohwada Exp $
+$Id: readme_jp.txt,v 1.49 2010/04/04 01:46:25 ohwada Exp $
 
 =================================================
 Version: 2.12
-Date:   2010-03-31
+Date:   2010-04-04
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -18,7 +18,12 @@ Email:  webmaster@ohwada.jp
 (1) カテゴリーの閲覧権限が設定できない
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1079&forum=13
 
-(2) 登録時のDBエラー
+(2) 他のサイトでの動画の埋込み再生ができない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1087&forum=13
+
+(3) altsys から言語ファイル読込みで Notice
+
+(4) 登録時のDBエラー
 item_content : Incorrect string value
 item_exif : Data too long
 
