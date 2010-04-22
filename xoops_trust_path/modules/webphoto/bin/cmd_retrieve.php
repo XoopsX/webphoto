@@ -1,5 +1,5 @@
 <?php
-// $Id: cmd_retrieve.php,v 1.2 2008/08/26 11:40:20 ohwada Exp $
+// $Id: cmd_retrieve.php,v 1.3 2010/04/22 03:40:35 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -7,15 +7,26 @@
 //=========================================================
 
 //---------------------------------------------------------
-// php cmd_etrieve.php -path=XOOPS_ROOT_PATH -dirname=DIRNAME -pass=PASSWORD
+// change log
+// 2010-04-22 K.OHWADA
+// $FLAG_XOOPS_CHECK_PATH
+// Notice: Constant XOOPS_CHECK_PATH already defined in mainfile.php
 //---------------------------------------------------------
+
+//---------------------------------------------------------
+// php cmd_retrieve.php -path=XOOPS_ROOT_PATH -dirname=DIRNAME -pass=PASSWORD
+//---------------------------------------------------------
+
+//=========================================================
+// user option
+//=========================================================
+$FLAG_XOOPS_CHECK_PATH = false;
 
 //=========================================================
 // start here
 //=========================================================
 $path    = null ;
 $dirname = null ;
-define('XOOPS_CHECK_PATH', 0);
 
 // parse arg
 if ( $_SERVER['argc'] > 1 ) {
@@ -33,6 +44,10 @@ if ( $_SERVER['argc'] > 1 ) {
 $XOOPS_ROOT_PATH  = $path;
 $MY_DIRNAME       = $dirname ;
 $MY_TRUST_DIRNAME = basename( dirname( dirname( __FILE__ ) ) ) ;
+
+if ( $FLAG_XOOPS_CHECK_PATH ) {
+	define('XOOPS_CHECK_PATH', 0);
+}
 
 $xoopsOption['nocommon'] = 1 ;
 require $XOOPS_ROOT_PATH .'/mainfile.php' ;
