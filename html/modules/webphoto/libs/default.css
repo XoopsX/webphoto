@@ -1,4 +1,4 @@
-/* $Id: default.css,v 1.12 2010/02/07 12:46:39 ohwada Exp $ */
+/* $Id: default.css,v 1.13 2010/04/22 04:18:50 ohwada Exp $ */
 
 /* === index === */
 div.webphoto_photo_type
@@ -311,7 +311,7 @@ div.webphoto_close
 	margin: 3px;
 }
 
-.webphoto_submit_dsc
+.webphoto_submit_cap_dsc
 {
 	font-size: 80%; 
 	font-weight: normal;

@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_photo.html,v 1.11 2010/02/23 01:36:16 ohwada Exp $ *}>
+<{* $Id: webphoto_form_photo.html,v 1.12 2010/04/22 04:18:50 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -77,9 +77,9 @@ function webphoto_gmap_disp_on()
 <{if $show_maxpixel }>
   <tr><td class="head" width="20%">
   <{$lang_cap_maxpixel}>
-  <{if $lang_submit_dsc_maxpixel != "" }>
+  <{if $lang_submit_cap_dsc_maxpixel != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_maxpixel}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_maxpixel}></span>
   <{/if}>
   </td>
   <td class="odd"><{$ele_maxpixel}></td></tr>
@@ -88,9 +88,9 @@ function webphoto_gmap_disp_on()
 <{if $show_maxsize }>
   <tr><td class="head" width="20%">
   <{$lang_cap_maxsize}>
-  <{if $lang_submit_dsc_maxsize != "" }>
+  <{if $lang_submit_cap_dsc_maxsize != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_maxsize}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_maxsize}></span>
   <{/if}>
   </td>
   <td class="odd"><{$ele_maxsize}></td></tr>
@@ -99,9 +99,9 @@ function webphoto_gmap_disp_on()
 <{if $show_allowed_exts }>
   <tr><td class="head" width="20%">
   <{$lang_cap_allowed_exts}>
-  <{if $lang_submit_dsc_allowed_exts != "" }>
+  <{if $lang_submit_cap_dsc_allowed_exts != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_allowed_exts}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_allowed_exts}></span>
   <{/if}> 
   </td>
   <td class="odd"><{$ele_allowed_exts}></td></tr>
@@ -111,9 +111,9 @@ function webphoto_gmap_disp_on()
 <{if $show_item_cat_id }>
   <tr><td class="head" width="20%">
   <{$lang_category}>
-  <{if $lang_submit_dsc_category != "" }>
+  <{if $lang_submit_cap_dsc_category != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_category}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_category}></span>
   <{/if}>
   </td>
   <td class="odd">
@@ -126,9 +126,9 @@ function webphoto_gmap_disp_on()
 <{* item_perm_level *}>
 <{if $show_item_perm_level }>
   <tr><td class="head" width="20%"><{$lang_item_perm_level}>
-  <{if $lang_submit_dsc_perm_level != "" }>
+  <{if $lang_submit_cap_dsc_perm_level != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_perm_level}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_perm_level}></span>
   <{/if}>
   </td>
   <td class="odd">
@@ -146,9 +146,9 @@ function webphoto_gmap_disp_on()
 <{* item title *}>
 <tr><td class="head" width="20%">
 <{$lang_item_title}>
-<{if $lang_submit_dsc_title != "" }>
+<{if $lang_submit_cap_dsc_title != "" }>
   <br /><br />
-  <span class="webphoto_submit_dsc"><{$lang_submit_dsc_title}></span>
+  <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_title}></span>
 <{/if}>
 </td>
 <td class="odd">
@@ -166,9 +166,9 @@ function webphoto_gmap_disp_on()
 
 <tr><td class="head" width="20%">
 <{$lang_item_description}>
-<{if $lang_submit_dsc_description != "" }>
+<{if $lang_submit_cap_dsc_description != "" }>
   <br /><br />
-  <span class="webphoto_submit_dsc"><{$lang_submit_dsc_description}></span>
+  <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_description}></span>
 <{/if}>
 </td>
 <td class="odd"><{$ele_item_description}></td></tr>
@@ -234,14 +234,20 @@ function webphoto_gmap_disp_on()
 <{* --- file photo --- *}>
 <{if $show_file_photo }>
   <tr><td class="head" width="20%"><{$lang_cap_photo_select}>
-  <{if $lang_submit_dsc_file_photo != "" }>
+  <{if $lang_submit_cap_dsc_file_photo != "" }>
     <br /><br />
-    <span class="webphoto_submit_dsc"><{$lang_submit_dsc_file_photo}></span>
+    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_file_photo}></span>
   <{/if}>
   </td><td class="odd">
   <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_photo" />
   <input type="file" id="file_photo" name="file_photo" size="50" />
-  <br /><br />
+  <br />
+
+<{if $lang_submit_dsc_file_photo != "" }>
+   <{$lang_submit_dsc_file_photo}><br />
+<{/if}>
+
+  <br />
 
 <{if $show_item_external_url }>
   <{$lang_or}> <{$lang_item_external_url}><br />
