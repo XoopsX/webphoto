@@ -1,11 +1,39 @@
-$Id: readme_jp.txt,v 1.49 2010/04/04 01:46:25 ohwada Exp $
+$Id: readme_jp.txt,v 1.50 2010/04/22 04:11:53 ohwada Exp $
+
+=================================================
+Version: 2.13
+Date:   2010-04-22
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. メールのテンプレート・ファイル を preload で置換できる
+
+2. バグ修正
+(1) bin/retrieve.php にて Fatal エラー
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
+
+(2) bin/cmd_retrieve.php にて Notice
+
+(3) weblinks モジュール にて Fatal エラー
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて、
+  「アップデート」の「ファイルの妥当性の検査」を実行し、
+  必要なファイルが設置されているかを確認する
+
 
 =================================================
 Version: 2.12
 Date:   2010-04-04
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
@@ -35,7 +63,6 @@ item_exif : Data too long
 (3) Webphoto の管理者画面にて、
   「アップデート」の「ファイルの妥当性の検査」を実行し、
   必要なファイルが設置されているかを確認する
-
 
 
 =================================================

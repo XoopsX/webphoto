@@ -1,11 +1,38 @@
-$Id: readme_en.txt,v 1.48 2010/04/04 01:46:25 ohwada Exp $
+$Id: readme_en.txt,v 1.49 2010/04/22 04:11:53 ohwada Exp $
+
+=================================================
+Version: 2.13
+Date:   2010-04-22
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. able to replace the template file of mail by preload 
+
+2. bug fix
+(1) Fatal error in bin/retrieve.php
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
+
+(2) Notice in bin/cmd_retrieve.php
+
+(3) Fatal error in weblinks module
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.12
 Date:   2010-04-04
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
