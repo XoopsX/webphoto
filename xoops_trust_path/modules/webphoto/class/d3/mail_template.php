@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_template.php,v 1.2 2010/02/08 01:42:02 ohwada Exp $
+// $Id: mail_template.php,v 1.3 2010/04/22 03:50:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-22 K.OHWADA
+// get_template_file()
 // 2010-02-01 K.OHWADA
 // replace_str_by_tags()
 //---------------------------------------------------------
@@ -23,6 +25,7 @@ class webphoto_d3_mail_template
 	var $_MODULE_DIR;
 	var $_MODULE_URL;
 	var $_TRUST_DIR;
+	var $_PRELOAD_DIR;
 	var $_SITE_URL;
 	var $_UNSUBSCRIBE_URL;
 
@@ -43,6 +46,7 @@ function webphoto_d3_mail_template( $dirname, $trust_dirname )
 	$this->_MODULE_DIR    = XOOPS_ROOT_PATH  .'/modules/'. $dirname;
 	$this->_MODULE_URL    = XOOPS_URL        .'/modules/'. $dirname;
 	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
+	$this->_PRELOAD_DIR   = $this->_MODULE_DIR.'/preload';
 
 	$this->_SITE_URL        = XOOPS_URL .'/';
 	$this->_UNSUBSCRIBE_URL = XOOPS_URL .'/notifications.php';
@@ -65,6 +69,21 @@ function &getInstance( $dirname, $trust_dirname )
 //-------------------------------------------------------------------
 // get_dir_mail_template
 //-------------------------------------------------------------------
+function get_template_file( $file ) 
+{
+	$template_file = $this->_PRELOAD_DIR.'/'.$file;
+	if ( file_exists( $template_file ) ) {
+		return $template_file;
+	}
+
+	$dir = $this->get_dir_mail_template( $file );
+	if ( $dir ) {
+		return $dir.$file;
+	}
+
+	return false;
+}
+
 function get_dir_mail_template( $file ) 
 {
 	$dir_trust_lang = $this->build_dir( $this->_TRUST_DIR,  $this->_xoops_language );
@@ -87,6 +106,12 @@ function build_dir( $dir, $lang )
 	return $str;
 }
 
+function build_dir_preload() 
+{
+	$str = $dir .'/language/'. $lang .'/mail_template/';
+	return $str;
+}
+
 //---------------------------------------------------------
 // read template file
 //---------------------------------------------------------
@@ -97,9 +122,9 @@ function replace_tag_array_by_template( $file )
 
 function read_template( $file ) 
 {
-	$dir = $this->get_dir_mail_template( $file );
-	if ( $dir ) {
-		return $this->read_file( $dir.$file );
+	$temp_file = $this->get_template_file( $file );
+	if ( $temp_file ) {
+		return $this->read_file( $temp_file );
 	}
 	return false;
 }

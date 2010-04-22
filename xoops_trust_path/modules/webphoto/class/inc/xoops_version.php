@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.34 2010/04/04 01:42:57 ohwada Exp $
+// $Id: xoops_version.php,v 1.35 2010/04/22 03:50:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-02 K.OHWADA
+// xoops_version_blocks_top_options
 // 2010-04-02 K.OHWADA
 // xoops_version_cfg_catonsubmenu_default
 // 2010-01-10 K.OHWADA
@@ -472,13 +474,15 @@ function _build_blocks()
 
 function _build_blocks_top_options()
 {
-	$str = $this->_DIRNAME.'|5|0|1|20|1|0' ;
+	$str  = $this->_DIRNAME;
+	$str .= $this->get_ini('xoops_version_blocks_top_options');
 	return $str ;
 }
 
 function _build_blocks_top_p_options()
 {
-	$str = $this->_DIRNAME.'|5|0|1|20|1|0|1|0|0|0|300' ;
+	$str  = $this->_DIRNAME;
+	$str .= $this->get_ini('xoops_version_blocks_top_p_options');
 	return $str ;
 }
 
