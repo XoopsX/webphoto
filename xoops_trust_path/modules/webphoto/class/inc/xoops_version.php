@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.35 2010/04/22 03:50:48 ohwada Exp $
+// $Id: xoops_version.php,v 1.36 2010/04/27 06:52:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-27 K.OHWADA
+// webphoto_inc_catlist
 // 2010-04-02 K.OHWADA
 // xoops_version_blocks_top_options
 // 2010-04-02 K.OHWADA
@@ -322,7 +324,7 @@ function _build_sub()
 	}
 
 	if ( $this->_cfg_catonsubmenu ) {
-		$rows = $this->_get_cat_rows_by_pid(0) ;
+		$rows = $this->_get_top_cat_rows() ;
 		if( is_array($rows) && count($rows) ) {
 			foreach ( $rows as $row )
 			{
@@ -1447,12 +1449,12 @@ function _blocks_msg( $local_msgs )
 //---------------------------------------------------------
 // cat table
 //---------------------------------------------------------
-function _get_cat_rows_by_pid( $pid, $limit=0, $offset=0 )
+function _get_top_cat_rows()
 {
-	$sql  = "SELECT * FROM ". $this->prefix_dirname( 'cat' );
-	$sql .= " WHERE cat_pid=". $pid;
-	$sql .= " ORDER BY cat_title ASC";
-	return $this->get_rows_by_sql( $sql, $limit, $offset );
+	$this->_catlist_class =& webphoto_inc_catlist::getSingleton( 
+		$this->_DIRNAME , $this->_TRUST_DIRNAME );
+
+	return $this->_catlist_class->get_top_cat_rows();
 }
 
 //---------------------------------------------------------

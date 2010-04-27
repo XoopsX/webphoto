@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: xoops_version.php,v 1.7 2010/04/27 06:52:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-27 K.OHWADA
+// class/inc/catlist.php
 // 2009-11-11 K.OHWADA
 // class/inc/ini.php
 // 2008-12-12 K.OHWADA
@@ -26,18 +28,28 @@
 
 if ( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
+//---------------------------------------------------------
+// xoops system files
+//---------------------------------------------------------
+include_once XOOPS_ROOT_PATH.'/class/xoopstree.php' ;
+
+//---------------------------------------------------------
+// webphoto files
+//---------------------------------------------------------
 include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'preload/debug.php',              $MY_DIRNAME );
 webphoto_include_once( 'include/constants.php',          $MY_DIRNAME );
 webphoto_include_once( 'include/version.php',            $MY_DIRNAME );
+webphoto_include_once( 'class/lib/multibyte.php',        $MY_DIRNAME );
 webphoto_include_once( 'class/inc/ini.php',              $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/base_ini.php',         $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/workdir.php',          $MY_DIRNAME );
+webphoto_include_once( 'class/inc/catlist.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/xoops_version.php',    $MY_DIRNAME );
 webphoto_include_language( 'modinfo.php',                $MY_DIRNAME );
 

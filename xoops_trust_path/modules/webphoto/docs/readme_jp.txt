@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.50 2010/04/22 04:11:53 ohwada Exp $
+$Id: readme_jp.txt,v 1.51 2010/04/27 06:52:02 ohwada Exp $
 
 =================================================
 Version: 2.13
-Date:   2010-04-22
+Date:   2010-04-27
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -20,6 +20,8 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
 (2) bin/cmd_retrieve.php にて Notice
 
 (3) weblinks モジュール にて Fatal エラー
+
+(4) サブメニューのカテゴリ表示にて、並び順と閲覧制限が効かない
 
 
 ● アップデート

@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.49 2010/04/22 04:11:53 ohwada Exp $
+$Id: readme_en.txt,v 1.50 2010/04/27 06:52:02 ohwada Exp $
 
 =================================================
 Version: 2.13
-Date:   2010-04-22
+Date:   2010-04-27
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -20,6 +20,8 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
 (2) Notice in bin/cmd_retrieve.php
 
 (3) Fatal error in weblinks module
+
+(4) NOT effective of category order and read permission in the sub menu
 
 
 * Update *

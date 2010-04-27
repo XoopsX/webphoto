@@ -1,5 +1,5 @@
 <?php
-// $Id: catlist.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: catlist.php,v 1.8 2010/04/27 06:52:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-27 K.OHWADA
+// get_top_cat_rows()
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-05-17 K.OHWADA
@@ -80,7 +82,44 @@ function &getSingleton( $dirname , $trust_dirname )
 }
 
 //---------------------------------------------------------
+// top category
+// webphoto_inc_xoops_version
+//---------------------------------------------------------
+function get_top_cat_rows( $limit=0, $offset=0 )
+{
+	$name_perm = $this->_get_name_perm();
+	return $this->_get_cat_rows_by_pid_order_perm( 
+		0, $this->_CAT_ORDER, $name_perm, $limit, $offset );
+}
+
+function _get_name_perm()
+{
+	$str = '';
+	if ( $this->_is_perm_cat_read_no_cat() ) {
+		$str = 'cat_perm_read';
+	}
+	return $str;
+}
+
+function _is_perm_cat_read_all()
+{
+	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
+		return true;
+	}
+	return false;
+}
+
+function _is_perm_cat_read_no_cat()
+{
+	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
+		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
 // cat list
+// webphoto_inc_blocks webphoto_category
 //---------------------------------------------------------
 function calc_width( $cols )
 {
@@ -98,13 +137,9 @@ function calc_width( $cols )
 
 function build_catlist( $parent_id, $flag_sub )
 {
-	$name_perm = '';
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
-		$name_perm = 'cat_perm_read';
-	}
-
 	$catlist = array() ;
 
+	$name_perm = $this->_get_name_perm();
 	$rows = $this->_get_cat_rows_by_pid_order_perm( 
 		$parent_id, $this->_CAT_ORDER, $name_perm  );
 
@@ -203,7 +238,7 @@ function _get_photo_count_in_parent_all_children( $cat_row )
 
 function _get_photo_count_by_cat_row( $cat_row )
 {
-	if ( $this->_cfg_perm_cat_read != _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
+	if ( ! $this->_is_perm_cat_read_all() ) {
 		if ( ! $this->_check_cat_perm_by_cat_row( $cat_row ) ) {
 			return 0 ;
 		}
@@ -225,8 +260,8 @@ function _build_cat_desc_disp( $desc )
 
 //---------------------------------------------------------
 // cat tree
-//---------------------------------------------------------
 // webphoto_inc_weblinks
+//---------------------------------------------------------
 function get_cat_titles()
 {
 	$rows = $this->get_cat_all_tree_array();
@@ -243,11 +278,7 @@ function get_cat_titles()
 
 function get_cat_all_tree_array()
 {
-	$name_perm = '';
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
-		$name_perm = 'cat_perm_read';
-	}
-
+	$name_perm = $this->_get_name_perm();
 	return $this->get_cat_all_tree_array_perm( 
 		$this->_CAT_ORDER, $name_perm ) ;
 }
@@ -267,14 +298,9 @@ function get_cat_parent_all_child_id_by_row( $cat_row )
 		return null ;
 	}
 
-	$cat_id = $cat_row[ $this->_CAT_ID_NAME ] ;
-
-	$name_perm = '';
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
-		$name_perm = 'cat_perm_read';
-	}
-
-	$tree_arr = $this->_get_cat_child_tree_array_recusible( 
+	$cat_id    = $cat_row[ $this->_CAT_ID_NAME ] ;
+	$name_perm = $this->_get_name_perm();
+	$tree_arr  = $this->_get_cat_child_tree_array_recusible( 
 		$cat_id, $this->_CAT_ORDER, $name_perm );
 
 	array_push( $tree_arr, $cat_row ) ;
@@ -284,7 +310,7 @@ function get_cat_parent_all_child_id_by_row( $cat_row )
 	if ( is_array($tree_arr) && count($tree_arr) ) {
 		foreach( $tree_arr as $row )
 		{
-			if (( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) ||
+			if (  $this->_is_perm_cat_read_all() ||
 			    ( $this->_check_cat_perm_by_cat_row( $row ) )) {
 
 				$id_arr[] = $row[ $this->_CAT_ID_NAME ] ;
@@ -297,11 +323,7 @@ function get_cat_parent_all_child_id_by_row( $cat_row )
 
 function get_cat_all_child_tree_array( $cat_id=0 )
 {
-	$name_perm = '';
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
-		$name_perm = 'cat_perm_read';
-	}
-
+	$name_perm = $this->_get_name_perm();
 	return $this->_get_cat_child_tree_array_recusible( 
 		$cat_id, $this->_CAT_ORDER, $name_perm );
 }
@@ -429,7 +451,7 @@ function _get_cat_first_child_rows_perm( $cat_row )
 		return array();
 	}
 
-	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
+	if ( $this->_is_perm_cat_read_no_cat() ) {
 		$arr = array();
 		foreach( $rows as $row ) 
 		{
