@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_register.php,v 1.3 2010/04/28 06:33:28 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-04-28 K.OHWADA
+// class/edit/item_create.php
 // 2008-01-10 K.OHWADA
 // class/edit/xxx
 //---------------------------------------------------------
@@ -26,6 +28,7 @@ webphoto_include_once( 'class/lib/mail_parse.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
+webphoto_include_once( 'class/edit/item_create.php' );
 webphoto_include_once( 'class/edit/base.php' );
 webphoto_include_once( 'class/edit/form.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
