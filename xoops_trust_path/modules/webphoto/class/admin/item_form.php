@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.27 2010/02/23 01:10:59 ohwada Exp $
+// $Id: item_form.php,v 1.28 2010/05/08 03:36:41 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-08 K.OHWADA
+// show_admin_gmap()
 // 2010-02-15 K.OHWADA
 // print_list_table()
 // 2010-01-10 K.OHWADA
@@ -226,6 +228,7 @@ function build_form_admin_by_files( $mode, $files )
 		'show_file_photo'          => $show_file_photo,
 		'show_rotate'              => $this->show_rotate( $show_file_photo ) ,
 		'show_valid'               => $this->show_valid(),
+		'show_gmap'                => $this->show_admin_gmap(),
 		'show_item_kind'           => $show_item_kind ,
 		'show_item_kind_hidden'    => ! $show_item_kind ,
 		'show_item_embed'          => $show_item_embed_type ,
@@ -298,6 +301,15 @@ function show_valid()
 {
 	$value = $this->get_row_by_key( 'item_status' );
 	if ( $value == _C_WEBPHOTO_STATUS_WAITING ) {
+		return true;
+	}
+	return false;
+}
+
+// BUG: NOT show gmap
+function show_admin_gmap()
+{
+	if ( $this->_cfg_gmap_apikey ) {
 		return true;
 	}
 	return false;
