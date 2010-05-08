@@ -1,10 +1,16 @@
 <?php
-// $Id: category.php,v 1.2 2010/01/28 02:08:13 ohwada Exp $
+// $Id: category.php,v 1.3 2010/05/08 06:30:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-08 K.OHWADA
+// BUG: total is wrong
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -92,7 +98,7 @@ function get_photo_for_list( $cat_id )
 {
 	$photo_row = null;
 
-	list( $rows, $total, $this_sum ) =
+	list( $rows, $total, $total_sum, $small_sum ) =
 		$this->get_rows_total_by_catid( 
 			$cat_id, $this->_PHOTO_LIST_UPDATE_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
 
@@ -100,7 +106,7 @@ function get_photo_for_list( $cat_id )
 		$photo_row = $rows[0];
 	}
 
-	return array( $photo_row, $total, $this_sum );
+	return array( $photo_row, $total, $small_sum );
 }
 
 function build_cat_summary_disp( $desc )
@@ -120,21 +126,23 @@ function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
 			'cat_title'   => '',
 			'photo_total' => 0,
 			'photo_rows'  => null,
-			'photo_sum'   => 0,
+			'photo_total_sum' => 0,
+			'photo_small_sum' => 0,
 		);
 		return $arr;
 	}
 
 	$cat_title = $row['cat_title'];
 
-	list( $photo_rows, $total, $this_sum ) =
+	list( $photo_rows, $total, $total_sum, $small_sum ) =
 		$this->get_rows_total_by_catid( $cat_id, $orderby, $limit, $start );
 
 	$arr = array(
-		'cat_title'   => $cat_title,
-		'photo_total' => $total,
-		'photo_rows'  => $photo_rows,
-		'photo_sum'   => $this_sum,
+		'cat_title'       => $cat_title,
+		'photo_total'     => $total,
+		'photo_rows'      => $photo_rows,
+		'photo_total_sum' => $total_sum,
+		'photo_small_sum' => $small_sum,
 	);
 
 	return $arr;
@@ -145,37 +153,43 @@ function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 {
 	$cfg_cat_child      = $this->_config_class->get_by_name('cat_child');
 
-	$rows     = null ; 
-	$total    = 0;
-	$this_sum = 0;
-	$name     = 'catid_array';
+	$name  = 'catid_array';
+	$rows  = null ; 
+	$total = 0;
+	$small_sum = 0;
+	$total_sum = 0;
 
 	if ( ! $this->check_cat_perm_read_by_catid( $cat_id ) ) {
-		return array( $rows, $total, $this_sum );
+		return array( $rows, $total, $total_sum, $small_sum );
 	}
 
 	$array_cat_id = array( $cat_id );
 	$catid_array  = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id );
 
-	$this_sum = $this->_public_class->get_count_by_name_param( $name, $array_cat_id );
-	$total    = $this->_public_class->get_count_by_name_param( $name, $catid_array );
+// BUG: total is wrong
+	$small_sum = $this->_public_class->get_count_by_name_param( $name, $array_cat_id );
+	$total_sum = $this->_public_class->get_count_by_name_param( $name, $catid_array );
 
 	switch( $cfg_cat_child ) 
 	{
 		case _C_WEBPHOTO_CAT_CHILD_EMPTY :
-			if ( $this_sum > 0 ) {
+			if ( $small_sum > 0 ) {
+				$total = $small_sum;
 				$param = $array_cat_id;
 			} else {
+				$total = $small_sum;
 				$param = $catid_array;
 			}
 			break;
 
 		case _C_WEBPHOTO_CAT_CHILD_ALWAYS :
+			$total = $total_sum;
 			$param = $catid_array;
 			break;
 
 		case _C_WEBPHOTO_CAT_CHILD_NON :
 		default:
+			$total = $small_sum;
 			$param = $array_cat_id;
 			break;
 	}
@@ -183,7 +197,7 @@ function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 	$rows = $this->_public_class->get_rows_by_name_param_orderby( 
 		$name, $param, $orderby, $limit, $offset ) ;
 
-	return array( $rows, $total, $this_sum );
+	return array( $rows, $total, $total_sum, $small_sum );
 }
 
 function check_cat_perm_read_by_catid( $cat_id )

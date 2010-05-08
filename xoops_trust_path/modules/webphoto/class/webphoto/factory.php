@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.5 2010/02/23 23:24:06 ohwada Exp $
+// $Id: factory.php,v 1.6 2010/05/08 06:30:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-08 K.OHWADA
+// BUG: total is wrong
 // 2010-02-20 K.OHWADA
 // build_execution_time()
 //---------------------------------------------------------
@@ -583,9 +585,14 @@ function set_tpl_photo_list( $val )
 	$this->tpl_set( 'photo_list', $val );
 }
 
-function set_tpl_photo_sum( $val )
+function set_tpl_photo_total_sum( $val )
 {
-	$this->tpl_set( 'photo_sum', $val );
+	$this->tpl_set( 'photo_total_sum', $val );
+}
+
+function set_tpl_photo_small_sum( $val )
+{
+	$this->tpl_set( 'photo_small_sum', $val );
 }
 
 function set_tpl_category_photo_list( $val )
@@ -788,12 +795,15 @@ function category_build_rows_for_detail( $cat_id )
 	$cat_param = $this->_category_class->build_rows_for_detail( 
 		$cat_id, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start ) ;
 
-	$title = $this->sanitize( $cat_param['cat_title'] );
-	$total = $cat_param['photo_total'] ;
-	$rows  = $cat_param['photo_rows'] ;
-	$sum   = $cat_param['photo_sum'] ;
+	$title     = $this->sanitize( $cat_param['cat_title'] );
+	$total     = $cat_param['photo_total'] ;
+	$rows      = $cat_param['photo_rows'] ;
 
-	return array( $title, $total, $rows, $sum );
+// BUG: total is wrong
+	$total_sum = $cat_param['photo_total_sum'] ;
+	$small_sum = $cat_param['photo_small_sum'] ;
+
+	return array( $title, $total, $rows, $total_sum, $small_sum );
 }
 
 function build_navi_param( $mode, $total )

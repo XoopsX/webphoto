@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.18 2010/02/23 23:24:06 ohwada Exp $
+// $Id: index.php,v 1.19 2010/05/08 06:30:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-08 K.OHWADA
+// BUG: total is wrong
 // 2010-02-15 K.OHWADA
 // build_execution_time()
 // 2010-01-10 K.OHWADA
@@ -265,7 +267,7 @@ function build_page_detail( $mode, $param )
 	$this->show_array_set_detail_by_mode( $mode );
 	$this->set_tpl_show_page_detail( true );
 
-	list( $title, $total, $rows, $photo_sum ) 
+	list( $title, $total, $rows, $photo_total_sum, $photo_small_sum ) 
 		= $this->build_rows_for_detail( $mode, $param );
 
 	if ( $mode == 'search' ) {
@@ -300,7 +302,8 @@ function build_page_detail( $mode, $param )
 	$this->set_tpl_notification_select_with_check();
 	$this->set_tpl_tagcloud_with_check( $this->_cfg_tags );
 	$this->set_tpl_photo_list( $photo_list );
-	$this->set_tpl_photo_sum(  $photo_sum );
+	$this->set_tpl_photo_total_sum(  $photo_total_sum );
+	$this->set_tpl_photo_small_sum( $photo_small_sum );
 	$this->set_tpl_cat_id( $this->_cat_id );
 	$this->set_tpl_catpath_with_check( $this->_cat_id );
 	$this->set_tpl_catlist_with_check( $this->_cat_id );
@@ -323,13 +326,16 @@ function build_rows_for_detail( $mode, $param )
 	$limit   = $this->_PHOTO_LIMIT;
 	$start   = $this->_start;
 
-	$param_out = null;
-	$photo_sum = null;
+	$param_out      = null;
+
+// BUG: total is wrong
+	$photo_total_sum = 0;
+	$photo_small_sum = 0;
 
 	switch( $mode )
 	{
 		case 'category':
-			list( $title, $total, $rows, $photo_sum )
+			list( $title, $total, $rows, $photo_total_sum, $photo_small_sum )
 				= $this->category_build_rows_for_detail( $param );
 			break;
 
@@ -374,7 +380,7 @@ function build_rows_for_detail( $mode, $param )
 		$this->set_param_out( $param_out );
 	}
 
-	return array( $title, $total, $rows, $photo_sum );
+	return array( $title, $total, $rows, $photo_total_sum, $photo_small_sum );
 }
 
 // --- class end ---
