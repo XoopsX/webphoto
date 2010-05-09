@@ -1,5 +1,5 @@
 <?php
-// $Id: mimetypes.php,v 1.8 2010/02/17 04:34:47 ohwada Exp $
+// $Id: mimetypes.php,v 1.9 2010/05/09 12:54:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-09 K.OHWADA
+// Fatal error: Call to undefined method build_perms_with_separetor()
 // 2010-02-15 K.OHWADA
 // $_GLUE_ALLOWED
 // 2009-11-11 K.OHWADA
@@ -270,8 +272,11 @@ function _print_form_mimetype( $mime_id=0 )
 		}
 	} else {
 		$row = $this->_mime_handler->create( true );
+
+// Fatal error: Call to undefined method build_perms_with_separetor() 
 		$row['mime_perms'] 
-			= $this->_mime_handler->build_perms_with_separetor( XOOPS_GROUP_ADMIN ) ;
+			= $this->_mime_handler->perm_str_with_separetor( XOOPS_GROUP_ADMIN ) ;
+
 	}
 
 	$this->_print_mime_form_mimetype( $row );
