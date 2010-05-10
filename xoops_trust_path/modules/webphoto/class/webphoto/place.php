@@ -1,10 +1,16 @@
 <?php
-// $Id: place.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: place.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -98,7 +104,7 @@ function build_rows_for_list()
 //---------------------------------------------------------
 // page detail
 //---------------------------------------------------------
-function build_rows_for_detail( $place_in, $orderby, $limit, $start )
+function build_total_for_detail( $place_in )
 {
 	$place_in  = $this->decode_uri_str( $place_in );
 	$place_arr = $this->_search_class->query_to_array( $place_in );
@@ -109,27 +115,37 @@ function build_rows_for_detail( $place_in, $orderby, $limit, $start )
 		$title = $this->get_constant('PLACE_NOT_SET');
 		$total = $this->_public_class->get_count_by_place(
 			_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
-
-		if ( $total > 0 ) {
-			$rows = $this->_public_class->get_rows_by_place_orderby(
-				_C_WEBPHOTO_PLACE_VALUE_NOT_SET, 
-				$orderby, $limit, $start );
-		}
+		$mode = 0;
 
 // if set place
 	} elseif ( is_array($place_arr) && count($place_arr) ) {
 		$title = $this->get_constant('PHOTO_PLACE') .' : '. $place ;
 		$total = $this->_public_class->get_count_by_place_array(
 			$place_arr );
-
-		if ( $total > 0 ) {
-			$rows = $this->_public_class->get_rows_by_place_array_orderby(
-				$place_arr, $orderby, $limit, $start );
-		}
-
+		$mode  = 1;
 	}
 
-	return array( $title, $total, $rows );
+	return array( $mode, $place_arr, $title, $total );
+}
+
+function build_rows_for_detail( $mode, $place_arr, $orderby, $limit, $start )
+{
+	switch ($mode)
+	{
+	case 1:
+		$rows = $this->_public_class->get_rows_by_place_array_orderby(
+			$place_arr, $orderby, $limit, $start );
+		break;
+
+	case 0:
+	default:
+		$rows = $this->_public_class->get_rows_by_place_orderby(
+			_C_WEBPHOTO_PLACE_VALUE_NOT_SET, 
+			$orderby, $limit, $start );
+		break;
+	}
+
+	return $rows;
 }
 
 // --- class end ---

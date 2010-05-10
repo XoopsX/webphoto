@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.19 2010/05/08 06:30:19 ohwada Exp $
+// $Id: index.php,v 1.20 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-05-08 K.OHWADA
+// 2010-05-10 K.OHWADA
+// main_build_rows_for_detail()
 // BUG: total is wrong
 // 2010-02-15 K.OHWADA
 // build_execution_time()
@@ -322,10 +323,6 @@ function build_page_detail( $mode, $param )
 
 function build_rows_for_detail( $mode, $param )
 {
-	$orderby = $this->_orderby;
-	$limit   = $this->_PHOTO_LIMIT;
-	$start   = $this->_start;
-
 	$param_out      = null;
 
 // BUG: total is wrong
@@ -341,38 +338,32 @@ function build_rows_for_detail( $mode, $param )
 
 		case 'date':
 			list( $title, $total, $rows, $param_out ) 
-				= $this->_date_class->build_rows_for_detail(
-					$param, $orderby, $limit, $start );
+				= $this->date_build_rows_for_detail( $param );
 			break;
 
 		case 'place':
 			list( $title, $total, $rows ) 
-				= $this->_place_class->build_rows_for_detail( 
-					$param, $orderby, $limit, $start );
+				= $this->place_build_rows_for_detail( $param );
 			break;
 
 		case 'tag':
 			list( $title, $total, $rows ) 
-				= $this->_tag_class->build_rows_for_detail( 
-					$param, $orderby, $limit, $start );
+				= $this->tag_build_rows_for_detail( $param );
 			break;
 
 		case 'user':
 			list( $title, $total, $rows ) 
-				= $this->_user_class->build_rows_for_detail( 
-					$param, $orderby, $limit, $start );
+				= $this->user_build_rows_for_detail( $param );
 			break;
 
 		case 'search':
 			list( $title, $total, $rows ) 
-				= $this->_search_class->build_rows_for_detail( 
-					$param, $orderby, $limit, $start );
+				= $this->search_build_rows_for_detail( $param );
 			break;
 
 		default:
 			list( $title, $total, $rows ) 
-				= $this->_main_class->build_rows_for_detail( 
-					$mode, $this->_get_sort, $limit, $start );
+				= $this->main_build_rows_for_detail( $mode );
 			break;
 	}
 
@@ -382,6 +373,102 @@ function build_rows_for_detail( $mode, $param )
 
 	return array( $title, $total, $rows, $photo_total_sum, $photo_small_sum );
 }
+
+function date_build_rows_for_detail( $param )
+{
+	list( $title, $total, $param_out ) =
+		$this->_date_class->build_total_for_detail( $param ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_date_class->build_rows_for_detail( 
+			$param_out, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows, $param_out );
+}
+
+function place_build_rows_for_detail( $param )
+{
+	list( $place_mode, $place_arr, $title, $total ) =
+		$this->_place_class->build_total_for_detail( $param ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_place_class->build_rows_for_detail( 
+			 $place_mode, $place_arr, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows );
+} 
+
+function tag_build_rows_for_detail( $param )
+{
+	list( $tag_name, $title, $total ) =
+		$this->_tag_class->build_total_for_detail( $param ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_tag_class->build_rows_for_detail( 
+			$tag_name, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows );
+} 
+
+function user_build_rows_for_detail( $param )
+{
+	list( $title, $total ) =
+		$this->_user_class->build_total_for_detail( $param ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_user_class->build_rows_for_detail( 
+			$param, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows );
+} 
+
+function search_build_rows_for_detail( $param )
+{
+	list( $sql_query, $title, $total ) =
+		$this->_search_class->build_total_for_detail( $param ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_search_class->build_rows_for_detail( 
+			 $sql_query, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows );
+} 
+
+function main_build_rows_for_detail( $mode )
+{
+	list( $title, $total ) =
+		$this->_main_class->build_total_for_detail( $mode ) ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows = $this->_main_class->build_rows_for_detail( 
+			 $mode, $this->_sort, $this->_PHOTO_LIMIT, $start ) ;
+	}
+
+	return array( $title, $total, $rows );
+} 
 
 // --- class end ---
 }

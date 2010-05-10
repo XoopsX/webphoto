@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.3 2010/02/23 23:24:06 ohwada Exp $
+// $Id: search.php,v 1.4 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
 // 2010-02-20 K.OHWADA
 // build_lang_keytooshort()
 //---------------------------------------------------------
@@ -57,18 +59,18 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $query, $orderby, $limit, $start )
+function build_total_for_detail( $query )
 {
 	$title = _SR_SEARCH;
-	$rows  = null;
 	$total = 0;
+	$sql_query = null; 
 
 	$this->_search_class->get_post_get_param();
 	$this->_search_class->set_query( $query );
 
 	$ret = $this->_search_class->parse_query();
 	if ( !$ret ) {
-		return array( $title, $total, $rows );
+		return array( $sql_query, $title, $total );
 	}
 
 	$sql_query = $this->_search_class->build_sql_query( 'item_search' );
@@ -76,11 +78,15 @@ function build_rows_for_detail( $query, $orderby, $limit, $start )
 
 	if ( $total > 0 ) {
 		$title = _SR_SEARCH.' : '.$this->_search_class->get_query_raw('s');
-		$rows  = $this->_public_class->get_rows_by_search_orderby( 
-			$sql_query, $orderby, $limit, $start );
 	}
 
-	return array( $title, $total, $rows );
+	return array( $sql_query, $title, $total );
+}
+
+function build_rows_for_detail( $sql_query, $orderby, $limit, $start )
+{
+	return $this->_public_class->get_rows_by_search_orderby( 
+		$sql_query, $orderby, $limit, $start );
 }
 
 function build_query_param( $total )

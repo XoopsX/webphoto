@@ -1,10 +1,16 @@
 <?php
-// $Id: user.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: user.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -88,18 +94,18 @@ function build_rows_for_list()
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $uid, $orderby, $limit, $start )
+function build_total_for_detail( $uid )
 {
 	$title = $this->build_show_info_morephotos( $uid );
-	$rows  = null ;
 	$total = $this->_public_class->get_count_by_uid( $uid );
 
-	if ( $total > 0 ) {
-		$rows = $this->_public_class->get_rows_by_uid_orderby( 
-			$uid, $orderby, $limit, $start );
-	}
+	return array( $title, $total );
+}
 
-	return array( $title, $total, $rows );
+function build_rows_for_detail( $uid, $orderby, $limit, $start )
+{
+	return $this->_public_class->get_rows_by_uid_orderby( 
+		$uid, $orderby, $limit, $start );
 }
 
 // --- class end ---

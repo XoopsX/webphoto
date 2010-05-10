@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
+// $Id: flash_player.php,v 1.12 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-10 K.OHWADA
+// get_movie_image( $thumb_row, $middle_row )
 // 2009-11-11 K.OHWADA
 // webphoto_base_ini
 // auto adjust
@@ -807,18 +809,11 @@ function get_player( $item_row, $cont_row, $swf_row, $mp3_row )
 
 function get_movie_image( $thumb_row, $middle_row )
 {
-	$image = null ;
-
-// middle
-	if ( is_array($middle_row) && $middle_row['file_url'] ) {
-		$image = $middle_row['file_url'] ;
-
-// thumb
-	} elseif ( is_array($thumb_row) && $thumb_row['file_url'] ) {
-		$image = $thumb_row['file_url'] ;
+	$url = $this->get_file_url( $middle_row );
+	if ( $url ) {
+		return $url;
 	}
-
-	return $image ;
+	return $this->get_file_url( $thumb_row );
 }
 
 function build_script_swfobject( $div_id )

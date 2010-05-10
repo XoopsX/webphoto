@@ -1,10 +1,16 @@
 <?php
-// $Id: pagenavi.php,v 1.1 2008/06/21 12:22:26 ohwada Exp $
+// $Id: pagenavi.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// calc_page()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -58,7 +64,8 @@ class webphoto_lib_pagenavi
 	var $_PERPAGE_DEFAULT = 10;
 	var $_SORTID_DEFAULT  = 0;
 
-	var $_FLAG_DEBUG = true;
+	var $_FLAG_DEBUG_MSG   = false;
+	var $_FLAG_DEBUG_TRACE = false;
 
 //---------------------------------------------------------
 // constructor
@@ -392,6 +399,25 @@ function _get_id_array( $num  )
 //---------------------------------------------------------
 // calc start end
 //---------------------------------------------------------
+function calc_page( $page=-1 , $perpage=-1 , $total=-1 )
+{
+	$page = $this->_get_page_internal( $page );
+	if ( $page === false ) { return false; }
+
+	$perpage = $this->_get_perpage_internal( $perpage );
+	if ( $perpage === false ) { return false; }
+
+	$total = $this->_get_total_internal( $total );
+	if ( $total === false ) { return false; }
+
+	$total_pages = $this->_calc_total_pages( $total , $perpage );
+	if ( $total_pages < 1 ) {
+		return $this->_MIN_PAGE;
+	}
+
+	return $this->_adjust_page( $page, $total_pages );
+}
+
 function calc_start( $page=-1 , $perpage=-1 )
 {
 	$page = $this->_get_page_internal( $page );
@@ -527,9 +553,14 @@ function set_mark_id_next( $val )
 	$this->_MARK_ID_NEXT = $val;
 }
 
-function set_flag_debug( $val )
+function set_flag_debug_msg( $val )
 {
-	$this->_FLAG_DEBUG = (bool)$val;
+	$this->_FLAG_DEBUG_MSG = (bool)$val;
+}
+
+function set_flag_debug_trace( $val )
+{
+	$this->_FLAG_DEBUG_TRACE = (bool)$val;
 }
 
 function get_total()
@@ -825,8 +856,11 @@ function _deny_javascript( $str )
 //---------------------------------------------------------
 function _debug_msg( $msg )
 {
-	if ( $this->_FLAG_DEBUG ) {
+	if ( $this->_FLAG_DEBUG_MSG ) {
 		echo $msg;
+	}
+	if ( $this->_FLAG_DEBUG_TRACE && function_exists('debug_print_backtrace') ) {
+		debug_print_backtrace();
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.36 2010/04/27 06:52:02 ohwada Exp $
+// $Id: xoops_version.php,v 1.37 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-10 K.OHWADA
+// changed build_modversion()
 // 2010-04-27 K.OHWADA
 // webphoto_inc_catlist
 // 2010-04-02 K.OHWADA
@@ -143,6 +145,8 @@ function build_modversion()
 // probably install or update
 	if ( $this->_is_module_admin && 
 	   ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) ) {
+		$this->set_debug_sql( false );
+		$this->set_debug_error( false );
 		$this->update_xoops_config();
 	}
 

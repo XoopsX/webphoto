@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.6 2010/05/08 06:30:19 ohwada Exp $
+// $Id: factory.php,v 1.7 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-05-08 K.OHWADA
+// 2010-05-10 K.OHWADA
+// calc_navi_start()
 // BUG: total is wrong
 // 2010-02-20 K.OHWADA
 // build_execution_time()
@@ -50,6 +51,7 @@ class webphoto_factory extends webphoto_base_this
 	var $_sort      = null;	// set default in empty
 	var $_orderby   = null;
 	var $_start     = null;
+	var $_page      = null;	// adjusted
 	var $_mode      = null;
 	var $_mode_orig = null;
 
@@ -171,9 +173,6 @@ function get_pathinfo_param( $mode_orig )
 
 	$this->_sort    = $this->_sort_class->get_photo_sort_name( $this->_get_sort, true );
 	$this->_orderby = $this->_sort_class->sort_to_orderby( $this->_sort );
-
-	$this->_start    = $this->_pagenavi_class->calc_navi_start( 
-		$this->_get_page, $this->_PHOTO_LIMIT ); 
 }
 
 function set_param_out( $val )
@@ -792,25 +791,38 @@ function tpl_get()
 //---------------------------------------------------------
 function category_build_rows_for_detail( $cat_id )
 {
-	$cat_param = $this->_category_class->build_rows_for_detail( 
-		$cat_id, $this->_orderby, $this->_PHOTO_LIMIT, $this->_start ) ;
+	$cat_param = $this->_category_class->build_total_for_detail( $cat_id ) ;
 
 	$title     = $this->sanitize( $cat_param['cat_title'] );
 	$total     = $cat_param['photo_total'] ;
-	$rows      = $cat_param['photo_rows'] ;
 
 // BUG: total is wrong
 	$total_sum = $cat_param['photo_total_sum'] ;
 	$small_sum = $cat_param['photo_small_sum'] ;
+	$sum_mode  = $cat_param['sum_mode'] ;
+
+	$rows  = null;
+	$start = $this->calc_navi_start( $total );
+
+	if ( $total > 0 ) {
+		$rows  = $this->_category_class->build_rows_for_detail( 
+			$sum_mode, $cat_id, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
+	}
 
 	return array( $title, $total, $rows, $total_sum, $small_sum );
+}
+
+function calc_navi_start( $total )
+{
+	$this->_page = $this->_pagenavi_class->calc_navi_page(  $this->_get_page, $this->_PHOTO_LIMIT, $total );
+	return         $this->_pagenavi_class->calc_navi_start( $this->_page, $this->_PHOTO_LIMIT );
 }
 
 function build_navi_param( $mode, $total )
 {
 	return $this->_pagenavi_class->build_navi( 
 		$mode, $total, $this->_param_out, $this->_get_sort, 
-		$this->_get_kind, $this->_get_page, $this->_PHOTO_LIMIT );
+		$this->_get_kind, $this->_page, $this->_PHOTO_LIMIT );
 }
 
 //---------------------------------------------------------

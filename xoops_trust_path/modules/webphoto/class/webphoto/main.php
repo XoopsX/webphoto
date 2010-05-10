@@ -1,10 +1,16 @@
 <?php
-// $Id: main.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: main.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -41,21 +47,22 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
+function build_total_for_detail( $mode )
+{
+	$title = $this->build_title( $mode );
+	$name  = $this->_sort_class->mode_to_name( $mode );
+	$total = $this->_public_class->get_count_by_name_param( $name, null );
+
+	return array( $title, $total );
+}
+
 function build_rows_for_detail( $mode, $sort, $limit, $start )
 {
-	$title   = $this->build_title( $mode );
 	$name    = $this->_sort_class->mode_to_name( $mode );
 	$orderby = $this->_sort_class->mode_to_orderby( $mode, $sort );
 
-	$rows  = null;
-	$total = $this->_public_class->get_count_by_name_param( $name, null );
-
-	if ( $total > 0 ) {
-		$rows = $this->_public_class->get_rows_by_name_param_orderby( 
-			$name, null, $orderby, $limit, $start );
-	}
-
-	return array( $title, $total, $rows );
+	return $this->_public_class->get_rows_by_name_param_orderby( 
+		$name, null, $orderby, $limit, $start );
 }
 
 function build_title( $mode )

@@ -1,10 +1,16 @@
 <?php
-// $Id: date.php,v 1.2 2010/01/26 08:25:45 ohwada Exp $
+// $Id: date.php,v 1.3 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -174,21 +180,21 @@ function build_rows_for_list()
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $datetime_in, $orderby, $limit, $start )
+function build_total_for_detail( $datetime_in )
 {
 	$datetime = $this->decode_uri_str( $datetime_in );
 	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
 
 	$title = $this->build_title( $datetime );
-	$rows  = null ;
 	$total = $this->_public_class->get_count_by_like_datetime( $datetime );
 
-	if ( $total > 0 ) {
-		$rows = $this->_public_class->get_rows_by_like_datetime_orderby( 
-			$datetime, $orderby, $limit, $start );
-	}
+	return array( $title, $total, $datetime );
+}
 
-	return array( $title, $total, $rows, $datetime );
+function build_rows_for_detail( $datetime, $orderby, $limit, $start )
+{
+	return $this->_public_class->get_rows_by_like_datetime_orderby( 
+		$datetime, $orderby, $limit, $start );
 }
 
 function build_title( $datetime )

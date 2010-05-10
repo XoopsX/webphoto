@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.3 2010/05/08 06:30:19 ohwada Exp $
+// $Id: category.php,v 1.4 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-05-08 K.OHWADA
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
 // BUG: total is wrong
 //---------------------------------------------------------
 
@@ -21,6 +22,9 @@ class webphoto_category extends webphoto_show_photo
 {
 	var $_public_class;
 	var $_catlist_class;
+
+	var $_saved_sum_mode = 0;
+	var $_saved_total    = 0;
 
 //---------------------------------------------------------
 // constructor
@@ -97,10 +101,20 @@ function build_photo_list_for_list()
 function get_photo_for_list( $cat_id )
 {
 	$photo_row = null;
+	$rows      = null;
 
-	list( $rows, $total, $total_sum, $small_sum ) =
-		$this->get_rows_total_by_catid( 
-			$cat_id, $this->_PHOTO_LIST_UPDATE_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
+//	list( $rows, $total, $total_sum, $small_sum ) =
+//		$this->get_rows_total_by_catid( 
+//			$cat_id, $this->_PHOTO_LIST_UPDATE_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
+
+	list( $sum_mode, $total, $total_sum, $small_sum ) =
+		$this->get_total_by_catid( _C_WEBPHOTO_CAT_CHILD_EMPTY, $cat_id );
+
+
+	if ( $total > 0 ) {
+		$rows = $this->get_rows_by_catid( 
+			$sum_mode, $cat_id, $this->_PHOTO_LIST_UPDATE_ORDER, $this->_PHOTO_LIST_LIMIT );
+	}
 
 	if ( is_array($rows) && count($rows) ) {
 		$photo_row = $rows[0];
@@ -117,50 +131,54 @@ function build_cat_summary_disp( $desc )
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
+function build_total_for_detail( $cat_id )
 {
 	$row = $this->_catlist_class->get_cat_row_by_catid_perm( $cat_id );
 
 	if ( !is_array( $row ) ) {
 		$arr = array(
-			'cat_title'   => '',
-			'photo_total' => 0,
-			'photo_rows'  => null,
+			'cat_title'       => '',
+			'photo_total'     => 0,
 			'photo_total_sum' => 0,
 			'photo_small_sum' => 0,
+			'sum_mode'        => 0,
 		);
 		return $arr;
 	}
 
-	$cat_title = $row['cat_title'];
+	$cat_title     = $row['cat_title'];
+	$cfg_cat_child = $this->_config_class->get_by_name('cat_child');
 
-	list( $photo_rows, $total, $total_sum, $small_sum ) =
-		$this->get_rows_total_by_catid( $cat_id, $orderby, $limit, $start );
+	list( $sum_mode, $total, $total_sum, $small_sum ) =
+		$this->get_total_by_catid( $cfg_cat_child, $cat_id );
 
 	$arr = array(
 		'cat_title'       => $cat_title,
 		'photo_total'     => $total,
-		'photo_rows'      => $photo_rows,
 		'photo_total_sum' => $total_sum,
 		'photo_small_sum' => $small_sum,
+		'sum_mode'        => $sum_mode,
 	);
 
 	return $arr;
 
 }
 
-function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
+function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
 {
-	$cfg_cat_child      = $this->_config_class->get_by_name('cat_child');
+	return $this->get_rows_by_catid( $sum_mode, $cat_id, $orderby, $limit, $start );
+}
 
-	$name  = 'catid_array';
-	$rows  = null ; 
-	$total = 0;
+function get_total_by_catid( $sel_mode, $cat_id )
+{
+	$name      = 'catid_array';
+	$sum_mode  = 0;	// small_sum
+	$total     = 0;
 	$small_sum = 0;
 	$total_sum = 0;
 
 	if ( ! $this->check_cat_perm_read_by_catid( $cat_id ) ) {
-		return array( $rows, $total, $total_sum, $small_sum );
+		return array( $mode, $total, $total_sum, $small_sum );
 	}
 
 	$array_cat_id = array( $cat_id );
@@ -170,34 +188,51 @@ function get_rows_total_by_catid( $cat_id, $orderby, $limit=0, $offset=0 )
 	$small_sum = $this->_public_class->get_count_by_name_param( $name, $array_cat_id );
 	$total_sum = $this->_public_class->get_count_by_name_param( $name, $catid_array );
 
-	switch( $cfg_cat_child ) 
+	switch( $sel_mode ) 
 	{
 		case _C_WEBPHOTO_CAT_CHILD_EMPTY :
 			if ( $small_sum > 0 ) {
 				$total = $small_sum;
-				$param = $array_cat_id;
 			} else {
-				$total = $small_sum;
-				$param = $catid_array;
+				$sum_mode = 1;	// total_sum
+				$total    = $total_sum;
 			}
 			break;
 
 		case _C_WEBPHOTO_CAT_CHILD_ALWAYS :
-			$total = $total_sum;
-			$param = $catid_array;
+			$sum_mode = 1;	// total_sum
+			$total    = $total_sum;
 			break;
 
 		case _C_WEBPHOTO_CAT_CHILD_NON :
 		default:
 			$total = $small_sum;
-			$param = $array_cat_id;
+			break;
+	}
+
+	return array( $sum_mode, $total, $total_sum, $small_sum );
+}
+
+function get_rows_by_catid( $sum_mode, $cat_id, $orderby, $limit=0, $offset=0 )
+{
+	$name = 'catid_array';
+
+	switch( $sum_mode ) 
+	{
+		case 1:
+			$param = $this->_catlist_class->get_cat_parent_all_child_id_by_id( $cat_id );
+			break;
+
+		case 0:
+		default:
+			$param = array( $cat_id );
 			break;
 	}
 
 	$rows = $this->_public_class->get_rows_by_name_param_orderby( 
 		$name, $param, $orderby, $limit, $offset ) ;
 
-	return array( $rows, $total, $total_sum, $small_sum );
+	return $rows;
 }
 
 function check_cat_perm_read_by_catid( $cat_id )

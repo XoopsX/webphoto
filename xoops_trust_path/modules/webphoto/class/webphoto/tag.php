@@ -1,10 +1,16 @@
 <?php
-// $Id: tag.php,v 1.7 2010/01/26 08:25:45 ohwada Exp $
+// $Id: tag.php,v 1.8 2010/05/10 10:34:49 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-01-10 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-05-10 K.OHWADA
+// build_total_for_detail()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -77,20 +83,20 @@ function build_rows_for_list()
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
-function build_rows_for_detail( $tag_in, $orderby, $limit, $start )
+function build_total_for_detail( $tag_in )
 {
 	$tag_name = $this->decode_uri_str( $tag_in );
 
 	$title = $this->build_title( $tag_name );
-	$rows  = null ;
 	$total = $this->get_count_by_tag( $tag_name );
 
-	if ( $total > 0 ) {
-		$rows = $this->get_rows_by_tag_orderby( 
-			$tag_name, $orderby, $limit, $start );
-	}
+	return array( $tag_name, $title, $total );
+}
 
-	return array( $title, $total, $rows );
+function build_rows_for_detail( $tag_name, $orderby, $limit, $start )
+{
+	return $this->get_rows_by_tag_orderby( 
+		$tag_name, $orderby, $limit, $start );
 }
 
 function build_title( $tag_name )
