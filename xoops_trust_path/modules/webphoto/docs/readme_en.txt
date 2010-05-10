@@ -1,8 +1,8 @@
-$Id: readme_en.txt,v 1.51 2010/04/28 06:33:28 ohwada Exp $
+$Id: readme_en.txt,v 1.52 2010/05/10 10:47:13 ohwada Exp $
 
 =================================================
 Version: 2.13
-Date:   2010-04-28
+Date:   2010-05-10
 Author: Kenichi OHWADA
 URL:    http://linux2.ohwada.net/
 Email:  webmaster@ohwada.net
@@ -17,14 +17,21 @@ This is the album module which manages photos and videos.
 (1) Fatal error in bin/retrieve.php
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
 
-(2) Notice in bin/cmd_retrieve.php
-
-(3) Fatal error in mail_register
+(2) Fatal error in mail_register
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1097&forum=13
 
-(4) Fatal error in weblinks module
+(3) NOT show google map in item manager
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1099&forum=13
 
-(5) NOT effective of category order and read permission in the sub menu
+(4) Wrong total in category
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1101&forum=13
+
+(5) Fatal error in mail manager
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1103&forum=13
+
+(6) Fatal error in weblinks module
+
+(7) NOT effective of category order and read permission in the sub menu
 
 
 * Update *

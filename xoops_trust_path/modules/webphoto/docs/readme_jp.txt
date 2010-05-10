@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.52 2010/04/28 06:33:28 ohwada Exp $
+$Id: readme_jp.txt,v 1.53 2010/05/10 10:47:13 ohwada Exp $
 
 =================================================
 Version: 2.13
-Date:   2010-04-28
+Date:   2010-05-10
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -17,14 +17,21 @@ Email:  webmaster@ohwada.jp
 (1) bin/retrieve.php にて Fatal エラー
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1090&forum=13
 
-(2) bin/cmd_retrieve.php にて Notice
-
-(3) メール登録 にて Fatal エラー
+(2) メール登録 にて Fatal エラー
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1097&forum=13
 
-(4) weblinks モジュール にて Fatal エラー
+(3) アイテム管理にて google map が表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1099&forum=13
 
-(5) サブメニューのカテゴリ表示にて、並び順と閲覧制限が効かない
+(4) カテゴリ表示にて total 数が正しくない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1101&forum=13
+
+(5) mime管理にて Fatal エラー
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1103&forum=13
+
+(6) weblinks モジュール にて Fatal エラー
+
+(7) サブメニューのカテゴリ表示にて、並び順と閲覧制限が効かない
 
 
 ● アップデート
