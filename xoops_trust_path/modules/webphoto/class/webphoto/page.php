@@ -1,5 +1,5 @@
 <?php
-// $Id: page.php,v 1.6 2010/05/11 21:07:18 ohwada Exp $
+// $Id: page.php,v 1.7 2010/05/11 21:35:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -256,6 +256,7 @@ function build_show_js_windows( $param )
 	} elseif ( $use_box_js ) {
 		$show_js_window  = true;
 		$show_js_boxlist = true;
+		$show_js_load    = true;
 		$js_load = 'webphoto_box_init';
 
 	} elseif ( $show_gmap ) {
