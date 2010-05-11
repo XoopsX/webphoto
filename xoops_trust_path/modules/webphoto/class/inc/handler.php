@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.15 2009/12/16 13:32:34 ohwada Exp $
+// $Id: handler.php,v 1.16 2010/05/11 13:30:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-11 K.OHWADA
+// BUG: echo sql always if error
 // 2009-12-06 K.OHWADA
 // save_xoops_config_mod()
 // 2009-08-22 K.OHWADA
@@ -317,6 +319,9 @@ function exists_table( $table )
 //---------------------------------------------------------
 function query( $sql, $limit=0, $offset=0, $force=false )
 {
+// BUG: echo sql always if error
+	$flag_echo_sql = false;
+
 	if ( $force ) {
 		return $this->queryF( $sql, $limit, $offset );
 	}
@@ -324,13 +329,17 @@ function query( $sql, $limit=0, $offset=0, $force=false )
 	$sql_full = $sql .': limit='. $limit .' :offset='. $offset ;
 
 	if ( $this->_DEBUG_SQL ) {
+		$flag_echo_sql = true;
 		echo $this->sanitize( $sql_full )."<br />\n";
 	}
 
 	$res = $this->_db->query( $sql, intval($limit), intval($offset) );
 	if ( !$res  ) {
 		$this->_db_error = $this->_db->error();
-		if ( ! $this->_DEBUG_SQL ) {
+		if ( empty($error) ) {
+			$error = 'Database update not allowed during processing of a GET request';
+		}
+		if ( $this->_DEBUG_SQL && !$flag_echo_sql ) {
 			echo $this->sanitize( $sql_full )."<br />\n";
 		}
 		if ( $this->_DEBUG_ERROR ) {
@@ -722,6 +731,8 @@ function set_debug_error_by_const_name( $name )
 
 function set_debug_sql( $val )
 {
+echo " set_debug_sql( $val ) ";
+
 	$this->_DEBUG_SQL = (bool)$val;
 }
 
