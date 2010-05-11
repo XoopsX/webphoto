@@ -1,8 +1,8 @@
-$Id: readme_jp.txt,v 1.53 2010/05/10 10:47:13 ohwada Exp $
+$Id: readme_jp.txt,v 1.54 2010/05/11 21:08:48 ohwada Exp $
 
 =================================================
 Version: 2.13
-Date:   2010-05-10
+Date:   2010-05-12
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
@@ -29,9 +29,12 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1101&forum=13
 (5) mime管理にて Fatal エラー
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1103&forum=13
 
-(6) weblinks モジュール にて Fatal エラー
+(6) リスト表示・テーブル表示の切替えが継続しない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1105&forum=13
 
-(7) サブメニューのカテゴリ表示にて、並び順と閲覧制限が効かない
+(7) weblinks モジュール にて Fatal エラー
+
+(8) サブメニューのカテゴリ表示にて、並び順と閲覧制限が効かない
 
 
 ● アップデート
