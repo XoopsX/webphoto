@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.4 2010/05/10 10:34:49 ohwada Exp $
+// $Id: category.php,v 1.5 2010/05/11 14:15:06 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -164,7 +164,7 @@ function build_total_for_detail( $cat_id )
 
 }
 
-function build_rows_for_detail( $cat_id, $orderby, $limit, $start )
+function build_rows_for_detail( $sum_mode, $cat_id, $orderby, $limit, $start )
 {
 	return $this->get_rows_by_catid( $sum_mode, $cat_id, $orderby, $limit, $start );
 }
