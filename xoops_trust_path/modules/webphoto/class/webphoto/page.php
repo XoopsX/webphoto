@@ -1,5 +1,5 @@
 <?php
-// $Id: page.php,v 1.5 2010/02/17 04:34:47 ohwada Exp $
+// $Id: page.php,v 1.6 2010/05/11 21:07:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-12 K.OHWADA
+// show_photo -> show_photo_list
 // 2010-02-15 K.OHWADA
 // change build_footer_param()
 // 2010-01-10 K.OHWADA
@@ -285,26 +287,31 @@ function build_show_js_windows( $param )
 
 function build_box_list( $param )
 {
+	if ( !isset($param['use_box_js']) || !$param['use_box_js'] ) {
+		return '';
+	}
+
 	$arr = array();
-	if ( isset($param['use_box_js']) && $param['use_box_js'] ) {
-		if ( isset($param['show_catlist']) && $param['show_catlist'] ) {
-			$arr[] = 'webphoto_box_catlist';
-		}
-		if ( isset($param['show_tagcloud']) && $param['show_tagcloud'] ) {
-			$arr[] = 'webphoto_box_tagcloud';
-		}
-		if ( isset($param['show_gmap']) && $param['show_gmap'] ) {
-			$arr[] = 'webphoto_box_gmap';
-		}
-		if ( isset($param['show_timeline']) && $param['show_timeline'] ) {
-			$arr[] = 'webphoto_box_timeline';
-		}
-		if ( isset($param['show_photo']) && $param['show_photo'] ) {
-			$arr[] = 'webphoto_box_photo';
-		}
-		if ( count($arr) ) {
-			return implode( ',', $arr );
-		}
+	if ( isset($param['show_catlist']) && $param['show_catlist'] ) {
+		$arr[] = 'webphoto_box_catlist';
+	}
+	if ( isset($param['show_tagcloud']) && $param['show_tagcloud'] ) {
+		$arr[] = 'webphoto_box_tagcloud';
+	}
+	if ( isset($param['show_gmap']) && $param['show_gmap'] ) {
+		$arr[] = 'webphoto_box_gmap';
+	}
+	if ( isset($param['show_timeline']) && $param['show_timeline'] ) {
+		$arr[] = 'webphoto_box_timeline';
+	}
+
+// show_photo -> show_photo_list
+	if ( isset($param['show_photo_list']) && $param['show_photo_list'] ) {
+		$arr[] = 'webphoto_box_photo';
+	}
+
+	if ( count($arr) ) {
+		return implode( ',', $arr );
 	}
 	return '';
 }
