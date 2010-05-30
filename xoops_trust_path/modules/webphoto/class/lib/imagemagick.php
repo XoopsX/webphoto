@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemagick.php,v 1.4 2009/11/20 22:22:50 ohwada Exp $
+// $Id: imagemagick.php,v 1.5 2010/05/30 11:24:07 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-30 K.OHWADA
+// is_win_os()
 // 2009-11-21 K.OHWADA
 // BUG: Fatal error: Call to undefined method webphoto_lib_imagemagick::get_msg_array()
 // 2009-01-10 K.OHWADA
@@ -22,12 +24,15 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_imagemagick
 {
+	var $_cmd_convert   = 'convert';
+	var $_cmd_composite = 'composite';
+
 	var $_cmd_path   = null;
 	var $_flag_chmod = false;
 	var $_msg_array  = array();
 
 	var $_CHMOD_MODE = 0777;
-	var $_DEBUG    = false ;
+	var $_DEBUG      = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -51,7 +56,15 @@ function &getInstance()
 //---------------------------------------------------------
 function set_cmd_path( $val )
 {
-	$this->_cmd_path = $val ;
+	$this->_cmd_path      = $val ;
+	$this->_cmd_convert   = $this->_cmd_path .'convert';
+	$this->_cmd_composite = $this->_cmd_path .'composite';
+
+	if ( $this->is_win_os() ) {
+		$this->_cmd_convert   = $this->conv_win_cmd( $this->_cmd_convert );
+		$this->_cmd_composite = $this->conv_win_cmd( $this->_cmd_composite );
+	}
+
 }
 
 function set_flag_chmod( $val )
@@ -98,8 +111,7 @@ function add_icon( $src, $dst, $icon )
 
 function convert( $src, $dst, $option='' )
 {
-	$cmd = $this->_cmd_path .'convert '. $option .' '. $src .' '.$dst ;
-
+	$cmd = $this->_cmd_convert .' '. $option .' '. $src .' '.$dst ;
 	$ret_array = null;
 	exec( "$cmd 2>&1", $ret_array );
 	if ( $this->_DEBUG ) {
@@ -122,7 +134,7 @@ function convert( $src, $dst, $option='' )
 
 function composite( $src, $dst, $change, $option='' )
 {
-	$cmd = $this->_cmd_path .'composite '. $option .' '. $change .' '. $src .' '. $dst ;
+	$cmd = $this->_cmd_composite .' '. $option .' '. $change .' '. $src .' '. $dst ;
 
 	$ret_array = null;
 	exec( "$cmd 2>&1", $ret_array );
@@ -156,7 +168,12 @@ function chmod_file( $file, $mode )
 //---------------------------------------------------------
 function version( $path )
 {
-	$cmd = "{$path}convert --help";
+	$convert = $path.'convert';
+	if ( $this->is_win_os() ) {
+		$convert = $this->conv_win_cmd( $convert );
+	}
+
+	$cmd = $convert.' --help';
 	exec( $cmd , $ret_array ) ;
 	if( count( $ret_array ) > 0 ) {
 		$ret = true ;
@@ -164,9 +181,26 @@ function version( $path )
 
 	} else {
 		$ret = false ;
-		$str = "Error: {$path}convert can't be executed" ;
+		$str = "Error: ". $convert ." can't be executed" ;
 	}
 	return array( $ret, $str );
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function is_win_os()
+{
+	if ( strpos(PHP_OS,"WIN") === 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function conv_win_cmd( $cmd )
+{
+	$str = '"'. $cmd .'.exe"';
+	return $str;
 }
 
 //---------------------------------------------------------
