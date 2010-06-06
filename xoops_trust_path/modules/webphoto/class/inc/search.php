@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.12 2009/11/29 07:34:21 ohwada Exp $
+// $Id: search.php,v 1.13 2010/06/06 10:03:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// BUG: overwrited by the previous data
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // get_ini()
@@ -87,40 +89,19 @@ function search( $query_array, $andor, $limit, $offset, $uid )
 
 	foreach( $item_rows as $item_row )
 	{
-		$item_id   = $item_row['item_id'];
-		$item_kind = $item_row['item_kind'];
+		$item_id = $item_row['item_id'];
 
-		$img_url    = null ;
-		$img_width  = 0 ;
-		$img_height = 0 ;
-
-		$is_image  = $this->is_image_kind( $item_kind );
-		$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
-
-		list( $thumb_url, $thumb_width, $thumb_height ) =
-			$this->build_show_file_image( $thumb_row ) ;
-
-		list( $icon_url, $icon_width, $icon_height ) =
-			$this->build_show_icon_image( $item_row );
-
-		if ( $is_image || $this->_SHOW_IMAGE ) {
-			if ( $thumb_url ) {
-				$img_url    = $thumb_url;
-				$img_width  = $thumb_width;
-				$img_height = $thumb_height;
-
-			} elseif ( $this->_SHOW_ICON && $icon_url ) {
-				$img_url    = $icon_url;
-				$img_width  = $icon_width;
-				$img_height = $icon_height;	
-			}
-		}
+		list( $img_url, $img_width, $img_height ) =
+			$this->build_img_url( $item_row, $this->_SHOW_IMAGE, $this->_SHOW_ICON );
 
 		if ( $this->_cfg_use_pathinfo ) {
 			$link = 'index.php/photo/'. $item_id .'/keywords='. $keywords .'/' ;
 		} else {
 			$link = 'index.php?fct=photo&amp;p='. $item_id .'&amp;keywords='. $keywords ;
 		}
+
+// BUG: overwrited by the previous data
+		$arr = array();
 
 		$arr['link']    = $link ;
 		$arr['title']   = $item_row['item_title'];

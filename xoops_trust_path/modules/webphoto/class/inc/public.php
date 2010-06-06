@@ -1,5 +1,5 @@
 <?php
-// $Id: public.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: public.php,v 1.6 2010/06/06 10:03:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// build_img_url()
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // $trust_dirname
@@ -414,6 +416,55 @@ function get_cat_cached_row_by_id( $id )
 	}
 
 	return null;
+}
+
+//---------------------------------------------------------
+// build_img_url
+//---------------------------------------------------------
+function build_img_url( $item_row, $show_image=false, $show_icon=false )
+{
+	$img_url    = null ;
+	$img_width  = 0 ;
+	$img_height = 0 ;
+
+	$item_kind           = $item_row['item_kind'];
+	$item_external_thumb = $item_row['item_external_thumb'];
+
+	$is_image    = $this->is_image_kind( $item_kind );
+	$is_external = $this->is_kind_external_thumb( $item_kind );
+
+	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+	list( $thumb_url, $thumb_width, $thumb_height ) =
+		$this->build_show_file_image( $thumb_row ) ;
+
+	list( $icon_url, $icon_width, $icon_height ) =
+		$this->build_show_icon_image( $item_row );
+
+	if (( $is_image || $show_image ) && $thumb_url ) {
+		$img_url    = $thumb_url;
+		$img_width  = $thumb_width;
+		$img_height = $thumb_height;
+
+	} elseif (( $is_external || $show_image ) && $item_external_thumb ) {
+		$img_url    = $item_external_thumb;
+
+	} elseif ( $show_icon && $icon_url ) {
+		$img_url    = $icon_url;
+		$img_width  = $icon_width;
+		$img_height = $icon_height;	
+	}
+
+	return array( $img_url,	$img_width, $img_height );
+}
+
+function is_kind_external_thumb( $kind )
+{
+	if ( $this->is_embed_kind( $kind ) || 
+         $this->is_external_image_kind( $kind ) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

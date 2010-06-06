@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.16 2010/05/11 13:30:20 ohwada Exp $
+// $Id: handler.php,v 1.17 2010/06/06 10:03:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// is_embed_kind()
 // 2010-05-11 K.OHWADA
 // BUG: echo sql always if error
 // 2009-12-06 K.OHWADA
@@ -652,6 +654,22 @@ function is_image_kind( $kind )
 function is_video_kind( $kind )
 {
 	if ( $kind == _C_WEBPHOTO_ITEM_KIND_VIDEO ) {
+		return true;
+	}
+	return false;
+}
+
+function is_embed_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_EMBED ) {
+		return true;
+	}
+	return false;
+}
+
+function is_external_image_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE ) {
 		return true;
 	}
 	return false;
