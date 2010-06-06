@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.11 2009/11/29 07:34:21 ohwada Exp $
+// $Id: whatsnew.php,v 1.12 2010/06/06 10:06:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// build_img_url()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // get_ini()
@@ -91,7 +93,8 @@ function whatsnew( $limit=0 , $offset=0 )
 		$time_create  = $item_row['item_time_create'];
 		$item_kind    = $item_row['item_kind'];
 
-		$is_image  = $this->is_image_kind( $item_kind );
+		$is_image = $this->is_image_kind( $item_kind );
+		$is_video = $this->is_video_kind( $item_kind );
 
 		$cat_row = $this->get_cat_cached_row_by_id( $cat_id );
 		if ( is_array($cat_row) ) {
@@ -111,21 +114,8 @@ function whatsnew( $limit=0 , $offset=0 )
 		list( $thumb_url, $thumb_width, $thumb_height ) =
 			$this->build_show_file_image( $thumb_row ) ;
 
-		list( $icon_url, $icon_width, $icon_height ) =
-			$this->build_show_icon_image( $item_row );
-
-		if ( $is_image || $this->_SHOW_IMAGE ) {
-			if ( $thumb_url ) {
-				$image  = $thumb_url;
-				$width  = $thumb_width;
-				$height = $thumb_height;
-
-			} elseif ( $this->_SHOW_ICON && $icon_url ) {
-				$imgage = $icon_url;
-				$width  = $icon_width;
-				$height = $icon_height;	
-			}
-		}
+		list( $image, $width, $height ) =
+			$this->build_img_url( $item_row, $this->_SHOW_IMAGE, $this->_SHOW_ICON );
 
 		if ( $this->_cfg_use_pathinfo ) {
 			$link     = $this->_MODULE_URL.'/index.php/photo/'.    $item_id .'/' ;
@@ -151,9 +141,6 @@ function whatsnew( $limit=0 , $offset=0 )
 			'created'     => $time_create ,
 			'description' => $this->build_item_description( $item_row ) ,
 		);
-
-		$is_image = $this->is_image_kind( $item_kind );
-		$is_video = $this->is_video_kind( $item_kind );
 
 // photo image
 		if ( $image ) {

@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: gmap_info.php,v 1.4 2010/06/06 10:06:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// show youtube thumb image
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 //---------------------------------------------------------
@@ -163,13 +165,22 @@ function build_img_thumb( $param )
 	$width   = intval( $param['thumb_width'] );
 	$height  = intval( $param['thumb_height'] );
 
+	$url_external_s = $this->sanitize( $param['item_external_thumb'] );
+	$embed_type     = $param['item_embed_type'] ;
+
 	$img = null;
+
+// if thumb
 	if ( $url_s && $width && $height ) {
 		$img = '<img src="'. $url_s .'" width="'. $width .'"  height="'. $height .'" alt="'. $title_s .' "border="0" />';
+
 	} elseif ( $url_s ) {
 		$img = '<img src="'. $url_s .'" alt="'. $title_s .'" border="0" />';
-	}
 
+// if youtube
+	} elseif ( $url_external_s && ( $embed_type == 'youtube') ) {
+		$img = '<img src="'. $url_external_s .'" alt="'. $title_s .'" border="0" />';
+	}
 	return $img;
 }
 
