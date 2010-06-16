@@ -1,5 +1,5 @@
 /* ========================================================
- * $Id: edit.js,v 1.2 2009/11/29 07:43:41 ohwada Exp $
+ * $Id: edit.js,v 1.3 2010/06/16 22:53:37 ohwada Exp $
  * ========================================================
  */
 
@@ -15,18 +15,36 @@ function webphoto_check_all( cbox, prefix )
 		}
 	}
 }
-function webphoto_detail_disp_onoff( onoff ) 
+function webphoto_detail_checkbox_onoff( on )
 {
-	if ( onoff.checked ) {
+	document.webphoto_edit.webphoto_form_detail_onoff.checked = on;
+	webphoto_detail_disp_onoff( on )
+}
+function webphoto_gmap_checkbox_onoff( on )
+{
+	document.webphoto_edit.webphoto_form_gmap_onoff.checked = on;
+	webphoto_gmap_disp_onoff( on )
+}
+function webphoto_detail_disp_onclick( checkbox ) 
+{
+	webphoto_detail_disp_onoff( checkbox.checked );
+}
+function webphoto_detail_disp_onoff( on ) 
+{
+	if ( on ) {
 		document.getElementById("webphoto_detail").style.display = "block";
-		webphoto_gmap_disp_on();
+		webphoto_gmap_checkbox_onoff( on );
 	} else{
 		document.getElementById("webphoto_detail").style.display = "none";
 	}
 }
-function webphoto_gmap_disp_onoff( onoff ) 
+function webphoto_gmap_disp_onclick( checkbox ) 
 {
-	if ( onoff.checked ) {
+	webphoto_gmap_disp_onoff( checkbox.checked ) ;
+}
+function webphoto_gmap_disp_onoff( on ) 
+{
+	if ( on ) {
 		webphoto_gmap_disp_on();
 	} else{
 		webphoto_set_gmap_iframe('');
