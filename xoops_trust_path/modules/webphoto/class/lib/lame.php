@@ -1,10 +1,16 @@
 <?php
-// $Id: lame.php,v 1.1 2009/11/06 18:06:06 ohwada Exp $
+// $Id: lame.php,v 1.2 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-10-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-06-06 K.OHWADA
+// is_win_os()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,6 +20,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_lame
 {
+	var $_cmd_lame = 'lame';
+
 	var $_cmd_path  = null;
 	var $_msg_array = array();
 	var $_DEBUG     = false;
@@ -41,6 +49,11 @@ function &getInstance()
 function set_cmd_path( $val )
 {
 	$this->_cmd_path = $val ;
+	$this->_cmd_lame = $this->_cmd_path .'lame';
+
+	if ( $this->is_win_os() ) {
+		$this->_cmd_lame = $this->conv_win_cmd( $this->_cmd_lame );
+	}
 }
 
 function set_debug( $val )
@@ -56,7 +69,7 @@ function wav_to_mp3( $wav, $mp3, $option='' )
 
 function lame( $wav, $mp3, $option='' )
 {
-	$cmd = $this->_cmd_path .'lame '.$option.' '.$wav.' '.$mp3 ;
+	$cmd = $this->_cmd_lame .' '.$option.' '.$wav.' '.$mp3 ;
 	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
@@ -73,7 +86,12 @@ function version( $path )
 {
 // LAME 32bits version 3.97 (http://www.mp3dev.org/)
 
-	$cmd = $path.'lame --help 2>&1' ;
+	$lame = $path.'lame';
+	if ( $this->is_win_os() ) {
+		$lame = $this->conv_win_cmd( $lame );
+	}
+
+	$cmd = $lame.' --help 2>&1' ;
 	exec( $cmd , $ret_array ) ;
 	if( count( $ret_array ) > 0 ) {
 		$ret = true ;
@@ -81,10 +99,27 @@ function version( $path )
 
 	} else {
 		$ret = false ;
-		$msg = "Error: ".$path."lame can't be executed" ;
+		$msg = "Error: ".$lame." can't be executed" ;
 	}
 
 	return array( $ret, $msg );
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function is_win_os()
+{
+	if ( strpos(PHP_OS,"WIN") === 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function conv_win_cmd( $cmd )
+{
+	$str = '"'. $cmd .'.exe"';
+	return $str;
 }
 
 //---------------------------------------------------------

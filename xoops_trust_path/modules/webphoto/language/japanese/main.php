@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.38 2010/03/04 02:17:26 ohwada Exp $
+// $Id: main.php,v 1.39 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1474,6 +1474,17 @@ define("_WEBPHOTO_CONFIRM_PHOTODEL_DSC","ÀâÌÀÊ¸¤ä¥³¥á¥ó¥È¤Ê¤É´ØÏ¢¤¹¤ëÁ´¤Æ¤Î¾ðÊó¤
 
 // search
 define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "¥­¡¼¥ï¡¼¥É¤ÏÈ¾³Ñ %s Ê¸»ú°Ê¾å¤Ç»ØÄê¤·¤Æ¤¯¤À¤µ¤¤");
+
+//---------------------------------------------------------
+// v2.20
+//---------------------------------------------------------
+// edit form
+define("_WEBPHOTO_EMBED_SUPPORT_TITLE", "¤³¤Î¥×¥é¥°¥¤¥ó¤Ï¥¿¥¤¥È¥ë¤ò¼èÆÀ¤·¤Þ¤¹");
+define("_WEBPHOTO_EMBED_SUPPORT_DESCRIPTION", "¤³¤Î¥×¥é¥°¥¤¥ó¤ÏÀâÌÀÊ¸¤ò¼èÆÀ¤·¤Þ¤¹");
+define("_WEBPHOTO_EMBED_SUPPORT_SITEURL", "¤³¤Î¥×¥é¥°¥¤¥ó¤Ï¥µ¥¤¥ÈURL¤ò¼èÆÀ¤·¤Þ¤¹");
+define("_WEBPHOTO_EMBED_SUPPORT_DURATION", "¤³¤Î¥×¥é¥°¥¤¥ó¤Ï¥Ó¥Ç¥ªºÆÀ¸»þ´Ö¤ò¼èÆÀ¤·¤Þ¤¹");
+define("_WEBPHOTO_EMBED_SUPPORT_EMBED_TEXT", "¤³¤Î¥×¥é¥°¥¤¥ó¤ÏËä¹þ¤ß¤ò¼èÆÀ¤·¤Þ¤¹");
+define("_WEBPHOTO_EMBED_SUPPORT_TAGS", "¤³¤Î¥×¥é¥°¥¤¥ó¤Ï¥¿¥°¤ò¼èÆÀ¤·¤Þ¤¹");
 
 // === define end ===
 }

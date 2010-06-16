@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.8 2009/04/21 15:14:54 ohwada Exp $
+// $Id: ffmpeg.php,v 1.9 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// is_win_os()
 // 2009-04-21 K.OHWADA
 // chmod_file()
 // 2009-01-10 K.OHWADA
@@ -35,9 +37,11 @@ class webphoto_lib_ffmpeg
 
 	var $_msg_array = array();
 
-	var $_CMD_INFO          = 'ffmpeg -i %s';
-	var $_CMD_CREATE_THUMBS = 'ffmpeg -vframes 1 -ss %s -i %s -f image2 %s';
-	var $_CMD_CREATE_FLASH  = 'ffmpeg -i %s -vcodec flv %s -f flv %s';
+	var $_CMD_FFMPEG          = 'ffmpeg';
+	var $_PARAM_INFO          = ' -i %s';
+	var $_PARAM_CREATE_THUMBS = ' -vframes 1 -ss %s -i %s -f image2 %s';
+	var $_PARAM_CREATE_FLASH  = ' -i %s -vcodec flv %s -f flv %s';
+	var $_PARAM_VERSION       = ' -version';
 
 	var $_EXT_FLV    = 'flv';
 	var $_CHMOD_MODE = 0777;
@@ -69,7 +73,12 @@ function &getInstance()
 // C:/Program Files/program/
 function set_cmd_path( $val )
 {
-	$this->_CMD_PATH = $val;
+	$this->_CMD_PATH   = $val;
+	$this->_CMD_FFMPEG = $this->_CMD_PATH.'ffmpeg';
+
+	if ( $this->is_win_os() ) {
+		$this->_CMD_FFMPEG = $this->conv_win_cmd( $this->_CMD_FFMPEG );
+	}
 }
 
 function set_tmp_path( $val )
@@ -118,7 +127,7 @@ function get_duration_size( $file )
 {
 	$this->clear_msg_array();
 
-	$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_INFO, $file );
+	$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_INFO, $file );
 
 	$ret_array = null;
 	exec( "$cmd 2>&1", $ret_array );
@@ -172,7 +181,7 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 		$name     = $this->build_thumb_name( $i + $this->_offset ) ;
 		$file_out = $this->_TMP_PATH .'/'. $name;
 
-		$cmd = $this->_CMD_PATH . sprintf( $this->_CMD_CREATE_THUMBS, $sec, $file_in, $file_out );
+		$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_CREATE_THUMBS, $sec, $file_in, $file_out );
 
 		$ret_array = null;
 		exec( "$cmd 2>&1", $ret_array );
@@ -221,8 +230,8 @@ function create_flash( $file_in, $file_out, $extra=null )
 		return false;
 	}
 
-	$cmd = $this->_CMD_PATH . sprintf( 
-		$this->_CMD_CREATE_FLASH, $file_in, $extra, $file_out );
+	$cmd = $this->_CMD_FFMPEG . sprintf( 
+		$this->_PARAM_CREATE_FLASH, $file_in, $extra, $file_out );
 
 	$ret_array = null;
 	exec( "$cmd 2>&1", $ret_array );
@@ -255,24 +264,47 @@ function parse_ext( $file )
 function version( $path )
 {
 	$ret = false;
-	$str = '';
+	$msg = '';
 
-	$cmd = "{$path}ffmpeg -version 2>&1";
-	exec( $cmd , $ret_array ) ;
+	$ffmpeg = $path.'ffmpeg';
+	if ( $this->is_win_os() ) {
+		$ffmpeg = $this->conv_win_cmd( $ffmpeg );
+	}
+
+	$cmd = $ffmpeg.$this->_PARAM_VERSION;
+
+	exec( "$cmd 2>&1", $ret_array ) ;
 	if ( is_array($ret_array) && count($ret_array) ) {
 		foreach ( $ret_array as $line ) {
 			if ( preg_match('/version/i', $line ) ) {
-				$str .= $line ."<br />\n";
+				$msg .= $line ."<br />\n";
 				$ret  = true;
 			}
 		}
 	}
 
 	if ( !$ret ) {
-		$str = "Error: {$path}ffmpeg can't be executed" ;
+		$msg = "Error: ". $ffmpeg ." can't be executed" ;
 	}
 
-	return array( $ret, $str );
+	return array( $ret, $msg );
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function is_win_os()
+{
+	if ( strpos(PHP_OS,"WIN") === 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function conv_win_cmd( $cmd )
+{
+	$str = '"'. $cmd .'.exe"';
+	return $str;
 }
 
 //---------------------------------------------------------

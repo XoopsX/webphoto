@@ -1,5 +1,5 @@
 <?php
-// $Id: xpdf.php,v 1.3 2010/03/31 02:49:06 ohwada Exp $
+// $Id: xpdf.php,v 1.4 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// is_win_os()
 // 2010-03-24 K.OHWADA
 // pdftops()
 //---------------------------------------------------------
@@ -29,6 +31,10 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_xpdf
 {
+	var $_cmd_pdftoppm  = 'pdftoppm';
+	var $_cmd_pdftops   = 'pdftops';
+	var $_cmd_pdftotext = 'pdftotext';
+
 	var $_cmd_path  = null;
 	var $_msg_array = array();
 	var $_DEBUG     = false;
@@ -55,7 +61,17 @@ function &getInstance()
 //---------------------------------------------------------
 function set_cmd_path( $val )
 {
-	$this->_cmd_path = $val ;
+	$this->_cmd_path  = $val ;
+	$this->_cmd_pdftoppm  = $this->_cmd_path .'pdftoppm';
+	$this->_cmd_pdftops   = $this->_cmd_path .'pdftops'; 
+	$this->_cmd_pdftotext = $this->_cmd_path .'pdftotext';
+
+	if ( $this->is_win_os() ) {
+		$this->_cmd_pdftoppm  = $this->conv_win_cmd( $this->_cmd_pdftoppm );
+		$this->_cmd_pdftops   = $this->conv_win_cmd( $this->_cmd_pdftops );
+		$this->_cmd_pdftotext = $this->conv_win_cmd( $this->_cmd_pdftotext );
+	}
+
 }
 
 function set_debug( $val )
@@ -99,21 +115,39 @@ function pdf_to_text( $pdf, $txt, $enc='UTF-8' )
 	return false ;
 }
 
+function pdftoppm_exists()
+{
+	return $this->cmd_exists( 'pdftoppm' );
+}
+
+function cmd_exists( $name )
+{
+	$cmd = $this->_cmd_path . $name;
+	if ( $this->is_win_os() ) {
+		$cmd = $this->conv_win_cmd_exe( $cmd );
+	}
+
+	if ( file_exists( $cmd ) ) {
+		return true;
+	};
+	return false;
+}
+
 function pdftoppm( $pdf, $root, $option='' )
 {
-	$cmd = $this->_cmd_path .'pdftoppm '.$option.' '.$pdf.' '.$root ;
+	$cmd = $this->_cmd_pdftoppm.' '.$option.' '.$pdf.' '.$root ;
 	return $this->exec_cmd( $cmd );
 }
 
 function pdftops( $pdf, $ps, $option='' )
 {
-	$cmd = $this->_cmd_path .'pdftops '.$option.' '.$pdf.' '.$ps ;
+	$cmd = $this->_cmd_pdftops.' '.$option.' '.$pdf.' '.$ps ;
 	return $this->exec_cmd( $cmd );
 }
 
 function pdftotext( $pdf, $txt, $option='' )
 {
-	$cmd = $this->_cmd_path .'pdftotext '.$option.' '.$pdf.' '.$txt ;
+	$cmd = $this->_cmd_pdftotext.' '.$option.' '.$pdf.' '.$txt ;
 	return $this->exec_cmd( $cmd );
 }
 
@@ -133,7 +167,12 @@ function exec_cmd( $cmd )
 //---------------------------------------------------------
 function version( $path )
 {
-	$cmd = $path.'pdftotext -v 2>&1' ;
+	$pdftotext = $path.'pdftotext';
+	if ( $this->is_win_os() ) {
+		$pdftotext = $this->conv_win_cmd( $pdftotext );
+	}
+
+	$cmd = $pdftotext.' -v 2>&1' ;
 	exec( $cmd , $ret_array ) ;
 	if( count( $ret_array ) > 0 ) {
 		$ret = true ;
@@ -141,10 +180,40 @@ function version( $path )
 
 	} else {
 		$ret = false ;
-		$msg = "Error: ".$path."pdftotext can't be executed" ;
+		$msg = "Error: ". $pdftotext ." can't be executed" ;
 	}
 
 	return array( $ret, $msg );
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function is_win_os()
+{
+	if ( strpos(PHP_OS,"WIN") === 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function conv_win_cmd( $cmd )
+{
+	$str = $this->conv_win_cmd_exe(  $cmd );
+	$str = $this->conv_win_cmd_quot( $str );
+	return $str;
+}
+
+function conv_win_cmd_exe( $cmd )
+{
+	$str = $cmd .'.exe';
+	return $str;
+}
+
+function conv_win_cmd_quot( $cmd )
+{
+	$str = '"'. $cmd .'"';
+	return $str;
 }
 
 //---------------------------------------------------------

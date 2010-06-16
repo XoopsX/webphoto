@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.12 2010/04/04 01:33:56 ohwada Exp $
+// $Id: modinfo.php,v 1.13 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,6 +31,15 @@ if ( !isset( $MY_DIRNAME ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v2.20
+//---------------------------------------------------------
+if( !defined($constpref."CFG_EMBED_WIDTH") ) 
+{
+define($constpref."CFG_EMBED_WIDTH", "Screen width of video site");
+define($constpref."CFG_EMBED_HEIGHT","Screen height of video site");
+}
 
 //---------------------------------------------------------
 // v2.11

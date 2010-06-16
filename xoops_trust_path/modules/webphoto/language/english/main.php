@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.43 2010/03/04 02:17:26 ohwada Exp $
+// $Id: main.php,v 1.44 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1475,6 +1475,17 @@ define("_WEBPHOTO_CONFIRM_PHOTODEL_DSC","All information, description comment an
 
 // search
 define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "Keywords must be at least <b>%s</b> characters long");
+
+//---------------------------------------------------------
+// v2.20
+//---------------------------------------------------------
+// edit form
+define("_WEBPHOTO_EMBED_SUPPORT_TITLE", "The external source will provide Title");
+define("_WEBPHOTO_EMBED_SUPPORT_DESCRIPTION", "The external source will provide Description");
+define("_WEBPHOTO_EMBED_SUPPORT_SITEURL", "The external source will provide Site url");
+define("_WEBPHOTO_EMBED_SUPPORT_DURATION", "The external source will provide Duration");
+define("_WEBPHOTO_EMBED_SUPPORT_EMBED_TEXT", "The external source will provide Emded");
+define("_WEBPHOTO_EMBED_SUPPORT_TAGS", "The external source will provide Tags");
 
 // === define end ===
 }

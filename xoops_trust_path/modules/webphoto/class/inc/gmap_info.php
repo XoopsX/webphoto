@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.4 2010/06/06 10:06:47 ohwada Exp $
+// $Id: gmap_info.php,v 1.5 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -166,7 +166,8 @@ function build_img_thumb( $param )
 	$height  = intval( $param['thumb_height'] );
 
 	$url_external_s = $this->sanitize( $param['item_external_thumb'] );
-	$embed_type     = $param['item_embed_type'] ;
+	$kind           = $param['item_kind'];
+	$is_embed       = $this->is_embed_kind( $kind );
 
 	$img = null;
 
@@ -177,8 +178,8 @@ function build_img_thumb( $param )
 	} elseif ( $url_s ) {
 		$img = '<img src="'. $url_s .'" alt="'. $title_s .'" border="0" />';
 
-// if youtube
-	} elseif ( $url_external_s && ( $embed_type == 'youtube') ) {
+// if embed
+	} elseif ( $url_external_s && $is_embed ) {
 		$img = '<img src="'. $url_external_s .'" alt="'. $title_s .'" border="0" />';
 	}
 	return $img;
@@ -212,6 +213,14 @@ function build_target_photo( $param )
 function check_normal_ext( $param )
 {
 	return $this->is_image_ext( $param['item_ext'] );
+}
+
+function is_embed_kind( $kind )
+{
+	if ( $kind == _C_WEBPHOTO_ITEM_KIND_EMBED ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

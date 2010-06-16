@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.26 2010/03/19 00:23:02 ohwada Exp $
+// $Id: constants.php,v 1.27 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -301,6 +301,10 @@ define("_C_WEBPHOTO_PLAYER_DISPLAYWIDTH_PLAYLIST",  "320");
 
 define("_C_WEBPHOTO_EMBED_HEIGHT_DEFAULT", "240");
 define("_C_WEBPHOTO_EMBED_WIDTH_DEFAULT",  "320");
+
+// v2.20
+define("_C_WEBPHOTO_EMBED_REPLACE_WIDTH",  '{$w-width}' ) ;
+define("_C_WEBPHOTO_EMBED_REPLACE_HEIGHT", '{$w-height}' ) ;
 
 define("_C_WEBPHOTO_PLAYLIST_TYPE_NONE",  "0");
 define("_C_WEBPHOTO_PLAYLIST_TYPE_IMAGE", "1");

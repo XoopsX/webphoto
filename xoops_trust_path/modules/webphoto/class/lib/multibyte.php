@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.7 2009/08/09 05:47:09 ohwada Exp $
+// $Id: multibyte.php,v 1.8 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// BUG : forget return
 // 2009-08-08 K.OHWADA
 // build_config_mbstring()
 // 2009-05-17 K.OHWADA
@@ -268,7 +270,9 @@ function convert_to_utf8( $str, $encoding=_CHARSET )
 	if ( function_exists('iconv') ) {
 		return $this->i_iconv( $encoding, 'UTF-8' , $str );
 	}
-	$str = utf8_encode( $str );
+
+// BUG : forget return
+	return utf8_encode( $str );
 }
 
 function convert_from_utf8( $str, $encoding=_CHARSET )
@@ -282,12 +286,14 @@ function convert_from_utf8( $str, $encoding=_CHARSET )
 	if ( function_exists('iconv') ) {
 		return $this->i_iconv( 'UTF-8', $encoding , $str );
 	}
-	$str = utf8_decode($str);
+
+// BUG : forget return
+	return utf8_decode($str);
 }
 
 function convert_encoding( $str, $to, $from )
 {
-	if ( $to == $from ) {
+	if ( strtolower($to) == strtolower($from) ) {
 		return $str;
 	}
 	if ( $this->_FUNC_SEL && function_exists('iconv') ) {

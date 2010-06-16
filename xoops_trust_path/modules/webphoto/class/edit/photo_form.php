@@ -1,15 +1,15 @@
 <?php
-// $Id: photo_form.php,v 1.14 2010/02/23 01:10:59 ohwada Exp $
+// $Id: photo_form.php,v 1.15 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
 
-// build_allowed_exts()
-
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// support_embed_params()
 // 2010-02-15 K.OHWADA
 // check_edit()
 // 2010-01-10 K.OHWADA
@@ -91,6 +91,8 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_editor_desc = null ;
 
 	var $_flag_admin     = false;
+
+	var $_support_embed_params = array();
 
 // constant
 	var $_FLAG_ITEM_ROW  = true ;
@@ -217,7 +219,7 @@ function build_form_photo( $item_row )
 	$show_gmap_onoff     = false;
 	$show_button_preview = false;
 	$show_button_delete  = false;
-	$show_detail_onoff_mode = false;
+	$show_detail_div_mode = false;
 
 	$file_id_array       = null;
 	$field_counter       = 0;
@@ -240,7 +242,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit_bulk';
 			$submit    = _ADD;
 			$show_gmap_onoff     = $show_gmap;
-			$show_detail_onoff_mode = true;
+			$show_detail_div_mode = true;
 			break;
 
 		case 'file':
@@ -249,7 +251,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit_file';
 			$submit    = _ADD;
 			$show_gmap_onoff     = $show_gmap;
-			$show_detail_onoff_mode = true;
+			$show_detail_div_mode = true;
 			break;
 
 		case 'admin_batch':
@@ -258,7 +260,7 @@ function build_form_photo( $item_row )
 			$op        = 'submit';
 			$submit    = _ADD;
 			$show_gmap_onoff   = $show_gmap;
-			$show_detail_onoff_mode = true;
+			$show_detail_div_mode = true;
 			break;
 
 		case 'submit':
@@ -269,7 +271,7 @@ function build_form_photo( $item_row )
 			$submit    = _ADD;
 			$show_button_preview = true;
 			$show_gmap_onoff     = $show_gmap;
-			$show_detail_onoff_mode = true;
+			$show_detail_div_mode = true;
 			break;
 	}
 
@@ -311,6 +313,9 @@ function build_form_photo( $item_row )
 	}
 
 	$show_item_cat_id = $this->show_item_cat_id(  $is_edit );
+
+	list ( $show_detail_div, $show_detail_div_on )
+		= $this->show_detail_div( $show_detail_div_mode );
 
 	list ( $show_item_embed_type, $show_item_embed_text, $show_item_embed_src )
 		= $this->show_item_embed();
@@ -377,8 +382,11 @@ function build_form_photo( $item_row )
 		'show_batch_dir'          => $show_batch_dir ,
 		'show_batch_uid'          => $show_batch_uid ,
 		'show_batch_update'       => $show_batch_update ,
+
 		'show_detail_table'       => $this->show_detail_table() ,
-		'show_detail_onoff'       => $this->show_detail_onoff( $show_detail_onoff_mode ) ,
+		'show_detail_div'         => $show_detail_div ,
+		'show_detail_div_on'      => $show_detail_div_on ,
+
 		'show_button_preview'     => $show_button_preview ,
 		'show_button_delete'      => $show_button_delete ,
 
@@ -409,6 +417,8 @@ function build_form_common( $is_edit )
 	$tag_name_array = $this->_tag_name_array ;
 	$rotate         = $this->_rotate ;
 	$has_resize     = $this->_has_image_resize ;
+
+	$this->set_support_embed_params();
 
 	$show_desc_options = $this->show_desc_options();
 
@@ -452,6 +462,13 @@ function build_form_common( $is_edit )
 		'show_item_perm_level'        => $this->show_item_perm_level( $is_edit ) ,
 		'show_item_perm_read'         => $this->show_item_perm_read() ,
 		'show_input_item_perm_read'   => $this->show_input_item_perm_read() ,
+
+		'show_embed_support_title'       => $this->show_embed_support_title() ,
+		'show_embed_support_description' => $this->show_embed_support_description() ,
+		'show_embed_support_siteurl'     => $this->show_embed_support_siteurl() ,
+		'show_embed_support_duration'    => $this->show_embed_support_duration() ,
+		'show_embed_support_tags'        => $this->show_embed_support_tags() ,
+		'show_embed_support_embed_text'  => $this->show_embed_support_embed_text() ,
 
 		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
 		'ele_maxsize'          => $this->ele_maxsize() ,
@@ -556,9 +573,8 @@ function show_item_embed()
 
 	if ( $this->is_embed_type() ) {
 		$show_type = true;
-		if ( $this->is_embed_general_type() ) {
-			$show_text = true;
-		} else {
+		$show_text = true;
+		if ( ! $this->is_embed_general_type() ) {
 			$show_src = true;
 		}
 	}
@@ -642,8 +658,7 @@ function show_thumb_dsc()
 {
 	$type = $this->get_row_by_key( 'item_embed_type' );
 	if ( $type ) {
-		$thumb = $this->_embed_class->build_thumb( $type, 'example' );
-		if ( $thumb ) {
+		if ( $this->is_support_embed_param('thumb') ) {
 			return array( false, true );
 		}
 	}
@@ -660,12 +675,19 @@ function show_detail_table()
 	return $this->check_show('detail');
 }
 
-function show_detail_onoff( $show_detail_onoff_mode )
+function show_detail_div( $show_detail_div_mode )
 {
-	if ( $show_detail_onoff_mode && $this->check_show('detail') ) {
-		return true;
+	$div = false;
+	$on  = false;
+
+	if ( $show_detail_div_mode && $this->check_show('detail') ) {
+		$div  = true;
+		if ( $this->get_ini('submit_detail_div_onoff') ) {
+			$on = true;
+		}
 	}
-	return false;
+
+	return array( $div, $on );
 }
 
 function show_rotate( $show_file_photo )
@@ -877,10 +899,7 @@ function embed_src_dsc()
 	$type = $this->get_row_by_key( 'item_embed_type' );
 	$src  = $this->get_row_by_key( 'item_embed_src' );
 
-	if ( $type ) {
-		return $this->_embed_class->build_src_desc( $type, $src );
-	}
-	return null;
+	return $this->build_embed_src_dsc( $type, $src );
 }
 
 function build_file_url( $id, $name )
@@ -987,6 +1006,66 @@ function build_allowed_exts()
 		$str .= "<br />\n";
 	}
 	return $str;
+}
+
+//---------------------------------------------------------
+// use embed class 
+//---------------------------------------------------------
+function show_embed_support_title()
+{
+	return $this->is_support_embed_param('title');
+}
+
+function show_embed_support_description()
+{
+	return $this->is_support_embed_param('description');
+}
+
+function show_embed_support_duration()
+{
+	return $this->is_support_embed_param('duration');
+}
+
+function show_embed_support_tags()
+{
+	return $this->is_support_embed_param('tags');
+}
+
+function show_embed_support_siteurl()
+{
+	return $this->is_support_embed_param('url');
+}
+
+function show_embed_support_embed_text()
+{
+	return $this->is_support_embed_param('script');
+}
+
+function set_support_embed_params()
+{
+	$type = $this->get_row_by_key( 'item_embed_type' );
+	$arr  = $this->support_embed_params( $type );
+	if ( is_array($arr) ) {
+		$this->_support_embed_params = $arr ;
+	}
+}
+
+function is_support_embed_param( $key )
+{
+	if ( isset( $this->_support_embed_params[ $key ] ) ) {
+		return  $this->_support_embed_params[ $key ] ;
+	}
+	return false;
+}
+
+function support_embed_params( $type )
+{
+	return $this->_embed_class->build_support_params( $type );
+}
+
+function build_embed_src_dsc( $type, $src )
+{
+	return $this->_embed_class->build_src_desc( $type, $src );
 }
 
 //---------------------------------------------------------

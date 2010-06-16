@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.5 2009/05/31 18:22:59 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.6 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -69,8 +69,9 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 
 	var $_REDIRECT_MSG_ERROR = 'ERROR not set message';
 
-	var $_MSG_LEVEL = 0;
-	var $_MSG_FIRST = false;
+	var $_MSG_LEVEL   = 0;
+	var $_MSG_FIRST   = false;
+	var $_TIME_FAILED = 5;
 
 	var $_PHOTO_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_PHOTO ;
 	var $_THUMB_FIELD_NAME  = _C_WEBPHOTO_UPLOAD_FIELD_THUMB ;
@@ -108,6 +109,8 @@ function webphoto_edit_imagemanager_submit( $dirname , $trust_dirname )
 	$this->_has_deletable   = $this->_perm_class->has_deletable();
 	$this->_has_html        = $this->_perm_class->has_html();
 	$this->_has_file        = $this->_perm_class->has_file();
+
+	$this->_TIME_FAILED = $this->_redirect_class->get_time_failed();
 }
 
 // for admin_photo_manage admin_catmanager

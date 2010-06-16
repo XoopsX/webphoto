@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.20 2010/01/25 10:03:07 ohwada Exp $
+# $Id: mysql.sql,v 1.21 2010/06/16 22:24:47 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2010-06-06 K.OHWADA
+# docx 
 # 2010-01-10 K.OHWADA
 # item_description_scroll 
 # 2009-12-06 K.OHWADA
@@ -613,6 +615,11 @@ INSERT INTO mime VALUES (29, 0, 0, 'pct', '', 'image/x-pict', 'Apple Macintosh Q
 INSERT INTO mime VALUES (30, 0, 0, 'psd', '', 'image/x-photshop', 'Adobe Photoshop', '&1&', '', 11, 'convert:--flatten');
 INSERT INTO mime VALUES (31, 0, 0, 'tif', '', 'image/tiff', 'Tag Image File Format', '&1&', '', 11, '');
 INSERT INTO mime VALUES (32, 0, 0, 'wmf', '', 'image/wmf application/octet-stream', 'Windows Meta File', '&1&', '', 11, '');
+
+# http://technet.microsoft.com/ja-jp/library/ee309278%28office.12%29.aspx
+INSERT INTO mime VALUES (33, 0, 0, 'docx', '', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'MS Word 2007', '&1&', '', 41, '');
+INSERT INTO mime VALUES (34, 0, 0, 'pptx', '', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'MS Power Point 2007', '&1&', '', 43, '');
+INSERT INTO mime VALUES (35, 0, 0, 'xltx', '', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'MS Excel 2007', '&1&', '', 42, '');
 
 #
 # player table

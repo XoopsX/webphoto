@@ -1,5 +1,5 @@
 <?php
-// $Id: redirect.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: redirect.php,v 1.2 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// get_time_failed()
 // 2009-01-10 K.OHWADA
 // webphoto_photo_redirect -> webphoto_edit_redirect
 // 2008-11-08 K.OHWADA
@@ -217,6 +219,9 @@ function build_redirect( $param )
 	return array( $url, $time, $msg );
 }
 
+//---------------------------------------------------------
+// set & get param
+//---------------------------------------------------------
 function get_redirect_url()
 {
 	return $this->_redirect_url ;
@@ -230,6 +235,21 @@ function get_redirect_time()
 function get_redirect_msg()
 {
 	return $this->_redirect_msg ;
+}
+
+function get_time_success()
+{
+	return $this->_TIME_SUCCESS;
+}
+
+function get_time_pending()
+{
+	return $this->_TIME_PENDING;
+}
+
+function get_time_failed()
+{
+	return $this->_TIME_FAILED;
 }
 
 function set_error_by_const_name( $name )

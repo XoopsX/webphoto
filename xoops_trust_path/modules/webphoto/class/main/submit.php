@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.20 2010/02/17 04:34:47 ohwada Exp $
+// $Id: submit.php,v 1.21 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// remove $_TIME_SUCCESS
 // 2010-02-15 K.OHWADA
 // build_footer_param()
 // 2010-01-10 K.OHWADA
@@ -55,10 +57,6 @@ class webphoto_main_submit extends webphoto_edit_submit
 
 // submit file
 	var $_post_file = null ;
-
-	var $_TIME_SUCCESS = 1;
-	var $_TIME_PENDING = 3;
-	var $_TIME_FAILED  = 5;
 
 //---------------------------------------------------------
 // constructor

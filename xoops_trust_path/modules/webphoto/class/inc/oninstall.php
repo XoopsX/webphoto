@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.21 2010/01/25 10:03:07 ohwada Exp $
+// $Id: oninstall.php,v 1.22 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// _mime_add_record_docx_etc();
 // 2010-01-10 K.OHWADA
 // _item_add_column_210()
 // 2009-12-06 K.OHWADA
@@ -1024,6 +1026,7 @@ function _mime_update()
 	$this->_mime_add_column_kind_etc();
 	$this->_mime_add_record_asf_etc();
 	$this->_mime_add_record_ai_etc();
+	$this->_mime_add_record_docx_etc();
 	$this->_mime_update_record_ffmpeg_s();
 	$this->_mime_update_record_kind_s();
 	$this->_mime_update_record_option_s();
@@ -1195,6 +1198,37 @@ function _mime_add_record_ai_etc()
 		'mime_type'        => 'image/wmf application/octet-stream' ,
 		'mime_perms'       => '&1&' ,
 		'mime_kind'        => _C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT ,
+	);
+
+	$this->_mime_add_record_list( $mime_list );
+}
+
+function _mime_add_record_docx_etc()
+{
+	$mime_list = array();
+
+	$mime_list[] = array(
+		'mime_name'        => 'MS Word 2007' ,
+		'mime_ext'         => 'docx' ,
+		'mime_type'        => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ,
+		'mime_perms'       => '&1&' ,
+		'mime_kind'        => _C_WEBPHOTO_MIME_KIND_OFFICE_DOC ,
+	);
+
+	$mime_list[] = array(
+		'mime_name'        => 'MS Power Point 2007' ,
+		'mime_ext'         => 'pptx' ,
+		'mime_type'        => 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ,
+		'mime_perms'       => '&1&' ,
+		'mime_kind'        => _C_WEBPHOTO_MIME_KIND_OFFICE_PPT ,
+	);
+
+	$mime_list[] = array(
+		'mime_name'        => 'MS Excel 2007' ,
+		'mime_ext'         => 'xlsx' ,
+		'mime_type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ,
+		'mime_perms'       => '&1&' ,
+		'mime_kind'        => _C_WEBPHOTO_MIME_KIND_OFFICE_XLS ,
 	);
 
 	$this->_mime_add_record_list( $mime_list );

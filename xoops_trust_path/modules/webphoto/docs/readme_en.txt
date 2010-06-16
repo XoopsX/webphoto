@@ -1,11 +1,72 @@
-$Id: readme_en.txt,v 1.53 2010/05/11 21:08:48 ohwada Exp $
+$Id: readme_en.txt,v 1.54 2010/06/16 22:24:47 ohwada Exp $
+
+=================================================
+Version: 2.20
+Date:   2010-06-17
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. suport windows
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1107&forum=13
+
+The following command can be operated in the windows OS. 
+imagemagick ffmpeg lame timidity xpdf java
+
+2. main.in option
+(1) added submit_detail_div_onoff
+in submit, "show detail" is turned "ON" by default. 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1113&forum=13
+
+(2) added upload_allowed_mimes
+NOT check mime type on uploading
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1114&forum=13
+
+3. Video site
+3.1 embed plugin
+(1) added the following plugins
+in submit, the title and the thumbnail image can be acquired
+- ustream.tv
+- nicovideo.jp
+- ameba.jp
+
+(2) in the following plugins, the title and the thumbnail image can be acquired
+- youtube.com
+- myspace.com
+- dailymotion.com
+
+3.2 Preferences
+added "Screen width of video site" and "Screen height"
+
+3.3 thumbnail image
+show thumbnail image in the following
+- GoogleMap
+- whatsnew module
+- happy_search module
+
+4. support MS Office 2007
+added extensions ( docx xlsx pptx ) whitch you can upload file
+
+5. Bug fix
+(1) wrong thumbnail image in happy_search module
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1116&forum=13
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.13
 Date:   2010-05-12
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

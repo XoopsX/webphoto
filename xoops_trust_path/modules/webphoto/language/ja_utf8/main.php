@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.38 2010/03/04 02:17:26 ohwada Exp $
+// $Id: main.php,v 1.39 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1475,6 +1475,17 @@ define("_WEBPHOTO_CONFIRM_PHOTODEL_DSC","説明文やコメントなど関連す
 
 // search
 define("_WEBPHOTO_SEARCH_KEYTOOSHORT", "キーワードは半角 %s 文字以上で指定してください");
+
+//---------------------------------------------------------
+// v2.20
+//---------------------------------------------------------
+// edit form
+define("_WEBPHOTO_EMBED_SUPPORT_TITLE", "このプラグインはタイトルを取得します");
+define("_WEBPHOTO_EMBED_SUPPORT_DESCRIPTION", "このプラグインは説明文を取得します");
+define("_WEBPHOTO_EMBED_SUPPORT_SITEURL", "このプラグインはサイトURLを取得します");
+define("_WEBPHOTO_EMBED_SUPPORT_DURATION", "このプラグインはビデオ再生時間を取得します");
+define("_WEBPHOTO_EMBED_SUPPORT_EMBED_TEXT", "このプラグインは埋込みを取得します");
+define("_WEBPHOTO_EMBED_SUPPORT_TAGS", "このプラグインはタグを取得します");
 
 // === define end ===
 }

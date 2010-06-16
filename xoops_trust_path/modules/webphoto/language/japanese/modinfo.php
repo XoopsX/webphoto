@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.22 2010/04/04 01:33:56 ohwada Exp $
+// $Id: modinfo.php,v 1.23 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -419,6 +419,12 @@ define($constpref."CFG_USE_LIGHTBOX","LightBox を使用する");
 // v2.11
 //---------------------------------------------------------
 define($constpref."ADMENU_REDOTHUMBS","サムネイルの再構築");
+
+//---------------------------------------------------------
+// v2.20
+//---------------------------------------------------------
+define($constpref."CFG_EMBED_WIDTH", "動画サイトの表示の幅");
+define($constpref."CFG_EMBED_HEIGHT","動画サイトの表示の高さ");
 
 }
 // === define begin ===

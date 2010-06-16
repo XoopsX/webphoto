@@ -1,10 +1,16 @@
 <?php
-// $Id: jodconverter.php,v 1.2 2009/01/31 19:12:49 ohwada Exp $
+// $Id: jodconverter.php,v 1.3 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-01-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-06-06 K.OHWADA
+// is_win_os()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -18,6 +24,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 class webphoto_lib_jodconverter
 {
+	var $_cmd_java = 'java';
+
 	var $_CMD_PATH_JAVA    = '';
 	var $_jodconverter_jar = '';
 	var $_msg_array = array();
@@ -46,6 +54,11 @@ function &getInstance()
 function set_cmd_path_java( $val )
 {
 	$this->_CMD_PATH_JAVA = $val;
+	$this->_cmd_java      = $this->_CMD_PATH_JAVA .'java';
+
+	if ( $this->is_win_os() ) {
+		$this->_cmd_java = $this->conv_win_cmd( $this->_cmd_java );
+	}
 }
 
 function set_jodconverter_jar( $val )
@@ -65,7 +78,7 @@ function convert( $src_file, $dst_file )
 {
 	$this->clear_msg_array();
 
-	$cmd = $this->_CMD_PATH_JAVA .'java -jar '.$this->_jodconverter_jar.' '.$src_file.' '.$dst_file ;
+	$cmd = $this->_cmd_java .' -jar '.$this->_jodconverter_jar.' '.$src_file.' '.$dst_file ;
 	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
@@ -80,7 +93,7 @@ function convert( $src_file, $dst_file )
 //---------------------------------------------------------
 function version()
 {
-	$cmd = $this->_CMD_PATH_JAVA .'java -version' ;
+	$cmd = $this->_cmd_java.' -version' ;
 	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
@@ -93,7 +106,7 @@ function version()
 		$msg .= $msg_jod ;
 
 	} else {
-		$msg = "Error: ". $this->_CMD_PATH_JAVA ."java cannot be executed" ;
+		$msg = "Error: ". $this->_cmd_java ." cannot be executed" ;
 	}
 
 	return array( $ret, $msg );
@@ -103,7 +116,7 @@ function get_version_jodconverter()
 {
 	$ret = false ;
 
-	if ( is_file( $this->_jodconverter_jar ) ) {
+	if ( file_exists( $this->_jodconverter_jar ) ) {
 		$ret  = true ;
 		$msg  = " jodconverter version ";
 		$msg .= $this->parse_version_jodconverter() ;
@@ -121,6 +134,23 @@ function parse_version_jodconverter()
 		return  $matches[1] ;
 	}
 	return null;
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function is_win_os()
+{
+	if ( strpos(PHP_OS,"WIN") === 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function conv_win_cmd( $cmd )
+{
+	$str = '"'. $cmd .'.exe"';
+	return $str;
 }
 
 //---------------------------------------------------------

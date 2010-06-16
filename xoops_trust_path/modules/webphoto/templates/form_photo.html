@@ -1,4 +1,4 @@
-<{* $Id: form_photo.html,v 1.12 2010/04/22 03:50:48 ohwada Exp $ *}>
+<{* $Id: form_photo.html,v 1.13 2010/06/16 22:24:47 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -146,15 +146,23 @@ function webphoto_gmap_disp_on()
 <{* item title *}>
 <tr><td class="head" width="20%">
 <{$lang_item_title}>
+
 <{if $lang_submit_cap_dsc_title != "" }>
   <br /><br />
   <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_title}></span>
 <{/if}>
+
 </td>
 <td class="odd">
 <input type="text" id="item_title" name="item_title" value="<{$item_title_s}>" size="50" />
 <br />
-<{$lang_dsc_title_blank}>
+
+<{if $show_embed_support_title }>
+  <{$lang_embed_support_title}>
+<{else}>
+  <{$lang_dsc_title_blank}>
+<{/if}>
+
 </td></tr>
 
 <{* item editor *}>
@@ -171,7 +179,14 @@ function webphoto_gmap_disp_on()
   <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_description}></span>
 <{/if}>
 </td>
-<td class="odd"><{$ele_item_description}></td></tr>
+<td class="odd">
+<{$ele_item_description}>
+
+<{if $show_embed_support_description }>
+  <br /><{$lang_embed_support_description}>
+<{/if}>
+
+</td></tr>
 
 <{* item description options *}>
 <{if $show_desc_options }>
@@ -206,19 +221,6 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{if $show_item_siteurl_1st }>
-  <tr><td class="head" width="20%"><{$lang_item_siteurl}></td><td class="odd">
-  <input type="text" id="item_siteurl" name="item_siteurl" value="<{$item_siteurl_s}>" size="50" />
-  </td></tr>
-<{/if}>
-
-<{* item embed text *}>
-<{if $show_item_embed_text }>
-  <tr><td class="head" width="20%"><{$lang_item_embed_text}></td><td class="odd">
-  <textarea id="item_embed_text" name="item_embed_text" rows="5" cols="80"><{$item_embed_text_s}></textarea>
-  </td></tr>
-<{/if}>
-
 <{* item embed src *}>
 <{if $show_item_embed_src }>
   <tr><td class="head" width="20%"><{$lang_item_embed_src}></td><td class="odd">
@@ -226,6 +228,29 @@ function webphoto_gmap_disp_on()
 
 <{if $embed_src_dsc != '' }>
   <br /><{$embed_src_dsc}>
+<{/if}>
+
+  </td></tr>
+<{/if}>
+
+<{if $show_item_siteurl_1st }>
+  <tr><td class="head" width="20%"><{$lang_item_siteurl}></td><td class="odd">
+  <input type="text" id="item_siteurl" name="item_siteurl" value="<{$item_siteurl_s}>" size="50" />
+
+<{if $show_embed_support_siteurl }>
+  <br /><{$lang_embed_support_siteurl}>
+<{/if}>
+
+  </td></tr>
+<{/if}>
+
+<{* item embed text *}>
+<{if $show_item_embed_text }>
+  <tr><td class="head" width="20%"><{$lang_item_embed_text}></td><td class="odd">
+  <textarea id="item_embed_text" name="item_embed_text" rows="5" cols="80"><{$item_embed_text_s}></textarea>
+
+<{if $show_embed_support_embed_text }>
+  <br /><{$lang_embed_support_embed_text}>
 <{/if}>
 
   </td></tr>
@@ -327,9 +352,9 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{if $show_detail_onoff }>
+<{if $show_detail_div }>
   <tr><td class="head" width="20%"><{$lang_cap_detail}></td><td class="odd">
-  <input type="checkbox" id="webphoto_form_detail_onoff" onclick="webphoto_detail_disp_onoff(this)" />
+  <input type="checkbox" id="webphoto_form_detail_onoff" name="webphoto_form_detail_onoff" onclick="webphoto_detail_disp_onclick(this)" />
   <{$lang_cap_detail_onoff}></td></tr>
 <{/if}>
 
@@ -337,7 +362,7 @@ function webphoto_gmap_disp_on()
 <{* basic table end *}>
 
 <{* === detail div === *}>
-<{if $show_detail_onoff }>
+<{if $show_detail_div }>
   <div id="webphoto_detail" style="display: none;">
 <{/if}>
 
@@ -369,6 +394,11 @@ function webphoto_gmap_disp_on()
 <{if $show_item_duration }>
   <tr><td class="head" width="20%"><{$lang_item_duration}> ( <{$lang_second}> ) </td><td class="odd">
   <input type="text" id="item_duration" name="item_duration" value="<{$item_duration_s}>" size="50" />
+
+<{if $show_embed_support_duration }>
+  <br /><{$lang_embed_support_duration}>
+<{/if}>
+
   </td></tr>
 <{/if}>
 
@@ -433,7 +463,13 @@ function webphoto_gmap_disp_on()
 <{if $show_tags }>
   <tr><td class="head" width="20%"><{$lang_tags}></td><td class="odd">
   <input type="text" id="tags" name="tags" value="<{$tags_val_s}>" size="80" />
-  <br /><{$lang_dsc_tag_divid}></td></tr>
+  <br /><{$lang_dsc_tag_divid}>
+
+<{if $show_embed_support_tags }>
+  <br /><{$lang_embed_support_tags}>
+<{/if}>
+
+  </td></tr>
 <{/if}>
 
 <{* --- file thumb --- *}>
@@ -599,7 +635,7 @@ function webphoto_gmap_disp_on()
 
 <{if $show_gmap_onoff }>
   <tr><td class="head" width="20%">google map</td><td class="odd">
-  <input type="checkbox" id="webphoto_form_gmap_onoff" checked="checked" onclick="webphoto_gmap_disp_onoff(this)" />
+  <input type="checkbox" id="webphoto_form_gmap_onoff" name="webphoto_form_gmap_onoff" onclick="webphoto_gmap_disp_onclick(this)" />
   <{$lang_cap_detail_onoff}></td></tr>
 <{/if}>
 
@@ -628,7 +664,7 @@ function webphoto_gmap_disp_on()
 <{/if}>
 <{* gmap table end *}>
 
-<{if $show_detail_onoff }>
+<{if $show_detail_div }>
   </div>
 <{/if}>
 <{* detail div end *}>
@@ -658,3 +694,13 @@ function webphoto_gmap_disp_on()
 <{* submit table end *}>
 
 </form>
+
+<{* === detail div === *}>
+<{if $show_detail_div_on }>
+<script type="text/javascript">
+//<![CDATA[
+	webphoto_detail_checkbox_onoff( true );
+//]]>
+</script>
+<{/if}>
+

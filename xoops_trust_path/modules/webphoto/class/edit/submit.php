@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.20 2010/03/19 00:23:02 ohwada Exp $
+// $Id: submit.php,v 1.21 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// merge_tag_name_array( $val )
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2010-02-15 K.OHWADA
@@ -80,6 +82,7 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 
 	var $_row_current  = null;
 	var $_row_update   = null ;
+	var $_row_fetch    = null;
 
 	var $_URL_DAFAULT_IMAGE;
 	var $_URL_PREVIEW_IMAGE;
@@ -341,6 +344,8 @@ function submit_exec_fetch( $row )
 	$ret = $this->_embed_build_class->build( $row );
 	if ( $ret <= 0 ) {
 		$this->_row_fetch = $this->_embed_build_class->get_item_row() ;
+		$this->merge_tag_name_array( 
+			$this->_embed_build_class->get_tags() ) ;
 		return $ret;
 	}
 
@@ -986,6 +991,17 @@ function set_tag_name_array( $val )
 {
 	if ( is_array($val) ) {
 		$this->_tag_name_array = $val;
+	}
+}
+
+function merge_tag_name_array( $val )
+{
+	if ( is_array($this->_tag_name_array) && is_array($val) ) {
+		$this->_tag_name_array += $val ;
+		$this->_tag_name_array = array_unique( $this->_tag_name_array );
+
+	} elseif ( is_array($val) ) {
+		$this->_tag_name_array = $val ;
 	}
 }
 

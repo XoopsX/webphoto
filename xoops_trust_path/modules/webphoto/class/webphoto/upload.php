@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: upload.php,v 1.9 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// upload_allowed_mimes
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_mime
 // 2009-05-05 K.OHWADA
@@ -39,6 +41,8 @@ class webphoto_upload extends webphoto_base_this
 
 	var $_flag_size_limit = true ;
 
+	var $_ini_allowed_mimes = true;
+
 	var $_uploader_media_name = null;
 	var $_uploader_media_type = null;
 	var $_uploader_file_name  = null;
@@ -60,6 +64,8 @@ function webphoto_upload( $dirname , $trust_dirname )
 	$this->_uploader_class =& webphoto_lib_uploader::getInstance() ;
 	$this->_uploader_class->setPrefix( _C_WEBPHOTO_UPLOADER_PREFIX ) ;
 	$this->_uploader_class->setUploadDir( $this->_TMP_DIR );
+
+	$this->_ini_allowed_mimes = $this->get_ini( 'upload_allowed_mimes' );
 
 	$this->set_max_filesize( $this->get_config_by_name( 'fsize' )  ) ;
 	$this->set_max_width(    $this->get_config_by_name( 'width' )  ) ;
@@ -94,9 +100,12 @@ function fetch_media( $field, $flag_allow_all )
 		$allowed_exts  = $this->_mime_class->get_image_exts();
 	}
 
-	$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
 	$this->_uploader_class->setAllowedExtensions( $allowed_exts );
 	$this->_uploader_class->setMaxFileSize( $this->_max_filesize );
+
+	if ( $this->_ini_allowed_mimes ) {
+		$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
+	}
 
 	if ( $this->_flag_size_limit ) {
 		$this->_uploader_class->setMaxWidth(  $this->_max_width );
@@ -124,9 +133,12 @@ function fetch_image( $field )
 	$allowed_mimes = $this->_mime_class->get_image_mimes();
 	$allowed_exts  = $this->_mime_class->get_image_exts();
 
-	$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
 	$this->_uploader_class->setAllowedExtensions( $allowed_exts );
 	$this->_uploader_class->setMaxFileSize( $this->_max_filesize );
+
+	if ( $this->_ini_allowed_mimes ) {
+		$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
+	}
 
 	if ( $this->_flag_size_limit ) {
 		$this->_uploader_class->setMaxWidth(  $this->_max_width );

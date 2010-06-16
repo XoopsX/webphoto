@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.38 2010/05/11 13:30:20 ohwada Exp $
+// $Id: xoops_version.php,v 1.39 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// embed_width
 // 2010-04-27 K.OHWADA
 // webphoto_inc_catlist
 // 2010-04-02 K.OHWADA
@@ -790,6 +792,27 @@ function _build_config()
 	) ;
 
 // remove thumbrule
+
+// for webphoto
+	$arr[] = array(
+		'name'			=> 'embed_width' ,
+		'title'			=> $this->_constant_name( 'CFG_EMBED_WIDTH' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '480' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'embed_height' ,
+		'title'			=> $this->_constant_name( 'CFG_EMBED_HEIGHT' ) ,
+		'description'	=> '' ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'int' ,
+		'default'		=> '360' ,
+		'options'		=> array()
+	) ;
 
 // for webphoto
 	$arr[] = array(

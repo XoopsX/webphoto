@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf.php,v 1.7 2010/03/31 02:49:06 ohwada Exp $
+// $Id: pdf.php,v 1.8 2010/06/16 22:24:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -119,6 +119,13 @@ function create_jpeg( $item_id, $pdf_file )
 		return false;
 	}
 
+	if( $this->pdftoppm_exists() ) {
+		$ret = $this->create_jpeg_by_pdftoppm( $item_id, $pdf_file );
+	} else {
+		$ret = $this->create_jpeg_by_pdftops( $item_id, $pdf_file );
+	}
+	return $ret;
+
 	switch( $this->_ini_cmd_pdf_jpeg )
 	{
 	case 'pdftoppm':
@@ -129,6 +136,11 @@ function create_jpeg( $item_id, $pdf_file )
 		$ret = $this->create_jpeg_by_pdftops( $item_id, $pdf_file );
 	}
 	return $ret;
+}
+
+function pdftoppm_exists()
+{
+	return $this->_xpdf_class->pdftoppm_exists();
 }
 
 function create_jpeg_by_pdftoppm( $item_id, $pdf_file )

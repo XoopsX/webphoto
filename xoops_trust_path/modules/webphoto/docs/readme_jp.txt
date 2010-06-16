@@ -1,11 +1,73 @@
-$Id: readme_jp.txt,v 1.54 2010/05/11 21:08:48 ohwada Exp $
+$Id: readme_jp.txt,v 1.55 2010/06/16 22:24:47 ohwada Exp $
+
+=================================================
+Version: 2.20
+Date:   2010-06-17
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. windows	対応
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1107&forum=13
+
+下記のコマンドが windows 環境でも動作するようにした
+imagemagick ffmpeg lame timidity xpdf java
+
+2. main.in オプション
+(1) submit_detail_div_onoff を追加した
+新規登録にて デフォルトで詳細設定を「表示」にする
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1113&forum=13
+
+(2) upload_allowed_mimes を追加した
+アップロードにて MIME タイプのチェックを行わない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1114&forum=13
+
+3. 動画サイト
+3.1 プラグイン
+(1) 下記の動画サイト・プラグインを追加した
+新規登録時にタイトルやサムネイル画像を取得する
+- ustream.tv ユーストリーム
+- nicovideo.jp ニコニコ動画
+- ameba.jp アメーバ
+
+(2) 下記の動画サイト・プラグインにて、タイトルやサムネイル画像を取得するようにした。
+- youtube.com ユーチューブ
+- myspace.com マイスペース
+- dailymotion.com デイリーモーション
+
+3.2 一般設定
+一般設定に「動画サイトの表示の幅」と「高さ」を追加した
+
+3.3 サムネイル表示
+下記に動画サイトのサムネイル表示を追加した
+- GoogleMap
+- whatsnew モジュール
+- happy_search モジュール
+
+4. MS Office 2007 対応
+アップロード可能なファイルに 拡張子 docx xlsx pptx を追加した
+
+5. バグ修正
+(1) happy_search の検索結果の画像がおかしい
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1116&forum=13
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて、
+  「アップデート」の「ファイルの妥当性の検査」を実行し、
+  必要なファイルが設置されているかを確認する
+
 
 =================================================
 Version: 2.13
 Date:   2010-05-12
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
