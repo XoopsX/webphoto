@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.24 2010/02/17 04:34:47 ohwada Exp $
+// $Id: index.php,v 1.25 2010/06/16 23:25:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// change_check_module_version()
 // 2010-02-15 K.OHWADA
 // build_admin_footer()
 // 2010-02-01 K.OHWADA
@@ -179,9 +181,10 @@ function _check_module_version()
 	$ver1 = $this->_xoops_class->get_my_module_version();
 	$ver2 = $this->_xoops_class->get_module_info_version_by_dirname( $this->_DIRNAME, true );
 
-	if ( $ver1 == $ver2 ) {
+	if ( intval($ver1) == intval($ver2) ) {
 		return true;
 	}
+
 	return false;
 }
 
