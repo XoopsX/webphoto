@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.2 2010/02/07 12:20:02 ohwada Exp $
+// $Id: photo.php,v 1.3 2010/06/16 22:32:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-06-06 K.OHWADA
+// build_photo_embed_text()
 // 2010-01-10 K.OHWADA
 // webphoto_show_main_photo -> webphoto_photo
 // get_photo_row()
@@ -34,6 +36,8 @@ class webphoto_photo extends webphoto_show_photo
 	var $_public_class;
 
 	var $_cfg_cat_child;
+	var $_cfg_embed_width;
+	var $_cfg_embed_height;
 
 	var $_param      = null;
 	var $_param_out  = null;
@@ -93,7 +97,10 @@ function webphoto_photo( $dirname , $trust_dirname )
 	$this->_comment_view_class =& webphoto_d3_comment_view::getInstance();
 	$this->_comment_view_class->init( $dirname );
 
-	$this->_cfg_cat_child = $this->_config_class->get_by_name( 'cat_child' );
+	$this->_cfg_cat_child    = $this->get_config_by_name( 'cat_child' );
+	$this->_cfg_embed_width  = $this->get_config_by_name( 'embed_width' );
+	$this->_cfg_embed_height = $this->get_config_by_name( 'embed_height' );
+
 	$this->_has_tagedit   = $this->_perm_class->has_tagedit();
 
 	$this->_CODEINFO_SHOW_LIST = explode( '|', _C_WEBPHOTO_CODEINFO_SHOW_LIST );
@@ -290,15 +297,26 @@ function build_photo_embed_link( $item_row )
 
 	$can = false ;
 
+// default if empty
+	if ( empty($width) ) {
+		$width = $this->_cfg_embed_width ;
+	}
+	if ( empty($height) ) {
+		$height = $this->_cfg_embed_height ;
+	}
+
+// when already set text & suteurl
 	if ( $text && $siteurl) {
-		$embed = $text;
+		$embed = $this->build_photo_embed_text( $text, $width, $height );
 		$link  = $siteurl;
 
+// when already set text, not set link
 	} elseif ( $text ) {
-		$embed = $text;
+		$embed = $this->build_photo_embed_text( $text, $width, $height );
 		list( $dummy, $link ) 
 			= $this->_embed_class->build_embed_link( $type, $src, $width, $height );
 
+// when not set embed & link
 	} else {
 		list( $embed, $link ) 
 			= $this->_embed_class->build_embed_link( $type, $src, $width, $height, true, true );
@@ -314,6 +332,13 @@ function build_photo_embed_link( $item_row )
 		'embed_link'  => $link ,
 	);
 	return $arr;
+}
+
+function build_photo_embed_text( $text, $width, $height )
+{
+	$text = str_replace( _C_WEBPHOTO_EMBED_REPLACE_WIDTH,  $width,  $text );
+	$text = str_replace( _C_WEBPHOTO_EMBED_REPLACE_HEIGHT, $height, $text );
+	return $text;
 }
 
 //---------------------------------------------------------
