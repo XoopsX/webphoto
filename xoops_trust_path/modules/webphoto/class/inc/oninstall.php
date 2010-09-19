@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.22 2010/06/16 22:24:47 ohwada Exp $
+// $Id: oninstall.php,v 1.23 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// _mime_add_record_svg();
 // 2010-06-06 K.OHWADA
 // _mime_add_record_docx_etc();
 // 2010-01-10 K.OHWADA
@@ -1027,6 +1029,7 @@ function _mime_update()
 	$this->_mime_add_record_asf_etc();
 	$this->_mime_add_record_ai_etc();
 	$this->_mime_add_record_docx_etc();
+	$this->_mime_add_record_svg();
 	$this->_mime_update_record_ffmpeg_s();
 	$this->_mime_update_record_kind_s();
 	$this->_mime_update_record_option_s();
@@ -1229,6 +1232,22 @@ function _mime_add_record_docx_etc()
 		'mime_type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ,
 		'mime_perms'       => '&1&' ,
 		'mime_kind'        => _C_WEBPHOTO_MIME_KIND_OFFICE_XLS ,
+	);
+
+	$this->_mime_add_record_list( $mime_list );
+}
+
+function _mime_add_record_svg()
+{
+	$mime_list = array();
+
+	$mime_list[] = array(
+		'mime_name'   => 'Scalable Vector Graphics' ,
+		'mime_ext'    => 'svg' ,
+		'mime_type'   => 'image/svg+xml' ,
+		'mime_perms'  => '&1&' ,
+		'mime_kind'   => _C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT ,
+		'mime_option' => 'convert:-size 1200;' ,
 	);
 
 	$this->_mime_add_record_list( $mime_list );

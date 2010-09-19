@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: maillog_manager.php,v 1.7 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// webphoto_admin_maillog_form
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_maillog_handler
 // 2009-01-10 K.OHWADA
@@ -29,6 +31,7 @@ class webphoto_admin_maillog_manager extends webphoto_lib_manage
 	var $_photo_class;
 	var $_form_class;
 	var $_unlink_class;
+	var $_maillog_form_class ;
 
 	var $_SUB_TITLE_ARRAY = array(
 		_AM_WEBPHOTO_MAILLOG_STATUS_REJECT, 
@@ -64,6 +67,10 @@ function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 		=& webphoto_cat_handler::getInstance( $dirname , $trust_dirname );
 	$this->_form_class    
 		=& webphoto_edit_form::getInstance( $dirname , $trust_dirname );
+
+	$this->_maillog_form_class 
+		=& webphoto_admin_maillog_form::getInstance( $dirname , $trust_dirname );
+
 	$this->_photo_class   
 		=& webphoto_edit_mail_photo::getInstance( $dirname , $trust_dirname );
 
@@ -281,6 +288,11 @@ function build_show_add_record()
 //---------------------------------------------------------
 function _print_form( $row )
 {
+	echo $this->_maillog_form_class->build_form( $row );
+}
+
+function XXX_print_form( $row )
+{
 	$status = intval( $row['maillog_status'] );
 
 	echo $this->build_manage_form_begin( $row );
@@ -337,8 +349,11 @@ function _build_line_submit( $status )
 
 function _build_ele_submitter()
 {
+	$USER_LIMIT = 0;
+	$USER_START = 0;
+	$list = $this->_form_class->get_xoops_user_list( $USER_LIMIT, $USER_START );
 	return $this->_form_class->build_form_user_select(
-		'uid', $this->_ADMIN_UID );
+		$list, 'uid', $this->_ADMIN_UID );
 }
 
 function _build_ele_category()

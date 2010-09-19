@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.15 2010/06/16 22:24:47 ohwada Exp $
+// $Id: photo_form.php,v 1.16 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// move item_uid_options() to webphoto_admin_item_form
 // 2010-06-06 K.OHWADA
 // support_embed_params()
 // 2010-02-15 K.OHWADA
@@ -509,7 +511,6 @@ function build_form_common( $is_edit )
 		'editor_js'     => $this->_editor_js ,
 
 		'item_time_update_disp' => $this->build_time_disp( 'item_time_update',  true ) ,
-		'item_uid_options'      => $this->item_uid_options() ,
 		'batch_dir_s'           => $this->batch_dir_s() ,
 		'rotate_checked'        => $this->rotate_checked( $rotate ) ,
 	);
@@ -965,12 +966,6 @@ function batch_update_s()
 {
 	return $this->sanitize( 
 		formatTimestamp( time() , _WEBPHOTO_DTFMT_YMDHI ) ) ;
-}
-
-function item_uid_options()
-{
-	$value = $this->get_row_by_key( 'item_uid' );
-	return $this->build_form_user_select_options( $value );
 }
 
 function time_now()

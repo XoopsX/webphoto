@@ -1,10 +1,16 @@
 <?php
-// $Id: image.php,v 1.3 2008/11/19 10:26:00 ohwada Exp $
+// $Id: image.php,v 1.4 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-09-17 K.OHWADA
+// webphoto_lib_readfile
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -13,6 +19,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_image extends webphoto_file_read
 {
+	var $_readfile_class ;
 	var $_kind_class ;
 
 //---------------------------------------------------------
@@ -22,6 +29,7 @@ function webphoto_main_image( $dirname, $trust_dirname )
 {
 	$this->webphoto_file_read( $dirname, $trust_dirname );
 
+	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 	$this->_kind_class =& webphoto_kind::getInstance();
 }
 
@@ -61,16 +69,8 @@ function main()
 		exit();
 	}
 
-	$this->zlib_off();
-	$this->http_output_pass();
+	$this->_readfile_class->readfile_view( $file, $mime );
 
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-Type: '. $mime );
-	header('Content-Length: '. $size );
-
-	readfile( $file ) ;
 	exit();
 }
 

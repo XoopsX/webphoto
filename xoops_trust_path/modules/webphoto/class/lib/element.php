@@ -1,5 +1,5 @@
 <?php
-// $Id: element.php,v 1.12 2009/12/24 06:32:22 ohwada Exp $
+// $Id: element.php,v 1.13 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -731,16 +731,16 @@ function build_row_hidden( $name )
 
 function build_row_label( $title, $name, $flag_sanitaize=true )
 {
-	$value = $this->get_row_by_key( $name, $flag_sanitaize );
-	$value = $this->substitute_empty( $value );
-	return $this->build_line_ele( $title, $value );
+	return $this->build_line_ele( 
+		$title, 
+		$this->get_row_label( $name, $flag_sanitaize ) );
 }
 
 function build_row_label_time( $title, $name )
 {
-	$value = $this->get_row_by_key( $name );
-	$value = date( $this->_TIME_FORMAT, $value );
-	return $this->build_line_ele( $title, $value );
+	return $this->build_line_ele( 
+		$title, 
+		$this->get_row_time( $name ) );
 }
 
 function build_row_text( $title, $name, $size=50 )
@@ -833,6 +833,23 @@ function get_alternate_class()
 	$this->_alternate_class = $class;
 	$this->_line_count ++;
 	return $class;
+}
+
+//---------------------------------------------------------
+// row value
+//---------------------------------------------------------
+function get_row_label( $name, $flag_sanitaize=true )
+{
+	$value = $this->get_row_by_key( $name, $flag_sanitaize );
+	$value = $this->substitute_empty( $value );
+	return $value;
+}
+
+function get_row_time( $name )
+{
+	$value = $this->get_row_by_key( $name );
+	$value = date( $this->_TIME_FORMAT, $value );
+	return $value;
 }
 
 //---------------------------------------------------------

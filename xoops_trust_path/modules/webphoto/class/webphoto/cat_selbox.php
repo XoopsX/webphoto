@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_selbox.php,v 1.3 2009/11/29 07:34:21 ohwada Exp $
+// $Id: cat_selbox.php,v 1.4 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// build_selbox_options()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2008-08-24 K.OHWADA
@@ -55,10 +57,10 @@ function init( $dirname , $trust_dirname )
 function build_selbox( 
 	$order='cat_title', $preset_id=0, $none_title='--', $sel_name='cat_id', $onchange='' )
 {
-	$order = 'cat_title';
+	$options = $this->build_selbox_options( 
+		$order, $preset_id, $none_title, $sel_name );
 
-	$tree = $this->_cat_handler->get_all_tree_array( $order );
-	if ( !is_array($tree) || !count($tree) ) {
+	if ( empty($options) ) {
 		return null;	// no action
 	}
 
@@ -67,6 +69,21 @@ function build_selbox(
 		$str .= ' onchange="'. $onchange .'" ';
 	}
 	$str .= ">\n";
+
+	$str .= $options;
+	$str .= "</select>\n";
+	return $str;
+}
+
+function build_selbox_options( 
+	$order='cat_title', $preset_id=0, $none_title='--', $sel_name='cat_id' )
+{
+	$tree = $this->_cat_handler->get_all_tree_array( $order );
+	if ( !is_array($tree) || !count($tree) ) {
+		return null;	// no action
+	}
+
+	$str = '';
 
 	if ( $none_title ) {
 		$str .= '<option value="0">'. $none_title . "</option>\n";
@@ -90,11 +107,10 @@ function build_selbox(
 		}
 
 		$str .= '<option value="'. $catid .'" '. $sel .'>';
-		$str .= $prefix . $this->sanitize($title) .'('. $num .')';
+		$str .= $prefix . $this->sanitize($title) .' ('. $num .')';
 		$str .= "</option>\n";
 	}
 
-	$str .=  "</select>\n";
 	return $str;
 }
 

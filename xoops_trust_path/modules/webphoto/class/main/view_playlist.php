@@ -1,10 +1,16 @@
 <?php
-// $Id: view_playlist.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: view_playlist.php,v 1.2 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-11-16 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-09-17 K.OHWADA
+// webphoto_lib_readfile
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -15,6 +21,7 @@ class webphoto_main_view_playlist extends webphoto_file_read
 {
 	var $_config_class ;
 	var $_kind_class ;
+	var $_readfile_class ;
 
 	var $_PLAYLISTS_DIR ;
 
@@ -27,6 +34,7 @@ function webphoto_main_view_playlist( $dirname, $trust_dirname )
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
+	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 
 	$uploads_path = $this->_config_class->get_uploads_path();
 	$this->_PLAYLISTS_DIR = XOOPS_ROOT_PATH . $uploads_path .'/playlists' ;
@@ -65,10 +73,8 @@ function main()
 		exit();
 	}
 
-	$this->http_output_pass();
-	$this->header_xml();
+	$this->_readfile_class->readfile_xml( $file );
 
-	readfile( $file ) ;
 	exit();
 }
 

@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.21 2010/06/16 22:24:47 ohwada Exp $
+# $Id: mysql.sql,v 1.22 2010/09/19 06:46:34 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2010-09-17 K.OHWADA
+# svg
 # 2010-06-06 K.OHWADA
 # docx 
 # 2010-01-10 K.OHWADA
@@ -620,6 +622,8 @@ INSERT INTO mime VALUES (32, 0, 0, 'wmf', '', 'image/wmf application/octet-strea
 INSERT INTO mime VALUES (33, 0, 0, 'docx', '', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'MS Word 2007', '&1&', '', 41, '');
 INSERT INTO mime VALUES (34, 0, 0, 'pptx', '', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'MS Power Point 2007', '&1&', '', 43, '');
 INSERT INTO mime VALUES (35, 0, 0, 'xltx', '', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'MS Excel 2007', '&1&', '', 42, '');
+
+INSERT INTO mime VALUES (36, 0, 0, 'svg', '', 'image/svg+xml', 'Scalable Vector Graphics', '&1&', '', 11, 'convert:-size 1200;');
 
 #
 # player table

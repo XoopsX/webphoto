@@ -1,5 +1,5 @@
 <?php
-// $Id: image_tmp.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: image_tmp.php,v 1.2 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// webphoto_lib_readfile
 // 2008-11-16 K.OHWADA
 // image.php -> image_tmp.php
 // 2008-11-08 K.OHWADA
@@ -23,9 +25,8 @@ class webphoto_main_image_tmp
 {
 	var $_config_class;
 	var $_post_class;
+	var $_readfile_class;
 
-	var $_DIRNAME;
-	var $_TRUST_DIRNAME;
 	var $_TMP_DIR;
 
 //---------------------------------------------------------
@@ -33,11 +34,9 @@ class webphoto_main_image_tmp
 //---------------------------------------------------------
 function webphoto_main_image_tmp( $dirname, $trust_dirname )
 {
-	$this->_DIRNAME       = $dirname;
-	$this->_TRUST_DIRNAME = $trust_dirname;
-
-	$this->_config_class =& webphoto_config::getInstance( $dirname );
-	$this->_post_class   =& webphoto_lib_post::getInstance();
+	$this->_config_class   =& webphoto_config::getInstance( $dirname );
+	$this->_post_class     =& webphoto_lib_post::getInstance();
+	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 
 	$work_dir        = $this->_config_class->get_by_name( 'workdir' );
 	$this->_TMP_DIR  = $work_dir.'/tmp' ;
@@ -70,13 +69,9 @@ function main()
 	}
 	$mime = $image_size['mime'];
 
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-type: '.$mime);
+	$this->_readfile_class->readfile_view( $file, $mime );
 
-	readfile( $file ) ;
-
+	exit();
 }
 
 // --- class end ---

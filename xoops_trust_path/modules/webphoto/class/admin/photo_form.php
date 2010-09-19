@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: photo_form.php,v 1.9 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// build_form_admin_edit()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_cat_selbox
 // 2009-01-10 K.OHWADA
@@ -42,6 +44,7 @@ class webphoto_admin_photo_form extends webphoto_edit_form
 	var $_get_pos;
 	var $_get_txt;
 	var $_get_mes;
+	var $_get_userstart;
 
 	var $_perpage;
 
@@ -85,6 +88,7 @@ function print_form( $photo_count, $photo_rows, $perpage, $photonavinfo )
 	$this->_get_pos   = $this->_post_class->get_get_int('pos');
 	$this->_get_txt   = $this->_post_class->get_get_text('txt');
 	$this->_get_mes   = $this->_post_class->get_get_text('mes');
+	$this->_get_userstart = $this->_post_class->get_get_int('userstart'); 
 
 	$onclick_off = ' onclick="with(document.MainForm){ for(i=0;i<length;i++){ if(elements[i].type==\'checkbox\'){ elements[i].checked=false; }}}" ';
 	$onclick_on = ' onclick="with(document.MainForm){ for(i=0;i<length;i++){ if(elements[i].type==\'checkbox\'){ elements[i].checked=true; }}}" ';
@@ -155,7 +159,7 @@ function print_form( $photo_count, $photo_rows, $perpage, $photonavinfo )
 	echo "<br />\n";
 // --- table 1 end ---
 
-	$this->_print_form_edit_table();
+	$this->_print_form_edit_table( $perpage );
 
 	echo "</form>\n" ;
 // --- form ---
@@ -352,8 +356,122 @@ function _check_deadlink( $row )
 //---------------------------------------------------------
 // print_edit_table
 //---------------------------------------------------------
-function _print_form_edit_table()
+function _print_form_edit_table( $perpage )
 {
+	$template = 'db:'. $this->_DIRNAME .'_form_admin_photo.html';
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_form_admin_edit(),
+		$this->build_admin_param( $perpage ) ,
+		$this->build_admin_language()
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_form_admin_edit()
+{
+	list( $show_user_list, $user_list, $new_uid_options )
+		= $this->get_user_param( 0, $this->_get_userstart );
+
+	$arr = array(
+		'new_cat_id_options' => $this->new_cat_id_options() ,
+		'new_datetime'       => $this->new_datetime() ,
+		'new_time_update'    => $this->new_time_update() ,
+		'new_text_array'     => $this->new_text_array() ,
+
+		'new_uid_options'    => $new_uid_options ,
+		'show_user_list'     => $show_user_list ,
+		'user_list'          => $user_list ,
+	);
+	return $arr;
+}
+
+function new_cat_id_options()
+{
+	return $this->_cat_selbox_class->build_selbox_options( 
+		'cat_title', 0 , _AM_WEBPHOTO_OPT_NOCHANGE ) ;
+}
+
+function new_datetime()
+{
+	return $this->get_mysql_date_today();
+}
+
+function new_time_update()
+{
+	return formatTimestamp( time(), _WEBPHOTO_DTFMT_YMDHI );
+}
+
+function new_text_array()
+{
+// preload
+	$item_text_array = $this->_preload_class->exec_function( 'get_form_item_text_array' );
+
+	if ( !is_array($item_text_array) ) {
+		return null;
+	}
+
+	$arr = array();
+
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_PHOTO_TEXT; $i++ ) 
+	{
+		$show  = false;
+		$title = '';
+		$name  = '';
+
+		$text_name = 'photo_text'.$i;
+
+		if ( in_array( $text_name, $item_text_array) ) {
+			$show  = true;
+			$title = $this->get_constant( $text_name );
+			$name  = 'new_text_'.$i ;
+		}
+
+		$arr[] = array(
+			'num'     => $i ,
+			'show'    => $show ,
+			'title'   => $title ,
+			'title_s' => $this->sanitize( $title ),
+			'name'    => $name ,
+		);
+	}
+
+	return $arr;
+}
+
+function build_admin_param( $perpage )
+{
+	$arr = array(
+		'perpage'    => $perpage ,
+		'catid'      => $this->_get_catid ,
+		'pos'        => $this->_get_pos ,
+		'userstart'  => $this->_get_userstart ,
+		'txt'        => $this->_get_txt ,
+		'mes'        => $this->_get_mes ,
+		'txt_encode' => urlencode( $this->_get_txt ) ,
+		'mes_encode' => urlencode( $this->_get_mes ) ,
+	);
+	return $arr;
+}
+
+function build_admin_language()
+{
+	$arr = array(
+		'lang_th_batchupdate'    => _AM_WEBPHOTO_TH_BATCHUPDATE ,
+		'lang_js_updateconfirm'  => _AM_WEBPHOTO_JS_UPDATECONFIRM ,
+		'lang_button_update'     => _AM_WEBPHOTO_BUTTON_UPDATE ,
+	);
+	return $arr;
+}
+
+function XXX_print_form_edit_table()
+{
+	$userstart = $this->_post_class->get_get('userstart'); 
+
 // preload
 	$item_text_array = $this->_preload_class->exec_function( 'get_form_item_text_array' );
 
@@ -392,7 +510,8 @@ function _build_ed_ele_category()
 
 function _build_ed_ele_submitter()
 {
-	return $this->build_form_user_select( 'new_uid', 0, true );
+	$list  = $this->get_xoops_user_list( $this->_USER_LIMIT, $this->_get_userstart );
+	return $this->build_form_user_select( $list, 'new_uid', 0, true );
 }
 
 function _build_ed_ele_datetime()

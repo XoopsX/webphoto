@@ -1,5 +1,5 @@
 <?php
-// $Id: text.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: text.php,v 1.3 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// webphoto_lib_readfile
 // 2008-11-08 K.OHWADA
 // TMP_DIR -> MAIL_DIR
 //---------------------------------------------------------
@@ -19,12 +21,16 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_admin_text extends webphoto_base_this
 {
+	var $_readfile_class ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
 function webphoto_admin_text( $dirname , $trust_dirname )
 {
 	$this->webphoto_base_this( $dirname , $trust_dirname );
+
+	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -48,13 +54,8 @@ function main()
 		exit();
 	}
 
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-type: text/plain');
-
-	readfile( $file ) ;
-
+	$this->_readfile_class->readfile_view( $file, 'text/plain' );
+	exit();
 }
 
 // --- class end ---

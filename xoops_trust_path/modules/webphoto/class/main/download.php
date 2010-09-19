@@ -1,5 +1,5 @@
 <?php
-// $Id: download.php,v 1.2 2008/12/18 13:23:16 ohwada Exp $
+// $Id: download.php,v 1.3 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// webphoto_lib_download
 // 2008-12-12 K.OHWADA
 // check_perm -> check_item_perm
 //---------------------------------------------------------
@@ -19,6 +21,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_main_download extends webphoto_file_read
 {
+	var $_readfile_class ;
+
 	var $_TIME_FAIL = 5;
 
 //---------------------------------------------------------
@@ -27,6 +31,8 @@ class webphoto_main_download extends webphoto_file_read
 function webphoto_main_download( $dirname , $trust_dirname )
 {
 	$this->webphoto_file_read( $dirname, $trust_dirname );
+
+	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -69,13 +75,8 @@ function main()
 	$size = $file_row['file_size'] ;
 	$file = $file_row['file_full'] ;
 
-	$this->zlib_off();
-	$this->http_output_pass();
-	session_cache_limiter('none');
-	session_start();
-	$this->header_down( $mime, $size, $name );
+	$this->_readfile_class->readfile( $file, $mime, $name );
 
-	readfile($file);
 	exit();
 }
 

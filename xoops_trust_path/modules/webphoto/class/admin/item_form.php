@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.28 2010/05/08 03:36:41 ohwada Exp $
+// $Id: item_form.php,v 1.29 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// item_uid_options()
 // 2010-05-08 K.OHWADA
 // show_admin_gmap()
 // 2010-02-15 K.OHWADA
@@ -171,6 +173,8 @@ function build_form_admin_by_files( $mode, $files )
 	$max_photo_file = $this->_MAX_PHOTO_FILE ;
 	$delete         = _DELETE ;
 
+	$userstart = $this->_post_class->get_get('userstart'); 
+
 	$this->_xoops_db_groups = $this->get_cached_xoops_db_groups();
 
 	$is_submit  = false ;
@@ -180,14 +184,16 @@ function build_form_admin_by_files( $mode, $files )
 	{
 		case 'admin_modify':
 			$is_edit = true;
-			$op      = 'modify';
+			$op_form = 'modify_form';
+			$op_edit = 'modify';
 			$submit  = _EDIT;
 			break;
 
 		case 'admin_submit':
 		default:
 			$is_submit = true;
-			$op        = 'submit';
+			$op_form   = 'submit_form';
+			$op_edit  = 'submit';
 			$submit    = _ADD;
 			break;
 	}
@@ -212,10 +218,14 @@ function build_form_admin_by_files( $mode, $files )
 	      $show_item_playlist_feed, $show_item_playlist_dir )
 		= $this->show_item_playlist();
 
+	list( $show_item_uid_list, $item_uid_list, $item_uid_options )
+		= $this->item_user_param( $userstart );
+
 	$arr1 = $this->build_form_common( $is_edit );
 
 	$arr2 = array( 
-		'op_edit'         => $op ,
+		'op_form'         => $op_form ,
+		'op_edit'         => $op_edit ,
 		'is_submit'       => $is_submit ,
 		'is_edit'         => $is_edit ,
 		'max_file_size'   => $this->_cfg_fsize ,
@@ -262,6 +272,10 @@ function build_form_admin_by_files( $mode, $files )
 		'item_playlist_time_select_options'  => $this->item_playlist_time_select_options(),
 		'item_embed_type_select_options'     => $this->item_embed_type_select_options(),
 		'show_err_invalid_cat'               => $this->show_err_invalid_cat( $is_edit ) ,
+
+		'show_item_uid_list' => $show_item_uid_list ,
+		'item_uid_list'      => $item_uid_list ,
+		'item_uid_options'   => $item_uid_options ,
 
 	);
 
@@ -469,6 +483,15 @@ function build_admin_language()
 		'lang_button_admit' => _AM_WEBPHOTO_BUTTON_ADMIT ,
 	);
 	return $arr;
+}
+
+//---------------------------------------------------------
+// uid
+//---------------------------------------------------------
+function item_user_param( $userstart )
+{
+	$uid  = $this->get_row_by_key( 'item_uid' );
+	return $this->get_user_param( $uid, $userstart );
 }
 
 //---------------------------------------------------------

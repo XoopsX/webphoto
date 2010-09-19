@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register_form.php,v 1.1 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_register_form.php,v 1.2 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// build_form_user()
 // 2009-01-10 K.OHWADA
 // webphoto_mail_register_form -> webphoto_edit_mail_register_form
 // 2008-08-24 K.OHWADA
@@ -44,6 +46,39 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function print_user_form( $row )
 {
+	$userstart = $this->_post_class->get_get('userstart'); 
+
+	$template = 'db:'. $this->_DIRNAME .'_form_mail_user.html';
+
+	$this->set_row( $row );
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_form_user( $userstart )
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_form_user( $userstart )
+{
+	$uid = $this->get_row_by_key( 'user_uid' );
+
+	list( $show_user_list, $user_list, $user_uid_options )
+		= $this->get_user_param( $uid, $userstart );
+
+	$arr = array(
+		'user_uid_options' => $user_uid_options ,
+		'show_user_list'   => $show_user_list ,
+		'user_list'        => $user_list ,
+	);
+	return $arr;
+}
+
+function XXXXprint_user_form( $row )
+{
 	$this->set_row( $row );
 
 	echo $this->build_form_begin();
@@ -66,8 +101,9 @@ function print_user_form( $row )
 
 function _build_ele_user_submitter()
 {
-	$uid = $this->get_row_by_key( 'user_uid' );
-	$text  = $this->build_form_user_select( 'user_uid', $uid, false );
+	$uid  = $this->get_row_by_key( 'user_uid' );
+	$list = $this->get_xoops_user_list( 0, 0 );
+	$text = $this->build_form_user_select( $list, 'user_uid', $uid, false );
 	return $text;
 }
 

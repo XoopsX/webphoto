@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.15 2010/02/17 04:34:47 ohwada Exp $
+// $Id: form.php,v 1.16 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// move build_form_user_select_options() to webphoto_admin_item_form
 // 2010-02-15 K.OHWADA
 // get_group_perms_for_group_perms_checkboxs()
 // 2010-01-10 K.OHWADA
@@ -143,6 +145,8 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_FORM_ACTION = null;
 	var $_THIS_FCT    = null;
 
+	var $_USER_LIMIT = 2;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -269,14 +273,19 @@ function ele_allowed_exts( $allowed_exts )
 
 function item_cat_id_options()
 {
-	$value = $this->get_row_by_key( 'item_cat_id' );
+	return $this->build_cat_id_options( 
+		$this->get_row_by_key( 'item_cat_id' ), 
+		$this->_FLAG_PERM_ADMIN );
+}
 
+function build_cat_id_options( $cat_id, $flag_admin=false )
+{
 	$show = true;
 	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_NO_CAT ) {
 		$show = false;
 	}
 
-	return $this->_cat_handler->build_options_with_perm_post( $value, $show, $this->_FLAG_PERM_ADMIN );
+	return $this->_cat_handler->build_options_with_perm_post( $cat_id, $show, $flag_admin );
 }
 
 function show_err_invalid_cat( $is_edit )
@@ -619,18 +628,56 @@ function get_config_array()
 //---------------------------------------------------------
 // xoops param
 //---------------------------------------------------------
-function build_form_user_select( $sel_name, $sel_value, $none=false )
+function get_user_param( $uid, $userstart )
+{
+	list( $show, $list ) 
+		= $this->get_user_param_list();
+
+	$options = $this->get_user_param_options( $uid, $userstart );
+
+	return array( $show, $list, $options );
+}
+
+function get_user_param_list()
+{
+	$show = false;
+	$list = array();
+
+	$count = $this->get_xoops_user_count();
+	if ( $count <= $this->_USER_LIMIT ) {
+		return array( $show, $list );
+	}
+
+	$show  = true;
+	$limit = intval( ( $count - 1 ) / $this->_USER_LIMIT ) ;
+
+	for ( $i=0; $i<=$limit; $i++ )
+	{
+		$list[] = array(
+			'page'      => $i + 1 ,
+			'userstart' => $i * $this->_USER_LIMIT ,
+		);
+	}
+
+	return array( $show, $list );
+}
+
+function get_user_param_options( $uid, $userstart )
+{
+	$list = $this->get_user_list( $uid, $userstart );
+	return $this->build_form_user_select_options( $list, $uid );
+}
+
+function build_form_user_select( $list, $sel_name, $sel_value, $none=false )
 {
 	$text  = '<select name="'. $sel_name .'">';
-	$text .= $this->build_form_user_select_options( $sel_value, $none );
+	$text .= $this->build_form_user_select_options( $list, $sel_value, $none );
 	$text .= "</select>\n";
 	return $text;
 }
 
-function build_form_user_select_options( $sel_value, $none=false )
+function build_form_user_select_options( $list, $sel_value, $none=false )
 {
-	$list = $this->get_xoops_user_list();
-
 	$opt = '';
 
 	if ( $none ) {
@@ -648,6 +695,26 @@ function build_form_user_select_options( $sel_value, $none=false )
 	}
 
 	return $opt;
+}
+
+function get_user_list( $uid, $userstart )
+{
+	$list = $this->get_xoops_user_list( $this->_USER_LIMIT, $userstart );
+	if ( empty($uid) || isset($list[$uid]) ) {
+		return $list;
+	}
+
+// add user, if user NOT exists in list
+	$name = $this->get_xoops_user_name( $uid );
+	if ( $name ) {
+		$list[ $uid ] = $name ;
+	}
+	return $list;
+}
+
+function get_xoops_user_count()
+{
+	return $this->_xoops_class->get_member_user_count();
 }
 
 //---------------------------------------------------------

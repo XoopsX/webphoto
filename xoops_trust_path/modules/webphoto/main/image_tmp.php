@@ -1,5 +1,5 @@
 <?php
-// $Id: image_tmp.php,v 1.1 2008/11/19 10:26:45 ohwada Exp $
+// $Id: image_tmp.php,v 1.2 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// class/lib/readfile.php
 // 2008-11-16 K.OHWADA
 // image.php -> image_tmp.php
 //---------------------------------------------------------
@@ -22,6 +24,7 @@ webphoto_include_once( 'class/xoops/base.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/post.php' );
+webphoto_include_once( 'class/lib/readfile.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/main/image_tmp.php' );
 

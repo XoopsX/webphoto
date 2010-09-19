@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.9 2010/02/07 12:20:02 ohwada Exp $
+// $Id: base.php,v 1.10 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// get_member_user_count()
 // 2010-02-01 K.OHWADA
 // get_module_info_value_by_dirname()
 // 2009-12-06 K.OHWADA
@@ -362,10 +364,22 @@ function get_member_user_list( $limit=0, $start=0 )
 	return $member_handler->getUserList( $criteria );
 }
 
+function get_member_user( $id )
+{
+	$member_handler =& xoops_gethandler('member');
+	return $member_handler->getUser( $id );
+}
+
 function get_member_users_by_group( $group_id, $asobject=false, $limit=0, $start=0 )
 {
 	$member_handler =& xoops_gethandler('member');
     return $member_handler->getUsersByGroup( $group_id, $asobject, $limit, $start );
+}
+
+function get_member_user_count( $criteria=null )
+{
+	$member_handler =& xoops_gethandler('member');
+	return $member_handler->getUserCount( $criteria );
 }
 
 //--------------------------------------------------------

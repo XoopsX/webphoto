@@ -1,5 +1,5 @@
 <?php
-// $Id: file_read.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: file_read.php,v 1.5 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// BUG: slash '/' is unnecessary
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_file_handler
 // 2008-12-12 K.OHWADA
@@ -68,7 +70,10 @@ function get_file_row( $item_row, $file_kind )
 	}
 
 	$path = $file_row['file_path'] ;
-	$file = XOOPS_ROOT_PATH .'/'. $path ;
+
+// BUG: slash '/' is unnecessary
+//	$file = XOOPS_ROOT_PATH .'/'. $path ;
+	$file = XOOPS_ROOT_PATH . $path ;
 
 	if ( empty($path) || !file_exists($file) ) {
 		$this->_error = $this->get_constant( 'NO_FILE' ) ;
@@ -77,42 +82,6 @@ function get_file_row( $item_row, $file_kind )
 
 	$file_row['file_full'] = $file;
 	return $file_row ;
-}
-
-function http_output_pass()
-{
-	return $this->_multibyte_class->m_mb_http_output('pass');
-}
-
-function zlib_off()
-{
-	if (ini_get('zlib.output_compression')) {
-		ini_set('zlib.output_compression', 'Off'); 
-	}
-}
-
-function header_view( $mime, $size )
-{
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
-	header('Content-Type: '. $mime );
-	header('Content-Length: '. $size );
-}
-
-function header_down( $mime, $size, $name )
-{
-	header('Pragma: public');
-	header('Cache-Control: must-revaitem_idate, post-check=0, pre-check=0');
-	header('Content-Description: File Transfer');
-	header('Content-Type: '. $mime );
-	header('Content-Length: '. $size );
-	header('Content-Disposition: attachment; filename=' . $name );
-}
-
-function header_xml()
-{
-	header ('Content-Type:text/xml; charset=utf-8');
 }
 
 // --- class end ---

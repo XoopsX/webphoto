@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.10 2010/03/31 02:40:58 ohwada Exp $
+// $Id: header.php,v 1.11 2010/09/19 06:43:11 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-17 K.OHWADA
+// class/lib/readfile.php
 // 2010-03-31 K.OHWADA
 // class/edit/item_create.php
 // 2009-11-11 K.OHWADA
@@ -64,6 +66,7 @@ webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
 webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
+webphoto_include_once( 'class/lib/readfile.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
