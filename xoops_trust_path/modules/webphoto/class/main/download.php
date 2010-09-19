@@ -1,5 +1,5 @@
 <?php
-// $Id: download.php,v 1.3 2010/09/19 06:43:11 ohwada Exp $
+// $Id: download.php,v 1.4 2010/09/19 07:14:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -75,7 +75,7 @@ function main()
 	$size = $file_row['file_size'] ;
 	$file = $file_row['file_full'] ;
 
-	$this->_readfile_class->readfile( $file, $mime, $name );
+	$this->_readfile_class->readfile_down( $file, $mime, $name );
 
 	exit();
 }
