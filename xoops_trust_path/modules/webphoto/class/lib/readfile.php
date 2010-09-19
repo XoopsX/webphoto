@@ -1,5 +1,5 @@
 <?php
-// $Id: readfile.php,v 1.1 2010/09/19 06:43:11 ohwada Exp $
+// $Id: readfile.php,v 1.2 2010/09/19 07:21:01 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -52,8 +52,6 @@ function readfile_down( $file, $mime, $name )
 {
 	$this->zlib_off();
 	$this->http_output_pass();
-	session_cache_limiter('none');
-	session_start();
 	$this->header_down( $file, $mime, $name );
 	ob_clean();
 	flush();
