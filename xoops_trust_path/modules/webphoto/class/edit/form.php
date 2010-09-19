@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.16 2010/09/19 06:43:11 ohwada Exp $
+// $Id: form.php,v 1.17 2010/09/19 07:04:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -145,7 +145,7 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_FORM_ACTION = null;
 	var $_THIS_FCT    = null;
 
-	var $_USER_LIMIT = 2;
+	var $_USER_LIMIT = 200;
 
 //---------------------------------------------------------
 // constructor
