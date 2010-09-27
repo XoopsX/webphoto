@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.25 2010/02/17 04:34:47 ohwada Exp $
+// $Id: base_this.php,v 1.26 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// is_wav_ext()
 // 2010-02-15 K.OHWADA
 // build_admin_footer()
 // 2010-01-10 K.OHWADA
@@ -119,6 +121,9 @@ class webphoto_base_this extends webphoto_base_ini
 	var $_MP3S_PATH;
 	var $_MP3S_DIR;
 	var $_MP3S_URL;
+	var $_WAVS_PATH;
+	var $_WAVS_DIR;
+	var $_WAVS_URL;
 	var $_CATS_PATH;
 	var $_CATS_DIR;
 	var $_CATS_URL;
@@ -186,6 +191,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_SWFS_PATH       = $this->_UPLOADS_PATH.'/swfs' ;
 	$this->_JPEGS_PATH      = $this->_UPLOADS_PATH.'/jpegs' ;
 	$this->_MP3S_PATH       = $this->_UPLOADS_PATH.'/mp3s' ;
+	$this->_WAVS_PATH       = $this->_UPLOADS_PATH.'/wavs' ;
 	$this->_CATS_PATH       = $this->_UPLOADS_PATH.'/categories' ;
 	$this->_GICONS_PATH     = $this->_UPLOADS_PATH.'/gicons' ;
 	$this->_GSHADOWS_PATH   = $this->_UPLOADS_PATH.'/gshadows' ;
@@ -204,6 +210,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_SWFS_DIR       = XOOPS_ROOT_PATH . $this->_SWFS_PATH ;
 	$this->_JPEGS_DIR      = XOOPS_ROOT_PATH . $this->_JPEGS_PATH ;
 	$this->_MP3S_DIR       = XOOPS_ROOT_PATH . $this->_MP3S_PATH ;
+	$this->_WAVS_DIR       = XOOPS_ROOT_PATH . $this->_WAVS_PATH ;
 	$this->_CATS_DIR       = XOOPS_ROOT_PATH . $this->_CATS_PATH ;
 	$this->_GICONS_DIR     = XOOPS_ROOT_PATH . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_DIR   = XOOPS_ROOT_PATH . $this->_GSHADOWS_PATH ;
@@ -222,6 +229,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_SWFS_URL       = XOOPS_URL . $this->_SWFS_PATH ;
 	$this->_JPEGS_URL      = XOOPS_URL . $this->_JPEGS_PATH ;
 	$this->_MP3S_URL       = XOOPS_URL . $this->_MP3S_PATH ;
+	$this->_WAVS_URL       = XOOPS_URL . $this->_WAVS_PATH ;
 	$this->_CATS_URL       = XOOPS_URL . $this->_CATS_PATH ;
 	$this->_GICONS_URL     = XOOPS_URL . $this->_GICONS_PATH ;
 	$this->_GSHADOWS_URL   = XOOPS_URL . $this->_GSHADOWS_PATH ;
@@ -330,6 +338,11 @@ function is_pdf_ext( $ext )
 function is_mp3_ext( $ext )
 {
 	return $this->_kind_class->is_mp3_ext( $ext ) ;
+}
+
+function is_wav_ext( $ext )
+{
+	return $this->_kind_class->is_wav_ext( $ext ) ;
 }
 
 function is_video_audio_kind( $kind )

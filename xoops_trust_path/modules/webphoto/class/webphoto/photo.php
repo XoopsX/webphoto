@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.3 2010/06/16 22:32:10 ohwada Exp $
+// $Id: photo.php,v 1.4 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// _C_WEBPHOTO_CODEINFO_SHOW_LIST -> explode_ini('view_codeinfo_list')
 // 2010-06-06 K.OHWADA
 // build_photo_embed_text()
 // 2010-01-10 K.OHWADA
@@ -56,7 +58,7 @@ class webphoto_photo extends webphoto_show_photo
 	var $_perm_download  = false;
 	var $_codeinfo_array = null;
 
-	var $_CODEINFO_SHOW_LIST;
+	var $_CODEINFO_LIST;
 	var $_FILE_LIST;
 
 	var $_TIME_SUCCESS = 1;
@@ -103,8 +105,10 @@ function webphoto_photo( $dirname , $trust_dirname )
 
 	$this->_has_tagedit   = $this->_perm_class->has_tagedit();
 
-	$this->_CODEINFO_SHOW_LIST = explode( '|', _C_WEBPHOTO_CODEINFO_SHOW_LIST );
 	$this->_FILE_LIST          = explode( '|', _C_WEBPHOTO_FILE_LIST );
+
+	$this->_CODEINFO_LIST = $this->explode_ini('view_codeinfo_list');
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -381,7 +385,7 @@ function build_photo_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 	}
 
 	$codes = array();
-	foreach ( $this->_CODEINFO_SHOW_LIST as $name ) {
+	foreach ( $this->_CODEINFO_LIST as $name ) {
 		$codes[] = $param[ $name ];
 	}
 

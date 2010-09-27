@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.15 2010/02/09 14:40:29 ohwada Exp $
+// $Id: item_build.php,v 1.16 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// item_displayfile
 // 2010-01-10 K.OHWADA
 // item_description_scroll
 // 2009-12-06 K.OHWADA
@@ -217,6 +219,7 @@ function build_row_common_by_post( $row, $item_datetime_checkbox )
 // kind
 		$row['item_kind']          = $this->get_post_int(   'item_kind' );
 		$row['item_displaytype']   = $this->get_post_int(   'item_displaytype' );
+		$row['item_displayfile']   = $this->get_post_int(   'item_displayfile' );
 		$row['item_onclick']       = $this->get_post_int(   'item_onclick' );
 
 // BUG: flash player becomes default in the user edit
@@ -416,11 +419,6 @@ function use_item_perm_level_admin()
 	return false;
 }
 
-//function use_item_perm_level_user()
-//{
-//	return $this->editable_item_perm_level();
-//}
-
 function build_item_perm_by_post_level()
 {
 	$level  = $this->get_post_int( 'item_perm_level' );
@@ -527,14 +525,19 @@ function build_row_files_individual( $row, $file, $file_id )
 // BUG: player id is not correctly selected 
 			$row['item_player_id']   = $this->_PLAYER_ID_FLASH_DEFAULT ;
 			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+			if ( empty($row['item_displayfile']) ) {
+				$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_FLASH ;
+			}
 			break;
 
 		case 'mp3':
 			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER ;
+			$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_MP3 ;
 			break;
 
 		case 'swf':
 			$row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT ;
+			$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_SWF ;
 			break;
 
 		case 'pdf':

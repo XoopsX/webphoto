@@ -1,5 +1,5 @@
 <?php
-// $Id: kind.php,v 1.6 2009/11/06 18:04:17 ohwada Exp $
+// $Id: kind.php,v 1.7 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// is_wav_ext()
 // 2009-10-25 K.OHWADA
 // is_jpeg_ext()
 // 2009-03-15 K.OHWADA
@@ -36,6 +38,7 @@ class webphoto_kind
 	var $_SWF_EXTS   = array( 'swf' );
 	var $_JPEG_EXTS  = array( 'jpg','jpeg' );
 	var $_MP3_EXTS   = array( 'mp3' );
+	var $_WAV_EXTS   = array( 'wav' );
 
 //---------------------------------------------------------
 // constructor
@@ -125,6 +128,11 @@ function is_swf_ext( $ext )
 function is_mp3_ext( $ext )
 {
 	return $this->is_ext_in_array( $ext, $this->_MP3_EXTS );
+}
+
+function is_wav_ext( $ext )
+{
+	return $this->is_ext_in_array( $ext, $this->_WAV_EXTS );
 }
 
 function is_ext_in_array( $ext, $arr )

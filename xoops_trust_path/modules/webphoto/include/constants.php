@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.27 2010/06/16 22:24:47 ohwada Exp $
+// $Id: constants.php,v 1.28 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// _C_WEBPHOTO_FILE_KIND_WAV
 // 2009-10-25 K.OHWADA
 // _C_WEBPHOTO_FILE_KIND_JPEG
 // 2009-01-04 K.OHWADA
@@ -87,7 +89,10 @@ define("_C_WEBPHOTO_CFG_OPT_PERPAGE" , "10|20|50|100" ) ;
 define("_C_WEBPHOTO_MAX_PHOTO_TEXT" , 10 ) ;
 define("_C_WEBPHOTO_MAX_CAT_TEXT" ,   5 ) ;
 define("_C_WEBPHOTO_MAX_USER_TEXT" ,  5 ) ;
-define("_C_WEBPHOTO_MAX_ITEM_FILE_ID" , 10 ) ;
+
+//define("_C_WEBPHOTO_MAX_ITEM_FILE_ID" , 10 ) ;
+define("_C_WEBPHOTO_MAX_ITEM_FILE_ID" , 20 ) ;
+
 define("_C_WEBPHOTO_MAX_ITEM_TEXT"    , 10 ) ;
 
 define("_C_WEBPHOTO_ITEM_KIND_UNDEFINED", 0 ) ;
@@ -100,6 +105,9 @@ define("_C_WEBPHOTO_ITEM_KIND_AUDIO",    13 ) ;
 // v1.90
 define("_C_WEBPHOTO_ITEM_KIND_OFFICE",      14 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER", 15 ) ;
+
+// v2.30
+define("_C_WEBPHOTO_ITEM_KIND_VIDEO_H264",  16 ) ;
 
 define("_C_WEBPHOTO_ITEM_KIND_EMBED",   100 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL", 101 ) ;
@@ -125,9 +133,18 @@ define("_C_WEBPHOTO_MIME_KIND_IMAGE",         10 ) ;
 define("_C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT", 11 ) ;
 define("_C_WEBPHOTO_MIME_KIND_VIDEO",         20 ) ;
 define("_C_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG",  21 ) ;
+
+// v2.30
+define("_C_WEBPHOTO_MIME_KIND_VIDEO_FLV",     22 ) ;
+
 define("_C_WEBPHOTO_MIME_KIND_AUDIO",         30 ) ;
 define("_C_WEBPHOTO_MIME_KIND_AUDIO_MID",     31 ) ;
 define("_C_WEBPHOTO_MIME_KIND_AUDIO_WAV",     32 ) ;
+
+// v2.30
+define("_C_WEBPHOTO_MIME_KIND_AUDIO_MP3",     33 ) ;
+define("_C_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG",  34 ) ;
+
 define("_C_WEBPHOTO_MIME_KIND_OFFICE",        40 ) ;
 
 // v1.90
@@ -136,8 +153,8 @@ define("_C_WEBPHOTO_MIME_KIND_OFFICE_XLS",    42 ) ;
 define("_C_WEBPHOTO_MIME_KIND_OFFICE_PPT",    43 ) ;
 define("_C_WEBPHOTO_MIME_KIND_OFFICE_PDF",    44 ) ;
 
-// v1.80
-define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|middle|small|flash|docomo|pdf|swf|jpeg|mp3" ) ;
+// v1.80 v2.30
+define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav" ) ;
 
 define("_C_WEBPHOTO_FILE_KIND_CONT"          , 1 ) ;
 define("_C_WEBPHOTO_FILE_KIND_THUMB"         , 2 ) ;
@@ -160,6 +177,9 @@ define("_C_WEBPHOTO_FILE_KIND_SMALL"         , 8 ) ;
 define("_C_WEBPHOTO_FILE_KIND_JPEG"          , 9 ) ;
 define("_C_WEBPHOTO_FILE_KIND_MP3"           , 10 ) ;
 
+// v2.30
+define("_C_WEBPHOTO_FILE_KIND_WAV"           , 11 ) ;
+
 define("_C_WEBPHOTO_ITEM_FILE_CONT"          , 'item_file_id_1' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_THUMB"         , 'item_file_id_2' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_MIDDLE"        , 'item_file_id_3' ) ;
@@ -180,6 +200,9 @@ define("_C_WEBPHOTO_ITEM_FILE_SMALL"         , 'item_file_id_8' ) ;
 // v1.80
 define("_C_WEBPHOTO_ITEM_FILE_JPEG"          , 'item_file_id_9' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_MP3"           , 'item_file_id_10' ) ;
+
+// v2.30
+define("_C_WEBPHOTO_ITEM_FILE_WAV"          , 'item_file_id_11' ) ;
 
 define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
@@ -270,6 +293,9 @@ define("_C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT",    "20");
 define("_C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER",  "21");
 define("_C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR", "22");
 
+// v2.30
+define("_C_WEBPHOTO_DISPLAYFILE_DEFAULT",      "0");
+
 define("_C_WEBPHOTO_ONCLICK_PAGE",   "0");
 define("_C_WEBPHOTO_ONCLICK_DIRECT", "1");
 define("_C_WEBPHOTO_ONCLICK_POPUP" , "2");
@@ -353,8 +379,8 @@ define("_C_WEBPHOTO_UPLOAD_FIELD_SMALL",    "file_small");
 define("_C_WEBPHOTO_EMBED_NAME_GENERAL",  "general" ) ;
 define("_C_WEBPHOTO_INFO_SEPARATOR" , "|" ) ;
 
-// v1.80
-define("_C_WEBPHOTO_CODEINFO_SHOW_LIST", "page|cont|flash|mp3|pdf|swf|jpeg|thumb|middle|site|play|embed|js");
+// v1.80 v2.30
+//define("_C_WEBPHOTO_CODEINFO_SHOW_LIST", "page|cont|flash|wav|mp3|pdf|swf|jpeg|thumb|middle|site|play|embed|js");
 //define("_C_WEBPHOTO_CODEINFO_FILE_LIST", "cont|thumb|middle|flash|docomo|pdf|swf|jpeg|mp3" ) ;
 //define("_C_WEBPHOTO_CODEINFO_PAGE_LIST", "page|site|play|embed|js");
 
@@ -376,6 +402,9 @@ define("_C_WEBPHOTO_CODEINFO_SMALL",  "8");
 // v1.80
 define("_C_WEBPHOTO_CODEINFO_JPEG",   "9");
 define("_C_WEBPHOTO_CODEINFO_MP3",    "10");
+
+// v2.30
+define("_C_WEBPHOTO_CODEINFO_WAV",    "11");
 
 define("_C_WEBPHOTO_CODEINFO_PAGE",   "101");
 define("_C_WEBPHOTO_CODEINFO_SITE",   "102");

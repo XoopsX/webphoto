@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.9 2010/06/16 22:24:47 ohwada Exp $
+// $Id: ffmpeg.php,v 1.10 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_wav()
 // 2010-06-06 K.OHWADA
 // is_win_os()
 // 2009-04-21 K.OHWADA
@@ -41,9 +43,13 @@ class webphoto_lib_ffmpeg
 	var $_PARAM_INFO          = ' -i %s';
 	var $_PARAM_CREATE_THUMBS = ' -vframes 1 -ss %s -i %s -f image2 %s';
 	var $_PARAM_CREATE_FLASH  = ' -i %s -vcodec flv %s -f flv %s';
+	var $_PARAM_CREATE_MP3    = ' -i %s %s -f mp3 %s';
+	var $_PARAM_CREATE_WAV    = ' -i %s %s -f wav %s';
 	var $_PARAM_VERSION       = ' -version';
 
 	var $_EXT_FLV    = 'flv';
+	var $_EXT_MP3    = 'mp3';
+	var $_EXT_WAV    = 'wav';
 	var $_CHMOD_MODE = 0777;
 
 	var $_DEBUG   = false;
@@ -125,25 +131,20 @@ function set_debug( $val )
 //---------------------------------------------------------
 function get_duration_size( $file )
 {
-	$this->clear_msg_array();
-
 	$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_INFO, $file );
 
-	$ret_array = null;
-	exec( "$cmd 2>&1", $ret_array );
-	if ( $this->_DEBUG ) {
-		echo $cmd."<br />\n";
-		print_r( $ret_array );
-		echo "<br />\n";
-	}
-
-	$this->set_msg( $cmd );
-	$this->set_msg( $ret_array );
-
-	if ( !is_array($ret_array) ) {
+	$this->clear_msg_array();
+	$ret_array = $this->cmd_excute( $cmd );
+	if ( !$ret_array ) {
 		return false;
 	}
 
+	$line_duration = null;
+	$line_audio    = null;
+	$line_video    = null;
+	$audio_codec   = null;
+	$video_codec   = null;
+	$flag_h264     = false;
 	$duration = 0;
 	$width    = 0;
 	$height   = 0;
@@ -151,15 +152,39 @@ function get_duration_size( $file )
 	foreach( $ret_array as $line )
 	{
 		if ( preg_match( "/duration.*(\d+):(\d+):(\d+)/i", $line, $match ) ) {
+			$line_duration = $line;
 			$duration = intval($match[1])*3600 + intval($match[2])*60 + intval($match[3]);
 		}
-		if ( preg_match( "/video.* (\d+)x(\d+)/i", $line, $match ) ) {
-			$width  = intval($match[1]);
-			$height = intval($match[2]);
+		if ( preg_match( "/stream.*audio:(.*)/i", $line, $match ) ) {
+			$line_audio = $line;
+			$arr = explode( ',', $match[1] );
+			if ( isset($arr[0]) ) {
+				$audio_codec = trim($arr[0]);
+			}
+		}
+		if ( preg_match( "/stream.*video:(.*)\s(\d+)x(\d+)/i", $line, $match ) ) {
+			$line_video = $line;
+			$width  = intval($match[2]);
+			$height = intval($match[3]);
+			$arr = explode( ',', $match[1] );
+			if ( isset($arr[0]) ) {
+				$video_codec = trim($arr[0]);
+			}
 		}
 	}
 
+	if (( $audio_codec == 'libfaad' ) &&
+	    ( $video_codec == 'h264' )) {
+		$flag_h264 = true;
+	}
+
 	$arr = array(
+		'line_duration' => $line_duration ,
+		'line_audio'    => $line_audio ,
+		'line_video'    => $line_video ,
+		'audio_codec'   => $audio_codec ,
+		'video_codec'   => $video_codec ,
+		'flag_h264'     => $flag_h264 ,
 		'duration' => $duration ,
 		'width'    => $width ,
 		'height'   => $height ,
@@ -183,33 +208,15 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 
 		$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_CREATE_THUMBS, $sec, $file_in, $file_out );
 
-		$ret_array = null;
-		exec( "$cmd 2>&1", $ret_array );
-		if ( $this->_DEBUG ) {
-			echo $cmd."<br />\n";
-			print_r( $ret_array );
-			echo "<br />\n";
-		}
+		$this->cmd_excute( $cmd );
 
-		$this->set_msg( $cmd );
-		$this->set_msg( $ret_array );
-
-		if ( is_file($file_out) && filesize( $file_out ) ) {
-			if ( $this->_flag_chmod ) {
-				$this->chmod_file( $file_out, $this->_CHMOD_MODE );
-			}
+		$ret = $this->chmod_file_out( $file_out );
+		if ( $ret ) {
 			$count ++;
 		}
 	}
 
 	return $count ;
-}
-
-function chmod_file( $file, $mode )
-{
-	if ( ! $this->_ini_safe_mode ) {
-		chmod( $file, $mode );
-	}
 }
 
 function build_thumb_name( $num )
@@ -223,39 +230,62 @@ function build_thumb_name( $num )
 //---------------------------------------------------------
 function create_flash( $file_in, $file_out, $extra=null )
 {
-	$this->clear_msg_array();
 
-// return input file is flash video
-	if ( $this->parse_ext( $file_in ) == $this->_EXT_FLV ) {
+// return input file is same format
+	$ret = $this->check_file_in( $file_in, $this->_EXT_FLV );
+	if ( $ret ) {
 		return false;
-	}
+	} 
 
 	$cmd = $this->_CMD_FFMPEG . sprintf( 
 		$this->_PARAM_CREATE_FLASH, $file_in, $extra, $file_out );
 
-	$ret_array = null;
-	exec( "$cmd 2>&1", $ret_array );
-	if ( $this->_DEBUG ) {
-		echo $cmd."<br />\n";
-		print_r( $ret_array );
-	}
+	$this->clear_msg_array();
+	$this->cmd_excute( $cmd );
 
-	$this->set_msg( $cmd );
-	$this->set_msg( $ret_array );
-
-	if ( is_file($file_out) && filesize( $file_out ) ) {
-		if ( $this->_flag_chmod ) {
-			$this->chmod_file( $file_out, $this->_CHMOD_MODE );
-		}
-		return true ;
-	}
-
-	return false ;
+	return $this->chmod_file_out( $file_out );
 }
 
-function parse_ext( $file )
+//---------------------------------------------------------
+// create wav
+//---------------------------------------------------------
+function create_wav( $file_in, $file_out, $extra=null )
 {
-	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
+
+// return input file is same format
+	$ret = $this->check_file_in( $file_in, $this->_EXT_WAV );
+	if ( $ret ) {
+		return false;
+	}
+
+	$cmd = $this->_CMD_FFMPEG . sprintf( 
+		$this->_PARAM_CREATE_WAV, $file_in, $extra, $file_out );
+
+	$this->clear_msg_array();
+	$this->cmd_excute( $cmd );
+
+	return $this->chmod_file_out( $file_out );
+}
+
+//---------------------------------------------------------
+// create mp3 
+//---------------------------------------------------------
+function create_mp3( $file_in, $file_out, $extra=null )
+{
+
+// return input file is same format
+	$ret = $this->check_file_in( $file_in, $this->_EXT_MP3 );
+	if ( $ret ) {
+		return false;
+	}
+
+	$cmd = $this->_CMD_FFMPEG . sprintf( 
+		$this->_PARAM_CREATE_MP3, $file_in, $extra, $file_out );
+
+	$this->clear_msg_array();
+	$this->cmd_excute( $cmd );
+
+	return $this->chmod_file_out( $file_out );
 }
 
 //---------------------------------------------------------
@@ -288,6 +318,58 @@ function version( $path )
 	}
 
 	return array( $ret, $msg );
+}
+
+//---------------------------------------------------------
+// function
+//---------------------------------------------------------
+function cmd_excute( $cmd )
+{
+	$ret_array = null;
+	exec( "$cmd 2>&1", $ret_array );
+	if ( $this->_DEBUG ) {
+		echo $cmd."<br />\n";
+		print_r( $ret_array );
+		echo "<br />\n";
+	}
+
+	$this->set_msg( $cmd );
+	$this->set_msg( $ret_array );
+
+	if ( !is_array($ret_array) ) {
+		return false;
+	}
+
+	return $ret_array ;
+}
+
+function check_file_in( $file, $ext )
+{
+// file matches ext
+	if ( $this->parse_ext( $file ) == $ext ) {
+		return true;
+	}
+	return false;
+}
+
+function chmod_file_out( $file )
+{
+// file exists ?
+	if ( !file_exists($file) || ( filesize($file) == 0 ) ) {
+		return false;
+	}
+
+// chmod 
+	if ( $this->_flag_chmod && !$this->_ini_safe_mode ) {
+		chmod( $file, $this->_CHMOD_MODE );
+	}
+
+	return true ;
+}
+
+function parse_ext( $file )
+{
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 //---------------------------------------------------------

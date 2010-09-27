@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.21 2010/06/16 22:24:47 ohwada Exp $
+// $Id: submit.php,v 1.22 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_sub_files()
 // 2010-06-06 K.OHWADA
 // merge_tag_name_array( $val )
 // 2010-03-18 K.OHWADA
@@ -446,6 +448,13 @@ function notify_waiting( $item_row )
 		$item_row['item_id'], $item_row['item_title'] );
 }
 
+function set_factory_error()
+{
+	if ( $this->_is_module_admin && error_reporting() ) {
+		$this->set_msg_array( $this->_factory_create_class->get_errors() );
+	}
+}
+
 //---------------------------------------------------------
 // mail send 
 //---------------------------------------------------------
@@ -523,17 +532,10 @@ function create_media_file_params( $item_row, $is_submit=true )
 
 // -- docomo, flash, pdf, video images
 	if ( is_array($cont_param) ) {
-		$file_params['docomo'] = $this->create_docomo_param( $photo_param, $cont_param  );
-		$file_params['flash']  = $this->create_flash_param(  $photo_param );
-		$file_params['jpeg']   = $this->create_jpeg_param(   $photo_param );
-		$file_params['mp3']    = $this->create_mp3_param(    $photo_param );
-		$file_params['pdf']    = $this->create_pdf_param(    $photo_param );
-		$file_params['swf']    = $this->create_swf_param(    $photo_param );
+		list( $sub_params, $middle_thumb_param )
+			= $this->create_sub_files( $photo_param, $cont_param );
 
-		$middle_thumb_param = $this->create_image_for_middle_thumb(
-			$photo_param, $file_params['jpeg'], $file_params['pdf'], $flag_video=false );
-
-		$this->create_video_plural_images( $photo_param );
+		$file_params = $file_params + $sub_params ;
 	}
 
 // -- thmub 
@@ -562,6 +564,46 @@ function create_media_file_params( $item_row, $is_submit=true )
 	$this->_media_file_params = $file_params ;
 
 	return 0;
+}
+
+function create_sub_files( $photo_param, $cont_param )
+{
+	$flag_single = false ;
+	$flag_plural = true;
+
+	$param = $this->_factory_create_class->create_sub_files( 
+		$photo_param, $cont_param, $flag_single, $flag_plural );
+
+	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_jpeg_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_JPEG') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_pdf_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_PDF') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_swf_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_SWF') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_wav_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_WAV') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_mp3_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_MP3') ) ;
+	}
+	if ( $this->_factory_create_class->get_flag_image_ext_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_IMAGE_EXT') ) ;
+	}
+
+	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
+		$this->_is_video_thumb_form = true;
+	}
+	if ( $this->_factory_create_class->get_flag_video_image_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
+	}
+
+	return $param;
 }
 
 function conv_rotate( $rotate )
@@ -617,89 +659,6 @@ function rotate_tmp_image( $src_name, $rotate, $flag_rename=false )
 	}
 
 	return $name ;
-}
-
-//---------------------------------------------------------
-// create flash docomo
-//---------------------------------------------------------
-function create_docomo_param( $photo_param, $cont_param )
-{
-	return $this->_factory_create_class->create_docomo_param( $photo_param, $cont_param );
-}
-
-function create_flash_param( $photo_param )
-{
-	$flash_param = $this->_factory_create_class->create_flash_param( $photo_param );
-	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
-	}
-	return $flash_param;
-}
-
-function create_jpeg_param( $photo_param )
-{
-	$jpeg_param = $this->_factory_create_class->create_jpeg_param( $photo_param );
-	if ( $this->_factory_create_class->get_flag_jpeg_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_JPEG') ) ;
-	}
-	return $jpeg_param;
-}
-
-function create_mp3_param( $photo_param )
-{
-	$mp3_param = $this->_factory_create_class->create_mp3_param( $photo_param );
-	if ( $this->_factory_create_class->get_flag_mp3_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_MP3') ) ;
-	}
-	return $mp3_param;
-}
-
-function create_pdf_param( $param )
-{
-	$pdf_param = $this->_factory_create_class->create_pdf_param( $param );
-	if ( $this->_factory_create_class->get_flag_pdf_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_PDF') ) ;
-	}
-	return $pdf_param ;
-}
-
-function create_swf_param( $param )
-{
-	$swf_param = $this->_factory_create_class->create_swf_param( $param );
-	if ( $this->_factory_create_class->get_flag_swf_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_SWF') ) ;
-	}
-	return $swf_param ;
-}
-
-function create_image_for_middle_thumb( $photo_param, $jpeg_param, $pdf_param, $flag_video )
-{
-	$img_param = $this->_factory_create_class->create_image_for_middle_thumb( 
-		$photo_param, $jpeg_param, $pdf_param, $flag_video );
-	$this->_image_tmp_file = $this->_factory_create_class->get_image_tmp_file();
-	if ( $this->_factory_create_class->get_flag_image_ext_failed() ) {
-		$this->set_msg_array( 'cannot create image ext' ) ;
-	}
-	return $img_param ; 
-}
-
-function create_video_plural_images( $param )
-{
-	$ret = $this->_factory_create_class->create_video_plural_images( $param );
-	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
-		$this->_is_video_thumb_form = true;
-	}
-	if ( $this->_factory_create_class->get_flag_video_image_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
-	}
-	return $ret;
-}
-
-function set_factory_error()
-{
-	if ( $this->_is_module_admin && error_reporting() ) {
-		$this->set_msg_array( $this->_factory_create_class->get_errors() );
-	}
 }
 
 //---------------------------------------------------------

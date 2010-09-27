@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: base_create.php,v 1.7 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// set_result()
 // 2009-11-11 K.OHWADA
 // webphoto_base_this
 // $trust_dirname
@@ -27,6 +29,7 @@ class webphoto_edit_base_create extends webphoto_base_this
 	var $_msg_class;
 	var $_mime_class;
 
+	var $_result       = null;
 	var $_flag_created = false ;
 	var $_flag_failed  = false ;
 
@@ -171,6 +174,11 @@ function set_error( $msg )
 //---------------------------------------------------------
 // get param
 //---------------------------------------------------------
+function set_result( $v )
+{
+	$this->_result = $v;
+}
+
 function set_flag_created()
 {
 	$this->_flag_created = true;
@@ -179,6 +187,17 @@ function set_flag_created()
 function set_flag_failed()
 {
 	$this->_flag_failed = true ;
+}
+
+function clear_flags()
+{
+	$this->_flag_created = false;
+	$this->_flag_failed  = false;
+}
+
+function get_result()
+{
+	return $this->_result;
 }
 
 function get_flag_created()

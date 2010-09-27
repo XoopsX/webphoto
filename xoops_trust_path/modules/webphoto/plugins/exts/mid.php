@@ -1,5 +1,5 @@
 <?php
-// $Id: mid.php,v 1.2 2009/11/29 07:34:23 ohwada Exp $
+// $Id: mid.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_mp3() -> create_wav()
 // 2009-11-11 K.OHWADA
 // $trust_dirname 
 //---------------------------------------------------------
@@ -49,25 +51,16 @@ function is_audio_mid_ext( $ext )
 {
 	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_AUDIO_MID );
 }
-
 //---------------------------------------------------------
-// create mp3
+// create wav
 //---------------------------------------------------------
-function create_mp3( $param )
+function create_wav( $param )
 {
 	$item_id  = $param['item_id'];
 	$src_file = $param['src_file'];
-	$mp3_file = $param['mp3_file'];
+	$wav_file = $param['wav_file'];
 
-	$ret1 = $this->_timidity_class->create_wav_tmp( $item_id, $src_file );
-	if ( !isset($ret1['flag']) || !$ret1['flag'] ) {
-		return $ret1;
-	}
-
-	$wav_file = $ret1['src_file'];
-	$ret2 = $this->_lame_class->create_mp3( $wav_file, $mp3_file );
-	unlink( $wav_file );
-	return $ret2;
+	return $this->_timidity_class->create_wav( $src_file, $wav_file );
 }
 
 //---------------------------------------------------------

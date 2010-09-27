@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: ffmpeg.php,v 1.5 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_wav()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-10-25 K.OHWADA
@@ -193,6 +195,38 @@ function create_flash( $src_file, $dst_file, $option=null )
 	}
 
 	$ret = $this->_ffmpeg_class->create_flash( $src_file, $dst_file, $option );
+	if ( !$ret ) {
+		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
+	}
+	return $ret;
+}
+
+//---------------------------------------------------------
+// mp3
+//---------------------------------------------------------
+function create_mp3( $src_file, $dst_file, $option=null )
+{
+	if ( empty($option) ) {
+		$option = $this->get_cmd_option( $src_file, $this->_CMD_FFMPEG );
+	}
+
+	$ret = $this->_ffmpeg_class->create_mp3( $src_file, $dst_file, $option );
+	if ( !$ret ) {
+		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
+	}
+	return $ret;
+}
+
+//---------------------------------------------------------
+// wav
+//---------------------------------------------------------
+function create_wav( $src_file, $dst_file, $option=null )
+{
+	if ( empty($option) ) {
+		$option = $this->get_cmd_option( $src_file, $this->_CMD_FFMPEG );
+	}
+
+	$ret = $this->_ffmpeg_class->create_wav( $src_file, $dst_file, $option );
 	if ( !$ret ) {
 		$this->set_error( $this->_ffmpeg_class->get_msg_array() );
 	}

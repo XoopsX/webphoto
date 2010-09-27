@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.11 2010/01/25 10:03:07 ohwada Exp $
+// $Id: item_table_manage.php,v 1.12 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// item_displayfile
 // 2010-01-10 K.OHWADA
 // item_description_scroll
 // 2009-12-06 K.OHWADA
@@ -115,6 +117,7 @@ function _build_row_by_post()
 		'item_uid'             => $this->_post_class->get_post_int(   'item_uid' ),
 		'item_kind'            => $this->_post_class->get_post_int(   'item_kind' ),
 		'item_displaytype'     => $this->_post_class->get_post_int(   'item_displaytype' ),
+		'item_displayfile'     => $this->_post_class->get_post_int(   'item_displayfile' ),
 		'item_onclick'         => $this->_post_class->get_post_int(   'item_onclick' ),
 		'item_detail_onclick'  => $this->_post_class->get_post_int(   'item_detail_onclick' ),
 		'item_weight'          => $this->_post_class->get_post_int(   'item_weight' ),
@@ -218,6 +221,7 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'item_weight' );
 	echo $this->build_comp_text( 'item_kind' );
 	echo $this->build_comp_text( 'item_displaytype' );
+	echo $this->build_comp_text( 'item_displayfile' );
 	echo $this->build_comp_text( 'item_detail_onclick' );
 	echo $this->build_comp_text( 'item_onclick' );
 	echo $this->build_comp_text( 'item_ext' );

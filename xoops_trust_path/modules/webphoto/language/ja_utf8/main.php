@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.39 2010/06/16 22:24:47 ohwada Exp $
+// $Id: main.php,v 1.40 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1414,7 +1414,7 @@ define("_WEBPHOTO_FILE_KIND_PDF" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_SWF" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_SMALL" ,  "スモール" ) ;
 define("_WEBPHOTO_FILE_KIND_JPEG" ,  "JPEG" ) ;
-define("_WEBPHOTO_FILE_KIND_MP30" , "MP3" ) ;
+define("_WEBPHOTO_FILE_KIND_MP3" , "MP3" ) ;
 
 // mime option
 define("_WEBPHOTO_MIME_KIND_OFFICE_DOC", "オフィス doc" ) ;
@@ -1486,6 +1486,39 @@ define("_WEBPHOTO_EMBED_SUPPORT_SITEURL", "このプラグインはサイトURL�
 define("_WEBPHOTO_EMBED_SUPPORT_DURATION", "このプラグインはビデオ再生時間を取得します");
 define("_WEBPHOTO_EMBED_SUPPORT_EMBED_TEXT", "このプラグインは埋込みを取得します");
 define("_WEBPHOTO_EMBED_SUPPORT_TAGS", "このプラグインはタグを取得します");
+
+//---------------------------------------------------------
+// v2.30
+//---------------------------------------------------------
+// item table
+define("_WEBPHOTO_ITEM_DISPLAYFILE", "表示ファイル");
+define("_WEBPHOTO_ITEM_FILE_ID_11" , "ファイル番号：WAV" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_12" , "ファイル番号：12" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_13" , "ファイル番号：13" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_14" , "ファイル番号：14" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_15" , "ファイル番号：15" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_16" , "ファイル番号：16" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_17" , "ファイル番号：17" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_18" , "ファイル番号：18" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_19" , "ファイル番号：19" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_20" , "ファイル番号：20" ) ;
+
+// item option
+define("_WEBPHOTO_ITEM_KIND_VIDEO_H264","動画 (H264)");
+
+// display file
+define("_WEBPHOTO_ITEM_DISPLAYFILE_DEFAULT","標準");
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_VIDEO_FLV",     "ビデオ flv" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_MP3",     "オーディオ mp3" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG",  "オーディオ ffmpeg" ) ;
+
+// item option
+define("_WEBPHOTO_ITEM_CODEINFO_WAV","WAVE");
+
+define("_WEBPHOTO_ERR_WAV",  "wav を生成できなかった");
+define("_WEBPHOTO_ERR_IMAGE_EXT",  "画像 を生成できなかった");
 
 // === define end ===
 }

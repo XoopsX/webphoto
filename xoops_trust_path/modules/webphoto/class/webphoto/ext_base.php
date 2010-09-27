@@ -1,5 +1,5 @@
 <?php
-// $Id: ext_base.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: ext_base.php,v 1.6 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// execute()
 // 2009-11-11 K.OHWADA
 // webphoto_base_ini
 // 2009-10-25 K.OHWADA
@@ -84,59 +86,100 @@ function is_ext_in_array( $ext, $array )
 }
 
 //---------------------------------------------------------
-// create image
+// excute
 //---------------------------------------------------------
+function execute( $method, $param )
+{
+	switch( $method )
+	{
+	case 'image':
+		return $this->create_image( $param );
+		break;
+
+	case 'flv':
+		return $this->create_flv( $param );
+		break;
+
+	case 'jpeg':
+		return $this->create_jpeg( $param );
+		break;
+
+	case 'wav':
+		return $this->create_wav( $param );
+		break;
+
+	case 'pdf':
+		return $this->create_pdf( $param );
+		break;
+
+	case 'swf':
+		return $this->create_swf( $param );
+		break;
+
+	case 'video_images':
+		return $this->create_video_images( $param );
+		break;
+
+	case 'duration_size':
+		return $this->get_duration_size( $param );
+		break;
+
+	case 'text_content':
+		return $this->get_text_content( $param );
+		break;
+	}
+
+	return null;
+}
+
 function create_image( $param )
 {
-	return false;
+	return null;
 }
 
-//---------------------------------------------------------
-// create jpeg
-//---------------------------------------------------------
+function create_video_images( $param )
+{
+	return null;
+}
+
+function create_flv( $param )
+{
+	return null;
+}
+
 function create_jpeg( $param )
 {
-	return 0 ;	// no action
+	return null;
 }
 
-//---------------------------------------------------------
-// create mp3
-//---------------------------------------------------------
+function create_wav( $param )
+{
+	return null;
+}
+
 function create_mp3( $param )
 {
-	return 0 ;	// no action
+	return null;
 }
 
-//---------------------------------------------------------
-// create pdf
-//---------------------------------------------------------
 function create_pdf( $param )
 {
-	return 0 ;	// no action
+	return null;
 }
 
-//---------------------------------------------------------
-// create swf
-//---------------------------------------------------------
 function create_swf( $param )
 {
-	return 0 ;	// no action
+	return null;
 }
 
-//---------------------------------------------------------
-// duration
-//---------------------------------------------------------
 function get_duration_size( $param )
 {
-	return false;
+	return null;
 }
 
-//---------------------------------------------------------
-// text content
-//---------------------------------------------------------
 function get_text_content( $param )
 {
-	return false;
+	return null;
 }
 
 //---------------------------------------------------------

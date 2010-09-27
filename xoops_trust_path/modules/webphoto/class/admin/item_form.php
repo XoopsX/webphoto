@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.29 2010/09/19 06:43:11 ohwada Exp $
+// $Id: item_form.php,v 1.30 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,9 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-17 K.OHWADA
+// 2010-09-20 K.OHWADA
 // item_uid_options()
+// item_displayfile_select_options()
 // 2010-05-08 K.OHWADA
 // show_admin_gmap()
 // 2010-02-15 K.OHWADA
@@ -264,6 +265,7 @@ function build_form_admin_by_files( $mode, $files )
 		'item_status_select_options'         => $this->item_status_select_options(),
 		'item_kind_select_options'           => $this->item_kind_select_options(),
 		'item_displaytype_select_options'    => $this->item_displaytype_select_options(),
+		'item_displayfile_select_options'    => $this->item_displayfile_select_options(),
 		'item_onclick_select_options'        => $this->item_onclick_select_options(),
 		'item_detail_onclick_select_options' => $this->item_detail_onclick_select_options(),
 		'item_player_id_select_options'      => $this->item_player_id_select_options(),
@@ -379,6 +381,13 @@ function item_displaytype_select_options()
 {
 	$value   = $this->get_row_by_key( 'item_displaytype' ) ; 
 	$options = $this->_item_handler->get_displaytype_options();
+	return $this->build_form_options( $value, $options );
+}
+
+function item_displayfile_select_options()
+{
+	$value   = $this->get_row_by_key( 'item_displayfile' ) ; 
+	$options = $this->_item_handler->get_displayfile_options();
 	return $this->build_form_options( $value, $options );
 }
 

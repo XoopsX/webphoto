@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.20 2010/03/19 00:39:10 ohwada Exp $
+// $Id: item_handler.php,v 1.21 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// item_displayfile etc
 // 2010-03-18 K.OHWADA
 // change insert update
 // 2010-02-15 K.OHWADA
@@ -137,6 +139,7 @@ function create( $flag_new=false )
 		'item_album'           => '',
 		'item_label'           => '',
 		'item_displaytype'     => 0,
+		'item_displayfile'     => 0,
 		'item_onclick'         => 0,
 		'item_views'           => 0,
 		'item_chain'           => 0,
@@ -231,6 +234,7 @@ function insert( $row, $force=false )
 	$sql .= 'item_width, ';
 	$sql .= 'item_height, ';
 	$sql .= 'item_displaytype, ';
+	$sql .= 'item_displayfile, ';
 	$sql .= 'item_onclick, ';
 	$sql .= 'item_views, ';
 	$sql .= 'item_chain, ';
@@ -316,6 +320,7 @@ function insert( $row, $force=false )
 	$sql .= intval($item_width).', ';
 	$sql .= intval($item_height).', ';
 	$sql .= intval($item_displaytype).', ';
+	$sql .= intval($item_displayfile).', ';
 	$sql .= intval($item_onclick).', ';
 	$sql .= intval($item_views).', ';
 	$sql .= intval($item_chain).', ';
@@ -411,6 +416,7 @@ function update( $row, $force=false )
 	$sql .= 'item_width='.intval($item_width).', ';
 	$sql .= 'item_height='.intval($item_height).', ';
 	$sql .= 'item_displaytype='.intval($item_displaytype).', ';
+	$sql .= 'item_displayfile='.intval($item_displayfile).', ';
 	$sql .= 'item_onclick='.intval($item_onclick).', ';
 	$sql .= 'item_views='.intval($item_views).', ';
 	$sql .= 'item_chain='.intval($item_chain).', ';
@@ -909,6 +915,10 @@ function get_kind_default_options()
 		_C_WEBPHOTO_ITEM_KIND_IMAGE            => _WEBPHOTO_ITEM_KIND_IMAGE ,
 		_C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER      => _WEBPHOTO_ITEM_KIND_IMAGE_OTHER ,
 		_C_WEBPHOTO_ITEM_KIND_VIDEO            => _WEBPHOTO_ITEM_KIND_VIDEO ,
+
+// v2.30
+		_C_WEBPHOTO_ITEM_KIND_VIDEO_H264       => _WEBPHOTO_ITEM_KIND_VIDEO_H264 ,
+
 		_C_WEBPHOTO_ITEM_KIND_AUDIO            => _WEBPHOTO_ITEM_KIND_AUDIO ,
 		_C_WEBPHOTO_ITEM_KIND_OFFICE           => _WEBPHOTO_ITEM_KIND_OFFICE ,
 		_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL => _WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL ,
@@ -938,6 +948,24 @@ function get_displaytype_options()
 		_C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT    => _WEBPHOTO_ITEM_DISPLAYTYPE_SWFOBJECT ,
 		_C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER  => _WEBPHOTO_ITEM_DISPLAYTYPE_MEDIAPLAYER ,
 		_C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR => _WEBPHOTO_ITEM_DISPLAYTYPE_IMAGEROTATOR ,
+	);
+	return $arr;
+}
+
+function get_displayfile_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_DISPLAYFILE_DEFAULT     => _WEBPHOTO_ITEM_DISPLAYFILE_DEFAULT ,
+		_C_WEBPHOTO_FILE_KIND_CONT          => _WEBPHOTO_FILE_KIND_CONT ,
+//		_C_WEBPHOTO_FILE_KIND_THUMB         => _WEBPHOTO_FILE_KIND_THUMB ,
+//		_C_WEBPHOTO_FILE_KIND_MIDDLE        => _WEBPHOTO_FILE_KIND_MIDDLE ,
+		_C_WEBPHOTO_FILE_KIND_FLASH         => _WEBPHOTO_FILE_KIND_FLASH ,
+//		_C_WEBPHOTO_FILE_KIND_DOCOMO        => _WEBPHOTO_FILE_KIND_DOCOMO ,
+//		_C_WEBPHOTO_FILE_KIND_PDF           => _WEBPHOTO_FILE_KIND_PDF ,
+		_C_WEBPHOTO_FILE_KIND_SWF           => _WEBPHOTO_FILE_KIND_SWF ,
+//		_C_WEBPHOTO_FILE_KIND_SMALL         => _WEBPHOTO_FILE_KIND_SMALL ,
+//		_C_WEBPHOTO_FILE_KIND_JPEG          => _WEBPHOTO_FILE_KIND_JPEG ,
+		_C_WEBPHOTO_FILE_KIND_MP3           => _WEBPHOTO_FILE_KIND_MP3 ,
 	);
 	return $arr;
 }
@@ -1013,6 +1041,7 @@ function get_codeinfo_options()
 //		_C_WEBPHOTO_CODEINFO_SMALL  => _WEBPHOTO_ITEM_CODEINFO_SMALL ,
 		_C_WEBPHOTO_CODEINFO_FLASH  => _WEBPHOTO_ITEM_CODEINFO_FLASH ,
 //		_C_WEBPHOTO_CODEINFO_DOCOMO => _WEBPHOTO_ITEM_CODEINFO_DOCOMO ,
+		_C_WEBPHOTO_CODEINFO_WAV    => _WEBPHOTO_ITEM_CODEINFO_WAV ,
 		_C_WEBPHOTO_CODEINFO_MP3    => _WEBPHOTO_ITEM_CODEINFO_MP3 ,
 		_C_WEBPHOTO_CODEINFO_PDF    => _WEBPHOTO_ITEM_CODEINFO_PDF ,
 		_C_WEBPHOTO_CODEINFO_SWF    => _WEBPHOTO_ITEM_CODEINFO_SWF ,

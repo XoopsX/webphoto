@@ -1,5 +1,5 @@
 <?php
-// $Id: jpeg_create.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: jpeg_create.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_jpeg() -> execute()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 //---------------------------------------------------------
@@ -95,7 +97,7 @@ function create_jpeg( $item_id, $src_file, $src_ext )
 		'jpeg_file' => $file ,
 	);
 
-	$ret = $this->_ext_class->create_jpeg( $param ) ;
+	$ret = $this->_ext_class->execute( 'jpeg', $param ) ;
 
 // created
 	if ( $ret == 1 ) {

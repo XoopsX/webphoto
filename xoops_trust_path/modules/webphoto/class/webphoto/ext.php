@@ -1,5 +1,5 @@
 <?php
-// $Id: ext.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: ext.php,v 1.6 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// execute()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in plugin class
 // 2009-10-25 K.OHWADA
@@ -47,39 +49,9 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // public
 //---------------------------------------------------------
-function create_image( $param )
+function execute( $method, $param )
 {
-	$src_ext     = isset($param['src_ext'])    ? $param['src_ext']            : null ;
-	$flag_video  = isset($param['flag_video']) ? (bool)($param['flag_video']) : false ;
-	$flag_extra  = isset($param['flag_extra']) ? (bool)($param['flag_extra']) : false ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		if ( !$flag_video && ( $type == 'video' ) ) {
-			continue;
-		}
-		if ( !$flag_extra && ( $type != 'video' ) ) {
-			continue;
-		}
-
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-
-		return $class->create_image( $param );
-	}
-
-	return null ;
-}
-
-function create_jpeg( $param )
-{
-	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+	$src_ext = isset($param['src_ext'])  ? $param['src_ext'] : null ;
 
 	$list = $this->get_cached_list();
 	foreach ( $list as $type )
@@ -92,114 +64,10 @@ function create_jpeg( $param )
 			continue;
 		}
 
-		return $class->create_jpeg( $param );
+		return $class->execute( $method, $param );
 	}
 
-	return 0 ;	// no action
-}
-
-function create_pdf( $param )
-{
-	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-
-		return $class->create_pdf( $param );
-	}
-
-	return 0 ;	// no action
-}
-
-function create_swf( $param )
-{
-	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-
-		return $class->create_swf( $param );
-	}
-
-	return 0 ;	// no action
-}
-
-function create_mp3( $param )
-{
-	$src_ext  = isset($param['src_ext'])  ? $param['src_ext'] : null ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-
-		return $class->create_mp3( $param );
-	}
-
-	return 0 ;	// no action
-}
-
-function get_duration_size( $param )
-{
-	$src_ext = isset($param['src_ext']) ? $param['src_ext'] : null ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-		return $class->get_duration_size( $param );
-	}
-
-	return null ;
-}
-
-function get_text_content( $param )
-{
-	$src_ext = isset($param['src_ext']) ? $param['src_ext'] : null ;
-
-	$list = $this->get_cached_list();
-	foreach ( $list as $type )
-	{
-		$class =& $this->get_cached_class_object( $type );
-		if ( ! is_object($class) ) {
-			continue;
-		}
-		if ( ! $class->is_ext( $src_ext ) ) {
-			continue;
-		}
-
-		return $class->get_text_content( $param );
-	}
-
-	return null ;
+	return null ;	// no action
 }
 
 //---------------------------------------------------------

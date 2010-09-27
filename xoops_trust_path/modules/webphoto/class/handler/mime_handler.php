@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mime_handler.php,v 1.8 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// _C_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
 // perm_int_with_like_separetor()
@@ -230,10 +232,19 @@ function get_kind_options()
 		_C_WEBPHOTO_MIME_KIND_IMAGE         => _WEBPHOTO_MIME_KIND_IMAGE ,
 		_C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT => _WEBPHOTO_MIME_KIND_IMAGE_CONVERT ,
 		_C_WEBPHOTO_MIME_KIND_VIDEO         => _WEBPHOTO_MIME_KIND_VIDEO ,
+
+// v2.30
+		_C_WEBPHOTO_MIME_KIND_VIDEO_FLV     => _WEBPHOTO_MIME_KIND_VIDEO_FLV ,
+
 		_C_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG  => _WEBPHOTO_MIME_KIND_VIDEO_FFMPEG ,
 		_C_WEBPHOTO_MIME_KIND_AUDIO         => _WEBPHOTO_MIME_KIND_AUDIO ,
 		_C_WEBPHOTO_MIME_KIND_AUDIO_MID     => _WEBPHOTO_MIME_KIND_AUDIO_MID ,
 		_C_WEBPHOTO_MIME_KIND_AUDIO_WAV     => _WEBPHOTO_MIME_KIND_AUDIO_WAV ,
+
+// v2.30
+		_C_WEBPHOTO_MIME_KIND_AUDIO_MP3     => _WEBPHOTO_MIME_KIND_AUDIO_MP3 ,
+		_C_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG  => _WEBPHOTO_MIME_KIND_AUDIO_FFMPEG ,
+
 		_C_WEBPHOTO_MIME_KIND_OFFICE        => _WEBPHOTO_MIME_KIND_OFFICE ,
 		_C_WEBPHOTO_MIME_KIND_OFFICE_DOC    => _WEBPHOTO_MIME_KIND_OFFICE_DOC ,
 		_C_WEBPHOTO_MIME_KIND_OFFICE_XLS    => _WEBPHOTO_MIME_KIND_OFFICE_XLS ,

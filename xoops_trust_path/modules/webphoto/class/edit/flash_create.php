@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_create.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: flash_create.php,v 1.5 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// webphoto_ext
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-10-25 K.OHWADA
@@ -21,9 +23,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_edit_flash_create extends webphoto_edit_base_create
 {
-	var $_ffmpeg_class ;
-
-	var $_cfg_use_ffmpeg ;
+	var $_ext_class ;
 
 	var $_SUB_DIR_FLASHS = 'flashs';
 	var $_FLASH_EXT      = 'flv';
@@ -37,9 +37,8 @@ function webphoto_edit_flash_create( $dirname , $trust_dirname  )
 {
 	$this->webphoto_edit_base_create( $dirname , $trust_dirname  );
 
-	$this->_ffmpeg_class  =& webphoto_ffmpeg::getInstance( $dirname, $trust_dirname );
-
-	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
+	$this->_ext_class 
+		=& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -54,7 +53,7 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // create flash
 //---------------------------------------------------------
-function create_param( $param )
+function create( $param )
 {
 	$this->clear_msg_array();
 
@@ -65,13 +64,6 @@ function create_param( $param )
 	$src_file       = $param['src_file'];
 	$src_ext        = $param['src_ext'];
 	$src_kind       = $param['src_kind'];
-
-	if ( ! $this->_cfg_use_ffmpeg ) {
-		return null ;
-	}
-	if ( ! $this->is_video_kind( $src_kind ) ) {
-		return null ;
-	}
 
 // return input file is flash 
 	if ( $this->is_flash_ext( $src_ext ) ) {
@@ -106,8 +98,17 @@ function create_flash( $item_id, $src_file, $src_ext )
 	$file  = $name_param['file'] ;
 	$url   = $name_param['url']  ;
 
-	$ret = $this->_ffmpeg_class->create_flash( $src_file, $file );
-	if ( $ret ) {
+	$param = array(
+		'item_id'  => $item_id ,
+		'src_file' => $src_file ,
+		'src_ext'  => $src_ext ,
+		'flv_file' => $file ,
+	);
+
+	$ret = $this->_ext_class->execute( 'flv', $param ) ;
+
+// created
+	if ( $ret == 1 ) {
 		$this->set_flag_created() ;
 		$this->set_msg( 'create flash' );
 
@@ -122,10 +123,11 @@ function create_flash( $item_id, $src_file, $src_ext )
 			'kind'   => _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ,
 		);
 
-	} else {
+// failed
+	} elseif ( $ret == -1 ) {
 		$this->set_flag_failed() ;
 		$this->set_msg( 'fail to create flash', true ) ;
-		$this->set_error( $this->_ffmpeg_class->get_errors() );
+		$this->set_error( $this->_ext_class->get_errors() );
 	}
 
 	return $flash_param ;

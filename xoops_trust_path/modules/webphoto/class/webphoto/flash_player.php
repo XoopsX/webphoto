@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.12 2010/05/10 10:34:49 ohwada Exp $
+// $Id: flash_player.php,v 1.13 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// JW Player 5.2
+// JW Image Rotator 3.18
 // 2010-05-10 K.OHWADA
 // get_movie_image( $thumb_row, $middle_row )
 // 2009-11-11 K.OHWADA
@@ -207,8 +210,7 @@ function build_code_embed( $param )
 
 	$config_url = $this->_MODULE_URL.'/index.php?fct=flash_config&item_id='.$item_id;
 
-	list( $player_sel, $flashplayer ) = 
-		$this->get_player( $item_row, $cont_row, $swf_row, $mp3_row );
+	list( $player_sel, $flashplayer ) = $this->get_player( $param );
 
 	if ( $player_sel == 0 ) {
 		return false ;
@@ -332,6 +334,7 @@ function set_variables_in_buffer( $param )
 	$external_url  = $item_row['item_external_url'];
 	$embed_type    = $item_row['item_embed_type'];
 	$embed_src     = $item_row['item_embed_src'];
+	$displayfile   = $item_row['item_displayfile'];
 
 	$width         = $player_row['player_width'];
 	$height        = $player_row['player_height'];
@@ -428,13 +431,11 @@ function set_variables_in_buffer( $param )
 		$lightcolor = $flashvar_lightcolor ;
 	}
 
-	$src_url       = null ;
 	$movie_file    = null ;
 	$playlist_url  = null ;
 	$playlist_path = null ;
 	$flag_file     = false ;
 	$flag_title    = false ;
-	$flag_type     = false ;
 	$flag_image    = false ;
 	$is_swfobject    = false ;
 	$is_mediaplayer  = false ;
@@ -446,22 +447,21 @@ function set_variables_in_buffer( $param )
 	$this->_kind         = $kind ;
 	$this->_player_style = $player_style ;
 
-	list( $player_sel, $flashplayer ) =
-		$this->get_player( $item_row, $cont_row, $swf_row, $mp3_row ) ;
+	list( $player_sel, $flashplayer ) =	$this->get_player( $param ) ;
+
+	list( $src_url, $flag_type ) = $this->get_src_url( $param );
 
 	switch ( $player_sel )
 	{
 		case _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT :
 			$is_swfobject = true;
 			$flag_title   = true ;
-			$flag_type    = true ;
 			break;
 
 		case _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
 			$is_mediaplayer = true;
 			$flag_file      = true;
 			$flag_title     = true ;
-			$flag_type      = true ;
 			$flag_image     = true ;
 			break;
 
@@ -481,30 +481,6 @@ function set_variables_in_buffer( $param )
 	$this->_width       = $width;
 	$this->_height      = $height;
 	$this->_screencolor = $screencolor;
-
-// flash video
-	if ( $file_flash_url ) {
-		$src_url   = $file_flash_url;
-		$flag_type = false ;
-
-// flash swf
-	} elseif ( $file_swf_url ) {
-		$src_url   = $file_swf_url;
-		$flag_type = false ;
-
-// mp3
-	} elseif ( $file_mp3_url ) {
-		$src_url   = $file_mp3_url;
-		$flag_type = false ;
-
-// external
-	} elseif ( $external_url ) {
-		$src_url = $external_url ;
-
-// others
-	} elseif ( $file_cont_url ) {
-		$src_url = $file_cont_url ;
-	}
 
 	if ( $playlist_cache ) {
 		$playlist_url  = $this->_PLAYLISTS_URL .'/'. $playlist_cache ;
@@ -764,26 +740,33 @@ function get_file_url( $file_row )
 }
 
 // BUG: not show external swf 
-function get_player( $item_row, $cont_row, $swf_row, $mp3_row )
+function get_player( $param )
 {
+	$item_row    = $param['item_row']; 
+	$cont_row    = $param['cont_row']; 
+	$flash_row   = $param['flash_row']; 
+	$swf_row     = $param['swf_row']; 
+	$mp3_row     = $param['mp3_row']; 
+
 	$sel    = 0 ;
 	$player = null;
 	$file   = null ;
 
 	$displaytype   = $item_row['item_displaytype'];
 	$external_url  = $item_row['item_external_url'];
-	$file_cont_url = $this->get_file_url( $cont_row ) ;
-	$file_swf_url  = $this->get_file_url( $swf_row ) ;
-	$file_mp3_url  = $this->get_file_url( $mp3_row ) ;
+
+	$cont_url = $this->get_file_url( $cont_row ) ;
+	$swf_url  = $this->get_file_url( $swf_row ) ;
+	$mp3_url  = $this->get_file_url( $mp3_row ) ;
 
 	if (  $external_url ) {
 		$file = $external_url ;
-	} elseif (  $file_swf_url ) {
-		$file = $file_swf_url ;
-	} elseif (  $file_mp3_url ) {
-		$file = $file_mp3_url ;
-	} elseif ( $file_cont_url ) {
-		$file = $file_cont_url ;
+	} elseif (  $swf_url ) {
+		$file = $swf_url ;
+	} elseif (  $mp3_url ) {
+		$file = $mp3_url ;
+	} elseif ( $cont_url ) {
+		$file = $cont_url ;
 	}
 
 	switch ( $displaytype )
@@ -793,18 +776,89 @@ function get_player( $item_row, $cont_row, $swf_row, $mp3_row )
 			$player = $file ;
 			break;
 
-		case  _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
+		case _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
 			$sel    = $displaytype ;
-			$player = $this->_MODULE_URL.'/libs/mediaplayer.swf';
+			$player = $this->_MODULE_URL.'/libs/jw/player.swf';
 			break;
 
 		case _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR :
 			$sel    = $displaytype ;
-			$player = $this->_MODULE_URL.'/libs/imagerotator.swf';
+			$player = $this->_MODULE_URL.'/libs/jw/imagerotator.swf';
 			break;
 	}
 
 	return array( $sel, $player );
+}
+
+function get_src_url( $param )
+{
+	$item_row    = $param['item_row']; 
+	$cont_row    = $param['cont_row']; 
+	$flash_row   = $param['flash_row']; 
+	$swf_row     = $param['swf_row']; 
+	$mp3_row     = $param['mp3_row']; 
+
+	$displaytype  = $item_row['item_displaytype'];
+	$displayfile  = $item_row['item_displayfile'];
+	$external_url = $item_row['item_external_url'];
+
+	$src_url     = null ;
+	$flag_type   = false ;
+
+	switch ( $displaytype )
+	{
+		case _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT :
+		case _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
+			$flag_type = true ;
+			break;
+	}
+
+	$cont_url  = $this->get_file_url( $cont_row ) ;
+	$flash_url = $this->get_file_url( $flash_row ) ;
+	$swf_url   = $this->get_file_url( $swf_row ) ;
+	$mp3_url   = $this->get_file_url( $mp3_row ) ;
+
+// displayfile
+	if (( $displayfile == _C_WEBPHOTO_FILE_KIND_CONT ) && $cont_url ) {
+		$src_url = $cont_url ;
+
+	} elseif (( $displayfile == _C_WEBPHOTO_FILE_KIND_FLASH ) && $flash_url ) {
+		$src_url   = $flash_url ;
+		$flag_type = false ;
+
+	} elseif (( $displayfile == _C_WEBPHOTO_FILE_KIND_SWF ) && $swf_url ) {
+		$src_url   = $swf_url ;
+		$flag_type = false ;
+
+	} elseif (( $displayfile == _C_WEBPHOTO_FILE_KIND_MP3 ) && $mp3_url ){
+		$src_url   = $mp3_url ;
+		$flag_type = false ;
+
+// flash video
+	} elseif ( $flash_url ) {
+		$src_url   = $flash_url;
+		$flag_type = false ;
+
+// flash swf
+	} elseif ( $swf_url ) {
+		$src_url   = $swf_url;
+		$flag_type = false ;
+
+// mp3
+	} elseif ( $mp3_url ) {
+		$src_url   = $mp3_url;
+		$flag_type = false ;
+
+// external
+	} elseif ( $external_url ) {
+		$src_url = $external_url ;
+
+// others
+	} elseif ( $cont_url ) {
+		$src_url = $cont_url ;
+	}
+
+	return array( $src_url, $flag_type );
 }
 
 function get_movie_image( $thumb_row, $middle_row )
@@ -818,7 +872,7 @@ function get_movie_image( $thumb_row, $middle_row )
 
 function build_script_swfobject( $div_id )
 {
-	$str  = '<script type="text/javascript" src="'.$this->_MODULE_URL.'/libs/swfobject.js">';
+	$str  = '<script type="text/javascript" src="'.$this->_MODULE_URL.'/libs/jw/swfobject.js">';
 	$str .= '</script>'."\n";
 	$str .= '<div id="'. $div_id .'">';
 	$str .= '<a href="http://www.macromedia.com/go/getflashplayer">';
@@ -1021,10 +1075,11 @@ function is_type_kind()
 	{
 		case _C_WEBPHOTO_ITEM_KIND_GENERAL :
 		case _C_WEBPHOTO_ITEM_KIND_IMAGE :
+		case _C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER :
 		case _C_WEBPHOTO_ITEM_KIND_VIDEO :
+		case _C_WEBPHOTO_ITEM_KIND_VIDEO_H264 :
 		case _C_WEBPHOTO_ITEM_KIND_AUDIO :
 		case _C_WEBPHOTO_ITEM_KIND_OFFICE :
-		case _C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER :
 		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL :
 		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE :
 			return true ;

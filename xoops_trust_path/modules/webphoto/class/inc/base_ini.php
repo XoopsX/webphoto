@@ -1,10 +1,16 @@
 <?php
-// $Id: base_ini.php,v 1.1 2009/11/29 07:37:03 ohwada Exp $
+// $Id: base_ini.php,v 1.2 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-11-11 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-09-20 K.OHWADA
+// set_msg()
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,6 +20,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_inc_base_ini extends webphoto_inc_handler
 {
 	var $_ini_class;
+
+	var $_msg_array = array();
 
 	var $_DIRNAME;
 	var $_TRUST_DIRNAME;
@@ -54,6 +62,31 @@ function get_ini( $name )
 function explode_ini( $name )
 {
 	return $this->_ini_class->explode_ini( $name );
+}
+
+//---------------------------------------------------------
+// msg
+//---------------------------------------------------------
+function set_msg( $msg )
+{
+// array type
+	if ( is_array($msg) ) {
+		foreach ( $msg as $m ) {
+			$this->_msg_array[] = $m;
+		}
+
+// string type
+	} else {
+		$arr = explode("\n", $msg);
+		foreach ( $arr as $m ) {
+			$this->_msg_array[] = $m;
+		}
+	}
+}
+
+function get_msg_array()
+{
+	return $this->_msg_array;
 }
 
 //---------------------------------------------------------

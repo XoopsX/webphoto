@@ -1,5 +1,5 @@
 <?php
-// $Id: timidity.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: timidity.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// create_wav()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 //---------------------------------------------------------
@@ -53,6 +55,32 @@ function &getInstance( $dirname, $trust_dirname )
 
 //---------------------------------------------------------
 // create wav
+//---------------------------------------------------------
+function create_wav( $src_file, $dst_file, $option='' )
+{
+	if ( empty($src_file) ) {
+		return null ;
+	}
+	if ( ! is_file($src_file) ) {
+		return null ;
+	}
+	if ( ! $this->_cfg_use_timidity ) {
+		return null ;
+	}
+
+	$this->_timidity_class->mid_to_wav( $src_file, $dst_file, $option );
+
+	if ( is_file($dst_file) ) {
+		$this->chmod_file( $dst_file );
+		return 1 ;	// suceess
+	}
+
+	$this->set_error( $this->_timidity_class->get_msg_array() );
+	return -1 ;	// fail
+}
+
+//---------------------------------------------------------
+// create wav tmp
 //---------------------------------------------------------
 function create_wav_tmp( $item_id, $src_file, $option='' )
 {

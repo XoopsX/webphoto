@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: file_handler.php,v 1.8 2010/09/27 03:42:54 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-09-20 K.OHWADA
+// function get_file_full_by_key()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
 // 2009-03-15 K.OHWADA
@@ -258,6 +260,19 @@ function build_show_file_image( $file_row, $flag_exists=false )
 	}
 
 	return array( $url, $width, $height );
+}
+
+function get_file_full_by_key( $arr, $key )
+{
+	$file = null;
+	$id   = isset( $arr[ $key ] ) ? intval( $arr[ $key ] ) : 0 ;
+	if ( $id > 0 ) {
+		$file_row = $this->get_row_by_id( $id );
+		if ( is_array($file_row) ) {
+			$file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
+		}
+	}
+	return $file;
 }
 
 // --- class end ---
