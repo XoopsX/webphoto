@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.30 2010/09/27 03:42:54 ohwada Exp $
+// $Id: item_form.php,v 1.31 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // item_uid_options()
 // item_displayfile_select_options()
 // 2010-05-08 K.OHWADA
@@ -76,7 +76,7 @@ class webphoto_admin_item_form extends webphoto_edit_photo_form
 	var $_CAP_ARRAY = array(
 		'maxpixel','maxsize','allowed_exts',
 		'desc_options','rotate','tags','text','file',
-		'file_photo','file_thumb','file_middle','file_small'
+		'file_photo','file_jpeg'
 	);
 
 //---------------------------------------------------------
@@ -132,9 +132,7 @@ function build_form_admin_with_template( $mode, $item_row )
 function build_form_admin_by_item_row( $mode, $item_row )
 {
 	$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
-	$thumb_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB ) ; 
-	$middle_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ; 
-	$small_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SMALL ) ; 
+	$jpeg_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_JPEG ) ; 
 	$flash_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
 	$pdf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_PDF );
 	$swf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF );
@@ -146,9 +144,7 @@ function build_form_admin_by_item_row( $mode, $item_row )
 	$files = array(
 		'item_row'   => $item_row , 
 		'cont_row'   => $cont_row , 
-		'thumb_row'  => $thumb_row , 
-		'middle_row' => $middle_row , 
-		'small_row'  => $small_row , 
+		'jpeg_row'   => $jpeg_row , 
 		'flash_row'  => $flash_row ,
 		'docomo_row' => $docomo_row ,
 		'pdf_row'    => $pdf_row ,
@@ -162,9 +158,7 @@ function build_form_admin_by_files( $mode, $files )
 {
 	$item_row      = $files['item_row']; 
 	$cont_row      = $files['cont_row']; 
-	$thumb_row     = $files['thumb_row']; 
-	$middle_row    = $files['middle_row']; 
-	$small_row     = $files['small_row']; 
+	$jpeg_row      = $files['jpeg_row']; 
 	$flash_row     = $files['flash_row']; 
 	$docomo_row    = $files['docomo_row']; 
 	$pdf_row       = $files['pdf_row']; 

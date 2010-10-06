@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.26 2010/09/27 03:42:54 ohwada Exp $
+// $Id: base_this.php,v 1.27 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // is_wav_ext()
 // 2010-02-15 K.OHWADA
 // build_admin_footer()
@@ -97,9 +97,12 @@ class webphoto_base_this extends webphoto_base_ini
 	var $_THUMBS_PATH;
 	var $_THUMBS_DIR;
 	var $_THUMBS_URL;
+	var $_LARGES_PATH;
+	var $_LARGES_DIR;
+	var $_LARGES_URL;
 	var $_MIDDLES_PATH;
 	var $_MIDDLES_DIR;
-	var $_MIDDLESS_URL;
+	var $_MIDDLES_URL;
 	var $_SMALLS_PATH;
 	var $_SMALLS_DIR;
 	var $_SMALLS_URL;
@@ -183,6 +186,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 
 	$this->_PHOTOS_PATH     = $this->_UPLOADS_PATH.'/photos' ;
 	$this->_THUMBS_PATH     = $this->_UPLOADS_PATH.'/thumbs' ;
+	$this->_LARGES_PATH     = $this->_UPLOADS_PATH.'/larges' ;
 	$this->_MIDDLES_PATH    = $this->_UPLOADS_PATH.'/middles' ;
 	$this->_SMALLS_PATH     = $this->_UPLOADS_PATH.'/smalls' ;
 	$this->_FLASHS_PATH     = $this->_UPLOADS_PATH.'/flashs' ;
@@ -202,6 +206,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 	$this->_UPLOADS_DIR    = XOOPS_ROOT_PATH . $this->_UPLOADS_PATH ;
 	$this->_PHOTOS_DIR     = XOOPS_ROOT_PATH . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_DIR     = XOOPS_ROOT_PATH . $this->_THUMBS_PATH ;
+	$this->_LARGES_DIR     = XOOPS_ROOT_PATH . $this->_LARGES_PATH ;
 	$this->_MIDDLES_DIR    = XOOPS_ROOT_PATH . $this->_MIDDLES_PATH ;
 	$this->_SMALLS_DIR     = XOOPS_ROOT_PATH . $this->_SMALLS_PATH ;
 	$this->_FLASHS_DIR     = XOOPS_ROOT_PATH . $this->_FLASHS_PATH ;
@@ -221,6 +226,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 
 	$this->_PHOTOS_URL     = XOOPS_URL . $this->_PHOTOS_PATH ;
 	$this->_THUMBS_URL     = XOOPS_URL . $this->_THUMBS_PATH ;
+	$this->_LARGES_URL     = XOOPS_URL . $this->_LARGES_PATH ;
 	$this->_MIDDLES_URL    = XOOPS_URL . $this->_MIDDLES_PATH ;
 	$this->_SMALLS_URL     = XOOPS_URL . $this->_SMALLS_PATH ;
 	$this->_FLASHS_URL     = XOOPS_URL . $this->_FLASHS_PATH ;
@@ -280,6 +286,22 @@ function get_group_perms_str_by_post( $name )
 {
 	$arr = $this->_post_class->get_post( $name );
 	return $this->_utility_class->convert_group_perms_array_to_str( $arr );
+}
+
+//---------------------------------------------------------
+// jpeg
+//---------------------------------------------------------
+function is_jpeg_not_cmyk( $file, $ext=null )
+{
+	if ( empty($ext) ) {
+		$ext = $this->parse_ext( $file );
+	}
+
+	if (  $this->is_jpeg_ext( $ext ) &&
+		 !$this->is_image_cmyk( $file ) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------
@@ -648,6 +670,17 @@ function is_photo_owner( $uid )
 		return true;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// file
+//---------------------------------------------------------
+function unlink_path( $path )
+{
+	$file = XOOPS_ROOT_PATH . $path;
+	if ( $path && $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
+		unlink( $file );
+	}
 }
 
 // --- class end ---

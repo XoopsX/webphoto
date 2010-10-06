@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.27 2010/02/07 12:20:02 ohwada Exp $
+// $Id: show_photo.php,v 1.28 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// img_large_src
 // 2010-01-10 K.OHWADA
 // webphoto_tag -> webphoto_tag_build
 // 2009-11-11 K.OHWADA
@@ -558,6 +560,7 @@ function build_show_imgsrc( $item_row, $show_arr )
 {
 	$cont_row   = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 	$thumb_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
+	$large_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_LARGE ) ;
 	$middle_row = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
 	$small_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_SMALL ) ;
 
@@ -565,10 +568,12 @@ function build_show_imgsrc( $item_row, $show_arr )
 		'item_row'       => $item_row ,
 		'cont_row'       => $cont_row ,
 		'thumb_row'      => $thumb_row ,
+		'large_row'      => $large_row ,
 		'middle_row'     => $middle_row ,
 		'small_row'      => $small_row ,
 		'photo_default'  => true ,
 		'thumb_default'  => true ,
+		'large_default'  => true ,
 		'middle_default' => true ,
 		'small_default'  => true ,
 	);
@@ -581,10 +586,12 @@ function build_show_imgsrc( $item_row, $show_arr )
 	$arr = $param_image ;
 	$arr['cont_url_s']        = $this->sanitize( $param_image['cont_url'] ) ;
 	$arr['thumb_url_s']       = $this->sanitize( $param_image['thumb_url'] ) ;
+	$arr['large_url_s']       = $this->sanitize( $param_image['large_url'] ) ;
 	$arr['middle_url_s']      = $this->sanitize( $param_image['middle_url'] ) ;
 	$arr['small_url_s']       = $this->sanitize( $param_image['small_url'] ) ;
 	$arr['media_url_s']       = $this->sanitize( $param_image['media_url'] ) ;
 	$arr['img_photo_src_s']   = $this->sanitize( $param_image['img_photo_src'] ) ;
+	$arr['img_large_src_s']   = $this->sanitize( $param_image['img_large_src'] ) ;
 	$arr['img_middle_src_s']  = $this->sanitize( $param_image['img_middle_src'] ) ;
 	$arr['img_thumb_src_s']   = $this->sanitize( $param_image['img_thumb_src'] ) ;
 	return $arr ;

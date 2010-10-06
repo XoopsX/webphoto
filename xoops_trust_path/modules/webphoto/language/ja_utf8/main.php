@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.40 2010/09/27 03:42:54 ohwada Exp $
+// $Id: main.php,v 1.41 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1493,7 +1493,7 @@ define("_WEBPHOTO_EMBED_SUPPORT_TAGS", "このプラグインはタグを取得�
 // item table
 define("_WEBPHOTO_ITEM_DISPLAYFILE", "表示ファイル");
 define("_WEBPHOTO_ITEM_FILE_ID_11" , "ファイル番号：WAV" ) ;
-define("_WEBPHOTO_ITEM_FILE_ID_12" , "ファイル番号：12" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_12" , "ファイル番号：ラージ" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_13" , "ファイル番号：13" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_14" , "ファイル番号：14" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_15" , "ファイル番号：15" ) ;
@@ -1503,22 +1503,33 @@ define("_WEBPHOTO_ITEM_FILE_ID_18" , "ファイル番号：18" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_19" , "ファイル番号：19" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_20" , "ファイル番号：20" ) ;
 
-// item option
-define("_WEBPHOTO_ITEM_KIND_VIDEO_H264","動画 (H264)");
+// item kind
+define("_WEBPHOTO_ITEM_KIND_IMAGE_CMYK", "画像 (cmyk)" ) ;
+define("_WEBPHOTO_ITEM_KIND_VIDEO_H264", "動画 (H264)");
 
-// display file
+// item detail
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_DOWNLOAD", "ダウンロードする");
+
+// item codeinfo
+define("_WEBPHOTO_ITEM_CODEINFO_LARGE", "ラージ画像");
+define("_WEBPHOTO_ITEM_CODEINFO_WAV",   "WAVE");
+
+// item display file
 define("_WEBPHOTO_ITEM_DISPLAYFILE_DEFAULT","標準");
 
+// photo form
+define("_WEBPHOTO_CAP_JPEG_SELECT", "JPEG画像の選択");
+define("_WEBPHOTO_FILE_JPEG_DSC", "サムネイル画像を生成します");
+define("_WEBPHOTO_FILE_JPEG_DELETE_DSC", "サムネイル画像も削除します");
+
 // mime option
+define("_WEBPHOTO_MIME_KIND_IMAGE_JPEG",    "画像 jpg" ) ;
 define("_WEBPHOTO_MIME_KIND_VIDEO_FLV",     "ビデオ flv" ) ;
 define("_WEBPHOTO_MIME_KIND_AUDIO_MP3",     "オーディオ mp3" ) ;
 define("_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG",  "オーディオ ffmpeg" ) ;
 
-// item option
-define("_WEBPHOTO_ITEM_CODEINFO_WAV","WAVE");
-
+// error
 define("_WEBPHOTO_ERR_WAV",  "wav を生成できなかった");
-define("_WEBPHOTO_ERR_IMAGE_EXT",  "画像 を生成できなかった");
 
 // === define end ===
 }

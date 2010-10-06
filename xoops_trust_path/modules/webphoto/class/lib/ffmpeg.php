@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.10 2010/09/27 03:42:54 ohwada Exp $
+// $Id: ffmpeg.php,v 1.11 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // create_wav()
 // 2010-06-06 K.OHWADA
 // is_win_os()
@@ -129,7 +129,7 @@ function set_debug( $val )
 //    Stream #0.0: Video: mjpeg, yuvj422p, 640x480, 30.00 tb(r)
 //    Stream #0.1: Audio: pcm_u8, 11024 Hz, mono, 88 kb/s
 //---------------------------------------------------------
-function get_duration_size( $file )
+function get_video_info( $file )
 {
 	$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_INFO, $file );
 
@@ -206,17 +206,20 @@ function create_thumbs( $file_in, $max=5, $start=0, $step=1 )
 		$name     = $this->build_thumb_name( $i + $this->_offset ) ;
 		$file_out = $this->_TMP_PATH .'/'. $name;
 
-		$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_CREATE_THUMBS, $sec, $file_in, $file_out );
-
-		$this->cmd_excute( $cmd );
-
-		$ret = $this->chmod_file_out( $file_out );
+		$ret = $this->create_single_thumb( $file_in, $file_out, $sec );
 		if ( $ret ) {
 			$count ++;
 		}
 	}
 
 	return $count ;
+}
+
+function create_single_thumb( $file_in, $file_out, $sec )
+{
+	$cmd = $this->_CMD_FFMPEG . sprintf( $this->_PARAM_CREATE_THUMBS, $sec, $file_in, $file_out );
+	$this->cmd_excute( $cmd );
+	return $this->chmod_file_out( $file_out );
 }
 
 function build_thumb_name( $num )

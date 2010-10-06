@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.26 2010/09/27 03:42:54 ohwada Exp $
+// $Id: index.php,v 1.27 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // _WAVS_DIR
 // 2010-06-06 K.OHWADA
 // change_check_module_version()
@@ -134,6 +134,7 @@ function _print_check()
 	echo $this->_make_dir( $this->_UPLOADS_DIR );
 	echo $this->_make_dir( $this->_PHOTOS_DIR );
 	echo $this->_make_dir( $this->_THUMBS_DIR );
+	echo $this->_make_dir( $this->_LARGES_DIR );
 	echo $this->_make_dir( $this->_MIDDLES_DIR );
 	echo $this->_make_dir( $this->_SMALLS_DIR );
 	echo $this->_make_dir( $this->_FLASHS_DIR );

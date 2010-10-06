@@ -1,5 +1,5 @@
 <?php
-// $Id: mid.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
+// $Id: mid.php,v 1.4 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // create_mp3() -> create_wav()
 // 2009-11-11 K.OHWADA
 // $trust_dirname 
@@ -66,10 +66,10 @@ function create_wav( $param )
 //---------------------------------------------------------
 // duration
 //---------------------------------------------------------
-function get_duration_size( $param )
+function get_video_info( $param )
 {
 	$src_file = $param['src_file'];
-	return $this->_ffmpeg_class->get_duration_size( $src_file );
+	return $this->_ffmpeg_class->get_video_info( $src_file );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: ext_base.php,v 1.6 2010/09/27 03:42:54 ohwada Exp $
+// $Id: ext_base.php,v 1.7 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // execute()
 // 2009-11-11 K.OHWADA
 // webphoto_base_ini
@@ -120,12 +120,16 @@ function execute( $method, $param )
 		return $this->create_video_images( $param );
 		break;
 
-	case 'duration_size':
-		return $this->get_duration_size( $param );
+	case 'video_info':
+		return $this->get_video_info( $param );
 		break;
 
 	case 'text_content':
 		return $this->get_text_content( $param );
+		break;
+
+	case 'exif':
+		return $this->get_exif( $param );
 		break;
 	}
 
@@ -172,12 +176,17 @@ function create_swf( $param )
 	return null;
 }
 
-function get_duration_size( $param )
+function get_video_info( $param )
 {
 	return null;
 }
 
 function get_text_content( $param )
+{
+	return null;
+}
+
+function get_exif( $param )
 {
 	return null;
 }

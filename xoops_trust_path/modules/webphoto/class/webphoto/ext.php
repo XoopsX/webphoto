@@ -1,5 +1,5 @@
 <?php
-// $Id: ext.php,v 1.6 2010/09/27 03:42:54 ohwada Exp $
+// $Id: ext.php,v 1.7 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // execute()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in plugin class
@@ -26,6 +26,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_ext extends webphoto_lib_plugin
 {
 	var $_cached_list = null;
+	var $_cached_objs_by_ext = array() ;
 
 //---------------------------------------------------------
 // constructor
@@ -51,7 +52,27 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function execute( $method, $param )
 {
-	$src_ext = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+	$ext = isset($param['src_ext'])  ? $param['src_ext'] : null ;
+	if ( empty($ext) ) {
+		return null ;	// no action
+	}
+
+	$class =& $this->get_cached_class_object_by_ext( $ext );
+	if ( ! is_object($class) ) {
+		return null ;	// no action
+	}
+
+	return $class->execute( $method, $param );
+}
+
+//---------------------------------------------------------
+// private
+//---------------------------------------------------------
+function &get_cached_class_object_by_ext( $ext )
+{
+	if ( isset( $this->_cached_objs_by_ext[ $ext ] ) ) {
+		return  $this->_cached_objs_by_ext[ $ext ] ;
+	}
 
 	$list = $this->get_cached_list();
 	foreach ( $list as $type )
@@ -60,19 +81,17 @@ function execute( $method, $param )
 		if ( ! is_object($class) ) {
 			continue;
 		}
-		if ( ! $class->is_ext( $src_ext ) ) {
+		if ( ! $class->is_ext( $ext ) ) {
 			continue;
 		}
 
-		return $class->execute( $method, $param );
+		return $class;
 	}
 
-	return null ;	// no action
+	$false = false;
+	return $false;
 }
 
-//---------------------------------------------------------
-// private
-//---------------------------------------------------------
 function get_cached_list()
 {
 	if ( is_array( $this->_cached_list ) ) {

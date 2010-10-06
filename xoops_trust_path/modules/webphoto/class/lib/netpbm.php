@@ -1,5 +1,5 @@
 <?php
-// $Id: netpbm.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
+// $Id: netpbm.php,v 1.4 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-01 K.OHWADA
+// file_to_type()
 // 2009-01-10 K.OHWADA
 // version()
 //---------------------------------------------------------
@@ -60,10 +62,11 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rotate=0 )
 		return false;
 	}
 
-	$type = $image_size[2] ;
+	$src_type = $image_size[2] ;
+	$dst_type = $this->file_to_type( $dst, $src_type ) ;
 
-	list( $cmd_in, $cmd_out ) = 
-		$this->build_cmd_in_out( $type );
+	$cmd_in  = $this->build_cmd_in(  $src_type );
+	$cmd_out = $this->build_cmd_out( $dst_type );
 
 	if( empty($cmd_in) || empty($cmd_out) ) {
 		return false;
@@ -100,29 +103,53 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rotate=0 )
 	return true;
 }
 
-function build_cmd_in_out( $type )
+function build_cmd_in( $type )
 {
 	$cmd_in  = null ;
-	$cmd_out = null ;
 
 	switch( $type ) 
 	{
 	// GIF	
 		case 1 :
 			$cmd_in   = $this->_cmd_path .'giftopnm';
+			break ;
+
+	// JPEG
+		case 2 :
+			$cmd_in  = $this->_cmd_path. 'jpegtopnm';
+			break ;
+
+	// PNG
+		case 3 :
+			$cmd_in  = $this->_cmd_path .'pngtopnm';
+			break ;
+
+		default :
+			break;
+	}
+
+	return $cmd_in ;
+}
+
+function build_cmd_out( $type )
+{
+	$cmd_out = null ;
+
+	switch( $type ) 
+	{
+	// GIF	
+		case 1 :
 			$cmd_out  = $this->_cmd_path .'ppmquant 256 | ';
 			$cmd_out .= $this->_cmd_path .'ppmtogif';
 			break ;
 
 	// JPEG
 		case 2 :
-			$cmd_in  = $this->_cmd_path. 'jpegtopnm';
 			$cmd_out = $this->_cmd_path. 'pnmtojpeg';
 			break ;
 
 	// PNG
 		case 3 :
-			$cmd_in  = $this->_cmd_path .'pngtopnm';
 			$cmd_out = $this->_cmd_path .'pnmtopng';
 			break ;
 
@@ -130,7 +157,7 @@ function build_cmd_in_out( $type )
 			break;
 	}
 
-	return array( $cmd_in, $cmd_out ) ;
+	return $cmd_out;
 }
 
 function build_cmd_resize( $max_width, $max_height )
@@ -143,6 +170,37 @@ function build_cmd_rotate( $angle )
 {
 	$cmd = $this->_cmd_path .'pnmflip -r'. $angle  .' ';
 	return $cmd;
+}
+
+function file_to_type( $file, $type_default )
+{
+	$ext = $this->parse_ext( $file );
+
+	switch( $ext ) 
+	{
+		case 'gif' :
+			$type = 1 ;
+			break ;
+
+		case 'jpg' :
+			$type = 2 ;
+			break ;
+
+		case 'png' :
+			$type = 3 ;
+			break ;
+
+		default :
+			$type = $type_default ;
+			break ;
+	}
+
+	return $type;
+}
+
+function parse_ext( $file )
+{
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 //---------------------------------------------------------

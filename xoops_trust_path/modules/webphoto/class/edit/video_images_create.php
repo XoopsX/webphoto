@@ -1,9 +1,9 @@
 <?php
-// $Id: video_images_create.php,v 1.1 2010/09/27 03:44:45 ohwada Exp $
+// $Id: video_images_create.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 //=========================================================
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -43,14 +43,15 @@ function create( $param )
 {
 	$this->clear_flags() ;
 
-	$count = $this->_ext_class->execute( 'video_images', $param );
-	if ( $count ) {
+	$ret = $this->_ext_class->execute( 'video_images', $param );
+	if ( $ret == 1 ) {
 		$this->set_flag_created() ;
 		return 1 ;
+	} elseif ( $ret == -1 ) {
+		$this->set_flag_failed() ;
+		return -1 ;
 	}
-
-	$this->set_flag_failed() ;
-	return -1 ;
+	return 0;
 }
 
 // --- class end ---

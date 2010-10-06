@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.16 2010/09/27 03:42:54 ohwada Exp $
+// $Id: factory_create.php,v 1.17 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
-// create_sub_files()
+// 2010-10-01 K.OHWADA
+// webphoto_edit_file_action
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2010-01-10 K.OHWADA
@@ -47,18 +47,17 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_jpeg_create_class;
 	var $_mp3_create_class;
 	var $_wav_create_class;
-
+	var $_file_action_class;
 	var $_video_middle_thumb_create_class;
 	var $_video_images_create_class;
-	var $_image_create_class; 
 	var $_item_build_class;
 	var $_icon_build_class;
 	var $_search_build_class;
 	var $_ext_build_class;
-	var $_exif_class;
 	var $_msg_main_class;
 	var $_msg_sub_class;
 	var $_multibyte_class;
+	var $_image_create_class ;
 
 // config
 	var $_cfg_use_pathinfo = false;
@@ -74,36 +73,31 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_flag_resized = false;
 	var $_flag_video_image_created = false ;
 	var $_flag_video_image_failed  = false ;
-	var $_flag_image_ext_created   = false;
-	var $_flag_image_ext_failed    = false;
 	var $_flag_flash_created       = false ;
 	var $_flag_flash_failed        = false ;
 	var $_flag_pdf_created         = false ;
 	var $_flag_pdf_failed          = false ;
 	var $_flag_swf_created         = false ;
 	var $_flag_swf_failed          = false ;
-
 	var $_flag_jpeg_created        = false ;
 	var $_flag_jpeg_failed         = false ;
+	var $_is_jpeg_cmyk             = false ;
 	var $_flag_mp3_created         = false ;
 	var $_flag_mp3_failed          = false ;
-
 	var $_flag_wav_created         = false ;
 	var $_flag_wav_failed          = false ;
-
-	var $_image_tmp_file     = null ;
 
 	var $_cont_param  = null ;
 	var $_video_param = null ;
 	var $_msg_item    = null ;
 
-	var $_FILE_LIST;
 	var $_TITLE_DEFAULT = 'no title';
 
 	var $_EXT_JPEG = 'jpg';
 	var $_EXT_WAV  = 'wav' ;
 
 	var $_CONTENT_LENGTH = 65000; // 64KB
+	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
 
 	var $_FLAG_ADMIN = false ;
 
@@ -130,8 +124,6 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 		=& webphoto_edit_middle_thumb_create::getInstance( $dirname , $trust_dirname  );
 	$this->_video_images_create_class 
 		=& webphoto_edit_video_images_create::getInstance( $dirname , $trust_dirname  );
-	$this->_image_create_class 
-		=& webphoto_edit_image_create::getInstance( $dirname , $trust_dirname  );
 	$this->_pdf_create_class   
 		=& webphoto_edit_pdf_create::getInstance( $dirname , $trust_dirname );
 	$this->_swf_create_class   
@@ -142,13 +134,16 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 		=& webphoto_edit_mp3_create::getInstance( $dirname , $trust_dirname );
 	$this->_wav_create_class   
 		=& webphoto_edit_wav_create::getInstance( $dirname , $trust_dirname );
+	$this->_file_action_class   
+		=& webphoto_edit_file_action::getInstance( $dirname , $trust_dirname );
 	$this->_video_middle_thumb_create_class 
 		=& webphoto_edit_video_middle_thumb_create::getInstance( $dirname , $trust_dirname );
 	$this->_ext_build_class  
 		=& webphoto_edit_ext_build::getInstance( $dirname , $trust_dirname );
+	$this->_image_create_class 
+		=& webphoto_image_create::getInstance( $dirname );
 
 	$this->_icon_build_class  =& webphoto_edit_icon_build::getInstance( $dirname );
-	$this->_exif_class        =& webphoto_exif::getInstance();
 	$this->_multibyte_class   =& webphoto_lib_multibyte::getInstance();
 
 	$this->_msg_main_class = new webphoto_lib_msg();
@@ -156,10 +151,8 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 
 	$this->_cfg_use_pathinfo = $this->get_config_by_name( 'use_pathinfo' );
 
-	$this->_has_image_resize  = $this->_cont_create_class->has_resize();
-	$this->_has_image_rotate  = $this->_cont_create_class->has_rotate();
-
-	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
+	$this->_has_image_resize  = $this->_image_create_class->has_resize();
+	$this->_has_image_rotate  = $this->_image_create_class->has_rotate();
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -230,8 +223,10 @@ function create_item_from_param( $item_row, $param )
 
 function create_files_from_param( $item_row, $param )
 {
+	$item_ext  = $item_row['item_ext'] ;
+	$item_kind = $item_row['item_kind'] ;
+
 	$src_file          = $param['src_file'] ;
-	$flag_video_single = isset($param['flag_video_single']) ? (bool)$param['flag_video_single'] : false ;
 	$flag_video_plural = isset($param['flag_video_plural']) ? (bool)$param['flag_video_plural'] : false ;
 
 	if ( empty($src_file) || !is_file($src_file) ) {
@@ -241,24 +236,25 @@ function create_files_from_param( $item_row, $param )
 // --- insert cont ---
 	$file_params = array();
 
-	$photo_param = $item_row ;
-	$photo_param['src_file'] = $src_file ;
-	$photo_param['src_ext']  = $item_row['item_ext'] ;
-	$photo_param['src_kind'] = $item_row['item_kind'] ;
+	$photo_param = $this->build_photo_param( $item_row, $src_file ) ;
 
 	$this->create_cont_param( $photo_param );
 	$file_params['cont'] = $this->_cont_param ;
 
 // -- docomo, flash, pdf, video images
 	if ( is_array( $this->_cont_param ) ) {
-		list( $sub_params, $middle_thumb_param )
-			= $this->create_sub_files( $photo_param, $this->_cont_param, $flag_video_single, $flag_video_plural );
+		$sub_params = $this->create_sub_files( 
+			$photo_param, $this->_cont_param, $flag_video_plural );
+		if ( is_array($sub_params) ) {
+			$file_params = $file_params + $sub_params ;
+		}
 
-		$file_params = $file_params + $sub_params ;
+		$file_params['jpeg'] = $this->create_jpeg_param( $photo_param, $file_params ) ;
 
-		$file_params['thumb']  = $this->create_thumb_param(  $middle_thumb_param );
-		$file_params['middle'] = $this->create_middle_param( $middle_thumb_param );
-		$file_params['small']  = $this->create_small_param(  $middle_thumb_param );
+		$image_param = $this->create_image_params( $photo_param, $file_params );
+		if ( is_array($image_params) ) {
+			$file_params  = $file_params + $image_params ;
+		}
 	}
 
 	$file_id_array = $this->insert_files_from_params( 
@@ -272,35 +268,25 @@ function create_files_from_param( $item_row, $param )
 	}
 	$this->_item_row = $item_row ;
 
-// remove temp file
-	if ( is_file( $this->_image_tmp_file ) ) {
-		unlink(   $this->_image_tmp_file );
-	}
-
 	return 0;
 }
 
-function create_sub_files( $photo_param, $cont_param, $flag_video_single, $flag_video_plural )
+function create_sub_files( $photo_param, $cont_param, $flag_video_plural )
 {
 	$sub_params = array();
 	$sub_params['docomo'] = $this->create_docomo_param( $photo_param, $cont_param ) ;
 	$sub_params['flash']  = $this->create_flash_param(  $photo_param ) ;
 	$sub_params['pdf']    = $this->create_pdf_param(    $photo_param ) ;
 	$sub_params['swf']    = $this->create_swf_param(    $photo_param ) ;
-	$sub_params['jpeg']   = $this->create_jpeg_param(   $photo_param ) ;
 	$sub_params['wav']    = $this->create_wav_param(    $photo_param ) ;
-
 	$sub_params['mp3']
-		= $this->create_mp3_param( $photo_param, $sub_params['wav'] ) ;
-
-	$middle_thumb_param = $this->create_image_for_middle_thumb( 
-		$photo_param, $sub_params['jpeg'], $sub_params['pdf'], $flag_video_single );
+		= $this->create_mp3_param(  $photo_param, $sub_params['wav'] ) ;
 
 	if ( $flag_video_plural ) {
 		$this->create_video_images( $photo_param );
 	}
 
-	return array( $sub_params, $middle_thumb_param );
+	return $sub_params ;
 }
 
 function build_msg_photo_title( $item_id, $title=null )
@@ -366,7 +352,7 @@ function build_item_row_from_file( $row, $src_file )
 {
 	$row = $this->build_row_ext_kind( $row, $src_file );
 	$row = $this->build_row_exif(     $row, $src_file );
-	$row = $this->build_row_duration( $row, $src_file );
+	$row = $this->build_row_video_info( $row, $src_file );
 	$row = $this->build_row_onclick( $row );
 	$row = $this->build_row_status( $row );
 	$row = $this->build_row_uid( $row );
@@ -386,7 +372,7 @@ function build_item_row_photo( $row, $photo_name, $media_name )
 	$row = $this->build_row_ext_kind(    $row, $photo_name );
 	$row = $this->build_row_title_media( $row, $media_name );
 	$row = $this->build_row_exif(     $row, $file );
-	$row = $this->build_row_duration( $row, $file );
+	$row = $this->build_row_video_info( $row, $file );
 	return $row;
 }
 
@@ -408,6 +394,8 @@ function build_item_row_submit_update( $row, $file_id_array, $tag_name_array=nul
 // files content icon search
 	$row = $this->build_row_content( $row, $file_id_array );
 	$row = $this->build_row_files(   $row, $file_id_array );
+	$row = $this->build_row_width(   $row );
+	$row = $this->build_row_cmyk(    $row );
 	$row = $this->build_row_icon_if_empty(  $row );
 	$row = $this->build_row_search( $row, $tag_name_array );
 	return $row;
@@ -500,19 +488,13 @@ function use_item_perm_level()
 //---------------------------------------------------------
 // create cont
 //---------------------------------------------------------
-function build_photo_param( $row, $photo_name, $mime )
+function build_photo_param( $item_row, $src_file )
 {
-	if ( empty($photo_name) ) {
-		return null; 
-	}
-
-	$param = $row ;
-	$param['src_ext']  = $row['item_ext'] ;
-	$param['src_kind'] = $row['item_kind'] ;
-	$param['src_file'] = $this->_TMP_DIR .'/'. $photo_name ;
-	$param['src_mime'] = $mime ;
-
-	return $param ;
+	$param = $item_row ;
+	$param['src_file'] = $src_file ;
+	$param['src_ext']  = $item_ext ;
+	$param['src_kind'] = $item_kind ;
+	return $param;
 }
 
 function create_cont_param( $param )
@@ -522,14 +504,15 @@ function create_cont_param( $param )
 		return $ret ;
 	}
 	$this->_cont_param   = $this->_cont_create_class->get_param();
-	$this->_flag_resized = $this->_cont_create_class->get_flag_resized();
 	$this->_msg_sub_class->set_msg(  $this->_cont_create_class->get_msg_array() ) ;
 	return 0 ;
 }
 
+// for preview
 function rotate_image( $src_file, $dst_file, $rotate )
 {
-	return $this->_cont_create_class->rotate_image( $src_file, $dst_file, $rotate );
+	return $this->_image_create_class->cmd_resize_rotate( 
+		$src_file, $dst_file, 0, 0, $rotate );
 }
 
 function get_cont_param()
@@ -543,30 +526,24 @@ function get_resized()
 }
 
 //---------------------------------------------------------
-// create thumb middle
+// create image
 //---------------------------------------------------------
-function build_middle_thumb_param( $row, $tmp_name )
+function create_image_params( $photo_param, $file_params )
 {
-	if ( empty($tmp_name) ) {
-		return null; 
+	$param = $photo_param;
+
+// if jpeg file
+	if ( isset( $file_params['jpeg']['file'] ) ) {
+		$param['src_file'] = $file_params['jpeg']['file'] ;
+		$param['src_ext']  = $file_params['jpeg']['ext'] ;
 	}
 
-	$param = $row;
-	$param['src_file'] = $this->_TMP_DIR .'/'. $tmp_name ;
+// not valid source
+	if ( !isset($param['src_file']) && empty($param['src_file']) ) {
+		return false;
+	}
 
-	return $param ;
-}
-
-function create_thumb_param( $param )
-{
-	$ret = $this->_middle_thumb_create_class->create_thumb_param( $param );
-	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
-	return $ret ;
-}
-
-function create_middle_param( $param )
-{
-	$ret = $this->_middle_thumb_create_class->create_middle_param( $param );
+	$ret = $this->_middle_thumb_create_class->create_image_params( $param );
 	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
 	return $ret ;
 }
@@ -582,115 +559,57 @@ function create_small_param_from_external_icon( $row )
 	return $ret ;
 }
 
-function create_small_param( $param )
-{
-	$ret = $this->_small_create_class->create_small_param( $param );
-	$this->_msg_sub_class->set_msg( $this->_small_create_class->get_msg_array() ) ;
-	return $ret ;
-}
-
-//---------------------------------------------------------
-// create image ext
-//---------------------------------------------------------
-function create_image_for_middle_thumb( $photo_param, $jpeg_param, $pdf_param, $flag_video )
-{
-
-// -- create image for thumb & middle
-	$image_param = $photo_param;
-	$image_param['flag_video'] = $flag_video ;
-	$image_param['flag_extra'] = true ;
-
-// if jpeg file
-	if ( isset( $jpeg_param['file'] ) ) {
-		$image_param['file_jpeg'] = $jpeg_param['file'] ;
-		return $this->copy_jpeg_to_image( $image_param );
-	}
-
-// if pdf file
-	if ( isset( $pdf_param['file'] ) ) {
-		$image_param['file_pdf'] = $pdf_param['file'] ;
-	}
-
-	$extra_param = $this->create_image_ext( $image_param ) ;
-	if ( is_array($extra_param) ) {
-		return    $extra_param ;
-	}
-
-// return orinal if not create
-	return $photo_param ;
-}
-
-function copy_jpeg_to_image( $param )
-{
-	$item_id  = $param['item_id'];
-	$src_file = $param['file_jpeg'];
-
-	$prefix   = 'tmp_'. sprintf("%04d", $item_id );
-	$dst_file = $this->_TMP_DIR .'/'. $prefix .'.'. $this->_EXT_JPEG;
-	$this->_image_tmp_file = $dst_file ;
-
-	copy($src_file, $dst_file);
-
-	$arr = array(
-		'flag'      => true ,
-		'item_id'   => $item_id ,
-		'src_file'  => $dst_file ,
-		'src_ext'   => $this->_EXT_JPEG ,
-		'icon_name' => '' ,
-	);
-	return $arr;
-}
-
-function create_image_ext( $param )
-{
-	$this->_image_tmp_file = null ;
-
-	$ret = $this->_image_create_class->create( $param );
-	if ( $ret == 1 ) {
-		$this->_flag_image_ext_created = $this->_image_create_class->get_flag_created();
-		$result = $this->_image_create_class->get_result();
-		$this->_image_tmp_file = $result['src_file'] ;
-		$this->_msg_sub_class->set_msg( 'create image ' . $param['src_ext'] ) ;
-		return $result ;
-
-	} elseif ( $ret == -1 ) {
-		$this->_flag_image_ext_failed = $this->_image_create_class->get_flag_failed();
-		$this->set_error( $this->_image_create_class->get_errors()) ;
-	}
-
-	return null ;
-}
-
-function get_image_tmp_file()
-{
-	return $this->_image_tmp_file ;
-}
-
-function get_flag_image_ext_created()
-{
-	return $this->_flag_image_ext_created ;
-}
-
-function get_flag_image_ext_failed()
-{
-	return $this->_flag_image_ext_failed ;
-}
-
 //---------------------------------------------------------
 // create jpeg
 //---------------------------------------------------------
-function create_jpeg_param( $param )
+function create_jpeg_param( $photo_param, $file_params=null )
 {
-	if ( $this->is_jpeg_ext( $param['src_ext'] ) ) {
+	if ( ! is_array( $photo_param ) ) {
 		return null;
 	}
+
+	$param = $photo_param;
+
+// if pdf file
+	$param['pdf_file'] = isset($file_params['pdf']['file']) ? $file_params['pdf']['file'] : null ;
 
 	$jpeg_param = $this->_jpeg_create_class->create_param( $param );
 	$this->_flag_jpeg_created = $this->_jpeg_create_class->get_flag_created() ;
 	$this->_flag_jpeg_failed  = $this->_jpeg_create_class->get_flag_failed() ;
+	$this->_is_jpeg_cmyk      = $this->_jpeg_create_class->is_cmyk();
 	$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
 
 	return $jpeg_param ;
+}
+
+function create_jpeg_param_by_tmp( $item_row, $tmp_name )
+{
+	if ( empty($tmp_name) ) {
+		return null;
+	}
+
+	$ext = $this->parse_ext( $tmp_name );
+
+	$param = $item_row ;
+	$param['src_file'] = $this->_TMP_DIR .'/'. $tmp_name ;
+	$param['src_ext']  = $ext ;
+
+// jpeg
+	if ( $this->is_jpeg_ext($ext) ) {
+		$ret = $this->_jpeg_create_class->create_copy_param( $param );
+		$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
+
+// gif, png
+	} elseif ( $this->is_image_ext($ext) ) {
+		$ret = $this->_jpeg_create_class->create_image_param( $param );
+		$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
+
+// not image
+	} else {
+		return null ;
+	}
+
+	return $ret ;
 }
 
 function get_flag_jpeg_created()
@@ -896,39 +815,53 @@ function video_thumb( $row )
 //---------------------------------------------------------
 function build_row_exif( $row, $src_file )
 {
-	if ( ! $this->is_image_kind( $row['item_kind'] ) ) {
-		return $row ;
+	$ret = $this->_ext_build_class->get_exif( $row, $src_file );
+	if ( $ret != 1 ) {
+		return $row;
 	}
 
-	$extra_param = $this->_exif_class->build_row_exif( $row, $src_file );
-	if ( isset( $extra_param['row'] ) ) {
-		$row =  $extra_param['row'] ;
-	}
-	if ( isset( $extra_param['flag'] ) ) {
-		$flag = $extra_param['flag'] ;
-		if ( $flag == 2 ) {
-			$this->_msg_sub_class->set_msg( 'get exif' ) ;
-		} else {
-			$this->_msg_sub_class->set_msg( 'no exif' )  ;
-		}
-	} 
+	$this->_msg_sub_class->set_msg( 'get exif' ) ;
+	$result = $this->_ext_build_class->get_result() ;
 
-	return $row ;
+	$datetime  = $result['datetime_mysql'] ;
+	$equipment = $result['equipment'] ;
+	$latitude  = $result['latitude'] ;
+	$longitude = $result['longitude'] ;
+	$exif      = $result['all_data'] ;
+
+	if ( $datetime ) {
+		$row['item_datetime'] = $datetime ;
+	}
+	if ( $equipment ) {
+		$row['item_equipment'] = $equipment ;
+	}
+	if ( ( $latitude != 0 )||( $longitude != 0 ) ) {
+		$row['item_gmap_latitude']  = $latitude ;
+		$row['item_gmap_longitude'] = $longitude ;
+		$row['item_gmap_zoom']      = $this->_GMAP_ZOOM ;
+	}
+	if ( $exif ) {
+		$row['item_exif'] = $exif ;
+	}
+
+	return $row;
 }
 
-function build_row_duration( $row, $src_file )
+function build_row_video_info( $row, $src_file )
 {
-	$ret = $this->_ext_build_class->get_duration_size( $row, $src_file );
-	if ( $ret == 1 ) {
-		$this->_msg_sub_class->set_msg( 'get duration' ) ;
-		$result = $this->_ext_build_class->get_result() ;
-		$row['item_duration'] = $result['duration'] ;
-		$row['item_width']    = $result['width'] ;
-		$row['item_height']   = $result['height'] ;
-		if ( $result['flag_h264'] ) {
-			$row['item_kind'] = _C_WEBPHOTO_ITEM_KIND_VIDEO_H264 ;
-			$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_CONT ;
-		}
+	$ret = $this->_ext_build_class->get_video_info( $row, $src_file );
+	if ( $ret != 1 ) {
+		return $row;
+	}
+
+	$this->_msg_sub_class->set_msg( 'get video info' ) ;
+	$result = $this->_ext_build_class->get_result() ;
+	$row['item_duration'] = $result['duration'] ;
+	$row['item_width']    = $result['width'] ;
+	$row['item_height']   = $result['height'] ;
+	if ( $result['flag_h264'] ) {
+		$row['item_kind'] = _C_WEBPHOTO_ITEM_KIND_VIDEO_H264 ;
+		$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_CONT ;
 	}
 
 	return $row ;
@@ -945,6 +878,28 @@ function build_row_content( $row, $file_id_array )
 		$this->set_error( $this->_ext_build_class->get_errors() );
 	}
 
+	return $row ;
+}
+
+//---------------------------------------------------------
+// width cmyk
+//---------------------------------------------------------
+function build_row_width( $row )
+{
+	if ( isset($this->_cont_param['width'])  && $this->_cont_param['width'] &&
+		 isset($this->_cont_param['height']) && $this->_cont_param['height'] ) {		$row['item_width']  = $this->_cont_param['width'] ;
+		$row['item_height'] = $this->_cont_param['height'] ;
+	}
+	return $row ;
+}
+
+function build_row_cmyk( $row )
+{
+	if ( $this->_is_jpeg_cmyk ) {
+		$row['item_kind']    = _C_WEBPHOTO_ITEM_KIND_IMAGE_CMYK ;
+		$row['item_onclick'] = _C_WEBPHOTO_ONCLICK_PAGE ;
+		$row['item_detail_onclick'] = _C_WEBPHOTO_DETAIL_ONCLICK_DOWNLOAD ;
+	}
 	return $row ;
 }
 
@@ -992,127 +947,23 @@ function update_item( $row )
 //---------------------------------------------------------
 function insert_files_from_params( $item_id, $params )
 {
-	if ( !is_array($params) ) {
-		return false;
-	}
-
-	$arr = array();
-	foreach( $this->_FILE_LIST as $file ) {
-		$arr[ $file.'_id' ] = $this->insert_file_by_params( $item_id, $params, $file ) ;
-	}
-	return $arr ;
+	return $this->_file_action_class->insert_files_from_params( $item_id, $params );
 }
 
-function update_files_from_params( $row, $params )
+function update_files_from_params( $item_id, $params )
 {
-	if ( !is_array($params) ) {
-		return false;
-	}
-
-	$arr = array();
-	foreach( $this->_FILE_LIST as $file ) {
-		$arr[ $file.'_id' ] = $this->update_file_by_params( $row, $params, $file ) ;
-	}
-	return $arr ;
+	return $this->_file_action_class->update_files_from_params( $item_id, $params );
 }
 
-function insert_file_by_params( $item_id, $params, $name )
+// action.php
+function insert_file_by_param( $item_id, $param )
 {
-	if ( isset( $params[ $name ] ) && is_array( $params[ $name ] ) ) {
-		return $this->insert_file( $item_id,  $params[ $name ] );
-	}
-	return 0;
-}
-
-function update_file_by_params( $row, $params, $name )
-{
-	$item_id = $row['item_id'] ;
-
-	if ( ! isset( $params[ $name ] ) ) {
-		return 0 ;
-	}
-
-	$param = $params[ $name ] ;
-	if ( ! is_array($param) ) {
-		return 0 ;
-	}
-
-	$file_row = $this->get_file_row_by_kind( $row, $param['kind'] );
-
-// update if exists
-	if ( is_array($file_row) ) {
-		$file_id = $file_row['file_id'];
-
-// remove old file
-		$this->unlink_file_in_row( $file_row, $param );
-
-		$ret = $this->update_file( $file_row, $param );
-		if ( !$ret ) {
-			return 0 ;
-		}
-		return $file_id;
-
-// insert if new
-	} else {
-		return $this->insert_file( $item_id, $param );
-	}
-}
-
-function insert_file( $item_id, $param )
-{
-	$param['item_id'] = $item_id ;
-
-	$row = $this->_file_handler->create( true );
-	$row = $this->_file_handler->build_row_by_param( $row, $param );
-
-	$newid = $this->_file_handler->insert( $row, $this->_flag_force_db );
-	if ( ! $newid ) {
-		$this->_msg_sub_class->set_msg( 'DB Error', true );
-		$this->set_error( $this->_file_handler->get_errors() );
-		return false ;
-	}
-
-	return $newid;
-}
-
-function update_file( $row, $param )
-{
-	$param['time_update'] = time();
-
-	$row = $this->_file_handler->build_row_by_param( $row, $param );
-
-// update
-	$ret = $this->_file_handler->update( $row );
-	if ( ! $ret ) {
-		$this->_msg_sub_class->set_msg( 'DB Error', true );
-		$this->set_error( $this->_file_handler->get_errors() );
-		return false ;
-	}
-
-	return true ;
+	return $this->_file_action_class->insert_file_by_param( $item_id, $param );
 }
 
 function get_file_full_by_key( $arr, $key )
 {
 	return $this->_file_handler->get_file_full_by_key( $arr, $key );
-}
-
-function unlink_file_in_row( $file_row, $param )
-{
-	$file_path = $file_row['file_path'];
-	$path      = $param['path'];
-
-	if ( $file_path && ( $file_path != $path ) ) {
-		$this->unlink_path($file_path);
-	}
-}
-
-function unlink_path( $path )
-{
-	$file = XOOPS_ROOT_PATH . $path;
-	if ( $path && $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
-		unlink( $file );
-	}
 }
 
 //---------------------------------------------------------

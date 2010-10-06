@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.22 2010/09/27 03:42:54 ohwada Exp $
+// $Id: submit.php,v 1.23 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // create_sub_files()
 // 2010-06-06 K.OHWADA
 // merge_tag_name_array( $val )
@@ -67,9 +67,7 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_cfg_file_dir ;
 	var $_cfg_file_size ;
 
-	var $_ini_file_thumb;
-	var $_ini_file_middle;
-	var $_ini_file_small;
+	var $_ini_file_jpeg;
 
 // post
 	var $_post_form_embed    = 0;
@@ -78,7 +76,6 @@ class webphoto_edit_submit extends webphoto_edit_imagemanager_submit
 	var $_checkbox_array = array();
 	var $_form_action    = null;
 	var $_post_rotate    = null;
-	var $_rotate_angle   = 0;
 
 	var $_is_video_thumb_form = false;
 
@@ -140,9 +137,7 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_cfg_file_dir       = $this->get_config_by_name( 'file_dir' ) ;
 	$this->_cfg_file_size      = $this->get_config_by_name( 'file_size' ) ;
 
-	$this->_ini_file_thumb     = $this->check_show('file_thumb');
-	$this->_ini_file_middle    = $this->check_show('file_middle');
-	$this->_ini_file_small     = $this->check_show('file_small');
+	$this->_ini_file_jpeg      = $this->check_show('file_jpeg');
 
 	$this->_URL_DAFAULT_IMAGE = $this->_MODULE_URL .'/images/exts/default.png' ;
 	$this->_URL_PREVIEW_IMAGE = $this->_MODULE_URL .'/images/exts/preview.png' ;
@@ -279,9 +274,7 @@ function submit_exec()
 
 	$item_row    = $this->_row_fetch ;
 	$photo_name  = $this->_photo_tmp_name ;
-	$middle_name = $this->_middle_tmp_name ;
-	$thumb_name  = $this->_thumb_tmp_name ;
-	$small_name  = $this->_small_tmp_name ;
+	$jpeg_name   = $this->_jpeg_tmp_name ;
 
 // --- insert item ---
 	$item_row = $this->build_item_row_submit_insert( $item_row );
@@ -294,11 +287,10 @@ function submit_exec()
 	$this->set_created_row( $item_row );
 
 // uploaded photo
-	if ( $photo_name || $middle_name || $thumb_name || $small_name ) {
+	if ( $photo_name || $jpeg_name ) {
 
 // --- insert files
-		$ret = $this->insert_media_files( 
-			$item_row, $photo_name, $middle_name, $thumb_name, $small_name );
+		$ret = $this->insert_media_files( $item_row );
 		if ( $ret < 0 ) {
 			return $ret;
 		}
@@ -360,7 +352,7 @@ function submit_exec_fetch( $row )
 	}
 
 // Check if upload file name specified
-	if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
+	if ( ! $this->check_xoops_upload_file( $this->_ini_file_jpeg ) ) {
 		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
 	}
 
@@ -370,15 +362,9 @@ function submit_exec_fetch( $row )
 		return $ret;	// failed
 	}
 
-// fetch thumb middle
-	if ( $this->_ini_file_thumb ) {
-		$this->upload_fetch_thumb();
-	}
-	if ( $this->_ini_file_middle ) {
-		$this->upload_fetch_middle();
-	}
-	if ( $this->_ini_file_small ) {
-		$this->upload_fetch_small();
+// fetch jpeg
+	if ( $this->_ini_file_jpeg ) {
+		$this->upload_fetch_jpeg();
 	}
 
 // upload
@@ -503,62 +489,53 @@ function insert_media_files( $item_row )
 function create_media_file_params( $item_row, $is_submit=true )
 {
 	$photo_name  = $this->_photo_tmp_name ;
-	$thumb_name  = $this->_thumb_tmp_name ;
-	$middle_name = $this->_middle_tmp_name ;
-	$small_name  = $this->_small_tmp_name ;
+	$jpeg_name   = $this->_jpeg_tmp_name ;
 
 	$item_id   = $item_row['item_id'] ;
 	$item_kind = $item_row['item_kind'] ;
+	$item_ext  = $item_row['item_ext'] ;
+
+	$photo_param = $item_row;
 
 	$file_params = array();
+	$cont_param  = null;
 	$middle_thumb_param = null;
 
 	$this->init_photo_create();
 
 // -- photo tmp
-// rotate tmp file
-	$this->rotate_tmp_image( $photo_name, $this->_rotate_angle, true );
-
-// -- cont 
-// resize cont file
 	$photo_param = $this->build_photo_param( $item_row );
 
-	list( $ret, $cont_param ) = $this->create_cont_param( $photo_param );
-	if ( $ret < 0 ) {
-		return $ret ;
+// -- cont 
+	if ( $photo_name ) {
+		list( $ret, $cont_param ) = $this->create_cont_param( $photo_param );
+		if ( $ret < 0 ) {
+			return $ret ;
+		}
+		$file_params['cont'] = $cont_param;
 	}
 
-	$file_params['cont'] = $cont_param;
-
-// -- docomo, flash, pdf, video images
+// -- flash, pdf, video images
 	if ( is_array($cont_param) ) {
-		list( $sub_params, $middle_thumb_param )
-			= $this->create_sub_files( $photo_param, $cont_param );
-
-		$file_params = $file_params + $sub_params ;
+		$sub_params = $this->create_sub_files( $photo_param, $cont_param );
+		if ( is_array($sub_params) ) {
+			$file_params = $file_params + $sub_params ;
+		}
 	}
 
-// -- thmub 
-	if ( $thumb_name ) {
-		$file_params['thumb'] = $this->create_thumb_param_by_tmp( $item_row, $thumb_name );
-	} elseif ( $is_submit && $this->is_external_embed_playlist_kind( $item_kind ) ) {
-		//	dummy
+// --- jpeg ---
+	if ( $jpeg_name ) {
+		$file_params['jpeg'] = $this->create_jpeg_param_by_tmp( $item_row, $jpeg_name );
 	} elseif ( is_array($cont_param) ) {
-		$file_params['thumb'] = $this->create_thumb_param_by_photo( $middle_thumb_param );
+		$file_params['jpeg'] = $this->create_jpeg_param_by_photo( $photo_param, $file_params ) ;
 	}
 
-// -- middle 
-	if ( $middle_name ) {
-		$file_params['middle'] = $this->create_middle_param_by_tmp( $item_row, $middle_name );
-	} elseif ( is_array($cont_param) ) {
-		$file_params['middle'] = $this->create_middle_param_by_photo( $middle_thumb_param );
-	}
-
-// -- small 
-	if ( $small_name ) {
-		$file_params['small'] = $this->create_small_param_by_tmp( $item_row, $small_name );
-	} elseif ( is_array($cont_param) ) {
-		$file_params['small'] = $this->create_small_param_by_photo( $middle_thumb_param );
+// --- thumb, etc ---
+	if ( is_array($cont_param) || $jpeg_name) {
+		$image_params = $this->create_image_params_by_photo( $photo_param, $file_params );
+		if ( is_array($image_params) ) {
+			$file_params  = $file_params + $image_params ;
+		}
 	}
 
 	$this->_media_file_params = $file_params ;
@@ -568,11 +545,10 @@ function create_media_file_params( $item_row, $is_submit=true )
 
 function create_sub_files( $photo_param, $cont_param )
 {
-	$flag_single = false ;
 	$flag_plural = true;
 
 	$param = $this->_factory_create_class->create_sub_files( 
-		$photo_param, $cont_param, $flag_single, $flag_plural );
+		$photo_param, $cont_param, $flag_plural );
 
 	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
 		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
@@ -592,10 +568,6 @@ function create_sub_files( $photo_param, $cont_param )
 	if ( $this->_factory_create_class->get_flag_mp3_failed() ) {
 		$this->set_msg_array( $this->get_constant('ERR_MP3') ) ;
 	}
-	if ( $this->_factory_create_class->get_flag_image_ext_failed() ) {
-		$this->set_msg_array( $this->get_constant('ERR_IMAGE_EXT') ) ;
-	}
-
 	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
 		$this->_is_video_thumb_form = true;
 	}
@@ -814,8 +786,6 @@ function build_submit_redirect_url_success( $cat_id )
 	);
 	return $this->build_uri_category( $cat_id, $param );
 }
-
-
 
 //---------------------------------------------------------
 // build form

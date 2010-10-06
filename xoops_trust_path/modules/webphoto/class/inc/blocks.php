@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.20 2009/11/29 07:34:21 ohwada Exp $
+// $Id: blocks.php,v 1.21 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// img_large_src
 // 2009-11-11 K.OHWADA
 // getInstance -> getSingleton 
 // 2009-04-10 K.OHWADA
@@ -758,6 +760,9 @@ function _build_imgsrc( $item_row )
 	$img_photo_src     = '';
 	$img_photo_width   = 0 ;
 	$img_photo_height  = 0 ;
+	$img_large_src     = '';
+	$img_large_width   = 0 ;
+	$img_large_height  = 0 ;
 	$img_thumb_src     = '';
 	$img_thumb_width   = 0 ;
 	$img_thumb_height  = 0 ;
@@ -770,6 +775,7 @@ function _build_imgsrc( $item_row )
 
 	$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+	$large_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_LARGE );
 	$small_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SMALL );
 
 	list( $cont_url, $cont_width, $cont_height ) =
@@ -777,6 +783,9 @@ function _build_imgsrc( $item_row )
 
 	list( $thumb_url, $thumb_width, $thumb_height ) =
 		$this->build_show_file_image( $thumb_row ) ;
+
+	list( $large_url, $large_width, $large_height ) =
+		$this->build_show_file_image( $large_row ) ;
 
 	list( $small_url, $small_width, $small_height ) =
 		$this->build_show_file_image( $small_row ) ;
@@ -795,6 +804,24 @@ function _build_imgsrc( $item_row )
 
 	} else {
 		$img_photo_src = $this->_DEFAULT_ICON_SRC ;
+	}
+
+// large image
+	if ( $large_url ) {
+		$img_large_src    = $large_url;
+		$img_large_width  = $large_width ;
+		$img_large_height = $large_height ;
+
+	} elseif ( $cont_url && $is_image_kind ) {
+		$img_large_src    = $cont_url;
+		$img_large_width  = $cont_width ;
+		$img_large_height = $cont_height ;
+
+	} elseif ( $external_url && $is_image_kind ) {
+		$img_large_src    = $external_url;
+
+	} else {
+		$img_large_src = $this->_DEFAULT_ICON_SRC ;
 	}
 
 // thumb image
@@ -849,6 +876,10 @@ function _build_imgsrc( $item_row )
 		'img_photo_src_s'   => $this->sanitize( $img_photo_src ) ,
 		'img_photo_width'   => $img_photo_width ,
 		'img_photo_height'  => $img_photo_height ,
+		'img_large_src'     => $img_large_src ,
+		'img_large_src_s'   => $this->sanitize( $img_large_src ) ,
+		'img_large_width'   => $img_large_width ,
+		'img_large_height'  => $img_large_height ,
 		'img_thumb_src'     => $img_thumb_src ,
 		'img_thumb_src_s'   => $this->sanitize( $img_thumb_src ) ,
 		'img_thumb_width'   => $img_thumb_width ,

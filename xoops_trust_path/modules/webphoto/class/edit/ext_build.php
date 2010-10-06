@@ -1,9 +1,9 @@
 <?php
-// $Id: ext_build.php,v 1.1 2010/09/27 03:44:45 ohwada Exp $
+// $Id: ext_build.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 //=========================================================
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -38,16 +38,28 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // function
 //---------------------------------------------------------
-function get_duration_size( $row, $src_file )
+function get_exif( $row, $src_file )
 {
-	$param = $row ;
-	$param['src_file'] = $src_file ;
-	$param['src_ext']  = $row['item_ext'] ;
+	$param = $this->_ext_class->execute(
+		'exif', 
+		$this->build_param( $row, $src_file ) );
 
-	$extra_param = $this->_ext_class->execute( 'duration_size' ,$param );
+	if ( is_array($param) ) {
+		$this->set_result( $param ) ;
+		return 1;
+	}
 
-	if ( is_array($extra_param) ) {
-		$this->set_result( $extra_param ) ;
+	return 0;
+}
+
+function get_video_info( $row, $src_file )
+{
+	$param = $this->_ext_class->execute(
+		'video_info', 
+		$this->build_param( $row, $src_file ) );
+
+	if ( is_array($param) ) {
+		$this->set_result( $param ) ;
 		return 1;
 	}
 
@@ -76,6 +88,17 @@ function get_text_content( $row, $file_id_array )
 	}
 
 	return 0;
+}
+
+//---------------------------------------------------------
+// uitlity
+//---------------------------------------------------------
+function build_param( $row, $src_file )
+{
+	$param = $row ;
+	$param['src_ext']  = $row['item_ext'] ;
+	$param['src_file'] = $src_file ;
+	return $param;
 }
 
 function get_file_full_by_key( $arr, $key )

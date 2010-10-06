@@ -1,5 +1,5 @@
 <?php
-// $Id: gd.php,v 1.2 2009/01/24 07:10:39 ohwada Exp $
+// $Id: gd.php,v 1.3 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2009-10-01 K.OHWADA
+// file_to_type()
 // 2009-01-10 K.OHWADA
 // version()
 //---------------------------------------------------------
@@ -55,6 +57,8 @@ function resize_rotate( $src_file, $dst_file, $max_width=0, $max_height=0, $rota
 	$src_height = $image_size[1] ;
 	$src_type   = $image_size[2] ;
 
+	$dst_type = $this->file_to_type( $dst_file, $src_type ) ;
+
 	$src_img = $this->image_create( $src_file, $src_type );
 	if ( !is_resource( $src_img ) ) {
 		return false;
@@ -82,7 +86,7 @@ function resize_rotate( $src_file, $dst_file, $max_width=0, $max_height=0, $rota
 	}
 
 	if ( is_resource( $dst_img ) ) {
-		$this->image_output( $dst_img, $dst_file, $src_type );
+		$this->image_output( $dst_img, $dst_file, $dst_type );
 		imagedestroy( $dst_img ) ;
 		$ret = true;
 
@@ -101,16 +105,16 @@ function resize_rotate( $src_file, $dst_file, $max_width=0, $max_height=0, $rota
 	return $ret ;
 }
 
-function image_create( $src_file, $src_type )
+function image_create( $file, $type )
 {
 	$img = null ;
 
-	switch( $src_type ) {
+	switch( $type ) {
 	// GIF
 	// GD 2.0.28 or later
 		case 1 :
 			if ( function_exists('imagecreatefromgif') ) {
-				$img = imagecreatefromgif( $src_file ) ; 
+				$img = imagecreatefromgif( $file ) ; 
 			}
 			break;
 
@@ -118,28 +122,28 @@ function image_create( $src_file, $src_type )
 	// GD 1.8 or later
 		case 2 :
 			if ( function_exists('imagecreatefromjpeg') ) {
-				$img = imagecreatefromjpeg( $src_file ) ;
+				$img = imagecreatefromjpeg( $file ) ;
 			}
 			break ;
 
 	// PNG
 		case 3 :
-			$img = imagecreatefrompng( $src_file ) ;
+			$img = imagecreatefrompng( $file ) ;
 			break ;
 	}
 
 	return $img;
 }
 
-function image_output( $src_img, $dst_file, $src_type )
+function image_output( $img, $file, $type )
 {
-	switch( $src_type ) 
+	switch( $type ) 
 	{
 	// GIF
 	// GD 2.0.28 or later
 		case 1 :
 			if ( function_exists('imagegif') ) {
-				imagegif( $src_img, $dst_file ) ;
+				imagegif( $img, $file ) ;
 			}
 			break ;
 
@@ -147,13 +151,13 @@ function image_output( $src_img, $dst_file, $src_type )
 	// GD 1.8 or later
 		case 2 :
 			if ( function_exists('imagejpeg') ) {
-				imagejpeg( $src_img, $dst_file, $this->_JPEG_QUALITY ) ;
+				imagejpeg( $img, $file, $this->_JPEG_QUALITY ) ;
 			}
 			break ;
 
 	// PNG
 		case 3 :
-			imagepng( $src_img, $dst_file ) ;
+			imagepng( $img, $file ) ;
 			break ;
 	}
 }
@@ -215,6 +219,37 @@ function image_adjust( $width, $height, $max_width, $max_height )
 	}
 
 	return array( intval($width), intval($height) );
+}
+
+function file_to_type( $file, $type_default )
+{
+	$ext = $this->parse_ext( $file );
+
+	switch( $ext ) 
+	{
+		case 'gif' :
+			$type = 1 ;
+			break ;
+
+		case 'jpg' :
+			$type = 2 ;
+			break ;
+
+		case 'png' :
+			$type = 3 ;
+			break ;
+
+		default :
+			$type = $type_default ;
+			break ;
+	}
+
+	return $type;
+}
+
+function parse_ext( $file )
+{
+	return strtolower( substr( strrchr( $file , '.' ) , 1 ) );
 }
 
 //---------------------------------------------------------

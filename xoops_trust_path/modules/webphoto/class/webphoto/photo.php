@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.4 2010/09/27 03:42:54 ohwada Exp $
+// $Id: photo.php,v 1.5 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // _C_WEBPHOTO_CODEINFO_SHOW_LIST -> explode_ini('view_codeinfo_list')
 // 2010-06-06 K.OHWADA
 // build_photo_embed_text()
@@ -400,11 +400,18 @@ function build_photo_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 
 function build_photo_file_link( $item_row, $show_arr, $name )
 {
-	$show      = false;
+	$item_id             = $item_row['item_id'] ;
+	$item_detail_onclick = $item_row['item_detail_onclick'] ;
+
+	$show     = false;
 	$show_img = false;
 	$url      = null;
 	$title    = null;
+	$target   = null;
 	$filesize = null;
+
+	$onclick_download = false;
+	$cont_download    = false;
 
 	$arr = array(
 		'show' => $show,
@@ -419,10 +426,16 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 	$item_name  = null ;
 	$file_kind  = constant( strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$name ) );
 
+// if download 
+	if ( $item_detail_onclick == _C_WEBPHOTO_DETAIL_ONCLICK_DOWNLOAD ) {
+		$onclick_download = true;
+	}
+
 	switch ( $name )
 	{
 		case 'cont' :
-			$item_name  = 'item_external_url' ;
+			$item_name     = 'item_external_url' ;
+			$cont_download = $onclick_download ;
 			break;
 
 		case 'thumb' :
@@ -434,7 +447,6 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 			break;
 	}
 
-	$item_id   = $item_row['item_id'] ;
 	$caption   = $this->build_photo_code_caption( $name );
 	$lang_down = $this->get_constant( 'DOWNLOAD' );
 	$file_row  = $this->get_show_file_row( $show_arr, $file_kind ) ; 
@@ -447,13 +459,16 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 		$path  = $file_row['file_path'] ;
 		$file  = XOOPS_ROOT_PATH .'/'. $path ;
 
-		if ( $this->is_image_ext( $ext ) ) {
+// image and not download
+		if ( $this->is_image_ext( $ext ) && !$cont_download ) {
 			$base_url = $this->_MODULE_URL.'/index.php?fct=image';
 			$title    = $caption ;
+			$target   = '_blank';
 
 		} else {
 			$base_url = $this->_MODULE_URL.'/index.php?fct=download';
 			$title    = $lang_down .' '. $caption ;
+			$target   = '_self';
 			$show_img = true;
 		}
 
@@ -469,12 +484,13 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 	} elseif ( $item_name ) {
 		$item_url = $item_row[ $item_name ] ;
 		if ( $item_url ) {
-			$url   = $item_url ;
-			$title = $caption ;
+			$url    = $item_url ;
+			$title  = $caption ;
+			$target = '_blank';
 		}
 	}
 
-	$arr = $this->build_photo_code_result_link( $name, $url, $title );
+	$arr = $this->build_photo_code_result_link( $name, $url, $title, $target );
 	$arr['show_img'] = $show_img;
 	$arr['filesize'] = $filesize;
 	return $arr;

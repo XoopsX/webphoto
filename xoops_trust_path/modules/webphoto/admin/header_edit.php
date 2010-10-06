@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.13 2010/09/27 03:42:54 ohwada Exp $
+// $Id: header_edit.php,v 1.14 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // class/edit/wav_create.php
 // 2010-03-18 K.OHWADA
 // class/edit/item_create.php
@@ -170,7 +170,6 @@ webphoto_include_once( 'class/edit/ext_build.php' );
 webphoto_include_once( 'class/edit/cont_create.php' );
 webphoto_include_once( 'class/edit/jpeg_create.php' );
 webphoto_include_once( 'class/edit/middle_thumb_create.php' );
-webphoto_include_once( 'class/edit/image_create.php' );
 webphoto_include_once( 'class/edit/small_create.php' );
 webphoto_include_once( 'class/edit/flash_create.php' );
 webphoto_include_once( 'class/edit/docomo_create.php' );
@@ -181,6 +180,7 @@ webphoto_include_once( 'class/edit/swf_create.php' );
 webphoto_include_once( 'class/edit/video_middle_thumb_create.php' );
 webphoto_include_once( 'class/edit/video_images_create.php' );
 webphoto_include_once( 'class/edit/search_build.php' );
+webphoto_include_once( 'class/edit/file_action.php' );
 webphoto_include_once( 'class/edit/factory_create.php' );
 webphoto_include_once( 'class/edit/external_build.php' );
 webphoto_include_once( 'class/edit/embed_build.php' );

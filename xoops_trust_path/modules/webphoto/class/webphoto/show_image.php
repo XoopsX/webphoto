@@ -1,5 +1,5 @@
 <?php
-// $Id: show_image.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: show_image.php,v 1.6 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// adjust_large_size()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 // 2009-03-15 K.OHWADA
@@ -33,6 +35,8 @@ class webphoto_show_image
 	var $_kind_class;
 	var $_utility_class;
 
+	var $_max_large_width;
+	var $_max_large_height;
 	var $_max_middle_width;
 	var $_max_middle_height;
 	var $_max_thumb_width;
@@ -59,6 +63,9 @@ function webphoto_show_image( $dirname , $trust_dirname )
 		$dirname , $trust_dirname );
 	$this->_file_handler  =& webphoto_file_handler::getInstance( 
 		$dirname , $trust_dirname  );
+
+	list( $this->_max_large_width, $this->_max_large_height )
+		= $this->_config_class->get_large_wh();
 
 	list( $this->_max_middle_width, $this->_max_middle_height )
 		= $this->_config_class->get_middle_wh();
@@ -143,6 +150,7 @@ function build_image_by_item_row( $item_row, $default )
 
 	$cont_row   = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
 	$thumb_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_THUMB );
+	$large_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_LARGE );
 	$middle_row = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE );
 	$small_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_SMALL );
 
@@ -150,10 +158,12 @@ function build_image_by_item_row( $item_row, $default )
 		'item_row'       => $item_row ,
 		'cont_row'       => $cont_row ,
 		'thumb_row'      => $thumb_row ,
+		'large_row'      => $large_row ,
 		'middle_row'     => $middle_row ,
 		'small_row'      => $small_row ,
 		'photo_default'  => $default ,
 		'thumb_default'  => $default ,
+		'large_default'  => $default ,
 		'middle_default' => $default ,
 		'small_default'  => $default ,
 	);
@@ -170,10 +180,12 @@ function build_image_by_param( $param )
 	$item_row       = $param['item_row'] ;
 	$cont_row       = $param['cont_row'] ;
 	$thumb_row      = $param['thumb_row'] ;
+	$large_row      = $param['large_row'] ;
 	$middle_row     = $param['middle_row'] ;
 	$small_row      = $param['small_row'] ;
 	$photo_default  = $param['photo_default'] ;
 	$thumb_default  = $param['thumb_default'] ;
+	$large_default  = $param['large_default'] ;
 	$middle_default = $param['middle_default'] ;
 	$small_default  = $param['small_default'] ;
 
@@ -188,6 +200,9 @@ function build_image_by_param( $param )
 	$img_thumb_src     = '';
 	$img_thumb_width   = 0 ;
 	$img_thumb_height  = 0 ;
+	$img_large_src     = '';
+	$img_large_width   = 0 ;
+	$img_large_height  = 0 ;
 	$img_middle_src    = '';
 	$img_middle_width  = 0 ;
 	$img_middle_height = 0 ;
@@ -197,6 +212,7 @@ function build_image_by_param( $param )
 	$external_url    = $item_row['item_external_url'] ;
 	$external_thumb  = $item_row['item_external_thumb'] ;
 	$external_middle = $item_row['item_external_middle'] ;
+	$external_large  = '' ;
 
 // BUG: not work when external image
 	$is_image_kind   = $this->is_src_image_kind( $kind );
@@ -209,6 +225,9 @@ function build_image_by_param( $param )
 
 	list( $thumb_url, $thumb_width, $thumb_height ) =
 		$this->build_show_file_image( $thumb_row ) ;
+
+	list( $large_url, $large_width, $large_height ) =
+		$this->build_show_file_image( $large_row ) ;
 
 	list( $middle_url, $middle_width, $middle_height ) =
 		$this->build_show_file_image( $middle_row ) ;
@@ -267,6 +286,42 @@ function build_image_by_param( $param )
 		$img_thumb_height = 1;
 	}
 
+// large image
+	if ( $large_url ) {
+		$img_large_src    = $large_url;
+		$img_large_width  = $large_width ;
+		$img_large_height = $large_height ;
+
+	} elseif ( $external_large ) {
+		$img_large_src    = $external_large ;
+
+	} elseif ( $cont_url && $is_image_kind ) {
+		$img_large_src    = $cont_url;
+		$img_large_width  = $cont_width;
+		$img_large_height = $cont_height;
+
+	} elseif ( $external_url && $is_image_kind ) {
+		$img_large_src    = $external_url ;
+
+	} elseif ( $thumb_url ) {
+		$img_large_src    = $thumb_url ;
+		$img_large_width  = $thumb_width ;
+		$img_large_height = $thumb_height ;
+
+	} elseif ( $external_thumb ) {
+		$img_large_src    = $external_thumb ;
+
+	} elseif ( $icon_url ) {
+		$img_large_src    = $icon_url ;
+		$img_large_width  = $icon_width;
+		$img_large_height = $icon_height;
+
+	} elseif( $large_default ) {
+		$img_large_src    = $this->_DEFAULT_ICON_SRC;
+		$img_large_width  = 1;
+		$img_large_height = 1;
+	}
+
 // middle image
 	if ( $middle_url ) {
 		$img_middle_src    = $middle_url;
@@ -303,6 +358,9 @@ function build_image_by_param( $param )
 		$img_middle_height = 1;
 	}
 
+	list( $img_large_width, $img_large_height )
+		= $this->adjust_middle_size( $img_large_width, $img_large_height );
+
 	list( $img_middle_width, $img_middle_height )
 		= $this->adjust_middle_size( $img_middle_width, $img_middle_height );
 
@@ -316,6 +374,9 @@ function build_image_by_param( $param )
 		'thumb_url'         => $thumb_url ,
 		'thumb_width'       => $thumb_width ,
 		'thumb_height'      => $thumb_height ,
+		'large_url'         => $large_url ,
+		'large_width'       => $large_width ,
+		'large_height'      => $large_height ,
 		'middle_url'        => $middle_url ,
 		'middle_width'      => $middle_width ,
 		'middle_height'     => $middle_height ,
@@ -329,6 +390,9 @@ function build_image_by_param( $param )
 		'img_photo_src'     => $img_photo_src ,
 		'img_photo_width'   => $img_photo_width ,
 		'img_photo_height'  => $img_photo_height ,
+		'img_large_src'     => $img_large_src ,
+		'img_large_width'   => $img_large_width ,
+		'img_large_height'  => $img_large_height ,
 		'img_middle_src'    => $img_middle_src ,
 		'img_middle_width'  => $img_middle_width ,
 		'img_middle_height' => $img_middle_height ,
@@ -381,6 +445,11 @@ function is_src_image_kind( $kind )
 function adjust_thumb_size( $width, $height )
 {
 	return $this->adjust_image_size( $width, $height, $this->_max_thumb_width, $this->_max_thumb_height );
+}
+
+function adjust_large_size( $width, $height )
+{
+	return $this->adjust_image_size( $width, $height, $this->_max_large_width, $this->_max_large_height );
 }
 
 function adjust_middle_size( $width, $height )

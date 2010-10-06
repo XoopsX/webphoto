@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf.php,v 1.8 2010/06/16 22:24:47 ohwada Exp $
+// $Id: pdf.php,v 1.9 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// create_image() -> create_jpeg()
 // 2010-03-24 K.OHWADA
 // create_jpeg_by_pdftops()
 // 2009-11-11 K.OHWADA
@@ -69,73 +71,28 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// create image
+// create jpeg
 //---------------------------------------------------------
-function create_image( $item_id, $src_file, $icon_name=null )
-{
-	if ( empty($src_file) ) {
-		return null ;
-	}
-	if ( ! is_file($src_file) ) {
-		return null ;
-	}
-	if ( ! $this->_cfg_use_xpdf ) {
-		return null ;
-	}
-
-	if ( isset( $this->_cached[ $item_id ] ) ) {
-		$created_file = $this->_cached[ $item_id ];
-	} else {
-		$created_file = $this->create_jpeg( $item_id, $src_file );
-	}
-
-	if ( ! is_file($created_file) ) {
-		$arr = array(
-			'flag'   => false ,
-			'errors' => $this->get_errors(),
-		);
-		return $arr ;
-	}
-
-	$this->_cached[ $item_id ] = $created_file ;
-
-	if( empty($icon_name) ) {
-		$icon_name = $this->_PDF_EXT ;
-	}
-
-	$arr = array(
-		'flag'      => true ,
-		'item_id'   => $item_id ,
-		'src_file'  => $created_file ,
-		'src_ext'   => $this->_JPEG_EXT ,
-		'icon_name' => $icon_name ,
-	);
-	return $arr;
-}
-
-function create_jpeg( $item_id, $pdf_file )
+function create_jpeg( $pdf_file, $jpeg_file )
 {
 	if ( !$this->_cfg_use_xpdf ) {
-		return false;
+		return 0;
+	}
+
+	if ( !file_exists($pdf_file) ) {
+		return 0;
 	}
 
 	if( $this->pdftoppm_exists() ) {
-		$ret = $this->create_jpeg_by_pdftoppm( $item_id, $pdf_file );
+		$this->create_jpeg_by_pdftoppm( $pdf_file, $jpeg_file );
 	} else {
-		$ret = $this->create_jpeg_by_pdftops( $item_id, $pdf_file );
+		$this->create_jpeg_by_pdftops(  $pdf_file, $jpeg_file );
 	}
-	return $ret;
 
-	switch( $this->_ini_cmd_pdf_jpeg )
-	{
-	case 'pdftoppm':
-		$ret = $this->create_jpeg_by_pdftoppm( $item_id, $pdf_file );
-
-	case 'pdftops':
-	default:
-		$ret = $this->create_jpeg_by_pdftops( $item_id, $pdf_file );
+	if ( file_exists($jpeg_file) ) {
+		return 1;
 	}
-	return $ret;
+	return -1;
 }
 
 function pdftoppm_exists()
@@ -143,11 +100,9 @@ function pdftoppm_exists()
 	return $this->_xpdf_class->pdftoppm_exists();
 }
 
-function create_jpeg_by_pdftoppm( $item_id, $pdf_file )
+function create_jpeg_by_pdftoppm( $pdf_file, $jpeg_file )
 {
-	$prefix   = $this->build_prefix( $item_id );
-	$root     = $this->_TMP_DIR .'/'. $prefix;
-	$jpeg_file = $this->build_jpeg_file( $item_id );
+	$root     = $this->_TMP_DIR .'/'. uniqid('ppm_');
 	$ppm_file = $this->_xpdf_class->pdf_to_ppm( $pdf_file, $root );
 
 	if ( !is_file($ppm_file) ) {
@@ -155,13 +110,13 @@ function create_jpeg_by_pdftoppm( $item_id, $pdf_file )
 		return false;
 	}
 
-	return $this->convert_to_jpeg( $ppm_file, $jpeg_file );
+	$this->convert_to_jpeg( $ppm_file, $jpeg_file );
+	return true;
 }
 
-function create_jpeg_by_pdftops( $item_id, $pdf_file )
+function create_jpeg_by_pdftops( $pdf_file, $jpeg_file )
 {
-	$jpeg_file = $this->build_jpeg_file( $item_id );
-	$ps_file   = $this->build_ps_file( $item_id );
+	$ps_file = $this->build_file_by_prefix_ext( uniqid('ps_'), $this->_PS_EXT );
 	$this->_xpdf_class->pdf_to_ps( $pdf_file, $ps_file );
 
 	if ( !is_file($ps_file) ) {
@@ -169,23 +124,20 @@ function create_jpeg_by_pdftops( $item_id, $pdf_file )
 		return false;
 	}
 
-	return $this->convert_to_jpeg( $ps_file, $jpeg_file );
-}
-
-function build_ps_file( $item_id )
-{
-	return $this->build_file_by_prefix_ext( 
-		$this->build_prefix( $item_id ), $this->_PS_EXT );
+	$this->convert_to_jpeg( $ps_file, $jpeg_file );
+	return true;
 }
 
 function convert_to_jpeg( $src_file, $jpeg_file )
 {
 	$this->_imagemagick_class->convert( $src_file, $jpeg_file );
+
+// remove temp file
 	unlink( $src_file );
+
 	if ( $this->_flag_chmod ) {
 		$this->chmod_file( $jpeg_file );
 	}
-	return $jpeg_file;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: image_cmd.php,v 1.8 2009/04/21 15:14:54 ohwada Exp $
+// $Id: image_cmd.php,v 1.9 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// same_ext()
 // 2009-04-21 K.OHWADA
 // chmod_file()
 // 2009-01-10 K.OHWADA
@@ -53,6 +55,7 @@ class webphoto_lib_image_cmd
 	var $_PIPEID_NETPBM  = 2 ;
 
 	var $_CODE_READFAULT  = -1 ;
+	var $_CODE_FAILED     = -2 ;
 	var $_CODE_CREATED    = 1 ;
 	var $_CODE_COPIED     = 2 ;
 	var $_CODE_SKIPPED    = 3 ;
@@ -200,9 +203,10 @@ function exec_resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rot
 	$width       = 0 ;
 	$height      = 0 ;
 	$flag_resize = $this->require_resize( $src_file, $max_width, $max_height );
+	$flag_same   = $this->same_ext( $src_file , $dst_file );
 
 	// only copy when small enough and no rotate
-	if (( !$flag_resize )&&( $rotate == 0 )) {
+	if (( !$flag_resize )&&( $rotate == 0 )&& $flag_same ) {
 		$this->copy_file( $src_file , $dst_file ) ;
 		return $this->_CODE_COPIED;	// copied
 	}
@@ -237,8 +241,12 @@ function exec_resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rot
 	}
 
 	// didn't exec convert, rename it.
-	$this->copy_file( $src_file , $dst_file ) ;
-	return $this->_CODE_COPIED;	// copied
+	if ( $flag_same ) {
+		$this->copy_file( $src_file , $dst_file ) ;
+		return $this->_CODE_COPIED;	// copied
+	}
+
+	return $this->_CODE_FAILED ;
 }
 
 function require_resize( $src_file, $max_width, $max_height )
@@ -320,9 +328,17 @@ function check_file( $file )
 
 function chmod_file( $file, $mode )
 {
-	if ( ! $this->_ini_safe_mode ) {
+	if ( ! $this->_ini_safe_mode && is_file($file) ) {
 		chmod( $file, $mode );
 	}
+}
+
+function same_ext( $src_file, $dst_file )
+{
+	if ( $this->parse_ext( $src_file ) == $this->parse_ext( $dst_file ) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.6 2009/01/24 07:10:39 ohwada Exp $
+// $Id: config.php,v 1.7 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// get_large_wh()
 // 2009-01-10 K.OHWADA
 // get_work_dir()
 // 2008-10-01 K.OHWADA
@@ -112,24 +114,30 @@ function get_medias_path()
 	return $this->_get_path_by_name( 'mediaspath' );
 }
 
+function get_large_wh()
+{
+	return $this->get_wh_common( 'width', 'height' );
+}
+
 function get_middle_wh()
 {
-	$width  = $this->get_by_name('middle_width');
-	$height = $this->get_by_name('middle_height');
+	return $this->get_wh_common( 'middle_width', 'middle_height' );
+}
 
-	if ( $width && empty($height) ) {
-		$height = $width;
-	} elseif ( empty($width) && $height ) {
-		$width = $height;
-	}
-
-	return array($width, $height);
+function get_small_wh()
+{
+	return $this->get_wh_common( 'small_width', 'small_height' );
 }
 
 function get_thumb_wh()
 {
-	$width  = $this->get_by_name('thumb_width');
-	$height = $this->get_by_name('thumb_height');
+	return $this->get_wh_common( 'thumb_width', 'thumb_height' );
+}
+
+function get_wh_common( $name_width, $name_height )
+{
+	$width  = $this->get_by_name( $name_width );
+	$height = $this->get_by_name( $name_height );
 
 	if ( $width && empty($height) ) {
 		$height = $width;

@@ -1,5 +1,5 @@
 <?php
-// $Id: wav.php,v 1.2 2009/11/29 07:34:23 ohwada Exp $
+// $Id: wav.php,v 1.3 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// get_video_info()
 // 2009-11-11 K.OHWADA
 // $trust_dirname 
 //---------------------------------------------------------
@@ -60,10 +62,10 @@ function create_mp3( $param )
 //---------------------------------------------------------
 // duration
 //---------------------------------------------------------
-function get_duration_size( $param )
+function get_video_info( $param )
 {
 	$src_file = $param['src_file'];
-	return $this->_ffmpeg_class->get_duration_size( $src_file );
+	return $this->_ffmpeg_class->get_video_info( $src_file );
 }
 
 // --- class end ---

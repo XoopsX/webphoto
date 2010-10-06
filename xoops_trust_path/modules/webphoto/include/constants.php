@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.28 2010/09/27 03:42:54 ohwada Exp $
+// $Id: constants.php,v 1.29 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -108,6 +108,7 @@ define("_C_WEBPHOTO_ITEM_KIND_IMAGE_OTHER", 15 ) ;
 
 // v2.30
 define("_C_WEBPHOTO_ITEM_KIND_VIDEO_H264",  16 ) ;
+define("_C_WEBPHOTO_ITEM_KIND_IMAGE_CMYK",  17 ) ;
 
 define("_C_WEBPHOTO_ITEM_KIND_EMBED",   100 ) ;
 define("_C_WEBPHOTO_ITEM_KIND_EXTERNAL_GENERAL", 101 ) ;
@@ -131,6 +132,10 @@ define("_C_WEBPHOTO_ITEM_KIND_GROUP_OTHERS", 9999 ) ;
 define("_C_WEBPHOTO_MIME_KIND_GENERAL",        0 ) ;
 define("_C_WEBPHOTO_MIME_KIND_IMAGE",         10 ) ;
 define("_C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT", 11 ) ;
+
+// v2.30
+define("_C_WEBPHOTO_MIME_KIND_IMAGE_JPEG",    12 ) ;
+
 define("_C_WEBPHOTO_MIME_KIND_VIDEO",         20 ) ;
 define("_C_WEBPHOTO_MIME_KIND_VIDEO_FFMPEG",  21 ) ;
 
@@ -154,7 +159,7 @@ define("_C_WEBPHOTO_MIME_KIND_OFFICE_PPT",    43 ) ;
 define("_C_WEBPHOTO_MIME_KIND_OFFICE_PDF",    44 ) ;
 
 // v1.80 v2.30
-define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav" ) ;
+define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|large|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav" ) ;
 
 define("_C_WEBPHOTO_FILE_KIND_CONT"          , 1 ) ;
 define("_C_WEBPHOTO_FILE_KIND_THUMB"         , 2 ) ;
@@ -179,6 +184,7 @@ define("_C_WEBPHOTO_FILE_KIND_MP3"           , 10 ) ;
 
 // v2.30
 define("_C_WEBPHOTO_FILE_KIND_WAV"           , 11 ) ;
+define("_C_WEBPHOTO_FILE_KIND_LARGE"         , 12 ) ;
 
 define("_C_WEBPHOTO_ITEM_FILE_CONT"          , 'item_file_id_1' ) ;
 define("_C_WEBPHOTO_ITEM_FILE_THUMB"         , 'item_file_id_2' ) ;
@@ -203,6 +209,7 @@ define("_C_WEBPHOTO_ITEM_FILE_MP3"           , 'item_file_id_10' ) ;
 
 // v2.30
 define("_C_WEBPHOTO_ITEM_FILE_WAV"          , 'item_file_id_11' ) ;
+define("_C_WEBPHOTO_ITEM_FILE_LARGE"        , 'item_file_id_12' ) ;
 
 define("_C_WEBPHOTO_PIPEID_GD" ,      0 ) ;
 define("_C_WEBPHOTO_PIPEID_IMAGICK" , 1 ) ;
@@ -375,6 +382,9 @@ define("_C_WEBPHOTO_UPLOAD_FIELD_PLOGO",    "file_plogo");
 // v1.30
 define("_C_WEBPHOTO_UPLOAD_FIELD_SMALL",    "file_small");
 
+// v2.30
+define("_C_WEBPHOTO_UPLOAD_FIELD_JPEG",     "file_jpeg");
+
 // v0.70
 define("_C_WEBPHOTO_EMBED_NAME_GENERAL",  "general" ) ;
 define("_C_WEBPHOTO_INFO_SEPARATOR" , "|" ) ;
@@ -405,6 +415,7 @@ define("_C_WEBPHOTO_CODEINFO_MP3",    "10");
 
 // v2.30
 define("_C_WEBPHOTO_CODEINFO_WAV",    "11");
+define("_C_WEBPHOTO_CODEINFO_LARGE",  "12");
 
 define("_C_WEBPHOTO_CODEINFO_PAGE",   "101");
 define("_C_WEBPHOTO_CODEINFO_SITE",   "102");
@@ -449,6 +460,9 @@ define("_C_WEBPHOTO_CAT_CHILD_ALWAYS" , 2 ) ;
 define("_C_WEBPHOTO_DETAIL_ONCLICK_DEFAULT",  0 ) ;
 define("_C_WEBPHOTO_DETAIL_ONCLICK_IMAGE",    9991 ) ;
 define("_C_WEBPHOTO_DETAIL_ONCLICK_LIGHTBOX", 9992 ) ;
+
+// v2.30
+define("_C_WEBPHOTO_DETAIL_ONCLICK_DOWNLOAD", 9981 ) ;
 
 // v2.00
 define("_C_WEBPHOTO_PERM_LEVEL_PUBLIC", 0 ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.5 2010/03/19 00:23:02 ohwada Exp $
+// $Id: base.php,v 1.6 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// move unlink_path()
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2009-11-11 K.OHWADA
@@ -102,17 +104,6 @@ function format_and_update_item( $row , $flag_force=false )
 		return false ;
 	}
 	return true ;
-}
-
-//---------------------------------------------------------
-// file
-//---------------------------------------------------------
-function unlink_path( $path )
-{
-	$file = XOOPS_ROOT_PATH . $path;
-	if ( $path && $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
-		unlink( $file );
-	}
 }
 
 //---------------------------------------------------------

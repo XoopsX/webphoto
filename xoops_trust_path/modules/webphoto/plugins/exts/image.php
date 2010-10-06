@@ -1,50 +1,50 @@
 <?php
-// $Id: mp3.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
+// $Id: image.php,v 1.1 2010/10/06 02:23:55 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-10-01 K.OHWADA
 //=========================================================
 
-if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
+if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //=========================================================
-// class webphoto_ext_mp3
+// class webphoto_ext_image
 //=========================================================
-class webphoto_ext_mp3 extends webphoto_ext_base
+class webphoto_ext_image extends webphoto_ext_base
 {
-	var $_ffmpeg_class ;
+	var $_image_create_class;
 
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
-function webphoto_ext_mp3( $dirname, $trust_dirname )
+function webphoto_ext_image( $dirname, $trust_dirname )
 {
 	$this->webphoto_ext_base( $dirname, $trust_dirname );
 
-	$this->_ffmpeg_class =& webphoto_ffmpeg::getInstance( $dirname, $trust_dirname );
+	$this->_image_create_class =& webphoto_image_create::getInstance( $dirname );
+	$this->set_debug_by_name( 'IMAGE' );
 }
 
 //---------------------------------------------------------
-// check type
+// check ext
 //---------------------------------------------------------
 function is_ext( $ext )
 {
-	return $this->is_audio_ext( $ext );
-}
-
-function is_audio_ext( $ext )
-{
-	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_AUDIO_MP3 );
+	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_IMAGE );
 }
 
 //---------------------------------------------------------
-// duration
+// create jpeg
 //---------------------------------------------------------
-function get_video_info( $param )
+function create_jpeg( $param )
 {
-	$src_file = $param['src_file'];
-	return $this->_ffmpeg_class->get_video_info( $src_file );
+	$src_file   = $param['src_file'] ;
+	$jpeg_file  = $param['jpeg_file'] ;
+	$rotate     = $param['rotate'] ;
+
+	return $this->_image_create_class->cmd_rotate( 
+		$src_file, $jpeg_file, $rotate );
 }
 
 // --- class end ---

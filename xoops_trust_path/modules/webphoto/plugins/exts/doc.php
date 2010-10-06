@@ -1,5 +1,5 @@
 <?php
-// $Id: doc.php,v 1.2 2009/11/29 07:34:23 ohwada Exp $
+// $Id: doc.php,v 1.3 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// create_image() -> create_jpeg()
 // 2009-11-11 K.OHWADA
 // $trust_dirname 
 //---------------------------------------------------------
@@ -42,11 +44,6 @@ function webphoto_ext_doc( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function is_ext( $ext )
 {
-	return $this->is_doc_ext( $ext );
-}
-
-function is_doc_ext( $ext )
-{
 	return $this->match_ext_kind( $ext, _C_WEBPHOTO_MIME_KIND_OFFICE_DOC );
 }
 
@@ -61,14 +58,13 @@ function create_pdf( $param )
 }
 
 //---------------------------------------------------------
-// create image
+// create jpeg
 //---------------------------------------------------------
-function create_image( $param )
+function create_jpeg( $param )
 {
-	$item_id  = $param['item_id'];
-	$item_ext = $param['item_ext'];
-	$file_pdf = isset($param['file_pdf']) ? $param['file_pdf'] : null ;
-	return $this->_pdf_class->create_image( $item_id, $file_pdf, $item_ext );
+	$pdf_file  = $param['pdf_file'] ;
+	$jpeg_file = $param['jpeg_file'] ;
+	return $this->_pdf_class->create_jpeg( $pdf_file, $jpeg_file );
 }
 
 //---------------------------------------------------------

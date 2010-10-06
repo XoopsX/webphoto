@@ -1,5 +1,5 @@
 <?php
-// $Id: image_create.php,v 1.11 2009/01/24 07:10:39 ohwada Exp $
+// $Id: image_create.php,v 1.12 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// cmd_rotate()
 // 2009-01-10 K.OHWADA
 // merge webphoto_image_info
 // add_icon()
@@ -115,6 +117,16 @@ function cmd_resize_rotate( $src_file, $dst_file, $max_width, $max_height, $rota
 {
 	return $this->_image_cmd_class->resize_rotate( 
 		 $src_file, $dst_file, $max_width, $max_height, $rotate );
+}
+
+function cmd_rotate( $src_file, $dst_file, $rotate=0 )
+{
+	$ret = $this->_image_cmd_class->resize_rotate( 
+		 $src_file, $dst_file, 0, 0, $rotate );
+	if ( $ret < 0 ) {
+		return -1;
+	}
+	return 1;
 }
 
 function cmd_resize( $src_file, $dst_file, $max_width, $max_height )

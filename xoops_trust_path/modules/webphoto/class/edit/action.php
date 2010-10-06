@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.14 2010/03/19 00:23:02 ohwada Exp $
+// $Id: action.php,v 1.15 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// webphoto_edit_file_action
 // 2010-03-18 K.OHWADA
 // format_and_update_item()
 // 2010-02-15 K.OHWADA
@@ -60,6 +62,9 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_edit_action extends webphoto_edit_submit
 {
 	var $_delete_class;
+	var $_file_action_class;
+
+	var $_delete_error = '';
 
 //---------------------------------------------------------
 // constructor
@@ -70,6 +75,8 @@ function webphoto_edit_action( $dirname , $trust_dirname )
 
 	$this->_delete_class 
 		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname );
+	$this->_file_action_class   
+		=& webphoto_edit_file_action::getInstance( $dirname , $trust_dirname );
 }
 
 // for admin_photo_manage admin_catmanager
@@ -198,9 +205,8 @@ function modify_exec( $item_row )
 	$this->_row_update = $item_row ;
 
 	$photo_tmp_name = null;
-	$thumb_tmp_name = null;
+	$jpeg_tmp_name  = null;
 	$image_info     = null;
-
 	$file_id_array  = null ;
 	$cont_id        = 0 ;
 
@@ -229,23 +235,15 @@ function modify_exec( $item_row )
 	}
 
 // fetch thumb middle
-	if ( $this->_ini_file_thumb ) {
-		$this->upload_fetch_thumb();
-	}
-	if ( $this->_ini_file_middle ) {
-		$this->upload_fetch_middle();
-	}
-	if ( $this->_ini_file_small ) {
-		$this->upload_fetch_small();
+	if ( $this->_ini_file_jpeg ) {
+		$this->upload_fetch_jpeg();
 	}
 
 	$photo_name  = $this->_photo_tmp_name;
-	$thumb_name  = $this->_thumb_tmp_name;
-	$middle_name = $this->_middle_tmp_name;
-	$small_name  = $this->_small_tmp_name;
+	$jpeg_name   = $this->_jpeg_tmp_name;
 
 // no upload
-	if ( empty($photo_name) && empty($thumb_name) && empty($middle_name) && empty($small_name) ) {
+	if ( empty($photo_name) && empty($jpeg_name) ) {
 		return $this->update_photo_no_image( $item_row );
 	}
 
@@ -253,6 +251,7 @@ function modify_exec( $item_row )
 	if ( $photo_name ) {
 		$item_row = $this->_factory_create_class->build_item_row_photo( 
 			$item_row, $photo_name, $this->_photo_media_name );
+		$item_row = $this->delete_file_jpeg_if_upload_jpeg( $item_row );
 	}
 
 	$ret = $this->create_media_file_params( $item_row, $is_submit=false );
@@ -289,7 +288,7 @@ function modify_fetch_photo()
 	if ( ! $this->check_edit('file_photo') ) {
 		return 0;	// no action
 	}
-	if ( ! $this->check_xoops_upload_file( $this->_ini_file_thumb ) ) {
+	if ( ! $this->check_xoops_upload_file( $this->_ini_file_jpeg ) ) {
 		return _C_WEBPHOTO_ERR_NO_SPECIFIED;
 	}
 	$ret = $this->upload_fetch_photo( true );
@@ -343,19 +342,24 @@ function update_all_file_duration( $item_row )
 	$duration = $item_row['item_duration'] ;
 
 	$cont_duration = 0 ; 
-	$cont_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	$cont_row = $this->_file_action_class->get_file_row_by_item_name( $item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
 	if ( is_array($cont_row) ) {
 		$cont_duration = $cont_row['file_duration'] ;
 	}
 
 	if ( $duration != $cont_duration ) {
-		$this->update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-		$this->update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
-		$this->update_file_duration( $duration, $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
+		$this->update_file_duration( $item_row, $duration, _C_WEBPHOTO_ITEM_FILE_CONT );
+		$this->update_file_duration( $item_row, $duration, _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH );
+		$this->update_file_duration( $item_row, $duration, _C_WEBPHOTO_ITEM_FILE_VIDEO_DOCOMO );
 	}
 }
 
-function update_file_duration( $duration, $item_row, $kind )
+function update_file_duration( $item_row, $duration, $item_name )
+{
+	return $this->_file_action_class->update_duration( $item_row, $duration, $item_name );
+}
+
+function XXXupdate_file_duration( $duration, $item_row, $kind )
 {
 	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
 	if ( !is_array($file_row ) ) {
@@ -492,14 +496,14 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 
 // create video thumb
 	if ( $flag_thumb && is_array($param) ) {
-		$this->create_video_plural_images( $param ) ;
+		$this->create_video_images( $param ) ;
 	}
 
 // update
 	$row_update = $item_row ;
 
 	if ( is_array($flash_param) ) {
-		$flash_id = $this->_factory_create_class->insert_file( $item_id, $flash_param );
+		$flash_id = $this->insert_file_by_param( $item_id, $flash_param );
 
 // success
 		if ( $flash_id > 0 ) {
@@ -521,6 +525,32 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 	$this->_row_update = $row_update ;
 
 	return 0;
+}
+
+function create_flash_param( $photo_param )
+{
+	$flash_param = $this->_factory_create_class->create_flash_param( $photo_param );
+	if ( $this->_factory_create_class->get_flag_flash_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_FLASH') ) ;
+	}
+	return $flash_param;
+}
+
+function create_video_images( $param )
+{
+	$ret = $this->_factory_create_class->create_video_images( $param );
+	if ( $this->_factory_create_class->get_flag_video_image_created() ) {
+		$this->_is_video_thumb_form = true;
+	}
+	if ( $this->_factory_create_class->get_flag_video_image_failed() ) {
+		$this->set_msg_array( $this->get_constant('ERR_VIDEO_THUMB') ) ;
+	}
+	return $ret;
+}
+
+function insert_file_by_param( $item_id, $param )
+{
+	return $this->_factory_create_class->insert_file_by_param( $item_id, $param );
 }
 
 //---------------------------------------------------------
@@ -552,22 +582,38 @@ function cont_delete( $item_row, $url_redirect )
 		$item_row, _C_WEBPHOTO_ITEM_FILE_CONT, $url_redirect, true );
 }
 
-function thumb_delete( $item_row, $url_redirect )
+function jpeg_thumb_delete( $item_row, $flag_thmub=true )
 {
-	$this->file_delete_common( 
-		$item_row, _C_WEBPHOTO_ITEM_FILE_THUMB, $url_redirect, true );
-}
+	$ret = $this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_JPEG );
+	if ( $ret == -1 ) {
+		$this->_delete_error = 'No file record' ;
+		return false;
+	}
+	if ( $ret == -2 ) {
+		return false;
+	}
 
-function middle_delete( $item_row, $url_redirect )
-{
-	$this->file_delete_common( 
-		$item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE, $url_redirect, true );
-}
+	$item_row[ _C_WEBPHOTO_ITEM_FILE_JPEG ] = 0 ;
 
-function small_delete( $item_row, $url_redirect )
-{
-	$this->file_delete_common( 
-		$item_row, _C_WEBPHOTO_ITEM_FILE_SMALL, $url_redirect, true );
+	if ( $flag_thmub ) {
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_THUMB );
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_LARGE );
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE );
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_SMALL );
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_THUMB]   = 0 ;
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_LARGE ]  = 0 ;
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_MIDDLE ] = 0 ;
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_SMALL ]  = 0 ;
+	}
+
+	$item_row = $this->_factory_create_class->build_row_icon_if_empty( $item_row );
+	$ret = $this->format_and_update_item( $item_row );
+	if ( !$ret ) {
+		$this->_delete_error = $this->get_format_error() ;
+		return false;
+	}
+
+	return true;
 }
 
 function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirect )
@@ -576,17 +622,13 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 	$file_id = $item_row[ $item_name ] ;
 	$error   = '' ;
 
-	$file_row = $this->_file_handler->get_row_by_id( $file_id );
-	if ( ! is_array($file_row ) ) {
+	$ret = $this->delete_file( $item_row, $item_name );
+	if ( $ret == -1 ) {
 		redirect_header( $url, $this->_TIME_FAILED, 'No file record' ) ;
 		exit() ;
 	}
-
-	$this->unlink_path( $file_row['file_path'] );
-
-	$ret = $this->_file_handler->delete_by_id( $file_id );
-	if ( !$ret ) {
-		$error .= $this->_file_handler->get_format_error() ;
+	if ( $ret == -2 ) {
+		$error .= $this->_delete_error;
 	}
 
 // BUG: not clear file id when delete file
@@ -608,6 +650,24 @@ function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirec
 	}
 
 	return true;
+}
+
+function delete_file_jpeg_if_upload_jpeg( $item_row )
+{
+	if ( $this->is_jpeg_ext($item_row['item_ext']) ) {
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_JPEG );
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_JPEG ] = 0 ;
+	}
+	return $item_row ;
+}
+
+function delete_file( $item_row, $item_name )
+{
+	$ret = $this->_file_action_class->delete_file( $item_row, $item_name );
+	if ( $ret == -2 ) {
+		$this->_delete_error = $this->_file_action_class->get_format_error() ;
+	}
+	return $ret;
 }
 
 //---------------------------------------------------------

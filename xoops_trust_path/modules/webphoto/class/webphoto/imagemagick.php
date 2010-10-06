@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemagick.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: imagemagick.php,v 1.3 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// create_jpeg_from_cmyk()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
 //---------------------------------------------------------
@@ -26,6 +28,7 @@ class webphoto_imagemagick extends webphoto_cmd_base
 	var $_PIPEID_IMAGICK = _C_WEBPHOTO_PIPEID_IMAGICK ;
 
 	var $_CMD_CONVERT = 'convert';
+	var $_CMYK_OPTION = '-colorspace RGB';
 
 //---------------------------------------------------------
 // constructor
@@ -54,8 +57,21 @@ function &getInstance( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
-// create image
+// create jpeg
 //---------------------------------------------------------
+function create_jpeg_from_cmyk( $src_file, $dst_file, $rotate=0, $option=null )
+{
+	$new_option  = $this->_CMYK_OPTION;
+
+	if ( $rotate > 0 ) {
+		$new_option .= ' -rotate '. $rotate ;
+	}
+
+	$new_option .= ' '.$option;
+
+	return $this->create_jpeg( $src_file, $dst_file, $new_option );
+}
+
 function create_jpeg( $src_file, $dst_file, $option=null )
 {
 	if ( $this->_cfg_imagingpipe != $this->_PIPEID_IMAGICK ) {

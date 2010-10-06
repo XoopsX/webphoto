@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.4 2010/03/19 00:23:02 ohwada Exp $
+// $Id: exif.php,v 1.5 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// build_row_exif() -> get_exif()
 // 2010-03-18 K.OHWADA
 // nothing to do
 //---------------------------------------------------------
@@ -22,8 +24,6 @@ class webphoto_exif
 {
 	var $_exif_class;
 	var $_utility_class;
-
-	var $_GMAP_ZOOM = _C_WEBPHOTO_GMAP_ZOOM ;
 
 //---------------------------------------------------------
 // constructor
@@ -46,42 +46,15 @@ function &getInstance()
 //---------------------------------------------------------
 // exif
 //---------------------------------------------------------
-function build_row_exif( $row, $file )
+function get_exif( $file )
 {
-	$flag = 1 ;
-
 	$info = $this->_exif_class->read_file( $file );
 	if ( !is_array($info) ) {
 		return null ; // no action
 	}
 
-	$datetime  = $this->exif_to_mysql_datetime( $info ) ;
-	$equipment = $info['equipment'] ;
-	$latitude  = $info['latitude'] ;
-	$longitude = $info['longitude'] ;
-	$exif      = $info['all_data'] ;
-
-	if ( $datetime ) {
-		$row['item_datetime'] = $datetime ;
-	}
-	if ( $equipment ) {
-		$row['item_equipment'] = $equipment ;
-	}
-	if ( ( $latitude != 0 )||( $longitude != 0 ) ) {
-		$row['item_gmap_latitude']  = $latitude ;
-		$row['item_gmap_longitude'] = $longitude ;
-		$row['item_gmap_zoom']      = $this->_GMAP_ZOOM ;
-	}
-	if ( $exif ) {
-		$row['item_exif'] = $exif ;
-		$flag = 2 ;
-	}
-
-	$arr = array(
-		'flag' => $flag,
-		'row'  => $row,
-	);
-	return $arr ;
+	$info['datetime_mysql'] = $this->exif_to_mysql_datetime( $info ) ;
+	return $info ;
 }
 
 function exif_to_mysql_datetime( $exif )
@@ -97,11 +70,6 @@ function exif_to_mysql_datetime( $exif )
 	if ( $time <= 0 ) { return false; }
 
 	return $this->time_to_mysql_datetime( $time );
-}
-
-function get_row()
-{
-	return $this->_row ;
 }
 
 //---------------------------------------------------------

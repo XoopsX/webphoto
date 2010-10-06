@@ -1,9 +1,9 @@
 <?php
-// $Id: audio_ffmpeg.php,v 1.1 2010/09/27 03:44:45 ohwada Exp $
+// $Id: audio_ffmpeg.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 //=========================================================
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -52,10 +52,10 @@ function create_wav( $param )
 //---------------------------------------------------------
 // duration
 //---------------------------------------------------------
-function get_duration_size( $param )
+function get_video_info( $param )
 {
 	$src_file = $param['src_file'];
-	return $this->_ffmpeg_class->get_duration_size( $src_file );
+	return $this->_ffmpeg_class->get_video_info( $src_file );
 }
 
 // --- class end ---

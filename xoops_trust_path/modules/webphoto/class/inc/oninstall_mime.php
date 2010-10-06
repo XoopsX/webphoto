@@ -1,9 +1,9 @@
 <?php
-// $Id: oninstall_mime.php,v 1.1 2010/09/27 03:44:45 ohwada Exp $
+// $Id: oninstall_mime.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 //=========================================================
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -418,9 +418,9 @@ function _mime_update_record_ffmpeg_s()
 function _mime_update_record_kind_s()
 {
 	$this->_mime_update_record_kind( 'gif',  _C_WEBPHOTO_MIME_KIND_IMAGE );
-	$this->_mime_update_record_kind( 'jpg',  _C_WEBPHOTO_MIME_KIND_IMAGE );
-	$this->_mime_update_record_kind( 'jpeg', _C_WEBPHOTO_MIME_KIND_IMAGE );
 	$this->_mime_update_record_kind( 'png',  _C_WEBPHOTO_MIME_KIND_IMAGE );
+	$this->_mime_update_record_kind( 'jpg',  _C_WEBPHOTO_MIME_KIND_IMAGE_JPEG );
+	$this->_mime_update_record_kind( 'jpeg', _C_WEBPHOTO_MIME_KIND_IMAGE_JPEG );
 	$this->_mime_update_record_kind( 'bmp',  _C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT );
 
 	$this->_mime_update_record_kind( 'flv',  _C_WEBPHOTO_MIME_KIND_VIDEO_FLV );

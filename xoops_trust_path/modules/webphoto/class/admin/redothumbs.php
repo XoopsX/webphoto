@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.13 2010/03/19 00:23:02 ohwada Exp $
+// $Id: redothumbs.php,v 1.14 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// webphoto_image_create
 // 2010-03-18 K.OHWADA
 // format_and_update_item()
 // 2009-12-12 K.OHWADA
@@ -43,6 +45,7 @@ class webphoto_admin_redothumbs extends webphoto_edit_base
 	var $_icon_build_class;
 	var $_cont_create_class;
 	var $_middle_thumb_create_class;
+	var $_image_create_class ;
 
 	var $_post_forceredo ;
 	var $_post_removerec ;
@@ -77,14 +80,16 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 
 	$this->_exif_class   =& webphoto_exif::getInstance();
 
-	$this->_delete_class =& webphoto_edit_item_delete::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_cont_create_class =& webphoto_edit_cont_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_middle_thumb_create_class =& webphoto_edit_middle_thumb_create::getInstance( 
-		$dirname , $trust_dirname );
-	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( 
-		$dirname , $trust_dirname );
+	$this->_delete_class 
+		=& webphoto_edit_item_delete::getInstance( $dirname , $trust_dirname );
+	$this->_cont_create_class 
+		=& webphoto_edit_cont_create::getInstance( $dirname , $trust_dirname );
+	$this->_middle_thumb_create_class 
+		=& webphoto_edit_middle_thumb_create::getInstance( $dirname , $trust_dirname );
+	$this->_icon_build_class 
+		=& webphoto_edit_icon_build::getInstance( $dirname , $trust_dirname );
+	$this->_image_create_class 
+		=& webphoto_image_create::getInstance( $dirname );
 
 	$this->_cfg_makethumb    = $this->get_config_by_name('makethumb');
 	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
@@ -614,8 +619,8 @@ function _update_cont_resize()
 
 	$this->rename_file( $cont_file , $tmp_file ) ;
 
-// Fatal error: cont_ceate_class -> cont_create_class
-	$this->_cont_create_class->resize_image( $tmp_file , $cont_file );
+	$this->_image_create_class->cmd_resize_rotate( 
+		$src_file, $dst_file, $this->_cfg_width, $this->_cfg_height );
 
 	$image_param = $this->_get_image_param( $cont_file ) ;
 	if ( !is_array($image_param) ) {

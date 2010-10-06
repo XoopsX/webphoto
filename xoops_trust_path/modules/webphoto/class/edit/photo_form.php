@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.16 2010/09/19 06:43:11 ohwada Exp $
+// $Id: photo_form.php,v 1.17 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// show_file_jpeg()
 // 2010-09-17 K.OHWADA
 // move item_uid_options() to webphoto_admin_item_form
 // 2010-06-06 K.OHWADA
@@ -210,9 +212,12 @@ function build_form_photo( $item_row )
 
 	$show_maxsize_mode = false;
 	$show_file_photo_mode  = false;
+	$show_file_jpeg_mode   = false;
+
 	$show_file_thumb_mode  = false;
 	$show_file_middle_mode = false;
 	$show_file_small_mode  = false;
+
 	$show_file_ids       = false;
 	$show_file_ftp       = false;
 	$show_batch_dir      = false;
@@ -307,10 +312,8 @@ function build_form_photo( $item_row )
 		default:
 			$show_maxsize_mode = true;
 			$show_file_photo_mode  = $this->is_upload_type() ;
-			$show_file_thumb_mode  = true;
-			$show_file_middle_mode = true;
-			$show_file_small_mode  = true;
-			$field_counter    = 4;
+			$show_file_jpeg_mode   = true;
+			$field_counter    = 2;
 			break;
 	}
 
@@ -352,7 +355,6 @@ function build_form_photo( $item_row )
 		'show_item_editor'             => $this->use_item('editor') ,
 		'show_item_codeinfo'           => $this->use_item('codeinfo') ,
 		'show_item_external_url'       => $this->use_item('external_url') ,
-		'show_item_external_middle'    => $this->use_item('external_middle') ,
 		'show_item_external_thumb'     => $this->use_item('external_thumb') ,
 		'show_item_datetime'           => $this->use_item('datetime') ,
 		'show_item_place'              => $this->use_item('place') ,
@@ -370,9 +372,7 @@ function build_form_photo( $item_row )
 		'show_input_item_perm_down'   => $this->show_input_item_perm_down() ,
 
 		'show_file_photo'         => $this->show_file_photo(  $show_file_photo_mode, $is_submit, $is_edit ),
-		'show_file_thumb'         => $this->show_file_thumb(  $show_file_thumb_mode ) ,
-		'show_file_middle'        => $this->show_file_middle( $show_file_middle_mode ) ,
-		'show_file_small'         => $this->show_file_small(  $show_file_small_mode ) ,
+		'show_file_jpeg'          => $this->show_file_jpeg(   $show_file_jpeg_mode ) ,
 		'show_file_ids'           => $show_file_ids ,
 		'show_file_ftp'           => $show_file_ftp ,
 
@@ -427,14 +427,8 @@ function build_form_common( $is_edit )
 	list( $photo_url, $show_file_photo_delete ) 
 		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_CONT, 'item_external_url' );
 
-	list( $thumb_url, $show_file_thumb_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_THUMB, 'item_external_thumb' );
-
-	list( $middle_url, $show_file_middle_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_MIDDLE, 'item_external_middle' );
-
-	list( $small_url, $show_file_small_delete ) 
-		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_SMALL, '' );
+	list( $jpeg_url, $show_file_jpeg_delete ) 
+		= $this->build_file_url( _C_WEBPHOTO_FILE_KIND_JPEG, 'item_external_thumb' );
 
 	list ( $show_thumb_dsc_select, $show_thumb_dsc_embed )
 		= $this->show_thumb_dsc();
@@ -455,9 +449,8 @@ function build_form_common( $is_edit )
 		'show_desc_options_hidden' => ! $show_desc_options ,
 
 		'show_file_photo_delete'  => $show_file_photo_delete ,
-		'show_file_thumb_delete'  => $show_file_thumb_delete ,
-		'show_file_middle_delete' => $show_file_middle_delete ,
-		'show_file_small_delete'  => $show_file_small_delete ,
+		'show_file_jpeg_delete'   => $show_file_jpeg_delete ,
+
 		'show_thumb_dsc_select'   => $show_thumb_dsc_select ,
 		'show_thumb_dsc_embed'    => $show_thumb_dsc_embed ,
 
@@ -503,9 +496,7 @@ function build_form_common( $is_edit )
 		'item_datetime_checkbox_checked'  => $this->build_checkbox_checked( 'item_datetime_checkbox' ) ,
 
 		'photo_url_s'   => $this->sanitize( $photo_url ), 
-		'thumb_url_s'   => $this->sanitize( $thumb_url ), 
-		'middle_url_s'  => $this->sanitize( $middle_url ), 
-		'small_url_s'   => $this->sanitize( $small_url ), 
+		'jpeg_url_s'    => $this->sanitize( $jpeg_url ), 
 		'tags_val_s'    => $this->tags_val_s( $tag_name_array ) ,
 		'embed_src_dsc' => $this->embed_src_dsc() ,
 		'editor_js'     => $this->_editor_js ,
@@ -712,25 +703,9 @@ function show_file_photo( $show_file_photo_mode, $is_submit, $is_edit )
 	return false;
 }
 
-function show_file_thumb( $show_file_thumb_mode )
+function show_file_jpeg( $show_file_jpeg_mode )
 {
-	if ( $show_file_thumb_mode && $this->check_show('file_thumb') ) {
-		return true;
-	}
-	return false;
-}
-
-function show_file_middle( $show_file_middle_mode )
-{
-	if ( $show_file_middle_mode && $this->check_show('file_middle') ) {
-		return true;
-	}
-	return false;
-}
-
-function show_file_small( $show_file_small_mode )
-{
-	if ( $show_file_small_mode && $this->check_show('file_small') ) {
+	if ( $show_file_jpeg_mode && $this->check_show('file_jpeg') ) {
 		return true;
 	}
 	return false;

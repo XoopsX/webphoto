@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.15 2010/01/25 10:03:07 ohwada Exp $
+// $Id: utility.php,v 1.16 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// is_image_cmyk()
 // 2010-01-10 K.OHWADA
 // array_remove()
 // 2009-10-20 K.OHWADA
@@ -623,6 +625,16 @@ function adjust_image_size( $width, $height, $max_width, $max_height )
 	}
 
 	return array( intval($width), intval($height) );
+}
+
+function is_image_cmyk( $file )
+{
+	$size = getimagesize($file);
+	if ( isset($size['channels']) && 
+       ( $size['channels'] == 4 )) {
+    	return true;
+	} 
+	return false;
 }
 
 //---------------------------------------------------------

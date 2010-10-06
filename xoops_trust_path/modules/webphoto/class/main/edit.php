@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.28 2010/02/17 04:34:47 ohwada Exp $
+// $Id: edit.php,v 1.29 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// _jpeg_delete()
 // 2010-02-15 K.OHWADA
 // build_footer_param()
 // 2010-02-01 K.OHWADA
@@ -115,16 +117,8 @@ function check_action()
 			$this->_cont_delete();
 			exit();
 
-		case 'thumb_delete':
-			$this->_thumb_delete();
-			exit();
-
-		case 'middle_delete':
-			$this->_middle_delete();
-			exit();
-
-		case 'small_delete':
-			$this->_small_delete();
+		case 'jpeg_delete':
+			$this->_jpeg_delete();
 			exit();
 
 		case 'flash_delete':
@@ -267,21 +261,15 @@ function _get_action()
 	$post_op            = $this->_post_class->get_post_get_text('op' );
 	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
 	$post_cont_delete   = $this->_post_class->get_post_text('file_photo_delete' );
-	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
-	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
-	$post_small_delete  = $this->_post_class->get_post_text('file_small_delete' );
+	$post_jpeg_delete   = $this->_post_class->get_post_text('file_jpeg_delete' );
 	$post_flash_delete  = $this->_post_class->get_post_text('flash_delete' );
 
 	if ( $post_conf_delete ) {
 		return 'confirm';
 	} elseif ( $post_cont_delete ) {
 		return 'cont_delete';
-	} elseif ( $post_thumb_delete ) {
-		return 'thumb_delete';
-	} elseif ( $post_middle_delete ) {
-		return 'middle_delete';
-	} elseif ( $post_small_delete ) {
-		return 'small_delete';
+	} elseif ( $post_jpeg_delete ) {
+		return 'jpeg_delete';
 	} elseif ( $post_flash_delete ) {
 		return 'flash_delete';
 	} elseif ( $post_op ) {
@@ -454,22 +442,18 @@ function _cont_delete()
 	$this->cont_delete( $item_row, $url_redirect );
 }
 
-function _thumb_delete()
+function _jpeg_delete()
 {
 	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->thumb_delete( $item_row, $url_redirect );
-}
 
-function _middle_delete()
-{
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->middle_delete( $item_row, $url_redirect );
-}
+	$ret = $this->jpeg_thumb_delete( $item_row );
+	if ( !$ret  ) {
+		redirect_header( $url, $this->_TIME_FAILED, $this->_delete_error ) ;
+		exit() ;
+	}
 
-function _small_delete()
-{
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->small_delete( $item_row, $url_redirect );
+	redirect_header( $url_redirect, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
+	exit();
 }
 
 function _flash_delete()

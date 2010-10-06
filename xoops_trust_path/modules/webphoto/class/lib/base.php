@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.18 2010/01/30 02:32:21 ohwada Exp $
+// $Id: base.php,v 1.19 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// is_image_cmyk()
 // 2010-01-10 K.OHWADA
 // is_system_group()
 // 2009-12-06 K.OHWADA
@@ -293,6 +295,11 @@ function check_http_null( $str )
 function adjust_image_size( $width, $height, $max_width, $max_height )
 {
 	return $this->_utility_class->adjust_image_size( $width, $height, $max_width, $max_height );
+}
+
+function is_image_cmyk( $file )
+{
+	return $this->_utility_class->is_image_cmyk( $file );
 }
 
 function build_error_msg( $msg, $title='', $flag_sanitize=true )

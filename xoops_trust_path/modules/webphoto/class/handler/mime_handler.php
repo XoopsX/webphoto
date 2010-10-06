@@ -1,5 +1,5 @@
 <?php
-// $Id: mime_handler.php,v 1.8 2010/09/27 03:42:54 ohwada Exp $
+// $Id: mime_handler.php,v 1.9 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // _C_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
@@ -230,6 +230,10 @@ function get_kind_options()
 	$arr = array(
 		_C_WEBPHOTO_MIME_KIND_GENERAL       => _WEBPHOTO_MIME_KIND_GENERAL ,
 		_C_WEBPHOTO_MIME_KIND_IMAGE         => _WEBPHOTO_MIME_KIND_IMAGE ,
+
+// v2.30
+		_C_WEBPHOTO_MIME_KIND_IMAGE_JPEG    => _WEBPHOTO_MIME_KIND_IMAGE_JPEG ,
+
 		_C_WEBPHOTO_MIME_KIND_IMAGE_CONVERT => _WEBPHOTO_MIME_KIND_IMAGE_CONVERT ,
 		_C_WEBPHOTO_MIME_KIND_VIDEO         => _WEBPHOTO_MIME_KIND_VIDEO ,
 

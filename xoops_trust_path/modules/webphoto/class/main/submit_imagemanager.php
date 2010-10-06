@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.10 2010/03/19 00:23:02 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.11 2010/10/06 02:22:46 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// create_image_params_by_photo()
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2009-04-19 K.OHWADA
@@ -218,6 +220,8 @@ function _insert_media_files( $item_row )
 
 function _create_media_file_params( $item_row )
 {
+	$item_ext  = $item_row['item_ext'] ;
+
 	$this->init_photo_create();
 	$photo_param = $this->build_photo_param( $item_row );
 
@@ -226,20 +230,18 @@ function _create_media_file_params( $item_row )
 		return $ret ;
 	}
 
-	$thumb_param  = null;
-	$middle_param = null;
-
-	if ( is_array($cont_param) ) {
-		$thumb_param  = $this->create_thumb_param_by_photo(  $photo_param );
-		$middle_param = $this->create_middle_param_by_photo( $photo_param );
-	}
-
-	$this->_media_file_params = array(
+	$file_params = array(
 		'cont'   => $cont_param ,
-		'thumb'  => $thumb_param ,
-		'middle' => $middle_param ,
 	);
 
+	if ( is_array($cont_param) ) {
+		$image_param  = $this->create_image_params_by_photo( $photo_param );
+		if ( is_array($image_params) ) {
+			$file_params = $file_params + $image_params ;
+		}
+	}
+
+	$this->_media_file_params = $file_params ;
 	return 0;
 }
 
