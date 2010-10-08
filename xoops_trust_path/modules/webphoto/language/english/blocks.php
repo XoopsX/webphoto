@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.8 2010/04/04 01:33:56 ohwada Exp $
+// $Id: blocks.php,v 1.9 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// Photo -> Photo Video Media
 // 2010-04-04 K.OHWADA
 // use $mydirname
 //---------------------------------------------------------
@@ -42,9 +44,9 @@ define($constpref."LANG_LOADED" , 1 ) ;
 // same as myalbum
 //=========================================================
 
-define($constpref."BTITLE_TOPNEW","Recent Photos");
-define($constpref."BTITLE_TOPHIT","Top Photos");
-define($constpref."BTITLE_RANDOM","Random Photo");
+define($constpref."BTITLE_TOPNEW","Recent Photo Video Media");
+define($constpref."BTITLE_TOPHIT","Top Photo Video Media");
+define($constpref."BTITLE_RANDOM","Random Photo Video Media");
 define($constpref."TEXT_DISP","Display");
 define($constpref."TEXT_STRLENGTH","Max length of photo's title");
 define($constpref."TEXT_CATLIMITATION","Limit by category");
@@ -52,7 +54,7 @@ define($constpref."TEXT_CATLIMITRECURSIVE","with Sub-categories");
 define($constpref."TEXT_BLOCK_WIDTH","Displays max");
 define($constpref."TEXT_BLOCK_WIDTH_NOTES","(if you set this to 0, the thumbnail image displays in its original size.)");
 define($constpref."TEXT_RANDOMCYCLE","Switching cycle of random images (sec)");
-define($constpref."TEXT_COLS","Columns of Photos");
+define($constpref."TEXT_COLS","Columns of Photo Video Media");
 
 //---------------------------------------------------------
 // v0.20

@@ -1,10 +1,16 @@
 <?php
-// $Id: admin.php,v 1.23 2010/02/17 04:34:47 ohwada Exp $
+// $Id: admin.php,v 1.24 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-10-01 K.OHWADA
+// 写真 -> 写真・動画・メディア
+//---------------------------------------------------------
 
 // === define begin ===
 if( !defined("_AM_WEBPHOTO_LANG_LOADED") ) 
@@ -15,6 +21,7 @@ define("_AM_WEBPHOTO_LANG_LOADED" , 1 ) ;
 //=========================================================
 // base on myalbum
 //=========================================================
+
 
 // menu
 define("_AM_WEBPHOTO_MYMENU_TPLSADMIN","テンプレート管理");
@@ -27,16 +34,10 @@ define("_AM_WEBPHOTO_MYMENU_GOTO_MODULE" , "モジュールへ" ) ;
 
 
 // Index (Categories)
-//define( "_AM_WEBPHOTO_H3_FMT_CATEGORIES" , "%s カテゴリー管理" ) ;
-//define( "_AM_WEBPHOTO_CAT_TH_TITLE" , "カテゴリー名" ) ;
-
-define( "_AM_WEBPHOTO_CAT_TH_PHOTOS" , "画像数" ) ;
+define( "_AM_WEBPHOTO_CAT_TH_PHOTOS" , "写真・動画・メディアの数" ) ;
 define( "_AM_WEBPHOTO_CAT_TH_OPERATION" , "操作" ) ;
 define( "_AM_WEBPHOTO_CAT_TH_IMAGE" , "イメージ" ) ;
 define( "_AM_WEBPHOTO_CAT_TH_PARENT" , "親カテゴリー" ) ;
-
-//define( "_AM_WEBPHOTO_CAT_TH_IMGURL" , "イメージのURL" ) ;
-
 define( "_AM_WEBPHOTO_CAT_MENU_NEW" , "カテゴリーの新規作成" ) ;
 define( "_AM_WEBPHOTO_CAT_MENU_EDIT" , "カテゴリーの編集" ) ;
 define( "_AM_WEBPHOTO_CAT_INSERTED" , "カテゴリーを追加しました" ) ;
@@ -46,44 +47,24 @@ define( "_AM_WEBPHOTO_CAT_LINK_MAKETOPCAT" , "トップカテゴリーを追加" ) ;
 define( "_AM_WEBPHOTO_CAT_LINK_ADDPHOTOS" , "このカテゴリーに画像を追加" ) ;
 define( "_AM_WEBPHOTO_CAT_LINK_EDIT" , "このカテゴリーの編集" ) ;
 define( "_AM_WEBPHOTO_CAT_LINK_MAKESUBCAT" , "このカテゴリー下にサブカテゴリー作成" ) ;
-define( "_AM_WEBPHOTO_CAT_FMT_NEEDADMISSION" , "未承認画像あり (%s 枚)" ) ;
-define( "_AM_WEBPHOTO_CAT_FMT_CATDELCONFIRM" , "カテゴリー %s を削除してよろしいですか？ 配下のサブカテゴリーも含め、画像やコメントがすべて削除されます" ) ;
-
+define( "_AM_WEBPHOTO_CAT_FMT_NEEDADMISSION" , "未承認の写真・動画・メディアあり (%s 枚)" ) ;
+define( "_AM_WEBPHOTO_CAT_FMT_CATDELCONFIRM" , "カテゴリー %s を削除してよろしいですか？ 配下のサブカテゴリーも含め、写真・動画・メディアやコメントがすべて削除されます" ) ;
 
 // Admission
-//define( "_AM_WEBPHOTO_H3_FMT_ADMISSION" , "%s 投稿画像の承認" ) ;
-//define( "_AM_WEBPHOTO_TH_SUBMITTER" , "投稿者" ) ;
-//define( "_AM_WEBPHOTO_TH_TITLE" , "タイトル" ) ;
-//define( "_AM_WEBPHOTO_TH_DESCRIPTION" , "説明文" ) ;
-//define( "_AM_WEBPHOTO_TH_CATEGORIES" , "カテゴリー" ) ;
-//define( "_AM_WEBPHOTO_TH_DATE" , "最終更新日" ) ;
-
-
-// Photo Manager
-//define( "_AM_WEBPHOTO_H3_FMT_PHOTOMANAGER" , "%s 画像管理" ) ;
-
-define( "_AM_WEBPHOTO_TH_BATCHUPDATE" , "チェックした画像をまとめて変更する" ) ;
+define( "_AM_WEBPHOTO_TH_BATCHUPDATE" , "チェックした写真・動画・メディアをまとめて変更する" ) ;
 define( "_AM_WEBPHOTO_OPT_NOCHANGE" , "変更なし" ) ;
-define( "_AM_WEBPHOTO_JS_UPDATECONFIRM" , "指定された項目についてのみ、チェックした画像を変更します" ) ;
+define( "_AM_WEBPHOTO_JS_UPDATECONFIRM" , "指定された項目についてのみ、チェックした写真・動画・メディアを変更します" ) ;
 
 
 // Module Checker
-//define( "_AM_WEBPHOTO_H3_FMT_MODULECHECKER" , "myAlbum-P 動作チェッカー (%s)" ) ;
-
 define( "_AM_WEBPHOTO_H4_ENVIRONMENT" , "環境チェック" ) ;
 define( "_AM_WEBPHOTO_PHPDIRECTIVE" , "PHP設定" ) ;
 define( "_AM_WEBPHOTO_BOTHOK" , "両方ok" ) ;
 define( "_AM_WEBPHOTO_NEEDON" , "要on" ) ;
 
 define( "_AM_WEBPHOTO_H4_TABLE" , "テーブルチェック" ) ;
-
-//define( "_AM_WEBPHOTO_PHOTOSTABLE" , "メイン画像テーブル" ) ;
-//define( "_AM_WEBPHOTO_DESCRIPTIONTABLE" , "テキストテーブル" ) ;
-//define( "_AM_WEBPHOTO_CATEGORIESTABLE" , "カテゴリーテーブル" ) ;
-//define( "_AM_WEBPHOTO_VOTEDATATABLE" , "投票データテーブル" ) ;
-
 define( "_AM_WEBPHOTO_COMMENTSTABLE" , "コメントテーブル" ) ;
-define( "_AM_WEBPHOTO_NUMBEROFPHOTOS" , "画像総数" ) ;
+define( "_AM_WEBPHOTO_NUMBEROFPHOTOS" , "写真・動画・メディアの総数" ) ;
 define( "_AM_WEBPHOTO_NUMBEROFDESCRIPTIONS" , "テキスト総数" ) ;
 define( "_AM_WEBPHOTO_NUMBEROFCATEGORIES" , "カテゴリー総数" ) ;
 define( "_AM_WEBPHOTO_NUMBEROFVOTEDATA" , "投票総数" ) ;
@@ -92,26 +73,20 @@ define( "_AM_WEBPHOTO_NUMBEROFCOMMENTS" , "コメント総数" ) ;
 define( "_AM_WEBPHOTO_H4_CONFIG" , "設定チェック" ) ;
 define( "_AM_WEBPHOTO_PIPEFORIMAGES" , "画像処理プログラム" ) ;
 
-//define( "_AM_WEBPHOTO_DIRECTORYFORPHOTOS" , "メイン画像ディレクトリ" ) ;
-//define( "_AM_WEBPHOTO_DIRECTORYFORTHUMBS" , "サムネイルディレクトリ" ) ;
-
 define( "_AM_WEBPHOTO_ERR_LASTCHAR" , "エラー: 最後の文字の'/'は必要ありません" ) ;
 define( "_AM_WEBPHOTO_ERR_FIRSTCHAR" , "エラー: 最初の文字は'/'でなければなりません" ) ;
 define( "_AM_WEBPHOTO_ERR_PERMISSION" , "エラー: まずこのディレクトリをつくって下さい。その上で、書込可能に設定して下さい。Unixではchmod 777、Windowsでは読み取り専用属性を外します" ) ;
 define( "_AM_WEBPHOTO_ERR_NOTDIRECTORY" , "エラー: 指定されたディレクトリがありません." ) ;
 define( "_AM_WEBPHOTO_ERR_READORWRITE" , "エラー: 指定されたディレクトリは読み出せないか書き込めないかのいずれかです。その両方を許可する設定にして下さい。Unixではchmod 777、Windowsでは読み取り専用属性を外します" ) ;
-define( "_AM_WEBPHOTO_ERR_SAMEDIR" , "エラー: メイン画像用ディレクトリとサムネイル用ディレクトリが一緒です。（その設定は不可能です）" ) ;
+define( "_AM_WEBPHOTO_ERR_SAMEDIR" , "エラー: 写真・動画・メディア用ディレクトリとサムネイル用ディレクトリが一緒です。（その設定は不可能です）" ) ;
 define( "_AM_WEBPHOTO_LNK_CHECKGD2" , "GD2(truecolor)モードが動くかどうかのチェック" ) ;
 define( "_AM_WEBPHOTO_CHECKGD2" , "（このリンク先が正常に表示されなければ、GD2モードでは動かないものと諦めてください）" ) ;
 define( "_AM_WEBPHOTO_GD2SUCCESS" , "成功しました!<br />おそらく、このサーバのPHPでは、GD2(true color)モードで画像を生成可能です。" ) ;
 
-define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "メイン画像とサムネイルのリンクチェック" ) ;
+define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "写真・動画・メディアとサムネイルのリンクチェック" ) ;
 define( "_AM_WEBPHOTO_NOWCHECKING" , "チェック中 ." ) ;
 
-//define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "メイン画像 (%s) が読めません." ) ;
-//define( "_AM_WEBPHOTO_FMT_THUMBNOTREADABLE" , "サムネイル画像 (%s) が読めません." ) ;
-
-define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADPHOTOS" , "画像のないレコードが %s 個ありました。" ) ;
+define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADPHOTOS" , "写真・動画・メディアのないレコードが %s 個ありました。" ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFDEADTHUMBS" , "サムネイルが %s 個未作成です" ) ;
 define( "_AM_WEBPHOTO_FMT_NUMBEROFREMOVEDTMPS" , "テンポラリを %s 個削除しました" ) ;
 define( "_AM_WEBPHOTO_LINK_REDOTHUMBS" , "サムネイル再構築" ) ;
@@ -119,26 +94,24 @@ define( "_AM_WEBPHOTO_LINK_TABLEMAINTENANCE" , "テーブルメンテナンス" ) ;
 
 
 // Redo Thumbnail
-//define( "_AM_WEBPHOTO_H3_FMT_RECORDMAINTENANCE" , "myAlbum-P 写真メンテナンス (%s)" ) ;
-
 define( "_AM_WEBPHOTO_FMT_CHECKING" , "%s をチェック中 ... " ) ;
-define( "_AM_WEBPHOTO_FORM_RECORDMAINTENANCE" , "サムネイルの再構築など、写真データの各種メンテナンス" ) ;
+define( "_AM_WEBPHOTO_FORM_RECORDMAINTENANCE" , "サムネイルの再構築など、写真・動画・メディアの各種メンテナンス" ) ;
 
-define( "_AM_WEBPHOTO_FAILEDREADING" , "写真ファイルの読み込み失敗" ) ;
+define( "_AM_WEBPHOTO_FAILEDREADING" , "写真・動画・メディアのファイルの読み込み失敗" ) ;
 define( "_AM_WEBPHOTO_CREATEDTHUMBS" , "サムネイル作成完了" ) ;
 define( "_AM_WEBPHOTO_BIGTHUMBS" , "サムネイルを作成できないので、コピーしました" ) ;
 define( "_AM_WEBPHOTO_SKIPPED" , "スキップします" ) ;
 define( "_AM_WEBPHOTO_SIZEREPAIRED" , "(登録されていたピクセル数を修正しました)" ) ;
 define( "_AM_WEBPHOTO_RECREMOVED" , "このレコードは削除されました" ) ;
-define( "_AM_WEBPHOTO_PHOTONOTEXISTS" , "画像がありません" ) ;
+define( "_AM_WEBPHOTO_PHOTONOTEXISTS" , "写真・動画・メディアがありません" ) ;
 define( "_AM_WEBPHOTO_PHOTORESIZED" , "サイズ調整しました" ) ;
 
 define( "_AM_WEBPHOTO_TEXT_RECORDFORSTARTING" , "処理を開始するレコード番号" ) ;
-define( "_AM_WEBPHOTO_TEXT_NUMBERATATIME" , "一度に処理する写真数" ) ;
+define( "_AM_WEBPHOTO_TEXT_NUMBERATATIME" , "一度に処理する写真・動画・メディアの数" ) ;
 define( "_AM_WEBPHOTO_LABEL_DESCNUMBERATATIME" , "この数を大きくしすぎるとサーバのタイムアウトを招きます" ) ;
 
 define( "_AM_WEBPHOTO_RADIO_FORCEREDO" , "サムネイルがあっても常に作成し直す" ) ;
-define( "_AM_WEBPHOTO_RADIO_REMOVEREC" , "写真がないレコードを削除する" ) ;
+define( "_AM_WEBPHOTO_RADIO_REMOVEREC" , "写真・動画・メディアがないレコードを削除する" ) ;
 define( "_AM_WEBPHOTO_RADIO_RESIZE" , "今のピクセル数設定よりも大きな画像はサイズを切りつめる" ) ;
 
 define( "_AM_WEBPHOTO_FINISHED" , "完了" ) ;
@@ -146,39 +119,29 @@ define( "_AM_WEBPHOTO_LINK_RESTART" , "再スタート" ) ;
 define( "_AM_WEBPHOTO_SUBMIT_NEXT" , "次へ" ) ;
 
 
-// Batch Register
-//define( "_AM_WEBPHOTO_H3_FMT_BATCHREGISTER" , "myAlbum-P 画像一括登録 (%s)" ) ;
-
-
 // GroupPerm Global
-//define( "_AM_WEBPHOTO_GROUPPERM_GLOBAL" , "各グループの権限設定" ) ;
-
 define( "_AM_WEBPHOTO_GROUPPERM_GLOBALDESC" , "グループ個々について、権限を設定します" ) ;
 define( "_AM_WEBPHOTO_GPERMUPDATED" , "権限設定を変更しました" ) ;
 
 
 // Import
-define( "_AM_WEBPHOTO_H3_FMT_IMPORTTO" , '%s への画像インポート' ) ;
+define( "_AM_WEBPHOTO_H3_FMT_IMPORTTO" , '%s への写真・動画・メディアのインポート' ) ;
 define( "_AM_WEBPHOTO_FMT_IMPORTFROMMYALBUMP" , 'myAblum-Pモジュール: 「%s」 からの取り込み（カテゴリー単位）' ) ;
 define( "_AM_WEBPHOTO_FMT_IMPORTFROMIMAGEMANAGER" , 'イメージ・マネージャからの取り込み（カテゴリー単位）' ) ;
 
-//define( "_AM_WEBPHOTO_CB_IMPORTRECURSIVELY" , 'サブカテゴリーもインポートする' ) ;
-//define( "_AM_WEBPHOTO_RADIO_IMPORTCOPY" , '画像のコピー（コメントは引き継がれません）' ) ;
-//define( "_AM_WEBPHOTO_RADIO_IMPORTMOVE" , '画像の移動（コメントを引き継ぎます）' ) ;
-
 define( "_AM_WEBPHOTO_IMPORTCONFIRM" , 'インポートします。よろしいですか？' ) ;
-define( "_AM_WEBPHOTO_FMT_IMPORTSUCCESS" , '%s 枚の画像をインポートしました' ) ;
+define( "_AM_WEBPHOTO_FMT_IMPORTSUCCESS" , '%s 枚の写真・動画・メディアをインポートしました' ) ;
 
 
 // Export
-define( "_AM_WEBPHOTO_H3_FMT_EXPORTTO" , '%s から他モジュール等への画像エクスポート' ) ;
+define( "_AM_WEBPHOTO_H3_FMT_EXPORTTO" , '%s から他モジュール等への写真・動画・メディアのエクスポート' ) ;
 define( "_AM_WEBPHOTO_FMT_EXPORTTOIMAGEMANAGER" , 'イメージ・マネージャへの書き出し（カテゴリー単位）' ) ;
 define( "_AM_WEBPHOTO_FMT_EXPORTIMSRCCAT" , 'コピー元カテゴリー' ) ;
 define( "_AM_WEBPHOTO_FMT_EXPORTIMDSTCAT" , 'コピー先カテゴリー' ) ;
 define( "_AM_WEBPHOTO_CB_EXPORTRECURSIVELY" , 'サブカテゴリーもエクスポートする' ) ;
 define( "_AM_WEBPHOTO_CB_EXPORTTHUMB" , 'サムネイル画像の方をエクスポートする' ) ;
 define( "_AM_WEBPHOTO_EXPORTCONFIRM" , 'エクスポートします。よろしいですか？' ) ;
-define( "_AM_WEBPHOTO_FMT_EXPORTSUCCESS" , '%s 枚の画像をエクスポートしました' ) ;
+define( "_AM_WEBPHOTO_FMT_EXPORTSUCCESS" , '%s 枚の写真・動画・メディアをエクスポートしました' ) ;
 
 
 //---------------------------------------------------------
@@ -189,20 +152,20 @@ define( "_AM_WEBPHOTO_BTN_SELECTNONE" , "選択解除" ) ;
 define( "_AM_WEBPHOTO_BTN_SELECTRVS" , "選択反転" ) ;
 define( "_AM_WEBPHOTO_FMT_PHOTONUM" , "%s 枚" ) ;
 
-define( "_AM_WEBPHOTO_ADMISSION" , "画像の承認" ) ;
-define( "_AM_WEBPHOTO_ADMITTING" , "画像を承認しました" ) ;
-define( "_AM_WEBPHOTO_LABEL_ADMIT" , "チェックした画像を承認する" ) ;
+define( "_AM_WEBPHOTO_ADMISSION" , "写真・動画・メディアの承認" ) ;
+define( "_AM_WEBPHOTO_ADMITTING" , "写真・動画・メディアを承認しました" ) ;
+define( "_AM_WEBPHOTO_LABEL_ADMIT" , "チェックした写真・動画・メディアを承認する" ) ;
 define( "_AM_WEBPHOTO_BUTTON_ADMIT" , "承認" ) ;
 define( "_AM_WEBPHOTO_BUTTON_EXTRACT" , "抽出" ) ;
 
-define( "_AM_WEBPHOTO_LABEL_REMOVE" , "チェックした画像を削除する" ) ;
+define( "_AM_WEBPHOTO_LABEL_REMOVE" , "チェックした写真・動画・メディアを削除する" ) ;
 define( "_AM_WEBPHOTO_JS_REMOVECONFIRM" , "削除してよろしいですか" ) ;
-define( "_AM_WEBPHOTO_LABEL_MOVE" , "チェックした画像を移動する" ) ;
+define( "_AM_WEBPHOTO_LABEL_MOVE" , "チェックした写真・動画・メディアを移動する" ) ;
 define( "_AM_WEBPHOTO_BUTTON_MOVE" , "移動" ) ;
 define( "_AM_WEBPHOTO_BUTTON_UPDATE" , "変更" ) ;
-define( "_AM_WEBPHOTO_DEADLINKMAINPHOTO" , "メイン画像が存在しません" ) ;
+define( "_AM_WEBPHOTO_DEADLINKMAINPHOTO" , "写真・動画・メディアが存在しません" ) ;
 
-define("_AM_WEBPHOTO_NOSUBMITTED","新規の投稿画像はありません。");
+define("_AM_WEBPHOTO_NOSUBMITTED","新規投稿の写真・動画・メディアはありません。");
 define("_AM_WEBPHOTO_ADDMAIN","トップカテゴリを追加");
 define("_AM_WEBPHOTO_IMGURL","画像のURL (画像の高さはあらかじめ50pixelに): ");
 define("_AM_WEBPHOTO_ADD","追加");
@@ -215,23 +178,23 @@ define("_AM_WEBPHOTO_IMGURLMAIN","画像URL (画像の高さはあらかじめ50pixelに): ");
 define("_AM_WEBPHOTO_PARENT","親カテゴリ:");
 define("_AM_WEBPHOTO_SAVE","変更を保存");
 define("_AM_WEBPHOTO_CATDELETED","カテゴリの消去完了");
-define("_AM_WEBPHOTO_CATDEL_WARNING","カテゴリと同時にここに含まれる画像およびコメントが全て削除されますがよろしいですか？");
+define("_AM_WEBPHOTO_CATDEL_WARNING","カテゴリと同時にここに含まれる写真・動画・メディアおよびコメントが全て削除されますがよろしいですか？");
 
 define("_AM_WEBPHOTO_NEWCATADDED","新カテゴリ追加に成功!");
-define("_AM_WEBPHOTO_ERROREXIST","エラー: 提供される画像はすでにデータベースに存在します。");
+define("_AM_WEBPHOTO_ERROREXIST","エラー: 提供される写真・動画・メディアはすでにデータベースに存在します。");
 define("_AM_WEBPHOTO_ERRORTITLE","エラー: タイトルが必要です!");
 define("_AM_WEBPHOTO_ERRORDESC","エラー: 説明が必要です!");
-define("_AM_WEBPHOTO_WEAPPROVED","画像データベースへのリンク要請を承認しました。");
+define("_AM_WEBPHOTO_WEAPPROVED","写真・動画・メディアのデータベースへのリンク要請を承認しました。");
 define("_AM_WEBPHOTO_THANKSSUBMIT","ご投稿有り難うございます。");
 define("_AM_WEBPHOTO_CONFUPDATED","設定を更新しました。");
 
 define("_AM_WEBPHOTO_PHOTOBATCHUPLOAD","サーバにアップロード済ファイルの一括登録");
 define("_AM_WEBPHOTO_PHOTOPATH","Path:");
 define("_AM_WEBPHOTO_TEXT_DIRECTORY","ディレクトリ");
-define("_AM_WEBPHOTO_DESC_PHOTOPATH","画像の含まれるディレクトリを絶対パスで指定して下さい");
-define("_AM_WEBPHOTO_MES_INVALIDDIRECTORY","指定されたディレクトリから画像を読み出せません");
-define("_AM_WEBPHOTO_MES_BATCHDONE","%s 枚の画像を登録しました");
-define("_AM_WEBPHOTO_MES_BATCHNONE","指定されたディレクトリに画像ファイルがみつかりませんでした");
+define("_AM_WEBPHOTO_DESC_PHOTOPATH","写真・動画・メディアの含まれるディレクトリを絶対パスで指定して下さい");
+define("_AM_WEBPHOTO_MES_INVALIDDIRECTORY","指定されたディレクトリから写真・動画・メディアを読み出せません");
+define("_AM_WEBPHOTO_MES_BATCHDONE","%s 枚の写真・動画・メディアを登録しました");
+define("_AM_WEBPHOTO_MES_BATCHNONE","指定されたディレクトリに写真・動画・メディアのファイルがみつかりませんでした");
 
 
 //---------------------------------------------------------
@@ -309,10 +272,6 @@ define("_AM_WEBPHOTO_MIME_ICO_DELETE","このアイテムを削除");
 define("_AM_WEBPHOTO_MIME_ICO_ONLINE","オンライン");
 define("_AM_WEBPHOTO_MIME_ICO_OFFLINE","オフライン");
 
-// find mine type
-//define("_AM_WEBPHOTO_MIME_FINDMIMETYPE", "Find New Mimetype:");
-//define("_AM_WEBPHOTO_MIME_FINDIT", "Get Extension!");
-
 // added for webphoto
 define("_AM_WEBPHOTO_MIME_PERMS", "許可されているグループ");
 define("_AM_WEBPHOTO_MIME_ALLOWED", "許可されているMIMEタイプ");
@@ -321,7 +280,7 @@ define("_AM_WEBPHOTO_MIME_NOT_ENTER_EXT", "拡張子が入力されていない");
 //---------------------------------------------------------
 // check config
 //---------------------------------------------------------
-define("_AM_WEBPHOTO_DIRECTORYFOR_PHOTOS" , "画像 ディレクトリ" ) ;
+define("_AM_WEBPHOTO_DIRECTORYFOR_PHOTOS" , "写真・動画・メディア ディレクトリ" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_THUMBS" , "サムネイル ディレクトリ" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_GICONS" , "Google アイコン ディレクトリ" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_TMP" ,    "一時ファイル ディレクトリ" ) ;
@@ -338,12 +297,6 @@ define("_AM_WEBPHOTO_MANAGE_DESC","<b>注意</b><br />テーブル単体の管理です<br />
 define("_AM_WEBPHOTO_ERR_NO_RECORD", "データが存在しない");
 
 //---------------------------------------------------------
-// cat manager
-//---------------------------------------------------------
-//define("_AM_WEBPHOTO_DSC_CAT_IMGPATH" , "画像ファイルをアップロードしてください<br />XOOPSインストール先からのパスを指定します（最初の'/'は必要）<br />設定しないときは、フォルダーアイコンが表示されます" ) ;
-//define("_AM_WEBPHOTO_OPT_CAT_PERM_POST_ALL" , "全てのグループ" ) ;
-
-//---------------------------------------------------------
 // import
 //---------------------------------------------------------
 define("_AM_WEBPHOTO_FMT_IMPORTFROM_WEBPHOTO" , 'webphoto モジュール: 「%s」 からの取り込み（カテゴリー単位）' ) ;
@@ -354,7 +307,7 @@ define("_AM_WEBPHOTO_IMPORT_COMMENT_YES" , "コメントをコピーする" ) ;
 // v0.20
 //---------------------------------------------------------
 define("_AM_WEBPHOTO_PATHINFO_LINK" , "Pathinfo が動くかどうかのチェック" ) ;
-define("_AM_WEBPHOTO_PATHINFO_DSC" , "このリンク先が正常に表示されなければ、Pathinfo が動かないものと諦めてください<br/>「一般設定」にて pathinfo を使用しないモードに変更できます" ) ;
+define("_AM_WEBPHOTO_PATHINFO_DSC" , "（このリンク先が正常に表示されなければ、Pathinfo が動かないものと諦めてください）" ) ;
 define("_AM_WEBPHOTO_PATHINFO_SUCCESS" , "成功しました!<br />おそらく、このサーバでは、Pathinfo が使用できます" ) ;
 define("_AM_WEBPHOTO_CAP_REDO_EXIF" , "Exif の取得" ) ;
 define("_AM_WEBPHOTO_RADIO_REDO_EXIF_TRY" , "設定されていないときに取得" ) ;
@@ -541,8 +494,6 @@ define("_AM_WEBPHOTO_GPERM_MODULE_READ"  , "モジュール・アクセス" ) ;
 
 // item manage
 define("_AM_WEBPHOTO_BUTTON_REFUSE", "拒否");
-//define("_AM_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
-//define("_AM_WEBPHOTO_MAIL_SUBMIT_REFUSE", "写真が拒否されました");
 define("_AM_WEBPHOTO_ERR_NO_SELECT" , "エラー: アイテムが選択されていない" ) ;
 
 // user list

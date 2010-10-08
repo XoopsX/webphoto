@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.17 2010/10/06 02:22:46 ohwada Exp $
+// $Id: factory_create.php,v 1.18 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -486,6 +486,44 @@ function use_item_perm_level()
 }
 
 //---------------------------------------------------------
+// create copy param
+//---------------------------------------------------------
+function create_single_copy_param( $param )
+{
+	$src_kind = $param['src_kind'] ;
+
+	$ret = null;
+
+	switch ( $src_kind )
+	{
+		case _C_WEBPHOTO_FILE_KIND_PDF :
+			$ret = $this->create_pdf_copy_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_SWF :
+			$ret = $this->create_swf_copy_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_WAV :
+			$ret = $this->create_wav_copy_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_MP3 :
+			$ret = $this->create_mp3_copy_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_THUMB :
+		case _C_WEBPHOTO_FILE_KIND_LARGE :
+		case _C_WEBPHOTO_FILE_KIND_MIDDLE :
+		case _C_WEBPHOTO_FILE_KIND_SMALL:
+			$ret = $this->create_image_copy_param( $param );
+			break;
+	}
+
+	return $ret;
+}
+
+//---------------------------------------------------------
 // create cont
 //---------------------------------------------------------
 function build_photo_param( $item_row, $src_file )
@@ -544,6 +582,18 @@ function create_image_params( $photo_param, $file_params )
 	}
 
 	$ret = $this->_middle_thumb_create_class->create_image_params( $param );
+	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
+	return $ret ;
+}
+
+function create_image_copy_param( $param )
+{
+// no action if not image
+	if ( ! $this->is_image_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$ret = $this->_middle_thumb_create_class->create_copy_param( $param );
 	$this->_msg_sub_class->set_msg( $this->_middle_thumb_create_class->get_msg_array() ) ;
 	return $ret ;
 }
@@ -671,11 +721,26 @@ function get_flag_flash_failed()
 //---------------------------------------------------------
 function create_pdf_param( $param )
 {
+// no action if pdf
 	if ( $this->is_pdf_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
 	$pdf_param = $this->_pdf_create_class->create_param( $param );
+	$this->_flag_pdf_created = $this->_pdf_create_class->get_flag_created() ;
+	$this->_flag_pdf_failed  = $this->_pdf_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_pdf_create_class->get_msg_array() ) ;
+	return $pdf_param ;
+}
+
+function create_pdf_copy_param( $param )
+{
+// no action if not pdf
+	if ( ! $this->is_pdf_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$pdf_param = $this->_pdf_create_class->create_copy_param( $param );
 	$this->_flag_pdf_created = $this->_pdf_create_class->get_flag_created() ;
 	$this->_flag_pdf_failed  = $this->_pdf_create_class->get_flag_failed() ;
 	$this->_msg_sub_class->set_msg( $this->_pdf_create_class->get_msg_array() ) ;
@@ -697,11 +762,26 @@ function get_flag_pdf_failed()
 //---------------------------------------------------------
 function create_swf_param( $param )
 {
+// no action if swf
 	if ( $this->is_swf_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
 	$swf_param = $this->_swf_create_class->create_param( $param );
+	$this->_flag_swf_created = $this->_swf_create_class->get_flag_created() ;
+	$this->_flag_swf_failed  = $this->_swf_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_swf_create_class->get_msg_array() ) ;
+	return $swf_param ;
+}
+
+function create_swf_copy_param( $param )
+{
+// no action if not swf
+	if ( ! $this->is_swf_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$swf_param = $this->_swf_create_class->create_copy_param( $param );
 	$this->_flag_swf_created = $this->_swf_create_class->get_flag_created() ;
 	$this->_flag_swf_failed  = $this->_swf_create_class->get_flag_failed() ;
 	$this->_msg_sub_class->set_msg( $this->_swf_create_class->get_msg_array() ) ;
@@ -748,6 +828,20 @@ function create_mp3_param( $photo_param, $wav_param )
 	return $param_out ;
 }
 
+function create_mp3_copy__param( $param)
+{
+// no action if not mp3t
+	if ( ! $this->is_mp3_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$param_out = $this->_mp3_create_class->create_copy_param( $param );
+	$this->_flag_mp3_created = $this->_mp3_create_class->get_flag_created() ;
+	$this->_flag_mp3_failed  = $this->_mp3_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_mp3_create_class->get_msg_array() ) ;
+	return $param_out ;
+}
+
 function get_flag_mp3_created()
 {
 	return $this->_flag_mp3_created ;
@@ -763,11 +857,26 @@ function get_flag_mp3_failed()
 //---------------------------------------------------------
 function create_wav_param( $param )
 {
+// no action if wave
 	if ( $this->is_wav_ext( $param['src_ext'] ) ) {
 		return null;
 	}
 
 	$wav_param = $this->_wav_create_class->create_param( $param );
+	$this->_flag_wav_created = $this->_wav_create_class->get_flag_created() ;
+	$this->_flag_wav_failed  = $this->_wav_create_class->get_flag_failed() ;
+	$this->_msg_sub_class->set_msg( $this->_wav_create_class->get_msg_array() ) ;
+	return $wav_param ;
+}
+
+function create_wav_copy_param( $param )
+{
+// no action if not wave
+	if ( ! $this->is_wav_ext( $param['src_ext'] ) ) {
+		return null;
+	}
+
+	$wav_param = $this->_wav_create_class->create_copy_param( $param );
 	$this->_flag_wav_created = $this->_wav_create_class->get_flag_created() ;
 	$this->_flag_wav_failed  = $this->_wav_create_class->get_flag_failed() ;
 	$this->_msg_sub_class->set_msg( $this->_wav_create_class->get_msg_array() ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.24 2010/06/16 22:24:47 ohwada Exp $
+// $Id: modinfo.php,v 1.25 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// Photo -> Photo Video Media
 // 2010-04-04 K.OHWADA
 // remove echo
 //---------------------------------------------------------
@@ -43,17 +45,17 @@ define($constpref."LANG_LOADED" , 1 ) ;
 //=========================================================
 
 // The name of this module
-define($constpref."NAME","Web Photo");
+define($constpref."NAME","Web Photo Video Media");
 
 // A brief description of this module
 define($constpref."DESC","Creates a photos section where users can search/submit/rate various photos.");
 
 // Names of blocks for this module (Not all module has blocks)
-define($constpref."BNAME_RECENT","Recent Photos");
-define($constpref."BNAME_HITS","Top Photos");
-define($constpref."BNAME_RANDOM","Random Photo");
-define($constpref."BNAME_RECENT_P","Recent Photos with thumbnails");
-define($constpref."BNAME_HITS_P","Top Photos with thumbnails");
+define($constpref."BNAME_RECENT","Recent Photo Video Media");
+define($constpref."BNAME_HITS","Top Photo Video Media");
+define($constpref."BNAME_RANDOM","Random Photo Video Media");
+define($constpref."BNAME_RECENT_P","Recent Photo Video Media with thumbnails");
+define($constpref."BNAME_HITS_P","Top Photo Video Media with thumbnails");
 
 // Config Items
 //define($constpref."CFG_PHOTOSPATH" , "Path to photos" ) ;
@@ -73,11 +75,11 @@ define($constpref."CFG_NETPBMPATH" , "Path of NetPBM" ) ;
 define($constpref."CFG_DESCNETPBMPATH" , "Alhough the full path to 'pnmscale' should be written, leave it blank in most environments.<br />This configuration is significant only when using NetPBM" ) ;
 define($constpref."CFG_POPULAR" , "Hits to be Popular" ) ;
 define($constpref."CFG_NEWDAYS" , "Days between displaying icon of 'new'&'update'" ) ;
-define($constpref."CFG_NEWPHOTOS" , "Number of Photos as New on Top Page" ) ;
+define($constpref."CFG_NEWPHOTOS" , "Number of Photo Video Media as New on Top Page" ) ;
 
 //define($constpref."CFG_DEFAULTORDER" , "Default order in category's view" ) ;
 
-define($constpref."CFG_PERPAGE" , "Displayed Photos per Page" ) ;
+define($constpref."CFG_PERPAGE" , "Displayed Photo Video Media per Page" ) ;
 define($constpref."CFG_DESCPERPAGE" , "Input selectable numbers separated with '|'<br />eg) 10|20|50|100" ) ;
 define($constpref."CFG_ALLOWNOIMAGE" , "Allow a submit without images" ) ;
 define($constpref."CFG_MAKETHUMB" , "Make Thumbnail Image" ) ;
@@ -88,10 +90,17 @@ define($constpref."CFG_DESCMAKETHUMB" , "When you change 'No' to 'Yes', You'd be
 //define($constpref."CFG_THUMBSIZE" , "Size of thumbnails (pixel)" ) ;
 //define($constpref."CFG_THUMBRULE" , "Calculation rule for building thumbnails" ) ;
 
-define($constpref."CFG_WIDTH" , "Max photo width" ) ;
-define($constpref."CFG_DESCWIDTH" , "This means the photo's width to be resized.<br />If you use GD without truecolor, this means the limitation of width." ) ;
-define($constpref."CFG_HEIGHT" , "Max photo height" ) ;
-define($constpref."CFG_DESCHEIGHT" , "This means the photo's height to be resized.<br />If you use GD without truecolor, this means the limitation of height." ) ;
+// v2.30
+//define($constpref."CFG_WIDTH" , "Max photo width" ) ;
+//define($constpref."CFG_DESCWIDTH" , "This means the photo's width to be resized.<br />If you use GD without truecolor, this means the limitation of width." ) ;
+//define($constpref."CFG_HEIGHT" , "Max photo height" ) ;
+//define($constpref."CFG_DESCHEIGHT" , "This means the photo's height to be resized.<br />If you use GD without truecolor, this means the limitation of height." ) ;
+define($constpref."CFG_WIDTH" , "Image Width in popup" ) ;
+define($constpref."CFG_DESCWIDTH" , "Image size when popup. <br /><br />In old version, this parameter was the limitation of the image size when upload. <br />This limitation was abolished. <br />The specification was changed in V2.30. 
+" ) ;
+define($constpref."CFG_HEIGHT" , "Image Height in popup" ) ;
+define($constpref."CFG_DESCHEIGHT" , "Same as Image Width" ) ;
+
 define($constpref."CFG_FSIZE" , "Max file size" ) ;
 define($constpref."CFG_DESCFSIZE" , "The limitation of the size of uploading file.(bytes)" ) ;
 
@@ -132,11 +141,11 @@ define($constpref."OPT_VIEWTABLE" , "Table View" ) ;
 //define($constpref."TEXT_SMNAME1","Submit");
 //define($constpref."TEXT_SMNAME2","Popular");
 //define($constpref."TEXT_SMNAME3","Top Rated");
-//define($constpref."TEXT_SMNAME4","My Photos");
+//define($constpref."TEXT_SMNAME4","My Photo Video Media");
 
 // Names of admin menu items
-//define($constpref."ADMENU0","Submitted Photos");
-//define($constpref."ADMENU1","Photo Management");
+//define($constpref."ADMENU0","Submitted Photo Video Media");
+//define($constpref."ADMENU1","Photo Video Media Management");
 //define($constpref."ADMENU2","Add/Edit Categories");
 //define($constpref."ADMENU_GPERM","Global Permissions");
 //define($constpref."ADMENU3","Check Configuration & Environment");
@@ -153,15 +162,15 @@ define($constpref."GLOBAL_NOTIFY", "Global");
 define($constpref."GLOBAL_NOTIFYDSC", "Global notification options");
 define($constpref."CATEGORY_NOTIFY", "Category");
 define($constpref."CATEGORY_NOTIFYDSC", "Notification options that apply to the current photo category");
-define($constpref."PHOTO_NOTIFY", "Photo");
+define($constpref."PHOTO_NOTIFY", "Photo Video Media");
 define($constpref."PHOTO_NOTIFYDSC", "Notification options that apply to the current photo");
 
-define($constpref."GLOBAL_NEWPHOTO_NOTIFY", "New Photo");
+define($constpref."GLOBAL_NEWPHOTO_NOTIFY", "New Photo Video Media");
 define($constpref."GLOBAL_NEWPHOTO_NOTIFYCAP", "Notify me when any new photos are posted");
 define($constpref."GLOBAL_NEWPHOTO_NOTIFYDSC", "Receive notification when a new photo description is posted.");
 define($constpref."GLOBAL_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: auto-notify : New photo");
 
-define($constpref."CATEGORY_NEWPHOTO_NOTIFY", "New Photo");
+define($constpref."CATEGORY_NEWPHOTO_NOTIFY", "New Photo Video Media");
 define($constpref."CATEGORY_NEWPHOTO_NOTIFYCAP", "Notify me when a new photo is posted to the current category");
 define($constpref."CATEGORY_NEWPHOTO_NOTIFYDSC", "Receive notification when a new photo description is posted to the current category");
 define($constpref."CATEGORY_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: auto-notify : New photo");
@@ -179,8 +188,8 @@ define($constpref."OPT_SORT_HITSA","Popularity (Least to Most Hits)");
 define($constpref."OPT_SORT_HITSD","Popularity (Most to Least Hits)");
 define($constpref."OPT_SORT_TITLEA","Title (A to Z)");
 define($constpref."OPT_SORT_TITLED","Title (Z to A)");
-define($constpref."OPT_SORT_DATEA","Updated Date (Old Photos Listed First)");
-define($constpref."OPT_SORT_DATED","Updated Date (New Photos Listed First)");
+define($constpref."OPT_SORT_DATEA","Updated Date (Old Photo Video Media Listed First)");
+define($constpref."OPT_SORT_DATED","Updated Date (New Photo Video Media Listed First)");
 define($constpref."OPT_SORT_RATINGA","Rating (Lowest Score to Highest Score)");
 define($constpref."OPT_SORT_RATINGD","Rating (Highest Score to Lowest Score)");
 define($constpref."OPT_SORT_RANDOM","Random");
@@ -208,12 +217,12 @@ define($constpref."CFG_INDEX_DESC_DEFAULT", "Here is where your page introductio
 define($constpref."SMNAME_SUBMIT","Submit");
 define($constpref."SMNAME_POPULAR","Popular");
 define($constpref."SMNAME_HIGHRATE","Top Rated");
-define($constpref."SMNAME_MYPHOTO","My Photos");
+define($constpref."SMNAME_MYPHOTO","My Photo Video Media");
 
 // Names of admin menu items
 //define($constpref."ADMENU_ADMISSION","Admitting images");
 
-define($constpref."ADMENU_PHOTOMANAGER","Photo Management");
+define($constpref."ADMENU_PHOTOMANAGER","Photo Video Media Management");
 define($constpref."ADMENU_CATMANAGER","Add/Edit Categories");
 define($constpref."ADMENU_CHECKCONFIGS","Check Configuration");
 define($constpref."ADMENU_BATCH","Batch Register");
@@ -226,13 +235,13 @@ define($constpref."ADMENU_GICONMANAGER","Google Icons Management");
 define($constpref."ADMENU_MIMETYPES","MIME Type Management");
 define($constpref."ADMENU_IMPORT_MYALBUM","Batch Import from Myalbum");
 define($constpref."ADMENU_CHECKTABLES","Check Tables Configuration");
-define($constpref."ADMENU_PHOTO_TABLE_MANAGE","Photo Table Management");
+define($constpref."ADMENU_PHOTO_TABLE_MANAGE","Photo Video Media Table Management");
 define($constpref."ADMENU_CAT_TABLE_MANAGE","Category Table Management");
 define($constpref."ADMENU_VOTE_TABLE_MANAGE","Vote Table Management");
 define($constpref."ADMENU_GICON_TABLE_MANAGE","Google Icon Table Management");
 define($constpref."ADMENU_MIME_TABLE_MANAGE","MIME Table Management");
 define($constpref."ADMENU_TAG_TABLE_MANAGE","Tag Table Management");
-define($constpref."ADMENU_P2T_TABLE_MANAGE","Photo-Tag Table Management");
+define($constpref."ADMENU_P2T_TABLE_MANAGE","Photo Video Media-Tag Table Management");
 define($constpref."ADMENU_SYNO_TABLE_MANAGE","Synonym Table Management");
 
 //---------------------------------------------------------
@@ -375,7 +384,7 @@ define($constpref."CFG_CAT_SUMMARY", "Max characters of category description");
 define($constpref."CFG_CAT_SUMMARY_DSC", "Enter the maximum number of characters of category description in the category list.<br />-1 is unlimited");
 define($constpref."CFG_CAT_CHILD", "Show photos of subcategoies");
 define($constpref."CFG_CAT_CHILD_DSC", "Enter to show or not photos of subcategoies in category list");
-define($constpref."OPT_CAT_CHILD_NON", "Photos of this category only. Not show photos of subcategoies");
+define($constpref."OPT_CAT_CHILD_NON", "Photo Video Media of this category only. Not show photos of subcategoies");
 define($constpref."OPT_CAT_CHILD_EMPTY", "When no photo in this category, show photos of subcategoies");
 define($constpref."OPT_CAT_CHILD_ALWAYS", "Show alwayas photos of subcategoies");
 

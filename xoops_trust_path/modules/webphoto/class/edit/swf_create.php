@@ -1,5 +1,5 @@
 <?php
-// $Id: swf_create.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
+// $Id: swf_create.php,v 1.4 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // create_swf() -> execute()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
@@ -23,12 +23,13 @@ class webphoto_edit_swf_create extends webphoto_edit_base_create
 {
 	var $_ext_class ;
 
-	var $_SUB_DIR_SWFS = 'swfs';
-	var $_EXT_SWF      = 'swf';
-
-	var $_SWF_EXT    = 'swf';
-	var $_SWF_MIME   = 'application/x-shockwave-flash';
-	var $_SWF_MEDIUM = '';
+	var $_param_ext    = 'swf' ;
+	var $_param_dir    = 'swfs';
+	var	$_param_mime   = 'application/x-shockwave-flash' ;
+	var $_param_medium = '' ;
+	var $_param_kind   = _C_WEBPHOTO_FILE_KIND_SWF ;
+	var $_msg_created  = 'create swf' ;
+	var $_msg_failed   = 'fail to create swf' ;
 
 //---------------------------------------------------------
 // constructor
@@ -76,16 +77,8 @@ function create_param( $param )
 
 function create_swf( $item_id, $src_file, $src_ext )
 {
-	$this->_flag_created = false ;
-	$this->_flag_failed  = false ;
-
-	$swf_param = null ;
-
-	$name_param =$this->build_random_name_param( $item_id, $this->_EXT_SWF, $this->_SUB_DIR_SWFS );
-	$name  = $name_param['name'] ;
-	$path  = $name_param['path'] ;
+	$name_param =$this->build_name_param( $item_id );
 	$file  = $name_param['file'] ;
-	$url   = $name_param['url']  ;
 
 	$param = array(
 		'src_file' => $src_file ,
@@ -95,29 +88,7 @@ function create_swf( $item_id, $src_file, $src_ext )
 
 	$ret = $this->_ext_class->execute( 'swf', $param ) ;
 
-// created
-	if ( $ret == 1 ) {
-		$this->set_flag_created() ;
-		$this->set_msg( 'create swf' );
-		$swf_param = array(
-			'url'    => $url ,
-			'file'   => $file ,
-			'path'   => $path ,
-			'name'   => $name ,
-			'ext'    => $this->_SWF_EXT ,
-			'mime'   => $this->_SWF_MIME ,
-			'medium' => $this->_SWF_MEDIUM ,
-			'size'   => filesize( $file ) ,
-			'kind'   => _C_WEBPHOTO_FILE_KIND_SWF ,
-		);
-
-// failed
-	} elseif ( $ret == -1 ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create swf', true ) ;
-	}
-
-	return $swf_param ;
+	return $this->build_result( $ret, $name_param );
 }
 
 // --- class end ---

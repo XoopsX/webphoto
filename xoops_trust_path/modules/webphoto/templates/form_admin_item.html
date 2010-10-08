@@ -1,4 +1,4 @@
-<{* $Id: form_admin_item.html,v 1.13 2010/10/06 02:22:46 ohwada Exp $ *}>
+<{* $Id: form_admin_item.html,v 1.14 2010/10/08 15:53:16 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -95,7 +95,6 @@
 <{/if}>
 </td></tr>
 
-<tr><td style="<{$cap_style.maxpixel}>"><{$lang_cap_maxpixel}></td><td class="odd"><{$ele_maxpixel}></td></tr>
 <tr><td style="<{$cap_style.maxsize}>"><{$lang_cap_maxsize}></td><td class="odd"><{$ele_maxsize}></td></tr>
 <tr><td style="<{$cap_style.allowed_exts}>"><{$lang_cap_allowed_exts}></td><td class="odd"><{$ele_allowed_exts}></td></tr>
 
@@ -518,7 +517,12 @@
 <{foreach item=item_file from=$item_file_array}>
 <{if $item_file.url_s != '' }>
   <tr><td style="<{$cap_style.file}>"><{$item_file.title_s}></td><td class="odd">  
+  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="<{$item_file.name}>" />
+  <input type="file" id="<{$item_file.name}>" name="<{$item_file.name}>" size="50" />
+  <br /><br />
   <a href="<{$item_file.url_s}>" target="_blank"><{$item_file.url_s}></a>
+  <br />
+  <input type="submit" id="<{$item_file.name_delete}>" name="<{$item_file.name_delete}>" value="<{$lang_delete}>" />
   </td></tr>
 <{/if}>
 <{/foreach}>

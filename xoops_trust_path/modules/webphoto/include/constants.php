@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.29 2010/10/06 02:22:46 ohwada Exp $
+// $Id: constants.php,v 1.30 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -159,6 +159,7 @@ define("_C_WEBPHOTO_MIME_KIND_OFFICE_PPT",    43 ) ;
 define("_C_WEBPHOTO_MIME_KIND_OFFICE_PDF",    44 ) ;
 
 // v1.80 v2.30
+define("_C_WEBPHOTO_FILE_KIND_NAME_LIST", "none|cont|thumb|middle|flash|docomo|pdf|swf|small|jpeg|mp3|wav|large" ) ;
 define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|large|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav" ) ;
 
 define("_C_WEBPHOTO_FILE_KIND_CONT"          , 1 ) ;

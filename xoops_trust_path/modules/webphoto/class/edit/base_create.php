@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.7 2010/09/27 03:42:54 ohwada Exp $
+// $Id: base_create.php,v 1.8 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,8 +8,8 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
-// set_result()
+// 2010-10-01 K.OHWADA
+// create_copy_param()
 // 2009-11-11 K.OHWADA
 // webphoto_base_this
 // $trust_dirname
@@ -36,6 +36,14 @@ class webphoto_edit_base_create extends webphoto_base_this
 	var $_IMAGE_MEDIUM = 'image';
 	var $_EXT_PNG      = 'png';
 
+	var $_param_ext    = null ;
+	var	$_param_mime   = null ;
+	var $_param_medium = null ;
+	var $_param_kind   = null ;
+	var $_param_dir    = null;
+	var $_msg_created  = null ;
+	var $_msg_failed   = null ;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -51,8 +59,30 @@ function webphoto_edit_base_create( $dirname, $trust_dirname )
 }
 
 //---------------------------------------------------------
+// create copy param
+//---------------------------------------------------------
+function create_copy_param( $param )
+{
+	$item_id  = $param['item_id'];
+	$src_file = $param['src_file'];
+
+	$name_param = $this->build_name_param( $item_id );
+	$file  = $name_param['file'] ;
+
+	copy( $src_file, $file );
+
+	return $this->build_copy_result( $name_param );
+}
+
+//---------------------------------------------------------
 // file
 //---------------------------------------------------------
+function build_name_param( $item_id )
+{
+	return $this->build_random_name_param( 
+		$item_id, $this->_param_ext, $this->_param_dir );
+}
+
 function build_random_name_param( $item_id, $src_ext, $sub_dir )
 {
 	$name = $this->build_random_file_name( $item_id, $src_ext );
@@ -133,6 +163,59 @@ function build_image_info( $path, $ext=null )
 	);
 
 	return $arr;
+}
+
+function build_file_param_by_name_param( $name_param )
+{
+	$name  = $name_param['name'] ;
+	$path  = $name_param['path'] ;
+	$file  = $name_param['file'] ;
+	$url   = $name_param['url']  ;
+
+	$param = array(
+		'url'    => $url ,
+		'file'   => $file ,
+		'path'   => $path ,
+		'name'   => $name ,
+		'size'   => filesize( $file ) ,
+		'ext'    => $this->_param_ext,
+		'mime'   => $this->_param_mime ,
+		'medium' => $this->_param_medium ,
+		'kind'   => $this->_param_kind ,
+	);
+	return $param;
+}
+
+function build_result( $ret, $name_param )
+{
+	$file_param = null;
+	$this->_flag_created = false ;
+	$this->_flag_failed  = false ;
+
+// created
+	if ( $ret == 1 ) {
+		$this->set_flag_created() ;
+		$this->set_msg( $this->_msg_created );
+		$file_param = $this->build_file_param_by_name_param( $name_param );
+
+// failed
+	} elseif ( $ret == -1 ) {
+		$this->set_flag_failed() ;
+		$this->set_msg( $this->_msg_failed, true ) ;
+	}
+
+	return $file_param ;
+}
+
+function build_copy_result( $name_param )
+{
+	if ( file_exists( $name_param['file'] ) ) {
+		$ret = 1;
+	} else {
+		$ret = -1;
+	}
+
+	return $this->build_result( $ret, $name_param );
 }
 
 //---------------------------------------------------------

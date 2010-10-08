@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.22 2010/06/16 22:24:47 ohwada Exp $
+// $Id: modinfo.php,v 1.23 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +9,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// 写真 -> 写真・動画・メディア
 // 2010-04-04 K.OHWADA
 // remove echo
 //---------------------------------------------------------
@@ -44,25 +46,17 @@ define($constpref."LANG_LOADED" , 1 ) ;
 //=========================================================
 
 // The name of this module
-define($constpref."NAME","WEB 写真集");
+define($constpref."NAME","WEB 写真・動画・メディア集");
 
 // A brief description of this module
-define($constpref."DESC","検索・投稿・ランクその他の機能を持つ画像セクションを生成");
+define($constpref."DESC","写真や動画やその他のメディアを管理するアルバム・モジュールです");
 
 // Names of blocks for this module (Not all module has blocks)
-define($constpref."BNAME_RECENT","最近の画像");
-define($constpref."BNAME_HITS","人気画像");
-define($constpref."BNAME_RANDOM","ピックアップ画像");
-define($constpref."BNAME_RECENT_P","最近の画像(画像付)");
-define($constpref."BNAME_HITS_P","人気画像(画像付)");
-
-// Config Items
-//define( $constpref."CFG_PHOTOSPATH" , "画像ファイルの保存先ディレクトリ" ) ;
-//define( $constpref."CFG_DESCPHOTOSPATH" , "XOOPSインストール先からのパスを指定（最初の'/'は必要、最後の'/'は不要）<br />Unixではこのディレクトリへの書込属性をONにして下さい" ) ;
-//define( $constpref."CFG_THUMBSPATH" , "サムネイルファイルの保存先ディレクトリ" ) ;
-//define( $constpref."CFG_DESCTHUMBSPATH" , "「画像ファイルの保存先ディレクトリ」と同じです" ) ;
-//define( $constpref."CFG_USEIMAGICK" , "画像処理にImageMagickを使う" ) ;
-//define( $constpref."CFG_DESCIMAGICK" , "使わない場合は、メイン画像の調整は機能せず、サムネイルの生成にGDを使います。<br />可能であればImageMagickの使用が最善です" ) ;
+define($constpref."BNAME_RECENT","最近の写真・動画・メディア");
+define($constpref."BNAME_HITS","人気の写真・動画・メディア");
+define($constpref."BNAME_RANDOM","ピックアップの写真・動画・メディア");
+define($constpref."BNAME_RECENT_P","最近の写真・動画・メディア(サムネイル付)");
+define($constpref."BNAME_HITS_P","人気の写真・動画・メディア(サムネイル付)");
 
 define( $constpref."CFG_IMAGINGPIPE" , "画像処理を行わせるパッケージ選択" ) ;
 define( $constpref."CFG_DESCIMAGINGPIPE" , "ほとんどのPHP環境で標準的に利用可能なのはGDですが機能的に劣ります<br />可能であればImageMagickかNetPBMの使用をお勧めします" ) ;
@@ -74,98 +68,56 @@ define( $constpref."CFG_NETPBMPATH" , "NetPBMの実行パス" ) ;
 define( $constpref."CFG_DESCNETPBMPATH" , "pnmscale等の存在するディレクトリをフルパスで指定しますが、空白でうまく行くことが多いでしょう。<br />画像処理パッケージとしてNetPBMを選択した時のみ意味を持ちます" ) ;
 define( $constpref."CFG_POPULAR" , "'POP'アイコンがつくために必要なヒット数" ) ;
 define( $constpref."CFG_NEWDAYS" , "'new'や'update'アイコンが表示される日数" ) ;
-define( $constpref."CFG_NEWPHOTOS" , "トップページで新規画像として表示する数" ) ;
-
-//define( $constpref."CFG_DEFAULTORDER" , "カテゴリ表示でのデフォルト表示順" ) ;
-
-define( $constpref."CFG_PERPAGE" , "1ページに表示される画像数" ) ;
+define( $constpref."CFG_NEWPHOTOS" , "トップページで新規として表示する数" ) ;
+define( $constpref."CFG_PERPAGE" , "1ページに表示される写真・動画・メディアの数" ) ;
 define( $constpref."CFG_DESCPERPAGE" , "選択可能な数字を | で区切って下さい<br />例: 10|20|50|100" ) ;
-define( $constpref."CFG_ALLOWNOIMAGE" , "画像のない投稿を許可する" ) ;
+define( $constpref."CFG_ALLOWNOIMAGE" , "写真・動画・メディアのない投稿を許可する" ) ;
 define( $constpref."CFG_MAKETHUMB" , "サムネイルを作成する" ) ;
 define( $constpref."CFG_DESCMAKETHUMB" , "「生成しない」から「生成する」に変更した時には、「サムネイルの再構築」が必要です。" ) ;
 
-//define( $constpref."CFG_THUMBWIDTH" , "サムネイル画像の幅" ) ;
-//define( $constpref."CFG_DESCTHUMBWIDTH" , "生成されるサムネイル画像の高さは、幅から自動計算されます" ) ;
-//define( $constpref."CFG_THUMBSIZE" , "サムネイル画像サイズ(pixel)" ) ;
-//define( $constpref."CFG_THUMBRULE" , "サムネイル生成法則" ) ;
+// v2.30
+//define( $constpref."CFG_WIDTH" , "最大画像幅" ) ;
+//define( $constpref."CFG_DESCWIDTH" , "画像アップロード時に自動調整されるメイン画像の最大幅。<br />GDモードでTrueColorを扱えない時には単なるサイズ制限" ) ;
+//define( $constpref."CFG_HEIGHT" , "最大画像高" ) ;
+//define( $constpref."CFG_DESCHEIGHT" , "最大幅と同じ意味です" ) ;
+define( $constpref."CFG_WIDTH" , "ポップアップでの画像の幅" ) ;
+define( $constpref."CFG_DESCWIDTH" , "ポップアップしたときの画像の大きさです。<br /><br />従来のバージョンではアップロード可能な画像の大きさの制限でした。<br />この制限はなくなりました。<br />2.30にて仕様が変わりました。" ) ;
+define( $constpref."CFG_HEIGHT" , "ポップアップでの画像の幅さ" ) ;
+define( $constpref."CFG_DESCHEIGHT" , "画像の幅と同じ意味です" ) ;
 
-define( $constpref."CFG_WIDTH" , "最大画像幅" ) ;
-define( $constpref."CFG_DESCWIDTH" , "画像アップロード時に自動調整されるメイン画像の最大幅。<br />GDモードでTrueColorを扱えない時には単なるサイズ制限" ) ;
-define( $constpref."CFG_HEIGHT" , "最大画像高" ) ;
-define( $constpref."CFG_DESCHEIGHT" , "最大幅と同じ意味です" ) ;
 define( $constpref."CFG_FSIZE" , "最大ファイルサイズ" ) ;
 define( $constpref."CFG_DESCFSIZE" , "アップロード時のファイルサイズ制限(byte)" ) ;
-
-//define( $constpref."CFG_MIDDLEPIXEL" , "シングルビューでの最大画像サイズ" ) ;
-//define( $constpref."CFG_DESCMIDDLEPIXEL" , "幅x高さ で指定します。<br />（例 480x480）" ) ;
-
-define( $constpref."CFG_ADDPOSTS" , "写真を投稿した時にカウントアップされる投稿数" ) ;
+define( $constpref."CFG_ADDPOSTS" , "写真・動画・メディアを投稿した時にカウントアップされる投稿数" ) ;
 define( $constpref."CFG_DESCADDPOSTS" , "常識的には0か1です。負の値は0と見なされます" ) ;
 define( $constpref."CFG_CATONSUBMENU" , "サブメニューへのトップカテゴリーの登録" ) ;
 define( $constpref."CFG_NAMEORUNAME" , "投稿者名の表示" ) ;
 define( $constpref."CFG_DESCNAMEORUNAME" , "ログイン名かハンドル名か選択して下さい" ) ;
-
-//define( $constpref."CFG_VIEWCATTYPE" , "一覧表示の表示タイプ" ) ;
 define( $constpref."CFG_VIEWTYPE" , "一覧表示の表示タイプ" ) ;
-
-//define( $constpref."CFG_COLSOFTABLEVIEW" , "テーブル表示時のカラム数" ) ;
 define( $constpref."CFG_COLSOFTABLE" , "テーブル表示時のカラム数" ) ;
-
-//define( $constpref."CFG_ALLOWEDEXTS" , "アップロード許可するファイル拡張子" ) ;
-//define( $constpref."CFG_DESCALLOWEDEXTS" , "ファイルの拡張子を、jpg|jpeg|gif|png のように、'|' で区切って入力して下さい。<br />すべて小文字で指定し、ピリオドや空白は入れないで下さい。<br />意味の判っている方以外は、phpやphtmlなどを追加しないで下さい" ) ;
-//define( $constpref."CFG_ALLOWEDMIME" , "アップロード許可するMIMEタイプ" ) ;
-//define( $constpref."CFG_DESCALLOWEDMIME" , "MIMEタイプを、image/gif|image/jpeg|image/png のように、'|' で区切って入力して下さい。<br />MIMEタイプによるチェックを行わない時には、ここを空欄にします" ) ;
-
 define( $constpref."CFG_USESITEIMG" , "イメージマネージャ統合での[siteimg]タグ" ) ;
 define( $constpref."CFG_DESCUSESITEIMG" , "イメージマネージャ統合で、[img]タグの代わりに[siteimg]タグを挿入するようになります。<br />利用モジュール側で[siteimg]タグが有効に機能するようになっている必要があります" ) ;
-
 define( $constpref."OPT_USENAME" , "ハンドル名" ) ;
 define( $constpref."OPT_USEUNAME" , "ログイン名" ) ;
-
-//define( $constpref."OPT_CALCFROMWIDTH" , "指定数値を幅として、高さを自動計算" ) ;
-//define( $constpref."OPT_CALCFROMHEIGHT" , "指定数値を高さとして、幅を自動計算" ) ;
-//define( $constpref."OPT_CALCWHINSIDEBOX" , "幅か高さの大きい方が指定数値になるよう自動計算" ) ;
-
 define( $constpref."OPT_VIEWLIST" , "説明文付リスト表示" ) ;
 define( $constpref."OPT_VIEWTABLE" , "テーブル表示" ) ;
-
-// Sub menu titles
-//define($constpref."TEXT_SMNAME1","投稿");
-//define($constpref."TEXT_SMNAME2","高人気");
-//define($constpref."TEXT_SMNAME3","トップランク");
-//define($constpref."TEXT_SMNAME4","自分の投稿");
-
-// Names of admin menu items
-//define($constpref."ADMENU0","投稿された画像の承認");
-//define($constpref."ADMENU1","画像管理");
-//define($constpref."ADMENU2","カテゴリ管理");
-//define($constpref."ADMENU_GPERM","各グループの権限");
-//define($constpref."ADMENU3","動作チェッカー");
-//define($constpref."ADMENU4","画像一括登録");
-//define($constpref."ADMENU5","サムネイルの再構築");
-//define($constpref."ADMENU_IMPORT","画像インポート");
-//define($constpref."ADMENU_EXPORT","画像エクスポート");
-//define($constpref."ADMENU_MYBLOCKSADMIN","ブロック・アクセス権限");
-//define($constpref."ADMENU_MYTPLSADMIN","テンプレート管理");
-
 
 // Text for notifications
 define($constpref."GLOBAL_NOTIFY", "モジュール全体");
 define($constpref."GLOBAL_NOTIFYDSC", "モジュール全体における通知オプション");
 define($constpref."CATEGORY_NOTIFY", "カテゴリー");
 define($constpref."CATEGORY_NOTIFYDSC", "選択中のカテゴリーに対する通知オプション");
-define($constpref."PHOTO_NOTIFY", "写真");
-define($constpref."PHOTO_NOTIFYDSC", "表示中の写真に対する通知オプション");
+define($constpref."PHOTO_NOTIFY", "写真・動画・メディア");
+define($constpref."PHOTO_NOTIFYDSC", "表示中の写真・動画・メディアに対する通知オプション");
 
-define($constpref."GLOBAL_NEWPHOTO_NOTIFY", "新規写真登録");
-define($constpref."GLOBAL_NEWPHOTO_NOTIFYCAP", "新規に写真が登録された時に通知する");
-define($constpref."GLOBAL_NEWPHOTO_NOTIFYDSC", "新規に写真が登録された時に通知する");
-define($constpref."GLOBAL_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 新たに写真が登録されました");
+define($constpref."GLOBAL_NEWPHOTO_NOTIFY", "写真・動画・メディアの新規登録");
+define($constpref."GLOBAL_NEWPHOTO_NOTIFYCAP", "写真・動画・メディアが新規に登録された時に通知する");
+define($constpref."GLOBAL_NEWPHOTO_NOTIFYDSC", "写真・動画・メディアが新規に登録された時に通知する");
+define($constpref."GLOBAL_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 新たに写真・動画・メディアが登録されました");
 
-define($constpref."CATEGORY_NEWPHOTO_NOTIFY", "カテゴリ毎の新写真登録");
-define($constpref."CATEGORY_NEWPHOTO_NOTIFYCAP", "このカテゴリに新たに写真が登録された時に通知する");
-define($constpref."CATEGORY_NEWPHOTO_NOTIFYDSC", "このカテゴリに新たに写真が登録された時に通知する");
-define($constpref."CATEGORY_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 新たに写真が登録されました");
+define($constpref."CATEGORY_NEWPHOTO_NOTIFY", "カテゴリ毎の写真・動画・メディアの新規登録");
+define($constpref."CATEGORY_NEWPHOTO_NOTIFYCAP", "このカテゴリに新たに写真・動画・メディアが登録された時に通知する");
+define($constpref."CATEGORY_NEWPHOTO_NOTIFYDSC", "このカテゴリに新たに写真・動画・メディアが登録された時に通知する");
+define($constpref."CATEGORY_NEWPHOTO_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 新たに写真・動画・メディアが登録されました");
 
 
 //=========================================================
@@ -185,10 +137,6 @@ define($constpref."OPT_SORT_DATED","更新日時 (新→旧)");
 define($constpref."OPT_SORT_RATINGA","評価 (低→高)");
 define($constpref."OPT_SORT_RATINGD","評価 (高→低)");
 define($constpref."OPT_SORT_RANDOM","ランダム");
-
-//define($constpref."CFG_GICONSPATH" , "Google アイコンファイルの保存先ディレクトリ" ) ;
-//define($constpref."CFG_TMPPATH" ,   "一時ファイルの保存先ディレクトリ" ) ;
-
 define($constpref."CFG_MIDDLE_WIDTH" ,  "シングルビューでの画像の幅" ) ;
 define($constpref."CFG_MIDDLE_HEIGHT" , "シングルビューでの画像の高さ" ) ;
 define($constpref."CFG_THUMB_WIDTH" ,  "サムネイル画像の幅" ) ;
@@ -212,16 +160,13 @@ define($constpref."SMNAME_HIGHRATE","トップランク");
 define($constpref."SMNAME_MYPHOTO","自分の投稿");
 
 // Names of admin menu items
-//define($constpref."ADMENU_ADMISSION","投稿された画像の承認");
-
-define($constpref."ADMENU_PHOTOMANAGER","画像管理");
+define($constpref."ADMENU_PHOTOMANAGER","メディア管理");
 define($constpref."ADMENU_CATMANAGER","カテゴリ管理");
 define($constpref."ADMENU_CHECKCONFIGS","動作チェッカー");
-define($constpref."ADMENU_BATCH","画像一括登録");
-//define($constpref."ADMENU_REDOTHUMB","サムネイルの再構築");
+define($constpref."ADMENU_BATCH","メディアの一括登録");
 define($constpref."ADMENU_GROUPPERM","各グループの権限");
-define($constpref."ADMENU_IMPORT","画像インポート");
-define($constpref."ADMENU_EXPORT","画像エクスポート");
+define($constpref."ADMENU_IMPORT","メディアのインポート");
+define($constpref."ADMENU_EXPORT","メディアのエクスポート");
 
 define($constpref."ADMENU_GICONMANAGER","Googleアイコン管理");
 define($constpref."ADMENU_MIMETYPES","MIMEタイプ管理");
@@ -239,17 +184,14 @@ define($constpref."ADMENU_SYNO_TABLE_MANAGE","類似語テーブル管理");
 //---------------------------------------------------------
 // v0.20
 //---------------------------------------------------------
-define( $constpref."CFG_USE_FFMPEG"  , "ffmpeg を使用する" ) ;
-define( $constpref."CFG_FFMPEGPATH"  , "ffmpeg の実行パス" ) ;
-define( $constpref."CFG_DESCFFMPEGPATH" , "ffmpeg の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「ffmpeg を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
+define($constpref."CFG_USE_FFMPEG"  , "ffmpeg を使用する" ) ;
+define($constpref."CFG_FFMPEGPATH"  , "ffmpeg の実行パス" ) ;
+define($constpref."CFG_DESCFFMPEGPATH" , "ffmpeg の存在するディレクトリをフルパスで指定します、空白でうまく行くことが多いでしょう。<br />「ffmpeg を使用する」の「はい」を選択した時のみ意味を持ちます" ) ;
 define($constpref."CFG_USE_PATHINFO","pathinfo を使用する");
 
 //---------------------------------------------------------
 // v0.30
 //---------------------------------------------------------
-//define($constpref."CFG_TMPDIR" ,   "一時ファイルの保存先ディレクトリ" ) ;
-//define($constpref."CFG_TMPDIR_DSC" , "フルパスを指定（最後の'/'は不要）<br />ドキュメント・ルート以外に設定することをお勧めします");
-
 define($constpref."CFG_MAIL_HOST"  , "メール サーバー ホスト名" ) ;
 define($constpref."CFG_MAIL_USER"  , "メール ユーザーID" ) ;
 define($constpref."CFG_MAIL_PASS"  , "メール パスワード" ) ;
@@ -359,26 +301,26 @@ define($constpref."OPT_TIMELINE_SCALE_DECADE", "１０年") ;
 // v1.40
 //---------------------------------------------------------
 // timeline
-define($constpref."CFG_TIMELINE_LATEST", "タイムラインの新しい方から表示する写真の数");
-define($constpref."CFG_TIMELINE_RANDOM", "タイムラインのランダムに表示する写真の数");
+define($constpref."CFG_TIMELINE_LATEST", "タイムラインの新しい方から表示する写真・動画・メディアの数");
+define($constpref."CFG_TIMELINE_RANDOM", "タイムラインのランダムに表示する写真・動画・メディアの数");
 define($constpref."BNAME_TIMELINE" , "タイムライン" ) ;
 
 // map, tag
-define($constpref."CFG_GMAP_PHOTOS", "マップに表示する写真の数");
+define($constpref."CFG_GMAP_PHOTOS", "マップに表示する写真・動画・メディアの数");
 define($constpref."CFG_TAGS", "タグクラウドに表示するタグの数");
 
 //---------------------------------------------------------
 // v1.70
 //---------------------------------------------------------
-define($constpref."CFG_ITEM_SUMMARY", "写真の説明の最大の文字数");
-define($constpref."CFG_ITEM_SUMMARY_DSC", "一覧に表示する写真の説明文の最大の文字数を指定する<br />-1 は制限なし");
+define($constpref."CFG_ITEM_SUMMARY", "写真・動画・メディアの説明の最大の文字数");
+define($constpref."CFG_ITEM_SUMMARY_DSC", "一覧に表示する写真・動画・メディアの説明文の最大の文字数を指定する<br />-1 は制限なし");
 define($constpref."CFG_CAT_SUMMARY", "カテゴリの説明の最大の文字数");
 define($constpref."CFG_CAT_SUMMARY_DSC", "カテゴリ一覧に表示する説明文の最大の文字数を指定する<br />-1 は制限なし");
-define($constpref."CFG_CAT_CHILD", "下位カテゴリの画像の表示");
-define($constpref."CFG_CAT_CHILD_DSC", "カテゴリ表示のときに下位カテゴリの画像を表示するか否かを指定する");
-define($constpref."OPT_CAT_CHILD_NON", "カテゴリの画像のみを表示する。常に下位カテゴリの画像を表示しない");
-define($constpref."OPT_CAT_CHILD_EMPTY", "カテゴリの画像がゼロのときに、下位カテゴリの画像を表示する");
-define($constpref."OPT_CAT_CHILD_ALWAYS", "常に下位カテゴリの画像を表示する");
+define($constpref."CFG_CAT_CHILD", "下位カテゴリの写真・動画・メディアの表示");
+define($constpref."CFG_CAT_CHILD_DSC", "カテゴリ表示のときに下位カテゴリの写真・動画・メディアを表示するか否かを指定する");
+define($constpref."OPT_CAT_CHILD_NON", "カテゴリの写真・動画・メディアのみを表示する。常に下位カテゴリの写真・動画・メディアを表示しない");
+define($constpref."OPT_CAT_CHILD_EMPTY", "カテゴリ写真・動画・メディアがゼロのときに、下位カテゴリの写真・動画・メディアを表示する");
+define($constpref."OPT_CAT_CHILD_ALWAYS", "常に下位カテゴリの写真・動画・メディアを表示する");
 
 //---------------------------------------------------------
 // v1.80
@@ -406,10 +348,10 @@ define($constpref."CFG_GROUPID_USER_DSC" , "このモジュールの利用者の
 define($constpref."ADMENU_INVITE", "友人を招待する");
 
 // notifications
-define($constpref."GLOBAL_WAITING_NOTIFY", "承認待ちの写真投稿");
-define($constpref."GLOBAL_WAITING_NOTIFYCAP", "承認待ちの写真が投稿された時に通知する (管理者)");
-define($constpref."GLOBAL_WAITING_NOTIFYDSC", "承認待ちの写真が投稿された時に通知する");
-define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 承認待ちの写真が投稿されました");
+define($constpref."GLOBAL_WAITING_NOTIFY", "承認待ちの写真・動画・メディアの投稿");
+define($constpref."GLOBAL_WAITING_NOTIFYCAP", "承認待ちの写真・動画・メディアが投稿された時に通知する (管理者)");
+define($constpref."GLOBAL_WAITING_NOTIFYDSC", "承認待ちの写真・動画・メディアが投稿された時に通知する");
+define($constpref."GLOBAL_WAITING_NOTIFYSBJ", "[{X_SITENAME}] {X_MODULE}: 承認待ちの写真・動画・メディア真が投稿されました");
 
 //---------------------------------------------------------
 // v2.10

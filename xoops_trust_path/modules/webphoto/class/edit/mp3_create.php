@@ -1,5 +1,5 @@
 <?php
-// $Id: mp3_create.php,v 1.3 2010/09/27 03:42:54 ohwada Exp $
+// $Id: mp3_create.php,v 1.4 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // webphoto_lame
 // 2009-11-11 K.OHWADA
 // $trust_dirname
@@ -23,12 +23,13 @@ class webphoto_edit_mp3_create extends webphoto_edit_base_create
 {
 	var $_lame_class;
 
-	var $_SUB_DIR_MP3S = 'mp3s';
-	var $_EXT_MP3      = 'mp3';
-
-	var $_MP3_EXT    = 'mp3';
-	var $_MP3_MIME   = 'audio/mpeg';
-	var $_MP3_MEDIUM = 'audio';
+	var $_param_ext    = 'mp3' ;
+	var $_param_dir    = 'mp3s';
+	var	$_param_mime   = 'audio/mpeg' ;
+	var $_param_medium = 'audio' ;
+	var $_param_kind   = _C_WEBPHOTO_FILE_KIND_MP3 ;
+	var $_msg_created  = 'create mp3' ;
+	var $_msg_failed   = 'fail to create mp3' ;
 
 //---------------------------------------------------------
 // constructor
@@ -76,42 +77,12 @@ function create_param( $param )
 
 function create_mp3( $item_id, $src_file, $src_ext )
 {
-	$this->_flag_created = false ;
-	$this->_flag_failed  = false ;
-
-	$mp3_param = null ;
-
-	$name_param =$this->build_random_name_param( $item_id, $this->_EXT_MP3, $this->_SUB_DIR_MP3S );
-	$name  = $name_param['name'] ;
-	$path  = $name_param['path'] ;
+	$name_param =$this->build_name_param( $item_id );
 	$file  = $name_param['file'] ;
-	$url   = $name_param['url']  ;
 
 	$ret = $this->_lame_class->create_mp3( $src_file, $file );
 
-// created
-	if ( $ret == 1 ) {
-		$this->set_flag_created() ;
-		$this->set_msg( 'create mp3' );
-		$mp3_param = array(
-			'url'    => $url ,
-			'file'   => $file ,
-			'path'   => $path ,
-			'name'   => $name ,
-			'ext'    => $this->_MP3_EXT ,
-			'mime'   => $this->_MP3_MIME ,
-			'medium' => $this->_MP3_MEDIUM ,
-			'size'   => filesize( $file ) ,
-			'kind'   => _C_WEBPHOTO_FILE_KIND_MP3 ,
-		);
-
-// failed
-	} elseif ( $ret == -1 ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create mp3', true ) ;
-	}
-
-	return $mp3_param ;
+	return $this->build_result( $ret, $name_param );
 }
 
 // --- class end ---

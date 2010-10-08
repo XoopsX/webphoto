@@ -1,10 +1,16 @@
 <?php
-// $Id: admin.php,v 1.22 2010/02/07 12:20:02 ohwada Exp $
+// $Id: admin.php,v 1.23 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-10-01 K.OHWADA
+// Photo -> Photo Video Media
+//---------------------------------------------------------
 
 // === define begin ===
 if( !defined("_AM_WEBPHOTO_LANG_LOADED") ) 
@@ -59,8 +65,8 @@ define( "_AM_WEBPHOTO_CAT_FMT_CATDELCONFIRM" , "%s will be deleted with its sub-
 //define( "_AM_WEBPHOTO_TH_DATE" , "Last update" ) ;
 
 
-// Photo Manager
-//define( "_AM_WEBPHOTO_H3_FMT_PHOTOMANAGER" , "Photo Manager (%s)" ) ;
+// Photo Video Media Manager
+//define( "_AM_WEBPHOTO_H3_FMT_PHOTOMANAGER" , "Photo Video Media Manager (%s)" ) ;
 
 define( "_AM_WEBPHOTO_TH_BATCHUPDATE" , "Update checked photos collectively" ) ;
 define( "_AM_WEBPHOTO_OPT_NOCHANGE" , "- NO CHANGE -" ) ;
@@ -77,13 +83,13 @@ define( "_AM_WEBPHOTO_NEEDON" , "need on" ) ;
 
 define( "_AM_WEBPHOTO_H4_TABLE" , "Table Check" ) ;
 
-//define( "_AM_WEBPHOTO_PHOTOSTABLE" , "Photos table" ) ;
+//define( "_AM_WEBPHOTO_PHOTOSTABLE" , "Photo Video Media table" ) ;
 //define( "_AM_WEBPHOTO_DESCRIPTIONTABLE" , "Descriptions table" ) ;
 //define( "_AM_WEBPHOTO_CATEGORIESTABLE" , "Categories table" ) ;
 //define( "_AM_WEBPHOTO_VOTEDATATABLE" , "Votedata table" ) ;
 
 define("_AM_WEBPHOTO_COMMENTSTABLE" , "Comments table" ) ;
-define("_AM_WEBPHOTO_NUMBEROFPHOTOS" , "Number of Photos" ) ;
+define("_AM_WEBPHOTO_NUMBEROFPHOTOS" , "Number of Photo Video Media" ) ;
 define("_AM_WEBPHOTO_NUMBEROFDESCRIPTIONS" , "Number of Descriptions" ) ;
 define("_AM_WEBPHOTO_NUMBEROFCATEGORIES" , "Number of Categories" ) ;
 define("_AM_WEBPHOTO_NUMBEROFVOTEDATA" , "Number of Votedata" ) ;
@@ -92,7 +98,7 @@ define("_AM_WEBPHOTO_NUMBEROFCOMMENTS" , "Number of Comments" ) ;
 define( "_AM_WEBPHOTO_H4_CONFIG" , "Config Check" ) ;
 define( "_AM_WEBPHOTO_PIPEFORIMAGES" , "Pipe for images" ) ;
 
-//define( "_AM_WEBPHOTO_DIRECTORYFORPHOTOS" , "Directory for Photos" ) ;
+//define( "_AM_WEBPHOTO_DIRECTORYFORPHOTOS" , "Directory for Photo Video Media" ) ;
 //define( "_AM_WEBPHOTO_DIRECTORYFORTHUMBS" , "Directory for Thumbnails" ) ;
 
 define( "_AM_WEBPHOTO_ERR_LASTCHAR" , "Error: The last charactor should not be '/'" ) ;
@@ -100,12 +106,12 @@ define( "_AM_WEBPHOTO_ERR_FIRSTCHAR" , "Error: The first charactor should be '/'
 define( "_AM_WEBPHOTO_ERR_PERMISSION" , "Error: You first have to create and chmod 777 this directory by ftp or shell." ) ;
 define( "_AM_WEBPHOTO_ERR_NOTDIRECTORY" , "Error: This is not a directory." ) ;
 define( "_AM_WEBPHOTO_ERR_READORWRITE" , "Error: This directory is not writable nor readable. You should change the permission of the directory to 777." ) ;
-define( "_AM_WEBPHOTO_ERR_SAMEDIR" , "Error: Photos Path should not be the same as Thumbs Path" ) ;
+define( "_AM_WEBPHOTO_ERR_SAMEDIR" , "Error: Photo Video Media Path should not be the same as Thumbs Path" ) ;
 define( "_AM_WEBPHOTO_LNK_CHECKGD2" , "Check that 'GD2'is working correctly under your GD bundled with PHP" ) ;
 define( "_AM_WEBPHOTO_CHECKGD2" , "If the page linked to from here doesn't display correctly, you should not use your GD in truecolor mode." ) ;
 define( "_AM_WEBPHOTO_GD2SUCCESS" , "Success!<br />Perhaps, you can use GD2 (truecolor) in this environment." ) ;
 
-define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "Photos & Thumbs Link Check" ) ;
+define( "_AM_WEBPHOTO_H4_PHOTOLINK" , "Photo Video Media & Thumbs Link Check" ) ;
 define( "_AM_WEBPHOTO_NOWCHECKING" , "Now, checking ." ) ;
 
 //define( "_AM_WEBPHOTO_FMT_PHOTONOTREADABLE" , "a main photo (%s) is not readable." ) ;
@@ -189,7 +195,7 @@ define("_AM_WEBPHOTO_BTN_SELECTNONE" , "Select None" ) ;
 define("_AM_WEBPHOTO_BTN_SELECTRVS" , "Select Reverse" ) ;
 define("_AM_WEBPHOTO_FMT_PHOTONUM" , "%s every page" ) ;
 
-define("_AM_WEBPHOTO_ADMISSION" , "Admit Photos" ) ;
+define("_AM_WEBPHOTO_ADMISSION" , "Admit Photo Video Media" ) ;
 define("_AM_WEBPHOTO_ADMITTING" , "Admitted photo(s)" ) ;
 define("_AM_WEBPHOTO_LABEL_ADMIT" , "Admit the photos you checked" ) ;
 define("_AM_WEBPHOTO_BUTTON_ADMIT" , "Admit" ) ;
@@ -202,7 +208,7 @@ define("_AM_WEBPHOTO_BUTTON_MOVE" , "Move" ) ;
 define("_AM_WEBPHOTO_BUTTON_UPDATE" , "Modify" ) ;
 define("_AM_WEBPHOTO_DEADLINKMAINPHOTO" , "The main image don't exist" ) ;
 
-define("_AM_WEBPHOTO_NOSUBMITTED","No New Submitted Photos.");
+define("_AM_WEBPHOTO_NOSUBMITTED","No New Submitted Photo Video Media.");
 define("_AM_WEBPHOTO_ADDMAIN","Add a MAIN Category");
 define("_AM_WEBPHOTO_IMGURL","Image URL (OPTIONAL Image height will be resized to 50): ");
 define("_AM_WEBPHOTO_ADD","Add");
@@ -215,10 +221,10 @@ define("_AM_WEBPHOTO_IMGURLMAIN","Image URL (OPTIONAL and Only valid for main ca
 define("_AM_WEBPHOTO_PARENT","Parent Category:");
 define("_AM_WEBPHOTO_SAVE","Save Changes");
 define("_AM_WEBPHOTO_CATDELETED","Category Deleted.");
-define("_AM_WEBPHOTO_CATDEL_WARNING","WARNING: Are you sure you want to delete this Category and ALL its Photos and Comments?");
+define("_AM_WEBPHOTO_CATDEL_WARNING","WARNING: Are you sure you want to delete this Category and ALL its Photo Video Media and Comments?");
 
 define("_AM_WEBPHOTO_NEWCATADDED","New Category Added Successfully!");
-define("_AM_WEBPHOTO_ERROREXIST","ERROR: The Photo you provided is already in the database!");
+define("_AM_WEBPHOTO_ERROREXIST","ERROR: The Photo Video Media you provided is already in the database!");
 define("_AM_WEBPHOTO_ERRORTITLE","ERROR: You need to enter a TITLE!");
 define("_AM_WEBPHOTO_ERRORDESC","ERROR: You need to enter a DESCRIPTION!");
 define("_AM_WEBPHOTO_WEAPPROVED","We approved your link submission to the photo database.");
@@ -321,7 +327,7 @@ define("_AM_WEBPHOTO_MIME_NOT_ENTER_EXT", "Not enter extention");
 //---------------------------------------------------------
 // check config
 //---------------------------------------------------------
-define("_AM_WEBPHOTO_DIRECTORYFOR_PHOTOS" , "Directory for Photos" ) ;
+define("_AM_WEBPHOTO_DIRECTORYFOR_PHOTOS" , "Directory for Photo Video Media" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_THUMBS" , "Directory for Thumbnails" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_GICONS" , "Directory for Google Icons" ) ;
 define("_AM_WEBPHOTO_DIRECTORYFOR_TMP" ,    "Directory for Tempolary" ) ;

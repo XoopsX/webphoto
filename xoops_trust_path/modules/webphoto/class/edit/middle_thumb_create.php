@@ -1,5 +1,5 @@
 <?php
-// $Id: middle_thumb_create.php,v 1.5 2010/10/06 02:22:46 ohwada Exp $
+// $Id: middle_thumb_create.php,v 1.6 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -136,6 +136,37 @@ function create_image_params( $param )
 	);
 
 	return $file_params;
+}
+
+//---------------------------------------------------------
+// create copy param
+//---------------------------------------------------------
+function create_copy_param( $param )
+{
+	$this->clear_msg_array();
+
+	$src_kind = $param['src_kind'] ;
+
+	switch ( $src_kind )
+	{
+		case _C_WEBPHOTO_FILE_KIND_THUMB :
+			$ret = $this->create_thumb_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_LARGE :
+			$ret = $this->create_large_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_MIDDLE :
+			$ret = $this->create_middle_param( $param );
+			break;
+
+		case _C_WEBPHOTO_FILE_KIND_SMALL:
+			$ret = $this->create_small_param( $param );
+			break;
+	}
+
+	return $ret;
 }
 
 //---------------------------------------------------------

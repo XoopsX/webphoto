@@ -1,5 +1,5 @@
 <?php
-// $Id: jpeg_create.php,v 1.4 2010/10/06 02:22:46 ohwada Exp $
+// $Id: jpeg_create.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -27,11 +27,13 @@ class webphoto_edit_jpeg_create extends webphoto_edit_base_create
 	var $_is_cmyk = false;
 	var $_rotate  = 0;
 
-	var $_SUB_DIR_JPEGS = 'jpegs';
-
-	var $_JPEG_EXT    = 'jpg';
-	var $_JPEG_MIME   = 'image/jpeg';
-	var $_JPEG_MEDIUM = 'image';
+	var $_param_ext    = 'jpg' ;
+	var $_param_dir    = 'jpegs';
+	var	$_param_mime   = 'image/jpeg' ;
+	var $_param_medium = 'image' ;
+	var $_param_kind   = _C_WEBPHOTO_FILE_KIND_JPEG ;
+	var $_msg_created  = 'create jpeg' ;
+	var $_msg_failed   = 'fail to create jpeg' ;
 
 //---------------------------------------------------------
 // constructor
@@ -96,12 +98,7 @@ function create_param( $param )
 
 function create_jpeg( $item_id, $src_file, $src_ext, $pdf_file )
 {
-	$this->_flag_created = false ;
-	$this->_flag_failed  = false ;
-
-	$jpeg_param = null ;
-
-	$name_param =$this->build_random_name_param( $item_id, $this->_JPEG_EXT, $this->_SUB_DIR_JPEGS );
+	$name_param =$this->build_name_param( $item_id );
 	$name  = $name_param['name'] ;
 	$path  = $name_param['path'] ;
 	$file  = $name_param['file'] ;
@@ -118,40 +115,7 @@ function create_jpeg( $item_id, $src_file, $src_ext, $pdf_file )
 
 	$ret = $this->_ext_class->execute( 'jpeg', $param ) ;
 
-// created
-	if ( $ret == 1 ) {
-		$this->set_flag_created() ;
-		$this->set_msg( 'create jpeg' );
-		$jpeg_param = $this->build_jpeg_param( $name_param );
-
-// failed
-	} elseif ( $ret == -1 ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create jpeg', true ) ;
-	}
-
-	return $jpeg_param ;
-}
-
-function build_jpeg_param( $name_param )
-{
-	$name  = $name_param['name'] ;
-	$path  = $name_param['path'] ;
-	$file  = $name_param['file'] ;
-	$url   = $name_param['url']  ;
-
-	$param = array(
-		'url'    => $url ,
-		'file'   => $file ,
-		'path'   => $path ,
-		'name'   => $name ,
-		'ext'    => $this->_JPEG_EXT ,
-		'mime'   => $this->_JPEG_MIME ,
-		'medium' => $this->_JPEG_MEDIUM ,
-		'size'   => filesize( $file ) ,
-		'kind'   => _C_WEBPHOTO_FILE_KIND_JPEG ,
-	);
-	return $param;
+	return $this->build_result( $ret, $name_param );
 }
 
 function is_cmyk()
@@ -160,59 +124,19 @@ function is_cmyk()
 }
 
 //---------------------------------------------------------
-// create copy param (for jpeg)
-//---------------------------------------------------------
-function create_copy_param( $param )
-{
-	$this->clear_msg_array();
-
-	$item_id  = $param['item_id'];
-	$src_file = $param['src_file'] ;
-
-	$name_param = $this->build_random_name_param( $item_id, $this->_JPEG_EXT, $this->_SUB_DIR_JPEGS );
-	$jpeg_file  = $name_param['file'] ;
-
-	copy( $src_file, $jpeg_file );
-
-	if ( !file_exists($jpeg_file) ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create jpeg', true ) ;
-		return false;
-	}
-
-	$this->set_flag_created() ;
-	$this->set_msg( 'create jpeg' );
-	$jpeg_param = $this->build_jpeg_param( $name_param );
-	return $jpeg_param ;
-
-}
-
-//---------------------------------------------------------
 // create image param (for gif, png)
 //---------------------------------------------------------
 function create_image_param( $param )
 {
-	$this->clear_msg_array();
-
 	$item_id  = $param['item_id'];
 	$src_file = $param['src_file'] ;
 
-	$name_param = $this->build_random_name_param( $item_id, $this->_JPEG_EXT, $this->_SUB_DIR_JPEGS );
+	$name_param = $this->build_name_param( $item_id );
 	$jpeg_file  = $name_param['file'] ;
 
 	$this->_image_create_class->cmd_rotate( $src_file, $jpeg_file, 0 );
 
-	if ( !file_exists($jpeg_file) ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create jpeg', true ) ;
-		return false;
-	}
-
-	$this->set_flag_created() ;
-	$this->set_msg( 'create jpeg' );
-	$jpeg_param = $this->build_jpeg_param( $name_param );
-	return $jpeg_param ;
-
+	return $this->build_copy_result( $name_param );
 }
 
 // --- class end ---

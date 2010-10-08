@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.15 2010/10/06 02:22:46 ohwada Exp $
+// $Id: action.php,v 1.16 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -239,11 +239,14 @@ function modify_exec( $item_row )
 		$this->upload_fetch_jpeg();
 	}
 
-	$photo_name  = $this->_photo_tmp_name;
-	$jpeg_name   = $this->_jpeg_tmp_name;
+	$this->upload_fetch_files();
+
+	$photo_name      = $this->_photo_tmp_name;
+	$jpeg_name       = $this->_jpeg_tmp_name;
+	$file_name_array = $this->_file_tmp_name_array;
 
 // no upload
-	if ( empty($photo_name) && empty($jpeg_name) ) {
+	if ( empty($photo_name) && empty($jpeg_name) && !count($file_name_array) ) {
 		return $this->update_photo_no_image( $item_row );
 	}
 
@@ -254,10 +257,21 @@ function modify_exec( $item_row )
 		$item_row = $this->delete_file_jpeg_if_upload_jpeg( $item_row );
 	}
 
-	$ret = $this->create_media_file_params( $item_row, $is_submit=false );
-	if ( $ret < 0 ) {
-		return $ret;
+	if ( $photo_name || $jpeg_name ) {
+		$ret = $this->create_media_file_params( $item_row, $is_submit=false );
+		if ( $ret < 0 ) {
+			return $ret;
+		}
 	}
+
+	if ( count($file_name_array) ) {
+		$ret = $this->create_files_params( $item_row );
+		if ( $ret < 0 ) {
+			return $ret;
+		}
+	}
+
+	$this->unlink_uploaded_files();
 
 // --- update files
 	$file_id_array = $this->_factory_create_class->update_files_from_params( 
@@ -357,23 +371,6 @@ function update_all_file_duration( $item_row )
 function update_file_duration( $item_row, $duration, $item_name )
 {
 	return $this->_file_action_class->update_duration( $item_row, $duration, $item_name );
-}
-
-function XXXupdate_file_duration( $duration, $item_row, $kind )
-{
-	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
-	if ( !is_array($file_row ) ) {
-		return true;
-	}
-
-	$file_row['file_duration'] = $duration ;
-
-	$ret = $this->_file_handler->update( $file_row );
-	if ( !$ret ) {
-		$this->set_error( $this->_file_handler->get_errors() );
-		return false;
-	}
-	return true;
 }
 
 //---------------------------------------------------------
@@ -548,38 +545,42 @@ function create_video_images( $param )
 	return $ret;
 }
 
-function insert_file_by_param( $item_id, $param )
-{
-	return $this->_factory_create_class->insert_file_by_param( $item_id, $param );
-}
-
 //---------------------------------------------------------
 // file delete
 //---------------------------------------------------------
-function video_flash_delete( $item_row, $url_redirect )
+function delete_file_jpeg_if_upload_jpeg( $item_row )
 {
-	$this->file_delete_common(
-		$item_row, _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH, $url_redirect, false );
+	if ( $this->is_jpeg_ext($item_row['item_ext']) ) {
+		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_JPEG );
+		$item_row[ _C_WEBPHOTO_ITEM_FILE_JPEG ] = 0 ;
+	}
+	return $item_row ;
+}
 
-	$item_id  = $item_row['item_id'] ;
+function video_flash_delete( $item_row )
+{
+	$ret = $this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH );
+	if ( $ret == -1 ) {
+		$this->_delete_error = 'No file record' ;
+		return false;
+	}
+	if ( $ret == -2 ) {
+		return false;
+	}
+
+	$item_row[ _C_WEBPHOTO_ITEM_FILE_VIDEO_FLASH ] = 0 ;
 	$item_row['item_displaytype'] = _C_WEBPHOTO_DISPLAYTYPE_GENERAL ;
 
 	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$msg  = "DB Error <br />\n" ;
-		$msg .= $this->get_format_error() ;
-		redirect_header( $url_redirect, $this->_TIME_FAILED, $msg );
-		exit();
+		$this->_delete_error  = "DB Error";
+		if ( $this->_FLAG_ADMIN ) {
+			$this->_delete_error .= "<br />\n".$this->get_format_error() ;
+		}
+		return false;
 	}
 
-	redirect_header( $url_redirect, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
-	exit();
-}
-
-function cont_delete( $item_row, $url_redirect )
-{
-	$this->file_delete_common( 
-		$item_row, _C_WEBPHOTO_ITEM_FILE_CONT, $url_redirect, true );
+	return true;
 }
 
 function jpeg_thumb_delete( $item_row, $flag_thmub=true )
@@ -609,63 +610,55 @@ function jpeg_thumb_delete( $item_row, $flag_thmub=true )
 	$item_row = $this->_factory_create_class->build_row_icon_if_empty( $item_row );
 	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$this->_delete_error = $this->get_format_error() ;
+		$this->_delete_error  = "DB Error";
+		if ( $this->_FLAG_ADMIN ) {
+			$this->_delete_error .= "<br />\n".$this->get_format_error() ;
+		}
 		return false;
 	}
 
 	return true;
 }
 
-function file_delete_common( $item_row, $item_name, $url_redirect, $flag_redirect )
+function cont_delete( $item_row )
 {
-	$item_id = $item_row['item_id'] ;
-	$file_id = $item_row[ $item_name ] ;
-	$error   = '' ;
+	return $this->file_delete_common( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
+}
 
+function file_delete_common( $item_row, $item_name )
+{
 	$ret = $this->delete_file( $item_row, $item_name );
 	if ( $ret == -1 ) {
-		redirect_header( $url, $this->_TIME_FAILED, 'No file record' ) ;
-		exit() ;
+		$this->_delete_error = 'No file record' ;
+		return false;
 	}
 	if ( $ret == -2 ) {
-		$error .= $this->_delete_error;
+		return false;
 	}
 
 // BUG: not clear file id when delete file
 	$item_row[ $item_name ] = 0 ;
 	$ret = $this->format_and_update_item( $item_row );
 	if ( !$ret ) {
-		$error .= $this->get_format_error() ;
-	}
-
-	if ( $error ) {
-		$msg  = "DB Error <br />\n". $error ;
-		redirect_header( $url_redirect, $this->_TIME_FAILED, $msg );
-		exit();
-	}
-
-	if ( $flag_redirect ) {
-		redirect_header( $url_redirect, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
-		exit();
+		$this->_delete_error  = "DB Error";
+		if ( $this->_FLAG_ADMIN ) {
+			$this->_delete_error .= "<br />\n".$this->get_format_error() ;
+		}
+		return false;
 	}
 
 	return true;
-}
-
-function delete_file_jpeg_if_upload_jpeg( $item_row )
-{
-	if ( $this->is_jpeg_ext($item_row['item_ext']) ) {
-		$this->delete_file( $item_row, _C_WEBPHOTO_ITEM_FILE_JPEG );
-		$item_row[ _C_WEBPHOTO_ITEM_FILE_JPEG ] = 0 ;
-	}
-	return $item_row ;
 }
 
 function delete_file( $item_row, $item_name )
 {
 	$ret = $this->_file_action_class->delete_file( $item_row, $item_name );
 	if ( $ret == -2 ) {
-		$this->_delete_error = $this->_file_action_class->get_format_error() ;
+		$this->_delete_error  = "DB Error";
+		if ( $this->_FLAG_ADMIN ) {
+			$this->_delete_error .= "<br />\n".$this->_file_action_class->get_format_error() ;
+		}
 	}
 	return $ret;
 }

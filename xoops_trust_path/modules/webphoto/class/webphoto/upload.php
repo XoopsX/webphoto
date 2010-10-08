@@ -1,5 +1,5 @@
 <?php
-// $Id: upload.php,v 1.9 2010/06/16 22:24:47 ohwada Exp $
+// $Id: upload.php,v 1.10 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// remove $this->unlink_file( $this->_uploader_class->getSavedDestination() )
 // 2010-06-06 K.OHWADA
 // upload_allowed_mimes
 // 2009-11-11 K.OHWADA
@@ -39,8 +41,6 @@ class webphoto_upload extends webphoto_base_this
 	var $_max_width    = 0 ;
 	var $_max_height   = 0 ;
 
-	var $_flag_size_limit = true ;
-
 	var $_ini_allowed_mimes = true;
 
 	var $_uploader_media_name = null;
@@ -68,8 +68,6 @@ function webphoto_upload( $dirname , $trust_dirname )
 	$this->_ini_allowed_mimes = $this->get_ini( 'upload_allowed_mimes' );
 
 	$this->set_max_filesize( $this->get_config_by_name( 'fsize' )  ) ;
-	$this->set_max_width(    $this->get_config_by_name( 'width' )  ) ;
-	$this->set_max_height(   $this->get_config_by_name( 'height' ) ) ;
 
 	$this->_init_errors();
 }
@@ -107,11 +105,6 @@ function fetch_media( $field, $flag_allow_all )
 		$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
 	}
 
-	if ( $this->_flag_size_limit ) {
-		$this->_uploader_class->setMaxWidth(  $this->_max_width );
-		$this->_uploader_class->setMaxHeight( $this->_max_height );
-	}
-
 	$ret = $this->uploader_fetch( $field );
 	if ( $ret <= 0 ) { 
 		return $ret;	// failed or no file
@@ -140,11 +133,6 @@ function fetch_image( $field )
 		$this->_uploader_class->setAllowedMimeTypes(  $allowed_mimes );
 	}
 
-	if ( $this->_flag_size_limit ) {
-		$this->_uploader_class->setMaxWidth(  $this->_max_width );
-		$this->_uploader_class->setMaxHeight( $this->_max_height );
-	}
-
 	$ret = $this->uploader_fetch( $field );
 	if ( $ret <= 0 ) { 
 		return $ret;	// failed or no file
@@ -166,24 +154,9 @@ function get_tmp_name()
 //---------------------------------------------------------
 // set param
 //---------------------------------------------------------
-function set_flag_size_limit( $val )
-{
-	$this->_flag_size_limit = (bool)$val;
-}
-
 function set_max_filesize( $val )
 {
 	$this->_max_filesize = intval($val);
-}
-
-function set_max_width( $val )
-{
-	$this->_max_width = intval($val);
-}
-
-function set_max_height( $val )
-{
-	$this->_max_height = intval($val);
 }
 
 //---------------------------------------------------------
@@ -194,6 +167,10 @@ function uploader_fetch( $media_name, $index=null )
 // http://www.php.net/manual/en/features.file-upload.errors.php
 // UPLOAD_ERR_NO_FILE = 4
 
+	$this->_uploader_media_name = null ;
+	$this->_uploader_media_type = null ;
+	$this->_uploader_file_name  = null ;
+
 	$ret1 = $this->_uploader_class->fetchMedia( $media_name, $index );
 	if ( !$ret1 ) {
 		$error_num = $this->_uploader_class->getMediaError();
@@ -202,14 +179,12 @@ function uploader_fetch( $media_name, $index=null )
 		}
 
 		$this->build_uploader_errors();
-		$this->unlink_file( $this->_uploader_class->getSavedDestination() );
 		return _C_WEBPHOTO_ERR_UPLOAD;
 	}
 
 	$ret2 = $this->_uploader_class->upload();
 	if ( !$ret2 ) {
 		$this->build_uploader_errors();
-		$this->unlink_file( $this->_uploader_class->getSavedDestination() );
 		return _C_WEBPHOTO_ERR_UPLOAD;
 	}
 
@@ -249,7 +224,7 @@ function is_readable_files_tmp_name( $field )
 function is_readable_in_tmp_dir( $name )
 {
 	$file = $this->_TMP_DIR .'/' . $name;
-	if ( $name && is_readable( $file ) ) {
+	if ( $name && file_exists( $file ) && is_readable( $file ) ) {
 		return true;
 	}
 	return false;

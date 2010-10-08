@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.7 2010/10/06 02:22:46 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.8 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -53,6 +53,8 @@ class webphoto_edit_imagemanager_submit extends webphoto_edit_base
 	var $_photo_media_name = null;
 	var $_jpeg_tmp_name    = null;
 	var $_jpeg_media_type  = null;
+	var $_file_tmp_name_array   = array();
+	var $_file_media_type_array = array();
 
 	var $_image_tmp_file      = null;
 	var $_photo_param         = null ;
@@ -98,7 +100,6 @@ function webphoto_edit_imagemanager_submit( $dirname , $trust_dirname )
 
 	$this->_upload_class =& webphoto_upload::getInstance( 
 		$dirname , $trust_dirname );
-	$this->_upload_class->set_flag_size_limit( !$this->_has_image_resize );
 
 	$this->_has_insertable  = $this->_perm_class->has_insertable();
 	$this->_has_superinsert = $this->_perm_class->has_superinsert();
@@ -349,6 +350,16 @@ function unlink_uploaded_files()
 		) ;
 		$this->unlink_tmp_dir_file( $rot_name );
 	}
+
+	$file_arr = $this->_file_tmp_name_array;
+
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+	{
+		$name  = 'file_'.$i;
+		$file_name  = isset( $file_arr[ $name ] )  ? $file_arr[ $name ]  : null;
+		$this->unlink_tmp_dir_file( $file_name );
+	}
+
 }
 
 //---------------------------------------------------------
@@ -387,9 +398,6 @@ function create_cont_param( $photo_param )
 	}
 
 	$cont_param = $this->_factory_create_class->get_cont_param();
-	if ( $this->_factory_create_class->get_resized() ) {
-		$this->set_msg_array( $this->get_constant('SUBMIT_RESIZED') ) ;
-	}
 
 	return array( 0, $cont_param );
 }
@@ -510,6 +518,28 @@ function upload_fetch_jpeg()
 	if ( $ret == 1 ) {
 		$this->_jpeg_tmp_name   = $this->_upload_class->get_tmp_name();
 		$this->_jpeg_media_type = $this->_upload_class->get_uploader_media_type();
+	}
+}
+
+function upload_fetch_files()
+{
+	$this->_file_tmp_name_array   = array();
+	$this->_file_media_type_array = array();
+
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+	{
+		$name  = 'file_'.$i;
+
+// if file file uploaded
+		$ret = $this->_upload_class->fetch_media( $name, true );
+
+		if ( $ret < 0 ) {
+			$this->set_error( $this->_upload_class->get_errors() );
+		}
+		if ( $ret == 1 ) {
+			$this->_file_tmp_name_array[ $name ]   = $this->_upload_class->get_tmp_name();
+			$this->_file_media_type_array[ $name ] = $this->_upload_class->get_uploader_media_type();
+		}
 	}
 }
 

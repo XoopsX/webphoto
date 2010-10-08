@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.29 2010/10/06 02:22:46 ohwada Exp $
+// $Id: edit.php,v 1.30 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -438,37 +438,48 @@ function _check_delete_perm_or_redirect()
 //---------------------------------------------------------
 function _cont_delete()
 {
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->cont_delete( $item_row, $url_redirect );
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+	$this->_check_token_and_redirect( $item_id );
+
+	$ret = $this->cont_delete( $item_row );
+
+	$url = $this->_build_edit_url( $item_id );
+	$this->_redirect_file_delete( $ret, $url );
 }
 
 function _jpeg_delete()
 {
-	list($item_row, $url_redirect) = $this->_delete_common();
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+	$this->_check_token_and_redirect( $item_id );
 
 	$ret = $this->jpeg_thumb_delete( $item_row );
+
+	$url = $this->_build_edit_url( $item_id );
+	$this->_redirect_file_delete( $ret, $url );
+}
+
+function _flash_delete()
+{
+	$item_row = $this->_row_current;
+	$item_id  = $item_row['item_id'] ;
+	$this->_check_token_and_redirect( $item_id );
+
+	$ret = $this->video_flash_delete( $item_row );
+	$url = $this->_build_edit_url( $item_id );
+	$this->_redirect_file_delete( $ret, $url );
+}
+
+function _redirect_file_delete( $ret, $url )
+{
 	if ( !$ret  ) {
 		redirect_header( $url, $this->_TIME_FAILED, $this->_delete_error ) ;
 		exit() ;
 	}
 
-	redirect_header( $url_redirect, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
+	redirect_header( $url, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
 	exit();
-}
-
-function _flash_delete()
-{
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->video_flash_delete( $item_row, $url_redirect );
-}
-
-function _delete_common()
-{
-	$item_row = $this->_row_current;
-	$item_id  = $item_row['item_id'] ;
-	$this->_check_token_and_redirect( $item_id );
-	$url_redirect = $this->_build_edit_url( $item_id );
-	return array( $item_row, $url_redirect );
 }
 
 //---------------------------------------------------------

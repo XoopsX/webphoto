@@ -1,10 +1,16 @@
 <?php
-// $Id: main.php,v 1.40 2010/10/06 02:22:46 ohwada Exp $
+// $Id: main.php,v 1.41 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-04-02 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-10-01 K.OHWADA
+// 写真 -> 写真・動画・メディア
+//---------------------------------------------------------
 
 // === define begin ===
 if( !defined("_MB_WEBPHOTO_LANG_LOADED") ) 
@@ -18,7 +24,7 @@ define("_MB_WEBPHOTO_LANG_LOADED" , 1 ) ;
 
 define("_WEBPHOTO_CATEGORY","カテゴリ");
 define("_WEBPHOTO_SUBMITTER","投稿者");
-define("_WEBPHOTO_NOMATCH_PHOTO","画像がありません");
+define("_WEBPHOTO_NOMATCH_PHOTO","写真・動画・メディアがありません");
 
 define("_WEBPHOTO_ICON_NEW","新着");
 define("_WEBPHOTO_ICON_UPDATE","更新");
@@ -49,7 +55,7 @@ define("_WEBPHOTO_SORT_S_CURSORTEDBY","現在の並び順: %s");
 define("_WEBPHOTO_NAVI_PREVIOUS","前");
 define("_WEBPHOTO_NAVI_NEXT","次");
 define("_WEBPHOTO_S_NAVINFO" , "%s 番 - %s 番を表示 (全 %s 枚)" ) ;
-define("_WEBPHOTO_S_THEREARE","データベースにある画像は <b>%s</b> 枚です");
+define("_WEBPHOTO_S_THEREARE","データベースにある写真・動画・メディアは <b>%s</b> 枚です");
 define("_WEBPHOTO_S_MOREPHOTOS","%s さんの画像をもっと");
 define("_WEBPHOTO_ONEVOTE","投票数 1");
 define("_WEBPHOTO_S_NUMVOTES","投票数 %s");
@@ -57,7 +63,7 @@ define("_WEBPHOTO_ONEPOST","コメント数");
 define("_WEBPHOTO_S_NUMPOSTS","コメント数 %s");
 define("_WEBPHOTO_VOTETHIS","投票する");
 define("_WEBPHOTO_TELLAFRIEND","友人に知らせる");
-define("_WEBPHOTO_SUBJECT4TAF","面白い写真を見つけました");
+define("_WEBPHOTO_SUBJECT4TAF","面白い写真・動画・メディアを見つけました");
 
 
 //---------------------------------------------------------
@@ -66,8 +72,8 @@ define("_WEBPHOTO_SUBJECT4TAF","面白い写真を見つけました");
 // only "Y/m/d" , "d M Y" , "M d Y" can be interpreted
 define("_WEBPHOTO_DTFMT_YMDHI" , "Y-m-d H:i" ) ;
 
-define("_WEBPHOTO_TITLE_ADDPHOTO","画像を追加する");
-define("_WEBPHOTO_TITLE_PHOTOUPLOAD","画像アップロード");
+define("_WEBPHOTO_TITLE_ADDPHOTO","写真・動画・メディアを追加する");
+define("_WEBPHOTO_TITLE_PHOTOUPLOAD","写真・動画・メディアのアップロード");
 define("_WEBPHOTO_CAP_MAXPIXEL","画像サイズ上限");
 define("_WEBPHOTO_CAP_MAXSIZE","ファイルサイズ上限 (byte)");
 define("_WEBPHOTO_CAP_VALIDPHOTO","承認");
@@ -79,23 +85,23 @@ define("_WEBPHOTO_RADIO_ROTATE90" , "右に90度回転" ) ;
 define("_WEBPHOTO_RADIO_ROTATE180" , "180度回転" ) ;
 define("_WEBPHOTO_RADIO_ROTATE270" , "左に90度回転" ) ;
 
-define("_WEBPHOTO_SUBMIT_RECEIVED","画像を登録しました。ご投稿有難うございます。");
-define("_WEBPHOTO_SUBMIT_ALLPENDING","すべての投稿画像は確認のため仮登録となります。");
+define("_WEBPHOTO_SUBMIT_RECEIVED","写真・動画・メディアを登録しました。ご投稿有難うございます。");
+define("_WEBPHOTO_SUBMIT_ALLPENDING","投稿したすべての写真・動画・メディアは確認のため仮登録となります。");
 
-define("_WEBPHOTO_ERR_MUSTREGFIRST","申し訳ありませんがアクセス権限がありません。<br />登録するか、ログイン後にお願いします。");
-define("_WEBPHOTO_ERR_MUSTADDCATFIRST","追加するためにはカテゴリが必要です。<br />まずカテゴリを作成して下さい。");
-define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","画像未選択：アップロードすべき画像ファイルを選択して下さい。");
-define("_WEBPHOTO_ERR_FILE","画像アップロードに失敗：画像ファイルが見つからないか容量制限を越えてます。");
-define("_WEBPHOTO_ERR_FILEREAD","画像読込失敗：なんらかの理由でアップロードされた画像ファイルを読み出せません。");
+define("_WEBPHOTO_ERR_MUSTREGFIRST","申し訳ありませんがアクセス権限がありません。<br>登録するか、ログイン後にお願いします。");
+define("_WEBPHOTO_ERR_MUSTADDCATFIRST","追加するためにはカテゴリが必要です。<br>まずカテゴリを作成して下さい。");
+define("_WEBPHOTO_ERR_NOIMAGESPECIFIED","写真・動画・メディアが未選択：アップロードすべき写真・動画・メディアのファイルを選択して下さい。");
+define("_WEBPHOTO_ERR_FILE","アップロードに失敗：写真・動画・メディアのファイルが見つからないか容量制限を越えてます。");
+define("_WEBPHOTO_ERR_FILEREAD","読込失敗：なんらかの理由でアップロードされた写真・動画・メディアのファイルを読み出せません。");
 define("_WEBPHOTO_ERR_TITLE","タイトルが必要です");
 
 
 //---------------------------------------------------------
 // edit
 //---------------------------------------------------------
-define("_WEBPHOTO_TITLE_EDIT","この画像を編集する");
-define("_WEBPHOTO_TITLE_PHOTODEL","画像を削除する");
-define("_WEBPHOTO_CONFIRM_PHOTODEL","画像削除?");
+define("_WEBPHOTO_TITLE_EDIT","この写真・動画・メディアを編集する");
+define("_WEBPHOTO_TITLE_PHOTODEL","写真・動画・メディアを削除する");
+define("_WEBPHOTO_CONFIRM_PHOTODEL","写真・動画・メディアを削除しますか?");
 define("_WEBPHOTO_DBUPDATED","データベース更新に成功!");
 define("_WEBPHOTO_DELETED","削除しました!");
 
@@ -103,241 +109,17 @@ define("_WEBPHOTO_DELETED","削除しました!");
 //---------------------------------------------------------
 // rate
 //---------------------------------------------------------
-define("_WEBPHOTO_RATE_VOTEONCE","同一画像への投票は一度だけにお願いします。");
+define("_WEBPHOTO_RATE_VOTEONCE","同一の写真・動画・メディアへの投票は一度だけにお願いします。");
 define("_WEBPHOTO_RATE_RATINGSCALE","評価は 1 から 10 までです： 1 が最低、 10 が最高");
 define("_WEBPHOTO_RATE_BEOBJECTIVE","客観的な評価をお願いします。点数が1か10のみだと順位付けの意味がありません");
-define("_WEBPHOTO_RATE_DONOTVOTE","自分が登録した画像は投票できません。");
+define("_WEBPHOTO_RATE_DONOTVOTE","自分が登録した写真・動画・メディアは投票できません。");
 define("_WEBPHOTO_RATE_IT","投票する!");
 define("_WEBPHOTO_RATE_VOTEAPPRE","投票を受け付けました");
 define("_WEBPHOTO_RATE_S_THANKURATE","当サイト %s へのご投票、ありがとうございました");
 
 define("_WEBPHOTO_ERR_NORATING","評価が選択されてません。");
-define("_WEBPHOTO_ERR_CANTVOTEOWN","自分の投稿画像には投票できません。<br />投票には全て目を通します");
-define("_WEBPHOTO_ERR_VOTEONCE","選択画像への投票は一度だけにお願いします。<br />投票にはすべて目を通します。");
-
-
-//---------------------------------------------------------
-// movo to admin.php
-//---------------------------------------------------------
-// New in myAlbum-P
-
-// only "Y/m/d" , "d M Y" , "M d Y" can be interpreted
-//define( "_WEBPHOTO_DTFMT_YMDHI" , "Y/m/d H:i" ) ;
-
-//define( "_WEBPHOTO_NEXT_BUTTON" , "次へ" ) ;
-//define( "_WEBPHOTO_REDOLOOPDONE" , "終了" ) ;
-
-//define( "_WEBPHOTO_BTN_SELECTALL" , "全選択" ) ;
-//define( "_WEBPHOTO_BTN_SELECTNONE" , "選択解除" ) ;
-//define( "_WEBPHOTO_BTN_SELECTRVS" , "選択反転" ) ;
-//define( "_WEBPHOTO_FMT_PHOTONUM" , "%s 枚" ) ;
-
-//define( "_WEBPHOTO_AM_ADMISSION" , "画像の承認" ) ;
-//define( "_WEBPHOTO_AM_ADMITTING" , "画像を承認しました" ) ;
-//define( "_WEBPHOTO_AM_LABEL_ADMIT" , "チェックした画像を承認する" ) ;
-//define( "_WEBPHOTO_AM_BUTTON_ADMIT" , "承認" ) ;
-//define( "_WEBPHOTO_AM_BUTTON_EXTRACT" , "抽出" ) ;
-
-//define( "_WEBPHOTO_AM_PHOTOMANAGER" , "画像の管理" ) ;
-//define( "_WEBPHOTO_AM_PHOTONAVINFO" , "%s 番〜 %s 番を表示 (全 %s 枚)" ) ;
-//define( "_WEBPHOTO_AM_LABEL_REMOVE" , "チェックした画像を削除する" ) ;
-//define( "_WEBPHOTO_AM_BUTTON_REMOVE" , "削除" ) ;
-//define( "_WEBPHOTO_AM_JS_REMOVECONFIRM" , "削除してよろしいですか" ) ;
-//define( "_WEBPHOTO_AM_LABEL_MOVE" , "チェックした画像を移動する" ) ;
-//define( "_WEBPHOTO_AM_BUTTON_MOVE" , "移動" ) ;
-//define( "_WEBPHOTO_AM_BUTTON_UPDATE" , "変更" ) ;
-//define( "_WEBPHOTO_AM_DEADLINKMAINPHOTO" , "メイン画像が存在しません" ) ;
-
-
-//---------------------------------------------------------
-// not use
-//---------------------------------------------------------
-// New MyAlbum 1.0.1 (and 1.2.0)
-//define("_WEBPHOTO_MOREPHOTOS","%s さんの画像をもっと!");
-//define("_WEBPHOTO_REDOTHUMBS","サムネイルの再構築(<a href='redothumbs.php'>再スタート</a>)");
-//define("_WEBPHOTO_REDOTHUMBS2","サムネイルの再構築");
-//define("_WEBPHOTO_REDOTHUMBSINFO","大きな数値を入力するとサーバータイムアウトの原因になります。");
-//define("_WEBPHOTO_REDOTHUMBSNUMBER","一度に処理するサムネールの数");
-//define("_WEBPHOTO_REDOING","再構築しました: ");
-//define("_WEBPHOTO_BACK","戻る");
-//define("_WEBPHOTO_ADDPHOTO","画像を追加");
-
-
-//---------------------------------------------------------
-// movo to admin.php
-//---------------------------------------------------------
-// New MyAlbum 1.0.0
-//define("_WEBPHOTO_PHOTOBATCHUPLOAD","サーバにアップロード済ファイルの一括登録");
-//define("_WEBPHOTO_PHOTOUPLOAD","画像アップロード");
-//define("_WEBPHOTO_PHOTOEDITUPLOAD","画像の編集・再アップロード");
-//define("_WEBPHOTO_MAXPIXEL","サイズ上限");
-//define("_WEBPHOTO_MAXSIZE","サイズ上限(byte)");
-//define("_WEBPHOTO_PHOTOCAT","カテゴリ");
-//define("_WEBPHOTO_PHOTOTITLE","タイトル");
-//define("_WEBPHOTO_PHOTOPATH","Path:");
-//define("_WEBPHOTO_TEXT_DIRECTORY","ディレクトリ");
-//define("_WEBPHOTO_DESC_PHOTOPATH","画像の含まれるディレクトリを絶対パスで指定して下さい");
-//define("_WEBPHOTO_MES_INVALIDDIRECTORY","指定されたディレクトリから画像を読み出せません");
-//define("_WEBPHOTO_MES_BATCHDONE","%s 枚の画像を登録しました");
-//define("_WEBPHOTO_MES_BATCHNONE","指定されたディレクトリに画像ファイルがみつかりませんでした");
-//define("_WEBPHOTO_PHOTODESC","説明");
-//define("_WEBPHOTO_SELECTFILE","画像選択");
-//define("_WEBPHOTO_NOIMAGESPECIFIED","画像未選択：アップロードすべき画像ファイルを選択して下さい。");
-//define("_WEBPHOTO_FILEERROR","画像アップロードに失敗：画像ファイルが見つからないか容量制限を越えてます。");
-//define("_WEBPHOTO_FILEREADERROR","画像読込失敗：なんらかの理由でアップロードされた画像ファイルを読み出せません。");
-
-//define("_WEBPHOTO_BATCHBLANK","タイトル部を空欄にした場合、ファイル名をタイトルとします");
-//define("_WEBPHOTO_DELETEPHOTO","削除?");
-//define("_WEBPHOTO_VALIDPHOTO","承認");
-//define("_WEBPHOTO_PHOTODEL","画像削除?");
-//define("_WEBPHOTO_DELETINGPHOTO","削除しました");
-//define("_WEBPHOTO_MOVINGPHOTO","移動しました");
-
-//define("_WEBPHOTO_STORETIMESTAMP","日時を変更しない");
-
-//define("_WEBPHOTO_POSTERC","投稿: ");
-//define("_WEBPHOTO_DATEC","日時: ");
-//define("_WEBPHOTO_EDITNOTALLOWED","コメントを編集する権限がありません！");
-//define("_WEBPHOTO_ANONNOTALLOWED","匿名ユーザは投稿できません。");
-//define("_WEBPHOTO_THANKSFORPOST","ご投稿有り難うございます。");
-//define("_WEBPHOTO_DELNOTALLOWED","コメントを削除する権限がありません!");
-//define("_WEBPHOTO_GOBACK","戻る");
-//define("_WEBPHOTO_AREYOUSURE","このコメントとその下部コメントを削除：よろしいですか？");
-//define("_WEBPHOTO_COMMENTSDEL","コメント削除完了！");
-
-// End New
-
-
-//---------------------------------------------------------
-// not use
-//---------------------------------------------------------
-//define("_WEBPHOTO_THANKSFORINFO","ご投稿頂いた画像の公開はできるだけ早く検討します。");
-//define("_WEBPHOTO_BACKTOTOP","最初の画像へ戻る");
-//define("_WEBPHOTO_THANKSFORHELP","ご協力有難うございます。");
-//define("_WEBPHOTO_FORSECURITY","セキュリティの観点からあなたのIPアドレスを一時的に保存します。");
-
-//define("_WEBPHOTO_MATCH","合致");
-//define("_WEBPHOTO_ALL","全て");
-//define("_WEBPHOTO_ANY","どれでも");
-//define("_WEBPHOTO_NAME","名前");
-//define("_WEBPHOTO_DESCRIPTION","説明");
-
-//define("_WEBPHOTO_MAIN","アルバムトップ");
-//define("_WEBPHOTO_NEW","新着");
-//define("_WEBPHOTO_UPDATED","更新");
-//define("_WEBPHOTO_POPULAR","高ヒット");
-//define("_WEBPHOTO_TOPRATED","高評価");
-
-//define("_WEBPHOTO_POPULARITYLTOM","ヒット数 (低→高)");
-//define("_WEBPHOTO_POPULARITYMTOL","ヒット数 (高→低)");
-//define("_WEBPHOTO_TITLEATOZ","タイトル (A → Z)");
-//define("_WEBPHOTO_TITLEZTOA","タイトル (Z → A)");
-//define("_WEBPHOTO_DATEOLD","日時 (旧→新)");
-//define("_WEBPHOTO_DATENEW","日時 (新→旧)");
-//define("_WEBPHOTO_RATINGLTOH","評価 (低→高)");
-//define("_WEBPHOTO_RATINGHTOL","評価 (高→低)");
-//define("_WEBPHOTO_LIDASC","レコード番号昇順");
-//define("_WEBPHOTO_LIDDESC","レコード番号降順");
-
-//define("_WEBPHOTO_NOSHOTS","サムネイルなし");
-//define("_WEBPHOTO_EDITTHISPHOTO","この画像を編集");
-
-//define("_WEBPHOTO_DESCRIPTIONC","説明");
-//define("_WEBPHOTO_EMAILC","Email");
-//define("_WEBPHOTO_CATEGORYC","カテゴリ");
-//define("_WEBPHOTO_SUBCATEGORY","サブカテゴリ");
-//define("_WEBPHOTO_LASTUPDATEC","前回更新");
-
-//define("_WEBPHOTO_HITSC","ヒット数");
-//define("_WEBPHOTO_RATINGC","評価");
-//define("_WEBPHOTO_NUMVOTES","投票数 %s");
-//define("_WEBPHOTO_NUMPOSTS","コメント数 %s");
-//define("_WEBPHOTO_COMMENTSC","コメント数");
-//define("_WEBPHOTO_RATETHISPHOTO","投票する");
-//define("_WEBPHOTO_MODIFY","変更");
-//define("_WEBPHOTO_VSCOMMENTS","コメントを見る/送る");
-
-//define("_WEBPHOTO_DIRECTCATSEL","カテゴリ選択");
-//define("_WEBPHOTO_THEREARE","データベースにある画像は <b>%s</b> 枚です");
-//define("_WEBPHOTO_LATESTLIST","最新リスト");
-
-//define("_WEBPHOTO_VOTEAPPRE","投票を受け付けました");
-//define("_WEBPHOTO_THANKURATE","当サイト %s へのご投票、ありがとうございました");
-//define("_WEBPHOTO_VOTEONCE","同一画像への投票は一度だけにお願いします。");
-//define("_WEBPHOTO_RATINGSCALE","評価は 1 から 10 までです： 1 が最低、 10 が最高");
-//define("_WEBPHOTO_BEOBJECTIVE","客観的な評価をお願いします。点数が1か10のみだと順位付けの意味がありません");
-//define("_WEBPHOTO_DONOTVOTE","自分が登録した画像は投票できません。");
-//define("_WEBPHOTO_RATEIT","投票する!");
-
-//define("_WEBPHOTO_RECEIVED","画像を登録しました。ご投稿有難うございます。");
-//define("_WEBPHOTO_ALLPENDING","すべての投稿画像は確認のため仮登録となります。");
-
-//define("_WEBPHOTO_RANK","ランク");
-//define("_WEBPHOTO_SUBCATEGORY","サブカテゴリ");
-//define("_WEBPHOTO_HITS","ヒット");
-//define("_WEBPHOTO_RATING","評価");
-//define("_WEBPHOTO_VOTE","投票");
-//define("_WEBPHOTO_TOP10","%s のトップ10"); // %s はカテゴリのタイトル
-
-//define("_WEBPHOTO_SORTBY","並び替え:");
-//define("_WEBPHOTO_TITLE","タイトル");
-//define("_WEBPHOTO_DATE","日時");
-//define("_WEBPHOTO_POPULARITY","ヒット数");
-//define("_WEBPHOTO_CURSORTEDBY","現在の並び順: %s");
-//define("_WEBPHOTO_FOUNDIN","見つかったのはここ:");
-//define("_WEBPHOTO_PREVIOUS","前");
-//define("_WEBPHOTO_NEXT","次");
-//define("_WEBPHOTO_NOMATCH","画像がありません");
-
-//define("_WEBPHOTO_CATEGORIES","カテゴリ");
-//define("_WEBPHOTO_SUBMIT","投稿");
-//define("_WEBPHOTO_CANCEL","キャンセル");
-
-//define("_WEBPHOTO_MUSTREGFIRST","申し訳ありませんがアクセス権限がありません。<br>登録するか、ログイン後にお願いします。");
-//define("_WEBPHOTO_MUSTADDCATFIRST","追加するためにはカテゴリが必要です。<br>まずカテゴリを作成して下さい。");
-//define("_WEBPHOTO_NORATING","評価が選択されてません。");
-//define("_WEBPHOTO_CANTVOTEOWN","自分の投稿画像には投票できません。<br>投票には全て目を通します");
-//define("_WEBPHOTO_VOTEONCE2","選択画像への投票は一度だけにお願いします。<br>投票にはすべて目を通します。");
-
-
-//---------------------------------------------------------
-// move to admin.php
-//---------------------------------------------------------
-//%%%%%%	Module Name 'MyAlbum' (Admin)	  %%%%%
-//define("_WEBPHOTO_PHOTOSWAITING","投稿された画像の承認: 承認待画像数");
-//define("_WEBPHOTO_PHOTOMANAGER","画像管理");
-//define("_WEBPHOTO_CATEDIT","カテゴリの追加・編集");
-//define("_WEBPHOTO_GROUPPERM_GLOBAL","各グループの権限");
-//define("_WEBPHOTO_CHECKCONFIGS","モジュールの状態チェック");
-//define("_WEBPHOTO_BATCHUPLOAD","画像一括登録");
-//define("_WEBPHOTO_GENERALSET","一般設定");
-//define("_WEBPHOTO_REDOTHUMBS2","Rebuild Thumbnails");
-
-//define("_WEBPHOTO_DELETE","削除");
-//define("_WEBPHOTO_NOSUBMITTED","新規の投稿画像はありません。");
-//define("_WEBPHOTO_ADDMAIN","トップカテゴリを追加");
-//define("_WEBPHOTO_IMGURL","画像のURL (画像の高さはあらかじめ50pixelに): ");
-//define("_WEBPHOTO_ADD","追加");
-//define("_WEBPHOTO_ADDSUB","サブカテゴリの追加");
-//define("_WEBPHOTO_IN","");
-//define("_WEBPHOTO_MODCAT","カテゴリ変更");
-
-//define("_WEBPHOTO_MODREQDELETED","変更要請を削除");
-//define("_WEBPHOTO_IMGURLMAIN","画像URL (画像の高さはあらかじめ50pixelに): ");
-//define("_WEBPHOTO_PARENT","親カテゴリ:");
-//define("_WEBPHOTO_SAVE","変更を保存");
-//define("_WEBPHOTO_CATDELETED","カテゴリの消去完了");
-//define("_WEBPHOTO_CATDEL_WARNING","カテゴリと同時にここに含まれる画像およびコメントが全て削除されますがよろしいですか？");
-//define("_WEBPHOTO_YES","はい");
-//define("_WEBPHOTO_NO","いいえ");
-//define("_WEBPHOTO_NEWCATADDED","新カテゴリ追加に成功!");
-//define("_WEBPHOTO_ERROREXIST","エラー: 提供される画像はすでにデータベースに存在します。");
-//define("_WEBPHOTO_ERRORTITLE","エラー: タイトルが必要です!");
-//define("_WEBPHOTO_ERRORDESC","エラー: 説明が必要です!");
-//define("_WEBPHOTO_WEAPPROVED","画像データベースへのリンク要請を承認しました。");
-//define("_WEBPHOTO_THANKSSUBMIT","ご投稿有り難うございます。");
-//define("_WEBPHOTO_CONFUPDATED","設定を更新しました。");
-
+define("_WEBPHOTO_ERR_CANTVOTEOWN","自分が投稿した写真・動画・メディアには投票できません。<br />投票には全て目を通します");
+define("_WEBPHOTO_ERR_VOTEONCE","選択した写真・動画・メディアへの投票は一度だけにお願いします。<br />投票にはすべて目を通します。");
 
 //---------------------------------------------------------
 // move from myalbum_constants.php
@@ -347,7 +129,7 @@ define( "_WEBPHOTO_CAPTION_TOTAL" , "Total:" ) ;
 define( "_WEBPHOTO_CAPTION_GUESTNAME" , "ゲスト" ) ;
 define( "_WEBPHOTO_CAPTION_REFRESH" , "更新" ) ;
 define( "_WEBPHOTO_CAPTION_IMAGEXYT" , "サイズ" ) ;
-define( "_WEBPHOTO_CAPTION_CATEGORY" , "カテゴリ" ) ;
+define( "_WEBPHOTO_CAPTION_CATEGORY" , "カテゴリー" ) ;
 
 
 //=========================================================
@@ -359,15 +141,15 @@ define( "_WEBPHOTO_CAPTION_CATEGORY" , "カテゴリ" ) ;
 //---------------------------------------------------------
 
 // photo table
-define("_WEBPHOTO_PHOTO_TABLE" , "写真テーブル" ) ;
-define("_WEBPHOTO_PHOTO_ID" , "写真ID" ) ;
+define("_WEBPHOTO_PHOTO_TABLE" , "写真・動画・メディアテーブル" ) ;
+define("_WEBPHOTO_PHOTO_ID" , "写真・動画・メディアID" ) ;
 define("_WEBPHOTO_PHOTO_TIME_CREATE" , "作成日時" ) ;
 define("_WEBPHOTO_PHOTO_TIME_UPDATE" , "更新日時" ) ;
 define("_WEBPHOTO_PHOTO_CAT_ID" ,  "カテゴリ番号" ) ;
 define("_WEBPHOTO_PHOTO_GICON_ID" , "GoogleMap アイコン番号" ) ;
 define("_WEBPHOTO_PHOTO_UID" ,   "ユーザ番号" ) ;
 define("_WEBPHOTO_PHOTO_DATETIME" ,  "撮影日時" ) ;
-define("_WEBPHOTO_PHOTO_TITLE" , "写真タイトル" ) ;
+define("_WEBPHOTO_PHOTO_TITLE" , "写真・動画・メディアタイトル" ) ;
 define("_WEBPHOTO_PHOTO_PLACE" , "撮影場所" ) ;
 define("_WEBPHOTO_PHOTO_EQUIPMENT" , "撮影機材" ) ;
 define("_WEBPHOTO_PHOTO_FILE_URL" ,  "ファイル URL" ) ;
@@ -377,15 +159,15 @@ define("_WEBPHOTO_PHOTO_FILE_EXT" ,  "ファイル 拡張子" ) ;
 define("_WEBPHOTO_PHOTO_FILE_MIME" ,  "ファイル MIMEタイプ" ) ;
 define("_WEBPHOTO_PHOTO_FILE_MEDIUM" ,  "ファイル メディアタイプ" ) ;
 define("_WEBPHOTO_PHOTO_FILE_SIZE" , "ファイル サイズ" ) ;
-define("_WEBPHOTO_PHOTO_CONT_URL" ,    "写真 URL" ) ;
-define("_WEBPHOTO_PHOTO_CONT_PATH" ,   "写真 パス" ) ;
-define("_WEBPHOTO_PHOTO_CONT_NAME" ,   "写真 ファイル名" ) ;
-define("_WEBPHOTO_PHOTO_CONT_EXT" ,    "写真 拡張子" ) ;
-define("_WEBPHOTO_PHOTO_CONT_MIME" ,   "写真 MIMEタイプ" ) ;
-define("_WEBPHOTO_PHOTO_CONT_MEDIUM" , "写真 メディアタイプ" ) ;
-define("_WEBPHOTO_PHOTO_CONT_SIZE" ,   "写真 ファイルサイズ" ) ;
-define("_WEBPHOTO_PHOTO_CONT_WIDTH" ,  "写真 画像横幅" ) ;
-define("_WEBPHOTO_PHOTO_CONT_HEIGHT" , "写真 画像高さ" ) ;
+define("_WEBPHOTO_PHOTO_CONT_URL" ,    "写真・動画・メディア URL" ) ;
+define("_WEBPHOTO_PHOTO_CONT_PATH" ,   "写真・動画・メディア パス" ) ;
+define("_WEBPHOTO_PHOTO_CONT_NAME" ,   "写真・動画・メディア ファイル名" ) ;
+define("_WEBPHOTO_PHOTO_CONT_EXT" ,    "写真・動画・メディア 拡張子" ) ;
+define("_WEBPHOTO_PHOTO_CONT_MIME" ,   "写真・動画・メディア MIMEタイプ" ) ;
+define("_WEBPHOTO_PHOTO_CONT_MEDIUM" , "写真・動画・メディア メディアタイプ" ) ;
+define("_WEBPHOTO_PHOTO_CONT_SIZE" ,   "写真・動画・メディア ファイルサイズ" ) ;
+define("_WEBPHOTO_PHOTO_CONT_WIDTH" ,  "写真・動画・メディア 画像横幅" ) ;
+define("_WEBPHOTO_PHOTO_CONT_HEIGHT" , "写真・動画・メディア 画像高さ" ) ;
 define("_WEBPHOTO_PHOTO_CONT_DURATION" , "ビデオ再生時間" ) ;
 define("_WEBPHOTO_PHOTO_CONT_EXIF" , "Exif 情報" ) ;
 define("_WEBPHOTO_PHOTO_MIDDLE_WIDTH" ,  "ミドル 画像横幅" ) ;
@@ -419,7 +201,7 @@ define("_WEBPHOTO_PHOTO_TEXT7" ,  "text7" ) ;
 define("_WEBPHOTO_PHOTO_TEXT8" ,  "text8" ) ;
 define("_WEBPHOTO_PHOTO_TEXT9" ,  "text9" ) ;
 define("_WEBPHOTO_PHOTO_TEXT10" , "text10" ) ;
-define("_WEBPHOTO_PHOTO_DESCRIPTION" ,  "写真説明文" ) ;
+define("_WEBPHOTO_PHOTO_DESCRIPTION" ,  "写真・動画・メディア説明文" ) ;
 define("_WEBPHOTO_PHOTO_SEARCH" ,  "検索文" ) ;
 
 // category table
@@ -431,7 +213,7 @@ define("_WEBPHOTO_CAT_GICON_ID" ,  "GoogleMap アイコン番号" ) ;
 define("_WEBPHOTO_CAT_FORUM_ID" ,  "フォーラム番号" ) ;
 define("_WEBPHOTO_CAT_PID" ,    "親番号" ) ;
 define("_WEBPHOTO_CAT_TITLE" ,  "カテゴリ名" ) ;
-define("_WEBPHOTO_CAT_IMG_PATH" , "カテゴリ画像の相対パス" ) ;
+define("_WEBPHOTO_CAT_IMG_PATH" , "カテゴリ画像" ) ;
 define("_WEBPHOTO_CAT_IMG_MODE" , "画像の表示モード" ) ;
 define("_WEBPHOTO_CAT_ORIG_WIDTH" ,  "画像の原寸の横幅" ) ;
 define("_WEBPHOTO_CAT_ORIG_HEIGHT" , "画像の原寸の高さ" ) ;
@@ -462,7 +244,7 @@ define("_WEBPHOTO_VOTE_TABLE" , "投票テーブル" ) ;
 define("_WEBPHOTO_VOTE_ID" ,          "投票ID" ) ;
 define("_WEBPHOTO_VOTE_TIME_CREATE" , "作成日時" ) ;
 define("_WEBPHOTO_VOTE_TIME_UPDATE" , "更新日時" ) ;
-define("_WEBPHOTO_VOTE_PHOTO_ID" , "写真番号" ) ;
+define("_WEBPHOTO_VOTE_PHOTO_ID" , "アイテム番号" ) ;
 define("_WEBPHOTO_VOTE_UID" ,      "ユーザ番号" ) ;
 define("_WEBPHOTO_VOTE_RATING" ,   "評価" ) ;
 define("_WEBPHOTO_VOTE_HOSTNAME" , "IPアドレス" ) ;
@@ -514,11 +296,11 @@ define("_WEBPHOTO_TAG_TIME_UPDATE" , "更新日時" ) ;
 define("_WEBPHOTO_TAG_NAME" ,   "タグ名" ) ;
 
 // photo-to-tag table
-define("_WEBPHOTO_P2T_TABLE" , "写真タグ関連テーブル" ) ;
-define("_WEBPHOTO_P2T_ID" ,          "写真タグ関連ID" ) ;
+define("_WEBPHOTO_P2T_TABLE" , "写真・動画・メディアとタグ関連テーブル" ) ;
+define("_WEBPHOTO_P2T_ID" ,          "写真・動画・メディアとタグ関連ID" ) ;
 define("_WEBPHOTO_P2T_TIME_CREATE" , "作成日時" ) ;
 define("_WEBPHOTO_P2T_TIME_UPDATE" , "更新日時" ) ;
-define("_WEBPHOTO_P2T_PHOTO_ID" , "写真番号" ) ;
+define("_WEBPHOTO_P2T_PHOTO_ID" , "アイテム番号" ) ;
 define("_WEBPHOTO_P2T_TAG_ID" ,   "タグ番号" ) ;
 define("_WEBPHOTO_P2T_UID" ,      "ユーザ番号" ) ;
 
@@ -540,7 +322,7 @@ define("_WEBPHOTO_TITLE_SUBMIT","投稿");
 define("_WEBPHOTO_TITLE_POPULAR","高人気");
 define("_WEBPHOTO_TITLE_HIGHRATE","トップランク");
 define("_WEBPHOTO_TITLE_MYPHOTO","自分の投稿");
-define("_WEBPHOTO_TITLE_RANDOM","ランダム写真");
+define("_WEBPHOTO_TITLE_RANDOM","ランダム表示");
 define("_WEBPHOTO_TITLE_HELP","ヘルプ");
 define("_WEBPHOTO_TITLE_CATEGORY_LIST", "カテゴリ 一覧");
 define("_WEBPHOTO_TITLE_TAG_LIST",  "タグ 一覧");
@@ -589,7 +371,7 @@ define("_WEBPHOTO_SR_SEARCH","検索");
 //---------------------------------------------------------
 // popbox
 //---------------------------------------------------------
-define("_WEBPHOTO_POPBOX_REVERT", "クリックすると、元の小さい写真になる");
+define("_WEBPHOTO_POPBOX_REVERT", "クリックすると、元の小さい画像になる");
 
 //---------------------------------------------------------
 // tag
@@ -603,9 +385,9 @@ define("_WEBPHOTO_DSC_TAG_EDITABLE", "自分が登録したタグのみ編集できます");
 // submit form
 //---------------------------------------------------------
 define("_WEBPHOTO_CAP_ALLOWED_EXTS", "許可されている拡張子");
-define("_WEBPHOTO_CAP_PHOTO_SELECT","メイン画像の選択");
+define("_WEBPHOTO_CAP_PHOTO_SELECT","写真・動画・メディアの選択");
 define("_WEBPHOTO_CAP_THUMB_SELECT", "サムネイル画像の選択");
-define("_WEBPHOTO_DSC_THUMB_SELECT", "指定しないときは、メイン画像より自動生成される");
+define("_WEBPHOTO_DSC_THUMB_SELECT", "指定しないときは、写真・動画・メディアより自動生成される");
 define("_WEBPHOTO_DSC_SET_DATETIME",   "撮影日時を設定する");
 
 //define("_WEBPHOTO_DSC_SET_TIME_UPDATE", "更新日時を変更する");
@@ -650,7 +432,7 @@ define("_WEBPHOTO_HELP_DSC", "貴方のパソコンで動作するアプリケーショーンの説明で
 define("_WEBPHOTO_HELP_PICLENS_TITLE", "PicLens");
 define("_WEBPHOTO_HELP_PICLENS_DSC", '
 Piclens は Cooliris 社が提供する FireFox のアドオンです<br />
-WEBサイトの写真を閲覧するビューワーです<br /><br />
+WEBサイトの画像を閲覧するビューワーです<br /><br />
 <b>参考記事</b><br />
 <a href="http://www.forest.impress.co.jp/article/2007/09/13/piclens.html" target="_blank">
 画像共有・画像検索サイト専用のビューワーを追加するFirefox拡張「PicLens」
@@ -672,7 +454,7 @@ http://このサイト/modules/webphoto/ <br /><br />
 define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_TITLE", "Media RSS スライドショー");
 define("_WEBPHOTO_HELP_MEDIARSSSLIDESHOW_DSC", '
 Media RSS スライドショー は Google ガジェットです<br />
-インターネットからの写真をスライドショーで表示します<br /><br />
+インターネットからの画像をスライドショーで表示します<br /><br />
 <b>設定方法</b><br />
 (1) Google デスクトップ をダウンロードする<br />
 <a href="http://desktop.google.co.jp/" target="_blank">
@@ -687,9 +469,9 @@ http://desktop.google.com/plugins/i/mediarssslideshow.html
 //---------------------------------------------------------
 // others
 //---------------------------------------------------------
-define("_WEBPHOTO_RANDOM_MORE","ランダム写真をもっと見る");
-define("_WEBPHOTO_USAGE_PHOTO","写真をクリックすると、大きな写真がポップアップします");
-define("_WEBPHOTO_USAGE_TITLE","タイトルをクリックすると、その写真のページが開きます");
+define("_WEBPHOTO_RANDOM_MORE","写真・動画・メディアをランダムにもっと見る");
+define("_WEBPHOTO_USAGE_PHOTO","画像をクリックすると、大きな画像がポップアップします");
+define("_WEBPHOTO_USAGE_TITLE","タイトルをクリックすると、その写真・動画・メディアのページが開きます");
 define("_WEBPHOTO_DATE_NOT_SET","撮影日時 設定なし");
 define("_WEBPHOTO_PLACE_NOT_SET","撮影場所 設定なし");
 define("_WEBPHOTO_GOTO_ADMIN", "管理者画面へ");
@@ -745,7 +527,7 @@ define("_WEBPHOTO_MAILLOG_TABLE" , "メールログ・テーブル" ) ;
 define("_WEBPHOTO_MAILLOG_ID" ,          "メールログID" ) ;
 define("_WEBPHOTO_MAILLOG_TIME_CREATE" , "作成日時" ) ;
 define("_WEBPHOTO_MAILLOG_TIME_UPDATE" , "更新日時" ) ;
-define("_WEBPHOTO_MAILLOG_PHOTO_IDS" , "写真番号" ) ;
+define("_WEBPHOTO_MAILLOG_PHOTO_IDS" , "アイテム番号" ) ;
 define("_WEBPHOTO_MAILLOG_STATUS" , "状態" ) ;
 define("_WEBPHOTO_MAILLOG_FROM" , "送信者メールアドレス" ) ;
 define("_WEBPHOTO_MAILLOG_SUBJECT" , "題名" ) ;
@@ -767,23 +549,23 @@ define("_WEBPHOTO_ERR_MAIL_ILLEGAL","メールアドレスの形式がおかしい");
 define("_WEBPHOTO_TITLE_MAIL_RETRIEVE" ,  "メール受信" ) ;
 define("_WEBPHOTO_DSC_MAIL_RETRIEVE" ,  "メールサーバーからメールを受信する" ) ;
 define("_WEBPHOTO_BUTTON_RETRIEVE" ,  "メール受信" ) ;
-define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "メールサーバーにアクセスする" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_ACCESS" ,  "メールサーバーにアクセスします" ) ;
 define("_WEBPHOTO_SUBTITLE_MAIL_PARSE" ,  "受信したメールを解読します" ) ;
-define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "メールに添付された写真を登録します" ) ;
+define("_WEBPHOTO_SUBTITLE_MAIL_PHOTO" ,  "メールに添付された画像を登録します" ) ;
 define("_WEBPHOTO_TEXT_MAIL_ACCESS_TIME" ,  "アクセス制限中です" ) ;
 define("_WEBPHOTO_TEXT_MAIL_RETRY"  ,  "１分後にアクセスしてください" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NOT_RETRIEVE" ,  "メールを受信できなかった。<br />一時的な通信障害と思われます。<br />しばらく時間をあけてから、試みてください。" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NO_NEW" ,  "新着メールはありません" ) ;
 define("_WEBPHOTO_TEXT_MAIL_RETRIEVED_FMT" ,  "%s 件のメールを受信しました" ) ;
 define("_WEBPHOTO_TEXT_MAIL_NO_VALID" ,  "有効なメールはありません" ) ;
-define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "%s 件の写真を登録しました" ) ;
+define("_WEBPHOTO_TEXT_MAIL_SUBMITED_FMT" ,  "%s 件の画像を登録しました" ) ;
 define("_WEBPHOTO_GOTO_INDEX" ,  "モジュールのトップページへ" ) ;
 
 // i.php
 define("_WEBPHOTO_TITLE_MAIL_POST" ,  "メールから投稿する" ) ;
 
 // file
-define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "ファイルからの画像追加" ) ;
+define("_WEBPHOTO_TITLE_SUBMIT_FILE" , "ファイルからの写真・動画・メディアの追加" ) ;
 define("_WEBPHOTO_CAP_FILE_SELECT", "ファイルの選択");
 define("_WEBPHOTO_ERR_EMPTY_FILE" , "ファイルを指定してください" ) ;
 define("_WEBPHOTO_ERR_EMPTY_CAT" , "カテゴリを指定してください" ) ;
@@ -796,21 +578,21 @@ define("_WEBPHOTO_HELP_MUST_LOGIN","詳しい説明を読むには、ログインしてください")
 define("_WEBPHOTO_HELP_NOT_PERM", "貴方には許可されていません。管理者までお問い合わせください。");
 
 define("_WEBPHOTO_HELP_MOBILE_TITLE", "携帯電話");
-define("_WEBPHOTO_HELP_MOBILE_DSC", "携帯電話にて、写真や動画を表示することができます<br/>240×320 程度の画面サイズです");
+define("_WEBPHOTO_HELP_MOBILE_DSC", "携帯電話にて、画像や動画を表示することができます<br/>240×320 程度の画面サイズです");
 define("_WEBPHOTO_HELP_MOBILE_TEXT_FMT", '
 <b>アクセスURL</b><br />
 <a href="{MODULE_URL}/i.php" target="_blank">{MODULE_URL}/i.php</a>');
 
-define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メールによる投稿");
-define("_WEBPHOTO_HELP_MAIL_DSC", "携帯電話からメールを送信して、写真や動画を投稿することができます");
+define("_WEBPHOTO_HELP_MAIL_TITLE", "携帯メール");
+define("_WEBPHOTO_HELP_MAIL_DSC", "携帯電話からメールを送信して、画像や動画を投稿することができます");
 define("_WEBPHOTO_HELP_MAIL_GUEST", "これは見本です。権限がないと、正しいメールアドレスは表示されません");
 
 define("_WEBPHOTO_HELP_FILE_TITLE", "FTP による投稿");
-define("_WEBPHOTO_HELP_FILE_DSC", "FTP によりファイルをアップロードすることで、ファイル容量の大きな写真や動画を投稿することができます");
+define("_WEBPHOTO_HELP_FILE_DSC", "FTP によりファイルをアップロードすることで、ファイル容量の大きな写真・動画・メディアを投稿することができます");
 define("_WEBPHOTO_HELP_FILE_TEXT_FMT", '
 <b>投稿方法</b><br />
 (1) 指定された FTP サーバーにファイルをアップロードする<br />
-(2) <a href="{MODULE_URL}/index.php?fct=submit_file" target="_blank">「ファイルからの画像追加」</a> をクリックする<br />
+(2) <a href="{MODULE_URL}/index.php?fct=submit_file" target="_blank">「ファイルからの写真・動画・メディアの追加」</a> をクリックする<br />
 (3) アップロードしたファイルを指定して投稿する' );
 
 // mail check
@@ -833,7 +615,7 @@ define("_WEBPHOTO_ITEM_UID" ,   "ユーザ番号" ) ;
 define("_WEBPHOTO_ITEM_KIND" , "種別" ) ;
 define("_WEBPHOTO_ITEM_EXT" ,  "拡張子" ) ;
 define("_WEBPHOTO_ITEM_DATETIME" ,  "撮影日時" ) ;
-define("_WEBPHOTO_ITEM_TITLE" , "写真タイトル" ) ;
+define("_WEBPHOTO_ITEM_TITLE" , "写真・動画・メディアのタイトル" ) ;
 define("_WEBPHOTO_ITEM_PLACE" , "撮影場所" ) ;
 define("_WEBPHOTO_ITEM_EQUIPMENT" , "撮影機材" ) ;
 define("_WEBPHOTO_ITEM_GMAP_LATITUDE" ,  "GoogleMap 緯度" ) ;
@@ -845,7 +627,7 @@ define("_WEBPHOTO_ITEM_STATUS" ,   "状態" ) ;
 define("_WEBPHOTO_ITEM_HITS" ,     "ヒット数" ) ;
 define("_WEBPHOTO_ITEM_RATING" ,   "評価" ) ;
 define("_WEBPHOTO_ITEM_VOTES" ,    "投票数" ) ;
-define("_WEBPHOTO_ITEM_DESCRIPTION" ,  "写真説明文" ) ;
+define("_WEBPHOTO_ITEM_DESCRIPTION" ,  "写真・動画・メディアの説明文" ) ;
 define("_WEBPHOTO_ITEM_EXIF" , "Exif 情報" ) ;
 define("_WEBPHOTO_ITEM_SEARCH" ,  "検索文" ) ;
 define("_WEBPHOTO_ITEM_COMMENTS" , "コメント数" ) ;
@@ -918,14 +700,14 @@ define("_WEBPHOTO_HELP_MAIL_POST_FMT", '
 <b>投稿方法</b><br />
 下記のメールアドレスにメールを送信する<br />
 <a href="mailto:{MAIL_ADDR}">{MAIL_ADDR}</a> {MAIL_GUEST} <br /><br />
-<b>写真の回転</b><br />
-題名 (Subject) の末尾に下記のように記入することで、写真が回転します。<br />
+<b>画像の回転</b><br />
+題名 (Subject) の末尾に下記のように記入することで、画像が回転します。<br />
  R@ : 右回転 <br />
  L@ : 左回転 <br /><br />' );
-define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE", "<b>メールの受信と、写真の登録</b><br />" );
+define("_WEBPHOTO_HELP_MAIL_SUBTITLE_RETRIEVE", "<b>メールの受信と、画像の登録</b><br />" );
 define("_WEBPHOTO_HELP_MAIL_RETRIEVE_FMT", '
 メールを送信してから、数秒後に <a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />' );
-define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "あなたが送信したメールを取り込んで、写真や動画を掲載します。<br />" );
+define("_WEBPHOTO_HELP_MAIL_RETRIEVE_TEXT", "あなたが送信したメールを取り込んで、画像や動画を掲載します。<br />" );
 define("_WEBPHOTO_HELP_MAIL_RETRIEVE_AUTO_FMT", '
 メールを送信すると、 %s 秒後に自動的に登録されます。<br />
 登録されない場合は、<a href="{MODULE_URL}/i.php?op=post" target="_blank">「メールから投稿する」</a> をクリックしてください。<br />' );
@@ -1083,7 +865,7 @@ define("_WEBPHOTO_ITEM_SHOWINFO_WEBFEED","WEB Feed");
 
 define("_WEBPHOTO_ITEM_STATUS_WAITING","承認待ち");
 define("_WEBPHOTO_ITEM_STATUS_APPROVED","承認済み");
-define("_WEBPHOTO_ITEM_STATUS_UPDATED","オンライン(更新)");
+define("_WEBPHOTO_ITEM_STATUS_UPDATED","更新");
 define("_WEBPHOTO_ITEM_STATUS_OFFLINE","オフライン");
 define("_WEBPHOTO_ITEM_STATUS_EXPIRED","期限切れ");
 
@@ -1413,7 +1195,7 @@ define("_WEBPHOTO_FILE_KIND_PDF" ,  "PDF" ) ;
 define("_WEBPHOTO_FILE_KIND_SWF" ,  "Flash swf" ) ;
 define("_WEBPHOTO_FILE_KIND_SMALL" ,  "スモール" ) ;
 define("_WEBPHOTO_FILE_KIND_JPEG" ,  "JPEG" ) ;
-define("_WEBPHOTO_FILE_KIND_MP30" , "MP3" ) ;
+define("_WEBPHOTO_FILE_KIND_MP3" , "MP3" ) ;
 
 // mime option
 define("_WEBPHOTO_MIME_KIND_OFFICE_DOC", "オフィス doc" ) ;
@@ -1444,20 +1226,20 @@ define("_WEBPHOTO_CAT_GROUP_ID", "ユーザグループID");
 // v2.10
 //---------------------------------------------------------
 // item 
-define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL", "写真説明文のスクロール表示");
+define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL", "写真・動画・メディアの説明文のスクロール表示");
 define("_WEBPHOTO_ITEM_DESCRIPTION_SCROLL_DSC", "スクロールの高さを px単位で指定する <br />0 のときはスクロールなしの通常の表示");
 
 // item option
-define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "写真を別画面に表示する");
-define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "写真を lightbox で表示する");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_IMAGE", "写真・動画・メディアを別画面に表示する");
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_LIGHTBOX", "写真・動画・メディアを lightbox で表示する");
 
 // submit
-define("_WEBPHOTO_MAIL_SUBMIT_WAITING", "承認待ちの写真が投稿されました");
-define("_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真が承認されました");
-define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "写真が拒否されました");
+define("_WEBPHOTO_MAIL_SUBMIT_WAITING", "承認待ちの写真・動画・メディアが投稿されました");
+define("_WEBPHOTO_MAIL_SUBMIT_APPROVE", "写真・動画・メディアが承認されました");
+define("_WEBPHOTO_MAIL_SUBMIT_REFUSE",  "写真・動画・メディアが拒否されました");
 
 // edit
-define("_WEBPHOTO_LOOK_PHOTO","写真を見る");
+define("_WEBPHOTO_LOOK_PHOTO","写真・動画・メディアを見る");
 
 //---------------------------------------------------------
 // v2.11
@@ -1501,6 +1283,18 @@ define("_WEBPHOTO_ITEM_FILE_ID_17" , "ファイル番号：17" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_18" , "ファイル番号：18" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_19" , "ファイル番号：19" ) ;
 define("_WEBPHOTO_ITEM_FILE_ID_20" , "ファイル番号：20" ) ;
+
+// file
+define("_WEBPHOTO_FILE_KIND_11" , "WAVE" ) ;
+define("_WEBPHOTO_FILE_KIND_12" , "ラージ" ) ;
+define("_WEBPHOTO_FILE_KIND_13" , "ファイル種別： 13" ) ;
+define("_WEBPHOTO_FILE_KIND_14" , "ファイル種別： 14" ) ;
+define("_WEBPHOTO_FILE_KIND_15" , "ファイル種別： 15" ) ;
+define("_WEBPHOTO_FILE_KIND_16" , "ファイル種別： 16" ) ;
+define("_WEBPHOTO_FILE_KIND_17" , "ファイル種別： 17" ) ;
+define("_WEBPHOTO_FILE_KIND_18" , "ファイル種別： 18" ) ;
+define("_WEBPHOTO_FILE_KIND_19" , "ファイル種別： 19" ) ;
+define("_WEBPHOTO_FILE_KIND_20" , "ファイル種別： 20" ) ;
 
 // item kind
 define("_WEBPHOTO_ITEM_KIND_IMAGE_CMYK", "画像 (cmyk)" ) ;

@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: misc_form.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// item_kind_list_video
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_ffmpeg
 // move item_embed_type_select_options()
@@ -32,6 +34,8 @@ class webphoto_edit_misc_form extends webphoto_edit_form
 	var $_icon_build_class ;
 	var $_kind_class;
 
+	var $_ini_kind_list_video = null;
+
 	var $_VIDEO_THUMB_WIDTH = 120;
 	var $_VIDEO_THUMB_MAX   = _C_WEBPHOTO_VIDEO_THUMB_PLURAL_MAX ;
 
@@ -50,6 +54,7 @@ function webphoto_edit_misc_form( $dirname, $trust_dirname )
 		=& webphoto_edit_icon_build::getInstance( $dirname );
 	$this->_kind_class   =& webphoto_kind::getInstance();
 
+	$this->_ini_kind_list_video = $this->explode_ini('item_kind_list_video');
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -333,7 +338,10 @@ function is_show_form_redo( $item_row )
 
 function is_video_kind( $kind )
 {
-	return $this->_kind_class->is_video_kind( $kind );
+	if ( in_array( $kind, $this->_ini_kind_list_video ) ) {
+		return true;
+	}
+	return false;
 }
 
 // --- class end ---

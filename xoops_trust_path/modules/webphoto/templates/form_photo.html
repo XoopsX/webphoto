@@ -1,4 +1,4 @@
-<{* $Id: form_photo.html,v 1.14 2010/10/06 02:22:46 ohwada Exp $ *}>
+<{* $Id: form_photo.html,v 1.15 2010/10/08 15:53:16 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -72,17 +72,6 @@ function webphoto_gmap_disp_on()
 <{* item id *}>
 <{if $is_edit && $is_module_admin }>
   <tr><td class="head" width="20%"><{$lang_item_id}></td><td class="odd"><{$item_id}></td></tr>
-<{/if}>
-
-<{if $show_maxpixel }>
-  <tr><td class="head" width="20%">
-  <{$lang_cap_maxpixel}>
-  <{if $lang_submit_cap_dsc_maxpixel != "" }>
-    <br /><br />
-    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_maxpixel}></span>
-  <{/if}>
-  </td>
-  <td class="odd"><{$ele_maxpixel}></td></tr>
 <{/if}>
 
 <{if $show_maxsize }>

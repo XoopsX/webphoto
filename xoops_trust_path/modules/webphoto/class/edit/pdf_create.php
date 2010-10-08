@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf_create.php,v 1.4 2010/09/27 03:42:54 ohwada Exp $
+// $Id: pdf_create.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-20 K.OHWADA
+// 2010-10-01 K.OHWADA
 // create_pdf() -> execute()
 // 2009-11-11 K.OHWADA
 // $trust_dirname
@@ -23,12 +23,13 @@ class webphoto_edit_pdf_create extends webphoto_edit_base_create
 {
 	var $_ext_class ;
 
-	var $_SUB_DIR_PDFS = 'pdfs';
-	var $_EXT_PDF      = 'pdf';
-
-	var $_PDF_EXT    = 'pdf';
-	var $_PDF_MIME   = 'application/pdf';
-	var $_PDF_MEDIUM = '';
+	var $_param_ext    = 'pdf' ;
+	var $_param_dir    = 'pdfs';
+	var	$_param_mime   = 'application/pdf' ;
+	var $_param_medium = '' ;
+	var $_param_kind   = _C_WEBPHOTO_FILE_KIND_PDF ;
+	var $_msg_created  = 'create pdf' ;
+	var $_msg_failed   = 'fail to create pdf' ;
 
 //---------------------------------------------------------
 // constructor
@@ -76,16 +77,8 @@ function create_param( $param )
 
 function create_pdf( $item_id, $src_file, $src_ext )
 {
-	$this->_flag_created = false ;
-	$this->_flag_failed  = false ;
-
-	$pdf_param = null ;
-
-	$name_param =$this->build_random_name_param( $item_id, $this->_EXT_PDF, $this->_SUB_DIR_PDFS );
-	$name  = $name_param['name'] ;
-	$path  = $name_param['path'] ;
+	$name_param = $this->build_name_param( $item_id );
 	$file  = $name_param['file'] ;
-	$url   = $name_param['url']  ;
 
 	$param = array(
 		'src_file' => $src_file ,
@@ -95,29 +88,7 @@ function create_pdf( $item_id, $src_file, $src_ext )
 
 	$ret = $this->_ext_class->execute( 'pdf', $param ) ;
 
-// created
-	if ( $ret == 1 ) {
-		$this->set_flag_created() ;
-		$this->set_msg( 'create pdf' );
-		$pdf_param = array(
-			'url'    => $url ,
-			'file'   => $file ,
-			'path'   => $path ,
-			'name'   => $name ,
-			'ext'    => $this->_PDF_EXT ,
-			'mime'   => $this->_PDF_MIME ,
-			'medium' => $this->_PDF_MEDIUM ,
-			'size'   => filesize( $file ) ,
-			'kind'   => _C_WEBPHOTO_FILE_KIND_PDF ,
-		);
-
-// failed
-	} elseif ( $ret == -1 ) {
-		$this->set_flag_failed() ;
-		$this->set_msg( 'fail to create pdf', true ) ;
-	}
-
-	return $pdf_param ;
+	return $this->build_result( $ret, $name_param );
 }
 
 // --- class end ---

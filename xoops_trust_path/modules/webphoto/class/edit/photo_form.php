@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.17 2010/10/06 02:22:46 ohwada Exp $
+// $Id: photo_form.php,v 1.18 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -88,6 +88,8 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_has_image_rotate;
 	var $_allowed_exts;
 
+	var $_ini_file_list = null;
+
 	var $_xoops_db_groups  = null;
 
 	var $_editor_show = false ;
@@ -137,6 +139,8 @@ function webphoto_edit_photo_form( $dirname, $trust_dirname )
 
 	$this->_item_kind_group_array = $this->_mime_class->get_my_item_kind_group_array();
 	$this->_tag_build_class->set_is_japanese( $this->_is_japanese );
+
+	$this->_ini_file_list = $this->explode_ini('edit_file_list');
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -337,7 +341,6 @@ function build_form_photo( $item_row )
 
 // BUG: not show maxsize
 		'show_maxsize'      => $this->show_maxsize( $show_maxsize_mode, $is_edit ) ,
-		'show_maxpixel'     => $this->show_maxpixel( $is_edit ) ,
 		'show_allowed_exts' => $this->show_allowed_exts( $is_edit ) ,
 
 		'show_item_cat_id'            =>   $show_item_cat_id ,
@@ -465,7 +468,6 @@ function build_form_common( $is_edit )
 		'show_embed_support_tags'        => $this->show_embed_support_tags() ,
 		'show_embed_support_embed_text'  => $this->show_embed_support_embed_text() ,
 
-		'ele_maxpixel'         => $this->ele_maxpixel( $has_resize ) ,
 		'ele_maxsize'          => $this->ele_maxsize() ,
 		'ele_allowed_exts'     => $this->build_allowed_exts() ,
 		'ele_item_description' => $this->_editor_desc ,
@@ -518,17 +520,6 @@ function show_maxsize( $show_maxsize_mode, $is_edit )
 		if ( !$is_edit ) {
 			return true;
 		}
-	}
-	return false;
-}
-
-function show_maxpixel( $is_edit )
-{
-	if ( $is_edit && $this->check_edit('maxpixel') ) {
-		return true;
-	}
-	if ( !$is_edit ) {
-		return true;
 	}
 	return false;
 }
@@ -758,20 +749,26 @@ function item_file_array( $is_edit )
 	$item_row = $this->get_row();
 
 	$arr = array();
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
+	foreach ( $this->_ini_file_list as $file ) 
 	{
-		$title = null;
-		$value = null;
-
-		if ( in_array( $i, $this->_ARRAY_FILE_ID ) ) {
-			$title    = $this->get_constant( 'FILE_KIND_'.$i );
-			$file_row = $this->get_cached_file_row_by_kind( $item_row, $i );
-			$url      = $this->build_file_url_size( $file_row ) ;
+		$const_name = strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$file );
+		if ( !defined($const_name) ) {
+			continue;
 		}
 
-		$arr[ $i ] = array(
-			'title_s' => $this->sanitize( $title ) ,
-			'value_s' => $this->sanitize( $value ) ,
+		$const = constant($const_name);
+
+		$name        = 'file_'. $const ;
+		$name_delete = $name.'_delete';
+		$title       = $this->get_constant( 'FILE_KIND_'.$const );
+		$file_row    = $this->get_cached_file_row_by_kind( $item_row, $const );
+		$url         = $this->build_file_url_size( $file_row ) ;
+
+		$arr[ $const ] = array(
+			'name'        => $name ,
+			'name_delete' => $name_delete ,
+			'title_s'     => $this->sanitize( $title ) ,
+			'url_s'       => $this->sanitize( $url ) ,
 		);
 	}
 

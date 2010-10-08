@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.28 2010/03/19 00:23:02 ohwada Exp $
+// $Id: item_manager.php,v 1.29 2010/10/08 15:53:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// _file_delete()
 // 2010-03-18 K.OHWADA
 // format_and_update_item()
 // 2010-02-15 K.OHWADA
@@ -69,6 +71,8 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 	var $_player_id       = 0 ;
 	var $_player_title    = null;
 	var $_alternate_class = 'even';
+
+	var	$_file_delete_num = 0;
 
 // preload
 	var $_SHOW_FORM_ADMIN_EMBED    = true;
@@ -186,20 +190,16 @@ function main()
 		$this->_cont_delete();
 		exit();
 
-	case 'thumb_delete':
-		$this->_thumb_delete();
-		exit();
-
-	case 'middle_delete':
-		$this->_middle_delete();
-		exit();
-
-	case 'small_delete':
-		$this->_small_delete();
+	case 'jpeg_delete':
+		$this->_jpeg_delete();
 		exit();
 
 	case 'flash_delete':
 		$this->_flash_delete();
+		exit();
+
+	case 'file_delete':
+		$this->_file_delete();
 		exit();
 
 	case 'flashvar_form': 
@@ -252,24 +252,31 @@ function _get_action()
 	$post_op            = $this->_post_class->get_post_get_text('op' );
 	$post_conf_delete   = $this->_post_class->get_post_text('conf_delete' );
 	$post_cont_delete   = $this->_post_class->get_post_text('file_photo_delete' );
-	$post_thumb_delete  = $this->_post_class->get_post_text('file_thumb_delete' );
-	$post_middle_delete = $this->_post_class->get_post_text('file_middle_delete' );
-	$post_small_delete  = $this->_post_class->get_post_text('file_small_delete' );
+	$post_jpeg_delete   = $this->_post_class->get_post_text('file_jpeg_delete' );
 	$post_flash_delete  = $this->_post_class->get_post_text('flash_delete' );
 	$post_restore       = $this->_post_class->get_post_text('restore' );
+
+	$file_delete_num = 0;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
+		$name = 'file_'.$i.'_delete' ;
+		$post = $this->_post_class->get_post_text($name);
+		if ( $post ) {
+			$file_delete_num = $i;
+			break;
+		}
+	}
 
 	if ( $post_conf_delete ) {
 		return 'confirm_form';
 	} elseif ( $post_cont_delete ) {
 		return 'cont_delete';
-	} elseif ( $post_thumb_delete ) {
-		return 'thumb_delete';
-	} elseif ( $post_middle_delete ) {
-		return 'middle_delete';
-	} elseif ( $post_small_delete ) {
-		return 'small_delete';
+	} elseif ( $post_jpeg_delete ) {
+		return 'jpeg_delete';
 	} elseif ( $post_flash_delete ) {
 		return 'flash_delete';
+	} elseif ( $file_delete_num ) {
+		$this->_file_delete_num = $file_delete_num;
+		return 'file_delete';
 	} elseif ( $post_restore ) {
 		return 'flashvar_restore';
 	} elseif ( $post_op ) {
@@ -876,47 +883,63 @@ function _redo()
 	exit();
 }
 
-
 //---------------------------------------------------------
 // file delete
 //---------------------------------------------------------
 function _cont_delete()
 {
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->cont_delete( $item_row, $url_redirect );
+	$this->_check_token_and_redirect();
+
+	$item_row = $this->_get_item_row_or_redirect();
+	$ret = $this->cont_delete( $item_row );
+
+	$url = $this->_build_modify_form_url( $item_row['item_id'] );
+	$this->_redirect_file_delete( $ret, $url );
 }
 
-function _thumb_delete()
+function _jpeg_delete()
 {
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->thumb_delete( $item_row, $url_redirect );
-}
+	$this->_check_token_and_redirect();
 
-function _middle_delete()
-{
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->middle_delete( $item_row, $url_redirect );
-}
+	$item_row = $this->_get_item_row_or_redirect();
+	$ret = $this->jpeg_thumb_delete( $item_row );
 
-function _small_delete()
-{
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->small_delete( $item_row, $url_redirect );
+	$url = $this->_build_modify_form_url( $item_row['item_id'] );
+	$this->_redirect_file_delete( $ret, $url );
 }
 
 function _flash_delete()
 {
-	list($item_row, $url_redirect) = $this->_delete_common();
-	$this->video_flash_delete( $item_row, $url_redirect );
+	$this->_check_token_and_redirect();
+
+	$item_row = $this->_get_item_row_or_redirect();
+	$ret = $this->video_flash_delete( $item_row );
+
+	$url = $this->_build_modify_form_url( $item_row['item_id'] );
+	$this->_redirect_file_delete( $ret, $url );
 }
 
-function _delete_common()
+function _file_delete()
 {
 	$this->_check_token_and_redirect();
-	$item_row = $this->_get_item_row_or_redirect();
-	$item_id  = $item_row['item_id'] ;
-	$url_redirect = $this->_build_modify_form_url( $item_id );
-	return array($item_row, $url_redirect);
+
+	$item_row  = $this->_get_item_row_or_redirect();
+	$item_name = 'item_file_id_'.$this->_file_delete_num;
+	$ret = $this->file_delete_common( $item_row, $item_name );
+
+	$url = $this->_build_modify_form_url( $item_row['item_id'] );
+	$this->_redirect_file_delete( $ret, $url );
+}
+
+function _redirect_file_delete( $ret, $url )
+{
+	if ( !$ret  ) {
+		redirect_header( $url, $this->_TIME_FAILED, $this->_delete_error ) ;
+		exit() ;
+	}
+
+	redirect_header( $url, $this->_TIME_SUCCESS, $this->get_constant('DELETED') );
+	exit();
 }
 
 //---------------------------------------------------------
