@@ -1,5 +1,5 @@
 <?php
-// $Id: ffmpeg.php,v 1.11 2010/10/06 02:22:46 ohwada Exp $
+// $Id: ffmpeg.php,v 1.12 2010/10/09 02:19:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -36,6 +36,9 @@ class webphoto_lib_ffmpeg
 	var $_ext      = 'jpg';
 	var $_offset   = 0;
 	var $_flag_chmod = false;
+
+	var $_audio_aac_array  = array('aac','libfaad');
+	var $_video_h264_array = array('h264');
 
 	var $_msg_array = array();
 
@@ -144,7 +147,6 @@ function get_video_info( $file )
 	$line_video    = null;
 	$audio_codec   = null;
 	$video_codec   = null;
-	$flag_h264     = false;
 	$duration = 0;
 	$width    = 0;
 	$height   = 0;
@@ -173,23 +175,43 @@ function get_video_info( $file )
 		}
 	}
 
-	if (( $audio_codec == 'libfaad' ) &&
-	    ( $video_codec == 'h264' )) {
-		$flag_h264 = true;
-	}
-
 	$arr = array(
 		'line_duration' => $line_duration ,
 		'line_audio'    => $line_audio ,
 		'line_video'    => $line_video ,
 		'audio_codec'   => $audio_codec ,
 		'video_codec'   => $video_codec ,
-		'flag_h264'     => $flag_h264 ,
+		'is_h264_aac'   => $this->is_h264_aac( $video_codec, $audio_codec ) ,
 		'duration' => $duration ,
 		'width'    => $width ,
 		'height'   => $height ,
 	);
 	return $arr;
+}
+
+function is_h264_aac( $video, $audio )
+{
+	if ( $this->is_video_h264( $video ) &&
+	     $this->is_audio_aac( $audio ) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_video_h264( $video )
+{
+	if ( in_array($video, $this->_video_h264_array) ) {
+		return true;
+	}
+	return false;
+}
+
+function is_audio_aac( $audio )
+{
+	if ( in_array($audio, $this->_audio_aac_array) ) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------

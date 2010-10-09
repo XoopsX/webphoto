@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.18 2010/10/08 15:53:16 ohwada Exp $
+// $Id: factory_create.php,v 1.19 2010/10/09 02:19:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -968,7 +968,7 @@ function build_row_video_info( $row, $src_file )
 	$row['item_duration'] = $result['duration'] ;
 	$row['item_width']    = $result['width'] ;
 	$row['item_height']   = $result['height'] ;
-	if ( $result['flag_h264'] ) {
+	if ( $result['is_h264_aac'] ) {
 		$row['item_kind'] = _C_WEBPHOTO_ITEM_KIND_VIDEO_H264 ;
 		$row['item_displayfile'] = _C_WEBPHOTO_FILE_KIND_CONT ;
 	}
