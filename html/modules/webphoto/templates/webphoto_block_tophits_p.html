@@ -1,4 +1,4 @@
-<{* $Id: webphoto_block_tophits_p.html,v 1.12 2009/04/11 14:46:56 ohwada Exp $ *}>
+<{* $Id: webphoto_block_tophits_p.html,v 1.13 2010/10/10 11:21:38 ohwada Exp $ *}>
 
 <{* popbox.js *}>
 <{if $block.show_popbox_js}>
@@ -37,9 +37,9 @@
 <{* POPUP IMAGE  *}>
     <{if ( $photo.onclick == 2 ) && $block.show_popbox }>
       <{if $photo.img_thumb_width && $photo.img_thumb_height }>
-        <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_photo_src_s}>" />
+        <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_large_src_s}>" />
       <{else}>
-        <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_photo_src_s}>" />
+        <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$block.cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_large_src_s}>" />
       <{/if}>
 
 <{* PHOTO PAGE *}>

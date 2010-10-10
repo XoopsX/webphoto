@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_photo.html,v 1.13 2010/06/16 22:53:37 ohwada Exp $ *}>
+<{* $Id: webphoto_form_photo.html,v 1.14 2010/10/10 11:21:38 ohwada Exp $ *}>
 
 <script src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js" type="text/javascript"></script>
 
@@ -72,17 +72,6 @@ function webphoto_gmap_disp_on()
 <{* item id *}>
 <{if $is_edit && $is_module_admin }>
   <tr><td class="head" width="20%"><{$lang_item_id}></td><td class="odd"><{$item_id}></td></tr>
-<{/if}>
-
-<{if $show_maxpixel }>
-  <tr><td class="head" width="20%">
-  <{$lang_cap_maxpixel}>
-  <{if $lang_submit_cap_dsc_maxpixel != "" }>
-    <br /><br />
-    <span class="webphoto_submit_cap_dsc"><{$lang_submit_cap_dsc_maxpixel}></span>
-  <{/if}>
-  </td>
-  <td class="odd"><{$ele_maxpixel}></td></tr>
 <{/if}>
 
 <{if $show_maxsize }>
@@ -472,11 +461,13 @@ function webphoto_gmap_disp_on()
   </td></tr>
 <{/if}>
 
-<{* --- file thumb --- *}>
-<{if $show_file_thumb }>
-  <tr><td class="head" width="20%"><{$lang_cap_thumb_select}></td><td class="odd">
-  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_thumb" />
-  <input type="file" id="file_thumb" name="file_thumb" size="50" />
+<{* --- file jpeg --- *}>
+<{if $show_file_jpeg }>
+  <tr><td class="head" width="20%"><{$lang_cap_jpeg_select}></td><td class="odd">
+  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_jpeg" />
+  <input type="file" id="file_jpeg" name="file_jpeg" size="50" />
+  <br />
+  <{$lang_file_jpeg_dsc}>
   <br /><br />
 
 <{if $show_item_external_thumb }>
@@ -500,62 +491,14 @@ function webphoto_gmap_disp_on()
   <{$lang_embed_thumb}><br />
 <{/if}>
 
-<{if $thumb_url_s != '' }>  
-  <a href="<{$thumb_url_s}>" title="thumb" target="_blank"><{$thumb_url_s}></a><br />
+<{if $jpeg_url_s != '' }>
+  <br />  
+  <a href="<{$jpeg_url_s}>" title="jpeg" target="_blank"><{$jpeg_url_s}></a><br />
 <{/if}>
 
-<{if $show_file_thumb_delete }>
-  <input type="submit" id="file_thumb_delete" name="file_thumb_delete" value="<{$lang_delete}>" />
-<{/if}>
-
-  </td></tr>
-<{/if}>
-
-<{* --- file middle --- *}>
-<{if $show_file_middle }>
-  <tr><td class="head" width="20%"><{$lang_cap_middle_select}></td><td class="odd">
-  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_middle" />
-  <input type="file" id="file_middle" name="file_middle" size="50" />
- <br /><br />
-
-<{if $show_item_external_middle }>
-  <{$lang_or}> <{$lang_item_external_middle}><br />
-  <input type="text" id="item_external_middle" name="item_external_middle" value="<{$item_external_middle_s}>" size="80" />
-  <br /><br />
-<{/if}>
-
-<{if $cfg_makethumb }> 
-  <{$lang_dsc_thumb_select}><br />
-<{/if}>
-
-<{if $middle_url_s != '' }>  
-  <a href="<{$middle_url_s}>" title="middle" target="_blank"><{$middle_url_s}></a><br />
-<{/if}>
-
-<{if $show_file_middle_delete }>
-  <input type="submit" id="file_middle_delete" name="file_middle_delete" value="<{$lang_delete}>" />
-<{/if}>
-
-  </td></tr>
-<{/if}>
-
-<{* --- file small --- *}>
-<{if $show_file_small }>
-  <tr><td class="head" width="20%"><{$lang_cap_small_select}></td><td class="odd">
-  <input type="hidden" id="xoops_upload_file[]" name="xoops_upload_file[]" value="file_small" />
-  <input type="file" id="file_small" name="file_small" size="50" />
-  <br /><br />
-
-<{if $cfg_makethumb }> 
-  <{$lang_dsc_thumb_select}><br />
-<{/if}>
-
-<{if $small_url_s != '' }>  
-  <a href="<{$small_url_s}>" title="small" target="_blank"><{$small_url_s}></a><br />
-<{/if}>
-
-<{if $show_file_small_delete }>
-  <input type="submit" id="file_small_delete" name="file_small_delete" value="<{$lang_delete}>" />
+<{if $show_file_jpeg_delete }>
+  <input type="submit" id="file_jpeg_delete" name="file_jpeg_delete" value="<{$lang_delete}>" />
+  <{$lang_file_jpeg_delete_dsc}>
 <{/if}>
 
   </td></tr>

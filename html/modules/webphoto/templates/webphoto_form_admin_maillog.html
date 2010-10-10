@@ -1,0 +1,102 @@
+<{* $Id: webphoto_form_admin_maillog.html,v 1.1 2010/10/10 11:22:08 ohwada Exp $ *}>
+
+<form name="webphoto_maillog_form" action="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}> />
+<input type="hidden" id="fct" name="fct" value="maillog_manager" />
+<input type="hidden" id="op" name="op" value="edit /">
+<input type="hidden" id="maillog_id" name="maillog_id" value="<{$maillog_id}>" />
+
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center">
+<th colspan="2"><{$lang_maillog_manager}></th>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_id}></td>
+<td class="odd"><{$maillog_id}></td>
+</tr>
+
+<{if $show_uid }>
+  <tr>
+  <td class="head"><{$lang_submitter}></td>
+  <td class="odd">
+  <select name="uid">
+  <{$uid_options}>
+  </select>
+
+  <{if $show_user_list }>
+    <br />
+    <{foreach from=$user_list item=list }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=maillog_manager&amp;op=form&amp;id=<{$maillog_id}>&amp;userstart=<{$list.userstart}>"><{$list.page}></a> 
+    <{/foreach}>
+  <{/if}>
+
+  </td>
+  </tr>
+<{/if}>
+
+<{if $show_cat_id }>
+  <tr>
+  <td class="head"><{$lang_category}></td>
+  <td class="odd">
+  <select id="cat_id" name="cat_id" size="1">
+  <{$cat_id_options}>
+  </select>
+  </td>
+  </tr>
+<{/if}>
+
+<tr>
+<td class="head"><{$lang_maillog_time_create}></td>
+<td class="odd"><{$time_create_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_time_update}></td>
+<td class="odd"><{$time_update_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_photo_ids}></td>
+<td class="odd"><{$photo_ids_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_status}></td>
+<td class="odd"><{$status_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_from}></td>
+<td class="odd"><{$from_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_subject}></td>
+<td class="odd"><{$subject_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_body}></td>
+<td class="odd"><{$body_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_file}></td>
+<td class="odd"><{$file_disp}></td>
+</td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_attach}></td>
+<td class="odd"><{$attach_disp}></td>
+</tr>
+<tr>
+<td class="head"><{$lang_maillog_comment}></td>
+<td class="odd"><{$comment_disp}></td>
+</tr>
+<tr>
+<td class="head"></td>
+<td class="head">
+
+<{if $show_submit_button }>
+  <input type="submit" id="submit" name="submit" value="<{$lang_button_submit_mail}>" />
+<{/if}>
+
+<input type="submit" id="delete" name="delete" value="<{$lang_delete}>" />
+</td>
+</tr>
+</table>
+
+</form>

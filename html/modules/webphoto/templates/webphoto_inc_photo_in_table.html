@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_in_table.html,v 1.12 2009/11/29 07:43:41 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_in_table.html,v 1.13 2010/10/10 11:21:38 ohwada Exp $ *}>
 
 <{* IMAGE PART *}>
 <div class="webphoto_table_image">
@@ -6,9 +6,9 @@
 <{* NORMAL IMAGES with popbox  *}>
 <{if ( $photo.onclick == 2 ) && $cfg_use_popbox }>
   <{if $photo.img_thumb_width && $photo.img_thumb_height }>
-    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_photo_src_s}>" />
+    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_large_src_s}>" />
   <{else}>
-    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_photo_src_s}>" />
+    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" title="<{$photo.title_s}>" width="<{$cfg_thumb_width}>" class="PopBoxImageSmall" onclick="Pop(this,100,'PopBoxImageLarge');" pbSrcNL="<{$photo.img_large_src_s}>" />
   <{/if}>
 
 <{* DIRECT LINK *}>

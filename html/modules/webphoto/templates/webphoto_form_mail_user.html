@@ -1,0 +1,34 @@
+<{* $Id: webphoto_form_mail_user.html,v 1.1 2010/10/10 11:22:08 ohwada Exp $ *}>
+
+<form name="webphoto_mail_user_form" action="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="op" name="op" value="form" />
+<input type="hidden" id="fct" name="fct" value="mail_register" />
+
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center">
+<th colspan="2"><{$lang_title_mail_register}></th>
+</tr>
+<tr><td class="head"><{$lang_cat_user}></td>
+<td class="odd">
+<select name="user_uid">
+<{$user_uid_options}>
+</select>
+
+<{if $show_user_list }>
+  <br />
+  <{foreach from=$user_list item=list }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=mail_register&amp;userstart=<{$list.userstart}>"><{$list.page}></a> 
+  <{/foreach}>
+<{/if}>
+
+</td>
+</tr>
+<tr>
+<td class="head"></td>
+<td class="odd">
+<input type="submit" id="submit" name="submit" value="<{$lang_button_register}>" />
+</td></tr>
+</table>
+
+</form>
