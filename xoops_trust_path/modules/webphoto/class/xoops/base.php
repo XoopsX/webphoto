@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.10 2010/09/19 06:43:11 ohwada Exp $
+// $Id: base.php,v 1.11 2010/10/10 12:46:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // change log
-// 2010-09-17 K.OHWADA
+// 2010-10-01 K.OHWADA
 // get_member_user_count()
 // 2010-02-01 K.OHWADA
 // get_module_info_value_by_dirname()
@@ -113,7 +113,7 @@ function get_my_module_version( $flag_format=false )
 {
 	$ver = $this->get_my_module_value_by_name( 'version' );
 	if ( $flag_format ) {
-		$ver = sprintf("%.2f", $ver/100 );
+		$ver = $this->convertVersionIntToFloat($ver);
 	}
 	return $ver;
 }
@@ -246,7 +246,7 @@ function get_module_info_version_by_dirname( $dirname, $flag_format=false )
 {
 	$ver = $this->get_module_info_value_by_dirname( $dirname, 'version' );
 	if ( $ver && $flag_format ) {
-		$ver = 100 * $ver;
+		$ver = $this->convertVersionFromModinfoToInt($ver);
 	}
 	return $ver;
 }
@@ -418,6 +418,20 @@ function user_to_server_time( $time, $default=0 )
 	}
 	$timestamp = $time - (($timeoffset - $xoopsConfig['server_TZ']) * 3600);
 	return $timestamp;
+}
+
+
+//---------------------------------------------------------
+// same as Legacy_Utils
+//---------------------------------------------------------
+function convertVersionFromModinfoToInt($version)
+{
+	return round(100 * floatval($version));
+}
+
+function convertVersionIntToFloat($version)
+{
+	return round(floatval(intval($version) / 100), 2);
 }
 
 // --- class end ---
