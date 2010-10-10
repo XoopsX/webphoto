@@ -1,10 +1,16 @@
 <?php
-// $Id: nicovideo.php,v 1.1 2010/06/16 22:46:22 ohwada Exp $
+// $Id: nicovideo.php,v 1.2 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-06-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-10-01 K.OHWADA
+// src for nm****
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -28,8 +34,8 @@ class webphoto_embed_nicovideo extends webphoto_embed_base
 function webphoto_embed_nicovideo()
 {
 	$this->webphoto_embed_base( 'nicovideo' );
-	$this->set_url( 'http://www.nicovideo.jp/watch/sm' );
-	$this->set_sample( '7389627' );
+	$this->set_url( 'http://www.nicovideo.jp/watch/' );
+	$this->set_sample( 'sm7389627' );
 }
 
 function embed( $src, $width, $height )
@@ -68,7 +74,7 @@ function support_params()
 
 function get_xml_params( $src )
 {
-	$url  = 'http://www.nicovideo.jp/api/getthumbinfo/sm'.$src;
+	$url  = 'http://www.nicovideo.jp/api/getthumbinfo/'.$src;
 	$cont = $this->get_remote_file( $url );
 	if ( empty($cont) ) {
 		return false;
@@ -151,7 +157,7 @@ function build_xml_script( $src )
 
 function build_embed_script( $src, $width, $height )
 {
-	$url  = 'http://ext.nicovideo.jp/thumb_watch/sm'.$src.'?w='.$width.'&h='.$height;
+	$url  = 'http://ext.nicovideo.jp/thumb_watch/'.$src.'?w='.$width.'&h='.$height;
 	$str  = $this->build_script_begin( $url );
 	$str .= '<!--so.addParam("wmode", "transparent");-->';
 	$str .= $this->build_script_end();

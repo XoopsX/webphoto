@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.21 2010/06/16 22:24:47 ohwada Exp $
+// $Id: submit.php,v 1.22 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-01 K.OHWADA
+// buiid_preview_embed()
 // 2010-06-06 K.OHWADA
 // remove $_TIME_SUCCESS
 // 2010-02-15 K.OHWADA
@@ -502,15 +504,26 @@ function _get_item_row_or_redirect()
 //---------------------------------------------------------
 function _build_preview_info( $item_row )
 {
+	$image_info = null;
+
+// new preview
 	if ( $this->is_readable_new_photo() ) {
 		$image_info = $this->_preview_new( $item_row );
 
+// old preview
 	} elseif ( $this->is_readable_preview() ) {
-		// old preview
 		$image_info = $this->_preview_old();
 
-	} else {
-		// preview without image
+// embed preview
+	} elseif ( $this->is_embed_preview( $item_row ) ) {
+		list( $row, $image_info ) = $this->build_preview_embed( $item_row );
+		if ( is_array($row) ) {
+			$item_row = $row ;
+		}
+	}
+
+// preview without image
+	if ( empty($image_info) ) {
 		$image_info = $this->_preview_no_image();
 	}
 

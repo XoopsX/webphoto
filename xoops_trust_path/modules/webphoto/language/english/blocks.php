@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.9 2010/10/08 15:53:16 ohwada Exp $
+// $Id: blocks.php,v 1.10 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -50,7 +50,10 @@ define($constpref."BTITLE_RANDOM","Random Photo Video Media");
 define($constpref."TEXT_DISP","Display");
 define($constpref."TEXT_STRLENGTH","Max length of photo's title");
 define($constpref."TEXT_CATLIMITATION","Limit by category");
-define($constpref."TEXT_CATLIMITRECURSIVE","with Sub-categories");
+
+// v2.30
+define($constpref."TEXT_CATLIMITRECURSIVE","with Sub-categories<br />Valid when set 'Limit by category' ");
+
 define($constpref."TEXT_BLOCK_WIDTH","Displays max");
 define($constpref."TEXT_BLOCK_WIDTH_NOTES","(if you set this to 0, the thumbnail image displays in its original size.)");
 define($constpref."TEXT_RANDOMCYCLE","Switching cycle of random images (sec)");

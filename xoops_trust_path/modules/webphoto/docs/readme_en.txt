@@ -1,11 +1,77 @@
-$Id: readme_en.txt,v 1.54 2010/06/16 22:24:47 ohwada Exp $
+$Id: readme_en.txt,v 1.55 2010/10/10 11:02:10 ohwada Exp $
+
+=================================================
+Version: 2.30
+Date:   2010-10-10
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Media file
+(1) added image : svg jpeg(cmyk)
+(2) added video : mp4 mpe m1v
+(3) added audio : wma aiff au
+
+2. Image file
+2.1 Media file
+In old version, when a uploaded image is larger than the set size,
+Webphoto saved a resized image, and not saved an original image.
+Since this version, Webphoto saves an original image.
+
+2.2 Thumbnail image
+(1) Webphoto converts from the media files into the JPEG image,
+and generates the thumbnail image. 
+In old version, Webphoto not saved the JPEG image.
+Since this version, Webphoto saves the JPEG image.
+
+(2) In old version, Webphoto generated the thumbnail image 
+from the GIF image and the PNG image with the same format. 
+Since this version, Webphoto convertes to the JPEG image,
+and generates the thumbnail image.
+
+3. Media player
+(1) Vesion up
+- JW Player 5.2
+- JW Image Rotator 3.18
+(2) Media player can play H.264/AAC format.
+
+4. Video site
+4.1 show preview when submit video.
+4.2 support souece id sm*** and nm*** for niconico video.
+
+5. Language file
+changed 'Photo' to 'Photo Video Media'
+
+6. Bug fix
+(1) NOT show download file.
+(2) NOT show submit form, when users are too much.
+
+7. Database structure
+(1) item table: add field item_displayfile etc
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
+
+* Notice *
+In this version, I changed many files, for "Image file".
+Although there are no big problem, 
+but I think that there are any small problem. 
+Welcome a bug report, a bug solution, and your hack, etc.
+
 
 =================================================
 Version: 2.20
 Date:   2010-06-17
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
@@ -62,6 +128,11 @@ Please copy and overwrite in the directory which XOOPS correspond
 (2) Execute the module update in the admin cp
 (3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
   and cofirm whether or not necessary files are set.
+
+
+* Special Thanks *
+Special thanks to the plugins of the video site. 
+- http://www.how-to.tv/
 
 
 =================================================

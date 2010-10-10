@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.9 2010/10/08 15:53:16 ohwada Exp $
+// $Id: blocks.php,v 1.10 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -51,7 +51,10 @@ define($constpref."BTITLE_RANDOM","ピックアップの写真・動画・メデ
 define($constpref."TEXT_DISP","表示数");
 define($constpref."TEXT_STRLENGTH","写真・動画・メディアのタイトルの最大表示文字数");
 define($constpref."TEXT_CATLIMITATION","カテゴリ限定");
-define($constpref."TEXT_CATLIMITRECURSIVE","サブカテゴリも対象");
+
+// v2.30
+define($constpref."TEXT_CATLIMITRECURSIVE","サブカテゴリも対象<br />カテゴリ限定のとき有効");
+
 define($constpref."TEXT_BLOCK_WIDTH","最大表示サイズ");
 define($constpref."TEXT_BLOCK_WIDTH_NOTES","（※ ここを0にした場合、サムネイル画像をそのままのサイズで表示します）");
 define($constpref."TEXT_RANDOMCYCLE","画像の切り替え周期（単位は秒）");

@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.22 2010/09/19 06:46:34 ohwada Exp $
+# $Id: mysql.sql,v 1.23 2010/10/10 11:02:10 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,8 +7,9 @@
 
 # =========================================================
 # change log
-# 2010-09-17 K.OHWADA
-# svg
+# 2010-10-01 K.OHWADA
+# item_displayfile etc
+# svg wav etc
 # 2010-06-06 K.OHWADA
 # docx 
 # 2010-01-10 K.OHWADA
@@ -142,6 +143,17 @@ CREATE TABLE item (
   item_weight         INT(11) UNSIGNED NOT NULL DEFAULT '0',  
   item_perm_level TINYINT(2) NOT NULL DEFAULT '0',  
   item_description_scroll INT(11) UNSIGNED NOT NULL DEFAULT '0',  
+  item_displayfile INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_11  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_12  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_13  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_14  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_15  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_16  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_17  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_18  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_19  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
+  item_file_id_20  INT(11) UNSIGNED NOT NULL DEFAULT '0', 
   PRIMARY KEY (item_id),
   KEY (item_time_update),
   KEY (item_cat_id),
@@ -593,13 +605,13 @@ INSERT INTO mime VALUES (5, 0, 0, 'bmp', 'image', 'image/bmp', 'Windows OS/2 Bit
 INSERT INTO mime VALUES (6, 0, 0, 'doc', '', 'application/msword', 'Word Document', '&1&', '', 41, '');
 INSERT INTO mime VALUES (7, 0, 0, 'flv', 'video', 'video/x-flv application/octet-stream', 'Flash Video', '&1&', '-ar 44100', 20, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (8, 0, 0, 'gif', 'image', 'image/gif', 'Graphic Interchange Format', '&1&2&', '', 10, '');
-INSERT INTO mime VALUES (9, 0, 0, 'jpg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 10, '');
-INSERT INTO mime VALUES (10, 0, 0, 'jpeg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 10, '');
+INSERT INTO mime VALUES (9, 0, 0, 'jpg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 12, '');
+INSERT INTO mime VALUES (10, 0, 0, 'jpeg', 'image', 'image/jpeg image/pjpeg', 'JPEG/JIFF Image', '&1&2&', '', 12, '');
 INSERT INTO mime VALUES (11, 0, 0, 'mid', 'audio', 'audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '', 31, '');
 INSERT INTO mime VALUES (12, 0, 0, 'mov', 'video', 'video/quicktime', 'QuickTime Video Clip', '&1&', '', 21, 'ffmpeg:-ar 44100;');
-INSERT INTO mime VALUES (13, 0, 0, 'mp3', 'audio', 'audio/mpeg', 'MPEG Audio Stream, Layer III', '&1&', '', 30, '');
-INSERT INTO mime VALUES (14, 0, 0, 'mpeg', 'video', 'video/mpeg', 'MPEG Movie', '&1&', '', 21, 'ffmpeg:-ar 44100;');
-INSERT INTO mime VALUES (15, 0, 0, 'mpg', 'video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (13, 0, 0, 'mp3', 'audio', 'audio/mpeg audio/mp3', 'MPEG Audio Stream, Layer III', '&1&', '', 30, '');
+INSERT INTO mime VALUES (14, 0, 0, 'mpeg', 'video', 'video/mpeg', 'MPEG Movie',           '&1&', '', 21, 'ffmpeg:-ar 44100;');
+INSERT INTO mime VALUES (15, 0, 0, 'mpg',  'video', 'video/mpeg', 'MPEG 1 System Stream', '&1&', '', 21, 'ffmpeg:-ar 44100;');
 INSERT INTO mime VALUES (16, 0, 0, 'pdf', '', 'application/pdf', 'Acrobat Portable Document Format', '&1&', '', 44, '');
 INSERT INTO mime VALUES (17, 0, 0, 'png', 'image', 'image/png image/x-png', 'Portable (Public) Network Graphic', '&1&2&', '', 10, '');
 INSERT INTO mime VALUES (18, 0, 0, 'ppt', '', 'application/vnd.ms-powerpoint', 'MS Power Point', '&1&', '', 43, '');
@@ -623,7 +635,21 @@ INSERT INTO mime VALUES (33, 0, 0, 'docx', '', 'application/vnd.openxmlformats-o
 INSERT INTO mime VALUES (34, 0, 0, 'pptx', '', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'MS Power Point 2007', '&1&', '', 43, '');
 INSERT INTO mime VALUES (35, 0, 0, 'xltx', '', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'MS Excel 2007', '&1&', '', 42, '');
 
+# v2.30
 INSERT INTO mime VALUES (36, 0, 0, 'svg', '', 'image/svg+xml', 'Scalable Vector Graphics', '&1&', '', 11, 'convert:-size 1200;');
+INSERT INTO mime VALUES (37, 0, 0, 'wma', '', 'audio/x-ms-wma', 'Windows Media Audio', '&1&', '', 34, '');
+INSERT INTO mime VALUES (38, 0, 0, 'aif', '', 'audio/aiff', 'Audio Interchange File Format', '&1&', '', 34, '');
+INSERT INTO mime VALUES (39, 0, 0, 'aifc', '', 'audio/aiff', 'Audio Interchange File Format', '&1&', '', 34, '');
+INSERT INTO mime VALUES (40, 0, 0, 'aiff', '', 'audio/aiff', 'Audio Interchange File Format', '&1&', '', 34, '');
+INSERT INTO mime VALUES (41, 0, 0, 'au', '', 'audio/basic', 'Audio UNIX', '&1&', '', 34, '');
+INSERT INTO mime VALUES (42, 0, 0, 'snd', '', 'audio/basic', 'Sound UNIX', '&1&', '', 34, '');
+INSERT INTO mime VALUES (43, 0, 0, 'ivf', '', 'application/octet-stream', 'Indeo Video Files', '&1&', '', 34, '');
+INSERT INTO mime VALUES (44, 0, 0, 'midi', '', 'audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '', 31, '');
+INSERT INTO mime VALUES (45, 0, 0, 'rmi', '', 'audio/mid', 'Musical Instrument Digital Interface MIDI-sequention Sound', '&1&', '', 31, '');
+INSERT INTO mime VALUES (46, 0, 0, 'mpa', '', 'video/x-mpg', 'MPEG-1 Audio Layer-III', '&1&', '', 34, 'ffmpeg:-ar 44100');
+INSERT INTO mime VALUES (47, 0, 0, 'm1v', '', 'video/mpeg video/x-mpeg', 'MPEG-1 Audio Layer-III', '&1&', '', 21, 'ffmpeg:-ar 44100');
+INSERT INTO mime VALUES (48, 0, 0, 'mpe', '', 'video/mpeg video/x-mpeg', 'MPEG-1 Audio Layer-III', '&1&', '', 21, 'ffmpeg:-ar 44100');
+INSERT INTO mime VALUES (49, 0, 0, 'mp4', '', 'video/mp4 video/mpeg4', 'MPEG-4', '&1&', '', 21, 'ffmpeg:-ar 44100');
 
 #
 # player table

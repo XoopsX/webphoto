@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.24 2010/10/08 15:53:16 ohwada Exp $
+// $Id: submit.php,v 1.25 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -710,12 +710,43 @@ function build_no_image_preview()
 {
 	$arr = array(
 		'media_url_s'      => '' ,
-		'img_thumb_src_s'  => $this->sanitize( $this->_URL_PIXEL_IMAGE ) ,
-		'img_thumb_width'  => $this->_cfg_thumb_width ,
-		'img_thumb_height' => $this->_cfg_thumb_height ,
+		'img_thumb_src_s'  => $this->sanitize( $this->_URL_PREVIEW_IMAGE ) ,
+		'img_thumb_width'  => $this->_PREVIEW_IMAGE_WIDTH ,
+		'img_thumb_height' => $this->_PREVIEW_IMAGE_HEIGHT ,
 		'is_normal_image'  => false,
 	);
 	return $arr;
+}
+
+function build_preview_embed( $item_row )
+{
+	$arr = null;
+
+	$item_row['item_kind']  = _C_WEBPHOTO_ITEM_KIND_EMBED ;
+	$item_row['item_title'] = '';
+	$item_row['item_external_thumb'] = '';
+
+	$ret = $this->_embed_build_class->build( $item_row );
+	if ( $ret > 0 ) {
+		return array( $item_row, $arr );
+	}
+
+	$row = $this->_embed_build_class->get_item_row() ;
+
+	$thumb = $row['item_external_thumb'];
+	if ( empty($thumb) ) {
+		return array( $item_row, $arr );
+	}
+
+	$arr = array(
+		'media_url'        => '' ,
+		'img_thumb_src_s'  => $this->sanitize( $thumb ) ,
+		'img_thumb_width'  => $this->_cfg_thumb_width ,
+		'img_thumb_height' => 0 ,
+		'is_normal_image'  => false,
+	);
+
+	return array( $row, $arr );
 }
 
 function build_preview_template( $row )
@@ -738,6 +769,20 @@ function build_preview_template( $row )
 	return $tpl->fetch( $template ) ;
 }
 
+function is_embed_preview( $item_row )
+{
+	$kind       = $item_row['item_kind'];
+	$embed_type = $item_row['item_embed_type'];
+
+// preview
+	if ( (( $kind == _C_WEBPHOTO_ITEM_KIND_UNDEFINED ) ||
+          ( $kind == _C_WEBPHOTO_ITEM_KIND_EMBED )) &&
+		$embed_type ) {
+		return true;
+	}
+
+	return false;
+}
 //---------------------------------------------------------
 // factory class
 //---------------------------------------------------------

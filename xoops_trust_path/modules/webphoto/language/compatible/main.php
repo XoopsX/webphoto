@@ -1,10 +1,69 @@
 <?php
-// $Id: main.php,v 1.17 2010/06/16 22:24:47 ohwada Exp $
+// $Id: main.php,v 1.18 2010/10/10 11:02:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-03-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// v2.30
+//---------------------------------------------------------
+if( !defined("_WEBPHOTO_ITEM_DISPLAYFILE") ) 
+{
+// item table
+define("_WEBPHOTO_ITEM_DISPLAYFILE", "Display File");
+define("_WEBPHOTO_ITEM_FILE_ID_11" , "File ID: WAV" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_12" , "File ID: Large" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_13" , "File ID: 13" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_14" , "File ID: 14" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_15" , "File ID: 15" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_16" , "File ID: 16" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_17" , "File ID: 17" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_18" , "File ID: 18" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_19" , "File ID: 19" ) ;
+define("_WEBPHOTO_ITEM_FILE_ID_20" , "File ID: 20" ) ;
+
+// file
+define("_WEBPHOTO_FILE_KIND_11" , "WAVE" ) ;
+define("_WEBPHOTO_FILE_KIND_12" , "Large" ) ;
+define("_WEBPHOTO_FILE_KIND_13" , "File Kind: 13" ) ;
+define("_WEBPHOTO_FILE_KIND_14" , "File Kind: 14" ) ;
+define("_WEBPHOTO_FILE_KIND_15" , "File Kind: 15" ) ;
+define("_WEBPHOTO_FILE_KIND_16" , "File Kind: 16" ) ;
+define("_WEBPHOTO_FILE_KIND_17" , "File Kind: 17" ) ;
+define("_WEBPHOTO_FILE_KIND_18" , "File Kind: 18" ) ;
+define("_WEBPHOTO_FILE_KIND_19" , "File Kind: 19" ) ;
+define("_WEBPHOTO_FILE_KIND_20" , "File Kind: 20" ) ;
+
+// item kind
+define("_WEBPHOTO_ITEM_KIND_IMAGE_CMYK", "Image (cmyk)" ) ;
+define("_WEBPHOTO_ITEM_KIND_VIDEO_H264", "Video (H264)");
+
+// item detail
+define("_WEBPHOTO_ITEM_DETAIL_ONCLICK_DOWNLOAD", "Download");
+
+// item codeinfo
+define("_WEBPHOTO_ITEM_CODEINFO_LARGE", "Large Image");
+define("_WEBPHOTO_ITEM_CODEINFO_WAV",   "WAVE");
+
+// item display file
+define("_WEBPHOTO_ITEM_DISPLAYFILE_DEFAULT","Default");
+
+// photo form
+define("_WEBPHOTO_CAP_JPEG_SELECT", "Select the JPEG image");
+define("_WEBPHOTO_FILE_JPEG_DSC", "Create the thumb image");
+define("_WEBPHOTO_FILE_JPEG_DELETE_DSC", "Delete with the thumb image");
+
+// mime option
+define("_WEBPHOTO_MIME_KIND_IMAGE_JPEG",    "Image jpg" ) ;
+define("_WEBPHOTO_MIME_KIND_VIDEO_FLV",     "Video flv" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_MP3",     "Audio mp3" ) ;
+define("_WEBPHOTO_MIME_KIND_AUDIO_FFMPEG",  "Audio ffmpeg" ) ;
+
+// error
+define("_WEBPHOTO_ERR_WAV",  "Cannot create wave");
+}
 
 //---------------------------------------------------------
 // v2.20
