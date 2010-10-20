@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.15 2010/02/17 04:34:47 ohwada Exp $
+// $Id: catmanager.php,v 1.16 2010/10/20 12:04:52 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-10-20 K.OHWADA
+// remove set_flag_size_limit()
 // 2010-02-15 K.OHWADA
 // build_admin_footer()
 // 2009-12-06 K.OHWADA
@@ -413,9 +415,6 @@ function _build_img_size( $row )
 function _fetch_image()
 {
 	$this->_error_upload = false;
-
-// BUG: not upload when over image size
-	$this->_upload_class->set_flag_size_limit( false );
 
 	$ret = $this->_upload_class->fetch_image( $this->_CAT_FIELD_NAME );
 	if ( $ret < 0 ) { 
