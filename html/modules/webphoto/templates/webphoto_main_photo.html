@@ -1,4 +1,4 @@
-<{* $Id: webphoto_main_photo.html,v 1.21 2010/01/28 02:15:17 ohwada Exp $ *}>
+<{* $Id: webphoto_main_photo.html,v 1.22 2010/11/04 02:35:57 ohwada Exp $ *}>
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
 <{$xoops_modulename}></a> &gt;&gt; 
@@ -68,6 +68,9 @@
 <div class="webphoto_page_title">
   <{include file="db:`$mydirname`_inc_catpath.html" }>
   &gt; <{$photo.title_s}>
+<{if $show_rss_icon }>
+  <{include file="db:`$mydirname`_inc_rss_icon.html" }>
+<{/if}>
 </div>
 
 <div align="center">
