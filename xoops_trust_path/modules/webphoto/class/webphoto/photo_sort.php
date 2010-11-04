@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_sort.php,v 1.6 2010/01/25 10:03:07 ohwada Exp $
+// $Id: photo_sort.php,v 1.7 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// input_to_mode()
 // 2010-01-10 K.OHWADA
 // get_photo_kind_name()
 // 2009-11-11 K.OHWADA
@@ -41,6 +43,7 @@ class webphoto_photo_sort
 	var $_PHOTO_SORT_DEFAULT;
 	var $_ORDERBY_RANDOM = 'rand()';
 
+	var $_MODE_DEFAULT ;
 	var $_SORT_TO_ORDER_ARRAY ;
 	var $_MODE_TO_KIND_ARRAY ;
 	var $_MODE_TO_SORT_ARRAY ;
@@ -62,10 +65,10 @@ function webphoto_photo_sort( $dirname, $trust_dirname )
 	$this->set_trust_dirname( $trust_dirname );
 	$this->_init_d3_language( $dirname, $trust_dirname );
 
-//	$this->set_photo_sort_array(   $this->photo_sort_array_default() );
-
 	$cfg_sort = $this->_config_class->get_by_name('sort');
 	$this->set_photo_sort_default( $cfg_sort );
+
+	$this->_MODE_DEFAULT = $this->_ini_class->get_ini('view_mode_default');
 
 	$this->_SORT_TO_ORDER_ARRAY       = $this->_ini_class->hash_ini('sort_to_order');
 	$this->_SORT_TO_ORDER_ADMIN_ARRAY = $this->_ini_class->hash_ini('sort_to_order_admin');
@@ -97,6 +100,85 @@ function init_for_admin()
 //---------------------------------------------------------
 // mode
 //---------------------------------------------------------
+function input_to_mode( $mode_input )
+{
+	$mode_orig = $mode_input;
+
+	switch ( $mode_input )
+	{
+		case 'latest':
+		case 'popular':
+		case 'highrate':
+		case 'random':
+		case 'map':
+		case 'timeline':
+//		case 'new':
+		case 'picture':
+		case 'video':
+		case 'audio':
+		case 'office':
+		case 'category':
+		case 'date':
+		case 'place':
+		case 'tag':
+		case 'user':
+		case 'search':
+		case 'photo':
+			$mode      = $mode_orig;
+			break;
+
+		case 'myphoto':
+			$mode      = 'user';
+			break;
+
+		default:
+			$mode      = $this->_MODE_DEFAULT;
+			$mode_orig = $this->_MODE_DEFAULT;
+			break;
+	}
+
+	return array( $mode, $mode_orig ) ;
+}
+
+function input_to_param( $mode, $input, $second, $cat_id, $uid, $my_uid )
+{
+	$p = $input;
+
+	switch ( $mode )
+	{
+		case 'category':
+			$p = $cat_id;
+			break;
+
+		case 'user':
+			$p = $uid;
+			break;
+
+		case 'myphoto':
+			$p = $my_uid ;
+			break;
+
+		case 'tag':
+		case 'date':
+		case 'place':
+		case 'search':
+			$p = $second;
+			break;
+	}
+
+	return $p;
+}
+
+function input_to_param_for_rss( $mode, $input )
+{
+	$second = $input;
+	$cat_id = $input;
+	$uid    = $input;
+	$my_uid = $input;
+
+	return $this->input_to_param( $mode, $input, $second, $cat_id, $uid, $my_uid );
+}
+
 function mode_to_orderby( $mode, $sort_in )
 {
 	$sort = $this->mode_to_sort( $mode );

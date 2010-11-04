@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.28 2010/10/06 02:22:46 ohwada Exp $
+// $Id: show_photo.php,v 1.29 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// move set_keyword_array_by_get() to webphoto_main_photo
 // 2010-10-01 K.OHWADA
 // img_large_src
 // 2010-01-10 K.OHWADA
@@ -665,13 +667,6 @@ function set_keyword_array( $arr )
 	if ( is_array($arr) ) {
 		$this->_keyword_array = $arr;
 	}
-}
-
-function set_keyword_array_by_get()
-{
-	$get_keywords = $this->_pathinfo_class->get_text( 'keywords' );
-	$arr = preg_split("/[\s|\+]/", $get_keywords);
-	$this->set_keyword_array( array_unique($arr) );
 }
 
 // --- class end ---

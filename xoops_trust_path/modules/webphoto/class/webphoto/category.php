@@ -1,5 +1,5 @@
 <?php
-// $Id: category.php,v 1.5 2010/05/11 14:15:06 ohwada Exp $
+// $Id: category.php,v 1.6 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 // BUG: total is wrong
@@ -26,6 +28,11 @@ class webphoto_category extends webphoto_show_photo
 	var $_saved_sum_mode = 0;
 	var $_saved_total    = 0;
 
+	var $_cfg_cat_child      = null;
+	var $_cfg_perm_cat_read  = null;
+	var $_cfg_cat_main_width = null;
+	var $_cfg_cat_sub_width  = null;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -37,6 +44,12 @@ function webphoto_category( $dirname , $trust_dirname )
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 	$this->_catlist_class  
 		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
+
+	$this->_cfg_cat_child      = $this->_config_class->get_by_name('cat_child');
+	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name('perm_cat_read');
+	$this->_cfg_cat_main_width = $this->_config_class->get_by_name('cat_main_width');
+	$this->_cfg_cat_sub_width  = $this->_config_class->get_by_name('cat_sub_width');
+
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -103,10 +116,6 @@ function get_photo_for_list( $cat_id )
 	$photo_row = null;
 	$rows      = null;
 
-//	list( $rows, $total, $total_sum, $small_sum ) =
-//		$this->get_rows_total_by_catid( 
-//			$cat_id, $this->_PHOTO_LIST_UPDATE_ORDER, $this->_PHOTO_LIST_LIMIT ) ;
-
 	list( $sum_mode, $total, $total_sum, $small_sum ) =
 		$this->get_total_by_catid( _C_WEBPHOTO_CAT_CHILD_EMPTY, $cat_id );
 
@@ -146,11 +155,10 @@ function build_total_for_detail( $cat_id )
 		return $arr;
 	}
 
-	$cat_title     = $row['cat_title'];
-	$cfg_cat_child = $this->_config_class->get_by_name('cat_child');
+	$cat_title = $row['cat_title'];
 
 	list( $sum_mode, $total, $total_sum, $small_sum ) =
-		$this->get_total_by_catid( $cfg_cat_child, $cat_id );
+		$this->get_total_by_catid( $this->_cfg_cat_child, $cat_id );
 
 	$arr = array(
 		'cat_title'       => $cat_title,
@@ -237,15 +245,32 @@ function get_rows_by_catid( $sum_mode, $cat_id, $orderby, $limit=0, $offset=0 )
 
 function check_cat_perm_read_by_catid( $cat_id )
 {
-	$cfg_perm_cat_read = $this->_config_class->get_by_name('perm_cat_read');
-
-	if ( $cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
+	if ( $this->_cfg_perm_cat_read == _C_WEBPHOTO_OPT_PERM_READ_ALL ) {
 		return true;
 	}
 	if ( $this->_catlist_class->check_cat_perm_by_catid( $cat_id ) ) {
 		return true ;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $cat_id, $orderby, $limit=0, $start=0 )
+{
+	$rows      = null;
+
+	$cat_param = $this->build_total_for_detail( $cat_id ) ;
+	$total     = $cat_param['photo_total'] ;
+	$sum_mode  = $cat_param['sum_mode'] ;
+
+	if ( $total > 0 ) {
+		$rows = $this->build_rows_for_detail( 
+			$sum_mode, $cat_id, $orderby, $limit, $start ) ;
+	}
+
+	return $rows;
 }
 
 //---------------------------------------------------------
@@ -279,9 +304,6 @@ function build_catpath( $cat_id )
 //---------------------------------------------------------
 function build_catlist( $cat_id, $cols_in, $delmita )
 {
-	$main_width = $this->_config_class->get_by_name('cat_main_width');
-	$sub_width  = $this->_config_class->get_by_name('cat_sub_width');
-
 	$show_sub      = $this->get_ini('category_show_sub');
 	$show_main_img = $this->get_ini('category_show_main_img');
 	$show_sub_img  = $this->get_ini('category_show_sub_img');
@@ -304,8 +326,8 @@ function build_catlist( $cat_id, $cols_in, $delmita )
 		'show_sub'        => $show_sub ,
 		'show_main_img'   => $show_main_img ,
 		'show_sub_img'    => $show_sub_img ,
-		'main_width'      => $main_width ,
-		'sub_width'       => $sub_width ,
+		'main_width'      => $this->_cfg_cat_main_width ,
+		'sub_width'       => $this->_cfg_cat_sub_width ,
 	);
 
 	$arr = array(

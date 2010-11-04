@@ -1,5 +1,5 @@
 <?php
-// $Id: place.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
+// $Id: place.php,v 1.3 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 //---------------------------------------------------------
@@ -106,39 +108,63 @@ function build_rows_for_list()
 //---------------------------------------------------------
 function build_total_for_detail( $place_in )
 {
-	$place_in  = $this->decode_uri_str( $place_in );
-	$place_arr = $this->_search_class->query_to_array( $place_in );
-	$place     = $this->array_to_str( $place_arr, ' ' );
+	list( $mode, $place_arr )
+		= $this->get_mode_for_detail( $place_in );
+
+	$place = $this->array_to_str( $place_arr, ' ' );
 
 // if not set place
-	if ( $place == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
+	if ( $mode == 1 ) {
 		$title = $this->get_constant('PLACE_NOT_SET');
 		$total = $this->_public_class->get_count_by_place(
 			_C_WEBPHOTO_PLACE_VALUE_NOT_SET );
-		$mode = 0;
 
 // if set place
-	} elseif ( is_array($place_arr) && count($place_arr) ) {
+	} elseif ( $mode == 2 ) {
 		$title = $this->get_constant('PHOTO_PLACE') .' : '. $place ;
 		$total = $this->_public_class->get_count_by_place_array(
 			$place_arr );
-		$mode  = 1;
+
+// if set nothig
+	} else {
+		$title = $this->get_constant('PHOTO_PLACE') ;
+		$total = 0;
 	}
 
 	return array( $mode, $place_arr, $title, $total );
 }
 
-function build_rows_for_detail( $mode, $place_arr, $orderby, $limit, $start )
+function get_mode_for_detail( $place_in )
 {
+	$place_str = $this->decode_uri_str( $place_in );
+	$place_arr = $this->_search_class->query_to_array( $place_str );
+
+	$mode = 0;
+
+// if not set place
+	if ( $place_str == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
+		$mode = 1;
+
+// if set place
+	} elseif ( is_array($place_arr) && count($place_arr) ) {
+		$mode  = 2;
+	}
+
+	return array( $mode, $place_arr );
+}
+
+function build_rows_for_detail( $mode, $place_arr, $orderby, $limit=0, $start=0 )
+{
+	$rows = null;
+
 	switch ($mode)
 	{
-	case 1:
+	case 2:
 		$rows = $this->_public_class->get_rows_by_place_array_orderby(
 			$place_arr, $orderby, $limit, $start );
 		break;
 
-	case 0:
-	default:
+	case 1:
 		$rows = $this->_public_class->get_rows_by_place_orderby(
 			_C_WEBPHOTO_PLACE_VALUE_NOT_SET, 
 			$orderby, $limit, $start );
@@ -146,6 +172,17 @@ function build_rows_for_detail( $mode, $place_arr, $orderby, $limit, $start )
 	}
 
 	return $rows;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $place_in, $orderby, $limit=0, $start=0 )
+{
+	list( $mode, $place_arr )
+		= $this->get_mode_for_detail( $place_in );
+
+	return $this->build_rows_for_detail( $mode, $place_arr, $orderby, $limit, $start );
 }
 
 // --- class end ---

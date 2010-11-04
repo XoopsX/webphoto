@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.4 2010/05/10 10:34:49 ohwada Exp $
+// $Id: search.php,v 1.5 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 // 2010-02-20 K.OHWADA
@@ -63,19 +65,13 @@ function build_total_for_detail( $query )
 {
 	$title = _SR_SEARCH;
 	$total = 0;
-	$sql_query = null; 
 
-	$this->_search_class->get_post_get_param();
-	$this->_search_class->set_query( $query );
-
-	$ret = $this->_search_class->parse_query();
-	if ( !$ret ) {
+	$sql_query = $this->build_sql_query( $query );
+	if ( !$sql_query ) {
 		return array( $sql_query, $title, $total );
 	}
 
-	$sql_query = $this->_search_class->build_sql_query( 'item_search' );
-	$total     = $this->_public_class->get_count_by_search( $sql_query );
-
+	$total = $this->_public_class->get_count_by_search( $sql_query );
 	if ( $total > 0 ) {
 		$title = _SR_SEARCH.' : '.$this->_search_class->get_query_raw('s');
 	}
@@ -83,7 +79,21 @@ function build_total_for_detail( $query )
 	return array( $sql_query, $title, $total );
 }
 
-function build_rows_for_detail( $sql_query, $orderby, $limit, $start )
+function build_sql_query( $query )
+{
+	$this->_search_class->get_post_get_param();
+	$this->_search_class->set_query( $query );
+
+	$ret = $this->_search_class->parse_query();
+	if ( !$ret ) {
+		return null;
+	}
+
+	$sql_query = $this->_search_class->build_sql_query( 'item_search' );
+	return $sql_query;
+}
+
+function build_rows_for_detail( $sql_query, $orderby, $limit=0, $start=0 )
 {
 	return $this->_public_class->get_rows_by_search_orderby( 
 		$sql_query, $orderby, $limit, $start );
@@ -110,6 +120,20 @@ function build_show_lang_keytooshort( $total, $param )
 		return true;
 	}
 	return false;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $query, $orderby, $limit=0, $start=0 )
+{
+	$sql_query = $this->build_sql_query( $query );
+	if ( !$sql_query ) {
+		return null;
+	}
+
+	return $this->build_rows_for_detail( 
+		$sql_query, $orderby, $limit, $start );
 }
 
 // --- class end ---

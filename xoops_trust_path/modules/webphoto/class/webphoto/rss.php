@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.6 2010/01/26 10:58:31 ohwada Exp $
+// $Id: rss.php,v 1.7 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// webphoto_main
 // 2010-01-10 K.OHWADA
 // webphoto_tag
 // 2009-11-11 K.OHWADA
@@ -62,6 +64,11 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_utility_class;
 	var $_public_class;
 	var $_tag_class;
+	var $_main_class ;
+	var $_category_class ;
+	var $_user_class ;
+	var $_place_class ;
+	var $_date_class ;
 
 	var $_cfg_use_pathinfo ;
 
@@ -69,19 +76,18 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_param = null;
 	var $_limit = 20;
 
-	var $_is_japanese = false;
-
 	var $_MAX_SUMMARY  = 500;
 	var $_MODE_DEFAULT = 'latest';
 	var $_ORDERBY_RANDOM = 'rand()';
 
 	var $_CACHE_TIME_RAMDOM = 60;	// 1 min
 	var $_CACHE_TIME_LATEST = 3600;	// 1 hour
+	var $_CACHE_TIME_DEBUG  = 0;	// no cache
 
 	var $_LIMIT_DEFAULT = 20;
 	var $_LIMIT_MAX = 100;
 
-	var $_NORMAL_EXTS;
+	var $_DEBUG_FLAG_CACHE_TIME = false;
 
 //---------------------------------------------------------
 // constructor
@@ -103,21 +109,25 @@ function webphoto_rss( $dirname, $trust_dirname )
 		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_tag_class 
 		=& webphoto_tag::getInstance( $dirname , $trust_dirname );
+	$this->_main_class 
+		=& webphoto_main::getInstance( $dirname , $trust_dirname );
+	$this->_category_class 
+		=& webphoto_category::getInstance( $dirname , $trust_dirname );
+	$this->_user_class 
+		=& webphoto_user::getInstance( $dirname , $trust_dirname );
+	$this->_place_class 
+		=& webphoto_place::getInstance( $dirname , $trust_dirname );
+	$this->_date_class 
+		=& webphoto_date::getInstance( $dirname , $trust_dirname );
+	$this->_search_class 
+		=& webphoto_search::getInstance( $dirname , $trust_dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
-	$this->_search_class   =& webphoto_lib_search::getInstance();
+
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
 
-	$this->_NORMAL_EXTS = explode('|', _C_WEBPHOTO_IMAGE_EXTS);
-	$this->_is_japanese = $this->_is_xoops_japanese( _C_WEBPHOTO_JPAPANESE ) ;
-
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
-	$this->_multibyte_class->set_is_japanese( $this->_is_japanese );
-	$this->_multibyte_class->set_ja_kuten(   _WEBPHOTO_JA_KUTEN );
-	$this->_multibyte_class->set_ja_dokuten( _WEBPHOTO_JA_DOKUTEN );
-	$this->_multibyte_class->set_ja_period(  _WEBPHOTO_JA_PERIOD );
-	$this->_multibyte_class->set_ja_comma(   _WEBPHOTO_JA_COMMA );
+	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
 	$this->_cfg_use_pathinfo = $this->_config_class->get_by_name( 'use_pathinfo' );
 }
@@ -136,30 +146,13 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 function show_rss()
 {
-	$this->_get_pathinfo_param();
-	$clear = $this->_pathinfo_class->get_int('clear');
+	$this->_mode  = $this->_get_mode();
+	$this->_param = $this->_get_param( $this->_mode );
+	$this->_limit = $this->_get_limit();
 
-	switch ( $this->_mode )
-	{
-		case 'random':
-			$cache_time = $this->_CACHE_TIME_RAMDOM;
-			break;
-
-		case 'latest':
-		case 'popular':
-		case 'highrate':
-		case 'tag':
-		case 'date':
-		case 'place':
-		case 'search':
-		case 'category':
-		case 'user':
-		default:
-			$cache_time = $this->_CACHE_TIME_LATEST;
-			break;
-	}
-
-	$cache_id = md5( $this->_mode.$this->_param );
+	$clear      = $this->_get_clear();
+	$cache_id   = $this->_get_cache_id(   $this->_mode , $this->_param );
+	$cache_time = $this->_get_cache_time( $this->_mode );
 
 	if ( $clear ) {
 		$this->clear_compiled_tpl_for_admin( $cache_id, true );
@@ -169,44 +162,38 @@ function show_rss()
 	echo $this->build_rss( $cache_id, $cache_time );
 }
 
-function _get_pathinfo_param()
+function _get_mode()
 {
-	$mode = $this->_pathinfo_class->get( 'mode' );
-	if ( empty($mode) ){
-		$mode = $this->_pathinfo_class->get_path( 1 );
+	$mode_input = $this->_pathinfo_class->get( 'mode' );
+	if ( empty($mode_input) ){
+		$mode_input = $this->_pathinfo_class->get_path( 1 );
 	}
 
-	$param = $this->_pathinfo_class->get( 'param' );
-	if ( empty($param) ){
-		$param = $this->_pathinfo_class->get_path( 2 );
-	}
-
-	$this->_get_limit();
-
-	switch ( $mode )
+	switch ( $mode_input )
 	{
 		case 'clear':
-			$this->_mode = $mode;
-			break;
-
-		case 'tag':
-		case 'date':
-		case 'place':
-		case 'search':
-		case 'latest':
-		case 'popular':
-		case 'highrate':
-		case 'random':
-		case 'category':
-		case 'user':
-			$this->_mode  = $mode;
-			$this->_param = $param;
+		case 'randomphotos':
+			$mode = $mode_input;
 			break;
 
 		default:
-			$this->_mode = $this->_MODE_DEFAULT;
+			list( $mode, $mode_orig )
+				= $this->_sort_class->input_to_mode( $mode_input );
 			break;
 	}
+
+	return $mode;
+}
+
+function _get_param( $mode )
+{
+	$param_input = $this->_pathinfo_class->get( 'param' );
+	if ( empty($param_input) ){
+		$param_input = $this->_pathinfo_class->get_path( 2 );
+	}
+
+	$param = $this->_sort_class->input_to_param_for_rss( $mode, $param_input );
+	return $param;
 }
 
 function _get_limit()
@@ -217,7 +204,38 @@ function _get_limit()
 	} elseif ( $limit > $this->_LIMIT_MAX ) {
 		$limit = $this->_LIMIT_MAX;
 	}
-	$this->_limit = $limit;
+	return $limit;
+}
+
+function _get_clear()
+{
+	return $this->_pathinfo_class->get_int('clear');
+}
+
+function _get_cache_id( $mode, $param )
+{
+	$cache_id = md5( $mode . $param );
+	return $cache_id;
+}
+
+function _get_cache_time( $mode )
+{
+	if ( $this->_DEBUG_FLAG_CACHE_TIME ) {
+		return $this->_CACHE_TIME_DEBUG ;
+	}
+
+	switch ( $mode )
+	{
+		case 'random':
+			$cache_time = $this->_CACHE_TIME_RAMDOM;
+			break;
+
+		default:
+			$cache_time = $this->_CACHE_TIME_LATEST;
+			break;
+	}
+
+	return $cache_time;
 }
 
 //---------------------------------------------------------
@@ -427,7 +445,6 @@ function _get_photo_rows()
 
 	$param     = $this->_param;
 	$param_int = intval( $param );
-	$place_arr = $this->_utility_class->str_to_array( $param, '+' );
 
 	$where   = null;
 	$orderby = null;
@@ -441,47 +458,22 @@ function _get_photo_rows()
 	{
 		case 'category':
 			if ( $param_int > 0 ) {
-				$rows = $this->_public_class->get_rows_by_catid_orderby(
+				$rows = $this->_category_class->build_rows_for_rss(
 					$param_int, $orderby, $limit );
 			}
 			break;
 
 		case 'date':
 			if ( $param ) {
-				$rows = $this->_public_class->get_rows_by_like_datetime_orderby(
+				$rows = $this->_date_class->build_rows_for_rss(
 					$param, $orderby, $limit ) ;
 			}
 			break;
 
 		case 'place':
-			if ( $param == _C_WEBPHOTO_PLACE_STR_NOT_SET ) {
-				$rows = $this->_public_class->get_rows_by_place_orderby(
-					_C_WEBPHOTO_PLACE_VALUE_NOT_SET, $orderby, $limit );
-
-			} elseif ( is_array($place_arr) && count($place_arr) ) {
-				$rows = $this->_public_class->get_rows_by_place_array_orderby(
-					$place_arr, $orderby, $limit );
-			}
-			break;
-
-// only photo for slide show
-		case 'random':
-			$orderby = $this->_ORDERBY_RANDOM;
-			if ( $param_int > 0 ) {
-				$rows = $this->_public_class->get_rows_photo_by_catid_orderby(
-					$param_int, $orderby, $limit );
-
-			} else {
-				$rows = $this->_public_class->get_rows_photo_by_orderby(
-					$orderby, $limit );
-			}
-			break;
-
-		case 'search':
 			if ( $param ) {
-				$sql_query = $this->_build_sql_query( $param );
-				$rows = $this->_public_class->get_rows_by_search_orderby(
-					$sql_query, $orderby, $limit );
+				$rows = $this->_place_class->build_rows_for_rss(
+					$param, $orderby, $limit );
 			}
 			break;
 
@@ -494,23 +486,26 @@ function _get_photo_rows()
 
 		case 'user':
 			if ( $param_int > 0 ) {
-				$rows = $this->_public_class->get_rows_by_uid_orderby(
+				$rows = $this->_user_class->build_rows_for_rss(
 					$param_int, $orderby, $limit );
 			}
 			break;
 
-		case 'latest':
-		case 'popular':
-		case 'highrate':
-		default:
-			$orderby = $this->_sort_class->mode_to_orderby( $this->_mode, $sort );
-			if ( $param_int > 0 ) {
-				$rows = $this->_public_class->get_rows_by_catid_orderby(
-					$param_int, $orderby, $limit );
-			} else {
-				$rows = $this->_public_class->get_rows_by_orderby( $orderby, $limit );
+		case 'search':
+			if ( $param ) {
+				$rows = $this->_search_class->build_rows_for_rss(
+					$param, $orderby, $limit );
 			}
+			break;
 
+// only photo for slide show
+		case 'randomphotos':
+			$rows = $this->_build_rows_randomphotos( $param_int, $limit );
+			break;
+
+		default:
+			$rows = $this->_main_class->build_rows_for_rss( 
+				$this->_mode, $limit ) ;
 			break;
 	}
 
@@ -518,41 +513,23 @@ function _get_photo_rows()
 		return $rows;
 	}
 
-	$rows = $this->_public_class->get_rows_by_orderby( $orderby, $limit );
+	$rows = $this->_main_class->build_rows_for_rss( 
+		$this->_MODE_DEFAULT, $limit ) ;
 	return $rows;
 }
 
-function _build_sql_query( $query )
+function _build_rows_randomphotos( $param_int, $limit )
 {
-	$this->_search_class->set_lang_zenkaku( $this->get_constant('SR_ZENKAKU') );
-	$this->_search_class->set_lang_hankaku( $this->get_constant('SR_HANKAKU') );
+	if ( $param_int > 0 ) {
+		$rows = $this->_public_class->get_rows_photo_by_catid_orderby(
+			$param_int, $this->_ORDERBY_RANDOM, $limit );
 
-	$this->_search_class->set_min_keyword( 
-		$this->_search_class->get_xoops_config_search_keyword_min() );
-	$this->_search_class->set_is_japanese( $this->_is_japanese );
-	$this->_search_class->get_post_get_param();
-	$this->_search_class->set_query( $query );
-
-	$ret = $this->_search_class->parse_query();
-	if ( !$ret ) {
-		return false;
+	} else {
+		$rows = $this->_public_class->get_rows_photo_by_orderby(
+			$this->_ORDERBY_RANDOM, $limit );
 	}
 
-	$where = $this->_search_class->build_sql_query( 'item_search' );
-	return $where;
-}
-
-//---------------------------------------------------------
-// xoops param
-//---------------------------------------------------------
-function _is_xoops_japanese( $str )
-{
-	global $xoopsConfig ;
-
-	if ( in_array( $xoopsConfig['language'], explode('|', $str ) ) ) {
-		return true;
-	}
-	return false;
+	return $rows;
 }
 
 // --- class end ---

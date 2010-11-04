@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
+// $Id: main.php,v 1.3 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 //---------------------------------------------------------
@@ -56,7 +58,7 @@ function build_total_for_detail( $mode )
 	return array( $title, $total );
 }
 
-function build_rows_for_detail( $mode, $sort, $limit, $start )
+function build_rows_for_detail( $mode, $sort, $limit=0, $start=0 )
 {
 	$name    = $this->_sort_class->mode_to_name( $mode );
 	$orderby = $this->_sort_class->mode_to_orderby( $mode, $sort );
@@ -69,6 +71,15 @@ function build_title( $mode )
 {
 	$str = $this->sanitize( $this->get_constant( 'title_'. $mode ) );
 	return $str;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $mode, $limit=0, $start=0 )
+{
+	$sort = null;
+	return $this->build_rows_for_detail( $mode, $sort, $limit, $start );
 }
 
 // --- class end ---

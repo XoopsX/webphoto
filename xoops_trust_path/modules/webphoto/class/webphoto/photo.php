@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.5 2010/10/06 02:22:46 ohwada Exp $
+// $Id: photo.php,v 1.6 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// webphoto_uri_parse
 // 2010-10-01 K.OHWADA
 // _C_WEBPHOTO_CODEINFO_SHOW_LIST -> explode_ini('view_codeinfo_list')
 // 2010-06-06 K.OHWADA
@@ -33,9 +35,8 @@ class webphoto_photo extends webphoto_show_photo
 	var $_comment_view_class;
 	var $_catlist_class;
 	var $_rate_check_class ;
-	var $_pathinfo_class;
-	var $_sort_class;
 	var $_public_class;
+	var $_uri_parse_class;
 
 	var $_cfg_cat_child;
 	var $_cfg_embed_width;
@@ -49,8 +50,8 @@ class webphoto_photo extends webphoto_show_photo
 // for photo
 	var $_get_photo_id;
 	var $_get_cat_id;
-	var $_get_order;
 	var $_get_kind;
+	var $_orderby;
 
 	var $_photo_row = null;
 	var $_has_tagedit    = false;
@@ -87,11 +88,10 @@ function webphoto_photo( $dirname , $trust_dirname )
 		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
 	$this->_rate_check_class 
 		=& webphoto_rate_check::getInstance( $dirname, $trust_dirname );
-	$this->_pathinfo_class   =& webphoto_lib_pathinfo::getInstance();
-	$this->_sort_class 
-		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_public_class     
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname  );
+	$this->_uri_parse_class     
+		=& webphoto_uri_parse::getInstance( $dirname, $trust_dirname  );
 
 	$this->_photo_navi_class->set_mark_id_prev( '<b>'. $this->get_constant('NAVI_PREVIOUS') .'</b>' );
 	$this->_photo_navi_class->set_mark_id_next( '<b>'. $this->get_constant('NAVI_NEXT') .'</b>' );
@@ -139,9 +139,9 @@ function check_photo_edittag()
 
 function check_photo_init()
 {
-	$this->_get_photo_id = $this->_uri_class->get_pathinfo_id( 'photo_id' ) ;
-	$this->_get_cat_id   = $this->_pathinfo_class->get_int( 'cat_id' );
-	$this->_get_order    = $this->_pathinfo_class->get( 'order' );
+	$this->_get_photo_id = $this->_uri_parse_class->get_id_by_key( 'photo_id' ) ;
+	$this->_get_cat_id   = $this->_uri_parse_class->get_int_by_key( 'cat_id' );
+	$this->_orderby      = $this->_uri_parse_class->get_photo_orderby();
 
 	$row = $this->_item_public_class->get_item_row( $this->_get_photo_id ) ;
 	if( !is_array($row) ) {
@@ -676,8 +676,7 @@ function build_photo_gmap_param( $row )
 function build_photo_navi( $photo_id, $cat_id )
 {
 	$script   = $this->_uri_class->build_photo_pagenavi() ;
-	$orderby  = $this->_sort_class->sort_to_orderby( $this->_get_order );
-	$id_array = $this->_public_class->get_id_array_by_catid_orderby( $cat_id, $orderby );
+	$id_array = $this->_public_class->get_id_array_by_catid_orderby( $cat_id, $this->_orderby );
 
 	return $this->_photo_navi_class->build_navi( $script, $id_array, $photo_id );
 }

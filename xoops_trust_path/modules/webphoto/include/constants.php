@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.30 2010/10/08 15:53:16 ohwada Exp $
+// $Id: constants.php,v 1.31 2010/11/04 02:24:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -471,6 +471,11 @@ define("_C_WEBPHOTO_PERM_LEVEL_GROUP", 1 ) ;
 
 // v2.10
 define("_C_WEBPHOTO_UID_DEFAULT", -1 ) ;
+
+// v2.31
+define("_C_WEBPHOTO_URI_PARAM_NAME",  "p" ) ;
+define("_C_WEBPHOTO_URI_PATH_FIRST",  0 ) ;
+define("_C_WEBPHOTO_URI_PATH_SECOND", 1 ) ;
 
 // v1.80
 //define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;

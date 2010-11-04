@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.9 2010/01/26 08:25:45 ohwada Exp $
+// $Id: rss.php,v 1.10 2010/11/04 02:24:16 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// class/webphoto/main.php
 // 2010-01-10 K.OHWADA
 // class/webphoto/tag.php
 // 2009-11-11 K.OHWADA
@@ -56,6 +58,7 @@ webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/d3/language.php' );
 
 webphoto_include_once( 'class/lib/multibyte.php' );
+webphoto_include_once( 'class/lib/highlight.php' );
 webphoto_include_once( 'class/lib/base.php' );
 webphoto_include_once( 'class/lib/msg.php' );
 webphoto_include_once( 'class/lib/post.php' );
@@ -67,16 +70,29 @@ webphoto_include_once( 'class/lib/rss.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/item_cat_handler.php' );
+webphoto_include_once( 'class/handler/tag_handler.php' );
+webphoto_include_once( 'class/handler/photo_tag_handler.php' );
+webphoto_include_once( 'class/handler/p2t_handler.php' );
 
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
+webphoto_include_once( 'class/webphoto/multibyte.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
 webphoto_include_once( 'class/webphoto/photo_sort.php' );
 webphoto_include_once( 'class/webphoto/photo_public.php' );
+webphoto_include_once( 'class/webphoto/show_image.php' );
+webphoto_include_once( 'class/webphoto/show_photo.php' );
+webphoto_include_once( 'class/webphoto/tag_build.php' );
+webphoto_include_once( 'class/webphoto/main.php' );
+webphoto_include_once( 'class/webphoto/category.php' );
+webphoto_include_once( 'class/webphoto/user.php' );
+webphoto_include_once( 'class/webphoto/place.php' );
+webphoto_include_once( 'class/webphoto/date.php' );
 webphoto_include_once( 'class/webphoto/tag.php' );
+webphoto_include_once( 'class/webphoto/search.php' );
 webphoto_include_once( 'class/webphoto/rss.php' );
 webphoto_include_once( 'class/main/rss.php' );
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.7 2010/05/10 10:34:49 ohwada Exp $
+// $Id: factory.php,v 1.8 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// input_to_param()
 // 2010-05-10 K.OHWADA
 // calc_navi_start()
 // BUG: total is wrong
@@ -28,7 +30,6 @@ class webphoto_factory extends webphoto_base_this
 	var $_page_class;
 	var $_gmap_class;
 	var $_qr_class;
-	var $_pathinfo_class;
 	var $_sort_class;
 	var $_public_class;
 	var $_multibyte_class;
@@ -36,6 +37,7 @@ class webphoto_factory extends webphoto_base_this
 	var $_timeline_class;
 	var $_auto_publish_class;
 	var $_tagcloud_class;
+	var $_uri_parse_class ;
 
 // config
 	var $_cfg_cat_summary;
@@ -62,7 +64,6 @@ class webphoto_factory extends webphoto_base_this
 	var $_templete_param = array();
 	var $_template_main  = null;
 
-	var $_MODE_DEFAULT;
 	var $_PHOTO_LIMIT;
 
 //---------------------------------------------------------
@@ -96,19 +97,19 @@ function webphoto_factory( $dirname, $trust_dirname )
 		=& webphoto_photo_sort::getInstance( $dirname, $trust_dirname );
 	$this->_tagcloud_class 
 		=& webphoto_inc_tagcloud::getSingleton( $dirname, $trust_dirname );
+	$this->_uri_parse_class 
+		=& webphoto_uri_parse::getInstance( $dirname, $trust_dirname );
 
 	$this->_auto_publish_class 
 		=& webphoto_inc_auto_publish::getSingleton( $dirname, $trust_dirname  );
 	$this->_auto_publish_class->set_workdir( $this->_WORK_DIR );
 
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
-	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
 
 	$this->_cfg_cat_summary = $this->_config_class->get_by_name('cat_summary');
 	$this->_cfg_newphotos   = $this->_config_class->get_by_name('newphotos');
 	$this->_cfg_tags        = $this->_config_class->get_by_name('tags');
 
-	$this->_MODE_DEFAULT = $this->get_ini('view_mode_default');
 	$this->_PHOTO_LIMIT  = $this->_cfg_newphotos;
 
 }
@@ -161,18 +162,16 @@ function set_mode_orig( $val )
 //---------------------------------------------------------
 function get_pathinfo_param( $mode_orig )
 {
-	$this->_get_page = $this->_pathinfo_class->get_page() ;
+	$this->_get_page = $this->_uri_parse_class->get_get_page();
+	$this->_get_kind = $this->_uri_parse_class->get_get_kind();
 
-	$this->_get_sort = $this->_sort_class->get_photo_sort_name(
-		$this->_pathinfo_class->get_text('sort') );
-	$this->_get_kind = $this->_sort_class->get_photo_kind_name( 
-		$this->_pathinfo_class->get_text('kind') );
+	$params = $this->_uri_parse_class->get_sort_orderby();
+	$this->_get_sort = $params['get_sort'];
+	$this->_sort     = $params['sort'];
+	$this->_orderby  = $params['orderby'];
 
-	$this->_param    = $this->_uri_class->get_pathinfo_param( $mode_orig );
+	$this->_param = $this->_uri_parse_class->get_param_by_mode( $mode_orig );
 	$this->set_param_out( $this->_param );
-
-	$this->_sort    = $this->_sort_class->get_photo_sort_name( $this->_get_sort, true );
-	$this->_orderby = $this->_sort_class->sort_to_orderby( $this->_sort );
 }
 
 function set_param_out( $val )
@@ -182,39 +181,8 @@ function set_param_out( $val )
 
 function get_page_mode()
 {
-	$mode_orig = $this->_pathinfo_class->get_fct_op_0();
-	switch ( $mode_orig )
-	{
-		case 'latest':
-		case 'popular':
-		case 'highrate':
-		case 'random':
-		case 'map':
-		case 'timeline':
-//		case 'new':
-		case 'picture':
-		case 'video':
-		case 'audio':
-		case 'office':
-		case 'category':
-		case 'date':
-		case 'place':
-		case 'tag':
-		case 'user':
-		case 'search':
-		case 'photo':
-			$mode      = $mode_orig;
-			break;
-
-		case 'myphoto':
-			$mode      = 'user';
-			break;
-
-		default:
-			$mode      = $this->_MODE_DEFAULT;
-			$mode_orig = $this->_MODE_DEFAULT;
-			break;
-	}
+	list( $mode, $mode_orig )
+		= $this->_uri_parse_class->get_page_mode();
 
 	$this->set_mode( $mode );
 	$this->set_mode_orig( $mode_orig );
@@ -302,11 +270,19 @@ function xoops_header_lightbox_with_check( $flag )
 	}
 }
 
-function xoops_header_rss_with_check( $mode, $rss_param )
+function xoops_header_rss_with_check( $mode, $param )
 {
 	if ( $this->xoops_header_check('rss') ) { 
+		$flag  = true;
+		$limit = $this->get_ini('view_rss_limit') ;
+
 		$this->_header_class->set_rss(
-			true, $mode, $rss_param, $this->get_ini('view_rss_limit') );
+			$flag, $mode, $param, $limit );
+
+		$this->tpl_set( 'show_rss_icon', $flag );
+		$this->tpl_set( 'rss_mode',  $mode );
+		$this->tpl_set( 'rss_param', $param );
+		$this->tpl_set( 'rss_limit', $limit );
 	}
 }
 

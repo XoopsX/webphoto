@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.3 2009/03/20 04:18:09 ohwada Exp $
+// $Id: uri.php,v 1.4 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// _C_WEBPHOTO_URI_PARAM_NAME
 // 2009-03-15 K.OHWADA
 // flag_amp_sanitize in build_full_uri_mode_param()
 // 2008-12-12 K.OHWADA
@@ -34,10 +36,6 @@ class webphoto_inc_uri
 	var $_HTML_AMP   = '&amp;' ;
 	var $_HTML_SLASH = '&#047;' ;
 	var $_HTML_COLON = '&#058;' ;
-
-	var $_PARAM_NAME  = 'p';
-	var $_PATH_FIRST  = 0 ;
-	var $_PATH_SECOND = 1 ;
 
 //---------------------------------------------------------
 // constructor
@@ -97,7 +95,7 @@ function build_full_uri_mode_param( $mode, $param, $flag_amp_sanitize=true )
 	if ( $this->_cfg_use_pathinfo ) {
 		$str .= '/'. $param .'/' ; 
 	} else {
-		$str .= $amp . $this->_PARAM_NAME .'='. $param ;
+		$str .= $amp . _C_WEBPHOTO_URI_PARAM_NAME .'='. $param ;
 	}
 	return $str;
 }

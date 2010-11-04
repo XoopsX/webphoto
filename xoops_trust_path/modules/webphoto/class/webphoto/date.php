@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.3 2010/05/10 10:34:49 ohwada Exp $
+// $Id: date.php,v 1.4 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 //---------------------------------------------------------
@@ -182,16 +184,21 @@ function build_rows_for_list()
 //---------------------------------------------------------
 function build_total_for_detail( $datetime_in )
 {
-	$datetime = $this->decode_uri_str( $datetime_in );
-	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
-
-	$title = $this->build_title( $datetime );
-	$total = $this->_public_class->get_count_by_like_datetime( $datetime );
+	$datetime = $this->build_datetime_for_detail( $datetime_in );
+	$title    = $this->build_title( $datetime );
+	$total    = $this->_public_class->get_count_by_like_datetime( $datetime );
 
 	return array( $title, $total, $datetime );
 }
 
-function build_rows_for_detail( $datetime, $orderby, $limit, $start )
+function build_datetime_for_detail( $datetime_in )
+{
+	$datetime = $this->decode_uri_str( $datetime_in );
+	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
+	return $datetime;
+}
+
+function build_rows_for_detail( $datetime, $orderby, $limit=0, $start=0 )
 {
 	return $this->_public_class->get_rows_by_like_datetime_orderby( 
 		$datetime, $orderby, $limit, $start );
@@ -205,6 +212,17 @@ function build_title( $datetime )
 		$str = $this->get_constant('PHOTO_DATETIME') .' : '. $datetime ;
 	}
 	return $str;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $datetime_in, $orderby, $limit=0, $start=0 )
+{
+	$datetime = $this->build_datetime_for_detail( $datetime_in );
+
+	return $this->build_rows_for_detail( 
+		$datetime, $orderby, $limit, $start );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.24 2010/02/07 12:20:02 ohwada Exp $
+// $Id: photo.php,v 1.25 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// get_photo_keyword_array()
 // 2010-01-10 K.OHWADA
 // webphoto_show_list -> webphoto_factory
 // 2009-12-06 K.OHWADA
@@ -110,7 +112,8 @@ function main()
 	$_GET['photo_id'] = $photo_id;
 
 	$this->_photo_class->set_flag_highlight( true );
-	$this->_photo_class->set_keyword_array_by_get();
+	$this->_photo_class->set_keyword_array(
+		$this->_uri_parse_class->get_photo_keyword_array() );
 
 // countup hits
 	if ( $this->_photo_class->check_not_owner( $row['item_uid'] ) ) {

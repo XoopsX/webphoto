@@ -1,5 +1,5 @@
 <?php
-// $Id: user.php,v 1.2 2010/05/10 10:34:49 ohwada Exp $
+// $Id: user.php,v 1.3 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 //---------------------------------------------------------
@@ -102,9 +104,18 @@ function build_total_for_detail( $uid )
 	return array( $title, $total );
 }
 
-function build_rows_for_detail( $uid, $orderby, $limit, $start )
+function build_rows_for_detail( $uid, $orderby, $limit=0, $start=0 )
 {
 	return $this->_public_class->get_rows_by_uid_orderby( 
+		$uid, $orderby, $limit, $start );
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $uid, $orderby, $limit=0, $start=0 )
+{
+	return $this->build_rows_for_detail( 
 		$uid, $orderby, $limit, $start );
 }
 

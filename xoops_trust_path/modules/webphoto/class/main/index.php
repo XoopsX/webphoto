@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.20 2010/05/10 10:34:49 ohwada Exp $
+// $Id: index.php,v 1.21 2010/11/04 02:23:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// BUG: not show rss param
 // 2010-05-10 K.OHWADA
 // main_build_rows_for_detail()
 // BUG: total is wrong
@@ -290,7 +292,10 @@ function build_page_detail( $mode, $param )
 
 	$this->xoops_header_array_set_by_mode( $mode ) ;
 	$this->xoops_header_param();
-	$this->xoops_header_rss_with_check(  $mode, null );
+
+// BUG: not show rss param
+	$this->xoops_header_rss_with_check(  $mode, $param );
+
 	$this->xoops_header_gmap_with_check( $show_gmap );
 	$this->xoops_header_lightbox_with_check( $show_ligthtbox );
 	$this->xoops_header_assign();
