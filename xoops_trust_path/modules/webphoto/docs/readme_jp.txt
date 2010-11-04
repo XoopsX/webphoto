@@ -1,11 +1,27 @@
-$Id: readme_jp.txt,v 1.56 2010/10/10 11:02:10 ohwada Exp $
+$Id: readme_jp.txt,v 1.57 2010/11/04 04:31:38 ohwada Exp $
+
+=================================================
+Version: 2.31
+Date:   2010-11-03
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ対策
+(1) カテゴリが登録できない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1139
+
+(2) RSSが表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1125
+
 
 =================================================
 Version: 2.30
 Date:   2010-10-10
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

@@ -1,11 +1,27 @@
-$Id: readme_en.txt,v 1.55 2010/10/10 11:02:10 ohwada Exp $
+$Id: readme_en.txt,v 1.56 2010/11/04 04:31:38 ohwada Exp $
+
+=================================================
+Version: 2.31
+Date:   2010-11-03
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bugfix
+(1) NOT create new category
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1139
+
+(2) NOT show RSS
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1125
+
 
 =================================================
 Version: 2.30
 Date:   2010-10-10
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
