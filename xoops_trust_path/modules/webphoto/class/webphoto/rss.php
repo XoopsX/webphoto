@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.8 2010/11/05 17:00:04 ohwada Exp $
+// $Id: rss.php,v 1.9 2010/11/05 17:38:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -87,8 +87,7 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_LIMIT_DEFAULT = 20;
 	var $_LIMIT_MAX = 100;
 
-//	var $_DEBUG_FLAG_CACHE_TIME = false;
-	var $_DEBUG_FLAG_CACHE_TIME = true;
+	var $_DEBUG_FLAG_CACHE_TIME = false;
 
 //---------------------------------------------------------
 // constructor
