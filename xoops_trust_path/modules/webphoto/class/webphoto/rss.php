@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.7 2010/11/04 02:23:19 ohwada Exp $
+// $Id: rss.php,v 1.8 2010/11/05 17:00:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -87,7 +87,8 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_LIMIT_DEFAULT = 20;
 	var $_LIMIT_MAX = 100;
 
-	var $_DEBUG_FLAG_CACHE_TIME = false;
+//	var $_DEBUG_FLAG_CACHE_TIME = false;
+	var $_DEBUG_FLAG_CACHE_TIME = true;
 
 //---------------------------------------------------------
 // constructor
@@ -443,8 +444,9 @@ function _get_photo_rows()
 {
 	$limit  = $this->_limit ;
 
-	$param     = $this->_param;
-	$param_int = intval( $param );
+	$param        = $this->_param;
+	$param_int    = intval( $param );
+	$param_decode = $this->_multibyte_class->convert_from_utf8( $param );
 
 	$where   = null;
 	$orderby = null;
@@ -471,16 +473,16 @@ function _get_photo_rows()
 			break;
 
 		case 'place':
-			if ( $param ) {
+			if ( $param_decode ) {
 				$rows = $this->_place_class->build_rows_for_rss(
-					$param, $orderby, $limit );
+					$param_decode, $orderby, $limit );
 			}
 			break;
 
 		case 'tag':
-			if ( $param ) {
-				$rows = $this->_tag_class->get_rows_by_tag_orderby(
-					$param, $orderby_default, $limit );
+			if ( $param_decode ) {
+				$rows = $this->_tag_class->build_rows_for_rss(
+					$param_decode, $orderby, $limit );
 			}
 			break;
 
@@ -509,7 +511,7 @@ function _get_photo_rows()
 			break;
 	}
 
-	if ( is_array($rows) ) {
+	if ( is_array($rows) && count($rows) ) {
 		return $rows;
 	}
 

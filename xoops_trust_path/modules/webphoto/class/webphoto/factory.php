@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.8 2010/11/04 02:23:19 ohwada Exp $
+// $Id: factory.php,v 1.9 2010/11/05 17:00:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -32,7 +32,6 @@ class webphoto_factory extends webphoto_base_this
 	var $_qr_class;
 	var $_sort_class;
 	var $_public_class;
-	var $_multibyte_class;
 	var $_pagenavi_class;
 	var $_timeline_class;
 	var $_auto_publish_class;
@@ -103,8 +102,6 @@ function webphoto_factory( $dirname, $trust_dirname )
 	$this->_auto_publish_class 
 		=& webphoto_inc_auto_publish::getSingleton( $dirname, $trust_dirname  );
 	$this->_auto_publish_class->set_workdir( $this->_WORK_DIR );
-
-	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
 	$this->_cfg_cat_summary = $this->_config_class->get_by_name('cat_summary');
 	$this->_cfg_newphotos   = $this->_config_class->get_by_name('newphotos');
@@ -275,13 +272,15 @@ function xoops_header_rss_with_check( $mode, $param )
 	if ( $this->xoops_header_check('rss') ) { 
 		$flag  = true;
 		$limit = $this->get_ini('view_rss_limit') ;
+		$param_encode = urlencode( 
+			$this->_multibyte_class->convert_to_utf8( $param ) );
 
 		$this->_header_class->set_rss(
-			$flag, $mode, $param, $limit );
+			$flag, $mode, $param_encode, $limit );
 
 		$this->tpl_set( 'show_rss_icon', $flag );
 		$this->tpl_set( 'rss_mode',  $mode );
-		$this->tpl_set( 'rss_param', $param );
+		$this->tpl_set( 'rss_param', $param_encode );
 		$this->tpl_set( 'rss_limit', $limit );
 	}
 }

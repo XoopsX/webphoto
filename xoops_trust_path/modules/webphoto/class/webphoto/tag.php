@@ -1,5 +1,5 @@
 <?php
-// $Id: tag.php,v 1.8 2010/05/10 10:34:49 ohwada Exp $
+// $Id: tag.php,v 1.9 2010/11/05 17:00:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// build_rows_for_rss()
 // 2010-05-10 K.OHWADA
 // build_total_for_detail()
 //---------------------------------------------------------
@@ -78,8 +80,6 @@ function build_rows_for_list()
 	return $arr;
 }
 
-
-
 //---------------------------------------------------------
 // detail
 //---------------------------------------------------------
@@ -93,7 +93,7 @@ function build_total_for_detail( $tag_in )
 	return array( $tag_name, $title, $total );
 }
 
-function build_rows_for_detail( $tag_name, $orderby, $limit, $start )
+function build_rows_for_detail( $tag_name, $orderby, $limit=0, $start=0 )
 {
 	return $this->get_rows_by_tag_orderby( 
 		$tag_name, $orderby, $limit, $start );
@@ -103,6 +103,17 @@ function build_title( $tag_name )
 {
 	$str = $this->get_constant('TITLE_TAGS') .' : '. $tag_name ;
 	return $str;
+}
+
+//---------------------------------------------------------
+// rss
+//---------------------------------------------------------
+function build_rows_for_rss( $tag_in, $orderby, $limit=0, $start=0 )
+{
+	$tag_name = $this->decode_uri_str( $tag_in );
+
+	return $this->build_rows_for_detail( 
+		$tag_name, $orderby, $limit, $start );
 }
 
 //---------------------------------------------------------

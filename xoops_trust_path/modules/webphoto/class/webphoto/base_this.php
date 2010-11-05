@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.27 2010/10/06 02:22:46 ohwada Exp $
+// $Id: base_this.php,v 1.28 2010/11/05 17:00:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// webphoto_multibyte
 // 2010-10-01 K.OHWADA
 // is_wav_ext()
 // 2010-02-15 K.OHWADA
@@ -77,6 +79,7 @@ class webphoto_base_this extends webphoto_base_ini
 	var $_uri_class;
 	var $_preload_class;
 	var $_kind_class;
+	var $_multibyte_class;
 
 	var $_cfg_uploads_path ;
 	var $_cfg_nameoruname;
@@ -172,6 +175,8 @@ function webphoto_base_this( $dirname, $trust_dirname )
 		=& webphoto_file_handler::getInstance( $dirname, $trust_dirname  );
 	$this->_perm_class   
 		=& webphoto_permission::getInstance( $dirname, $trust_dirname  );
+
+	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();

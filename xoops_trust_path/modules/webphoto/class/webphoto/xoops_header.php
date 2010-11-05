@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.3 2010/02/07 12:20:02 ohwada Exp $
+// $Id: xoops_header.php,v 1.4 2010/11/05 17:00:04 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-03 K.OHWADA
+// change _build_header_rss()
 // 2010-01-10 K.OHWADA
 // webphoto_inc_xoops_header -> webphoto_base_this
 //---------------------------------------------------------
@@ -159,11 +161,11 @@ function _build_header_once( $name )
 	return null;
 }
 
-function _build_header_once_rss( $mode, $param, $limit )
+function _build_header_once_rss( $mode, $param_encode, $limit )
 {
 	$const_name = $this->build_const_name( 'rss' ) ;
 	if ( $this->check_once( $const_name ) ) {
-		return $this->_build_header_rss( $mode, $param, $limit );
+		return $this->_build_header_rss( $mode, $param_encode, $limit );
 	}
 	return null;
 }
@@ -199,11 +201,11 @@ function _build_header_scriptaculous_js()
 		'scriptaculous/scriptaculous.js?load=effects,builder' );
 }
 
-function _build_header_rss( $mode, $param, $limit )
+function _build_header_rss( $mode, $param_encode, $limit )
 {
 	$url = $this->_MODULE_URL.'/index.php/rss/'.$mode;
-	if ( $param ) {
-		$url .= '/'. urlencode($param);
+	if ( $param_encode ) {
+		$url .= '/'. $param_encode ;
 	}
 	$url .= '/limit='. $limit .'/';
 
