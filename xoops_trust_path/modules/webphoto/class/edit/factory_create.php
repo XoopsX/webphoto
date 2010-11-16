@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.19 2010/10/09 02:19:20 ohwada Exp $
+// $Id: factory_create.php,v 1.20 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// Undefined variable: item_ext
 // 2010-10-01 K.OHWADA
 // webphoto_edit_file_action
 // 2010-03-18 K.OHWADA
@@ -251,7 +253,9 @@ function create_files_from_param( $item_row, $param )
 
 		$file_params['jpeg'] = $this->create_jpeg_param( $photo_param, $file_params ) ;
 
-		$image_param = $this->create_image_params( $photo_param, $file_params );
+// Undefined variable: image_params
+		$image_params = $this->create_image_params( $photo_param, $file_params );
+
 		if ( is_array($image_params) ) {
 			$file_params  = $file_params + $image_params ;
 		}
@@ -530,8 +534,11 @@ function build_photo_param( $item_row, $src_file )
 {
 	$param = $item_row ;
 	$param['src_file'] = $src_file ;
-	$param['src_ext']  = $item_ext ;
-	$param['src_kind'] = $item_kind ;
+
+// Undefined variable: item_ext
+	$param['src_ext']  = $item_row['item_ext'] ;
+	$param['src_kind'] = $item_row['item_kind'] ;
+
 	return $param;
 }
 
@@ -566,7 +573,7 @@ function get_resized()
 //---------------------------------------------------------
 // create image
 //---------------------------------------------------------
-function create_image_params( $photo_param, $file_params )
+function create_image_params( $photo_param, $file_params=null )
 {
 	$param = $photo_param;
 
@@ -628,6 +635,8 @@ function create_jpeg_param( $photo_param, $file_params=null )
 	$this->_flag_jpeg_failed  = $this->_jpeg_create_class->get_flag_failed() ;
 	$this->_is_jpeg_cmyk      = $this->_jpeg_create_class->is_cmyk();
 	$this->_msg_sub_class->set_msg( $this->_jpeg_create_class->get_msg_array() ) ;
+
+//print_r($jpeg_param);
 
 	return $jpeg_param ;
 }
@@ -1072,7 +1081,11 @@ function insert_file_by_param( $item_id, $param )
 
 function get_file_full_by_key( $arr, $key )
 {
-	return $this->_file_handler->get_file_full_by_key( $arr, $key );
+	$id = isset( $arr[ $key ] ) ? intval( $arr[ $key ] ) : 0 ;
+	if ( $id > 0 ) {
+		return $this->_file_handler->get_full_path_by_id( $id );
+	}
+	return null;
 }
 
 //---------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: pdf_create.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
+// $Id: pdf_create.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// changed create_param()
 // 2010-10-01 K.OHWADA
 // create_pdf() -> execute()
 // 2009-11-11 K.OHWADA
@@ -60,7 +62,6 @@ function create_param( $param )
 	$item_id  = $param['item_id'];
 	$src_file = $param['src_file'];
 	$src_ext  = $param['src_ext'];
-	$src_kind = $param['src_kind'];
 
 // return input file is pdf 
 	if ( $this->is_pdf_ext( $src_ext ) ) {

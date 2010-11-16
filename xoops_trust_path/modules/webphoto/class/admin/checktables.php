@@ -1,5 +1,5 @@
 <?php
-// $Id: checktables.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: checktables.php,v 1.7 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_file_full_by_kind()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_mime_handler
 // 2008-10-01 K.OHWADA
@@ -242,17 +244,12 @@ function _print_check()
 
 		for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 		{
-			$file_file = null ;
-			$file_row  = $this->get_file_row_by_kind( $item_row, $i );
-			if ( is_array($file_row) ) {
-				$file_file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
-			}
-
-			if ( $file_file && ! is_readable( $file_file ) ) {
+			$file_full = $this->get_file_full_by_kind( $item_row, $i );
+			if ( $file_full && ! is_readable( $file_full ) ) {
 				$name = $this->get_constant( 'FILE_KIND_'.$i );
 				echo "<br />\n";
 				echo $admin_link;
-				printf( _AM_WEBPHOTO_FMT_NOT_READABLE , $name, $file_file ) ;
+				printf( _AM_WEBPHOTO_FMT_NOT_READABLE , $name, $file_full ) ;
 				echo "<br />\n";
 				$dead[ $i ] ++ ;
 			}

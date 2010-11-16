@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.29 2010/11/04 02:23:19 ohwada Exp $
+// $Id: show_photo.php,v 1.30 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_cached_file_extend_row_by_kind()
 // 2010-11-03 K.OHWADA
 // move set_keyword_array_by_get() to webphoto_main_photo
 // 2010-10-01 K.OHWADA
@@ -265,7 +267,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
 		$name_i = 'file_row_'.$i;
-		$show_arr[ $name_i ] = $this->get_cached_file_row_by_kind( $row, $i );
+		$show_arr[ $name_i ] = $this->get_cached_file_extend_row_by_kind( $row, $i );
 	}
 
 	list( $cont_size , $cont_duration ) =
@@ -560,11 +562,16 @@ function can_download( $row )
 //---------------------------------------------------------
 function build_show_imgsrc( $item_row, $show_arr )
 {
-	$cont_row   = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
-	$thumb_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
-	$large_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_LARGE ) ;
-	$middle_row = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
-	$small_row  = $this->get_show_file_row( $show_arr, _C_WEBPHOTO_FILE_KIND_SMALL ) ;
+	$cont_row   = $this->get_show_file_row( 
+		$show_arr, _C_WEBPHOTO_FILE_KIND_CONT ) ;
+	$thumb_row  = $this->get_show_file_row( 
+		$show_arr, _C_WEBPHOTO_FILE_KIND_THUMB ) ;
+	$large_row  = $this->get_show_file_row( 
+		$show_arr, _C_WEBPHOTO_FILE_KIND_LARGE ) ;
+	$middle_row = $this->get_show_file_row( 
+		$show_arr, _C_WEBPHOTO_FILE_KIND_MIDDLE ) ;
+	$small_row  = $this->get_show_file_row( 
+		$show_arr, _C_WEBPHOTO_FILE_KIND_SMALL ) ;
 
 	$param = array(
 		'item_row'       => $item_row ,

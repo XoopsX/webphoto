@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.3 2010/03/19 00:23:02 ohwada Exp $
+// $Id: update_040.php,v 1.4 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// remove class/webphoto/image_info.php
 // 2010-03-18 K.OHWADA
 // class/edit/item_create.php
 // 2008-11-08 K.OHWADA
@@ -31,7 +33,6 @@ webphoto_include_once( 'class/lib/ffmpeg.php' );
 webphoto_include_once( 'class/handler/photo_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/syno_handler.php' );
-webphoto_include_once( 'class/webphoto/image_info.php' );
 webphoto_include_once( 'class/webphoto/image_create.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/video.php' );

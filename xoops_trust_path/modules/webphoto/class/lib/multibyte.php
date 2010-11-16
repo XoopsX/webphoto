@@ -1,5 +1,5 @@
 <?php
-// $Id: multibyte.php,v 1.8 2010/06/16 22:24:47 ohwada Exp $
+// $Id: multibyte.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// @iconv_strlen
 // 2010-06-06 K.OHWADA
 // BUG : forget return
 // 2009-08-08 K.OHWADA
@@ -369,9 +371,9 @@ function i_iconv_strlen( $str, $charset=null )
 {
 	if ( function_exists('iconv_strlen') ) {
 		if ( $charset ) {
-			return iconv_strlen( $str, $charset );
+			return @iconv_strlen( $str, $charset );
 		} else {
-			return iconv_strlen( $str );
+			return @iconv_strlen( $str );
 		}
 	}
 	return strlen( $str );

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_form.php,v 1.31 2010/10/06 02:22:46 ohwada Exp $
+// $Id: item_form.php,v 1.32 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// show_item_icon_name()
 // 2010-10-01 K.OHWADA
 // item_uid_options()
 // item_displayfile_select_options()
@@ -131,11 +133,16 @@ function build_form_admin_with_template( $mode, $item_row )
 
 function build_form_admin_by_item_row( $mode, $item_row )
 {
-	$cont_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
-	$jpeg_row   = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_JPEG ) ; 
-	$flash_row  = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
-	$pdf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_PDF );
-	$swf_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_SWF );
+	$cont_row   = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ; 
+	$jpeg_row   = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_JPEG ) ; 
+	$flash_row  = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH );
+	$pdf_row    = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_PDF );
+	$swf_row    = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_SWF );
 
 // for futue
 //	$docomo_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_DOCOMO );
@@ -246,6 +253,8 @@ function build_form_admin_by_files( $mode, $files )
 		'show_item_playlist_time_hidden' => ! $show_item_playlist_time ,
 		'show_item_playlist_feed_hidden' => ! $show_item_playlist_feed ,
 		'show_item_playlist_dir_hidden'  => ! $show_item_playlist_dir ,
+
+		'show_item_icon_name'          => $this->show_item_icon_name() ,
 
 		'time_now'               => $this->time_now() ,
 		'item_time_create_disp'  => $this->build_time_disp( 'item_time_create',  true ) ,

@@ -1,5 +1,5 @@
 <?php
-// $Id: item_table_manage.php,v 1.12 2010/09/27 03:42:54 ohwada Exp $
+// $Id: item_table_manage.php,v 1.13 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// file_id_to_item_name()
 // 2010-09-20 K.OHWADA
 // item_displayfile
 // 2010-01-10 K.OHWADA
@@ -178,15 +180,13 @@ function _build_row_by_post()
 
 	);
 
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
-	{
-		$name = 'item_file_id_'.$i;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
+		$name = $this->_manage_handler->file_id_to_item_name( $i );
 		$row[ $name ] = $this->_post_class->get_post_int( $name );
 	}
 
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
-	{
-		$name = 'item_text_'.$i;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
+		$name = $this->_manage_handler->text_id_to_item_name( $i );
 		$row[ $name ] = $this->_post_class->get_post_text( $name );
 	}
 
@@ -311,7 +311,7 @@ function _build_row_manage_id()
 
 function _build_row_file_id( $i )
 {
-	$name  = 'item_file_id_'.$i ;
+	$name  = $this->_manage_handler->file_id_to_item_name( $i );
 	$value = intval( $this->get_row_by_key( $name ) );
 	$ele   = $this->build_input_text( $name, $value );
 	if ( $value > 0 ) {

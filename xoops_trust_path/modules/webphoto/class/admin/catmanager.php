@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.16 2010/10/20 12:04:52 ohwada Exp $
+// $Id: catmanager.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_file_full_path()
 // 2010-10-20 K.OHWADA
 // remove set_flag_size_limit()
 // 2010-02-15 K.OHWADA
@@ -376,7 +378,7 @@ function _build_img_size( $row )
 		$full_path = $this->_CATS_DIR .'/'. $img_name ;
 
 	} elseif ( $img_path ) { 
-		$full_path = XOOPS_ROOT_PATH . $img_path ;
+		$full_path = $this->build_file_full_path( $img_path );
 
 	} else {
 		return $row;

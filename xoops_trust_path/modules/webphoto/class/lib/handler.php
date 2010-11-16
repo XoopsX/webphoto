@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.13 2010/03/14 17:19:16 ohwada Exp $
+// $Id: handler.php,v 1.14 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_value_by_id_name()
 // 2010-03-14 K.OHWADA
 // BUG: echo sql always if error
 // 2010-02-15 K.OHWADA
@@ -325,6 +327,19 @@ function create()
 	// dummy
 }
 
+function get_value_by_id_name( $id, $name, $flag_sanitize=false )
+{
+	$row = $this->get_row_by_id( $id );
+	if ( isset( $row[ $name ] ) ) {
+		$val = $row[ $name ];
+		if ( $flag_sanitize ) {
+			$val = $this->sanitize( $val );
+		}
+		return $val;
+	}
+	return null;
+}
+
 //---------------------------------------------------------
 // rows
 //---------------------------------------------------------
@@ -403,7 +418,7 @@ function get_cached_row_by_id( $id )
 
 	$row = $this->get_row_by_id( $id );
 	if ( is_array($row) ) {
-		$this->_cached [$id ] = $row;
+		$this->_cached[ $id ] = $row;
 		return $row;
 	}
 

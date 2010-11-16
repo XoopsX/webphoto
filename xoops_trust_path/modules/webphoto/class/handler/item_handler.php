@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.23 2010/10/06 02:52:31 ohwada Exp $
+// $Id: item_handler.php,v 1.24 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// file_id_to_item_name()
 // 2010-10-01 K.OHWADA
 // item_displayfile etc
 // 2010-03-18 K.OHWADA
@@ -179,14 +181,38 @@ function create( $flag_new=false )
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$arr[ 'item_file_id_'.$i ] = 0;
+		$name = $this->file_id_to_item_name( $i );
+		$arr[ $name ] = 0;
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
-		$arr[ 'item_text_'.$i ] = '';
+		$name = $this->text_id_to_item_name( $i );
+		$arr[ $name ] = '';
 	}
 
 	return $arr;
+}
+
+function file_id_to_item_name( $id )
+{
+	$str = 'item_file_id_'. $id ;
+	return $str;
+}
+
+function text_id_to_item_name( $id )
+{
+	$str = 'item_text_'. $id ;
+	return $str;
+}
+
+function build_name_fileid_by_kind( $kind )
+{
+	return $this->file_id_to_item_name( $kind );
+}
+
+function build_name_text_by_kind( $kind )
+{
+	return $this->text_id_to_item_name( $kind );
 }
 
 //---------------------------------------------------------
@@ -273,11 +299,13 @@ function insert( $row, $force=false )
 	$sql .= 'item_perm_level, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$sql .= 'item_file_id_'.$i.', ';
+		$name = $this->file_id_to_item_name( $i );
+		$sql .= $name.', ';
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
-		$sql .= 'item_text_'.$i.', ';
+		$name = $this->text_id_to_item_name( $i );
+		$sql .= $name.', ';
 	}
 
 	$sql .= 'item_search ';
@@ -359,11 +387,13 @@ function insert( $row, $force=false )
 	$sql .= intval($item_perm_level).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
-		$sql .= intval( $row[ 'item_file_id_'.$i ] ).', ';
+		$name = $this->file_id_to_item_name( $i );
+		$sql .= intval( $row[ $name ] ).', ';
 	}
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
-		$sql .= $this->quote( $row[ 'item_text_'.$i ] ).', ';
+		$name = $this->text_id_to_item_name( $i );
+		$sql .= $this->quote( $row[ $name ] ).', ';
 	}
 
 	$sql .= $this->quote($item_search).' ';
@@ -454,15 +484,13 @@ function update( $row, $force=false )
 	$sql .= 'item_weight='.intval($item_weight).', ';
 	$sql .= 'item_perm_level='.intval($item_perm_level).', ';
 
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
-	{
-		$name = 'item_file_id_'.$i;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) {
+		$name = $this->file_id_to_item_name( $i );
 		$sql .= $name .'='. intval( $row[ $name ] ).', ';
 	}
 
-	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) 
-	{
-		$name = 'item_text_'.$i;
+	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_TEXT; $i++ ) {
+		$name = $this->text_id_to_item_name( $i );
 		$sql .= $name .'='. $this->quote( $row[ $name ] ).', ';
 	}
 
@@ -759,24 +787,12 @@ function build_value_fileid_by_kind( $row, $kind )
 	return false ;
 }
 
-function build_name_fileid_by_kind( $kind )
-{
-	$str = 'item_file_id_'.$kind;
-	return $str ;
-}
-
 function build_value_text_by_num( $row, $num )
 {
 	if ( isset( $row[ $this->build_name_text_by_num( $num ) ] ) ) {
 		return  $row[ $this->build_name_text_by_num( $num ) ];
 	}
 	return false ;
-}
-
-function build_name_text_by_kind( $num )
-{
-	$str = 'item_text_'.$num;
-	return $str ;
 }
 
 function build_show_description_disp( $row )

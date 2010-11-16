@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
+// $Id: misc_form.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_file_url_by_file_row()
 // 2010-10-01 K.OHWADA
 // item_kind_list_video
 // 2009-11-11 K.OHWADA
@@ -325,7 +327,7 @@ function build_form_redo_by_flash_row( $flash_row )
 function build_flash_url_s( $flash_row )
 {
 	return $this->sanitize( 
-		$this->build_file_url_size( $flash_row ) );
+		$this->build_file_url_by_file_row( $flash_row ) );
 }
 
 function is_show_form_redo( $item_row )

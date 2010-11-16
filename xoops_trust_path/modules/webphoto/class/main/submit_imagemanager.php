@@ -1,5 +1,5 @@
 <?php
-// $Id: submit_imagemanager.php,v 1.11 2010/10/06 02:22:46 ohwada Exp $
+// $Id: submit_imagemanager.php,v 1.12 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// typo $image_params
 // 2010-10-01 K.OHWADA
 // create_image_params_by_photo()
 // 2010-03-18 K.OHWADA
@@ -235,7 +237,7 @@ function _create_media_file_params( $item_row )
 	);
 
 	if ( is_array($cont_param) ) {
-		$image_param  = $this->create_image_params_by_photo( $photo_param );
+		$image_params = $this->create_image_params_by_photo( $photo_param );
 		if ( is_array($image_params) ) {
 			$file_params = $file_params + $image_params ;
 		}

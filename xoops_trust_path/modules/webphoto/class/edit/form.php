@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.17 2010/09/19 07:04:46 ohwada Exp $
+// $Id: form.php,v 1.18 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_cached_file_extend_row_by_kind()
 // 2010-09-17 K.OHWADA
 // move build_form_user_select_options() to webphoto_admin_item_form
 // 2010-02-15 K.OHWADA
@@ -305,14 +307,6 @@ function item_description_dhtml()
 	return $this->build_form_dhtml( $name, $value );
 }
 
-function build_file_url_size( $file_row )
-{
-	list( $url, $width, $height ) =
-		$this->_file_handler->build_show_file_image( $file_row, true ) ;
-
-	return $url;
-}
-
 // for misc_form.php
 function get_item_editor( $flag )
 {
@@ -332,28 +326,43 @@ function get_item_embed_type( $flag )
 	return $value;
 }
 
+//---------------------------------------------------------
+// file handler
+//---------------------------------------------------------
 function exists_photo( $item_row )
 {
-	$cont_row = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( is_array($cont_row) ) {
-		$cont_path = $cont_row['file_path'];
-	} else {
-		return false;
-	}
-
-	if ( $cont_path  && is_readable( XOOPS_ROOT_PATH . $cont_path ) ) {
-		return true;
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->exists_full_path_by_id( $file_id );
 	}
 	return false;
 }
 
-function get_cached_file_row_by_kind( $item_row, $kind )
+function build_file_url_by_kind( $item_row, $kind )
 {
-	$file_id = $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
-	if ( $file_id > 0 ) {
-		return $this->_file_handler->get_cached_row_by_id( $file_id );
+	$file_row = $this->get_cached_file_extend_row_by_kind( $item_row, $kind );
+	if ( is_array($file_row) ) {
+		return $this->build_file_url_by_file_row( $file_row ) ;
 	}
 	return null;
+}
+
+function get_cached_file_extend_row_by_kind( $item_row, $kind )
+{
+	$file_id = $this->_item_handler->build_value_fileid_by_kind( 
+		$item_row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->_file_handler->get_cached_extend_row_by_id( $file_id );
+	}
+	return null;
+}
+
+function build_file_url_by_file_row( $file_row )
+{
+	list( $url, $width, $height )
+		= $this->_file_handler->build_show_file_image( $file_row );
+	return $url;
 }
 
 //---------------------------------------------------------

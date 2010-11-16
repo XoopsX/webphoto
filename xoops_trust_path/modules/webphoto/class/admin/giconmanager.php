@@ -1,5 +1,5 @@
 <?php
-// $Id: giconmanager.php,v 1.8 2009/11/29 07:34:21 ohwada Exp $
+// $Id: giconmanager.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_file_full_path()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_gicon_handler
 // 2009-01-10 K.OHWADA
@@ -431,7 +433,8 @@ function _excute_update()
 
 // default icons have no name value
 		if ( $row['gicon_shadow_path'] && $row['gicon_shadow_name'] ) {
-			$this->unlink_file( XOOPS_ROOT_PATH.$row['gicon_shadow_path'] );
+			$file = $this->build_file_full_path( $row['gicon_shadow_path'] );
+			$this->unlink_file( $file );
 			$row['gicon_shadow_path']   = '' ;
 			$row['gicon_shadow_name']   = '' ;
 			$row['gicon_shadow_ext']    = '' ;
@@ -467,10 +470,12 @@ function _delete()
 // delete image files
 // default icons have no name value
 	if ( $row['gicon_image_path'] && $row['gicon_image_name'] ) {
-		$this->unlink_file( XOOPS_ROOT_PATH.$row['gicon_image_path'] );
+		$file = $this->build_file_full_path( $row['gicon_image_path']);
+		$this->unlink_file( $file );
 	}
 	if ( $row['gicon_shadow_path'] && $row['gicon_shadow_name'] ) {
-		$this->unlink_file( XOOPS_ROOT_PATH.$row['gicon_shadow_path'] );
+		$file = $this->build_file_full_path( $row['gicon_shadow_path'] );
+		$this->unlink_file( $file );
 	}
 
 	$ret1 = $this->_cat_handler->clear_gicon_id( $gicon_id );

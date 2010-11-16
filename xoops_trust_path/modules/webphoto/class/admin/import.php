@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.8 2010/03/19 00:23:02 ohwada Exp $
+// $Id: import.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// file_id_to_item_name()
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2009-11-11 K.OHWADA
@@ -491,7 +493,7 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{
-		$name = 'item_file_id_'.$i ;
+		$name = $this->_item_handler->file_id_to_item_name( $i ) ;
 		$item_row[ $name ] = 0 ;
 		$webphoto_file_id = $webphoto_item_row[ $name ];
 		if ( $webphoto_file_id > 0 ) {

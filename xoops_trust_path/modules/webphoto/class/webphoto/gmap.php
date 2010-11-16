@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.14 2010/01/28 02:08:13 ohwada Exp $
+// $Id: gmap.php,v 1.15 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_file_extend_row_by_kind()
 // 2010-01-10 K.OHWADA
 // build_for_category()
 // 2009-11-11 K.OHWADA
@@ -244,7 +246,8 @@ function _build_show_from_single_row( $item_row )
 
 function _build_gmap_info( $item_row )
 {
-	$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+	$thumb_row = $this->get_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 	list( $thumb_url, $thumb_width, $thumb_height ) =
 		$this->build_show_file_image( $thumb_row ) ;

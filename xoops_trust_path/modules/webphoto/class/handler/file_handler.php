@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.8 2010/09/27 03:42:54 ohwada Exp $
+// $Id: file_handler.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_full_path()
 // 2010-09-20 K.OHWADA
 // function get_file_full_by_key()
 // 2009-11-11 K.OHWADA
@@ -29,6 +31,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_file_handler extends webphoto_handler_base_ini
 {
+	var $_cached_extend = array();
 
 //---------------------------------------------------------
 // constructor
@@ -197,6 +200,35 @@ function get_rows_by_kind( $kind, $limit=0, $offset=0 )
 	return $this->get_rows_by_sql( $sql, $limit, $offset );
 }
 
+function get_extend_row_by_id( $id )
+{
+	$row = $this->get_row_by_id( $id );
+	if ( is_array($row) ) {
+		$full_path               = $this->build_full_path_by_row( $row );
+		$full_url                = $this->build_full_url_by_row(  $row );
+		$row['full_path']        = $full_path;
+		$row['full_url']         = $full_url;
+		$row['full_path_exists'] = $this->exists_file( $full_path );
+		return $row;
+	}
+	return null;
+}
+
+function get_cached_extend_row_by_id( $id )
+{
+	if ( isset( $this->_cached_extend[ $id ] ) ) {
+		return  $this->_cached_extend[ $id ];
+	}
+
+	$row = $this->get_extend_row_by_id( $id );
+	if ( is_array($row) ) {
+		$this->_cached_extend[ $id ] = $row;
+		return $row;
+	}
+
+	return null;
+}
+
 //---------------------------------------------------------
 // build
 //---------------------------------------------------------
@@ -241,38 +273,92 @@ function build_show_file_image( $file_row, $flag_exists=false )
 	$height = 0 ;
 
 	if ( is_array($file_row) ) {
-		$url    = $file_row['file_url'] ;
-		$path   = $file_row['file_path'] ;
-		$width  = $file_row['file_width'] ;
-		$height = $file_row['file_height'] ;
+		$file_url = $file_row['file_url'] ;
+		$width    = $file_row['file_width'] ;
+		$height   = $file_row['file_height'] ;
+		$full_url = $file_row['full_url'] ;
+		$exists   = $file_row['full_path_exists'] ;
 
-// not need '/'
-		$full_path = XOOPS_ROOT_PATH . $path ;
-		$full_url  = XOOPS_URL       . $path ;
+		if ( $flag_exists && $exists && $full_url) {
+			$url = $full_url ;
 
-		if ( $path ) {
-			if ( $flag_exists && file_exists( $full_path ) ) {
-				$url = $full_url ;
-			} else {
-				$url = $full_url ;
-			}
+		} elseif ( $full_url ) {
+			$url = $full_url ;
+
+		} elseif ( $file_url ) {
+			$url = $file_url ;
 		}
 	}
 
 	return array( $url, $width, $height );
 }
 
-function get_file_full_by_key( $arr, $key )
+function get_full_path_by_id( $id )
 {
-	$file = null;
-	$id   = isset( $arr[ $key ] ) ? intval( $arr[ $key ] ) : 0 ;
-	if ( $id > 0 ) {
-		$file_row = $this->get_row_by_id( $id );
-		if ( is_array($file_row) ) {
-			$file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
-		}
+	$row = $this->get_extend_row_by_id( $id );
+	return $this->get_full_path_by_row( $row );
+}
+
+function exists_full_path_by_id( $id )
+{
+	$row  = $this->get_extend_row_by_id( $id );
+	return $this->exists_full_path_by_row( $row );
+}
+
+function exists_full_path_by_row( $row )
+{
+	$file = $this->get_full_path_by_row( $row );
+	return $this->exists_file( $file );
+}
+
+function get_full_path_by_row( $row )
+{
+	if ( is_array($row) && $row['full_path'] ) {
+		return $row['full_path'];
 	}
-	return $file;
+	return null;
+}
+
+function build_full_path_by_row( $row )
+{
+	if ( is_array($row) && $row['file_path'] ) {
+		return $this->build_full_path( $row['file_path'] );
+	}
+	return null;
+}
+
+function build_full_url_by_row( $row )
+{
+	if ( is_array($row) && $row['file_path'] ) {
+		return $this->build_full_url( $row['file_path'] );
+	}
+	return null;
+}
+
+function build_full_path( $path )
+{
+	if ( $path ) {
+		$str = XOOPS_ROOT_PATH . $path ;
+		return $str;
+	}
+	return null;
+}
+
+function build_full_url( $path )
+{
+	if ( $path ) {
+		$str = XOOPS_URL . $path ;
+		return $str;
+	}
+	return null;
+}
+
+function exists_file( $file )
+{
+	if ( $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
+		return true;
+	}
+	return false;
 }
 
 // --- class end ---

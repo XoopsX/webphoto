@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager_submit.php,v 1.8 2010/10/08 15:53:16 ohwada Exp $
+// $Id: imagemanager_submit.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// changed create_image_params_by_photo()
 // 2010-10-01 K.OHWADA
 // create_jpeg_param_by_photo()
 // 2009-05-30 K.OHWADA
@@ -418,9 +420,10 @@ function create_jpeg_param_by_tmp( $item_row, $tmp_name )
 //---------------------------------------------------------
 // create images
 //---------------------------------------------------------
-function create_image_params_by_photo( $photo_param, $file_params )
+function create_image_params_by_photo( $photo_param, $file_params=null )
 {
-	return $this->_factory_create_class->create_image_params( $photo_param, $file_params );
+	return $this->_factory_create_class->create_image_params( 
+		$photo_param, $file_params );
 }
 
 //---------------------------------------------------------

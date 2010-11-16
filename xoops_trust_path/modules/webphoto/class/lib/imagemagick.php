@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemagick.php,v 1.5 2010/05/30 11:24:07 ohwada Exp $
+// $Id: imagemagick.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// changed resize_rotate()
 // 2010-05-30 K.OHWADA
 // is_win_os()
 // 2009-11-21 K.OHWADA
@@ -89,12 +91,8 @@ function resize_rotate( $src, $dst, $max_width=0, $max_height=0, $rorate=0 )
 		$option .= ' -rotate '. $rorate ;
 	}
 
-	if ( $option ) {
-		$this->convert( $src, $dst, $option );
-		return true;
-	}
-
-	return false;
+	$this->convert( $src, $dst, $option );
+	return true;
 }
 
 function add_watermark( $src, $dst, $mark )

@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.3 2010/03/19 00:23:02 ohwada Exp $
+// $Id: import.php,v 1.4 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_file_full_path()
 // 2010-03-18 K.OHWADA
 // format_and_insert_item()
 // 2009-11-11 K.OHWADA
@@ -192,7 +194,7 @@ function build_category_img_path( $imgurl )
 
 	if ( $imgurl ) {
 		$tmp_path  = str_replace( XOOPS_URL, '', $imgurl );
-		$full_path = XOOPS_ROOT_PATH . $tmp_path ;
+		$full_path = $this->build_file_full_path( $tmp_path );
 
 // in this site
 		if ( file_exists($full_path) ) { 

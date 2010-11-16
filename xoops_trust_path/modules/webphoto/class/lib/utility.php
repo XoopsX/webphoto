@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.16 2010/10/06 02:22:46 ohwada Exp $
+// $Id: utility.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// Incorrect datetime value
 // 2010-10-01 K.OHWADA
 // is_image_cmyk()
 // 2010-01-10 K.OHWADA
@@ -844,7 +846,7 @@ function str_to_mysql_datetime( $str )
 	$date = '';
 	$time = '';
 
-	$arr = explode(' ', $str);
+	$arr = $this->str_to_array( $str, ' ' );
 	if ( isset($arr[0]) ) {
 		$date = $this->str_to_mysql_date( $arr[0] );
 	}
@@ -855,11 +857,14 @@ function str_to_mysql_datetime( $str )
 	if ( $date && $time ) {
 		$val = $date.' '.$time;
 		return $val;
-	}
-	elseif ( $date ) {
+
+	} elseif ( $date ) {
 		return $date;
 	}
-	return false;
+
+// Incorrect datetime value
+	$null = '0000-00-00 00:00:00';
+	return $null;
 }
 
 function str_to_mysql_date( $str )

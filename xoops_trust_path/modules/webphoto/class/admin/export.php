@@ -1,5 +1,5 @@
 <?php
-// $Id: export.php,v 1.5 2009/11/29 07:34:21 ohwada Exp $
+// $Id: export.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_file_extend_row_by_kind()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_cat_selbox
 // get_ini()
@@ -152,21 +154,23 @@ function _export_image()
 		}
 
 		if ( $use_thumb ) {
-			$file_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+			$file_row = $this->get_file_extend_row_by_kind( 
+				$item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 			if ( !is_array($file_row) ) {
 				echo " cannot get thumb row <br />\n";
 				continue;
 			}
 
 		} else {
-			$file_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+			$file_row = $this->get_file_extend_row_by_kind( 
+				$item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 			if ( !is_array($file_row) ) {
 				echo " cannot get cont row <br />\n";
 				continue;
 			}
 		}
 
-		$src_file = XOOPS_ROOT_PATH . $file_row['file_path'] ;
+		$src_file = $file_row['full_path'];
 		$ext      = $file_row['file_ext'] ;
 		$mime     = $file_row['file_mime'] ;
 

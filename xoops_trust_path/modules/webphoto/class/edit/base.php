@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.6 2010/10/06 02:22:46 ohwada Exp $
+// $Id: base.php,v 1.7 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// move clear_tmp_files_in_tmp_dir() to webphoto_admin_redothumbs
 // 2010-10-01 K.OHWADA
 // move unlink_path()
 // 2010-03-18 K.OHWADA
@@ -205,38 +207,6 @@ function set_msg_level_user( $msg, $flag_highlight=false, $flag_br=false )
 	if ( $str ) {
 		$this->set_msg( $str );
 	}
-}
-
-//---------------------------------------------------------
-// for admin/redothumbs.php
-//---------------------------------------------------------
-function clear_tmp_files_in_tmp_dir()
-{
-	return $this->clear_tmp_files( $this->_TMP_DIR, _C_WEBPHOTO_UPLOADER_PREFIX );
-}
-
-function clear_tmp_files( $dir_path , $prefix )
-{
-	$files = $this->_utility_class->get_files_in_dir( $dir_path );
-	if ( !is_array($files) ) {
-		return 0 ;
-	}
-
-	$prefix_len = strlen( $prefix ) ;
-	$count = 0 ;
-
-	foreach( $files as $file ) 
-	{
-		if( strncmp( $file , $prefix , $prefix_len ) === 0 ) {
-			$file_full = $dir_path .'/'. $file ;
-			$ret = unlink( $file_full );
-			if ( $ret ){ 
-				$count ++ ;
-			}
-		}
-	}
-
-	return $count ;
 }
 
 // --- class end ---

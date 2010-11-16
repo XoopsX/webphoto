@@ -1,5 +1,5 @@
 <?php
-// $Id: jpeg_create.php,v 1.5 2010/10/08 15:53:16 ohwada Exp $
+// $Id: jpeg_create.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_image_file_param();
 // 2010-10-01 K.OHWADA
 // create_jpeg() -> execute()
 // 2009-11-11 K.OHWADA

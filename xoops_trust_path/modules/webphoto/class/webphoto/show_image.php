@@ -1,5 +1,5 @@
 <?php
-// $Id: show_image.php,v 1.6 2010/10/06 02:22:46 ohwada Exp $
+// $Id: show_image.php,v 1.7 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_cached_file_extend_row_by_name()
 // 2010-10-01 K.OHWADA
 // adjust_large_size()
 // 2009-11-11 K.OHWADA
@@ -148,11 +150,16 @@ function build_image_by_item_row( $item_row, $default )
 		return false;
 	}
 
-	$cont_row   = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
-	$thumb_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_THUMB );
-	$large_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_LARGE );
-	$middle_row = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE );
-	$small_row  = $this->get_cached_file_row_by_name( $item_row, _C_WEBPHOTO_ITEM_FILE_SMALL );
+	$cont_row   = $this->get_cached_file_extend_row_by_name( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_CONT );
+	$thumb_row  = $this->get_cached_file_extend_row_by_name( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_THUMB );
+	$large_row  = $this->get_cached_file_extend_row_by_name( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_LARGE );
+	$middle_row = $this->get_cached_file_extend_row_by_name( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_MIDDLE );
+	$small_row  = $this->get_cached_file_extend_row_by_name( 
+		$item_row, _C_WEBPHOTO_ITEM_FILE_SMALL );
 
 	$param = array(
 		'item_row'       => $item_row ,
@@ -405,7 +412,7 @@ function build_image_by_param( $param )
 	return $arr;
 }
 
-function get_cached_file_row_by_name( $item_row, $item_name )
+function get_cached_file_extend_row_by_name( $item_row, $item_name )
 {
 	if ( isset(    $item_row[ $item_name ] ) ) {
 		$file_id = $item_row[ $item_name ] ;
@@ -414,7 +421,7 @@ function get_cached_file_row_by_name( $item_row, $item_name )
 	}
 
 	if ( $file_id > 0 ) {
-		return $this->_file_handler->get_cached_row_by_id( $file_id );
+		return $this->_file_handler->get_cached_extend_row_by_id( $file_id );
 	}
 
 	return false ;

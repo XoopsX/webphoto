@@ -1,10 +1,16 @@
 <?php
-// $Id: ext_build.php,v 1.2 2010/10/06 02:22:46 ohwada Exp $
+// $Id: ext_build.php,v 1.3 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2010-11-11 K.OHWADA
+// get_extend_row_by_id()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -103,7 +109,11 @@ function build_param( $row, $src_file )
 
 function get_file_full_by_key( $arr, $key )
 {
-	return $this->_file_handler->get_file_full_by_key( $arr, $key );
+	$id = isset( $arr[ $key ] ) ? intval( $arr[ $key ] ) : 0 ;
+	if ( $id > 0 ) {
+		return $this->_file_handler->get_full_path_by_id( $id );
+	}
+	return null;
 }
 
 // --- class end ---

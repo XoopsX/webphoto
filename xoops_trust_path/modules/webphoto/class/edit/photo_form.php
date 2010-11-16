@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.18 2010/10/08 15:53:16 ohwada Exp $
+// $Id: photo_form.php,v 1.19 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// show_item_icon_name()
 // 2010-10-01 K.OHWADA
 // show_file_jpeg()
 // 2010-09-17 K.OHWADA
@@ -371,6 +373,7 @@ function build_form_photo( $item_row )
 		'show_item_perm_down'          => $this->use_item('perm_down') ,
 		'show_item_exif'               => $this->show_item_exif(    $is_edit ) ,
 		'show_item_content'            => $this->show_item_content( $is_edit ) ,
+		'show_item_icon_name'          => $this->show_item_icon_name() ,
 
 		'show_input_item_perm_down'   => $this->show_input_item_perm_down() ,
 
@@ -702,6 +705,23 @@ function show_file_jpeg( $show_file_jpeg_mode )
 	return false;
 }
 
+function show_item_icon_name()
+{
+	$item_row       = $this->get_row();
+	$icon_name      = $this->get_row_by_key('item_icon_name');
+	$external_thumb = $this->get_row_by_key('item_external_thumb');
+
+	$jpeg_url  = $this->build_file_url_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_JPEG );
+	$thumb_url = $this->build_file_url_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+	if ( $icon_name && empty($external_thumb) && empty($jpeg_url) && empty($thumb_url) ) {
+		return true;
+	}
+	return false;
+}
+
 function get_form_title( $is_edit )
 {
 	if ( $is_edit ) {
@@ -751,20 +771,19 @@ function item_file_array( $is_edit )
 	$arr = array();
 	foreach ( $this->_ini_file_list as $file ) 
 	{
-		$const_name = strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$file );
-		if ( !defined($const_name) ) {
+		$kind_name = strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$file );
+		if ( !defined($kind_name) ) {
 			continue;
 		}
 
-		$const = constant($const_name);
+		$kind = constant($kind_name);
 
-		$name        = 'file_'. $const ;
+		$name        = 'file_'. $kind ;
 		$name_delete = $name.'_delete';
-		$title       = $this->get_constant( 'FILE_KIND_'.$const );
-		$file_row    = $this->get_cached_file_row_by_kind( $item_row, $const );
-		$url         = $this->build_file_url_size( $file_row ) ;
+		$title       = $this->get_constant( 'FILE_KIND_'.$kind );
+		$url         = $this->build_file_url_by_kind( $item_row, $kind ) ;
 
-		$arr[ $const ] = array(
+		$arr[ $kind ] = array(
 			'name'        => $name ,
 			'name_delete' => $name_delete ,
 			'title_s'     => $this->sanitize( $title ) ,
@@ -875,11 +894,9 @@ function embed_src_dsc()
 	return $this->build_embed_src_dsc( $type, $src );
 }
 
-function build_file_url( $id, $name )
+function build_file_url( $kind, $name )
 {
-	$file_row = $this->get_cached_file_row_by_kind( $this->get_row(), $id );
-
-	$url = $this->build_file_url_size( $file_row ) ;
+	$url = $this->build_file_url_by_kind( $this->get_row(), $kind );
 	if ( $url ) {
 		return array( $url, true );
 	}

@@ -1,5 +1,5 @@
 <?php
-// $Id: base_create.php,v 1.8 2010/10/08 15:53:16 ohwada Exp $
+// $Id: base_create.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_file_full_path()
 // 2010-10-01 K.OHWADA
 // create_copy_param()
 // 2009-11-11 K.OHWADA
@@ -87,8 +89,8 @@ function build_random_name_param( $item_id, $src_ext, $sub_dir )
 {
 	$name = $this->build_random_file_name( $item_id, $src_ext );
 	$path = $this->_UPLOADS_PATH .'/'. $sub_dir .'/'. $name ;
-	$file = XOOPS_ROOT_PATH . $path ;
-	$url  = XOOPS_URL       . $path ;
+	$file = $this->build_file_full_path( $path );
+	$url  = $this->build_file_full_url(  $path );
 
 	$arr = array(
 		'name' => $name ,
@@ -99,30 +101,28 @@ function build_random_name_param( $item_id, $src_ext, $sub_dir )
 	return $arr ;
 }
 
-function build_image_file_param( $path, $name, $ext=null, $kind=null )
+function build_image_file_param( $path, $name, $ext, $kind )
 {
 	$info = $this->build_image_info( $path, $ext );
 
 	$arr = array(
-		'url'     => XOOPS_URL . $path ,
+		'url'     => $this->build_file_full_url(  $path ) ,
+		'file'    => $this->build_file_full_path( $path ) ,
 		'path'    => $path ,
 		'name'    => $name ,
-		'ext'     => $info['ext'] ,
+		'ext'     => $ext ,
+		'kind'    => $kind ,
 		'width'   => $info['width'] ,
 		'height'  => $info['height'] ,
+		'size'    => $info['size'] ,
 		'mime'    => $info['mime'] ,
 		'medium'  => $info['medium'] ,
-		'size'    => $info['size'] ,
 	);
-
-	if ( $kind ) {
-		$arr['kind'] = $kind ;
-	}
 
 	return $arr;
 }
 
-function build_image_info( $path, $ext=null )
+function build_image_info( $path, $ext )
 {
 	$size     = 0;
 	$width    = 0;
@@ -131,11 +131,7 @@ function build_image_info( $path, $ext=null )
 	$medium   = '';
 	$is_image = false;
 
-	$file = XOOPS_ROOT_PATH . $path;
-
-	if ( empty($ext) ) {
-		$ext  = $this->parse_ext( $path );
-	}
+	$file = $this->build_file_full_path( $path );
 
 	if ( is_readable( $file ) ) {
 		if ( $this->is_image_ext( $ext ) ) {
@@ -172,11 +168,15 @@ function build_file_param_by_name_param( $name_param )
 	$file  = $name_param['file'] ;
 	$url   = $name_param['url']  ;
 
+	$info  = $this->build_image_info( $path, $this->_param_ext );
+
 	$param = array(
 		'url'    => $url ,
 		'file'   => $file ,
 		'path'   => $path ,
 		'name'   => $name ,
+		'width'  => $info['width'] ,
+		'height' => $info['height'] ,
 		'size'   => filesize( $file ) ,
 		'ext'    => $this->_param_ext,
 		'mime'   => $this->_param_mime ,

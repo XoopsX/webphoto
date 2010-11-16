@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.14 2010/10/06 02:22:46 ohwada Exp $
+// $Id: redothumbs.php,v 1.15 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// webphoto_edit_jpeg_create
 // 2010-10-01 K.OHWADA
 // webphoto_image_create
 // 2010-03-18 K.OHWADA
@@ -46,6 +48,8 @@ class webphoto_admin_redothumbs extends webphoto_edit_base
 	var $_cont_create_class;
 	var $_middle_thumb_create_class;
 	var $_image_create_class ;
+	var $_jpeg_create_class;
+	var $_pdf_create_class;
 
 	var $_post_forceredo ;
 	var $_post_removerec ;
@@ -58,12 +62,11 @@ class webphoto_admin_redothumbs extends webphoto_edit_base
 	var $_cfg_height       ;
 	var $_cfg_use_pathinfo ;
 
-	var $_item_row ;
-
-	var $_DEFAULT_SIZE = 10;
-	var $_MAX_SIZE     = 1000;
-	var $_GMAP_ZOOM    = _C_WEBPHOTO_GMAP_ZOOM ;
-	var $_IMAGE_MEDIUM = 'image';
+	var $_DEFAULT_SIZE  = 10;
+	var $_MAX_SIZE      = 1000;
+	var $_TMP_FILE_TIME = 86400 ;// 1 day
+	var $_GMAP_ZOOM     = _C_WEBPHOTO_GMAP_ZOOM ;
+	var $_IMAGE_MEDIUM  = 'image';
 
 	var $_THIS_FCT = 'redothumbs';
 	var $_THIS_URL = null;
@@ -86,6 +89,10 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 		=& webphoto_edit_cont_create::getInstance( $dirname , $trust_dirname );
 	$this->_middle_thumb_create_class 
 		=& webphoto_edit_middle_thumb_create::getInstance( $dirname , $trust_dirname );
+	$this->_jpeg_create_class   
+		=& webphoto_edit_jpeg_create::getInstance( $dirname , $trust_dirname );
+	$this->_pdf_create_class   
+		=& webphoto_edit_pdf_create::getInstance( $dirname , $trust_dirname );
 	$this->_icon_build_class 
 		=& webphoto_edit_icon_build::getInstance( $dirname , $trust_dirname );
 	$this->_image_create_class 
@@ -221,7 +228,8 @@ function _submit( $param )
 	$this->_post_resize    = $param['resize'];
 	$this->_post_exif      = $param['exif'];
 
-	$item_rows = $this->_item_create_class->get_rows_all_asc( $post_size, $post_start );
+	$item_rows = $this->_item_handler->get_rows_all_asc( 
+		$post_size, $post_start );
 
 	$counter = 0 ;
 
@@ -240,15 +248,13 @@ function _item_exec( $item_row )
 {
 	$this->set_msg_array( $this->_build_msg_title( $item_row ) ) ;
 
-	$this->_item_row = $item_row ;
-
 	$item_id   = $item_row['item_id'] ;
 	$item_ext  = $item_row['item_ext'] ;
 	$item_kind = $item_row['item_kind'] ;
 	$item_exif = $item_row['item_exif'] ;
 
-	$cont_row  = $this->_get_cont_row(  false ) ;
-	$thumb_row = $this->_get_thumb_row( false ) ;
+	$cont_row  = $this->_get_cont_row(  $item_id, false ) ;
+	$thumb_row = $this->_get_thumb_row( $item_id, false ) ;
 
 	$is_none  = false;
 	$is_image = false;
@@ -312,76 +318,48 @@ function _item_exec( $item_row )
 		}
 	}
 
-	// Check if the file is not image
-	if ( ! $is_image ) {
-		$this->_update_non_image_type( $item_row, $thumb_row );
-		return;
-	}
-
 	// --- nomal image ---
 
+	if ( $is_image ) {
+
 	// get exif
-	if ( $this->_check_update_exif( $item_exif ) ) {
-		$ret = $this->_update_exif( $item_id );
-		if ( !$ret ) {
-			return;
+		if ( $this->_check_update_exif( $item_exif ) ) {
+			$ret = $this->_update_exif( $item_id );
+			if ( !$ret ) {
+				return;
+			}
 		}
-	}
 
 	// Size of main photo
-	$image_param = $this->_get_cont_imagesize( $cont_row ) ;
-	if ( ! is_array($image_param) ) {
-		return;
-	}
-
-	if ( $this->_check_cont_resize( $image_param ) ) {
-		$cont_row = $this->_update_cont_resize() ;
-		if ( ! is_array($cont_row) ) {
+		$image_param = $this->_get_cont_imagesize( $cont_row ) ;
+		if ( ! is_array($image_param) ) {
 			return;
 		}
-	}
+
+		if ( $this->_check_cont_resize( $image_param ) ) {
+			$cont_row = $this->_update_cont_resize( $item_id ) ;
+			if ( ! is_array($cont_row) ) {
+				return;
+			}
+		}
 
 	// Check and repair record of the photo if necessary
-	if ( $this->_check_cont_image_size( $cont_row ) ) {
-		$cont_row = $this->_update_cont_image_size();
-		if ( ! is_array($cont_row) ) {
-			return;
+		if ( $this->_check_cont_image_size( $cont_row ) ) {
+			$cont_row = $this->_update_cont_image_size( $item_id );
+			if ( ! is_array($cont_row) ) {
+				return;
+			}
 		}
+
 	}
 
 // --- thumb ---
-	$ret = $this->_exec_update_thumb( $item_id );
-	switch( $ret ) 
-	{
-		case _C_WEBPHOTO_ERR_DB : 
-			break ;
+	if ( $this->_check_update_thumb( $item_id ) ) {
+		$this->_update_thumb( $item_id, $is_image );
+	}
 
-		case _C_WEBPHOTO_IMAGE_READFAULT : 
-			$this->set_msg_array( _AM_WEBPHOTO_FAILEDREADING ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_CREATED : 
-		case _C_WEBPHOTO_IMAGE_RESIZE :
-			$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_COPIED : 
-			$this->set_msg_array( _AM_WEBPHOTO_BIGTHUMBS ) ;
-			break ;
-
-		case _C_WEBPHOTO_IMAGE_SKIPPED : 
-			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
-			break ;
-
-		case _C_WEBPHOTO_ERR_GET_IMAGE_SIZE : 
-			break ;
-
-		default : 
-
-// BUG: Undefined variable: retocde
-			$this->set_msg_array( 'unexpect return code '. $ret ) ;
-
-			break ;
+	if ( $this->_check_update_icon( $item_id ) ) {
+		$this->_update_icon( $item_id );
 	}
 
 	return ;
@@ -409,24 +387,12 @@ function _build_msg_title( $item_row )
 
 function _check_remove_all_files( $cont_row )
 {
-	if ( !is_array($cont_row) ) {
-		if ( $this->_cfg_allownoimage ) {
-			return false ;	// allow no image
-		}
-		return true ;
+	if ( $this->_cfg_allownoimage ) {
+		return false ;	// allow no image
 	}
 
-	$cont_path = $cont_row['file_path'];
-	if ( empty($cont_path) ) {
-		return true ;
-	}
-
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
-	if ( ! $this->check_file( $cont_file ) ) {
-		return true ;
-	}
-
-	return false ;
+	$check = $this->_exists_full_path_by_row( $cont_row );
+	return !$check ;
 }
 
 function _remove_all_files( $item_row )
@@ -456,10 +422,10 @@ function _update_cont_filesize( $cont_row )
 {
 	$cont_path = $cont_row['file_path'];
 	$cont_size = $cont_row['file_size'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
+	$cont_full = $cont_row['full_path'];
 
 	$row_update              = $cont_row ;
-	$row_update['file_size'] = filesize( $cont_file );
+	$row_update['file_size'] = filesize( $cont_full );
 
 	$ret = $this->_update_file( $row_update );
 	if ( !$ret ) {
@@ -470,42 +436,62 @@ function _update_cont_filesize( $cont_row )
 	return $row_update ;
 }
 
-function _update_non_image_type( $item_row, $thumb_row )
+function _check_update_icon( $item_id )
 {
-	$this->set_msg_array( ' non-image type ' ) ;
-
-	if ( $this->_exist_thumb_icon( $item_row, $thumb_row ) ) {
-		$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
-		return true;
+	$item_row = $this->get_item_row_by_id( $item_id );
+	if ( $this->_exist_thumb_icon( $item_row ) ) {
+		return false;
 	}
-
-	$item_row = $this->_icon_build_class->build_row_icon( $item_row );
-	return $this->_update_item_by_row( $item_row );
+	return true;
 }
 
-function _exist_thumb_icon( $item_row, $thumb_row )
+function _update_icon( $item_id )
 {
-	$item_external_thumb = $item_row['item_external_thumb'] ;
-	$item_icon_name      = $item_row['item_icon_name'] ;
+	$item_row = $this->get_item_row_by_id( $item_id );
+	$item_row = $this->_icon_build_class->build_row_icon( $item_row );
 
-	$thumb_file = null;
-	if ( is_array($thumb_row) ) {
-		$thumb_path = $thumb_row['file_path'];
-		$thumb_file = XOOPS_ROOT_PATH . $thumb_path;
+	$ret = $this->_update_item_by_row( $item_row );
+	if ( $ret ) {
+		$this->set_msg_array( ' update icon ' ) ;
 	}
+	return $ret;
+}
 
-	$icon_file = $this->_ROOT_EXTS_DIR .'/'. $item_icon_name ;
-
-	if ( $thumb_file && $this->check_file( $thumb_file ) ) {
+function _exist_thumb_icon( $item_row )
+{
+	if ( $this->_exist_thumb( $item_row ) ) {
 		return true;
 	}
+	if ( $this->_exist_icon( $item_row ) ) {
+		return true;
+	}
+	if ( $this->_exist_external_thumb( $item_row ) ) {
+		return true;
+	}
+	return false;
+}
+
+function _exist_thumb( $item_row )
+{
+	return $this->_check_file_by_itemrow_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+}
+
+function _exist_icon( $item_row )
+{
+	$item_icon_name = $item_row['item_icon_name'] ;
+	$icon_file = $this->_ROOT_EXTS_DIR .'/'. $item_icon_name ;
 	if ( $item_icon_name && $this->check_file( $icon_file ) ) {
 		return true;
 	}
-	if ( $item_external_thumb ) {
+	return false;
+}
+
+function _exist_external_thumb( $item_row )
+{
+	if ( $item_row['item_external_thumb'] ) {
 		return true;
 	}
-
 	return false;
 }
 
@@ -522,12 +508,11 @@ function _check_update_exif( $item_exif )
 
 function _update_exif( $item_id )
 {
-	$cont_row  = $this->_get_cont_row() ;
-	$cont_path = $cont_row['file_path'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
-
 	$flag = null;
-	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
+	$item_row = $this->get_item_row_by_id( $item_id );
+
+	$cont_file = $this->_get_file_by_itemrow_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_CONT );
 
 	$param = $this->_exif_class->build_row_exif( $item_row, $cont_file );
 	if ( isset( $param['row'] ) ) {
@@ -546,10 +531,9 @@ function _update_exif( $item_id )
 
 function _get_cont_imagesize( $cont_row )
 {
-	$cont_path = $cont_row['file_path'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
+	$cont_full = $cont_row['full_path'];
 
-	$image_param = $this->_get_image_param( $cont_file ) ;
+	$image_param = $this->_get_image_param( $cont_full ) ;
 	if ( !is_array($image_param) ) {
 		return false ;
 	}
@@ -583,10 +567,9 @@ function _check_cont_image_size( $cont_row )
 {
 	$cont_width  = $cont_row['file_width'];
 	$cont_height = $cont_row['file_height'];
-	$cont_path   = $cont_row['file_path'];
-	$cont_file   = XOOPS_ROOT_PATH . $cont_path;
+	$cont_full   = $cont_row['full_path'];
 
-	$image_param = $this->_get_image_param( $cont_file ) ;
+	$image_param = $this->_get_image_param( $cont_full ) ;
 	if ( !is_array($image_param) ) {
 		return false ;	// no action
 	}
@@ -603,21 +586,20 @@ function _check_cont_image_size( $cont_row )
 	return false;
 }
 
-function _update_cont_resize()
+function _update_cont_resize( $item_id )
 {
-	$cont_row = $this->_get_cont_row();
+	$cont_row = $this->_get_cont_row( $item_id );
 	if ( !is_array($cont_row) ) {
 		return false ;
 	}
 
-	$cont_path = $cont_row['file_path'];
+	$cont_full = $cont_row['full_path'];
 	$cont_ext  = $cont_row['file_ext'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
 	$tmp_file = $this->_TMP_DIR.'/'.uniqid('tmp_').'.'.$cont_ext ;
 	$this->unlink_file( $tmp_file ) ;
 
-	$this->rename_file( $cont_file , $tmp_file ) ;
+	$this->rename_file( $cont_full , $tmp_file ) ;
 
 	$this->_image_create_class->cmd_resize_rotate( 
 		$src_file, $dst_file, $this->_cfg_width, $this->_cfg_height );
@@ -625,7 +607,7 @@ function _update_cont_resize()
 	$image_param = $this->_get_image_param( $cont_file ) ;
 	if ( !is_array($image_param) ) {
 // recovery
-		$this->rename_file( $tmp_file, $cont_file ) ;
+		$this->rename_file( $tmp_file, $cont_full ) ;
 		$this->set_msg_array( 'resize failed ', true );
 		return false ;
 	}
@@ -647,15 +629,13 @@ function _update_cont_resize()
 	return $cont_row ;
 }
 
-function _update_cont_image_size()
+function _update_cont_image_size( $item_id )
 {
-	$cont_row = $this->_get_cont_row();
-	if ( !is_array($cont_row) ) {
+	$cont_file = $this->_get_file_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( empty($cont_file) ) {
 		return false ;
 	}
-
-	$cont_path = $cont_row['file_path'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
 
 	$image_param = $this->_get_image_param( $cont_file ) ;
 	if ( !is_array($image_param) ) {
@@ -677,82 +657,315 @@ function _update_cont_image_size()
 	return $cont_row ;
 }
 
-function _exec_update_thumb( $item_id )
+function _check_update_thumb( $item_id )
 {
-	$thumb_file = null ;
-
-	$cont_row = $this->_get_cont_row();
-	if ( !is_array($cont_row) ) {
-		return _C_WEBPHOTO_IMAGE_SKIPPED ;
-	}
-
-	$cont_path = $cont_row['file_path'];
-	$cont_ext  = $cont_row['file_ext'];
-	$cont_file = XOOPS_ROOT_PATH . $cont_path;
-
-	$thumb_row = $this->_get_thumb_row( false );
-	if ( is_array($thumb_row) ) {
-		$thumb_path = $thumb_row['file_path'];
-		$thumb_file = XOOPS_ROOT_PATH . $thumb_path;
-	}
+	$check = $this->_check_file_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 // exist thumb
-	if ( $thumb_file && $this->check_file( $thumb_file ) ) {
-		$image_param = $this->_get_image_param( $cont_file ) ;
-		if ( !is_array($image_param) ) {
-			return _C_WEBPHOTO_ERR_GET_IMAGE_SIZE ;
-		}
-
-		$thumb_w = $image_param['width'] ;
-		$thumb_h = $image_param['height'] ;
-		$this->set_msg_array( $thumb_w .' x '. $thumb_h .' .. ' ) ;
-
+	if ( $check ) {
 		if ( $this->_post_forceredo ) {
-			return $this->_create_update_thumb( $item_id, $cont_file, $cont_ext );
+			return true;
 		}
 
 // no thumb
 	} else {
 		if ( $this->_cfg_makethumb ) {
-			return $this->_create_update_thumb( $item_id, $cont_file, $cont_ext );
+			return true;
 		}
 	}
 
-	return _C_WEBPHOTO_IMAGE_SKIPPED ;
+	return false ;
 }
 
-function _create_update_thumb( $item_id, $cont_file, $cont_ext )
+function _update_thumb( $item_id, $is_image )
 {
-	$thumb_row = $this->_get_thumb_row() ;
+	$ret =$this->_create_update_jpeg_thumb( 
+		$item_id, $is_image );
 
-	$param = array(
+	switch( $ret ) 
+	{
+		case _C_WEBPHOTO_ERR_DB : 
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_READFAULT : 
+			$this->set_msg_array( _AM_WEBPHOTO_FAILEDREADING ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_CREATED :
+		case _C_WEBPHOTO_IMAGE_RESIZE :
+			$this->set_msg_array( _AM_WEBPHOTO_CREATEDTHUMBS ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_COPIED : 
+			$this->set_msg_array( _AM_WEBPHOTO_BIGTHUMBS ) ;
+			break ;
+
+		case _C_WEBPHOTO_IMAGE_SKIPPED : 
+			$this->set_msg_array( _AM_WEBPHOTO_SKIPPED ) ;
+			break ;
+
+		case _C_WEBPHOTO_ERR_GET_IMAGE_SIZE : 
+			break ;
+
+		case _C_WEBPHOTO_ERR_CREATE_THUMB ;
+			$this->set_msg_array( ' NOT create thumb, ' ) ;
+			break ;
+
+		default : 
+
+// BUG: Undefined variable: retocde
+			$this->set_msg_array( 'unexpect return code '. $ret ) ;
+
+			break ;
+	}
+
+	return true;
+}
+
+function _create_update_jpeg_thumb( $item_id, $is_image )
+{
+	$cont_file = $this->_get_file_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_CONT );
+	if ( empty($cont_file) ) {
+		return _C_WEBPHOTO_IMAGE_SKIPPED;
+	}
+
+	$cont_ext = $this->parse_ext( $cont_file );
+
+	$param_pdf = array(
 		'item_id'  => $item_id ,
 		'src_file' => $cont_file ,
 		'src_ext'  => $cont_ext ,
 	);
 
-	$thumb_param = $this->_middle_thumb_create_class->create_thumb_param( $param );
+	$param_jpeg = array(
+		'item_id'  => $item_id ,
+		'src_file' => $cont_file ,
+		'src_ext'  => $cont_ext ,
+	);
 
-// update recoed
-	if ( is_array($thumb_row) ) {
-		$ret2 = $this->_update_file_by_param( $thumb_row, $thumb_param ) ;
-		if ( !$ret2 ) {
-			return _C_WEBPHOTO_ERR_DB ;
-		}
+	$pdf_row = $this->_create_pdf_by_param( $param_pdf ) ;
+	if ( is_array($pdf_row) ) {
+		$param_jpeg['pdf_file'] = $pdf_row['full_path'] ;
 
-// new recoed
+	} elseif ( $pdf_row < 0  ) {
+		return $pdf_row ;
+	}
+
+	$jpeg_row = $this->_create_jpeg_by_param( $param_jpeg );
+	if ( is_array($jpeg_row) ) {
+		$src_file = $jpeg_row['full_path'] ;
+		$src_ext  = $jpeg_row['file_ext'] ;
+
+	} elseif ( $jpeg_row < 0  ) {
+		return $jpeg_row ;
+
+// image cont
+	} elseif ( $is_image ) {
+		$src_file = $cont_file ;
+		$src_ext  = $cont_ext ;
+
+// no image
 	} else {
-		$newid = $this->_insert_file_by_param( $item_id, $thumb_param );
-		if ( !$newid ) {
-			return _C_WEBPHOTO_ERR_DB ;
-		}
-		$ret3 = $this->_update_item_thumbid( $item_id, $newid );
-		if ( !$ret3 ) {
-			return _C_WEBPHOTO_ERR_DB ;
-		}
+		return _C_WEBPHOTO_IMAGE_SKIPPED ;
+	}
+
+	$param_thumb = array(
+		'item_id'  => $item_id ,
+		'src_file' => $src_file ,
+		'src_ext'  => $src_ext ,
+	);
+
+	$ret = $this->_create_update_thumb_by_param( $param_thumb );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$ret = $this->_create_update_middle_by_param( $param_thumb );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$ret = $this->_create_update_small_by_param( $param_thumb );
+	if ( $ret < 0 ) {
+		return $ret ;
+	}
+
+	$ret = $this->_remove_item_icon( $item_id );
+	if ( $ret < 0 ) {
+		return $ret ;
 	}
 
 	return _C_WEBPHOTO_IMAGE_CREATED ;
+}
+
+function _create_pdf_by_param( $param )
+{
+	$item_id = $param['item_id'];
+	$row = $this->_get_file_row_after_check_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_PDF );
+	if ( is_array($row) ) {
+		return $row;
+	}
+
+	$image_param = $this->_pdf_create_class->create_param( $param );
+	if ( !is_array($image_param) ){
+		return 0;
+	}
+
+	$image_param['width']  = 0;
+	$image_param['height'] = 0;
+
+	$ret = $this->_create_update_file_by_param( 
+		$item_id, $image_param, _C_WEBPHOTO_FILE_KIND_PDF );
+	if ( $ret < 0  ) {
+		return $ret ;
+	}
+
+	$this->_set_msg_created( $ret, ' create pdf ', ' update pdf ' );
+
+	$row = $this->_get_file_row_after_check_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_PDF );
+	if ( is_array($row) ) {
+		return $row;
+	}
+
+	return 0 ;
+}
+
+function _create_jpeg_by_param( $param )
+{
+	$item_id = $param['item_id'];
+	$row = $this->_get_file_row_after_check_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_JPEG );
+	if ( is_array($row) ) {
+		return $row;
+	}
+
+	$image_param = $this->_jpeg_create_class->create_param( $param );
+	$ret = $this->_create_update_file_by_param( 
+		$item_id, $image_param, _C_WEBPHOTO_FILE_KIND_JPEG );
+	if ( $ret < 0  ) {
+		return $ret ;
+	}
+
+	$this->_set_msg_created( $ret, ' create jpeg ', ' update jpeg ' );
+
+	$row = $this->_get_file_row_after_check_by_itemid_kind( 
+		$item_id, _C_WEBPHOTO_FILE_KIND_JPEG );
+	if ( is_array($row) ) {
+		return $row;
+	}
+
+	return 0 ;
+}
+
+function _create_update_thumb_by_param( $param )
+{
+	$item_id = $param['item_id'];
+	$image_param = $this->_middle_thumb_create_class->create_thumb_param( $param );
+	if ( !is_array($image_param) ) {
+		return _C_WEBPHOTO_ERR_CREATE_THUMB;
+	}
+
+	$ret = $this->_create_update_file_by_param(
+		$item_id, $image_param, _C_WEBPHOTO_FILE_KIND_THUMB );
+
+	$this->_set_msg_created( $ret, ' create thumb ', ' update thumb ');
+	return $ret ;
+}
+
+function _create_update_middle_by_param( $param )
+{
+	$item_id = $param['item_id'];
+	$image_param = $this->_middle_thumb_create_class->create_middle_param( $param );
+	if ( !is_array($image_param) ) {
+		return _C_WEBPHOTO_ERR_CREATE_THUMB;
+	}
+
+	$ret = $this->_create_update_file_by_param(
+		$item_id, $image_param, _C_WEBPHOTO_FILE_KIND_MIDDLE );
+
+	$this->_set_msg_created( $ret, ' create middle ', ' update middle ' );
+	return $ret ;
+}
+
+function _create_update_small_by_param( $param )
+{
+	$item_id = $param['item_id'];
+	$image_param = $this->_middle_thumb_create_class->create_small_param( $param );
+	if ( !is_array($image_param) ) {
+		return _C_WEBPHOTO_ERR_CREATE_THUMB;
+	}
+
+	$ret = $this->_create_update_file_by_param(
+		$item_id, $image_param, _C_WEBPHOTO_FILE_KIND_SMALL );
+
+	$this->_set_msg_created( $ret, ' create small ', ' update small ' );
+	return $ret ;
+}
+
+function _create_update_file_by_param( $item_id, $param, $kind )
+{
+	if ( !is_array($param) ) {
+		return 0;	// no action
+	}
+
+	$item_row  = $this->get_item_row_by_id( $item_id );
+	$file_row  = $this->get_file_row_by_kind( $item_row, $kind );
+	$item_name = $this->build_item_name_by_file_kind( $kind );
+
+// update recoed
+	if ( is_array($file_row) ) {
+
+// remove old file
+		$file = $this->_get_full_path_by_row( $file_row );
+		$this->unlink_file( $file );
+
+		$ret = $this->_update_file_by_param( $file_row, $param ) ;
+		if ( !$ret ) {
+			return _C_WEBPHOTO_ERR_DB ;
+		}
+		return 2;	// updated
+
+// new recoed
+	} else {
+		$newid = $this->_insert_file_by_param( $item_id, $param );
+		if ( !$newid ) {
+			return _C_WEBPHOTO_ERR_DB ;
+		}
+		$ret = $this->_update_item_file_id( 
+			$item_id, $newid, $item_name );
+		if ( !$ret ) {
+			return _C_WEBPHOTO_ERR_DB ;
+		}
+		return 1;	// created
+	}
+
+	return 0 ;	// dummy
+}
+
+function _set_msg_created( $ret, $msg1, $msg2 )
+{
+	if ( $ret == 1 ) {
+		$this->set_msg_array( $msg1 ) ;
+	} elseif ( $ret == 2 ) {
+		$this->set_msg_array( $msg2 ) ;
+	}
+}
+
+function _remove_item_icon( $item_id )
+{
+	$item_row = $this->get_item_row_by_id( $item_id );
+	$item_row['item_icon_name']   = '';
+	$item_row['item_icon_width']  = 0;
+	$item_row['item_icon_height'] = 0;
+	$ret = $this->_update_item_by_row( $item_row );
+	if ( !$ret ) {
+		return _C_WEBPHOTO_ERR_DB ;
+	}
+	return 0;
 }
 
 function check_file( $file )
@@ -794,10 +1007,10 @@ function _get_image_param( $file, $flag_msg=true )
 //---------------------------------------------------------
 // update item
 //---------------------------------------------------------
-function _update_item_thumbid( $item_id, $thumb_id )
+function _update_item_file_id( $item_id, $file_id, $file_id_name )
 {
-	$row = $this->_item_create_class->get_row_by_id( $item_id );
-	$row['item_file_id_2'] = $thumb_id ;
+	$row = $this->get_item_row_by_id( $item_id );
+	$row[ $file_id_name ] = $file_id ;
 
 	$ret = $this->format_and_update_item( $row );
 	if ( !$ret ) {
@@ -810,7 +1023,7 @@ function _update_item_thumbid( $item_id, $thumb_id )
 
 function _update_item_by_param( $item_id, $param )
 {
-	$item_row = $this->_item_create_class->get_row_by_id( $item_id );
+	$item_row = $this->get_item_row_by_id( $item_id );
 	$item_row = array_merge( $item_row, $param );
 	return $this->_update_item_by_row( $item_row );
 }
@@ -827,32 +1040,100 @@ function _update_item_by_row( $item_row )
 }
 
 //---------------------------------------------------------
+// file handler
+//---------------------------------------------------------
+function _get_cont_row( $item_id, $flag_msg=true )
+{
+	return $this->_get_file_row_by_itemid_kind( 
+		$item_id ,
+		_C_WEBPHOTO_FILE_KIND_CONT , 
+		' cannot get cont row, ', 
+		$flag_msg );
+}
+
+function _get_thumb_row( $item_id, $flag_msg=true )
+{
+	return $this->_get_file_row_by_itemid_kind( 
+		$item_id ,
+		_C_WEBPHOTO_FILE_KIND_THUMB, 
+		' cannot get thumb row, ', 
+		$flag_msg );
+}
+
+function _check_file_by_itemid_kind( $item_id, $kind )
+{
+	$file_row = $this->_get_file_row_by_itemid_kind( $item_id, $kind );
+	return $this->_exists_full_path_by_row( $file_row );
+}
+
+function _get_file_row_after_check_by_itemid_kind( $item_id, $kind )
+{
+	$file_row = $this->_get_file_row_by_itemid_kind( $item_id, $kind );
+	$exists   = $this->_exists_full_path_by_row( $file_row );
+	if ( $exists ) {
+		return $file_row;
+	}
+	return false;
+}
+
+function _get_file_by_itemid_kind( $item_id, $kind )
+{
+	$file_row = $this->_get_file_row_by_itemid_kind( $item_id, $kind );
+	return $this->_get_full_path_by_row( $file_row );
+}
+
+function _get_file_row_by_itemid_kind( $item_id, $kind, $msg=null, $flag_msg=false )
+{
+	$file_id = $this->_get_file_id_by_itemid_kind( $item_id, $kind );
+	if ( $file_id == 0 ) {
+		return false ;
+	}
+
+	$file_row = $this->_get_file_extend_row_by_fileid( $file_id );
+	if ( !is_array($file_row) ) {
+		if ( $flag_msg ) {
+			$this->build_set_msg( $msg, true ) ;
+		}
+		return false ;
+	}
+
+	return $file_row;
+}
+
+function _get_file_id_by_itemid_kind( $item_id, $kind )
+{
+	$item_row = $this->get_item_row_by_id( $item_id );
+	if ( !is_array($item_row) ) {
+		return false ;
+	}
+
+	return $this->build_value_fileid_by_kind( $item_row, $kind );
+}
+
+function _check_file_by_itemrow_kind( $item_row, $kind )
+{
+	$file_row = $this->get_file_row_by_kind( $item_row, $kind );
+	return $this->_exists_full_path_by_row( $file_row );
+}
+
+function _get_file_extend_row_by_fileid( $file_id )
+{
+	return $this->_file_handler->get_extend_row_by_id( $file_id );
+}
+
+function _get_full_path_by_row( $file_row )
+{
+	return $this->_file_handler->get_full_path_by_row( $file_row );
+}
+
+function _exists_full_path_by_row( $file_row )
+{
+	return $this->_file_handler->exists_full_path_by_row( $file_row );
+}
+
+//---------------------------------------------------------
 // insert update file
 //---------------------------------------------------------
-function _get_cont_row( $flag_msg=true )
-{
-	$row = $this->get_file_row_by_kind( $this->_item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-	if ( !is_array($row) ) {
-		if ( $flag_msg ) {
-			$this->build_set_msg( ' cannot get cont row, ', true ) ;
-		}
-		return false ;
-	}
-	return $row;
-}
-
-function _get_thumb_row( $flag_msg=true )
-{
-	$row = $this->get_file_row_by_kind( $this->_item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
-	if ( !is_array($row) ) {
-		if ( $flag_msg ) {
-			$this->build_set_msg( ' cannot get thumb row, ', true ) ;
-		}
-		return false ;
-	}
-	return $row;
-}
-
 function _insert_file_by_param( $item_id, $param )
 {
 	$duration = isset($param['duration']) ? intval($param['duration']) : 0 ;
@@ -925,6 +1206,48 @@ function _update_file( $row )
 		return false ;
 	}
 	return true ;
+}
+
+//---------------------------------------------------------
+// tmp file
+//---------------------------------------------------------
+function clear_tmp_files_in_tmp_dir()
+{
+	return $this->clear_tmp_files( 
+		$this->_TMP_DIR, _C_WEBPHOTO_UPLOADER_PREFIX, $this->_TMP_FILE_TIME );
+}
+
+function clear_tmp_files( $dir_path , $prefix, $time=0 )
+{
+	$files = $this->_utility_class->get_files_in_dir( $dir_path );
+	if ( !is_array($files) ) {
+		return 0 ;
+	}
+
+	$prefix_len = strlen( $prefix ) ;
+	$count = 0 ;
+	$stamp = time() - $time;
+
+	foreach( $files as $file ) 
+	{
+		if( strncmp( $file , $prefix , $prefix_len ) !== 0 ) {
+			continue;
+		}
+
+		$file_full = $dir_path .'/'. $file ;
+
+		if ( ( $time > 0 ) && 
+             ( $stamp < filemtime( $file_full ) ) ) {
+				continue;
+		}
+
+		$ret = $this->unlink_file( $file_full );
+		if ( $ret ){ 
+			$count ++ ;
+		}
+	}
+
+	return $count ;
 }
 
 //---------------------------------------------------------

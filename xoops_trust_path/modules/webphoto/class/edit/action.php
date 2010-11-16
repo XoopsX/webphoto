@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.16 2010/10/08 15:53:16 ohwada Exp $
+// $Id: action.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_file_extend_row_by_kind()
 // 2010-10-01 K.OHWADA
 // webphoto_edit_file_action
 // 2010-03-18 K.OHWADA
@@ -445,31 +447,30 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 	$item_ext  = $item_row['item_ext'];
 	$item_kind = $item_row['item_kind'];
 
-	$cont_file  = null ;
-	$flash_file = null ;
+	$cont_full  = null ;
+	$flash_full = null ;
 	$param      = null ;
 
-	$cont_row = $this->get_file_row_by_kind( 
+	$cont_row = $this->get_file_extend_row_by_kind( 
 		$item_row, _C_WEBPHOTO_FILE_KIND_CONT ) ;
 	if ( is_array($cont_row) ) {
 		$cont_path     = $cont_row['file_path'];
 		$cont_width    = $cont_row['file_width'];
 		$cont_height   = $cont_row['file_height'];
 		$cont_duration = $cont_row['file_duration'];
-		$cont_file     = XOOPS_ROOT_PATH . $cont_path ;
+		$cont_full     = $cont_row['full_path'];
 
 		$param = $item_row ;
-		$param['src_file'] = $cont_file ;
+		$param['src_file'] = $cont_full ;
 		$param['src_kind'] = $item_kind ;
 		$param['src_ext']  = $item_ext  ;
 
 	}
 
-	$flash_row = $this->get_file_row_by_kind( 
+	$flash_row = $this->get_file_extend_row_by_kind( 
 		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	if ( is_array($flash_row) ) {
-		$flash_path = $flash_row['file_path'];
-		$flash_file = XOOPS_ROOT_PATH . $flash_path ;
+		$flash_full = $flash_row['full_path'];
 	}
 
 	$flash_tmp_file = $this->_TMP_DIR .'/tmp_' . uniqid( $item_id.'_' ) ;
@@ -477,7 +478,7 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 // create flash
 	if ( $flag_flash && is_array($param) ) {
 // save file
-		$this->rename_file( $flash_file, $flash_tmp_file );
+		$this->rename_file( $flash_full, $flash_tmp_file );
 
 		$flash_param = $this->create_flash_param( $param );
 
@@ -487,7 +488,7 @@ function video_redo_exec( $item_row, $flag_thumb, $flag_flash )
 
 		} else {
 // recovery file if fail
-			$this->rename_file( $flash_tmp_file, $flash_file );
+			$this->rename_file( $flash_tmp_file, $flash_full );
 		}
 	}
 

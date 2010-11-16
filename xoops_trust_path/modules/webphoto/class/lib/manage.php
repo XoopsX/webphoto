@@ -1,5 +1,5 @@
 <?php
-// $Id: manage.php,v 1.4 2008/10/30 00:22:49 ohwada Exp $
+// $Id: manage.php,v 1.5 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// Undefined variable: id 
 // 2008-10-01 K.OHWADA
 // build_manage_list_menu()
 // 2008-08-01 K.OHWADA
@@ -466,6 +468,10 @@ function _manage_edit_exec( $row )
 {
 	$ret = $this->_manage_handler->update( $row );
 	if ( !$ret ) {
+
+// Undefined variable: id 
+		$id   = $this->get_manage_id( $row );
+
 		$msg  = 'DB error <br />';
 		$msg .= $this->_manage_handler->get_format_error();
 		redirect_header( $this->build_manage_form_url( $id ), $this->_MANAGE_TIME_FAIL, $msg );
@@ -497,9 +503,9 @@ function _manage_delete_get_row()
 
 function _manage_delete_exec( $row )
 {
-	$id  = $this->get_manage_id( $row );
-	$ret = $this->_manage_handler->delete( $row );
+    $ret = $this->_manage_handler->delete( $row );
 	if ( !$ret ) {
+		$id   = $this->get_manage_id( $row );
 		$msg  = 'DB error <br />';
 		$msg .= $this->_manage_handler->get_format_error();
 		redirect_header( $this->build_manage_form_url( $id ), $this->_MANAGE_TIME_FAIL, $msg );

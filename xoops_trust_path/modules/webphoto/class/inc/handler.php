@@ -1,5 +1,5 @@
 <?php
-// $Id: handler.php,v 1.17 2010/06/06 10:03:01 ohwada Exp $
+// $Id: handler.php,v 1.18 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// file_kind_to_item_name()
 // 2010-06-06 K.OHWADA
 // is_embed_kind()
 // 2010-05-11 K.OHWADA
@@ -189,6 +191,19 @@ function build_show_icon_image( $item_row )
 //---------------------------------------------------------
 // file handler
 //---------------------------------------------------------
+function get_file_extend_row_by_kind( $item_row, $kind )
+{
+	$id = $this->get_file_id_by_kind( $item_row, $kind );
+	if ( $id > 0 ) {
+		$row = $this->get_file_row_by_id( $id );
+		if ( is_array($row) ) {
+			$row['file_full'] = $this->build_full_path( $row['file_path'] );
+			return $row;
+		}
+	}
+	return false ;
+}
+
 function get_file_row_by_kind( $item_row, $kind )
 {
 	$id = $this->get_file_id_by_kind( $item_row, $kind );
@@ -200,11 +215,17 @@ function get_file_row_by_kind( $item_row, $kind )
 
 function get_file_id_by_kind( $item_row, $kind )
 {
-	$name = 'item_file_id_'.$kind;
+	$name = $this->file_kind_to_item_name( $kind );
 	if ( isset( $item_row[ $name ] ) ) {
 		return  $item_row[ $name ] ;
 	}
 	return false ;
+}
+
+function file_kind_to_item_name( $kind )
+{
+	$str = 'item_file_id_'. $kind ;
+	return $str;
 }
 
 function get_file_row_by_id( $file_id )
@@ -225,13 +246,28 @@ function build_show_file_image( $file_row )
 		$path   = $file_row['file_path'] ;
 		$width  = $file_row['file_width'] ;
 		$height = $file_row['file_height'] ;
-		if ( $path ) {
-// not need '/'
-			$url = XOOPS_URL . $path ;
-		}
+		$url    = $this->build_full_url( $path );
 	}
 
 	return array( $url, $width, $height );
+}
+
+function build_full_path( $path )
+{
+	if ( $path ) {
+		$str = XOOPS_ROOT_PATH . $path ;
+		return $str;
+	}
+	return null;
+}
+
+function build_full_url( $path )
+{
+	if ( $path ) {
+		$str = XOOPS_URL . $path ;
+		return $str;
+	}
+	return null;
 }
 
 //---------------------------------------------------------

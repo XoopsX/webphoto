@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.28 2010/11/05 17:00:04 ohwada Exp $
+// $Id: base_this.php,v 1.29 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_item_name_by_file_kind()
 // 2010-11-03 K.OHWADA
 // webphoto_multibyte
 // 2010-10-01 K.OHWADA
@@ -483,36 +485,82 @@ function decode_uri_str( $str )
 //---------------------------------------------------------
 // item handler
 //---------------------------------------------------------
+function get_item_row_by_id( $item_id )
+{
+	return $this->_item_handler->get_row_by_id( $item_id );
+}
+
 function build_show_icon_image( $item_row )
 {
 	return $this->_item_handler->build_show_item_image( 
 		$item_row, $this->_ROOT_EXTS_URL );
 }
 
+function build_item_name_by_file_kind( $kind )
+{
+	return $this->_item_handler->build_name_fileid_by_kind( $kind );
+}
+
 //---------------------------------------------------------
 // file handler
 //---------------------------------------------------------
-function get_file_row_by_kind( $row, $kind )
+function build_file_full_path( $path )
 {
-	$file_id = $this->build_value_fileid_by_kind( $row, $kind );
+	return $this->_file_handler->build_full_path( $path );
+}
+
+function build_file_full_url( $path )
+{
+	return $this->_file_handler->build_full_url( $path );
+}
+
+function get_file_full_by_kind( $item_row, $kind )
+{
+	$file_row = $this->get_file_extend_row_by_kind( $item_row, $kind );
+	return $this->_file_handler->get_full_path_by_row( $file_row );
+}
+
+function get_file_row_by_kind( $item_row, $kind )
+{
+	$file_id = $this->build_value_fileid_by_kind( $item_row, $kind );
 	if ( $file_id > 0 ) {
-		return $this->_file_handler->get_row_by_id( $file_id );
+		return $this->_file_handler->get_extend_row_by_id( $file_id );
 	}
 	return null;
 }
 
-function get_cached_file_row_by_kind( $row, $kind )
+function get_file_extend_row_by_itemid_kind( $item_id, $kind )
 {
-	$file_id = $this->build_value_fileid_by_kind( $row, $kind );
+	$item_row = $this->get_item_row_by_id( $item_id );
+	return $this->get_file_extend_row_by_kind( $item_row, $kind );
+}
+
+function get_file_extend_row_by_kind( $item_row, $kind )
+{
+	$file_id = $this->build_value_fileid_by_kind( $item_row, $kind );
 	if ( $file_id > 0 ) {
-		return $this->_file_handler->get_cached_row_by_id( $file_id );
+		return $this->get_cached_file_extend_row_by_fileid( $file_id );
 	}
 	return null;
 }
 
-function build_value_fileid_by_kind( $row, $kind )
+function get_cached_file_extend_row_by_kind( $item_row, $kind )
 {
-	return $this->_item_handler->build_value_fileid_by_kind( $row, $kind );
+	$file_id = $this->build_value_fileid_by_kind( $item_row, $kind );
+	if ( $file_id > 0 ) {
+		return $this->get_cached_file_extend_row_by_fileid( $file_id );
+	}
+	return null;
+}
+
+function get_cached_file_extend_row_by_fileid( $file_id )
+{
+	return $this->_file_handler->get_cached_extend_row_by_id( $file_id );
+}
+
+function build_value_fileid_by_kind( $item_row, $kind )
+{
+	return $this->_item_handler->build_value_fileid_by_kind( $item_row, $kind );
 }
 
 function build_show_file_image( $file_row )
@@ -682,10 +730,15 @@ function is_photo_owner( $uid )
 //---------------------------------------------------------
 function unlink_path( $path )
 {
-	$file = XOOPS_ROOT_PATH . $path;
-	if ( $path && $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
+	$file = $this->build_file_full_path( $path );
+	if ( $this->check_file( $file ) ) {
 		unlink( $file );
 	}
+}
+
+function check_file( $file )
+{
+	return $this->_utility_class->check_file( $file );
 }
 
 // --- class end ---

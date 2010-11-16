@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.29 2010/10/08 15:53:16 ohwada Exp $
+// $Id: item_manager.php,v 1.30 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// file_id_to_item_name()
 // 2010-10-01 K.OHWADA
 // _file_delete()
 // 2010-03-18 K.OHWADA
@@ -481,7 +483,8 @@ function _modify_form()
 	$kind        = $item_row['item_kind'] ;
 	$title_s     = $this->sanitize( $item_row['item_title'] ) ;
 
-	$flash_row    = $this->get_cached_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
+	$flash_row    = $this->get_cached_file_extend_row_by_kind( 
+		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 	$flashvar_row = $this->_flashvar_handler->get_cached_row_by_id( $flashvar_id ) ;
 
 	$edit_url  = $this->_MODULE_URL .'/index.php?fct=edit&amp;photo_id='. $item_id ;
@@ -924,7 +927,7 @@ function _file_delete()
 	$this->_check_token_and_redirect();
 
 	$item_row  = $this->_get_item_row_or_redirect();
-	$item_name = 'item_file_id_'.$this->_file_delete_num;
+	$item_name = $this->_item_handler->file_id_to_item_name( $this->_file_delete_num ) ;
 	$ret = $this->file_delete_common( $item_row, $item_name );
 
 	$url = $this->_build_modify_form_url( $item_row['item_id'] );

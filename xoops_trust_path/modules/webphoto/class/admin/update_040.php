@@ -1,5 +1,5 @@
 <?php
-// $Id: update_040.php,v 1.5 2010/03/19 00:23:02 ohwada Exp $
+// $Id: update_040.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// build_random_file_node()
 // 2010-03-18 K.OHWADA
 // webphoto_edit_item_create
 // 2010-01-10 K.OHWADA
@@ -483,7 +485,7 @@ function _create_image_middle( $photo_row )
 	$cont_ext  = $photo_row['photo_cont_ext'] ;
 
 	$src_file  = XOOPS_ROOT_PATH . $cont_path ;
-	$node      = $this->_image_class->build_photo_node( $photo_id );
+	$node      = $this->build_random_file_node( $photo_id );
 	$name      = $node .'.'. $cont_ext ;
 	$path      = $this->_MIDDLES_PATH .'/'. $name;
 	$dst_file  = XOOPS_ROOT_PATH . $path ;

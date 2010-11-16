@@ -1,5 +1,5 @@
 <?php
-// $Id: imagemanager.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: imagemanager.php,v 1.10 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// get_file_extend_row_by_kind()
 // 2009-11-11 K.OHWADA
 // $trust_dirname 
 // 2009-03-19 K.OHWADA
@@ -167,8 +169,10 @@ function main()
 		$item_rows = $this->get_item_rows_for_imagemanager( $cat_id, $num , $start );
 		foreach( $item_rows as $item_row )
 		{
-			$cont_row  = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_CONT );
-			$thumb_row = $this->get_file_row_by_kind( $item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
+			$cont_row  = $this->get_file_extend_row_by_kind( 
+				$item_row, _C_WEBPHOTO_FILE_KIND_CONT );
+			$thumb_row = $this->get_file_extend_row_by_kind( 
+				$item_row, _C_WEBPHOTO_FILE_KIND_THUMB );
 
 			if ( !is_array($cont_row) ) {
 				continue;
@@ -270,10 +274,13 @@ function _build_file_image( $file_row )
 	$path     = $file_row['file_path'] ;
 	$width    = $file_row['file_width'] ;
 	$height   = $file_row['file_height'] ;
+	$full_url = $file_row['full_url'] ;
+	$exists   = $file_row['full_path_exists'] ;
+
 	$tag_path = $this->_strip_slash_from_head( $path );
 
-	if ( $path ) {
-		$src  = XOOPS_URL . $path ;
+	if ( $full_url && $exists ) {
+		$src  = $full_url ;
 	} elseif ( $url ) {
 		$src = $url;
 	} else {

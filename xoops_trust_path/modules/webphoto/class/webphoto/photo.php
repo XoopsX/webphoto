@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.6 2010/11/04 02:23:19 ohwada Exp $
+// $Id: photo.php,v 1.7 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// full_path_exists
 // 2010-11-03 K.OHWADA
 // webphoto_uri_parse
 // 2010-10-01 K.OHWADA
@@ -453,11 +455,12 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 
 // if file exists
 	if ( is_array($file_row) ) {
-		$url   = $file_row['file_url'] ;
-		$ext   = $file_row['file_ext'] ;
-		$size  = $file_row['file_size'] ;
-		$path  = $file_row['file_path'] ;
-		$file  = XOOPS_ROOT_PATH .'/'. $path ;
+		$url    = $file_row['file_url'] ;
+		$ext    = $file_row['file_ext'] ;
+		$size   = $file_row['file_size'] ;
+		$path   = $file_row['file_path'] ;
+		$file   = $file_row['full_path'] ;
+		$exists = $file_row['full_path_exists'] ;
 
 // image and not download
 		if ( $this->is_image_ext( $ext ) && !$cont_download ) {
@@ -472,7 +475,7 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 			$show_img = true;
 		}
 
-		if ( $path && file_exists($file) ) {
+		if ( $exists && $file ) {
 			$url  = $base_url .'&item_id='. $item_id .'&file_kind='. $file_kind;
 
 			if ( $size > 0 ) {

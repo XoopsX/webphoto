@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.22 2010/10/10 11:02:10 ohwada Exp $
+// $Id: submit.php,v 1.23 2010/11/16 23:43:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-11-11 K.OHWADA
+// typo contiune -> continue
 // 2010-10-01 K.OHWADA
 // buiid_preview_embed()
 // 2010-06-06 K.OHWADA
@@ -296,8 +298,8 @@ function _submit_bulk()
 	$this->set_form_mode( 'bulk' );
 	$this->clear_msg_array();
 
-	$item_row = $this->create_item_row_by_post();
-	$post_title = $item_row['item_title'] ;
+	$item_row_crete = $this->create_item_row_by_post();
+	$post_title = $item_row_crete['item_title'] ;
 
 	$param = array(
 		'flag_video_single' => true ,
@@ -306,9 +308,11 @@ function _submit_bulk()
 	$filecount = 1 ;
 	for ( $i=1; $i <= $this->_MAX_PHOTO_FILE; $i++ )
 	{
+		$item_row   = $item_row_crete;
 		$field_name = 'file_'.$i;
 
-		$ret = $this->_upload_class->fetch_media( $field_name, $this->_FLAG_FETCH_ALLOW_ALL );
+		$ret = $this->_upload_class->fetch_media( 
+			$field_name, $this->_FLAG_FETCH_ALLOW_ALL );
 		if ( $ret < 0 ) {
 			$this->set_msg_array( $this->_upload_class->get_errors() );
 			contine; 
@@ -324,7 +328,7 @@ function _submit_bulk()
 		$file_media_name = $this->_upload_class->get_uploader_media_name();
 
 		if ( empty($file_tmp_name) ) {
-			contiune; 
+			continue; 
 		}
 
 		$item_row['item_title'] = $this->build_bulk_title( $post_title, $filecount );
@@ -335,9 +339,12 @@ function _submit_bulk()
 		$param['src_file'] = $this->build_tmp_dir_file( $file_tmp_name );
 
 		$ret = $this->_factory_create_class->create_item_from_param( $item_row, $param );
-		if ( !$ret ) {
+		if ( $ret < 0 ) {
 			$this->set_msg_array( $this->_factory_create_class->get_errors() );
-			contiune; 
+
+// typo contiune -> continue
+			continue;
+ 
 		}
 
 		$filecount ++ ;
