@@ -1,11 +1,28 @@
-$Id: readme_jp.txt,v 1.57 2010/11/04 04:31:38 ohwada Exp $
+$Id: readme_jp.txt,v 1.58 2010/11/17 00:08:44 ohwada Exp $
+
+=================================================
+Version: 2.32
+Date:   2010-11-17
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ対策
+(1) 一括登録にてサムネイル画像が生成されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1146
+
+(2) 一括登録にて前の情報が残り誤った情報が登録される
+
+(3) imagemanager にて登録できない
+
 
 =================================================
 Version: 2.31
 Date:   2010-11-03
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

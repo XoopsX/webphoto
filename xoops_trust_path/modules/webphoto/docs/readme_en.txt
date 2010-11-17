@@ -1,11 +1,28 @@
-$Id: readme_en.txt,v 1.56 2010/11/04 04:31:38 ohwada Exp $
+$Id: readme_en.txt,v 1.57 2010/11/17 00:08:44 ohwada Exp $
+
+=================================================
+Version: 2.32
+Date:   2010-11-17
+Author: Kenichi OHWADA
+URL:    http://linux2.ohwada.net/
+Email:  webmaster@ohwada.net
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bugfix
+(1) In batch registration, NOT create the thumbnail
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1146
+
+(2) In batch registration, set wrong data
+
+(3) In imagemanager, NOT submit the image.
+
 
 =================================================
 Version: 2.31
 Date:   2010-11-03
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.
