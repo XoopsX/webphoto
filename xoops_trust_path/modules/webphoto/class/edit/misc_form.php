@@ -1,5 +1,5 @@
 <?php
-// $Id: misc_form.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
+// $Id: misc_form.php,v 1.7 2011/04/30 23:30:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// Fatal error: Call to undefined method get_cached_file_row_by_kind()
 // 2010-11-11 K.OHWADA
 // build_file_url_by_file_row()
 // 2010-10-01 K.OHWADA
@@ -306,7 +308,8 @@ function build_form_redo_by_item_row( $item_row )
 		return array( false, array() ) ;
 	}
 
-	$flash_row = $this->get_cached_file_row_by_kind( 
+// Fatal error: Call to undefined method get_cached_file_row_by_kind()
+	$flash_row = $this->get_cached_file_extend_row_by_kind( 
 		$item_row, _C_WEBPHOTO_FILE_KIND_VIDEO_FLASH ) ;
 
 	$arr = array(
