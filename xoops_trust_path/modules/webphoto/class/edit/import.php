@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.4 2010/11/16 23:43:38 ohwada Exp $
+// $Id: import.php,v 1.5 2011/05/01 10:51:58 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// Fatal error: Call to undefined method create_image_ext()
 // 2010-11-11 K.OHWADA
 // build_file_full_path()
 // 2010-03-18 K.OHWADA
@@ -237,48 +239,34 @@ function build_category_img_path( $imgurl )
 //---------------------------------------------------------
 function add_photo_from_myalbum( $myalbum_id, $new_cid, $myalbum_row )
 {
+// Fatal error: Call to undefined method create_image_ext()
 
-// --- insert item ---
 	$item_row = $this->create_photo_row_from_myalbum( $myalbum_id, $new_cid, $myalbum_row );
-	$newid = $this->format_and_insert_item( $item_row );
-	if ( !$newid ) {
-		echo ' DB error ' ;
-		return false;
+	$param = $this->build_param_from_myalbum( $myalbum_row );
+
+	$src_file = $param['src_file'];
+	if ( ! $this->is_readable_file( $src_file ) ) {
+		echo $this->highlight( ' fail to read file : '.$src_file ) ;
+		echo "<br />\n";
+		return false ;
 	}
 
-	$item_id             = $newid ;
-	$item_row['item_id'] = $item_id;
+	$this->_factory_create_class->create_item_from_param( $item_row, $param );
+	echo $this->_factory_create_class->get_main_msg();
+	echo "<br />\n";
+	return false ;
+}
 
-	echo $this->_factory_create_class->build_msg_photo_title( $item_id );
-
+function build_param_from_myalbum( $myalbum_row )
+{
 	list( $src_id, $src_ext, $src_file )
 		= $this->build_myalbum_filename( $myalbum_row );
 
-	if ( ! $this->is_readable_file( $src_file ) ) {
-		echo $this->highlight( ' fail to read file : '.$src_file ) ;
-		return false ;
-	}
-
-// copy photo
-	$file_params = $this->copy_photo_from_myalbum( $item_row, $myalbum_row );
-	if ( !is_array($file_params) ) {
-		return false ;
-	}
-
-// --- insert file ---
-	$file_id_array = $this->_factory_create_class->insert_files_from_params(
-		$item_id,  $file_params );
-
-// --- update item ---
-	$item_row = $this->_factory_create_class->build_item_row_submit_update( 
-		$item_row, $file_id_array );
-	$ret = $this->format_and_update_item( $item_row );
-	if ( !$ret ) {
-		echo ' DB error ' ;
-		return false;
-	}
-
-	return $item_id;
+	$param = array(
+		'flag_video_single' => true ,
+		'src_file'          => $src_file ,
+	);
+	return $param;
 }
 
 function create_photo_row_from_myalbum( $photo_id, $cat_id, $myalbum_row )
@@ -329,129 +317,6 @@ function is_readable_file( $file )
 		return true ;
 	}
 	return false ;
-}
-
-function copy_photo_from_myalbum( $item_row, $myalbum_row )
-{
-	$cont_param   = null ;
-	$thumb_param  = null ;
-	$middle_param = null ;
-	$flash_param  = null ;
-	$docomo_param = null ;
-
-	$flag_image = false ;
-	$flag_thumb = false ;
-
-	$item_id   = $item_row['item_id'] ;
-	$item_kind = $item_row['item_kind'] ;
-
-	list( $src_id, $src_ext, $src_photo_file )
-		= $this->build_myalbum_filename( $myalbum_row );
-
-	$src_name_ext       = $src_id .'.'. $src_ext;
-	$src_name_gif       = $src_id .'.'. $this->_EXT_GIF ;
-	$src_thumb_file_ext = $this->_myalbum_thumbs_dir .'/'. $src_name_ext;
-	$src_thumb_file_gif = $this->_myalbum_thumbs_dir .'/'. $src_name_gif;
-
-	$photo_param                = $item_row;
-	$photo_param['src_file']    = $src_photo_file ;
-	$photo_param['src_ext']     = $src_ext ;
-	$photo_param['src_kind']    = $item_kind ;
-	$photo_param['flag_video']  = true ;
-	$photo_param['flag_extra']  = true ;
-
-// --- create cont ---
-	$this->_factory_create_class->create_cont_param( $photo_param );
-	$cont_param = $this->_factory_create_class->get_cont_param();
-	if ( !is_array($cont_param) ) {
-		echo $this->highlight( ' not create photo ' ) ;
-		return null ;
-	}
-
-// --- create docomo flash pdf
-	$docomo_param = $this->_factory_create_class->create_docomo_param( $photo_param, $cont_param ) ;
-	$flash_param  = $this->_factory_create_class->create_flash_param(  $photo_param ) ;
-	$pdf_param    = $this->_factory_create_class->create_pdf_param(    $photo_param ) ;
-
-// if pdf file
-	if ( isset( $pdf_param['file'] ) ) {
-		$photo_param['file_pdf'] = $pdf_param['file'] ;
-	}
-
-// --- create image
-	$image_param = $this->_factory_create_class->create_image_ext( $photo_param );
-	$this->_image_tmp_file = $this->_factory_create_class->get_image_tmp_file();
-	if ( is_array($image_param) ) {
-		$flag_image = true ;
-	}
-
-// --- create thumb ---
-// if exists thumb file
-	if ( file_exists( $src_thumb_file_ext ) && !$flag_image ) {
-		$middle_thumb_param = $photo_param ;
-		$middle_thumb_param['src_file'] = $src_thumb_file_ext ;
-		$middle_thumb_param['src_ext']  = $src_ext ;
-
-// if exists thumb icon 
-	} elseif ( file_exists( $src_thumb_file_gif ) && !$flag_image ) {
-		$middle_thumb_param = $photo_param ;
-		$middle_thumb_param['src_file'] = $src_thumb_file_gif ;
-		$middle_thumb_param['src_ext']  = $this->_EXT_GIF ;
-
-// if src file
-	} elseif ( $this->_cfg_makethumb && $this->is_image_kind( $item_kind ) ) {
-		$middle_thumb_param = $photo_param;
-		$flag_thumb = true;
-
-// if image file
-	} elseif ( $this->_cfg_makethumb && $flag_image ) {
-		$middle_thumb_param = $image_param ;
-		$flag_thumb = true;
-	}
-
-	$thumb_param = $this->_factory_create_class->create_thumb_param( $middle_thumb_param );
-	if ( $flag_thumb ) {
-		if ( is_array($thumb_param) ) {
-			echo ' create thumb, ' ;
-		} else {
-			echo $this->highlight( ' fail to create thumb, ' ) ;
-		}
-	}
-
-// --- create middle ---
-// if src file
-	if ( $this->_cfg_makethumb && $this->is_image_kind( $item_kind ) ) {
-		$middle_thumb_param = $photo_param;
-		$flag_thumb = true;
-
-// if image file
-	} elseif ( $this->_cfg_makethumb && $flag_image ) {
-		$middle_thumb_param = $image_param ;
-		$flag_thumb = true;
-	}
-
-	$middle_param  = $this->_factory_create_class->create_middle_param( $middle_thumb_param );
-	if ( is_array($middle_param) ) {
-		echo ' create middle, ';
-	} else {
-		echo $this->highlight( ' fail to create middle, ' ) ;
-	}
-
-// remove temp file
-	if ( $this->_image_tmp_file ) {
-		$this->_utility_class->unlink_file( $this->_image_tmp_file );
-	}
-
-	$file_params = array(
-		'cont'   => $cont_param ,
-		'thumb'  => $thumb_param ,
-		'middle' => $middle_param ,
-		'flash'  => $flash_param ,
-		'docomo' => $docomo_param ,
-		'pdf'    => $pdf_param ,
-	);
-
-	return $file_params ;
 }
 
 //---------------------------------------------------------
