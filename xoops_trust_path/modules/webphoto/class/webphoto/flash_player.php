@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.13 2010/09/27 03:42:54 ohwada Exp $
+// $Id: flash_player.php,v 1.14 2011/05/02 13:58:38 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-02 K.OHWADA
+// continously play all files in the music playlist
 // 2010-09-20 K.OHWADA
 // JW Player 5.2
 // JW Image Rotator 3.18
@@ -492,6 +494,11 @@ function set_variables_in_buffer( $param )
 		$movie_file = $playlist_url ;
 		$flag_image = false ;
 
+// continously play all files in the music playlist
+		if ( $is_mediaplayer ) {
+			$repeat = 'always' ;
+		}
+
 // others
 	} else {
 		$movie_file = $src_url ;
@@ -598,9 +605,16 @@ function set_variables_in_buffer( $param )
 	if( $fallback != '' ) {
 		$this->set_variable_buffer( 'fallback', $fallback, true );
 	} 
-	if ( $repeat == 1 ) {  
+
+// set in imagerotator
+	if ( $repeat === 1 ) {  
 		$this->set_variable_buffer( 'repeat', 'true' );
+
+// set in music playlist
+	} elseif ( $repeat ) {  
+		$this->set_variable_buffer( 'repeat', $repeat );
 	}
+
 	if ( $rotatetime && ( $rotatetime != _C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT ) ) {
 		$this->set_variable_buffer( 'rotatetime', $rotatetime );
 	}
