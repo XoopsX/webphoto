@@ -1,5 +1,5 @@
 <?php
-// $Id: include_submit.php,v 1.1 2011/05/10 02:59:15 ohwada Exp $
+// $Id: include_submit.php,v 1.2 2011/05/10 23:08:41 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -22,15 +22,7 @@ include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 //---------------------------------------------------------
 webphoto_include_once( 'include/constants.php' );
 
-webphoto_include_once( 'class/inc/handler.php' );
-webphoto_include_once( 'class/inc/base_ini.php' );
-webphoto_include_once( 'class/inc/config.php' );
-webphoto_include_once( 'class/inc/catlist.php' );
-webphoto_include_once( 'class/inc/tagcloud.php' );
-webphoto_include_once( 'class/inc/timeline.php' );
 webphoto_include_once( 'class/inc/uri.php' );
-webphoto_include_once( 'class/inc/group_permission.php' );
-webphoto_include_once( 'class/inc/xoops_header.php' );
 
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/notification_event.php' );
@@ -62,6 +54,7 @@ webphoto_include_once( 'class/lib/timidity.php' );
 webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
+webphoto_include_once( 'class/lib/utility.php' );
 
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );

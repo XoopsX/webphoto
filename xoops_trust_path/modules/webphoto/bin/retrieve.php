@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.14 2011/05/10 02:56:39 ohwada Exp $
+// $Id: retrieve.php,v 1.15 2011/05/10 23:08:41 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -45,8 +45,8 @@ if( !defined("WEBPHOTO_ROOT_PATH") ) {
 include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
-webphoto_include_once( 'main/include_submit.php' );
-webphoto_include_once( 'main/include_mail.php' );
+webphoto_include_once( 'class/lib/error.php' );
+webphoto_include_once( 'class/lib/handler.php' );
 
 webphoto_include_once( 'class/bin/xoops_database.php' );
 webphoto_include_once( 'class/bin/xoops_mysql_database.php' );
@@ -54,8 +54,10 @@ webphoto_include_once( 'class/bin/xoops_base.php' );
 webphoto_include_once( 'class/bin/permission.php' );
 webphoto_include_once( 'class/bin/base.php' );
 
+webphoto_include_once( 'main/include_submit.php' );
+webphoto_include_once( 'main/include_mail.php' );
+
 webphoto_include_once( 'class/inc/ini.php' );
-webphoto_include_once( 'class/inc/uri.php' );
 
 webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/tree_handler.php' );
