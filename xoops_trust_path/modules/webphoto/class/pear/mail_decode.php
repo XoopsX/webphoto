@@ -1,13 +1,13 @@
 <?php
-// $Id: mail_decode.php,v 1.1 2011/05/10 03:02:30 ohwada Exp $
+// $Id: mail_decode.php,v 1.2 2011/05/10 14:28:34 ohwada Exp $
 
 //=========================================================
-// webphoto module
+// mail decode with pear
 // 2011-05-01 K.OHWADA
 //=========================================================
 
 //=========================================================
-// class webphoto_pear_mail_decode
+// class pear_mail_decode
 //=========================================================
 class webphoto_pear_mail_decode
 {
@@ -256,18 +256,19 @@ function decode_multipart( $parts )
 
 function decode_part_text( $part )
 {
-	$param = $this->decode_part_common( $part );
-	$body  = $param['body'];
+	$param   = $this->decode_part_common( $part );
+	$body    = $param['body'];
+	$charset = $param['charset'] ;
 
 	switch ( $param['ctype_secondary'] )
 	{
 		case 'plain':
-			$param['body_converted'] = $this->convert_encoding( $body, $param['charset'] );
+			$param['body_converted'] = $this->convert_encoding( $body, $charset );
 			break;
 
 		case 'html':
 			list ( $param['body_converted'], $param['html_charset'] ) =			
-				$this->convert_encoding_html( $body );
+				$this->convert_encoding_html( $body, $charset );
 			break;
 	}
 

@@ -1,13 +1,13 @@
 <?php
-// $Id: mail_pop3.php,v 1.1 2011/05/10 03:02:30 ohwada Exp $
+// $Id: mail_pop3.php,v 1.2 2011/05/10 14:28:34 ohwada Exp $
 
 //=========================================================
-// webphoto module
+// mail pop3 woth pear
 // 2011-05-01 K.OHWADA
 //=========================================================
 
 //=========================================================
-// class webphoto_pear_mail_pop3
+// class pear_mail_pop3
 //=========================================================
 class webphoto_pear_mail_pop3
 {
@@ -20,7 +20,6 @@ class webphoto_pear_mail_pop3
 	var $_MAX_MAIL = 10;
 
 	var $_mail_arr  = array();
-	var $_msg_arr   = array();
 	var $_error_arr = array();
 
 //---------------------------------------------------------
@@ -58,18 +57,22 @@ function set_pass( $val )
 	$this->_PASS = $val;
 }
 
+function set_max_mail( $val )
+{
+	$this->_MAX_MAIL = intval($val);
+}
+
 //---------------------------------------------------------
 // pop mail
 //---------------------------------------------------------
 function recv_mails()
 {
 	$this->clear_mails();
-	$this->clear_msgs();
 	$this->clear_errors();
 
 	if ( empty($this->_HOST) || empty($this->_USER) || empty($this->_PASS) ) {
 		$this->set_error( 'not set param' );
-		return -1;
+		return false;
 	}
 
 	$hostinfo = array();
@@ -85,14 +88,14 @@ function recv_mails()
 	$ret = $pop->connect($host, $port);
 	if ( !$ret ) {
 		$this->set_error( 'not connect' );
-		return -1;
+		return false;
 	}
 
 	$ret = $pop->login($this->_USER, $this->_PASS);
 	if ( $ret !== true ) {
 		$this->set_error( $ret );
 		$pop->disconnect();
-		return -1;
+		return false;
 	}
 
 	$num = $pop->numMsg();
@@ -111,8 +114,8 @@ function recv_mails()
 // get mails
 	for ( $i=1; $i<=$num; $i++ ) 
 	{
-		$this->set_mail( $pop->getMsg( 1 ) );
-		$pop->deleteMsg( 1 );
+		$this->set_mail( $pop->getMsg( $i ) );
+		$pop->deleteMsg( $i );
 	}
 
 	$pop->disconnect();
@@ -135,21 +138,6 @@ function set_mail( $mail )
 function get_mails() 
 {
 	return $this->_mail_arr;
-}
-
-function clear_msgs() 
-{
-	$this->_msg_arr = array();
-}
-
-function set_msg( $msg ) 
-{
-	$this->_msg_arr[] = $msg;
-}
-
-function get_msgs() 
-{
-	return $this->_msg_arr;
 }
 
 function clear_errors() 
