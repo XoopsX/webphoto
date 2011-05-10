@@ -1,4 +1,4 @@
-<{* $Id: webphoto_inc_photo_codebox.html,v 1.1 2009/11/06 18:08:07 ohwada Exp $ *}>
+<{* $Id: webphoto_inc_photo_codebox.html,v 1.2 2011/05/10 03:25:55 ohwada Exp $ *}>
 
 <script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/code.js"></script>
 
@@ -18,8 +18,10 @@
       <{/if}>
     </td><td class="webphoto_td_code_middle">
       <{if $code.filesize }>
-        <{if $code.show_img }>
+        <{if $code.show_img_download }>
           <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/download.png" alt="<{$lang_download}>" title="<{$lang_download}> border="0" />
+        <{elseif $code.show_img_view }>
+          <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/view.png" alt="<{$lang_view}>" title="<{$lang_view}> border="0" />
         <{/if}>
         ( <{$code.filesize}> )
       <{/if}>
