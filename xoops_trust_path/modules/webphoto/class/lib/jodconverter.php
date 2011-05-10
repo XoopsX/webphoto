@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.3 2010/06/16 22:24:47 ohwada Exp $
+// $Id: jodconverter.php,v 1.4 2011/05/10 20:17:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// print_r
 // 2010-06-06 K.OHWADA
 // is_win_os()
 //---------------------------------------------------------
@@ -82,6 +84,7 @@ function convert( $src_file, $dst_file )
 	exec( "$cmd 2>&1", $ret_array, $ret_code ) ;
 	if ( $this->_DEBUG ) {
 		echo $cmd."<br />\n";
+		print_r( $ret_array );
 	}
 	$this->set_msg( $cmd );
 	$this->set_msg( $ret_array );

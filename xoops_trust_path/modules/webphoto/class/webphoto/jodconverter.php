@@ -1,5 +1,5 @@
 <?php
-// $Id: jodconverter.php,v 1.7 2009/11/29 07:34:21 ohwada Exp $
+// $Id: jodconverter.php,v 1.8 2011/05/10 20:17:10 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+//	$this->set_debug_by_const_name();
 // 2009-11-11 K.OHWADA
 // webphoto_lib_error -> webphoto_cmd_base
 // 2009-04-21 K.OHWADA
@@ -72,6 +74,7 @@ function webphoto_jodconverter( $dirname, $trust_dirname )
 		$this->_junk_words = $this->_JUNK_WORDS_ENG ;
 	}
 
+	$this->set_debug_by_const_name( $this->_jod_class, 'DEBUG_JODCONVERTER' );
 	$this->set_debug_by_ini_name( $this->_jod_class );
 }
 
