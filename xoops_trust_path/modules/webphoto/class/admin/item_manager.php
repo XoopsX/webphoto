@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.31 2011/05/10 02:56:39 ohwada Exp $
+// $Id: item_manager.php,v 1.32 2011/05/10 20:49:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -120,7 +120,7 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->init_preload();
 
 	$this->_ini_flashvar_player_repeat_when_playlist
-		= $this->get_init('flashvar_player_repeat_when_playlist');
+		= $this->get_ini('flashvar_player_repeat_when_playlist');
 }
 
 function &getInstance( $dirname , $trust_dirname )
