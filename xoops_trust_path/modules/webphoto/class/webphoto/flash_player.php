@@ -1,5 +1,5 @@
 <?php
-// $Id: flash_player.php,v 1.14 2011/05/02 13:58:38 ohwada Exp $
+// $Id: flash_player.php,v 1.15 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-03 K.OHWADA
+// JW Player 5.6
 // 2010-05-02 K.OHWADA
 // continously play all files in the music playlist
 // 2010-09-20 K.OHWADA
@@ -42,10 +44,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 //---------------------------------------------------------
 // http://blog.deconcept.com/swfobject/
-// http://www.jeroenwijering.com/?item=JW_FLV_Media_Player
-// http://www.jeroenwijering.com/?item=JW_Image_Rotator
-// http://code.jeroenwijering.com/trac/wiki/Playlists3
-// http://code.jeroenwijering.com/trac/wiki/Flashvars3
+// http://www.longtailvideo.com/support/jw-player/jw-player-for-flash-v5/12536/configuration-options
+// http://developer.longtailvideo.com/trac/wiki/ImageRotatorVars
 //---------------------------------------------------------
 
 class webphoto_flash_player extends webphoto_base_ini
@@ -324,88 +324,174 @@ function set_variables_in_buffer( $param )
 	$mp3_row        = $param['mp3_row']; 
 	$player_row     = $param['player_row']; 
 	$flashvar_row   = $param['flashvar_row'];
-	$playlist_cache = $param['playlist_cache'] ; 
 
 	$item_id       = $item_row['item_id'];
-	$item_title    = $item_row['item_title'];
-	$ext           = $item_row['item_ext'];
 	$kind          = $item_row['item_kind'];
-	$siteurl       = $item_row['item_siteurl'];
-	$showinfo      = $item_row['item_showinfo'];
-	$perm_down     = $item_row['item_perm_down'];
-	$external_url  = $item_row['item_external_url'];
-	$embed_type    = $item_row['item_embed_type'];
-	$embed_src     = $item_row['item_embed_src'];
-	$displayfile   = $item_row['item_displayfile'];
 
-	$width         = $player_row['player_width'];
-	$height        = $player_row['player_height'];
-	$displaywidth  = $player_row['player_displaywidth'];
-	$displayheight = $player_row['player_displayheight'];
-	$player_title       = $player_row['player_title'];
+// overwrite by flashvar
+	list( $width, $height ) = 
+		$this->get_width_height( $item_row, $flashvar_row, $flash_row, $player_row ) ;
+
+//	if (( $flashvar_displaywidth > 0 )&&( $flashvar_displayheight > 0 )) {
+//		$displaywidth   = $flashvar_displaywidth;
+//		$displayheight  = $flashvar_displayheight;
+//	}
+
+	$is_swfobject    = false ;
+	$is_mediaplayer  = false ;
+	$is_imagerotator = false ;
+	$flag_file       = false ;
+
+	$this->_item_row     = $item_row ;
+	$this->_flashvar_row = $flashvar_row ;
+	$this->_item_id      = $item_id;
+	$this->_kind         = $kind ;
+
+	list( $player_sel, $flashplayer ) =	$this->get_player( $param ) ;
+
+	switch ( $player_sel )
+	{
+		case _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT :
+			$is_swfobject = true;
+			break;
+
+		case _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
+			$is_mediaplayer = true;
+			$flag_file      = true;
+			break;
+
+		case _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR :
+			$is_imagerotator = true;
+			$flag_file       = true;
+			break;
+
+		default;
+			if ( $this->_is_module_admin ) {
+				echo "NOT flash player type <br />\n";
+			}
+			return false;
+	}
+
+	$this->_flashplayer = $flashplayer;
+	$this->_width       = $width;
+	$this->_height      = $height;
+
+// file
+	list( $movie_file, $flag_playlist )= $this->get_movie_file( $param );
+
+	$logo_file = $this->get_logo_file( $flashvar_row );
+
+	if ( $flag_file && $movie_file ) {
+		$this->set_variable_buffer( 'file', $movie_file, true );
+	}
+
+// colors
+	$this->set_variables_colors( $player_row, $flashvar_row );
+
+// common
+	$this->set_variables_common( $flashvar_row );
+
+// mediaplayer
+	if ( $is_mediaplayer ) {
+		$this->set_variables_jwplayer( $param, $flag_playlist, $logo_file );
+	} 
+
+// imagerotator
+	if ( $is_imagerotator ) {
+		$this->set_variables_imagerotator( $flashvar_row, $width, $height, $logo_file );
+	}
+
+// === old param ===
+//	if ( $searchbar == 1 ) {
+//		$this->set_variable_buffer( 'searchbar', 'true' );
+//	}
+//	if ( $showeq == 1 ) {  
+//		$this->set_variable_buffer( 'showeq', 'true' );
+//	}
+
+// Controlbar appearance
+//	if ( $showstop == 1 ) { 
+//		$this->set_variable_buffer( 'showstop', 'true' );
+//	}
+//	if ( $showdigits == 0 ) {
+//		$this->set_variable_buffer( 'showdigits', 'false' );
+//	}
+
+// Playlist appearance
+//	if ( $autoscroll == 1 ) {        
+//		$this->set_variable_buffer( 'autoscroll', 'true' );
+//	}
+//	if ( $displaywidth > 0 ) {
+//		$this->set_variable_buffer( 'displaywidth',  $displaywidth );
+//	}
+//	if ( $displayheight > 0 ) {
+//		$this->set_variable_buffer( 'displayheight', $displayheight );
+//	}
+//	if ( $thumbsinplaylist == 0 ) {  
+//		$this->set_variable_buffer( 'thumbsinplaylist', 'false' );
+//	}
+
+// Playback behaviour
+//	if( $captions != '' ) {
+//		$this->set_variable_buffer( 'captions', $captions, true );
+//	} 
+//	if( $fallback != '' ) {
+//		$this->set_variable_buffer( 'fallback', $fallback, true );
+//	} 
+
+// External communication
+//	if ( $is_mediaplayer && $this->_cfg_use_callback ) {
+//		$this->set_variable_buffer( 'callback', $this->_CALLBACK_URL, true );
+//	}
+
+// for futrue
+//	if ( $enablejs == 1 ) {          
+//		$this->set_variable_buffer( 'enablejs', 'true' );   
+//		$this->set_variable_buffer( 'javascriptid', 'play'.$item_id );
+//	}
+
+//	$movie_link = $this->get_movie_link( $src_url ) ;
+//	if ( $movie_link ) {
+//		$this->set_variable_buffer( 'link', $movie_link, true );
+//		if ( $showdownload == 1 ) {
+//			$this->set_variable_buffer( 'showdownload', 'true' );
+//		}
+//	}
+
+//	if ( $recommendations != '' ) {
+//		$this->set_variable_buffer( 'recommendations', $recommendations );
+//	}
+//	if ( $searchlink != '' ) {
+//		$this->set_variable_buffer( 'searchlink', $searchlink );
+//	}
+//	if ( $streamscript != '' ) {
+//		$this->set_variable_buffer( 'streamscript', $streamscript );
+//	}
+//	if ( $flag_type && $this->check_type( $movie_file, $ext ) && $ext ) {
+//		$this->set_variable_buffer( 'type', $ext ); 
+//	}
+//	if ( $flag_title && $item_title ) {
+//		$this->set_variable_buffer( 'title', $item_title );
+//	}
+
+	return true;
+}
+
+function set_variables_colors( $player_row, $flashvar_row )
+{
 	$player_style       = $player_row['player_style'] ; 
 	$player_screencolor = $player_row['player_screencolor'];
 	$player_backcolor   = $player_row['player_backcolor'];
 	$player_frontcolor  = $player_row['player_frontcolor'];
 	$player_lightcolor  = $player_row['player_lightcolor'];
 
-	$image_show        = $flashvar_row['flashvar_image_show'];
-	$searchbar         = $flashvar_row['flashvar_searchbar'];
-	$showeq            = $flashvar_row['flashvar_showeq'];
-	$showicons         = $flashvar_row['flashvar_showicons'];
-	$shownavigation    = $flashvar_row['flashvar_shownavigation'];
-	$showstop          = $flashvar_row['flashvar_showstop'];
-	$showdigits        = $flashvar_row['flashvar_showdigits'];
-	$showdownload      = $flashvar_row['flashvar_showdownload'];
-	$usefullscreen     = $flashvar_row['flashvar_usefullscreen'];
-	$autoscroll        = $flashvar_row['flashvar_autoscroll'];
-	$thumbsinplaylist  = $flashvar_row['flashvar_thumbsinplaylist'];
-	$autostart         = $flashvar_row['flashvar_autostart'];
-	$repeat            = $flashvar_row['flashvar_repeat'];
-	$shuffle           = $flashvar_row['flashvar_shuffle'];
-	$smoothing         = $flashvar_row['flashvar_smoothing'];
-	$enablejs          = $flashvar_row['flashvar_enablejs'];
-	$linkfromdisplay   = $flashvar_row['flashvar_linkfromdisplay'];
-	$link_type         = $flashvar_row['flashvar_link_type'];
-	$type              = $flashvar_row['flashvar_type'];
-	$logo              = $flashvar_row['flashvar_logo'];
-	$link              = $flashvar_row['flashvar_link'];
-	$audio             = $flashvar_row['flashvar_audio'];
-	$captions          = $flashvar_row['flashvar_captions'];
-	$fallback          = $flashvar_row['flashvar_fallback'];
-	$javascriptid      = $flashvar_row['flashvar_javascriptid'];
-	$recommendations   = $flashvar_row['flashvar_recommendations'];
-	$searchlink        = $flashvar_row['flashvar_searchlink'];
-	$streamscript      = $flashvar_row['flashvar_streamscript'];
-	$bufferlength      = $flashvar_row['flashvar_bufferlength'];
-	$rotatetime        = $flashvar_row['flashvar_rotatetime'];
-	$volume            = $flashvar_row['flashvar_volume'];
-	$linktarget        = $flashvar_row['flashvar_linktarget'];
-	$overstretch       = $flashvar_row['flashvar_overstretch'];
-	$transition        = $flashvar_row['flashvar_transition'];
-	$enablejs          = $flashvar_row['flashvar_enablejs'];
-	$flashvar_width         = $flashvar_row['flashvar_width'];
-	$flashvar_height        = $flashvar_row['flashvar_height'];
-	$flashvar_displaywidth  = $flashvar_row['flashvar_displaywidth'];
-	$flashvar_displayheight = $flashvar_row['flashvar_displayheight'];
 	$flashvar_screencolor   = $flashvar_row['flashvar_screencolor'];
 	$flashvar_backcolor     = $flashvar_row['flashvar_backcolor'];
 	$flashvar_frontcolor    = $flashvar_row['flashvar_frontcolor'];
 	$flashvar_lightcolor    = $flashvar_row['flashvar_lightcolor'];
 
-	$file_cont_url  = $this->get_file_url( $cont_row ) ;
-	$file_flash_url = $this->get_file_url( $flash_row ) ;
-	$file_swf_url   = $this->get_file_url( $swf_row ) ;
-	$file_mp3_url   = $this->get_file_url( $mp3_row ) ;
-
-// overwrite by flashvar
-	list( $width, $height ) = 
-		$this->get_width_height( $item_row, $flashvar_row, $flash_row, $player_row ) ;
-
-	if (( $flashvar_displaywidth > 0 )&&( $flashvar_displayheight > 0 )) {
-		$displaywidth   = $flashvar_displaywidth;
-		$displayheight  = $flashvar_displayheight;
-	}
+	$shuffle       = $flashvar_row['flashvar_shuffle'];
+	$volume        = $flashvar_row['flashvar_volume'];
 
 // color
 	$screencolor = $this->_SCREENCOLOR_DEFAULT ;
@@ -433,99 +519,7 @@ function set_variables_in_buffer( $param )
 		$lightcolor = $flashvar_lightcolor ;
 	}
 
-	$movie_file    = null ;
-	$playlist_url  = null ;
-	$playlist_path = null ;
-	$flag_file     = false ;
-	$flag_title    = false ;
-	$flag_image    = false ;
-	$is_swfobject    = false ;
-	$is_mediaplayer  = false ;
-	$is_imagerotator = false ;
-
-	$this->_item_row     = $item_row ;
-	$this->_flashvar_row = $flashvar_row ;
-	$this->_item_id      = $item_id;
-	$this->_kind         = $kind ;
-	$this->_player_style = $player_style ;
-
-	list( $player_sel, $flashplayer ) =	$this->get_player( $param ) ;
-
-	list( $src_url, $flag_type ) = $this->get_src_url( $param );
-
-	switch ( $player_sel )
-	{
-		case _C_WEBPHOTO_DISPLAYTYPE_SWFOBJECT :
-			$is_swfobject = true;
-			$flag_title   = true ;
-			break;
-
-		case _C_WEBPHOTO_DISPLAYTYPE_MEDIAPLAYER :
-			$is_mediaplayer = true;
-			$flag_file      = true;
-			$flag_title     = true ;
-			$flag_image     = true ;
-			break;
-
-		case _C_WEBPHOTO_DISPLAYTYPE_IMAGEROTATOR :
-			$is_imagerotator = true;
-			$flag_file       = true;
-			break;
-
-		default;
-			if ( $this->_is_module_admin ) {
-				echo "NOT flash player type <br />\n";
-			}
-			return false;
-	}
-
-	$this->_flashplayer = $flashplayer;
-	$this->_width       = $width;
-	$this->_height      = $height;
-	$this->_screencolor = $screencolor;
-
-	if ( $playlist_cache ) {
-		$playlist_url  = $this->_PLAYLISTS_URL .'/'. $playlist_cache ;
-		$playlist_path = $this->_PLAYLISTS_DIR .'/'. $playlist_cache ;
-	}
-
-// playlist
-	if ( $this->is_playlist_kind() && $playlist_path && file_exists($playlist_path) ) {
-		$movie_file = $playlist_url ;
-		$flag_image = false ;
-
-// continously play all files in the music playlist
-		if ( $is_mediaplayer ) {
-			$repeat = 'always' ;
-		}
-
-// others
-	} else {
-		$movie_file = $src_url ;
-	}
-
-	$movie_image = $this->get_movie_image( $thumb_row, $middle_row ) ; 
-	$flag_down   = $this->check_perm_down( $item_row );
-
-// basics
-	$this->set_variable_buffer( 'width',  $width );
-	$this->set_variable_buffer( 'height', $height );
-
-	if ( $flag_file && $movie_file ) {
-		$this->set_variable_buffer( 'file', $movie_file, true );
-	}
-	
-	if ( ( $image_show == 1 ) && $flag_image && $movie_image ) {
-		$this->set_variable_buffer( 'image', $movie_image, true );
-	}
-
-	$this->set_variable_buffer( 'id',     $item_id );
-
-	if ( $searchbar == 1 ) {
-		$this->set_variable_buffer( 'searchbar', 'true' );
-	}
-
-// colors
+// Colors
 	if ( $screencolor ) {
 		$this->set_variable_buffer_color( 'screencolor', $screencolor );
 	}
@@ -539,135 +533,197 @@ function set_variables_in_buffer( $param )
 		$this->set_variable_buffer_color( 'lightcolor',  $lightcolor );
 	}
 
-// Display appearance 
-	$movie_logo = $this->get_movie_logo( $logo );
-	if ( $movie_logo ) {
-		$this->set_variable_buffer( 'logo', $movie_logo, true );
+	$this->_screencolor = $screencolor;
+
+	return true;
+}
+
+function set_variables_common( $flashvar_row )
+{
+	$shuffle = $flashvar_row['flashvar_shuffle'];
+	$volume  = $flashvar_row['flashvar_volume'];
+
+	return true;
+}
+
+function set_variables_jwplayer( $param, $flag_playlist, $logo_file )
+{
+// JW Player 5.6
+
+	$item_row       = $param['item_row']; 
+	$thumb_row      = $param['thumb_row']; 
+	$middle_row     = $param['middle_row']; 
+	$flashvar_row   = $param['flashvar_row'];
+
+	$item_id       = $item_row['item_id'];
+
+	$autostart    = $flashvar_row['flashvar_autostart'];
+	$bufferlength = $flashvar_row['flashvar_bufferlength'];
+	$smoothing    = $flashvar_row['flashvar_smoothing'];
+	$mute         = $flashvar_row['flashvar_mute'];
+	$duration     = $flashvar_row['flashvar_duration'];
+	$start        = $flashvar_row['flashvar_start'];
+	$item         = $flashvar_row['flashvar_item'];
+	$mediaid      = $flashvar_row['flashvar_mediaid'];
+	$provider     = $flashvar_row['flashvar_provider'];
+	$skin         = $flashvar_row['flashvar_skin'];
+	$plugins      = $flashvar_row['flashvar_plugins'];
+	$dock         = $flashvar_row['flashvar_dock'];
+	$icons        = $flashvar_row['flashvar_icons'];
+	$stretching   = $flashvar_row['flashvar_stretching'];
+	$playerready  = $flashvar_row['flashvar_playerready'];
+	$playlistfile = $flashvar_row['flashvar_playlistfile'];
+	$streamer     = $flashvar_row['flashvar_streamer'];
+	$netstreambasepath   = $flashvar_row['flashvar_netstreambasepath'];
+	$player_repeat       = $flashvar_row['flashvar_player_repeat'];
+	$playlist_size       = $flashvar_row['flashvar_playlist_size'];
+	$playlist_position   = $flashvar_row['flashvar_playlist_position'];
+	$controlbar_idlehide = $flashvar_row['flashvar_controlbar_idlehide'];
+	$controlbar_position = $flashvar_row['flashvar_controlbar_position'];
+	$display_showmute    = $flashvar_row['flashvar_display_showmute'];
+	$logo_hide        = $flashvar_row['flashvar_logo_hide'];
+	$logo_link        = $flashvar_row['flashvar_logo_link'];
+	$logo_margin      = $flashvar_row['flashvar_logo_margin'];
+	$logo_timeout     = $flashvar_row['flashvar_logo_timeout'];
+	$logo_over        = $flashvar_row['flashvar_logo_over'];
+	$logo_out         = $flashvar_row['flashvar_logo_out'];
+	$logo_linktarget  = $flashvar_row['flashvar_logo_linktarget'];
+	$logo_position    = $flashvar_row['flashvar_logo_position'];
+
+	$repeat = '' ;
+
+// set continously play all files in the music playlist
+	if ( $flag_playlist && empty($player_repeat) ) {
+		$repeat = _C_WEBPHOTO_FLASHVAR_PLAYER_REPEAT_ALWAYS ;
+
+// set in mediaplayer
+	} else {
+		$repeat = $player_repeat ;
 	}
 
+	$movie_image = $this->get_movie_image( $thumb_row, $middle_row ) ; 
+
+// Playlist Properties
+//	$this->set_variable_buffer( 'playlist', $playlist );
+//	$this->set_variable_buffer( 'mediaid',  $mediaid );
+//	$this->set_variable_buffer( 'provider', $provider );
+//	$this->set_variable_buffer( 'streamer', $streamer );
+//	$this->set_variable_buffer( 'netstreambasepath', $netstreambasepath );
+
+	if ( !$flag_playlist && $movie_image ) {
+		$this->set_variable_buffer( 'image', $movie_image, true );
+	}
+
+	$this->set_variable_buffer_int( 'duration', $duration );
+	$this->set_variable_buffer_int( 'start',    $start );
+
+// Layout
+	$this->set_variable_buffer_boolean( 'dock',  $dock );
+	$this->set_variable_buffer_boolean( 'icons', $icons );
+	$this->set_variable_buffer_str( 'skin', $skin );
+
+	$this->set_variable_buffer_boolean( 'controlbar.idlehide', $controlbar_idlehide );
+	$this->set_variable_buffer_str( 'controlbar.position', $controlbar_position );
+	$this->set_variable_buffer_boolean( 'display.showmute', $display_showmute );
+
+	if ( $flag_playlist ) {
+		$this->set_variable_buffer_str( 'playlist.position', $playlist_position );
+		$this->set_variable_buffer_int( 'playlist.size',     $playlist_size );
+	}
+
+// Behavior
+//	$this->set_variable_buffer_str( 'playerready', $playerready );
+
+	$this->set_variable_buffer( 'id', $item_id );
+	$this->set_variable_buffer_boolean( 'mute', $mute );
+	$this->set_variable_buffer_boolean( 'autostart', $autostart );
+	$this->set_variable_buffer_boolean( 'smoothing', $smoothing );
+	$this->set_variable_buffer_int( 'item', $item );
+	$this->set_variable_buffer_int( 'bufferlength',  $bufferlength );
+	$this->set_variable_buffer_str( 'repeat', $repeat );
+	$this->set_variable_buffer_str( 'plugins',     $plugins );
+	$this->set_variable_buffer_str( 'stretching',  $stretching );
+
+// Logo
+// In licensed copies of the player, this watermark is empty by default. 
+//	if ( $logo_file ) {
+//		$this->set_variable_buffer( 'logo.file', $logo_file, true );
+//		$this->set_variable_buffer_str( 'logo.link', $logo_link, true );
+//		$this->set_variable_buffer_str( 'logo.linktarget', $logo_linktarget );
+//		$this->set_variable_buffer_boolean( 'logo.hide', $logo_hide );
+//		$this->set_variable_buffer_int( 'logo.margin',   $logo_margin );
+//		$this->set_variable_buffer_str( 'logo.position', $logo_position );
+//		$this->set_variable_buffer_int( 'logo.timeout',  $logo_timeout );
+//		if ( $logo_link ) {
+//			$this->set_variable_buffer( 'logo.link', $logo_link, true );
+//			$this->set_variable_buffer_str( 'logo.linktarget', $logo_linktarget );
+//		}
+//		if ( $logo_over > 0 ) {
+//			$this->set_variable_buffer( 'logo.over',     $logo_over );
+//		}
+//		if ( $logo_out > 0 ) {
+//			$this->set_variable_buffer( 'logo.out',      $logo_out );
+//		}
+//	}
+
+	return true;
+}
+
+function set_variables_imagerotator( $flashvar_row, $width, $height, $logo_file )
+{
+// ImageRotator 3.18
+
+	$logo              = $flashvar_row['flashvar_logo'];
+	$overstretch       = $flashvar_row['flashvar_overstretch'];
+	$showicons         = $flashvar_row['flashvar_showicons'];
+	$shownavigation    = $flashvar_row['flashvar_shownavigation'];
+	$transition        = $flashvar_row['flashvar_transition'];
+	$usefullscreen     = $flashvar_row['flashvar_usefullscreen'];
+	$repeat            = $flashvar_row['flashvar_repeat'];
+	$audio             = $flashvar_row['flashvar_audio'];
+	$linkfromdisplay   = $flashvar_row['flashvar_linkfromdisplay'];
+	$linktarget        = $flashvar_row['flashvar_linktarget'];
+	$rotatetime        = $flashvar_row['flashvar_rotatetime'];
+
+// Basics
+	$this->set_variable_buffer( 'width',  $width );
+	$this->set_variable_buffer( 'height', $height );
+
+// Appearance 
+	if ( $logo_file ) {
+		$this->set_variable_buffer( 'logo', $logo_file, true );
+	}
 	if ( $overstretch && ( $overstretch != _C_WEBPHOTO_FLASHVAR_OVERSTRETCH_DEFAULT ) ) {
 		$this->set_variable_buffer( 'overstretch', $overstretch );
-	}
-	if ( $showeq == 1 ) {  
-		$this->set_variable_buffer( 'showeq', 'true' );
 	}
 	if ( $showicons == 0 ) {  
 		$this->set_variable_buffer( 'showicons', 'false' );
 	}
-	if ( $transition && ( $transition != _C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT ) ) {
-		$this->set_variable_buffer( 'transition', $transition );
-	}
-
-// Controlbar appearance
 	if ( $shownavigation == 0 ) { 
 		$this->set_variable_buffer( 'shownavigation', 'false' ); 
 	}
-	if ( $showstop == 1 ) { 
-		$this->set_variable_buffer( 'showstop', 'true' );
-	}
-	if ( $showdigits == 0 ) {
-		$this->set_variable_buffer( 'showdigits', 'false' );
+	if ( $transition && ( $transition != _C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT ) ) {
+		$this->set_variable_buffer( 'transition', $transition );
 	}
 	if ( $usefullscreen == 0 ) {   
 		$this->set_variable_buffer( 'usefullscreen', 'false' );
 	}
-
-// Playlist appearance
-	if ( $autoscroll == 1 ) {        
-		$this->set_variable_buffer( 'autoscroll', 'true' );
-	}
-	if ( $displaywidth > 0 ) {
-		$this->set_variable_buffer( 'displaywidth',  $displaywidth );
-	}
-	if ( $displayheight > 0 ) {
-		$this->set_variable_buffer( 'displayheight', $displayheight );
-	}
-	if ( $thumbsinplaylist == 0 ) {  
-		$this->set_variable_buffer( 'thumbsinplaylist', 'false' );
-	}
-
-// Playback behaviour
-	if ( $audio != '' ) {  
-		$this->set_variable_buffer( 'audio', $audio, true );
-	}
-
-	if ( $autostart != _C_WEBPHOTO_FLASHVAR_AUTOSTART_DEFAULT ) {
-		$this->set_variable_buffer( 'autostart', 
-			$this->get_movie_autostart( $autostart ) );
-	}
-
-	if ( $bufferlength && ( $bufferlength != _C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT ) ) {
-		$this->set_variable_buffer( 'bufferlength',  $bufferlength );
-	}
-	if( $captions != '' ) {
-		$this->set_variable_buffer( 'captions', $captions, true );
-	} 
-	if( $fallback != '' ) {
-		$this->set_variable_buffer( 'fallback', $fallback, true );
-	} 
-
-// set in imagerotator
-	if ( $repeat === 1 ) {  
+	if ( $repeat == 1 ) {
 		$this->set_variable_buffer( 'repeat', 'true' );
-
-// set in music playlist
-	} elseif ( $repeat ) {  
-		$this->set_variable_buffer( 'repeat', $repeat );
 	}
 
+// Behaviour
+	if ( $audio != '' ) {  
+		$this->set_variable_buffer( 'audio', $audio );
+	}
+	if ( $linkfromdisplay == 1 ) { 
+		$this->set_variable_buffer( 'linkfromdisplay', 'true' );
+	}
+	if ( $linktarget && ( $linktarget != _C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT ) ) {
+		$this->set_variable_buffer( 'linktarget', $linktarget );
+	}
 	if ( $rotatetime && ( $rotatetime != _C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT ) ) {
 		$this->set_variable_buffer( 'rotatetime', $rotatetime );
-	}
-	if ($shuffle == 1) {  
-		$this->set_variable_buffer( 'shuffle', 'true' );
-	}
-	if ( $smoothing == 0 ) {  
-		$this->set_variable_buffer( 'smoothing', 'false' );
-	}
-	if ( $volume && ($volume != _C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT ) ) {  
-		$this->set_variable_buffer( 'volume', $volume );
-	}
-
-// External communication
-	if ( $is_mediaplayer && $this->_cfg_use_callback ) {
-		$this->set_variable_buffer( 'callback', $this->_CALLBACK_URL, true );
-	}
-
-// for futrue
-//	if ( $enablejs == 1 ) {          
-//		$this->set_variable_buffer( 'enablejs', 'true' );   
-//		$this->set_variable_buffer( 'javascriptid', 'play'.$item_id );
-//	}
-
-	$movie_link = $this->get_movie_link( $src_url ) ;
-	if ( $movie_link ) {
-		$this->set_variable_buffer( 'link', $movie_link, true );
-
-		if ( $showdownload == 1 ) {
-			$this->set_variable_buffer( 'showdownload', 'true' );
-		}
-		if ( $linkfromdisplay == 1 ) { 
-			$this->set_variable_buffer( 'linkfromdisplay', 'true' );
-		}
-		if ( $linktarget && ( $linktarget != _C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT ) ) {
-			$this->set_variable_buffer( 'linktarget', $linktarget );
-		}
-	}
-
-	if ( $recommendations != '' ) {
-		$this->set_variable_buffer( 'recommendations', $recommendations );
-	}
-	if ( $searchlink != '' ) {
-		$this->set_variable_buffer( 'searchlink', $searchlink );
-	}
-	if ( $streamscript != '' ) {
-		$this->set_variable_buffer( 'streamscript', $streamscript );
-	}
-	if ( $flag_type && $this->check_type( $movie_file, $ext ) && $ext ) {
-		$this->set_variable_buffer( 'type', $ext ); 
-	}
-	if ( $flag_title && $item_title ) {
-		$this->set_variable_buffer( 'title', $item_title );
 	}
 
 	return true;
@@ -683,6 +739,29 @@ function set_variable_buffer_color( $name, $value )
 	$this->_variable_buffers[ $name ] = array( $this->convert_color( $value ), false ) ;
 }
 
+function set_variable_buffer_boolean( $name, $value )
+{
+	if ( $value == 1 ) {
+		$this->set_variable_buffer( $name, 'true' );
+	} elseif ( $value == 0 ) {
+		$this->set_variable_buffer( $name, 'false' );
+	}
+}
+
+function set_variable_buffer_int( $name, $value )
+{
+	if ( $value > 0 ) {
+		$this->set_variable_buffer( $name, $value );
+	}
+}
+
+function set_variable_buffer_str( $name, $value, $flag_urlencode=false  )
+{
+	if ( $value != '' ) {
+		$this->set_variable_buffer( $name, $value, $flag_urlencode );
+	}
+}
+
 function get_variable_buffers()
 {
 	return $this->_variable_buffers ;
@@ -693,12 +772,27 @@ function render_variable_buffers()
 	$str = '';
 	foreach ( $this->_variable_buffers as $k => $v ) {
 		if ( $v[1] ) {
-			$val = urlencode( $v[0] );
+			$val = $this->encoding( $v[0] );
 		} else {
 			$val = $v[0];
 		}
 		$str .= $this->build_add_variable( $k, $val );
 	}
+	return $str;
+}
+
+//---------------------------------------------------------
+//  ? -> %3F
+//  = -> %3D
+//  & -> %26
+//---------------------------------------------------------
+function encoding( $str )
+{
+	$search  = array( '?',   '=',   '&' );
+	$replace = array( '%3F', '%3D', '%26' );
+
+	$str = str_replace( $search,$replace, $str );
+	$str = urlencode( $str );
 	return $str;
 }
 
@@ -740,6 +834,49 @@ function build_embedjs( $item_id, $flashplayer, $width, $height, $config )
 //---------------------------------------------------------
 // utility
 //---------------------------------------------------------
+function get_movie_file( $param )
+{
+	$playlist_cache = $param['playlist_cache'] ; 
+
+	$flag_playlist = false;
+
+	list( $src_url, $flag_type ) = $this->get_src_url( $param );
+
+	$playlist_url = $this->get_playlist_url( $playlist_cache );
+
+// playlist
+	if ( $playlist_url ) {
+		$movie_file    = $playlist_url ;
+		$flag_playlist = true;
+
+// others
+	} else {
+		$movie_file = $src_url ;
+	}
+
+	return array($movie_file, $flag_playlist);
+
+}
+
+function get_playlist_url( $playlist_cache )
+{
+	if ( !$this->is_playlist_kind() ) {
+		return false;
+	}
+
+	if ( empty($playlist_cache) ) {
+		return false;
+	}
+
+	$playlist_url  = $this->_PLAYLISTS_URL .'/'. $playlist_cache ;
+	$playlist_path = $this->_PLAYLISTS_DIR .'/'. $playlist_cache ;
+
+	if ( file_exists($playlist_path) ) {
+		return $playlist_url ;
+	}
+	return false;
+}
+
 function get_file_url( $file_row )
 {
 	$url = null ;
@@ -1038,26 +1175,16 @@ function get_movie_link( $src_url )
 	return $link;
 }
 
-function get_movie_autostart( $autostart )
+function get_logo_file( $flashvar_row )
 {
-	if ( $autostart == 0 ) {  
-		$movie_autostart = 'false';
-	} else { 
-		$movie_autostart = 'true';
-	}
-	return $movie_autostart ;
-}
-
-function get_movie_logo( $logo )
-{
+	$logo = $flashvar_row['flashvar_logo'];
 	$logo_file = $this->_LOGOS_DIR .'/'. $logo ;
 	$logo_url  = $this->_LOGOS_URL .'/'. $logo ;
 
-	$movie_logo = null;
 	if ( $logo && file_exists( $logo_file ) ) {          
-		$movie_logo = $logo_url ;
+		return $logo_url ;
 	}
-	return $movie_logo ;
+	return false;
 }
 
 function check_type( $file, $ext )
@@ -1098,14 +1225,6 @@ function is_type_kind()
 		case _C_WEBPHOTO_ITEM_KIND_EXTERNAL_IMAGE :
 			return true ;
 			break;
-	}
-	return false;
-}
-
-function is_player_style_mono()
-{
-	if ( $this->_player_style == _C_WEBPHOTO_PLAYER_STYLE_MONO ) {
-		return true;
 	}
 	return false;
 }

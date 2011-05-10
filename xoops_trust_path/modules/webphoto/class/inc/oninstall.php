@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.24 2010/09/27 03:42:54 ohwada Exp $
+// $Id: oninstall.php,v 1.25 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// webphoto_inc_oninstall_flashvar
 // 2010-09-20 K.OHWADA
 // webphoto_inc_oninstall_mime
 // 2010-06-06 K.OHWADA
@@ -56,6 +58,7 @@ class webphoto_inc_oninstall extends webphoto_inc_base_ini
 	var $_gperm_def_class;
 	var $_oninstall_item_class;
 	var $_oninstall_mime_class;
+	var $_oninstall_flashvar_class;
 
 	var $_table_item ;
 	var $_table_mime ;
@@ -91,6 +94,8 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 		=& webphoto_inc_oninstall_item::getSingleton( $dirname , $trust_dirname );
 	$this->_oninstall_mime_class 
 		=& webphoto_inc_oninstall_mime::getSingleton( $dirname , $trust_dirname );
+	$this->_oninstall_flashvar_class 
+		=& webphoto_inc_oninstall_flashvar::getSingleton( $dirname , $trust_dirname );
 
 	$this->_table_cat    = $this->prefix_dirname( 'cat' );
 	$this->_table_item   = $this->prefix_dirname( 'item' );
@@ -238,6 +243,7 @@ function _exec_update()
 	$this->_cat_update();
 	$this->_item_update();
 	$this->_mime_update();
+	$this->_flashvar_update();
 	$this->_template_update();
 
 	return true ;
@@ -714,6 +720,18 @@ function _mime_update()
 {
 	$this->_oninstall_mime_class->update();
 	$arr = $this->_oninstall_mime_class->get_msg_array();
+	if ( is_array($arr) && count($arr) ) {
+		$this->set_msg( $arr );
+	}
+}
+
+//---------------------------------------------------------
+// flashvar table
+//---------------------------------------------------------
+function _flashvar_update()
+{
+	$this->_oninstall_flashvar_class->update();
+	$arr = $this->_oninstall_flashvar_class->get_msg_array();
 	if ( is_array($arr) && count($arr) ) {
 		$this->set_msg( $arr );
 	}

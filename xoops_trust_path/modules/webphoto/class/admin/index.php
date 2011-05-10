@@ -1,5 +1,5 @@
 <?php
-// $Id: index.php,v 1.28 2010/10/10 12:46:37 ohwada Exp $
+// $Id: index.php,v 1.29 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// _AM_WEBPHOTO_PLEASE_IMPORT_MYALBUM
 // 2010-10-01 K.OHWADA
 // _WAVS_DIR
 // 2010-06-06 K.OHWADA
@@ -170,7 +172,12 @@ function _print_check()
 	if ( $this->_cat_handler->get_count_all() == 0 ) {
 		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';
 		$msg .= _WEBPHOTO_ERR_MUSTADDCATFIRST ;
-		$msg .= '</a>';
+		$msg .= '</a><br />';
+		$msg .= _WEBPHOTO_OR;
+		$msg .= '<br />';
+		$msg .= '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=import_myalbum">';
+		$msg .= _AM_WEBPHOTO_PLEASE_IMPORT_MYALBUM ;
+		$msg .= '</a><br />';
 		echo $this->build_error_msg( $msg, '', false );
 	}
 

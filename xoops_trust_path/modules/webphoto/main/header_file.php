@@ -1,5 +1,5 @@
 <?php
-// $Id: header_file.php,v 1.5 2010/09/19 06:43:11 ohwada Exp $
+// $Id: header_file.php,v 1.6 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// class/webphoto/multibyte.php
 // 2010-09-17 K.OHWADA
 // class/lib/readfile.php
 // 2009-11-11 K.OHWADA
@@ -39,10 +41,12 @@ webphoto_include_once( 'class/lib/readfile.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 
+webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/kind.php' );
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/file_read.php' );
+webphoto_include_once( 'class/webphoto/multibyte.php' );
 
 webphoto_include_language( 'main.php' );
 

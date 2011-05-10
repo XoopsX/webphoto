@@ -1,5 +1,5 @@
 <?php
-// $Id: user_handler.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: user_handler.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// change get_row_by_email()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_handler -> webphoto_handler_base_ini
 //---------------------------------------------------------
@@ -151,8 +153,15 @@ function get_row_by_uid( $uid )
 
 function get_row_by_email( $email )
 {
+	$email = $this->quote($email);
+
 	$sql  = 'SELECT * FROM '.$this->_table;
-	$sql .= ' WHERE user_email='.$this->quote($email);
+	$sql .= ' WHERE user_email='.$email;
+	$sql .= ' OR user_text2='.$email;
+	$sql .= ' OR user_text3='.$email;
+	$sql .= ' OR user_text4='.$email;
+	$sql .= ' OR user_text5='.$email;
+
 	return $this->get_row_by_sql( $sql );
 }
 

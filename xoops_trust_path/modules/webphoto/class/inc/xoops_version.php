@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.39 2010/06/16 22:24:47 ohwada Exp $
+// $Id: xoops_version.php,v 1.40 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// pear_path
 // 2010-06-06 K.OHWADA
 // embed_width
 // 2010-04-27 K.OHWADA
@@ -569,6 +571,16 @@ function _build_config()
 		'formtype'		=> 'textbox' ,
 		'valuetype'		=> 'int' ,
 		'default'		=> '75' ,
+		'options'		=> array()
+	) ;
+
+	$arr[] = array(
+		'name'			=> 'pear_path' ,
+		'title'			=> $this->_constant_name( 'CFG_PEAR_PATH' ) ,
+		'description'	=> $this->_constant_name( 'CFG_PEAR_PATH_DSC' ) ,
+		'formtype'		=> 'textbox' ,
+		'valuetype'		=> 'text' ,
+		'default'		=> '' ,
 		'options'		=> array()
 	) ;
 

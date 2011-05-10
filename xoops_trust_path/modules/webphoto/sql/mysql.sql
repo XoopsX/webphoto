@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.23 2010/10/10 11:02:10 ohwada Exp $
+# $Id: mysql.sql,v 1.24 2011/05/10 02:56:39 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,9 @@
 
 # =========================================================
 # change log
+# 2011-05-01 K.OHWADA
+# JW Player 5.6
+# flashvar_dock
 # 2010-10-01 K.OHWADA
 # item_displayfile etc
 # svg wav etc
@@ -571,6 +574,36 @@ CREATE TABLE flashvar (
   flashvar_recommendations  VARCHAR(255) NOT NULL DEFAULT '',
   flashvar_streamscript     VARCHAR(255) NOT NULL DEFAULT '',
   flashvar_searchlink  VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_dock  TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_icons TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_mute  TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_controlbar_idlehide TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_display_showmute    TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_logo_hide TINYINT(2)  NOT NULL DEFAULT '0',
+  flashvar_duration INT(3)  NOT NULL DEFAULT '0',
+  flashvar_start    INT(3)  NOT NULL DEFAULT '0',
+  flashvar_item     INT(3)  NOT NULL DEFAULT '0',
+  flashvar_playlist_size INT(3)  NOT NULL DEFAULT '0',
+  flashvar_logo_margin   INT(3)  NOT NULL DEFAULT '0',
+  flashvar_logo_timeout  INT(3)  NOT NULL DEFAULT '0',
+  flashvar_logo_over     FLOAT(5,4)  NOT NULL DEFAULT '0',
+  flashvar_logo_out      FLOAT(5,4)  NOT NULL DEFAULT '0',
+  flashvar_playlistfile  VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_mediaid       VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_provider      VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_streamer      VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_netstreambasepath VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_skin          VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_player_repeat VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_playerready   VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_plugins       VARCHAR(255) NOT NULL DEFAULT '',
+  flashvar_stretching    VARCHAR(255) NOT NULL DEFAULT '' 
+  flashvar_controlbar_position VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_playlist_position   VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_logo_file       VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_logo_link       VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_logo_linktarget VARCHAR(255) NOT NULL DEFAULT '', 
+  flashvar_logo_position   VARCHAR(255) NOT NULL DEFAULT ''
   PRIMARY KEY  (flashvar_id),
   KEY (flashvar_item_id)
 ) TYPE=MyISAM;

@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.31 2010/11/04 02:24:16 ohwada Exp $
+// $Id: constants.php,v 1.32 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// JW Player 5.2
 // 2010-09-20 K.OHWADA
 // _C_WEBPHOTO_FILE_KIND_WAV
 // 2009-10-25 K.OHWADA
@@ -160,7 +162,7 @@ define("_C_WEBPHOTO_MIME_KIND_OFFICE_PDF",    44 ) ;
 
 // v1.80 v2.30
 define("_C_WEBPHOTO_FILE_KIND_NAME_LIST", "none|cont|thumb|middle|flash|docomo|pdf|swf|small|jpeg|mp3|wav|large" ) ;
-define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|large|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav" ) ;
+define("_C_WEBPHOTO_FILE_LIST", "cont|thumb|large|middle|small|flash|docomo|pdf|swf|jpeg|mp3|wav|large" ) ;
 
 define("_C_WEBPHOTO_FILE_KIND_CONT"          , 1 ) ;
 define("_C_WEBPHOTO_FILE_KIND_THUMB"         , 2 ) ;
@@ -351,14 +353,15 @@ define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_SITE", "1");
 define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_PAGE", "2");
 define("_C_WEBPHOTO_FLASHVAR_LINK_TYPE_FILE", "3");
 
-// http://developer.longtailvideo.com/trac/wiki/ImageRotatorVars
-define("_C_WEBPHOTO_FLASHVAR_AUTOSTART_DEFAULT"   , "2");
-define("_C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT", "3");
 define("_C_WEBPHOTO_FLASHVAR_ROTATETIME_DEFAULT",   "5");
-define("_C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT",       "80");
 define("_C_WEBPHOTO_FLASHVAR_LINKTARGET_DEFAULT",   "_self");
 define("_C_WEBPHOTO_FLASHVAR_OVERSTRETCH_DEFAULT",  "false");
 define("_C_WEBPHOTO_FLASHVAR_TRANSITION_DEFAULT",   "random");
+
+// v2.40
+define("_C_WEBPHOTO_FLASHVAR_AUTOSTART_DEFAULT", "false");
+define("_C_WEBPHOTO_FLASHVAR_BUFFERLENGTH_DEFAULT", "1");
+define("_C_WEBPHOTO_FLASHVAR_VOLUME_DEFAULT",       "90");
 
 define("_C_WEBPHOTO_PLAYER_STYLE_MONO",   "0");
 define("_C_WEBPHOTO_PLAYER_STYLE_THEME",  "1");
@@ -476,6 +479,29 @@ define("_C_WEBPHOTO_UID_DEFAULT", -1 ) ;
 define("_C_WEBPHOTO_URI_PARAM_NAME",  "p" ) ;
 define("_C_WEBPHOTO_URI_PATH_FIRST",  0 ) ;
 define("_C_WEBPHOTO_URI_PATH_SECOND", 1 ) ;
+
+// v2.40
+// JW Player 5.2
+define("_C_WEBPHOTO_FLASHVAR_SHUFFLE_DEFAULT",   "0");
+define("_C_WEBPHOTO_FLASHVAR_MUTE_DEFAULT",      "0");
+define("_C_WEBPHOTO_FLASHVAR_SMOOTHING_DEFAULT", "1");
+define("_C_WEBPHOTO_FLASHVAR_DOCK_DEFAULT",      "1");
+define("_C_WEBPHOTO_FLASHVAR_ICONS_DEFAULT",     "1");
+define("_C_WEBPHOTO_FLASHVAR_STRETCHING_DEFAULT",   "uniform");
+define("_C_WEBPHOTO_FLASHVAR_CONTROLBAR_IDLEHIDE_DEFAULT", "0");
+define("_C_WEBPHOTO_FLASHVAR_CONTROLBAR_POSITION_DEFAULT", "bottom");
+define("_C_WEBPHOTO_FLASHVAR_DISPLAY_SHOWMUTE_DEFAULT", "0");
+define("_C_WEBPHOTO_FLASHVAR_PLAYLIST_SIZE_DEFAULT", "180");
+define("_C_WEBPHOTO_FLASHVAR_PLAYLIST_POSITION_DEFAULT",   "none");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_HIDE_DEFAULT",    "1");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_MARGIN_DEFAULT",  "8");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_TIMEOUT_DEFAULT", "3");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_OVER_DEFAULT",    "1");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_OUT_DEFAULT",     "0.5");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_POSITION_DEFAULT", "bottom-left");
+define("_C_WEBPHOTO_FLASHVAR_LOGO_LINKTARGET_DEFAULT", "_blank");
+define("_C_WEBPHOTO_FLASHVAR_PLAYER_REPEAT_DEFAULT", "none");
+define("_C_WEBPHOTO_FLASHVAR_PLAYER_REPEAT_ALWAYS",  "always");
 
 // v1.80
 //define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;

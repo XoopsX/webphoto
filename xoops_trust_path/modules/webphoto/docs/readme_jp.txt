@@ -1,11 +1,81 @@
-$Id: readme_jp.txt,v 1.58 2010/11/17 00:08:44 ohwada Exp $
+$Id: readme_jp.txt,v 1.59 2011/05/10 02:56:39 ohwada Exp $
+
+=================================================
+Version: 2.40
+Date:   201-05-10
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. ファイルのダウンロード
+(1) オリジナルのファイル名でダウンロードする
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1167&forum=13
+
+(2) 画像ファイルはダウンロードと画像表示の２つを表示する
+(3) メディアとサムネイル画像が同じファイル名になるので、サムネイル画像には thumb を追加した
+
+2. Flash プレイヤー
+(1) 「JW Player 5.6」にバージョンアップした
+(2) 「Flash Player のオプションの編集」を大幅に修正した
+
+3. メール受信
+(1) POPサーバーを Gmail に対応した
+(2) 機種依存文字に対応した
+(3) スペースのあるファイル名に対応した
+(3) Subject がない時はファイル名をタイトルにした
+(4) メールアドレスを５個に拡張した
+(5) PEAR ライブラリを使用した
+
+4. バグ対策
+(1) プレイリストにて最初の１曲しか再生しない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1152&forum=13
+
+(2) コマンドのテスト実行にて fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1154&forum=13
+
+(3) myalbum-pからの一括インポートに失敗します。
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1157&forum=13
+
+(4) 「アイテム管理」にて、期限切れ一覧が表示されない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1158&forum=13
+
+(5) ダウンロードができない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1167&forum=13
+
+(6) 「アイテム管理」にて、動画のときに「編集」ボタンを押すと、fatal error
+
+(7) 「アイテム管理」にて、状態がオフラインにならない
+
+(8) プレイリストにて、存在しないページにリンクしている
+
+5. データベースの構造
+(1) flashvar table : JW Player 5.6 に対応した
+
+6. PEAR ライブラリ
+下記を同封しています
+2011年5月 時点
+(1) Net_Socket 1.0.10 
+(2) Net_POP3 1.3.8
+(3) Mail_mime 1.8.1
+(4) Mail_mimeDecode 1.5.5 
+
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて、
+  「アップデート」の「ファイルの妥当性の検査」を実行し、
+  必要なファイルが設置されているかを確認する
+
 
 =================================================
 Version: 2.32
 Date:   2010-11-17
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

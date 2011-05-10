@@ -1,11 +1,81 @@
-$Id: readme_en.txt,v 1.57 2010/11/17 00:08:44 ohwada Exp $
+$Id: readme_en.txt,v 1.58 2011/05/10 02:56:39 ohwada Exp $
+
+=================================================
+Version: 2.40
+Date:   201-05-10
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. file download
+(1) download file by an original file name. 
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1167&forum=13
+
+(2) image file show two mode, download and the image display.
+(3) add 'thumb' to the thumbnail file, 
+because the thumbnail file has same name as media file
+
+2. Flash Player
+(1) version up to "JW Player 5.6"
+(2) modify greatly "Edit of Flash Player's options"
+
+3. Mail recive
+(1) support Gmail for POP server
+(2) support the platform dependent Japansese character
+(3) support the file name with space. 
+(3) Title is made from filename when there was no Subject. 
+(4) extend to 5 mail address.
+(5) use PEAR library
+
+4. bugfix
+(1) play the first one music in the playlist
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1152&forum=13
+
+(2) Fatal Error in commnad test excute
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1154&forum=13
+
+(3) Fatal Error in import from myalbum-p
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1157&forum=13
+
+(4) Fatal Error in expire list of "Item Manager"
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1158&forum=13
+
+(5) Fatal Error in download
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1167&forum=13
+
+(6) Fatal Error in video edit of "Item Manager"
+
+(7) NOT set offline in "Item Manager"
+
+(8) link with the page that doesn't exist in playlist
+
+5. Database structure
+(1) flashvar table : support "JW Player 5.6"
+
+6. PEAR library
+enclose the following
+at May, 2011
+(1) Net_Socket 1.0.10 
+(2) Net_POP3 1.3.8
+(3) Mail_mime 1.8.1
+(4) Mail_mimeDecode 1.5.5 
+
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.32
 Date:   2010-11-17
-Author: Kenichi OHWADA
-URL:    http://linux2.ohwada.net/
-Email:  webmaster@ohwada.net
 =================================================
 
 This is the album module which manages photos and videos.

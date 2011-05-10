@@ -1,5 +1,5 @@
 <?php
-// $Id: image.php,v 1.4 2010/09/19 06:43:11 ohwada Exp $
+// $Id: image.php,v 1.5 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// Notice [PHP]: Undefined index: file_full
 // 2010-09-17 K.OHWADA
 // webphoto_lib_readfile
 //---------------------------------------------------------
@@ -60,10 +62,14 @@ function main()
 		exit();
 	}
 
+//print_r($file_row);
+
 	$ext  = $file_row['file_ext'] ;
 	$mime = $file_row['file_mime'] ;
 	$size = $file_row['file_size'] ;
-	$file = $file_row['file_full'] ;
+
+// Notice [PHP]: Undefined index: file_full
+	$file = $file_row['full_path'] ;
 
 	if ( ! $this->_kind_class->is_image_ext( $ext ) ) {
 		exit();

@@ -1,5 +1,5 @@
 <?php
-// $Id: file_read.php,v 1.6 2010/11/16 23:43:38 ohwada Exp $
+// $Id: file_read.php,v 1.7 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// webphoto_lib_multibyte -> webphoto_multibyte
 // 2010-11-11 K.OHWADA
 // get_extend_row_by_id()
 // 2010-09-17 K.OHWADA
@@ -39,7 +41,7 @@ function webphoto_file_read( $dirname , $trust_dirname )
 
 	$this->_file_handler    =& webphoto_file_handler::getInstance( 
 		$dirname, $trust_dirname );
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_multibyte_class =& webphoto_multibyte::getInstance();
 	$this->_post_class      =& webphoto_lib_post::getInstance();
 	$this->_utility_class   =& webphoto_lib_utility::getInstance();
 

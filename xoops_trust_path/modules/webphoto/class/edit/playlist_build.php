@@ -1,5 +1,5 @@
 <?php
-// $Id: playlist_build.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: playlist_build.php,v 1.5 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// create_cache()
 // 2009-11-11 K.OHWADA
 // webphoto_lib_error -> webphoto_base_ini
 // 2009-04-19 K.OHWADA
@@ -63,19 +65,19 @@ function is_type( $row )
 	return false;
 }
 
-function build( $row )
+// called before crete item
+function build_row( $row )
 {
+	if ( ! $this->is_type( $row ) ) {
+		return 1 ;	// no action
+	}
+
 	$this->_item_row = $row ;
 
-	$item_id             = $row['item_id'] ;
 	$item_title          = $row['item_title'] ;
 	$item_playlist_type  = $row['item_playlist_type'] ;
 	$item_playlist_feed  = $row['item_playlist_feed'] ;
 	$item_playlist_dir   = $row['item_playlist_dir'] ;
-
-	if ( ! $this->is_type( $row ) ) {
-		return 1 ;	// no action
-	}
 
 	if ( $item_playlist_feed ) {
 		$row['item_kind'] = _C_WEBPHOTO_ITEM_KIND_PLAYLIST_FEED ;
@@ -109,12 +111,27 @@ function build( $row )
 
 	$row = $this->build_row_icon_if_empty( $row, $this->_THUMB_EXT_DEFAULT );
 
+	$this->_item_row = $row ;
+	return 0 ;	// OK
+}
+
+// called after crete item
+function create_cache( $row )
+{
+	if ( ! $this->is_type( $row ) ) {
+		return 1 ;	// no action
+	}
+
+	$this->_item_row = $row ;
+	$item_id = $row['item_id'] ;
+
 // playlist cache
 	$row['item_playlist_cache'] = $this->_playlist_class->build_name( $item_id ) ;
 
 	$ret = $this->_playlist_class->create_cache_by_item_row( $row );
 	if ( !$ret ) {
 		$this->set_error( $this->_playlist_class->get_errors() );
+		return _C_WEBPHOTO_ERR_PLAYLIST;
 	}
 
 	$this->_item_row = $row ;

@@ -1,10 +1,16 @@
 <?php
-// $Id: readfile.php,v 1.2 2010/09/19 07:21:01 ohwada Exp $
+// $Id: readfile.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-09-17 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-05-01 K.OHWADA
+// $is_rfc2231
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // http://jp.php.net/manual/ja/function.readfile.php
@@ -48,11 +54,11 @@ function readfile_view( $file, $mime )
 	readfile( $file ) ;
 }
 
-function readfile_down( $file, $mime, $name )
+function readfile_down( $file, $mime, $name, $is_rfc2231=false )
 {
 	$this->zlib_off();
 	$this->http_output_pass();
-	$this->header_down( $file, $mime, $name );
+	$this->header_down( $file, $mime, $name, $is_rfc2231 );
 	ob_clean();
 	flush();
 	readfile($file);
@@ -81,7 +87,24 @@ function header_view( $file, $mime )
 	header('Content-Length: '. $size );
 }
 
-function header_down( $file, $mime, $name )
+function header_down( $file, $mime, $name, $is_rfc2231=false )
+{
+	if ( $is_rfc2231 ) {;
+		$dis = 'Content-Disposition: attachment; filename*=';
+	} else {
+		$dis = 'Content-Disposition: attachment; filename=';
+	}
+
+	$size = filesize( $file );
+	header('Pragma: public');
+	header('Cache-Control: must-revaitem_idate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: '. $mime );
+	header('Content-Length: '. $size );
+	header($dis . $name );
+}
+
+function header_down_rfc2131( $file, $mime, $name )
 {
 	$size = filesize( $file );
 	header('Pragma: public');
@@ -89,7 +112,7 @@ function header_down( $file, $mime, $name )
 	header('Content-Description: File Transfer');
 	header('Content-Type: '. $mime );
 	header('Content-Length: '. $size );
-	header('Content-Disposition: attachment; filename=' . $name );
+	header('Content-Disposition: attachment; filename*=' . $name );
 }
 
 function header_xml()

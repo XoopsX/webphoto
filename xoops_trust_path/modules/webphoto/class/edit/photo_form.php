@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_form.php,v 1.19 2010/11/16 23:43:38 ohwada Exp $
+// $Id: photo_form.php,v 1.20 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// show_batch_uid
 // 2010-11-11 K.OHWADA
 // show_item_icon_name()
 // 2010-10-01 K.OHWADA
@@ -309,8 +311,9 @@ function build_form_photo( $item_row )
 
 		case 'admin_batch':
 			$show_batch_dir    = true;
-			$show_batch_uid    = true;
 			$show_batch_update = true;
+// for future
+//			$show_batch_uid    = true;
 			break;
 
 		case 'submit':

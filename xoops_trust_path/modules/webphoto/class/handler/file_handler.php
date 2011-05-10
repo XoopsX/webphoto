@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
+// $Id: file_handler.php,v 1.10 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// get_download_image_aux()
 // 2010-11-11 K.OHWADA
 // build_full_path()
 // 2010-09-20 K.OHWADA
@@ -357,6 +359,59 @@ function exists_file( $file )
 {
 	if ( $file && file_exists($file) && is_file($file) && !is_dir($file) ) {
 		return true;
+	}
+	return false;
+}
+
+//---------------------------------------------------------
+// options
+//---------------------------------------------------------
+function get_file_kind_all_options()
+{
+	$arr = array(
+		_C_WEBPHOTO_FILE_KIND_CONT   => 'cont',
+		_C_WEBPHOTO_FILE_KIND_THUMB  => 'thumb',
+		_C_WEBPHOTO_FILE_KIND_MIDDLE => 'middile',
+		_C_WEBPHOTO_FILE_KIND_FLASH  => 'flash',
+		_C_WEBPHOTO_FILE_KIND_DOCOMO => 'docomo',
+		_C_WEBPHOTO_FILE_KIND_PDF    => 'pdf',
+		_C_WEBPHOTO_FILE_KIND_MIDDLE => 'middile',
+		_C_WEBPHOTO_FILE_KIND_SWF    => 'swf',
+		_C_WEBPHOTO_FILE_KIND_JPEG   => 'jpeg',
+		_C_WEBPHOTO_FILE_KIND_MP3    => 'mp3',
+		_C_WEBPHOTO_FILE_KIND_WAV    => 'wav',
+		_C_WEBPHOTO_FILE_KIND_LARGE  => 'large',
+	);
+	return $arr;
+}
+
+function get_file_kind_image_options()
+{
+	$arr = array(
+//		_C_WEBPHOTO_FILE_KIND_CONT   => 'cont',
+		_C_WEBPHOTO_FILE_KIND_THUMB  => 'thumb',
+		_C_WEBPHOTO_FILE_KIND_MIDDLE => 'middile',
+//		_C_WEBPHOTO_FILE_KIND_FLASH  => 'flash',
+//		_C_WEBPHOTO_FILE_KIND_DOCOMO => 'docomo',
+//		_C_WEBPHOTO_FILE_KIND_PDF    => 'pdf',
+		_C_WEBPHOTO_FILE_KIND_MIDDLE => 'middile',
+//		_C_WEBPHOTO_FILE_KIND_SWF    => 'swf',
+		_C_WEBPHOTO_FILE_KIND_JPEG   => 'jpeg',
+//		_C_WEBPHOTO_FILE_KIND_MP3    => 'mp3',
+//		_C_WEBPHOTO_FILE_KIND_WAV    => 'wav',
+		_C_WEBPHOTO_FILE_KIND_LARGE  => 'large',
+	);
+	return $arr;
+}
+
+//---------------------------------------------------------
+// options
+//---------------------------------------------------------
+function get_download_image_aux( $file_kind )
+{
+	$options = $this->get_file_kind_image_options();
+	if ( isset( $options[ $file_kind ] ) ) {
+		return  $options[ $file_kind ];
 	}
 	return false;
 }

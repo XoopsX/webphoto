@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
+// $Id: utility.php,v 1.18 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// substitute_filename_to_underbar()
 // 2010-11-11 K.OHWADA
 // Incorrect datetime value
 // 2010-10-01 K.OHWADA
@@ -660,6 +662,31 @@ function decode_slash( $str )
 function decode_colon( $str )
 {
 	return str_replace( $this->_HTML_COLON, ':', $str );
+}
+
+//---------------------------------------------------------
+// file name
+//---------------------------------------------------------
+function substitute_filename_to_underbar( $name, $char='_' )
+{
+// substitute the characters that cannot be used as the file name to underbar. 
+// \ / : * ? " < > | sapce
+	$search  = array('\\','/',':','*','?','"','<','>','|',' ');
+
+	$replace = array();
+	for ( $i=0; $i<10; $i++ ){
+		$replace[] = $char;
+	}
+
+	$str = str_replace( $search, $replace, $name );
+	return $str;
+}
+
+function build_filename_rfc2231( $name, $charset, $langcode )
+{
+	$str  = strtolower( $charset."'". $langcode ."'" );
+	$str .= rawurlencode($name);
+	return $str;
 }
 
 //---------------------------------------------------------

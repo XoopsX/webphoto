@@ -1,5 +1,5 @@
 <?php
-// $Id: flashvar_edit.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: flashvar_edit.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// JW Player 5.6
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_flashvar_handler
 // 2009-01-10 K.OHWADA
@@ -141,6 +143,40 @@ function build_row_by_post( $row )
 	$row['flashvar_streamscript']     = $this->_post_class->get_post_text( 'flashvar_streamscript' );
 	$row['flashvar_searchlink']       = $this->_post_class->get_post_text( 'flashvar_searchlink' );
 	$row['flashvar_audio']            = $this->_post_class->get_post_url( 'flashvar_audio' );
+
+// JW Player 5.6
+	$row['flashvar_dock']         = $this->_post_class->get_post_int( 'flashvar_dock' );
+	$row['flashvar_icons']        = $this->_post_class->get_post_int( 'flashvar_icons' );
+	$row['flashvar_mute']         = $this->_post_class->get_post_int( 'flashvar_mute' );
+	$row['flashvar_duration']     = $this->_post_class->get_post_int( 'flashvar_duration' );
+	$row['flashvar_start']        = $this->_post_class->get_post_int( 'flashvar_start' );
+	$row['flashvar_item']         = $this->_post_class->get_post_int( 'flashvar_item' );
+	$row['flashvar_logo_hide']    = $this->_post_class->get_post_int( 'flashvar_logo_hide' );
+	$row['flashvar_logo_margin']  = $this->_post_class->get_post_int( 'flashvar_logo_margin' );
+	$row['flashvar_logo_timeout'] = $this->_post_class->get_post_int( 'flashvar_logo_timeout' );
+	$row['flashvar_controlbar_idlehide'] = $this->_post_class->get_post_int( 'flashvar_controlbar_idlehide' );
+	$row['flashvar_display_showmute']    = $this->_post_class->get_post_int( 'flashvar_display_showmute' );
+	$row['flashvar_playlist_size']       = $this->_post_class->get_post_int( 'flashvar_playlist_size' );
+
+	$row['flashvar_logo_over']    = $this->_post_class->get_post_float( 'flashvar_logo_over' );
+	$row['flashvar_logo_out']     = $this->_post_class->get_post_float( 'flashvar_logo_out' );
+
+	$row['flashvar_playlistfile'] = $this->_post_class->get_post_text( 'flashvar_playlistfile' );
+	$row['flashvar_mediaid']      = $this->_post_class->get_post_text( 'flashvar_mediaid' );
+	$row['flashvar_provider']     = $this->_post_class->get_post_text( 'flashvar_provider' );
+	$row['flashvar_streamer']     = $this->_post_class->get_post_text( 'flashvar_streamer' );
+	$row['flashvar_skin']         = $this->_post_class->get_post_text( 'flashvar_skin' );
+	$row['flashvar_playerready']  = $this->_post_class->get_post_text( 'flashvar_playerready' );
+	$row['flashvar_plugins']      = $this->_post_class->get_post_text( 'flashvar_plugins' );
+	$row['flashvar_stretching']   = $this->_post_class->get_post_text( 'flashvar_stretching' );
+	$row['flashvar_netstreambasepath']   = $this->_post_class->get_post_text( 'flashvar_netstreambasepath' );
+	$row['flashvar_player_repeat']       = $this->_post_class->get_post_text( 'flashvar_player_repeat' );
+	$row['flashvar_controlbar_position'] = $this->_post_class->get_post_text( 'flashvar_controlbar_position' );
+	$row['flashvar_playlist_position']   = $this->_post_class->get_post_text( 'flashvar_playlist_position' );
+	$row['flashvar_logo_file']           = $this->_post_class->get_post_text( 'flashvar_logo_file' );
+	$row['flashvar_logo_link']           = $this->_post_class->get_post_text( 'flashvar_logo_link' );
+	$row['flashvar_logo_linktarget']     = $this->_post_class->get_post_text( 'flashvar_logo_linktarget' );
+	$row['flashvar_logo_position']       = $this->_post_class->get_post_text( 'flashvar_logo_position' );
 
 	return $row;
 }

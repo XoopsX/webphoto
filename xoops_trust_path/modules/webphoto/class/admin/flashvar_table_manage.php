@@ -1,5 +1,5 @@
 <?php
-// $Id: flashvar_table_manage.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: flashvar_table_manage.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// JW Player 5.6
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_flashvar_handler
 //---------------------------------------------------------
@@ -106,6 +108,36 @@ function _build_row_by_post()
 		'flashvar_recommendations'  => $this->_post_class->get_post_text( 'flashvar_recommendations' ),
 		'flashvar_streamscript'     => $this->_post_class->get_post_text( 'flashvar_streamscript' ),
 		'flashvar_searchlink'       => $this->_post_class->get_post_text( 'flashvar_searchlink' ),
+
+// JW Player 5.6
+		'flashvar_dock'                => $this->_post_class->get_post_int(  'flashvar_dock' ),
+		'flashvar_icons'               => $this->_post_class->get_post_int(  'flashvar_icons' ),
+		'flashvar_mute'                => $this->_post_class->get_post_int(  'flashvar_mute' ),
+		'flashvar_controlbar_idlehide' => $this->_post_class->get_post_int(  'flashvar_controlbar_idlehide' ),
+		'flashvar_logo_hide'           => $this->_post_class->get_post_int(  'flashvar_logo_hide' ),
+		'flashvar_duration'            => $this->_post_class->get_post_int(  'flashvar_duration' ),
+		'flashvar_start'               => $this->_post_class->get_post_int(  'flashvar_start' ),
+		'flashvar_item'                => $this->_post_class->get_post_int(  'flashvar_item' ),
+		'flashvar_playlist_size'       => $this->_post_class->get_post_int(  'flashvar_playlist_size' ),
+		'flashvar_logo_margin'         => $this->_post_class->get_post_int(  'flashvar_logo_margin' ),
+		'flashvar_logo_timeout'        => $this->_post_class->get_post_int(  'flashvar_logo_timeout' ),
+		'flashvar_logo_over'           => $this->_post_class->get_post_float(  'flashvar_logo_over' ),
+		'flashvar_logo_out'            => $this->_post_class->get_post_float(  'flashvar_logo_out' ),
+		'flashvar_playlistfile'        => $this->_post_class->get_post_text( 'flashvar_playlistfile' ),
+		'flashvar_mediaid'             => $this->_post_class->get_post_text( 'flashvar_mediaid' ),
+		'flashvar_provider'            => $this->_post_class->get_post_text( 'flashvar_provider' ),
+		'flashvar_netstreambasepath'   => $this->_post_class->get_post_text( 'flashvar_netstreambasepath' ),
+		'flashvar_skin'                => $this->_post_class->get_post_text( 'flashvar_skin' ),
+		'flashvar_player_repeat'       => $this->_post_class->get_post_text( 'flashvar_player_repeat' ),
+		'flashvar_playerready'         => $this->_post_class->get_post_text( 'flashvar_playerready' ),
+		'flashvar_plugins'             => $this->_post_class->get_post_text( 'flashvar_plugins' ),
+		'flashvar_stretching'          => $this->_post_class->get_post_text( 'flashvar_stretching' ),
+		'flashvar_controlbar_position' => $this->_post_class->get_post_text( 'flashvar_controlbar_position' ),
+		'flashvar_playlist_position'   => $this->_post_class->get_post_text( 'flashvar_playlist_position' ),
+		'flashvar_logo_file'           => $this->_post_class->get_post_text( 'flashvar_logo_file' ),
+		'flashvar_logo_linktarget'     => $this->_post_class->get_post_text( 'flashvar_logo_linktarget' ),
+		'flashvar_logo_position'       => $this->_post_class->get_post_text( 'flashvar_logo_position' ),
+
 	);
 	return $row;
 }
@@ -170,6 +202,38 @@ function _print_form( $row )
 	echo $this->build_comp_text( 'flashvar_streamscript' );
 	echo $this->build_comp_text( 'flashvar_searchlink' );
 
+// JW Player 5.6
+	echo $this->build_comp_text( 'flashvar_dock' );
+	echo $this->build_comp_text( 'flashvar_icons' );
+	echo $this->build_comp_text( 'flashvar_mute' );
+	echo $this->build_comp_text( 'flashvar_controlbar_idlehide' );
+	echo $this->build_comp_text( 'flashvar_display_showmute' );
+	echo $this->build_comp_text( 'flashvar_logo_hide' );
+	echo $this->build_comp_text( 'flashvar_duration' );
+	echo $this->build_comp_text( 'flashvar_start' );
+	echo $this->build_comp_text( 'flashvar_item' );
+	echo $this->build_comp_text( 'flashvar_playlist_size' );
+	echo $this->build_comp_text( 'flashvar_logo_margin' );
+	echo $this->build_comp_text( 'flashvar_logo_timeout' );
+	echo $this->build_comp_text( 'flashvar_logo_over' );
+	echo $this->build_comp_text( 'flashvar_logo_out' );
+	echo $this->build_comp_text( 'flashvar_playlistfile' );
+	echo $this->build_comp_text( 'flashvar_mediaid' );
+	echo $this->build_comp_text( 'flashvar_provider' );
+	echo $this->build_comp_text( 'flashvar_streamer' );
+	echo $this->build_comp_text( 'flashvar_netstreambasepath' );
+	echo $this->build_comp_text( 'flashvar_skin' );
+	echo $this->build_comp_text( 'flashvar_player_repeat' );
+	echo $this->build_comp_text( 'flashvar_playerready' );
+	echo $this->build_comp_text( 'flashvar_plugins' );
+	echo $this->build_comp_text( 'flashvar_stretching' );
+	echo $this->build_comp_text( 'flashvar_controlbar_position' );
+	echo $this->build_comp_text( 'flashvar_playlist_position' );
+	echo $this->build_comp_text( 'flashvar_logo_file' );
+	echo $this->build_comp_text( 'flashvar_logo_link' );
+	echo $this->build_comp_text( 'flashvar_logo_linktarget' );
+	echo $this->build_comp_text( 'flashvar_logo_position' );
+
 	echo $this->build_manage_submit();
 
 	echo "</table></form>\n";
@@ -177,7 +241,7 @@ function _print_form( $row )
 
 function _build_row_item_id()
 {
-	$name  = 'file_item_id' ;
+	$name  = 'flashvar_item_id' ;
 	$value = intval( $this->get_row_by_key( $name ) );
 	$ele   = $this->build_input_text( $name, $value );
 	if ( $value > 0 ) {

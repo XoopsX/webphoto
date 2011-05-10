@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.30 2010/11/16 23:43:38 ohwada Exp $
+// $Id: item_manager.php,v 1.31 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// set always if playlist
 // 2010-11-11 K.OHWADA
 // file_id_to_item_name()
 // 2010-10-01 K.OHWADA
@@ -70,6 +72,8 @@ class webphoto_admin_item_manager extends webphoto_edit_action
 	var $_sort_class ;
 	var $_admin_item_form_class;
 
+	var $_ini_flashvar_player_repeat_when_playlist = null;
+
 	var $_player_id       = 0 ;
 	var $_player_title    = null;
 	var $_alternate_class = 'even';
@@ -114,6 +118,9 @@ function webphoto_admin_item_manager( $dirname , $trust_dirname )
 	$this->_sort_class->init_for_admin();
 
 	$this->init_preload();
+
+	$this->_ini_flashvar_player_repeat_when_playlist
+		= $this->get_init('flashvar_player_repeat_when_playlist');
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -524,7 +531,9 @@ function _modify_form()
 	} else {
 		$url = $this->_THIS_URL.'&amp;op=flashvar_form&amp;item_id='. $item_id ;
 		echo '<a href="'. $url .'">';
-		echo '[ ADD FlashVar ]';
+		echo '[ ';
+		echo _WEBPHOTO_FLASHVARS_ADD;
+		echo ' ]';
 		echo "</a><br /><br />\n";
 	}
 
@@ -964,6 +973,14 @@ function _flashvar_form()
 		$mode = 'admin_item_submit';
 		$flashvar_row = $this->_flashvar_handler->create( true );
 		$flashvar_row['flashvar_item_id'] = $item_id ;
+
+// set always if playlist
+		$item_row = $this->_item_handler->get_row_by_id( $item_id );
+		if ( isset( $item_row['item_kind'] ) && 
+		     $this->is_playlist_kind( $item_row['item_kind'] )) {
+			$flashvar_row['flashvar_player_repeat'] = 
+				$this->_ini_flashvar_player_repeat_when_playlist;
+		}
 	}
 
 	$this->_print_form_flashvar( $mode, $flashvar_row );
@@ -1049,7 +1066,9 @@ function _build_flashvar_redirect( $ret, $error, $error_upload )
 //---------------------------------------------------------
 function _flashvar_modify()
 {
-	$edit_class =& webphoto_flashvar_edit::getInstance( 
+// Fatal error: Class 'webphoto_flashvar_edit' not found 
+
+	$edit_class =& webphoto_edit_flashvar_edit::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 
 	$this->_check_token_and_redirect();
@@ -1464,7 +1483,7 @@ function _print_form_redo( $mode, $item_row, $flash_row )
 
 function _print_form_flashvar( $mode, $flashvar_row )
 {
-// Fatal error: Class 'webphoto_flashvar_form'
+// Fatal error: Class webphoto_flashvar_form
 	$form_class =& webphoto_edit_flashvar_form::getInstance( 
 		$this->_DIRNAME , $this->_TRUST_DIRNAME );
 

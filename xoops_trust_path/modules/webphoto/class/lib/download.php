@@ -1,5 +1,5 @@
 <?php
-// $Id: download.php,v 1.5 2011/05/10 02:56:39 ohwada Exp $
+// $Id: download.php,v 1.1 2011/05/10 02:59:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -26,6 +26,7 @@ class webphoto_main_download extends webphoto_file_read
 {
 	var $_readfile_class ;
 	var $_browser_class;
+	var $_filename_class;
 
 	var $_TIME_FAIL = 5;
 
@@ -38,6 +39,13 @@ function webphoto_main_download( $dirname , $trust_dirname )
 
 	$this->_readfile_class =& webphoto_lib_readfile::getInstance();
 	$this->_browser_class  =& webphoto_lib_browser::getInstance();
+	$this->_filename_class =& webphoto_download_filename::getInstance();
+
+	$is_japanese = $this->xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
+
+	$this->_filename_class->set_charset_local( _CHARSET );
+	$this->_filename_class->set_langcode( _LANGCODE );
+	$this->_filename_class->set_is_japanese( $is_japanese );
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -115,81 +123,19 @@ function build_filename_by_row( $item_row, $file_row )
 		$name = $file_name ;
 	}
 
-// substitute the characters that cannot be used as the file name to underbar. 
-// \ / : * ? " < > | sapce
-	$name = $this->_utility_class->substitute_filename_to_underbar( $name );
-	$name = $this->_multibyte_class->convert_space_zen_to_han( $name );
-	$name = str_replace( ' ', '_', $name );
-
-	return array($name, $file_name);
+	return array( $name, $file_name );
 }
 
 function build_filename_encode( $name, $name_alt )
 {
-	$is_rfc2231 = false;
-
 	if ( ! $this->get_ini('download_filename_encode') ) {
-		return array( $name_alt, $is_rfc2231 );
+		return array( $name_alt, false );
 	}
-
-	$browser = $this->get_convert_kind( $name );
-	switch ( $browser )
-	{
-// ASCII
-		case 'ascii':
-			$name = rawurlencode($name);
-			break;
-
-// SJIS
-		case 'msie_ja':
-			$name = $this->_multibyte_class->convert_encoding(
-				$name, "SJIS", _CHARSET);
-			break;
-
-// RFC2231
-		case 'firefox':
-		case 'chrome':
-		case 'opera':
-			$name = $this->_multibyte_class->convert_to_utf8( $name );
-			$name = $this->_utility_class->build_filename_rfc2231( $name, 'utf-8', _LANGCODE );
-			$is_rfc2231 = true;
-			break;
-
-// UTF-8
-		case 'safari_utf8':
-			$name = $this->_multibyte_class->convert_to_utf8( $name );
-			break;
-
-		default:
-			$name = rawurlencode($name_alt);
-			break;
-	}
-
-	return array( $name, $is_rfc2231 );
-}
-
-function get_convert_kind( $name )
-{
-	$is_japanese = $this->_xoops_class->is_japanese( _C_WEBPHOTO_JPAPANESE ) ;
 
 	$this->_browser_class->presume_agent();
 	$browser = $this->_browser_class->get_browser();
 
-	$ascii = $this->_multibyte_class->convert_encoding( 
-		$name, "US-ASCII", _CHARSET );
-	if ( $ascii == $name ) {
-		$browser = 'ascii';
-	}
-
-	if (( $browser == 'msie' ) && $is_japanese ) {
-		$browser = 'msie_ja';
-	}
-
-	if (( $browser == 'safari' ) && (_CHARSET == 'UTF-8') ) {
-		$browser = 'safari_utf8';
-	}
-
-	return $browser;
+	return $this->_filename_class->build_encode( $name, $name_alt, $browser );
 }
 
 // --- class end ---

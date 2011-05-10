@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.6 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mail_register.php,v 1.7 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// _check_submit() user_text2
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_user_handler
 // 2009-01-10 K.OHWADA
@@ -201,12 +203,15 @@ function _check_token_exit()
 function _check_submit()
 {
 	$email = $this->_post_class->get_post_text( 'user_email' );
+	$text2 = $this->_post_class->get_post_text( 'user_text2' );
+	$text3 = $this->_post_class->get_post_text( 'user_text3' );
+	$text4 = $this->_post_class->get_post_text( 'user_text4' );
+	$text5 = $this->_post_class->get_post_text( 'user_text5' );
 
 // overwrite
-	$this->_row_current['user_email']  = $email;
 	$this->_row_current['user_cat_id'] = $this->_post_class->get_post_int('user_cat_id');
 
-	if ( empty($email) ) {
+	if ( empty($email) && empty($text2) && empty($text3) && empty($text4) && empty($text5)) {
 
 // if new
 		if ( $this->_is_new ) {
@@ -220,10 +225,22 @@ function _check_submit()
 	}
 
 	$email = $this->_parse_class->parse_mail_addr( $email );
-	if ( empty($email) ) {
+	$text2 = $this->_parse_class->parse_mail_addr( $text2 );
+	$text3 = $this->_parse_class->parse_mail_addr( $text3 );
+	$text4 = $this->_parse_class->parse_mail_addr( $text4 );
+	$text5 = $this->_parse_class->parse_mail_addr( $text5 );
+
+	if ( empty($email) && empty($text2) && empty($text3) && empty($text4) && empty($text5)) {
 		$this->set_error( $this->get_constant('ERR_MAIL_ILLEGAL') );
 		return false ;
 	}
+
+// overwrite
+	$this->_row_current['user_email']  = $email;
+	$this->_row_current['user_text2']  = $text2;
+	$this->_row_current['user_text3']  = $text3;
+	$this->_row_current['user_text4']  = $text4;
+	$this->_row_current['user_text5']  = $text5;
 
 	return true;
 }

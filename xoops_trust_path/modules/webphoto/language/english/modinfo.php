@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.25 2010/10/08 15:53:16 ohwada Exp $
+// $Id: modinfo.php,v 1.26 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -434,6 +434,12 @@ define($constpref."ADMENU_REDOTHUMBS","Rebuild Thumbnails");
 //---------------------------------------------------------
 define($constpref."CFG_EMBED_WIDTH", "Screen width of video site");
 define($constpref."CFG_EMBED_HEIGHT","Screen height of video site");
+
+//---------------------------------------------------------
+// v2.40
+//---------------------------------------------------------
+define($constpref."CFG_PEAR_PATH", 'Path of PEAR libraly');
+define($constpref."CFG_PEAR_PATH_DSC", 'Enter the absolute path in the PEAR library with Net_POP3.<br />When not enter, modules/webphoto/PEAR is used.');
 
 }
 // === define begin ===

@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.3 2009/01/24 07:10:39 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.4 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// main/include_submit.php
 // 2008-01-10 K.OHWADA
 // class/edit/xxx
 // 2008-11-08 K.OHWADA
@@ -20,12 +22,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'main/header_submit.php' );
-webphoto_include_once( 'class/lib/mail_parse.php' );
-webphoto_include_once( 'class/lib/mail_pop.php' );
-webphoto_include_once( 'class/edit/mail_check.php' );
-webphoto_include_once( 'class/edit/mail_photo.php' );
-webphoto_include_once( 'class/edit/mail_unlink.php' );
-webphoto_include_once( 'class/edit/mail_retrieve.php' );
+webphoto_include_once( 'main/include_mail.php' );
 webphoto_include_once( 'class/main/mail_retrieve.php' );
 
 //=========================================================

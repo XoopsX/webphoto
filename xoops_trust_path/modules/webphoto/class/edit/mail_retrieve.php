@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_retrieve.php,v 1.2 2009/01/25 10:25:27 ohwada Exp $
+// $Id: mail_retrieve.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2010-05-01 K.OHWADA
+// webphoto_pear_pop3
 // 2009-01-10 K.OHWADA
 // webphoto_mail_retrieve -> webphoto_edit_mail_retrieve
 // print_msg_level -> set_msg_level
@@ -51,7 +53,7 @@ function webphoto_edit_mail_retrieve( $dirname , $trust_dirname )
 	$this->webphoto_edit_mail_photo( $dirname , $trust_dirname );
 	$this->set_mail_groups( XOOPS_GROUP_USERS );
 
-	$this->_pop_class =& webphoto_lib_mail_pop::getInstance();
+	$this->_pop_class =& webphoto_pear_mail_pop3::getInstance();
 
 	$cfg_mail_host        = $this->get_config_by_name( 'mail_host' );
 	$cfg_mail_user        = $this->get_config_by_name( 'mail_user' );

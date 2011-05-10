@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.24 2010/10/08 15:53:16 ohwada Exp $
+// $Id: admin.php,v 1.25 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -508,6 +508,11 @@ define('_AM_WEBPHOTO_USER_CONTROL', "操作");
 define('_AM_WEBPHOTO_USER_TOTAL', "メンバー数");
 define('_AM_WEBPHOTO_USER_ASSIGN', "メンバーの登録");
 define('_AM_WEBPHOTO_USER_USER', "ユーザー");
+
+//---------------------------------------------------------
+// v2.40
+//---------------------------------------------------------
+define('_AM_WEBPHOTO_PLEASE_IMPORT_MYALBUM', "Myalbum からの一括インポートを実行ください");
 
 // === define end ===
 }

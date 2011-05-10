@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.inc.php,v 1.5 2010/09/27 03:42:54 ohwada Exp $
+// $Id: oninstall.inc.php,v 1.6 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// class/inc/oninstall_flashvar.php
 // 2010-09-20 K.OHWADA
 // class/inc/oninstall_mime.php
 // 2009-12-06 K.OHWADA
@@ -40,6 +42,7 @@ webphoto_include_once( 'class/inc/gperm_def.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_item.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_mime.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/oninstall_flashvar.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall.php', $MY_DIRNAME );
 
 webphoto_include_once_trust( 'preload/constants.php' );

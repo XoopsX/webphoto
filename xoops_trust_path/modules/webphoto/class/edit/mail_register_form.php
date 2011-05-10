@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register_form.php,v 1.2 2010/09/19 06:43:11 ohwada Exp $
+// $Id: mail_register_form.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// build_form_register()
 // 2010-09-17 K.OHWADA
 // build_form_user()
 // 2009-01-10 K.OHWADA
@@ -77,28 +79,6 @@ function build_form_user( $userstart )
 	return $arr;
 }
 
-function XXXXprint_user_form( $row )
-{
-	$this->set_row( $row );
-
-	echo $this->build_form_begin();
-	echo $this->build_input_hidden( 'op',   'form' );
-	echo $this->build_input_hidden( 'fct',  'mail_register' );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_MAIL_REGISTER') );
-
-	echo $this->build_line_ele( $this->get_constant('CAT_USER'), 
-		$this->_build_ele_user_submitter() );
-
-	echo $this->build_line_ele( '', 
-		$this->build_input_submit( 'submit', $this->get_constant('BUTTON_REGISTER') ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
-}
-
 function _build_ele_user_submitter()
 {
 	$uid  = $this->get_row_by_key( 'user_uid' );
@@ -111,6 +91,21 @@ function _build_ele_user_submitter()
 // submit form
 //---------------------------------------------------------
 function print_submit_form( $row, $param )
+{
+	$template = 'db:'. $this->_DIRNAME .'_form_mail_register.html';
+
+	$arr = array_merge( 
+		$this->build_form_base_param(),
+		$this->build_form_register( $row, $param ),
+		$this->build_item_row( $row )
+	);
+
+	$tpl = new XoopsTpl() ;
+	$tpl->assign( $arr ) ;
+	echo $tpl->fetch( $template ) ;
+}
+
+function build_form_register( $row, $param )
 {
 	$mode = $param['mode'];
 	
@@ -128,43 +123,24 @@ function print_submit_form( $row, $param )
 
 	$this->set_row( $row );
 
-	echo $this->build_form_begin();
-	echo $this->build_html_token();
-	echo $this->build_input_hidden( 'op',   'submit' );
-	echo $this->build_input_hidden( 'fct',  'mail_register' );
-
-	echo $this->build_table_begin();
-	echo $this->build_line_title( $this->get_constant('TITLE_MAIL_REGISTER') );
-
-	echo $this->build_line_ele( $this->get_constant('CAT_USER'), 
-		$this->_build_ele_submitter() );
-
-	echo $this->build_line_ele( $this->get_constant('CATEGORY'), 
-		$this->_build_ele_category() );
-
-	echo $this->build_row_text( $this->get_constant('USER_EMAIL'), 
-		'user_email' );
-
-	echo $this->build_line_ele( '', $this->build_input_submit( 'submit', $submit ) );
-
-	echo $this->build_table_end();
-	echo $this->build_form_end();
-
+	$arr = array(
+		'ele_user_cat_id' => $this->_ele_user_cat_id() ,
+		'submitter'       => $this->_submitter(),
+		'button_submit'   => $submit ,
+	);
+	return $arr;
 }
 
-function _build_ele_category()
+function _submitter()
+{
+	$uid   = $this->get_row_by_key( 'user_uid' );
+	return $this->_xoops_class->get_user_uname_from_id( $uid );
+}
+
+function _ele_user_cat_id()
 {
 	return $this->_cat_handler->build_selbox_with_perm_post(
 		$this->get_row_by_key( 'user_cat_id' ) , 'user_cat_id' );
-}
-
-function _build_ele_submitter()
-{
-	$uid = $this->get_row_by_key( 'user_uid' );
-	$text  = $this->_xoops_class->get_user_uname_from_id( $uid );
-	$text .= ' ';
-	$text .= $this->build_input_hidden( 'user_uid', $uid );
-	return $text;
 }
 
 // --- class end ---

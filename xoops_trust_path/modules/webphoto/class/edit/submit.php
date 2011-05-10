@@ -1,5 +1,5 @@
 <?php
-// $Id: submit.php,v 1.25 2010/10/10 11:02:10 ohwada Exp $
+// $Id: submit.php,v 1.26 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// create_cache()
 // 2010-10-01 K.OHWADA
 // create_sub_files()
 // 2010-06-06 K.OHWADA
@@ -322,6 +324,20 @@ function submit_exec()
 		}
 	}
 
+// playlist
+	if ( $this->_FLAG_ADMIN ) {
+		$ret = $this->_playlist_build_class->create_cache( $item_row );
+		if ( $ret < 0 ) {
+			return $ret;
+		}
+		if ( $ret == 0 ) {
+// --- update item ---
+			$item_row = $this->_playlist_build_class->get_item_row() ;
+			$this->format_and_update_item( $item_row );
+			$this->set_created_row( $item_row );
+		}
+	}
+
 	$this->set_factory_error();
 	$this->submit_exec_tag_save( $item_row );
 	$this->submit_exec_post_count();
@@ -346,8 +362,9 @@ function submit_exec_fetch( $row )
 		return $ret;
 	}
 
+// playlist
 	if ( $this->_FLAG_ADMIN ) {
-		$ret = $this->_playlist_build_class->build( $row );
+		$ret = $this->_playlist_build_class->build_row( $row );
 		if ( $ret <= 0 ) {
 			$this->_row_fetch = $this->_playlist_build_class->get_item_row() ;
 			return $ret;

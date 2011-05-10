@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_photo.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mail_photo.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// webphoto_lib_mail_parse -> webphoto_pear_mail_parse
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_maillog_handler
 // 2009-01-10 K.OHWADA
@@ -64,7 +66,7 @@ function webphoto_edit_mail_photo( $dirname , $trust_dirname )
 	$this->_check_class     
 		=& webphoto_edit_mail_check::getInstance( $dirname, $trust_dirname );
 
-	$this->_parse_class     =& webphoto_lib_mail_parse::getInstance();
+	$this->_parse_class     =& webphoto_pear_mail_parse::getInstance();
 	$this->_unlink_class    =& webphoto_edit_mail_unlink::getInstance( $dirname );
 
 	$this->_parse_class->set_charset_local( _CHARSET );
@@ -227,7 +229,7 @@ function parse_attaches( $mail_filename, $attaches_in, $specified_array=null )
 		if (( is_array($specified_array) && in_array( $filename, $specified_array ) ) ||
 		    ( empty($specified_array) && empty($reject) )) { 
 
-			$file_save = $this->_utility_class->strip_ext( $mail_filename ).'-'.$filename ;
+			$file_save = $this->build_save_name( $mail_filename, $filename );
 			$file_path = $this->_MAIL_DIR.'/'.$file_save ;
 			
 			$this->_utility_class->write_file(
@@ -253,6 +255,14 @@ function parse_attaches( $mail_filename, $attaches_in, $specified_array=null )
 	}
 
 	return $attaches_new ;
+}
+
+function build_save_name( $mail, $attach )
+{
+	$str = $this->_utility_class->strip_ext( $mail ).'-'.$attach ;
+	$str = $this->_utility_class->substitute_filename_to_underbar($str);
+	$str = rawurlencode( $str );
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -356,18 +366,12 @@ function add_photo_from_attaches( $param_in )
 	$gmap_zoom      = 0 ;
 
 	$attaches   = $param_in['attaches'];
-	$subject_in = $param_in['subject']; 
+	$subject    = $param_in['subject']; 
 	$body       = $param_in['body'];
 	$datetime   = $param_in['datetime'];
 	$gps        = $param_in['gps'];
 
 	$time = time();
-
-	if ( $subject_in ) {
-		$subject = $subject_in ;
-	} else {
-		$subject = $this->_SUBJECT_DEFAULT ;
-	}
 
 	if ( isset($gps['flag']) && $gps['flag'] ) {
 		$gmap_latitude  = $gps['gmap_latitude'] ;
@@ -378,7 +382,7 @@ function add_photo_from_attaches( $param_in )
 	$item_row = $this->_item_handler->create( true );
 	$item_row['item_time_create'] = $time ;
 	$item_row['item_time_update'] = $time ;
-	$item_row['item_title']       = $subject ;
+	$item_row['item_title']       = $this->substitute_subject_if_empty( $subject );
 	$item_row['item_cat_id']      = $param_in['cat_id'] ;
 	$item_row['item_uid']         = $param_in['uid'] ;
 	$item_row['item_description'] = $param_in['body'] ;
@@ -397,7 +401,7 @@ function add_photo_from_attaches( $param_in )
 	if ( !is_array($attaches) || !count($attaches) ) {
 
 // has body
-		if ( $this->_cfg_allownoimage && ( $subject_in || $body ) ) {
+		if ( $this->_cfg_allownoimage && ( $subject || $body ) ) {
 			$newid = $this->create_item_from_param( $item_row, $param_photo ) ;
 			$this->set_msg_level_user( null, false, true );
 			if ( $newid > 0 ) {
@@ -426,6 +430,12 @@ function add_photo_from_attaches( $param_in )
 		}
 
 		$src_file = $this->_MAIL_DIR .'/'. $file_save ;
+
+		if ( empty($subject) && $filename ) {
+			$subject = $this->_utility_class->strip_ext( $filename );
+		} elseif ( empty($subject) ) {
+			$subject = $this->_SUBJECT_DEFAULT ;
+		}
 
 		if ( $i > 0 ) {
 			$title = $subject .' - '. $i;
@@ -461,6 +471,14 @@ function create_item_from_param( $item_row, $param )
 		return  $item_row['item_id'] ;
 	}
 	return 0 ;
+}
+
+function substitute_subject_if_empty( $str )
+{
+	if ( empty($str) ) {
+		$str = $this->_SUBJECT_DEFAULT ;
+	}
+	return $str;
 }
 
 //---------------------------------------------------------
@@ -521,8 +539,8 @@ function update_maillog( $param )
 
 	$row['maillog_time_update'] = time() ;
 	$row['maillog_from']        = $param['mail_from'] ;
-	$row['maillog_subject']     = $param['subject'] ;
 	$row['maillog_status']      = $param['status'] ;
+	$row['maillog_subject']     = $param['subject'] ;
 	$row['maillog_photo_ids']   = $this->build_maillog_photo_ids( $row, $param ) ;
 	$row['maillog_body']        = $this->build_maillog_body( $param ) ;
 	$row['maillog_attach']      = $this->build_maillog_attach( $param ) ;

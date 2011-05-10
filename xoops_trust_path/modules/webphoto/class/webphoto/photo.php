@@ -1,5 +1,5 @@
 <?php
-// $Id: photo.php,v 1.7 2010/11/16 23:43:38 ohwada Exp $
+// $Id: photo.php,v 1.8 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// build_photo_file_link_dual()
 // 2010-11-11 K.OHWADA
 // full_path_exists
 // 2010-11-03 K.OHWADA
@@ -110,7 +112,6 @@ function webphoto_photo( $dirname , $trust_dirname )
 	$this->_FILE_LIST          = explode( '|', _C_WEBPHOTO_FILE_LIST );
 
 	$this->_CODEINFO_LIST = $this->explode_ini('view_codeinfo_list');
-
 }
 
 function &getInstance( $dirname , $trust_dirname )
@@ -374,25 +375,49 @@ function build_photo_code( $item_row, $show_arr, $flash_arr, $embed_arr )
 		$param[ $name ] = $this->build_photo_file_link( $item_row, $show_arr, $name );
 	}
 
-	if ( $param['thumb']['show'] && ( $param['cont']['value'] == $param['thumb']['value'] )) {
-		 $param['thumb']['show'] = false;
+// list up cont url
+	$cont_values = array();
+	if ( isset( $param['cont']['dual'] ) ) {
+		$cont_values[] = $param['cont']['download']['value'];
+		if ( isset( $param['cont']['image'] )) {
+			$cont_values[] = $param['cont']['image']['value'];
+		}
+	} else {
+		$cont_values[] = $param['cont']['value'];
 	}
 
-	if ( $param['middle']['show'] && ( $param['cont']['value'] == $param['middle']['value'] )) {
-		 $param['middle']['show'] = false;
+// file codeinfo 
+	$codes1 = array();
+	foreach ( $this->_CODEINFO_LIST as $name ) 
+	{
+		if ( isset( $param[ $name ]['dual'] ) ) {
+			if ( isset( $param[ $name ]['image'] )) {
+				$codes1[] = $param[ $name ]['image'];
+			}
+			$codes1[] = $param[ $name ]['download'];
+		} else {
+			$codes1[] = $param[ $name ];
+		}
 	}
 
-	if ( $param['small']['show'] && ( $param['cont']['value'] == $param['small']['value'] )) {
-		 $param['small']['show'] = false;
-	}
-
-	$codes = array();
-	foreach ( $this->_CODEINFO_LIST as $name ) {
-		$codes[] = $param[ $name ];
+// set no show if same as cont url
+	if ( is_array($cont_values) && is_array($cont_values) ) {
+		$codes2 = array();
+		foreach ( $codes1 as $code ) 
+		{
+			if ( isset($code['name']) && isset($code['value']) &&
+				( $code['name'] != 'cont' ) && 
+				in_array( $code['value'], $cont_values ) ) {
+				$code['show'] = false;
+			}
+			$codes2[] = $code;
+		}
+	} else {
+		$codes2 = $codes1;
 	}
 
 	$arr = array();
-	$arr['codes'] = $codes;
+	$arr['codes'] = $codes2;
 
 // always last
 	$arr['show_codebox'] = $this->_show_codebox ;
@@ -428,16 +453,10 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 	$item_name  = null ;
 	$file_kind  = constant( strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$name ) );
 
-// if download 
-	if ( $item_detail_onclick == _C_WEBPHOTO_DETAIL_ONCLICK_DOWNLOAD ) {
-		$onclick_download = true;
-	}
-
 	switch ( $name )
 	{
 		case 'cont' :
 			$item_name     = 'item_external_url' ;
-			$cont_download = $onclick_download ;
 			break;
 
 		case 'thumb' :
@@ -455,33 +474,7 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 
 // if file exists
 	if ( is_array($file_row) ) {
-		$url    = $file_row['file_url'] ;
-		$ext    = $file_row['file_ext'] ;
-		$size   = $file_row['file_size'] ;
-		$path   = $file_row['file_path'] ;
-		$file   = $file_row['full_path'] ;
-		$exists = $file_row['full_path_exists'] ;
-
-// image and not download
-		if ( $this->is_image_ext( $ext ) && !$cont_download ) {
-			$base_url = $this->_MODULE_URL.'/index.php?fct=image';
-			$title    = $caption ;
-			$target   = '_blank';
-
-		} else {
-			$base_url = $this->_MODULE_URL.'/index.php?fct=download';
-			$title    = $lang_down .' '. $caption ;
-			$target   = '_self';
-			$show_img = true;
-		}
-
-		if ( $exists && $file ) {
-			$url  = $base_url .'&item_id='. $item_id .'&file_kind='. $file_kind;
-
-			if ( $size > 0 ) {
-				$filesize = $this->build_show_filesize( $size );
-			}
-		}
+		return 	$this->build_photo_file_link_dual( $name, $item_id, $file_row );
 
 // if external
 	} elseif ( $item_name ) {
@@ -494,8 +487,63 @@ function build_photo_file_link( $item_row, $show_arr, $name )
 	}
 
 	$arr = $this->build_photo_code_result_link( $name, $url, $title, $target );
-	$arr['show_img'] = $show_img;
 	$arr['filesize'] = $filesize;
+	return $arr;
+}
+
+function build_photo_file_link_dual( $name, $item_id, $file_row )
+{
+	$filesize = null;
+
+	$file_kind  = constant( strtoupper( '_C_WEBPHOTO_FILE_KIND_'.$name ) );
+	$caption    = $this->build_photo_code_caption( $name );
+	$lang_down  = $this->get_constant( 'DOWNLOAD' );
+
+	$url    = $file_row['file_url'] ;
+	$ext    = $file_row['file_ext'] ;
+	$size   = $file_row['file_size'] ;
+	$path   = $file_row['file_path'] ;
+	$file   = $file_row['full_path'] ;
+	$exists = $file_row['full_path_exists'] ;
+
+	$base_url1 = $this->_MODULE_URL.'/index.php?fct=download';
+	$title1    = $lang_down .' '. $caption ;
+	$target1   = '_self';
+	$url1       = $url;
+
+	$base_url2 = $this->_MODULE_URL.'/index.php?fct=image';
+	$title2    = $caption ;
+	$target2   = '_blank';
+	$url2      = $url;
+
+	if ( $exists && $file ) {
+		$url1  = $base_url1 .'&item_id='. $item_id .'&file_kind='. $file_kind;
+		$url2  = $base_url2 .'&item_id='. $item_id .'&file_kind='. $file_kind;
+
+		if ( $size > 0 ) {
+			$filesize = $this->build_show_filesize( $size );
+		}
+	}
+
+	$arr1 = $this->build_photo_code_result_link( $name, $url1, $title1, $target1 );
+	$arr1['filesize'] = $filesize;
+	$arr1['show_img_download'] = true;
+	$arr1['show_img_view']     = false;
+
+	$arr2 = $this->build_photo_code_result_link( $name, $url2, $title2, $target2 );
+	$arr2['filesize'] = $filesize;
+	$arr2['show_img_download'] = false;
+	$arr2['show_img_view']     = true;
+
+	$arr = array();
+	$arr['dual']     = true;
+	$arr['show']     = true;
+	$arr['download'] = $arr1;
+
+	if ( $this->is_image_ext( $ext ) ) {
+		$arr['image'] = $arr2;
+	}
+
 	return $arr;
 }
 

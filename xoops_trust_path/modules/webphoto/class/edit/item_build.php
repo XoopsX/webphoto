@@ -1,5 +1,5 @@
 <?php
-// $Id: item_build.php,v 1.16 2010/09/27 03:42:54 ohwada Exp $
+// $Id: item_build.php,v 1.17 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// build_modify_status_admin()
 // 2010-09-20 K.OHWADA
 // item_displayfile
 // 2010-01-10 K.OHWADA
@@ -341,28 +343,56 @@ function get_item_datetime_by_post( $checkbox )
 
 function build_modify_status( $row )
 {
+	if ( $this->_flag_admin ) {
+		return $this->build_modify_status_admin( $row );
+	}
+	return $this->build_modify_status_user( $row );
+}
+
+function build_modify_status_user( $row )
+{
+	$current_status = $row['item_status'] ;
+	$new_status     = $current_status ;
+
+	switch ( $current_status ) 
+	{
+		case _C_WEBPHOTO_STATUS_APPROVED : 
+			$new_status = _C_WEBPHOTO_STATUS_UPDATED ;
+			break;
+
+		case _C_WEBPHOTO_STATUS_WAITING : 
+		case _C_WEBPHOTO_STATUS_UPDATED :
+		case _C_WEBPHOTO_STATUS_OFFLINE :
+		case _C_WEBPHOTO_STATUS_EXPIRED :
+		default:
+			break;
+	}
+
+	return $new_status;
+}
+
+function build_modify_status_admin( $row )
+{
 	$post_valid  = $this->get_post_int('valid');
 	$post_status = $this->get_post_int('item_status');
 
 	$current_status = $row['item_status'] ;
 	$time_publish   = $row['item_time_publish'] ;
 
-	if ( $this->_flag_admin ) {
-		$new_status = $post_status ;
-	} else {
-		$new_status = $current_status ;
-	}
+	$new_status = $post_status ;
 
 	switch ( $current_status ) 
 	{
 		case _C_WEBPHOTO_STATUS_WAITING : 
-			if ( $this->_flag_admin && ( $post_valid == _C_WEBPHOTO_YES ) )  {
+			if ( $post_valid == _C_WEBPHOTO_YES ) {
 				$new_status = _C_WEBPHOTO_STATUS_APPROVED ;
 			}
 			break;
 
 		case _C_WEBPHOTO_STATUS_APPROVED : 
-			$new_status = _C_WEBPHOTO_STATUS_UPDATED ;
+			if ( $post_status == _C_WEBPHOTO_STATUS_APPROVED ) {
+				$new_status = _C_WEBPHOTO_STATUS_UPDATED ;
+			}
 			break;
 
 		case _C_WEBPHOTO_STATUS_UPDATED :
@@ -376,8 +406,7 @@ function build_modify_status( $row )
 	{
 		case _C_WEBPHOTO_STATUS_APPROVED : 
 		case _C_WEBPHOTO_STATUS_UPDATED :
-			if (   $this->_flag_admin  &&
-			     ( $time_publish > 0 ) &&
+			if ( ( $time_publish > 0 ) &&
 				 ( $time_publish > time() ) ) {
 				$new_status = _C_WEBPHOTO_STATUS_OFFLINE ;
 			}

@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.13 2010/06/16 22:24:47 ohwada Exp $
+// $Id: modinfo.php,v 1.14 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,6 +31,15 @@ if ( !isset( $MY_DIRNAME ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v2.40
+//---------------------------------------------------------
+if( !defined($constpref."CFG_PEAR_PATH") ) 
+{
+define($constpref."CFG_PEAR_PATH", 'Path of PEAR libraly');
+define($constpref."CFG_PEAR_PATH_DSC", 'Enter the absolute path in the PEAR library with Net_POP3.<br />When not enter, modules/webphoto/PEAR is used.');
+}
 
 //---------------------------------------------------------
 // v2.20

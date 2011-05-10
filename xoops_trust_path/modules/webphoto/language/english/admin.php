@@ -1,5 +1,5 @@
 <?php
-// $Id: admin.php,v 1.23 2010/10/08 15:53:16 ohwada Exp $
+// $Id: admin.php,v 1.24 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -563,6 +563,11 @@ define('_AM_WEBPHOTO_USER_CONTROL', "Control");
 define('_AM_WEBPHOTO_USER_TOTAL', "Total of member");
 define('_AM_WEBPHOTO_USER_ASSIGN', "Assign a member");
 define('_AM_WEBPHOTO_USER_USER', "User");
+
+//---------------------------------------------------------
+// v2.40
+//---------------------------------------------------------
+define('_AM_WEBPHOTO_PLEASE_IMPORT_MYALBUM', "Please execute the batch import from Myalbum.");
 
 // === define end ===
 }

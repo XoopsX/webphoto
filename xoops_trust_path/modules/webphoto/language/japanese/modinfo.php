@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.24 2010/10/08 15:53:16 ohwada Exp $
+// $Id: modinfo.php,v 1.25 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -367,6 +367,12 @@ define($constpref."ADMENU_REDOTHUMBS","サムネイルの再構築");
 //---------------------------------------------------------
 define($constpref."CFG_EMBED_WIDTH", "動画サイトの表示の幅");
 define($constpref."CFG_EMBED_HEIGHT","動画サイトの表示の高さ");
+
+//---------------------------------------------------------
+// v2.40
+//---------------------------------------------------------
+define($constpref."CFG_PEAR_PATH", 'PEAR ライブラリのパス');
+define($constpref."CFG_PEAR_PATH_DSC", 'Net_POP3 のある PEAR ライブラリの絶対パスを指定する<br />指定しないときは modules/webphoto/PEAR が使用される');
 
 }
 // === define begin ===

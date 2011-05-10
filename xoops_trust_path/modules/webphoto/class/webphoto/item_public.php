@@ -1,5 +1,5 @@
 <?php
-// $Id: item_public.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: item_public.php,v 1.3 2011/05/10 02:56:39 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,7 @@
 
 //---------------------------------------------------------
 // change log
+// webphoto_lib_base -> webphoto_base_ini
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_item_handler
 //---------------------------------------------------------
@@ -17,7 +18,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 // class webphoto_item_public
 //=========================================================
-class webphoto_item_public extends webphoto_lib_base
+class webphoto_item_public extends webphoto_base_ini
 {
 	var $_config_class;
 	var $_cat_handler;
@@ -34,7 +35,7 @@ class webphoto_item_public extends webphoto_lib_base
 //---------------------------------------------------------
 function webphoto_item_public( $dirname , $trust_dirname )
 {
-	$this->webphoto_lib_base( $dirname, $trust_dirname );
+	$this->webphoto_base_ini( $dirname, $trust_dirname );
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_cat_handler  =& webphoto_cat_handler::getInstance( 
