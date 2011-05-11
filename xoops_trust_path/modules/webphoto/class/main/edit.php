@@ -1,5 +1,5 @@
 <?php
-// $Id: edit.php,v 1.30 2010/10/08 15:53:16 ohwada Exp $
+// $Id: edit.php,v 1.31 2011/05/11 23:35:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-01 K.OHWADA
+// _C_WEBPHOTO_IS_PLAYLIST
 // 2010-10-01 K.OHWADA
 // _jpeg_delete()
 // 2010-02-15 K.OHWADA
@@ -175,16 +177,25 @@ function form_param()
 function _check()
 {
 	$this->get_post_param();
+	$item_id = $this->get_post_item_id();
 
 	switch ( $this->_exec_check() )
 	{
+		case _C_WEBPHOTO_IS_PLAYLIST:
+			if ( $this->_is_module_admin ) {
+				$url = $this->_ADMIN_INDEX_PHP.'?fct=item_manager&op=modify_form&item_id='.$item_id ;
+				redirect_header( $url , $this->_TIME_SUCCESS , _WEBPHOTO_GOTO_ADMIN ) ;
+			}
+			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , _NOPERM ) ;
+			exit() ;
+
 		case _C_WEBPHOTO_ERR_NO_PERM:
 			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , _NOPERM ) ;
-			exit ;
+			exit() ;
 
 		case _C_WEBPHOTO_ERR_NO_RECORD:
 			redirect_header( $this->_INDEX_PHP , $this->_TIME_FAILED , $this->get_constant('NOMATCH_PHOTO') ) ;
-			exit ;
+			exit() ;
 
 		case 0:
 		default:
@@ -211,7 +222,7 @@ function _exec_check()
 	}
 
 	if ( $this->_check_playlist( $item_row ) ) {
-		return _C_WEBPHOTO_ERR_NO_PERM; 
+		return _C_WEBPHOTO_IS_PLAYLIST; 
 	}
 
 	if ( ! $this->_check_public( $item_row ) ) {

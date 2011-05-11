@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.32 2011/05/10 02:56:39 ohwada Exp $
+// $Id: constants.php,v 1.33 2011/05/11 23:35:21 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -542,6 +542,9 @@ define("_C_WEBPHOTO_ERR_NO_FALSHVAR", -124 ) ;
 define("_C_WEBPHOTO_ERR_VOTE_OWN",   -125 ) ;
 define("_C_WEBPHOTO_ERR_VOTE_ONCE",  -126 ) ;
 define("_C_WEBPHOTO_ERR_NO_RATING",  -127 ) ;
+
+// v2.40
+define("_C_WEBPHOTO_IS_PLAYLIST",  100 ) ;
 
 // v1.90
 define("_C_WEBPHOTO_NAME_DEBUG_SQL" ,   "debug_sql" ) ;
