@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.7 2011/05/10 02:56:39 ohwada Exp $
+// $Id: mail_register.php,v 1.8 2011/05/15 22:25:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-16 K.OHWADA
+// webphoto_edit_mail_check
 // 2011-05-01 K.OHWADA
 // _check_submit() user_text2
 // 2009-11-11 K.OHWADA
@@ -26,7 +28,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_mail_register extends webphoto_edit_base
 {
 	var $_user_handler;
-	var $_parse_class;
+	var $_check_class;
 	var $_xoops_user_class;
 
 	var $_is_set_mail = false;
@@ -55,7 +57,9 @@ function webphoto_main_mail_register( $dirname , $trust_dirname )
 	$this->_user_handler     
 		=& webphoto_user_handler::getInstance( $dirname , $trust_dirname );
 
-	$this->_parse_class      =& webphoto_lib_mail_parse::getInstance();
+// Fatal error: Class webphoto_lib_mail_parse
+	$this->_check_class =& webphoto_edit_mail_check::getInstance( $dirname , $trust_dirname );
+
 	$this->_xoops_user_class =& webphoto_xoops_user::getInstance();
 
 	$this->_is_set_mail = $this->_config_class->is_set_mail();
@@ -224,15 +228,20 @@ function _check_submit()
 		}
 	}
 
-	$email = $this->_parse_class->parse_mail_addr( $email );
-	$text2 = $this->_parse_class->parse_mail_addr( $text2 );
-	$text3 = $this->_parse_class->parse_mail_addr( $text3 );
-	$text4 = $this->_parse_class->parse_mail_addr( $text4 );
-	$text5 = $this->_parse_class->parse_mail_addr( $text5 );
-
-	if ( empty($email) && empty($text2) && empty($text3) && empty($text4) && empty($text5)) {
-		$this->set_error( $this->get_constant('ERR_MAIL_ILLEGAL') );
-		return false ;
+	if ( ! $this->_check_mail_addr( $email ) ) {
+		return false;
+	}
+	if ( ! $this->_check_mail_addr( $text2 ) ) {
+		return false;
+	}
+	if ( ! $this->_check_mail_addr( $text3 ) ) {
+		return false;
+	}
+	if ( ! $this->_check_mail_addr( $text4 ) ) {
+		return false;
+	}
+	if ( ! $this->_check_mail_addr( $text5 ) ) {
+		return false;
 	}
 
 // overwrite
@@ -243,6 +252,21 @@ function _check_submit()
 	$this->_row_current['user_text5']  = $text5;
 
 	return true;
+}
+
+function _check_mail_addr( $mail )
+{
+	$lang_error = $this->get_constant('ERR_MAIL_ILLEGAL');
+
+	if ( empty($mail) ) {
+		return true ;
+	}
+
+	if ( $this->_check_class->check_mail_addr( $mail ) ) {
+		return true ;
+	}
+
+	$this->set_error( $lang_error.' : '.$mail );
 }
 
 function _submit()

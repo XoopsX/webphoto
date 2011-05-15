@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_check.php,v 1.2 2009/11/29 07:34:21 ohwada Exp $
+// $Id: mail_check.php,v 1.3 2011/05/15 22:25:53 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-05-16 K.OHWADA
+// check_mail_addr()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_user_handler
 // 2009-01-10 K.OHWADA
@@ -301,6 +303,10 @@ function get_result()
 
 function check_mailto( $mailto ) 
 {
+	if ( ! $this->check_mail_addr( $mailto ) ) {
+		$this->set_reject_msg('not allow format in mailto : '. $mailto );
+		return false;
+	}
 	$pattern = "/".quotemeta( $this->_MAILTO )."/";
 	if ( $mailto && !preg_match( $pattern, $mailto ) ) {
 		$this->set_reject_msg('not allow mailto : '. $mailto );
@@ -361,6 +367,10 @@ function check_mail_from( $mail_from )
 {
 	if ( empty($mail_from) ) {
 		return true;
+	}
+	if ( ! $this->check_mail_addr( $mail_from ) ) {
+		$this->set_reject_msg('not allow format in from mail : '. $mail_from );
+		return false;
 	}
 	for ($i=0; $i<count( $this->_DENY_MAIL_FROM_ARRAY ); $i++)
 	{
@@ -616,6 +626,19 @@ function check_attach_maxbyte( $content )
 		return false;
 	}
 	return true;
+}
+
+//---------------------------------------------------------
+// utility
+//---------------------------------------------------------
+function check_mail_addr( $addr ) 
+{
+	$MAIL_FORMAT_EREG = "[-!#$%&\'*+\\./0-9A-Z^_`a-z{|}~]+@[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+";
+	$match = array();
+	if (eregi( $MAIL_FORMAT_EREG, $addr, $match )) {
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------------
