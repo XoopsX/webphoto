@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.24 2011/05/10 02:56:39 ohwada Exp $
+# $Id: mysql.sql,v 1.25 2011/05/15 22:22:06 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2011-05-16 K.OHWADA
+# SQL syntax error
 # 2011-05-01 K.OHWADA
 # JW Player 5.6
 # flashvar_dock
@@ -597,13 +599,13 @@ CREATE TABLE flashvar (
   flashvar_player_repeat VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_playerready   VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_plugins       VARCHAR(255) NOT NULL DEFAULT '',
-  flashvar_stretching    VARCHAR(255) NOT NULL DEFAULT '' 
+  flashvar_stretching    VARCHAR(255) NOT NULL DEFAULT '',
   flashvar_controlbar_position VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_playlist_position   VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_logo_file       VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_logo_link       VARCHAR(255) NOT NULL DEFAULT '', 
   flashvar_logo_linktarget VARCHAR(255) NOT NULL DEFAULT '', 
-  flashvar_logo_position   VARCHAR(255) NOT NULL DEFAULT ''
+  flashvar_logo_position   VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY  (flashvar_id),
   KEY (flashvar_item_id)
 ) TYPE=MyISAM;
