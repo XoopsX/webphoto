@@ -1,11 +1,26 @@
-$Id: readme_en.txt,v 1.58 2011/05/10 02:56:39 ohwada Exp $
+$Id: readme_en.txt,v 1.59 2011/05/15 22:42:01 ohwada Exp $
+
+=================================================
+Version: 2.41
+Date:   201-05-16
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bug fix
+(1) can NOT install module
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1177&post_id=4297
+
+(2) can NOT "mail register"
+
 
 =================================================
 Version: 2.40
 Date:   201-05-10
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 This is the album module which manages photos and videos.
