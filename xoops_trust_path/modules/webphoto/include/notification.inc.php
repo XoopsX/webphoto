@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.inc.php,v 1.3 2009/11/29 07:34:23 ohwada Exp $
+// $Id: notification.inc.php,v 1.4 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// class/inc/uri.php
 // 2009-11-11 K.OHWADA
 // WEBPHOTO_TRUST_DIRNAME in webphoto_inc_notification
 // include/header.php
@@ -23,6 +25,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 
+webphoto_include_once( 'class/inc/uri.php' ,          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/notification.php' , $MY_DIRNAME );
 
 //=========================================================

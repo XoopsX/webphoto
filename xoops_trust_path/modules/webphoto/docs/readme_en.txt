@@ -1,11 +1,24 @@
-$Id: readme_en.txt,v 1.59 2011/05/15 22:42:01 ohwada Exp $
+$Id: readme_en.txt,v 1.60 2011/06/05 07:23:40 ohwada Exp $
 
 =================================================
 Version: 2.41
-Date:   201-05-16
+Date:   2011-06-05
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. bug fix
+(1) wrong url in gmap when not use pathinfo
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1178&post_id=4302
+
+
+=================================================
+Version: 2.41
+Date:   2011-05-16
 =================================================
 
 This is the album module which manages photos and videos.
@@ -20,7 +33,7 @@ http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1177&post_i
 
 =================================================
 Version: 2.40
-Date:   201-05-10
+Date:   2011-05-10
 =================================================
 
 This is the album module which manages photos and videos.

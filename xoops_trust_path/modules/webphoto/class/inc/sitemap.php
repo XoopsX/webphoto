@@ -1,5 +1,5 @@
 <?php
-// $Id: sitemap.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: sitemap.php,v 1.5 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2008-12-12 K.OHWADA
@@ -23,7 +25,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_sitemap extends webphoto_inc_base_ini
 {
-	var $_cfg_use_pathinfo = false;
+	var $_uri_class;
 
 //---------------------------------------------------------
 // constructor
@@ -34,7 +36,7 @@ function webphoto_inc_sitemap( $dirname , $trust_dirname )
 	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
-	$this->_init_xoops_config( $dirname );
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 }
 
 function &getSingleton( $dirname , $trust_dirname )
@@ -53,11 +55,7 @@ function sitemap()
 {
 	$table_cat = $this->prefix_dirname( 'cat' );
 
-	if ( $this->_cfg_use_pathinfo ) {
-		$link = 'index.php/category/' ;
-	} else {
-		$link = 'index.php?fct=category&amp;p=' ;
-	}
+	$link = $this->_uri_class->build_sitemap_category();
 
 // this function is defined in sitemap module
 	if ( function_exists('sitemap_get_categoires_map') ) {
@@ -66,16 +64,6 @@ function sitemap()
 	}
 
 	return array();
-}
-
-//---------------------------------------------------------
-// xoops_config
-//---------------------------------------------------------
-function _init_xoops_config( $dirname )
-{
-	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
-
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 // --- class end ---

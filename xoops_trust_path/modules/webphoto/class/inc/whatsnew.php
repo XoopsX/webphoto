@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.php,v 1.12 2010/06/06 10:06:47 ohwada Exp $
+// $Id: whatsnew.php,v 1.13 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2010-06-06 K.OHWADA
 // build_img_url()
 // 2009-11-11 K.OHWADA
@@ -31,6 +33,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_whatsnew extends webphoto_inc_public
 {
+	var $_uri_class;
+
 	var $_SHOW_IMAGE = true ;
 	var $_SHOW_ICON  = false ;
 
@@ -44,6 +48,8 @@ function webphoto_inc_whatsnew( $dirname, $trust_dirname  )
 	$this->auto_publish();
 
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 
 // preload
 	$show_image = $this->get_ini( 'whatsnew_show_image' );
@@ -117,13 +123,8 @@ function whatsnew( $limit=0 , $offset=0 )
 		list( $image, $width, $height ) =
 			$this->build_img_url( $item_row, $this->_SHOW_IMAGE, $this->_SHOW_ICON );
 
-		if ( $this->_cfg_use_pathinfo ) {
-			$link     = $this->_MODULE_URL.'/index.php/photo/'.    $item_id .'/' ;
-			$cat_link = $this->_MODULE_URL.'/index.php/category/'. $cat_id .'/' ;
-		} else {
-			$link     = $this->_MODULE_URL.'/index.php?fct=photo&amp;p='.    $item_id ;
-			$cat_link = $this->_MODULE_URL.'/index.php?fct=category&amp;p='. $cat_id ;
-		}
+		$link     = $this->_uri_class->build_photo( $item_id );
+		$cat_link = $this->_uri_class->build_category( $cat_id );
 
 		$arr = array(
 			'link'     => $link ,

@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.5 2010/06/16 22:24:47 ohwada Exp $
+// $Id: gmap_info.php,v 1.6 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2010-06-06 K.OHWADA
 // show youtube thumb image
 // 2009-11-11 K.OHWADA
@@ -22,8 +24,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_inc_gmap_info
 {
 	var $_utility_class ;
+	var $_uri_class;
 
-	var $_cfg_use_pathinfo = false ;
 	var $_has_editable     = false ;
 
 	var $_xoops_uid       = 0 ;
@@ -51,11 +53,12 @@ function webphoto_inc_gmap_info( $dirname , $trust_dirname )
 
 	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
-
 	$this->_init_xoops_param( $dirname );
-	$this->_init_config(      $dirname );
 	$this->_init_permission(  $dirname , $trust_dirname );
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
+
+	$this->_utility_class =& webphoto_lib_utility::getInstance();
 }
 
 function &getSingleton( $dirname , $trust_dirname )
@@ -243,12 +246,8 @@ function build_uri_search( $query )
 
 function build_uri( $fct, $param )
 {
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = $this->_MODULE_URL .'/index.php/'. $fct .'/'. $param .'/';
-	} else {
-		$str = $this->_MODULE_URL .'/index.php?'. $fct .'photo&amp;p='. $param ;
-	}
-	return $str;
+// BUG: wrong url
+	return $this->_uri_class->build_full_uri_mode_param( $fct, $param );
 }
 
 function build_uri_edit( $item_id )
@@ -315,16 +314,6 @@ function is_photo_owner( $uid )
 		return true;
 	}
 	return false;
-}
-
-//---------------------------------------------------------
-// config
-//---------------------------------------------------------
-function _init_config( $dirname )
-{
-	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
-
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name( 'use_pathinfo' );
 }
 
 //---------------------------------------------------------

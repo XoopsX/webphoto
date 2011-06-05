@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.4 2009/04/11 14:23:34 ohwada Exp $
+// $Id: timeline.php,v 1.5 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// remove build_uri()
 // 2009-04-10 K.OHWADA
 // check_exist()
 //---------------------------------------------------------
@@ -23,7 +25,6 @@ class webphoto_inc_timeline
 {
 	var $_timeline_class ;
 
-	var $_cfg_use_pathinfo;
 	var $_cfg_timeline_scale;
 
 	var $_show_onload   = false;
@@ -52,7 +53,6 @@ function webphoto_inc_timeline( $dirname )
 
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
 	$this->_cfg_timeline_scale = $config_handler->get_by_name( 'timeline_scale' );
 
 	$this->_UNIT_DEFAULT = $this->_cfg_timeline_scale ;
@@ -242,19 +242,6 @@ function unixtime_to_datetime( $time )
 function escape_quotation( $str )
 {
 	return $this->_timeline_class->escape_quotation( $str );
-}
-
-//---------------------------------------------------------
-// uri
-//---------------------------------------------------------
-function build_uri( $fct, $param )
-{
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = $this->_MODULE_URL .'/index.php/'. $fct .'/'. $param .'/';
-	} else {
-		$str = $this->_MODULE_URL .'/index.php?'. $fct .'photo&amp;p='. $param ;
-	}
-	return $str;
 }
 
 //---------------------------------------------------------

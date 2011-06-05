@@ -1,5 +1,5 @@
 <?php
-// $Id: import.php,v 1.9 2010/11/16 23:43:38 ohwada Exp $
+// $Id: import.php,v 1.10 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// Fatal error: Class 'webphoto_item_create_class' not found
 // 2010-11-11 K.OHWADA
 // file_id_to_item_name()
 // 2010-03-18 K.OHWADA
@@ -419,7 +421,9 @@ function _init_webphoto( $src_dirname )
 	$this->_webphoto_photos_path = $config_class->get_by_name( 'photospath' );
 	$this->_webphoto_thumbs_path = $config_class->get_by_name( 'thumbspath' );
 
-	$this->_webphoto_item_create_class = new webphoto_item_create_class( $src_dirname, $this->_TRUST_DIRNAME );
+// Fatal error: Class 'webphoto_item_create_class' not found
+	$this->_webphoto_item_create_class = new webphoto_edit_item_create( $src_dirname, $this->_TRUST_DIRNAME );
+
 	$this->_webphoto_cat_handler  = new webphoto_cat_handler(  $src_dirname, $this->_TRUST_DIRNAME );
 	$this->_webphoto_file_handler = new webphoto_file_handler( $src_dirname, $this->_TRUST_DIRNAME );
 	$this->_webphoto_vote_handler = new webphoto_vote_handler( $src_dirname, $this->_TRUST_DIRNAME );
@@ -489,7 +493,7 @@ function _add_photo_from_webphoto( $new_cid, $webphoto_item_row )
 	$item_id             = $newid ;
 	$item_row['item_id'] = $item_id;
 
-	echo $this->_factory_create_class->build_msg_photo_title( $item_id );
+	echo $this->_factory_create_class->build_uri_photo_id( $item_id );
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_ITEM_FILE_ID; $i++ ) 
 	{

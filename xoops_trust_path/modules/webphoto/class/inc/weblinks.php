@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
+// $Id: weblinks.php,v 1.6 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2010-01-10 K.OHWADA
 // BUG: Fatal error: Call to undefined function: getinstance()
 // 2009-11-11 K.OHWADA
@@ -24,6 +26,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_inc_weblinks extends webphoto_inc_public
 {
 	var $_catlist_class;
+	var $_uri_class;
 
 //---------------------------------------------------------
 // constructor
@@ -31,6 +34,8 @@ class webphoto_inc_weblinks extends webphoto_inc_public
 function webphoto_inc_weblinks()
 {
 	$this->webphoto_inc_public();
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 }
 
 function &getInstance()
@@ -99,10 +104,7 @@ function photos( $opts )
 		return null;
 	}
 
-	$href_base       = XOOPS_URL .'/modules/'. $dirname .'/index.php';
-
-// Notice [PHP]: Undefined index: use_pathinfo
-	$use_pathinfo    = $block['cfg_use_pathinfo'] ;
+	$href_base       = XOOPS_URL .'/modules/'. $dirname .'/';
 
 	$attribs_default = 'width="'. $block['cfg_thumb_width'] .'"';
 
@@ -110,8 +112,8 @@ function photos( $opts )
 	foreach ( $block['photo'] as $photo )
 	{
 		$ret[] = array(
-			'href'        => $this->build_href_photo( $photo, $href_base, $use_pathinfo ) ,
-			'cat_href'    => $this->build_href_cat(   $photo, $href_base, $use_pathinfo ) ,
+			'href'        => $this->build_href_photo( $photo, $href_base ) ,
+			'cat_href'    => $this->build_href_cat(   $photo, $href_base ) ,
 			'title'       => $photo['title_s'] ,
 			'cat_title'   => $photo['cat_title_s'] ,
 			'img_src'     => $photo['img_thumb_src_s'] ,
@@ -122,28 +124,18 @@ function photos( $opts )
 	return $ret ;
 }
 
-function build_href_photo( $photo, $href_base, $use_pathinfo )
+function build_href_photo( $photo, $href_base )
 {
-	$photo_id = $photo['photo_id'];
-
-	if ( $use_pathinfo ) {
-		$href = $href_base .'/photo/'. $photo_id .'/';
-	} else {
-		$href = $href_base. '?fct=photo&amp;p='. $photo_id ;
-	}
-	return $href;
+	$str  = $href_base ;
+	$str .= $this->_uri_class->build_relatevie_uri_mode_param( 'photo', $photo['item_id'] );
+	return $str;
 }
 
-function build_href_cat( $photo, $href_base, $use_pathinfo )
+function build_href_cat( $photo, $href_base )
 {
-	$cat_id = $photo['item_cat_id'];
-
-	if ( $use_pathinfo ) {
-		$href = $href_base .'/category/'. $cat_id .'/' ;
-	} else {
-		$href = $href_base. '?fct=category&amp;p='. $cat_id ;
-	}
-	return $href;
+	$str  = $href_base ;
+	$str .= $this->_uri_class->build_relatevie_uri_mode_param( 'category', $photo['item_cat_id'] );
+	return $str;
 }
 
 function build_attribs( $photo, $attribs_default )

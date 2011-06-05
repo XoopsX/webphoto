@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.9 2010/11/05 17:38:21 ohwada Exp $
+// $Id: rss.php,v 1.10 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_uri
 // 2010-11-03 K.OHWADA
 // webphoto_main
 // 2010-01-10 K.OHWADA
@@ -69,8 +71,7 @@ class webphoto_rss extends webphoto_lib_rss
 	var $_user_class ;
 	var $_place_class ;
 	var $_date_class ;
-
-	var $_cfg_use_pathinfo ;
+	var $_uri_class ;
 
 	var $_mode  = null;
 	var $_param = null;
@@ -123,13 +124,11 @@ function webphoto_rss( $dirname, $trust_dirname )
 		=& webphoto_search::getInstance( $dirname , $trust_dirname );
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
-	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
+	$this->_uri_class      =& webphoto_uri::getInstance( $dirname );
 
-	$this->_utility_class  =& webphoto_lib_utility::getInstance();
-
+	$this->_pathinfo_class  =& webphoto_lib_pathinfo::getInstance();
+	$this->_utility_class   =& webphoto_lib_utility::getInstance();
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
-
-	$this->_cfg_use_pathinfo = $this->_config_class->get_by_name( 'use_pathinfo' );
 }
 
 function &getInstance( $dirname, $trust_dirname )
@@ -397,13 +396,7 @@ function _build_context( $row )
 
 function _build_link( $row )
 {
-	$item_id = $row['item_id'] ;
-	if ( $this->_cfg_use_pathinfo ) {
-		$link = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
-	} else {
-		$link = $this->_MODULE_URL .'/index.php?fct=photo&p='. $item_id ;
-	}
-	return $link;
+	return $this->_uri_class->build_photo( $row['item_id'], false );
 }
 
 function _is_kind_image( $row )

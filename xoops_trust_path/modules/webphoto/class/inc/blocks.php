@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.21 2010/10/06 02:22:46 ohwada Exp $
+// $Id: blocks.php,v 1.22 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2010-10-01 K.OHWADA
 // img_large_src
 // 2009-11-11 K.OHWADA
@@ -53,7 +55,9 @@ class webphoto_inc_blocks extends webphoto_inc_public
 	var $_timeline_class ;
 	var $_gmap_block_class ;
 	var $_gmap_info_class  ;
+	var $_uri_class;
 
+	var $_cfg_use_pathinfo   = false;
 	var $_cfg_use_popbox     = false;
 	var $_cfg_thumb_width    = 0 ;
 	var $_cfg_thumb_height   = 0 ;
@@ -110,6 +114,8 @@ function webphoto_inc_blocks( $dirname , $trust_dirname )
 
 	$this->_header_class     =& webphoto_inc_xoops_header::getSingleton( $dirname );
 	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 
 	$this->_timeline_class   =& webphoto_inc_timeline::getSingleton( $dirname );
 	$this->_init_timeline    = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
@@ -372,7 +378,7 @@ function timeline_show( $options )
 	if ( $this->_init_timeline ) {
 		$item_rows = $this->_get_item_rows_timeline( $latest, $random );
 		list( $photos, $photo_num ) = 
-			$this->_build_photos( $options, $item_rows );
+			$this->_build_photos( $options, $item_rows, false );
 		if ( $photo_num > 0 ) {
 
 //			$this->_timeline_class->set_show_timeout( true );
@@ -509,7 +515,7 @@ function _build_block( $mode , $options )
 	return $block ;
 }
 
-function _build_photos( $options, $item_rows )
+function _build_photos( $options, $item_rows, $flag_amp_sanitize=true )
 {
 	$title_max_length  = $this->_get_option_int(  $options, 4, 20 ) ;
 
@@ -540,7 +546,7 @@ function _build_photos( $options, $item_rows )
 
 		$arr['time_create']   = $row['item_time_create'];
 		$arr['datetime_unix'] = $this->_utility_class->mysql_datetime_to_unixtime( $row['item_datetime'] );
-		$arr['photo_uri']     = $this->_build_uri_photo( $item_id ) ;
+		$arr['photo_uri']     = $this->_uri_class->build_photo( $item_id, $flag_amp_sanitize ) ;
 		$arr['description_disp'] = $this->build_item_description( $row );
 
 		$photos[ $count ++ ] = $arr ;
@@ -926,17 +932,6 @@ function _build_hits_suffix( $hits )
 	return $val;
 }
 
-function _build_uri_photo( $id )
-{
-	$str = $this->_MODULE_URL .'/index.php' ;
-	if ( $this->_cfg_use_pathinfo ) {
-		$str .= '/photo/'. $id .'/' ; 
-	} else {
-		$str .= '?fct=photo&photo_id='. $id ;
-	}
-	return $str;
-}
-
 function _adjust_image_thumb( $width, $height )
 {
 	return $this->_adjust_image_size( 
@@ -1206,6 +1201,7 @@ function _init_xoops_config_for_block( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
+	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
 	$this->_cfg_use_popbox     = $config_handler->get_by_name( 'use_popbox' );
 	$this->_cfg_thumb_width    = $config_handler->get_by_name( 'thumb_width' );
 	$this->_cfg_thumb_height   = $config_handler->get_by_name( 'thumb_height' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.plugin.php,v 1.6 2009/11/29 07:34:23 ohwada Exp $
+// $Id: whatsnew.plugin.php,v 1.7 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// class/inc/uri.php
 // 2009-11-11 K.OHWADA
 // WEBPHOTO_TRUST_DIRNAME in webphoto_inc_whatsnew
 // include/header.php
@@ -30,6 +32,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 webphoto_include_once( 'class/inc/config.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/public.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/uri.php' ,         $MY_DIRNAME );
 webphoto_include_once( 'class/inc/whatsnew.php' ,    $MY_DIRNAME );
 
 //=========================================================

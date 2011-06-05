@@ -1,5 +1,5 @@
 <?php
-// $Id: tagcloud.php,v 1.4 2009/11/29 07:34:21 ohwada Exp $
+// $Id: tagcloud.php,v 1.5 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// remove cfg_use_pathinfo
 // 2009-11-11 K.OHWADA
 // webphoto_inc_handler -> webphoto_inc_base_ini
 // 2009-01-25 K.OHWADA
@@ -21,12 +23,13 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_tagcloud extends webphoto_inc_base_ini
 {
+	var $_uri_class;
+
 	var $_item_table;
 	var $_cat_table;
 	var $_tag_table;
 	var $_p2t_table;
 
-	var $_cfg_use_pathinfo   = false ;
 	var $_cfg_perm_cat_read  = 0 ;
 	var $_cfg_perm_item_read = 0 ;
 
@@ -44,6 +47,8 @@ function webphoto_inc_tagcloud( $dirname , $trust_dirname )
 	$this->init_handler( $dirname );
 
 	$this->_init_config( $dirname );
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 
 	$this->_item_table = $this->prefix_dirname( 'item' );
 	$this->_cat_table  = $this->prefix_dirname( 'cat' );
@@ -76,16 +81,13 @@ function build_tagcloud_by_rows( $rows )
 {
 	$cloud_class =& new webphoto_lib_cloud();
 
-	$uri_class =& webphoto_inc_uri::getSingleton( $this->_DIRNAME );
-	$uri_class->set_use_pathinfo( $this->_cfg_use_pathinfo );
-
 	ksort($rows);
 
 	foreach ( array_keys($rows) as $i )
 	{
 		$name  = $rows[$i]['tag_name'];
 		$count = $rows[$i]['photo_count'];
-		$link  = $uri_class->build_tag( $name );
+		$link  = $this->_uri_class->build_tag( $name );
 		$cloud_class->addElement( $name, $link, $count );
 	}
 
@@ -251,7 +253,6 @@ function _init_config( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
 	$this->_cfg_perm_cat_read  = $config_handler->get_by_name( 'perm_cat_read' );
 	$this->_cfg_perm_item_read = $config_handler->get_by_name( 'perm_item_read' );
 }

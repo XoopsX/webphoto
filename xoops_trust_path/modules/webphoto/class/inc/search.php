@@ -1,5 +1,5 @@
 <?php
-// $Id: search.php,v 1.13 2010/06/06 10:03:01 ohwada Exp $
+// $Id: search.php,v 1.14 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2010-06-06 K.OHWADA
 // BUG: overwrited by the previous data
 // 2009-11-11 K.OHWADA
@@ -33,6 +35,8 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_search extends webphoto_inc_public
 {
+	var $_uri_class;
+
 	var $_SHOW_IMAGE = true ;
 	var $_SHOW_ICON  = false ;
 
@@ -46,6 +50,8 @@ function webphoto_inc_search( $dirname, $trust_dirname )
 	$this->auto_publish();
 
 	$this->set_normal_exts( _C_WEBPHOTO_IMAGE_EXTS );
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 
 // preload
 	$show_image = $this->get_ini( 'search_show_image' );
@@ -94,16 +100,12 @@ function search( $query_array, $andor, $limit, $offset, $uid )
 		list( $img_url, $img_width, $img_height ) =
 			$this->build_img_url( $item_row, $this->_SHOW_IMAGE, $this->_SHOW_ICON );
 
-		if ( $this->_cfg_use_pathinfo ) {
-			$link = 'index.php/photo/'. $item_id .'/keywords='. $keywords .'/' ;
-		} else {
-			$link = 'index.php?fct=photo&amp;p='. $item_id .'&amp;keywords='. $keywords ;
-		}
+		$link = $this->_uri_class->build_search_photo_keywords( $item_id, $keywords ) ;
 
 // BUG: overwrited by the previous data
 		$arr = array();
 
-		$arr['link']    = $link ;
+		$arr['link']    = $link;
 		$arr['title']   = $item_row['item_title'];
 		$arr['time']    = $item_row['item_time_update'];
 		$arr['uid']     = $item_row['item_uid'];

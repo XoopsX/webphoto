@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.29 2010/11/16 23:43:38 ohwada Exp $
+// $Id: base_this.php,v 1.30 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// build_uri_photo_id_title()
 // 2010-11-11 K.OHWADA
 // build_item_name_by_file_kind()
 // 2010-11-03 K.OHWADA
@@ -452,6 +454,24 @@ function is_playlist_dir_kind( $kind )
 //---------------------------------------------------------
 // uri class
 //---------------------------------------------------------
+function build_uri_photo_id_title( $id, $title, $target='_blank', $flag_amp_sanitize=true, $flag_title_sanitize=true )
+{
+	return $this->_uri_class->build_photo_id_title( 
+		$id, $title, $target, $flag_amp_sanitize, $flag_title_sanitize );
+}
+
+function build_uri_photo_id( $id, $target='_blank', $flag_amp_sanitize=true )
+{
+	return $this->_uri_class->build_photo_id( 
+		$id, $target, $flag_amp_sanitize );
+}
+
+function build_uri_photo_title( $id, $title, $target='_blank', $flag_amp_sanitize=true, $flag_title_sanitize=true )
+{
+	return $this->_uri_class->build_photo_title( 
+		$id, $title, $target, $flag_amp_sanitize, $flag_title_sanitize );
+}
+
 function build_uri_operate( $op )
 {
 	return $this->_uri_class->build_operate( $op );

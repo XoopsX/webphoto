@@ -1,5 +1,5 @@
 <?php
-// $Id: notification.php,v 1.6 2009/12/24 06:32:22 ohwada Exp $
+// $Id: notification.php,v 1.7 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// webphoto_inc_uri
 // 2009-12-06 K.OHWADA
 // Fatal error: Call to undefined method webphoto_inc_base_ini()
 // 2009-11-11 K.OHWADA
@@ -28,7 +30,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // Fatal error: Call to undefined method webphoto_inc_base_ini()
 class webphoto_inc_notification extends webphoto_inc_base_ini
 {
-	var $_cfg_use_pathinfo = false;
+	var $_uri_class;
 
 	var $_INDEX_URL ;
 
@@ -41,9 +43,9 @@ function webphoto_inc_notification( $dirname , $trust_dirname )
 	$this->init_base_ini( $dirname , $trust_dirname );
 	$this->init_handler( $dirname );
 
-	$this->_init_xoops_config( $dirname );
-
 	$this->_INDEX_URL = $this->_MODULE_URL .'/index.php';
+
+	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 }
 
 function &getSingleton( $dirname , $trust_dirname )
@@ -85,12 +87,7 @@ function notify( $category, $id )
 
 function _get_url( $category, $id )
 {
-	if ( $this->_cfg_use_pathinfo ) {
-		$url = $this->_MODULE_URL .'/index.php/'. $category .'/'. $id .'/' ;
-	} else {
-		$url = $this->_MODULE_URL .'/index.php?fct='. $category .'&amp;p='. $id ;
-	}
-	return $url;
+	return $this->_uri_claas->build_full_uri_mode_param( $category, $id );
 }
 
 //---------------------------------------------------------
@@ -112,16 +109,6 @@ function _get_cat_title( $cat_id )
 		return  $row['cat_title'];
 	}
 	return false;
-}
-
-//---------------------------------------------------------
-// xoops_config
-//---------------------------------------------------------
-function _init_xoops_config( $dirname )
-{
-	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
-
-	$this->_cfg_use_pathinfo = $config_handler->get_by_name('use_pathinfo');
 }
 
 // --- class end ---

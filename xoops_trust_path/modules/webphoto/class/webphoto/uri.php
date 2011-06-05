@@ -1,5 +1,5 @@
 <?php
-// $Id: uri.php,v 1.10 2010/11/04 02:23:19 ohwada Exp $
+// $Id: uri.php,v 1.11 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// build_photo_id_title()
 // 2010-11-03 K.OHWADA
 // move get_pathinfo_param() to webphoto_uri_parse
 // 2010-01-10 K.OHWADA
@@ -29,7 +31,6 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_uri extends webphoto_inc_uri
 {
-	var $_config_class;
 
 //---------------------------------------------------------
 // constructor
@@ -38,10 +39,6 @@ function webphoto_uri( $dirname )
 {
 	$this->webphoto_inc_uri( $dirname );
 
-	$this->_config_class   =& webphoto_config::getInstance( $dirname );
-
-	$this->set_use_pathinfo(
-		$this->_config_class->get_by_name('use_pathinfo') );
 }
 
 function &getInstance( $dirname )
@@ -51,6 +48,58 @@ function &getInstance( $dirname )
 		$instance = new webphoto_uri( $dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// buiid uri
+//---------------------------------------------------------
+function build_photo_id_title( $id, $title, $target='_blank', $flag_amp_sanitize=true, $flag_title_sanitize=true  )
+{
+	$str  = $this->build_photo_a_href( $id, $target, $flag_amp_sanitize );
+	$str .= $id;
+
+	if ( $title ) {
+		$str .= ' : ';
+		if ( $flag_title_sanitize ) {
+			$str .= $this->sanitize( $title );
+		} else {
+			$str .= $title;
+		}
+	}
+
+	$str .= '</a>';
+	return $str ;
+}
+
+function build_photo_id( $id, $target='_blank', $flag_amp_sanitize=true )
+{
+	$str  = $this->build_photo_a_href( $id, $target, $flag_amp_sanitize );
+	$str .= $id;
+	$str .= '</a>';
+	return $str ;
+}
+
+function build_photo_title( $title, $target='_blank', $flag_amp_sanitize=true, $flag_title_sanitize=true )
+{
+	$str  = $this->build_photo_a_href( $id, $target, $flag_amp_sanitize );
+	if ( $flag_title_sanitize ) {
+		$str .= $this->sanitize( $title );
+	} else {
+		$str .= $title;
+	}
+	$str .= '</a>';
+	return $str ;
+}
+
+function build_photo_a_href( $id, $target='_blank', $flag_amp_sanitize=true )
+{
+	$url = $this->build_photo( $id, $flag_amp_sanitize );
+	if ( $target ) {
+		$str = '<a href="'. $url .'" target="'. $target .'">';
+	} else {
+		$str = '<a href="'. $url .'>';
+	}
+	return $str ;
 }
 
 //---------------------------------------------------------
@@ -68,12 +117,8 @@ function build_operate( $op )
 
 function build_photo_pagenavi()
 {
-	$str = $this->build_full_uri_mode( 'photo' );
-	if ( $this->_cfg_use_pathinfo ) {
-		$str .= '/';
-	} else {
-		$str .= '&amp;'. _C_WEBPHOTO_URI_PARAM_NAME .'=' ;
-	}
+	$str  = $this->build_full_uri_mode( 'photo' );
+	$str .= $this->build_part_uri_param_name();
 	return $str;
 }
 
@@ -96,22 +141,7 @@ function build_user( $id )
 
 function build_param( $param )
 {
-	if ( !is_array($param) || !count($param)) {
-		return null;
-	}
-
-	$arr = array();
-	foreach ( $param as $k => $v ) {
-		$arr[] = $this->sanitize($k) .'='. $this->sanitize($v) ;
-	}
-
-	if ( $this->_cfg_use_pathinfo ) {
-		$str = implode( $arr, '/' ) .'/' ;
-	} else {
-		$str = '&amp;'. implode( $arr, '&amp;' ) ;
-	}
-
-	return $str;
+	return $this->build_uri_extention( $param );
 }
 
 //---------------------------------------------------------

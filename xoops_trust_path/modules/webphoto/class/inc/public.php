@@ -1,5 +1,5 @@
 <?php
-// $Id: public.php,v 1.6 2010/06/06 10:03:01 ohwada Exp $
+// $Id: public.php,v 1.7 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// remove cfg_use_pathinfo
 // 2010-06-06 K.OHWADA
 // build_img_url()
 // 2009-11-11 K.OHWADA
@@ -26,7 +28,6 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_public extends webphoto_inc_base_ini
 {
-	var $_cfg_use_pathinfo   = false;
 	var $_cfg_workdir        = null;
 	var $_cfg_perm_cat_read  = false ;
 	var $_cfg_perm_item_read = false ;
@@ -485,7 +486,6 @@ function _init_xoops_config( $dirname )
 {
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
-	$this->_cfg_use_pathinfo   = $config_handler->get_by_name( 'use_pathinfo' );
 	$this->_cfg_workdir        = $config_handler->get_by_name( 'workdir' );
 	$this->_cfg_perm_cat_read  = $config_handler->get_by_name( 'perm_cat_read' ) ;
 	$this->_cfg_perm_item_read = $config_handler->get_by_name( 'perm_item_read' ) ;

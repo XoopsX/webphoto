@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.12 2010/03/14 14:30:45 ohwada Exp $
+// $Id: photo_public.php,v 1.13 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// remove cfg_use_pathinfo
 // 2010-03-14 K.OHWADA
 // set_perm_cat_read()
 // 2010-01-10 K.OHWADA
@@ -35,7 +37,6 @@ class webphoto_photo_public
 	var $_item_cat_handler ;
 
 	var $_cfg_perm_cat_read ;
-	var $_cfg_use_pathinfo ;
 
 	var $_ORDERBY_ASC    = 'item_id ASC';
 	var $_ORDERBY_LATEST = 'item_time_update DESC, item_id DESC';
@@ -55,7 +56,6 @@ function webphoto_photo_public( $dirname, $trust_dirname )
 
 	$this->_config_class   =& webphoto_config::getInstance( $dirname );
 
-	$this->_cfg_use_pathinfo   = $this->_config_class->get_by_name( 'use_pathinfo');
 	$this->_cfg_perm_cat_read  = $this->_config_class->get_by_name( 'perm_cat_read' );
 	$cfg_perm_item_read        = $this->_config_class->get_by_name( 'perm_item_read' );
 

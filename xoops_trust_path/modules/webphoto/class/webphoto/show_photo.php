@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.30 2010/11/16 23:43:38 ohwada Exp $
+// $Id: show_photo.php,v 1.31 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// remove cfg_use_pathinfo
 // 2010-11-11 K.OHWADA
 // get_cached_file_extend_row_by_kind()
 // 2010-11-03 K.OHWADA
@@ -81,7 +83,6 @@ class webphoto_show_photo extends webphoto_base_this
 	var $_cfg_perm_cat_read;
 	var $_cfg_perm_item_read;
 	var $_cfg_gmap_apikey;
-	var $_cfg_use_pathinfo;
 	var $_cfg_cat_main_width;
 	var $_cfg_cat_sub_width;
 	var $_cfg_timeline_dirname;
@@ -141,7 +142,6 @@ function webphoto_show_photo( $dirname, $trust_dirname )
 	$this->_cfg_perm_cat_read    = $this->get_config_by_name('perm_cat_read');
 	$this->_cfg_perm_item_read   = $this->get_config_by_name('perm_item_read');
 	$this->_cfg_gmap_apikey      = $this->get_config_by_name('gmap_apikey');
-	$this->_cfg_use_pathinfo     = $this->get_config_by_name('use_pathinfo');
 	$this->_cfg_cat_main_width   = $this->get_config_by_name('cat_main_width');
 	$this->_cfg_cat_sub_width    = $this->get_config_by_name('cat_sub_width');
 	$this->_cfg_timeline_dirname = $this->get_config_by_name('timeline_dirname');

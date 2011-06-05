@@ -1,5 +1,5 @@
 <?php
-// $Id: redothumbs.php,v 1.15 2010/11/16 23:43:38 ohwada Exp $
+// $Id: redothumbs.php,v 1.16 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// build_uri_photo_id_title()
 // 2010-11-11 K.OHWADA
 // webphoto_edit_jpeg_create
 // 2010-10-01 K.OHWADA
@@ -60,7 +62,6 @@ class webphoto_admin_redothumbs extends webphoto_edit_base
 	var $_cfg_allownoimage ;
 	var $_cfg_width        ;
 	var $_cfg_height       ;
-	var $_cfg_use_pathinfo ;
 
 	var $_DEFAULT_SIZE  = 10;
 	var $_MAX_SIZE      = 1000;
@@ -102,7 +103,6 @@ function webphoto_admin_redothumbs( $dirname , $trust_dirname )
 	$this->_cfg_allownoimage = $this->get_config_by_name( 'allownoimage' );
 	$this->_cfg_width        = $this->get_config_by_name('width');
 	$this->_cfg_height       = $this->get_config_by_name('height');
-	$this->_cfg_use_pathinfo = $this->get_config_by_name('use_pathinfo');
 
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT ;
 }
@@ -367,22 +367,11 @@ function _item_exec( $item_row )
 
 function _build_msg_title( $item_row )
 {
-	$item_id    = $item_row['item_id'] ;
-	$item_title = $item_row['item_title'] ;
-
-	if ( $this->_cfg_use_pathinfo ) {
-		$url = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
-	} else {
-		$url = $this->_MODULE_URL .'/index.php?fct=photo&amp;p='. $item_id ;
-	}
-
-	$msg  = ' checking ';
-	$msg .= ' <a href="'. $url .'" target="_blank">';
-	$msg .= $item_id;
-	$msg .= ' : ';
-	$msg .= $this->sanitize( $item_title );
-	$msg .= '</a> ';
-	return $msg ;
+	$str  = ' checking ';
+	$str .= $this->build_uri_photo_id_title( 
+		$item_row['item_id'], $item_row['item_title'] );
+	$str .= ' : ';
+	return $str ;
 }
 
 function _check_remove_all_files( $cont_row )

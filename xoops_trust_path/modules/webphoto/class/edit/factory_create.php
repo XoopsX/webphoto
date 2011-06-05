@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.20 2010/11/16 23:43:38 ohwada Exp $
+// $Id: factory_create.php,v 1.21 2011/06/05 07:23:40 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-06-04 K.OHWADA
+// build_uri_photo_id_title()
 // 2010-11-11 K.OHWADA
 // Undefined variable: item_ext
 // 2010-10-01 K.OHWADA
@@ -62,7 +64,6 @@ class webphoto_edit_factory_create extends webphoto_edit_base
 	var $_image_create_class ;
 
 // config
-	var $_cfg_use_pathinfo = false;
 	var $_has_image_resize = false;
 	var $_has_image_rotate = false;
 
@@ -151,8 +152,6 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 	$this->_msg_main_class = new webphoto_lib_msg();
 	$this->_msg_sub_class  = new webphoto_lib_msg();
 
-	$this->_cfg_use_pathinfo = $this->get_config_by_name( 'use_pathinfo' );
-
 	$this->_has_image_resize  = $this->_image_create_class->has_resize();
 	$this->_has_image_rotate  = $this->_image_create_class->has_rotate();
 }
@@ -209,7 +208,10 @@ function create_item_from_param( $item_row, $param )
 	$this->_item_row     = $item_row ;
 
 	if ( $this->_flag_print_first_msg ) {
-		$msg = $this->build_msg_photo_title( $item_id, $item_row['item_title'] );
+		$msg  = ' ';
+		$msg .= $this->build_uri_photo_id_title( 
+			$item_id, $item_row['item_title'] );
+		$msg .= ' : ';
 		$this->_msg_main_class->set_msg( $msg ) ;
 	}
 
@@ -291,26 +293,6 @@ function create_sub_files( $photo_param, $cont_param, $flag_video_plural )
 	}
 
 	return $sub_params ;
-}
-
-function build_msg_photo_title( $item_id, $title=null )
-{
-	if ( $this->_cfg_use_pathinfo ) {
-		$url = $this->_MODULE_URL .'/index.php/photo/'. $item_id .'/';
-	} else {
-		$url = $this->_MODULE_URL .'/index.php?fct=photo&amp;p='. $item_id ;
-	}
-
-	$msg  = ' <a href="'. $url .'" target="_blank">';
-	$msg .= $item_id;
-
-	if ( $title ) {
-		$msg .= ' : ';
-		$msg .= $this->sanitize( $title );
-	}
-
-	$msg .= '</a> : ';
-	return $msg ;
 }
 
 function check_item( $item_row, $param )
