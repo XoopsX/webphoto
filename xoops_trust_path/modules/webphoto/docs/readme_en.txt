@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.60 2011/06/05 07:23:40 ohwada Exp $
+$Id: readme_en.txt,v 1.61 2011/06/05 07:28:59 ohwada Exp $
 
 =================================================
 Version: 2.41
@@ -12,8 +12,10 @@ This is the album module which manages photos and videos.
 
 * Changes *
 1. bug fix
-(1) wrong url in gmap when not use pathinfo
+(1) WRONG url in gmap when not use pathinfo
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1178&post_id=4302
+
+(2) Fatal Error in import from webphoto
 
 
 =================================================
