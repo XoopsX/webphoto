@@ -1,4 +1,4 @@
-$Id: readme_jp.txt,v 1.62 2011/06/05 07:28:59 ohwada Exp $
+$Id: readme_jp.txt,v 1.63 2011/06/06 00:08:17 ohwada Exp $
 
 =================================================
 Version: 2.42
@@ -15,7 +15,9 @@ Email:  webmaster@ohwada.jp
 (1) pathinfoを使用しないとき、gmapのURLが正しくない
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?forum=13&topic_id=1178&post_id=4302
 
-(2) 
+(2) webphotoからインポートにて Fatal エラー
+
+
 =================================================
 Version: 2.41
 Date:   2011-05-16
