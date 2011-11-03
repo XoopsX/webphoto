@@ -1,13 +1,13 @@
-/* $Id: PopBox.js,v 1.2 2008/06/30 13:11:33 ohwada Exp $ */
+/* $Id: PopBox.js,v 1.3 2011/11/03 11:26:42 ohwada Exp $ */
 
-/* 2008-06-29 hacked by K.OHWADA
-remove this
-popBoxWaitImage.src = "images/spinner40.gif";
+/* 2011-11-03 hacked by K.OHWADA
+removed this
+popBoxWaitImage.src = "/images/spinner40.gif";
 */
 
 /********************************************************************************************************************
-* PopBox.js, v2.5 released December 18, 2007. Copyright (c) 2007, C6 Software, Inc. (http://www.c6software.com/)
-* PopBox is released under the Creative Commons Attribution 3.0 license (http://creativecommons.org/licenses/by/3.0/)
+* PopBox.js, v2.7a Copyright (c) 2009, C6 Software, Inc. (http://www.c6software.com/)
+* PopBox is released under the Creative Commons GNU GPL license (http://creativecommons.org/licenses/GPL/2.0/)
 * and is free to use in both commercial and non-commercial work, provided this header remains at the top.
 * The latest version and documentation can be found at http://www.c6software.com/products/popbox/default.aspx.
 * Questions and suggestions can be sent to john.reid@c6software.com. Please put "PopBox" somewhere in the
@@ -53,12 +53,28 @@ function GetRawObject(obj) {
 
 // Return the available content width and height space in browser window
 function GetInsideWindowSize() {
-    if (window.innerWidth) {
-        return {x:window.innerWidth, y:window.innerHeight};
-    } else if (document.compatMode && document.compatMode.indexOf("CSS1") >= 0) {
-        return {x:document.body.parentNode.clientWidth, y:document.body.parentNode.clientHeight};
-    } else if (document.body && document.body.clientWidth) {
-        return {x:document.body.clientWidth, y:document.body.clientHeight};
+	 if (window.innerWidth) {
+		  return {x:window.innerWidth, y:window.innerHeight};
+    }
+    else
+    {
+		 var baseArray = document.getElementsByTagName("base");
+		 if (baseArray.length == 0)
+		 {
+			 if (document.compatMode && document.compatMode.indexOf("CSS1") >= 0) {
+				  return {x:document.body.parentNode.clientWidth, y:document.body.parentNode.clientHeight};
+			 } else if (document.body && document.body.clientWidth) {
+				  return {x:document.body.clientWidth, y:document.body.clientHeight};
+			 }
+		 }
+		 else
+		 {
+			 if (document.body && document.body.clientWidth) {
+				  return {x:document.body.clientWidth, y:document.body.clientHeight};
+			 } else if (document.compatMode && document.compatMode.indexOf("CSS1") >= 0) {
+				  return {x:document.body.parentNode.clientWidth, y:document.body.parentNode.clientHeight};
+			 }
+		 }
     }
     return {x:0, y:0};
 }
@@ -142,6 +158,13 @@ function GetElementPosition(obj)
 		{
 			left += parent.offsetLeft;
 			top += parent.offsetTop;
+
+			if (parent.style && parent.style.overflow && parent.style.overflow != "")
+			{
+				left -= parent.scrollLeft;
+				top -= parent.scrollTop;
+			}
+
 			var parentTagName = parent.tagName.toLowerCase();
 			if (parentTagName != "table" &&
 				parentTagName != "body" && 
@@ -237,6 +260,7 @@ function MouseMoveRevert(e)
 
 // holds numerous properties related to position, size and motion
 var popBox = new Array();
+var popBoxIds = new Array();
 // holds positioning value for the z axis
 var popBoxZ = 100;
 // holds the popped image for each <img> tag with a pbsrc attribute
@@ -338,17 +362,19 @@ function InitPopBox(obj)
 		startPos.x = parseInt(elem.style.left, 10);
 		startPos.y = parseInt(elem.style.top, 10);
 	}
-	
+
 	// if there is a pbsrc then create that, else if it's not absolute or relative then create a copy
 	if (pbSrc[elem.id] != null || (elem.style.position != "absolute" && elem.style.position != "relative"))
 	{
-		var img = document.createElement("img");
+		var strSrc = (pbSrc[elem.id] != null) ? pbSrc[elem.id].src : elem.src;
+		var img = null;
+		try{img = document.createElement("<img src='" + strSrc + "' />");}
+		catch(ex){img = document.createElement("img"); img.src = strSrc;}
 		// copy image properties
 		img.border = elem.border;
 		img.className = elem.className;
 		img.height = elem.height;
 		img.id = "popcopy" + elem.id;
-		img.src = (pbSrc[elem.id] != null) ? pbSrc[elem.id].src : elem.src;
 		img.alt = elem.alt;
 		img.title = elem.title;
 		img.width = elem.width;
@@ -370,7 +396,8 @@ function InitPopBox(obj)
 		elem.style.visibility = "hidden";
 		elem = img;
 	}
-	
+
+	popBoxIds.push(elem.id);	
 	popBox[elem.id] = {	elemId:elem.id,
 							xCurr:0.0,
 							yCurr:0.0,
@@ -515,7 +542,7 @@ function DoPopBox(elem)
 			
 			if (popBox[elem.id].isPopped == true)
 			{
-				elem.style.zIndex = null;
+				elem.style.zIndex = "";
 	
 				if (popBox[elem.id].originalId != null)
 				{
@@ -687,14 +714,9 @@ function CreatePbBar(obj, pbShowBar, pbShowText, pbShowImage, pbText, pbImage, p
 		
 		var imgPos = GetElementPosition(obj);
 		var spanPos = GetElementPosition(objSpan);
-		objSpan.style.left = (spanPos.x > imgPos.x) ? (imgPos.x - spanPos.x) + "px" : imgPos.x - spanPos.x + "px";
-		objSpan.style.top = (spanPos.y > imgPos.y) ? (imgPos.y - spanPos.y) + "px" : imgPos.y - spanPos.y + "px";
+		objSpan.style.left = (imgPos.x - spanPos.x) + "px";
+		objSpan.style.top = (floatValue != "") ? "1px" : (imgPos.y - spanPos.y) + "px";
 		
-		objSpan.onclick = fnClick;
-		if (isRevert == true)
-			objSpan.onmouseout = fnMouseOut;
-		else
-			objSpan.onmouseover = fnMouseOver;
 		parentNode = objSpan;
 	}
 
@@ -777,9 +799,10 @@ function CreatePbBar(obj, pbShowBar, pbShowText, pbShowImage, pbText, pbImage, p
 	
 	if (pbShowImage == true)
 	{
-		var imgPopped = document.createElement("img");
+		var imgPopped = null;
+		try{imgPopped = document.createElement("<img src='" + pbImage + "' />");}
+		catch(ex){imgPopped = document.createElement("img"); imgPopped.src = pbImage;}
 		imgPopped.id = "popBoxImgPopped" + z;
-		imgPopped.src = pbImage;
 		imgPopped.style.width = "20px";
 		imgPopped.style.height = "20px";
 		imgPopped.style.borderStyle = "none";
@@ -851,6 +874,16 @@ function CreatePbBar(obj, pbShowBar, pbShowText, pbShowImage, pbText, pbImage, p
 		fnRemove.push(function(){divCapText.parentNode.removeChild(divCapText);});
 
 		AddCaptionText(divCapTrans, divCapText, pbCaption);
+		
+		if (popBoxExpandCaptions == true && divCapText.hasChildNodes() == true)
+		{
+			var spanMore = divCapText.lastChild;
+			if (spanMore && spanMore.onclick)
+			{
+				spanMore.id = CreateRandomId();
+				setTimeout(new Function("", "var spanMore = GetRawObject('" + spanMore.id + "'); if (spanMore != null && spanMore.onclick) { spanMore.onclick(); }"), 10);
+			}
+		}
 	}
 
 	if (fnRemove.length != 0)
@@ -944,12 +977,14 @@ function ResizeCaption(divCapTrans, divCapText, height, caption)
 		
 		if ((h + 10) >= height)
 		{
-			top -= (height - h);
+			if (popBoxExpandCaptionsBelow == false)
+				top -= (height - h);
 			h = height;
 		}
 		else
 		{
-			top -= 10;
+			if (popBoxExpandCaptionsBelow == false)
+				top -= 10;
 			h += 10;
 		}
 		
@@ -965,12 +1000,14 @@ function ResizeCaption(divCapTrans, divCapText, height, caption)
 	{
 		if ((h - 10) <= height)
 		{
-			top += (h - height);
+			if (popBoxExpandCaptionsBelow == false)
+				top += (h - height);
 			h = height;
 		}
 		else
 		{
-			top += 10;
+			if (popBoxExpandCaptionsBelow == false)
+				top += 10;
 			h -= 10;
 		}
 		
@@ -1039,9 +1076,9 @@ function CreateWaitImage(obj)
 
 	var parentNode = obj.parentNode;
 
-	imgWait = document.createElement("img");
+	try{imgWait = document.createElement("<img src='" + popBoxWaitImage.src + "' />");}
+	catch(ex){imgWait = document.createElement("img"); imgWait.src = popBoxWaitImage.src;}
 	imgWait.id = newId;
-	imgWait.src = popBoxWaitImage.src;
 	imgWait.style.position = "absolute";
 	imgWait.style.left = (left + (width / 2) - (popBoxWaitImage.width / 2)) + "px";
 	imgWait.style.top = (top + (height / 2) - (popBoxWaitImage.height / 2)) + "px";
@@ -1119,6 +1156,57 @@ function CalculateImageDimensions(newWidth, newHeight, fullWidth, fullHeight, wi
 	return {x:newWidth, y:newHeight};
 }
 
+function GetObjectToPop(obj)
+{
+	if (typeof obj == "string") obj = GetRawObject(obj);
+	if (obj.id == "")
+		obj.id = CreateRandomId();
+
+	var poppedSrc = obj.getAttribute('pbSrcNL');
+	if (poppedSrc == null && pbSrc[obj.id] == null)
+		poppedSrc = obj.getAttribute('pbSrc');
+
+	if (poppedSrc != null && pbSrc[obj.id] == null)
+	{
+		var poppedImg = new Image();
+		poppedImg.src = poppedSrc;
+		
+		if (pbSrc[obj.id] != null)
+			delete pbSrc[obj.id];
+			
+		pbSrc[obj.id] = poppedImg;
+	}
+	
+	return (pbSrc[obj.id] != null) ? pbSrc[obj.id] : obj;
+}
+
+function GetPoppedImageSize(obj)
+{
+	var size = {x:0, y:0};
+	if (obj != null && typeof obj.id != 'undefined')
+	{
+		if (pbSrc[obj.id] != null)
+		{
+			size.x = pbSrc[obj.id].width;
+			size.y = pbSrc[obj.id].height;
+		}
+		else if (obj.naturalWidth && obj.naturalHeight)
+		{
+			size.x = obj.naturalWidth;
+			size.y = obj.naturalHeight;
+		}
+		else
+		{
+			var img = new Image();
+			img.src = obj.src;
+			size.x = img.width;
+			size.y = img.height;
+			delete img;
+		}
+	}
+	return size;
+}
+
 /***************************************************************************************************
 * This is where the user-callable section starts.
 * Function signatures above this line are subject to change.
@@ -1129,16 +1217,16 @@ var popBoxAutoClose = true;
 var popBoxMouseMoveRevert = true;
 var popBoxWaitImage = new Image();
 
-/* 2008-06-29 hacked by K.OHWADA
+/* 2011-11-03 hacked by K.OHWADA
 removed this
-popBoxWaitImage.src = "images/spinner40.gif";
+popBoxWaitImage.src = "/images/spinner40.gif";
 */
 
 var popBoxShowRevertBar = true;
 var popBoxShowRevertText = true;
 var popBoxShowRevertImage = true;
 var popBoxRevertText = "Click the image to shrink it.";
-var popBoxRevertImage = "images/magminus.gif";
+var popBoxRevertImage = "/images/magminus.gif";
 var popBoxRevertBarAbove = false;
 
 // there is no popBoxShowPopBar global, but instead the pbShowPopBar attribute must be
@@ -1146,13 +1234,15 @@ var popBoxRevertBarAbove = false;
 var popBoxShowPopText = true;
 var popBoxShowPopImage = true;
 var popBoxPopText = "Click to expand.";
-var popBoxPopImage = "images/magplus.gif";
+var popBoxPopImage = "/images/magplus.gif";
 var popBoxPopBarAbove = false;
 
 var popBoxShowCaption = true;
 var popBoxCaptionBelow = false;
 var popBoxCaptionMoreText = "more";
 var popBoxCaptionLessText = "less";
+var popBoxExpandCaptions = false;
+var popBoxExpandCaptionsBelow = false;
 
 // these custom attributes on the <img> element will override the globals above
 // pbShowRevertBar, pbShowRevertText, pbShowRevertImage, pbRevertText, pbRevertImage
@@ -1266,30 +1356,21 @@ function Pop(obj, speed, className)
 function PopEx(obj, newLeft, newTop, newWidth, newHeight, speed, className)
 {
 	if (typeof obj == "string") obj = GetRawObject(obj);
-	if (obj.id == "")
-		obj.id = CreateRandomId();
-
-	var poppedSrc = obj.getAttribute('pbSrcNL');
-	if (poppedSrc == null && pbSrc[obj.id] == null)
-		poppedSrc = obj.getAttribute('pbSrc');
-
-	if (poppedSrc != null)
-	{
-		var poppedImg = new Image();
-		poppedImg.src = poppedSrc;
-		
-		if (pbSrc[obj.id] != null)
-			delete pbSrc[obj.id];
-			
-		pbSrc[obj.id] = poppedImg;
-	}
-	
-	var objToPop = (pbSrc[obj.id] != null) ? pbSrc[obj.id] : obj;
+	var objToPop = GetObjectToPop(obj);
 	var isReady = (typeof objToPop.readyState != 'undefined') ? (objToPop.readyState == "complete") : ((typeof objToPop.complete != 'undefined') ? (objToPop.complete == true) : true);
 	if (isReady == false)
 	{
 		var imgWait = CreateWaitImage(obj);
-		var str = "var imgWait = GetRawObject('" + imgWait.id + "'); if (imgWait != null) { imgWait.parentNode.removeChild(imgWait); PopEx('" + obj.id + "'," + newLeft + "," + newTop + "," + newWidth + "," + newHeight + "," + speed + ",'" + className + "'); }";
+		var str = "var imgWait = GetRawObject('" + imgWait.id + "'); if (imgWait != null) { imgWait.parentNode.removeChild(imgWait); } PopEx('" + obj.id + "',";
+		if (newLeft == null)
+			str += newLeft + ",";
+		else
+			str += "'" + newLeft + "',";
+		if (newTop == null)
+			str += newTop + ",";
+		else
+			str += "'" + newTop + "',";
+		str += newWidth + "," + newHeight + "," + speed + ",'" + className + "');";
 		objToPop.onload = new Function("", str);
 		return;
 	}
@@ -1304,44 +1385,24 @@ function PopEx(obj, newLeft, newTop, newWidth, newHeight, speed, className)
 	var startX = parseInt(elem.style.left);
 	var startY = parseInt(elem.style.top);
 
-	// figure out the popped image size and position
+	// figure out the max window size
 	var windowSize = GetInsideWindowSize();
 	var hasRevertBar = HasRevertBar(obj);
 	var hasCaption = HasCaption(obj);
 	if (hasRevertBar == true && popBoxRevertBarAbove == true) windowSize.y -= 20;
 	if (hasCaption == true && popBoxCaptionBelow == true) windowSize.y -= 20;
 
-	var fullWidth = newWidth;
-	var fullHeight = newHeight;
-
+	var fullSize = {x:newWidth, y:newHeight};
 	if (newWidth == 0 || newHeight == 0 || newWidth == null || newHeight == null)
 	{
-		// get size from original object
-		if (pbSrc[obj.id] != null)
-		{
-			fullWidth = pbSrc[obj.id].width;
-			fullHeight = pbSrc[obj.id].height;
-		}
-		else if (obj.naturalWidth && obj.naturalHeight)
-		{
-			fullWidth = obj.naturalWidth;
-			fullHeight = obj.naturalHeight;
-		}
-		else
-		{
-			var img = new Image();
-			img.src = elem.src;
-			fullWidth = img.width;
-			fullHeight = img.height;
-			delete img;
-		}
+		fullSize = GetPoppedImageSize(elem);
 		
 		// some browsers have a race condition where it still doesn't get set so just fill the window
-		if (fullWidth == 0 || fullHeight == 0)
+		if (fullSize.x == 0 || fullSize.y == 0)
 		{
 			var scale = Math.min(parseFloat(windowSize.x) / parseFloat(elem.width), parseFloat(windowSize.y) / parseFloat(elem.height));
-			fullWidth = parseInt(elem.width * scale);
-			fullHeight = parseInt(elem.height * scale);
+			fullSize.x = parseInt(elem.width * scale);
+			fullSize.y = parseInt(elem.height * scale);
 		}
 	}
 
@@ -1367,12 +1428,12 @@ function PopEx(obj, newLeft, newTop, newWidth, newHeight, speed, className)
 	}
 
 	// adjust for scrollbars that might appear (quick compromise for browser incompatibilities)
-	if (newWidth == null && newHeight == 0 && fullWidth > (windowSize.x - 20))
+	if (newWidth == null && newHeight == 0 && fullSize.x > (windowSize.x - 20))
 		windowSize.y -= 20;
-	else if (newWidth == 0 && newHeight == null && fullHeight > (windowSize.y - 4))
+	else if (newWidth == 0 && newHeight == null && fullSize.y > (windowSize.y - 4))
 		windowSize.x -= 4;
 
-	var newSize = CalculateImageDimensions(newWidth, newHeight, fullWidth, fullHeight, windowSize);
+	var newSize = CalculateImageDimensions(newWidth, newHeight, fullSize.x, fullSize.y, windowSize);
 
 	// width and height are now set, so position it
 	if (newLeft == null || newTop == null)
@@ -1404,11 +1465,91 @@ function PopEx(obj, newLeft, newTop, newWidth, newHeight, speed, className)
 	PopBox(elem, startX, startY, newLeft, newTop, popBox[elem.id].wOriginal, popBox[elem.id].hOriginal, newSize.x, newSize.y, speed, speed, className, func);
 }
 
+function PopInPlace(obj, speed, className)
+{
+	if (typeof obj == "string") obj = GetRawObject(obj);
+	var objToPop = GetObjectToPop(obj);
+	var isReady = (typeof objToPop.readyState != 'undefined') ? (objToPop.readyState == "complete") : ((typeof objToPop.complete != 'undefined') ? (objToPop.complete == true) : true);
+	if (isReady == false)
+	{
+		var imgWait = CreateWaitImage(obj);
+		var str = "var imgWait = GetRawObject('" + imgWait.id + "'); if (imgWait != null) { imgWait.parentNode.removeChild(imgWait); } PopInPlace('" + obj.id + "'," + speed + ",'" + className + "');";
+		objToPop.onload = new Function("", str);
+		return;
+	}
+
+	var elem = InitPopBox(obj);
+
+	if (popBox[elem.id].isPopped == true) return;
+
+	if (typeof elem.ondblclick == "function")
+		elem.onclick = elem.ondblclick;
+
+	var startX = parseInt(elem.style.left);
+	var startY = parseInt(elem.style.top);
+
+	// figure out the max window size
+	var windowSize = GetInsideWindowSize();
+	var hasRevertBar = HasRevertBar(obj);
+	var hasCaption = HasCaption(obj);
+	if (hasRevertBar == true && popBoxRevertBarAbove == true) windowSize.y -= 20;
+	if (hasCaption == true && popBoxCaptionBelow == true) windowSize.y -= 20;
+	
+	var fullSize = GetPoppedImageSize(elem);
+	
+	// some browsers have a race condition where it still doesn't get set so just fill the window
+	if (fullSize.x == 0 || fullSize.y == 0)
+	{
+		var scale = Math.min(parseFloat(windowSize.x) / parseFloat(elem.width), parseFloat(windowSize.y) / parseFloat(elem.height));
+		fullSize.x = parseInt(elem.width * scale);
+		fullSize.y = parseInt(elem.height * scale);
+	}
+
+	var newSize = CalculateImageDimensions(0, 0, fullSize.x, fullSize.y, windowSize);
+	var newLeft = startX - parseInt(((newSize.x - popBox[elem.id].wOriginal) / 2), 10);
+	var newTop = startY - parseInt(((newSize.y - popBox[elem.id].hOriginal) / 2), 10);
+
+	// have the best case position, now adjust it if it would expand beyond the window
+	var scroll = GetScrollOffset();
+	if (scroll.x > newLeft)
+	{
+		newLeft = scroll.x;
+	}
+	else
+	{
+		var xOffset = ((newLeft + newSize.x) - (windowSize.x + scroll.x));
+		if (xOffset > 0) newLeft -= xOffset;
+	}
+
+	if (scroll.y > newTop)
+	{
+		newTop = scroll.y;
+	}
+	else
+	{
+		var yOffset = ((newTop + newSize.y) - (windowSize.y + scroll.y));
+		if (yOffset > 0) newTop -= yOffset;
+	}
+
+	if (hasRevertBar == true && popBoxRevertBarAbove == true) newTop += 10;
+	if (hasCaption == true && popBoxCaptionBelow == true) newTop -= 10;
+	if (newTop < 0) newTop = 0;
+	
+	var func = null;
+	if (typeof PostPopProcessing == "function")
+		func = PostPopProcessing;
+
+	if (typeof PrePopProcessing == "function")
+		PrePopProcessing(obj);
+
+	PopBox(elem, startX, startY, newLeft, newTop, popBox[elem.id].wOriginal, popBox[elem.id].hOriginal, newSize.x, newSize.y, speed, speed, className, func);
+}
+
 // Helper function for PopBox to move/resize the image back to its original position/size. Use this! It's much easier.
 function Revert(obj, speed, className)
 {
 	if (typeof obj == "string") obj = GetRawObject(obj); 
-	if (typeof popBox[obj.id] == "undefined" || popBox[obj.id] == null) return;
+	if (obj == null || typeof popBox[obj.id] == "undefined" || popBox[obj.id] == null) return;
 
 	if (typeof speed == 'undefined' || speed == null || speed == 0)
 		speed = Math.max(popBox[obj.id].velM, popBox[obj.id].velS);
@@ -1426,6 +1567,12 @@ function Revert(obj, speed, className)
 	PopBox(obj, popBox[obj.id].xTarg, popBox[obj.id].yTarg, popBox[obj.id].xOriginal, popBox[obj.id].yOriginal, popBox[obj.id].wTarg, popBox[obj.id].hTarg, popBox[obj.id].wOriginal, popBox[obj.id].hOriginal, speed, speed, className, func);
 }
 
+// Helper function to revert all images.
+function RevertAll(speed, className)
+{
+	for (var i = 0; i < popBoxIds.length; i++)
+		Revert(popBoxIds[i], speed, className);
+}
 
 /***************************************************************************************************
 * These methods are the pre and post processing events for Pop/PopEx and Revert.
