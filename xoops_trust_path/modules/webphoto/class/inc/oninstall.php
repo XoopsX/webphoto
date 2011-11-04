@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.25 2011/05/10 02:56:39 ohwada Exp $
+// $Id: oninstall.php,v 1.26 2011/11/04 04:01:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// Assigning the return value of new by reference is deprecated
 // 2011-05-01 K.OHWADA
 // webphoto_inc_oninstall_flashvar
 // 2010-09-20 K.OHWADA
@@ -282,12 +284,13 @@ function _table_install()
 	$this->set_msg( "SQL file found at <b>". $this->sanitize($sql_file_path) ."</b>" );
 	$this->set_msg( "Creating tables..." );
 
+// Unknown Condition [8192]: Assigning the return value of new by reference is deprecated
 	if( file_exists( XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ) ) {
 		include_once XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ;
-		$sqlutil =& new OldSqlUtility ;
+		$sqlutil = new OldSqlUtility() ;
 	} else {
 		include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php' ;
-		$sqlutil =& new SqlUtility ;
+		$sqlutil = new SqlUtility() ;
 	}
 
 	$sql_query = trim( file_get_contents( $sql_file_path ) ) ;
@@ -335,12 +338,13 @@ function _table_update()
 
 	$prefix_mod = $this->_db->prefix() . '_' . $this->_DIRNAME ;
 
+// Unknown Condition [8192]: Assigning the return value of new by reference is deprecated
 	if( file_exists( XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ) ) {
 		include_once XOOPS_ROOT_PATH.'/class/database/oldsqlutility.php' ;
-		$sqlutil =& new OldSqlUtility ;
+		$sqlutil = new OldSqlUtility() ;
 	} else {
 		include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php' ;
-		$sqlutil =& new SqlUtility ;
+		$sqlutil = new SqlUtility() ;
 	}
 
 	$sql_query = trim( file_get_contents( $sql_file_path ) ) ;

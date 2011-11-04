@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_check.php,v 1.3 2011/05/15 22:25:53 ohwada Exp $
+// $Id: mail_check.php,v 1.4 2011/11/04 04:01:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// Function ereg() is deprecated
 // 2011-05-16 K.OHWADA
 // check_mail_addr()
 // 2009-11-11 K.OHWADA
@@ -40,7 +42,20 @@ class webphoto_edit_mail_check
 
 	var $_DENY_MAIL_FROM_ARRAY = array('163.com','bigfoot.com','boss.com','mine.nu','51444.tv','nyan_nyan_cat_2004@yahoo.co.jp','motto.zapto.org','i-towns.net','ori-g.net','jewelry.polty.cc','birabira4u.com','wecl-online.com');
 
-	var $_REMOVE_UNDERLINE_EREG = "[_]{25,}";
+// Function ereg() is deprecated
+// the underlinea are continued 25 or more 
+	var $_PREG_UNDERLINE_25 = "/[_]{25,}/";
+
+// 03-5321-1111
+	var $_PREG_TEL_FORMAT_1 = "/[\d\-]{12,13}/";
+
+// 0353211111
+	var $_PREG_TEL_FORMAT_2 = "/\d{10,11}/";
+
+	var $_MARK_ASTERISK_10 = "**********";
+
+// http://www.devshed.com/c/a/PHP/Email-Address-Verification-with-PHP/2/
+	var $_PREG_MAIL_FORMAT = "/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/";
 
 	var $_AD_WORD_ARRAY = array(
 		"http://auction.msn.co.jp/" ,
@@ -374,7 +389,9 @@ function check_mail_from( $mail_from )
 	}
 	for ($i=0; $i<count( $this->_DENY_MAIL_FROM_ARRAY ); $i++)
 	{
-		if (eregi( $this->_DENY_MAIL_FROM_ARRAY[$i], $mail_from )) {
+// Function ereg() is deprecated
+		$pattern = '/'.$this->_DENY_MAIL_FROM_ARRAY[$i].'/i';
+		if ( preg_match( $pattern, $mail_from )) {
 			$this->set_reject_msg('not allow from mail : '. $mail_from );
 			return false;
 		}
@@ -514,7 +531,7 @@ function proofread_single_body( $body )
 	}
 
 	$text = $this->replace_return_code( $text );
-	$text = $this->remove_tel( $text );
+	$text = $this->replace_tel( $text );
 	$text = $this->remove_underline( $text );
 	$text = $this->remove_word( $text );
 	$text = $this->remove_del_reg( $text );
@@ -530,15 +547,18 @@ function replace_return_code( $text )
 	return $text;
 }
 
-function remove_tel( $text ) 
+function replace_tel( $text ) 
 {
-	$TEL_FORMAT_EREG = "([[:digit:]]{11})|([[:digit:]\-]{13})";
-	return eregi_replace( $TEL_FORMAT_EREG, "", $text );
+// Function ereg() is deprecated
+	$text = preg_replace( $this->_PREG_TEL_FORMAT_1, $this->_MARK_ASTERISK_10, $text );
+	$text = preg_replace( $this->_PREG_TEL_FORMAT_2, $this->_MARK_ASTERISK_10, $text );
+	return $text;
 }
 
 function remove_underline( $text ) 
 {
-	return eregi_replace( $this->_REMOVE_UNDERLINE_EREG, "", $text);
+// Function ereg() is deprecated
+	return preg_replace( $this->_PREG_UNDERLINE_25, "", $text);
 }
 
 function remove_word( $text ) 
@@ -633,9 +653,8 @@ function check_attach_maxbyte( $content )
 //---------------------------------------------------------
 function check_mail_addr( $addr ) 
 {
-	$MAIL_FORMAT_EREG = "[-!#$%&\'*+\\./0-9A-Z^_`a-z{|}~]+@[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+";
-	$match = array();
-	if (eregi( $MAIL_FORMAT_EREG, $addr, $match )) {
+// Function ereg() is deprecated
+	if (preg_match( $this->_PREG_MAIL_FORMAT, $addr )) {
 		return true;
 	}
 	return false;

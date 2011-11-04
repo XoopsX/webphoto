@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_pop3.php,v 1.2 2011/05/10 14:28:34 ohwada Exp $
+// $Id: mail_pop3.php,v 1.3 2011/11/04 04:01:48 ohwada Exp $
 
 //=========================================================
 // mail pop3 woth pear
 // 2011-05-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-03 K.OHWADA
+// Function ereg() is deprecated
+//---------------------------------------------------------
 
 //=========================================================
 // class pear_mail_pop3
@@ -75,8 +81,10 @@ function recv_mails()
 		return false;
 	}
 
-	$hostinfo = array();
-	if(eregi('^(.+):([0-9]+)$', $this->_HOST, $hostinfo)) {
+// Function ereg() is deprecated
+// example.com:110
+	if(preg_match('/^(.+):([0-9]+)$/', $this->_HOST, $hostinfo)) {
+
 		$host = $hostinfo[1];
 		$port = $hostinfo[2];
 	} else {

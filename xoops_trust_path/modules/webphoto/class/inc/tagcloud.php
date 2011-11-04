@@ -1,5 +1,5 @@
 <?php
-// $Id: tagcloud.php,v 1.5 2011/06/05 07:23:40 ohwada Exp $
+// $Id: tagcloud.php,v 1.6 2011/11/04 04:01:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// Assigning the return value of new by reference is deprecated
 // 2011-06-04 K.OHWADA
 // remove cfg_use_pathinfo
 // 2009-11-11 K.OHWADA
@@ -79,7 +81,8 @@ function build_tagcloud( $limit )
 
 function build_tagcloud_by_rows( $rows )
 {
-	$cloud_class =& new webphoto_lib_cloud();
+// Assigning the return value of new by reference is deprecated
+	$cloud_class = new webphoto_lib_cloud();
 
 	ksort($rows);
 

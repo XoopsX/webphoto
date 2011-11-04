@@ -1,13 +1,19 @@
 <?php
-// $Id: qrcode.php,v 1.1 2008/08/25 19:30:22 ohwada Exp $
+// $Id: qrcode.php,v 1.2 2011/11/04 04:01:48 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2008-08-24 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2011-11-03 K.OHWADA
+// Function ereg() is deprecated
+// 2008-08-24 K.OHWADA
 // comment this line
 //define ("QRCODE_DATA_PATH","/usr/local/apache/htdocs/qrcode_php0.50beta9/qrcode_data");
+//---------------------------------------------------------
 
 /*
 #
@@ -103,8 +109,9 @@ function cal_qrcode($qrcode_data_string){
 
 /*  --- determine encode mode */
 
-    if (ereg("[^0-9]",$qrcode_data_string)){
-        if (ereg("[^0-9A-Z \$\*\%\+\-\.\/\:]",$qrcode_data_string)) {
+// Function ereg() is deprecated
+    if (preg_match("/[^0-9]/",$qrcode_data_string)){
+        if (preg_match("/[^0-9A-Z \$\*\%\+\-\.\/\:]/",$qrcode_data_string)) {
 
             /*  --- 8bit byte mode */
 
