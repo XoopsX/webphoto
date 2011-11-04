@@ -1,5 +1,5 @@
 <?php
-// $Id: item_manager.php,v 1.32 2011/05/10 20:49:21 ohwada Exp $
+// $Id: item_manager.php,v 1.33 2011/11/04 15:08:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// add tag_array_name to _print_form_admin()
 // 2011-05-01 K.OHWADA
 // set always if playlist
 // 2010-11-11 K.OHWADA
@@ -1444,7 +1446,6 @@ function init_admin_item_form()
 	$this->_admin_item_form_class->set_fct( $this->_THIS_FCT ) ;
 	$this->_admin_item_form_class->set_form_mode( $this->_FORM_MODE ) ;
 	$this->_admin_item_form_class->set_form_action( $this->_FLAG_ADMIN ) ;
-	$this->_admin_item_form_class->set_tag_name_array( $this->_tag_name_array ) ;
 	$this->_admin_item_form_class->set_checkbox_array( $this->_checkbox_array ) ;
 	$this->_admin_item_form_class->set_preview_name( $this->_preview_name ) ;
 	$this->_admin_item_form_class->set_rotate( $this->_post_rotate ) ;
@@ -1452,6 +1453,10 @@ function init_admin_item_form()
 
 function _print_form_admin( $mode, $item_row )
 {
+	$item_id = $item_row['item_id'];
+	$tag_name_array = $this->_tag_build_class->get_tag_name_array_by_photoid( $item_id );
+	$this->_admin_item_form_class->set_tag_name_array( $tag_name_array ) ;
+
 	echo $this->_admin_item_form_class->build_form_admin_with_template( $mode, $item_row );
 }
 

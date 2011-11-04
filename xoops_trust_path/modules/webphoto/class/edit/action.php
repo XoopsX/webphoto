@@ -1,5 +1,5 @@
 <?php
-// $Id: action.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
+// $Id: action.php,v 1.18 2011/11/04 15:08:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// update_tags_admin()
 // 2010-11-11 K.OHWADA
 // get_file_extend_row_by_kind()
 // 2010-10-01 K.OHWADA
@@ -669,7 +671,14 @@ function delete_file( $item_row, $item_name )
 //---------------------------------------------------------
 function tag_handler_update_tags( $item_id, $tag_name_array )
 {
-	return $this->_tag_build_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
+	if ( $this->_FLAG_ADMIN ) {
+		return $this->_tag_build_class->update_tags_admin( $item_id, $this->_xoops_uid, $tag_name_array );
+	} else {
+		return $this->_tag_build_class->update_tags( $item_id, $this->_xoops_uid, $tag_name_array );
+	}
+
+// dummy
+	return false;
 }
 
 function tag_handler_tag_name_array( $item_id )

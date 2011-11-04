@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.26 2011/11/04 04:01:48 ohwada Exp $
+// $Id: oninstall.php,v 1.27 2011/11/04 15:08:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -10,6 +10,7 @@
 // change log
 // 2011-11-03 K.OHWADA
 // Assigning the return value of new by reference is deprecated
+// _groupperm_webphoto_users()
 // 2011-05-01 K.OHWADA
 // webphoto_inc_oninstall_flashvar
 // 2010-09-20 K.OHWADA
@@ -68,6 +69,7 @@ class webphoto_inc_oninstall extends webphoto_inc_base_ini
 
 	var $_IS_XOOPS_2018 = false;
 
+	var $_use_groupperm_webphoto_users = false;
 	var $_use_groupperm_module_read_anonymous = false;
 	var $_use_cfg_groupid_admin = false;
 	var $_use_cfg_groupid_user  = false;
@@ -104,6 +106,8 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 	$this->_table_mime   = $this->prefix_dirname( 'mime' );
 	$this->_table_player = $this->prefix_dirname( 'player' );
 
+	$this->_use_groupperm_webphoto_users
+		= $this->get_ini('oninstall_groupperm_webphoto_users');
 	$this->_use_groupperm_module_read_anonymous 
 		= $this->get_ini('oninstall_groupperm_module_read_anonymous');
 	$this->_use_cfg_groupid_admin
@@ -220,6 +224,9 @@ function _exec_install()
 
 	$this->_template_install();
 	$this->_groupperm_webphoto_admin();
+	if ( $this->_use_groupperm_webphoto_users ) {
+		$this->_groupperm_webphoto_users();
+	}
 	if ( $this->_use_groupperm_module_read_anonymous ) {
 		$this->_groupperm_module_read_anonymous();
 	}
@@ -642,6 +649,13 @@ function _groupperm_webphoto_admin()
 	$this->set_msg( 'Add groupperm to admin ...' );
 	$this->_group_class->create_gperm_webphoto_groupid( 
 		XOOPS_GROUP_ADMIN, $this->_gperm_def_class->get_perms_admin() );
+}
+
+function _groupperm_webphoto_users()
+{
+	$this->set_msg( 'Add groupperm to user ...' );
+	$this->_group_class->create_gperm_webphoto_groupid( 
+		XOOPS_GROUP_USERS, $this->_gperm_def_class->get_perms_user() );
 }
 
 function _groupperm_module_read_anonymous()

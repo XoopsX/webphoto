@@ -1,5 +1,5 @@
 <?php
-// $Id: tag_build.php,v 1.1 2010/01/25 10:05:02 ohwada Exp $
+// $Id: tag_build.php,v 1.2 2011/11/04 15:08:24 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// update_tags_admin()
 // 2010-01-10 K.OHWADA
 // webphoto_tag -> webphoto_tag_build
 // 2009-11-11 K.OHWADA
@@ -85,6 +87,17 @@ function update_tags( $photo_id, $uid, $tag_name_array )
 	return $this->return_code();
 }
 
+function update_tags_admin( $photo_id, $uid, $tag_name_array )
+{
+// get user's tags
+	$old_array = $this->_p2t_handler->get_tag_id_array_by_photoid( $photo_id );
+
+	$this->add_tags(          $photo_id, $uid, $tag_name_array );
+	$this->delete_tags_admin( $photo_id, $old_array, $this->_tag_id_array );
+
+	return $this->return_code();
+}
+
 function add_tags( $photo_id, $uid, $tag_name_array )
 {
 	if ( !is_array($tag_name_array) || !count($tag_name_array) ) {
@@ -144,14 +157,25 @@ function delete_tags( $photo_id, $uid, $old_array, $new_array )
 {
 	$tags = $this->build_delete_tags( $old_array, $new_array );
 	if ( is_array($tags) && count($tags) ) {
-
-// delete no-use linkage
-		$ret = $this->_p2t_handler->delete_by_photoid_uid_tagid_array( $photo_id, $uid, $tags );
+		$ret = $this->_p2t_handler->delete_by_photoid_uid_tagid_array( 
+			$photo_id, $uid, $tags );
 		if ( !$ret ) {
 			$this->set_error( $this->_p2t_handler->get_errors() );
 		}
 	}
+	return $this->return_code();
+}
 
+function delete_tags_admin( $photo_id, $old_array, $new_array )
+{
+	$tags = $this->build_delete_tags( $old_array, $new_array );
+	if ( is_array($tags) && count($tags) ) {
+		$ret = $this->_p2t_handler->delete_by_photoid_tagid_array( 
+			$photo_id, $tags );
+		if ( !$ret ) {
+			$this->set_error( $this->_p2t_handler->get_errors() );
+		}
+	}
 	return $this->return_code();
 }
 
