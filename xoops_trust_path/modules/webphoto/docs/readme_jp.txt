@@ -1,11 +1,29 @@
-$Id: readme_jp.txt,v 1.63 2011/06/06 00:08:17 ohwada Exp $
+$Id: readme_jp.txt,v 1.64 2011/11/04 04:15:41 ohwada Exp $
+
+=================================================
+Version: 2.50
+Date:   2011-11-03
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. PHP 5.3 対応
+PHP 5.3.x で推奨されない機能
+http://www.php.net/manual/ja/migration53.deprecated.php
+(1) ereg
+(2) new の返り値を参照で代入すること
+
+2. PopBix.js を v2.7a に更新
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1189&forum=13
+
 
 =================================================
 Version: 2.42
 Date:   2011-06-05
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

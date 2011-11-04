@@ -1,11 +1,29 @@
-$Id: readme_en.txt,v 1.61 2011/06/05 07:28:59 ohwada Exp $
+$Id: readme_en.txt,v 1.62 2011/11/04 04:15:41 ohwada Exp $
+
+=================================================
+Version: 2.50
+Date:   2011-11-03
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Migrating to PHP 5.3
+Deprecated features in PHP 5.3.x
+http://www.php.net/manual/en/migration53.deprecated.php
+(1) ereg
+(2) Assigning the return value of new by reference is now deprecated.
+
+2. Update PopBix.js to v2.7a
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1189&forum=13
+
 
 =================================================
 Version: 2.41
 Date:   2011-06-05
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 This is the album module which manages photos and videos.
