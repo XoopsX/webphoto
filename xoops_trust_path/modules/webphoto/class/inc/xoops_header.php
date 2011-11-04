@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.5 2010/01/25 10:03:07 ohwada Exp $
+// $Id: xoops_header.php,v 1.6 2011/11/04 03:52:14 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-03 K.OHWADA
+// PopBox.js -> popbox/PopBox.js
 // 2010-01-10 K.OHWADA
 // build_envelop_css()
 // 2009-01-25 K.OHWADA
@@ -172,8 +174,8 @@ function build_popbox_js( $lang_popbox_revert=null )
 	$text .= '  popBoxRevertImage   = "'. $this->_POPBOX_URL .'/magminus.gif" '."\n";
 	$text .= '  popBoxPopImage      = "'. $this->_POPBOX_URL .'/magplus.gif" '."\n";
 
-	$str  = $this->build_link_css_libs( 'popbox.css' );
-	$str .= $this->build_script_js_libs( 'PopBox.js' );
+	$str  = $this->build_link_css_libs( 'popbox/Styles.css' );
+	$str .= $this->build_script_js_libs( 'popbox/PopBox.js' );
 	$str .= $this->build_envelop_js( $text );
 	return $str;
 }
