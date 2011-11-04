@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.62 2011/11/04 04:15:41 ohwada Exp $
+$Id: readme_en.txt,v 1.63 2011/11/04 15:14:57 ohwada Exp $
 
 =================================================
 Version: 2.50
@@ -19,6 +19,20 @@ http://www.php.net/manual/en/migration53.deprecated.php
 
 2. Update PopBix.js to v2.7a
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1189&forum=13
+
+3. Global Permissions on install
+(1) to Registered Users, allow Post (need approval) and othes. 
+(2) to Anonymous Users, allow Module Access. 
+
+4. Tag management
+in Item Management, the admin can edit all tags. 
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
 
 
 =================================================
