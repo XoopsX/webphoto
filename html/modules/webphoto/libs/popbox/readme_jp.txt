@@ -1,11 +1,11 @@
-$Id: readme_jp.txt,v 1.1 2011/11/04 03:49:19 ohwada Exp $
+$Id: readme_jp.txt,v 1.2 2011/11/04 03:51:30 ohwada Exp $
 
 =================================================
-PopBox.js ‚Ìİ’u‚É‚Â‚¢‚Ä
+PopBox.js ã®è¨­ç½®ã«ã¤ã„ã¦
 2011-11-03 K.OHWADA
 =================================================
 
-¡ ƒtƒ@ƒCƒ‹”z’u
+â–  ãƒ•ã‚¡ã‚¤ãƒ«é…ç½®
 
 libs/popbox/
 - PopBox.js
@@ -15,7 +15,7 @@ libs/popbox/images/
 - magminus.cur
 - magplus.cur
 
-images/ (¦ IE—p)
+images/ (â€» IEç”¨)
 - magminus.cur
 - magplus.cur
 
@@ -24,26 +24,26 @@ images/popbox/
 - magplus.gif
 - spinner40.gif
 
-¦ IE—p
-Styles.css ‚É‚Ä url("images/magminus.cur") ‚Æw’è‚µ‚Ä‚¢‚éB
-d—lã‚Í css ƒtƒ@ƒCƒ‹‚©‚ç‚Ì‘Š‘ÎˆÊ’u‚É‚È‚é‚ªB
-IE ‚Å‚Í html ƒtƒ@ƒCƒ‹‚©‚ç‚Ì‘Š‘ÎˆÊ’u‚É‚È‚éB
+â€» IEç”¨
+Styles.css ã«ã¦ url("images/magminus.cur") ã¨æŒ‡å®šã—ã¦ã„ã‚‹ã€‚
+ä»•æ§˜ä¸Šã¯ css ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ç›¸å¯¾ä½ç½®ã«ãªã‚‹ãŒã€‚
+IE ã§ã¯ html ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ç›¸å¯¾ä½ç½®ã«ãªã‚‹ã€‚
 
 
-¡ —ˆ—ğ
+â–  æ¥æ­´
 
 v2.50 (2011-11)
-PopBox.js v2.7a (July 3, 2009) ‚ÉXV
-webphoto^uÅV‚Ì‰æ‘œvƒNƒŠƒbƒN‚Å‚h‚d‚Å‚ÍƒtƒŠ[ƒY
+PopBox.js v2.7a (July 3, 2009) ã«æ›´æ–°
+webphotoï¼ã€Œæœ€æ–°ã®ç”»åƒã€ã‚¯ãƒªãƒƒã‚¯ã§ï¼©ï¼¥ã§ã¯ãƒ•ãƒªãƒ¼ã‚º
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1189&forum=13
 
 v0.81 (2008-12)
-webphoto 0.80‚ÅRSS‚ªo—Í‚³‚ê‚Ü‚¹‚ñ
+webphoto 0.80ã§RSSãŒå‡ºåŠ›ã•ã‚Œã¾ã›ã‚“
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=890&forum=13
 
 v0.20 (2008-07)
-RSS‚ğæ“¾‚Å‚«‚Ü‚¹‚ñ
+RSSã‚’å–å¾—ã§ãã¾ã›ã‚“
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=818&forum=13
 
 v0.10 (2008-06) 
-PopBox.js v2.5 (December 18, 2007) ‚ğİ’u
+PopBox.js v2.5 (December 18, 2007) ã‚’è¨­ç½®
