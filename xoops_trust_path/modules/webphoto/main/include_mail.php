@@ -1,10 +1,16 @@
 <?php
-// $Id: include_mail.php,v 1.3 2011/11/12 11:05:02 ohwada Exp $
+// $Id: include_mail.php,v 1.4 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2011-05-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// class/lib/mail.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -37,6 +43,8 @@ require_once 'Mail/mimeDecode.php';
 webphoto_include_once( 'class/pear/mail_pop3.php' );
 webphoto_include_once( 'class/pear/mail_decode.php' );
 webphoto_include_once( 'class/pear/mail_parse.php' );
+
+webphoto_include_once( 'class/lib/mail.php' );
 
 webphoto_include_once( 'class/edit/mail_check.php' );
 webphoto_include_once( 'class/edit/mail_photo.php' );

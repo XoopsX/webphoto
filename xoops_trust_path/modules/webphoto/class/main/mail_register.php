@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.8 2011/05/15 22:25:53 ohwada Exp $
+// $Id: mail_register.php,v 1.9 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// webphoto_lib_mail
 // 2011-05-16 K.OHWADA
 // webphoto_edit_mail_check
 // 2011-05-01 K.OHWADA
@@ -28,7 +30,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_main_mail_register extends webphoto_edit_base
 {
 	var $_user_handler;
-	var $_check_class;
+	var $_mail_class;
 	var $_xoops_user_class;
 
 	var $_is_set_mail = false;
@@ -57,9 +59,7 @@ function webphoto_main_mail_register( $dirname , $trust_dirname )
 	$this->_user_handler     
 		=& webphoto_user_handler::getInstance( $dirname , $trust_dirname );
 
-// Fatal error: Class webphoto_lib_mail_parse
-	$this->_check_class =& webphoto_edit_mail_check::getInstance( $dirname , $trust_dirname );
-
+	$this->_mail_class       =& webphoto_lib_mail::getInstance();
 	$this->_xoops_user_class =& webphoto_xoops_user::getInstance();
 
 	$this->_is_set_mail = $this->_config_class->is_set_mail();
@@ -262,7 +262,7 @@ function _check_mail_addr( $mail )
 		return true ;
 	}
 
-	if ( $this->_check_class->check_mail_addr( $mail ) ) {
+	if ( $this->_mail_class->check_valid_addr( $mail ) ) {
 		return true ;
 	}
 

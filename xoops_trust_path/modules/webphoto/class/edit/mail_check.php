@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_check.php,v 1.4 2011/11/04 04:01:48 ohwada Exp $
+// $Id: mail_check.php,v 1.5 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// webphoto_lib_mail
 // 2011-11-03 K.OHWADA
 // Function ereg() is deprecated
 // 2011-05-16 K.OHWADA
@@ -30,6 +32,7 @@ class webphoto_edit_mail_check
 	var $_user_handler;
 	var $_mime_class;
 	var $_utility_class;
+	var $_mail_class;
 
 	var $_reject_msg_arr = array();
 	var $_result;
@@ -53,9 +56,6 @@ class webphoto_edit_mail_check
 	var $_PREG_TEL_FORMAT_2 = "/\d{10,11}/";
 
 	var $_MARK_ASTERISK_10 = "**********";
-
-// http://www.devshed.com/c/a/PHP/Email-Address-Verification-with-PHP/2/
-	var $_PREG_MAIL_FORMAT = "/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/";
 
 	var $_AD_WORD_ARRAY = array(
 		"http://auction.msn.co.jp/" ,
@@ -97,6 +97,7 @@ function webphoto_edit_mail_check( $dirname, $trust_dirname )
 
 	$this->_config_class  =& webphoto_config::getInstance( $dirname );
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
+	$this->_mail_class    =& webphoto_lib_mail::getInstance();
 
 	$cfg_fsize        = $this->_config_class->get_by_name( 'fsize' );
 	$cfg_mail_addr    = $this->_config_class->get_by_name( 'mail_addr' );
@@ -597,16 +598,16 @@ function check_attaches( $attaches )
 		$content  = $attach['content'] ;
 		$charset  = $attach['charset'] ;
 		$type     = $attach['type'] ;
+		$ext      = '';
 
 		if ( $filename ) {
 			$ext = $this->_utility_class->parse_ext( $filename );
-		} else {
-			list($main, $ext) = explode("/", $type);
-			$filename = time() .'.'. $ext;
 		}
 
 		$msg = array();
-		if ( ! $this->check_attach_ext( $ext ) ) {
+		if ( empty( $ext ) ) {
+			$msg[] = 'no ext';
+		} elseif ( ! $this->check_attach_ext( $ext ) ) {
 			$msg[] = 'not allow ext : '. $ext ;
 		}
 		if ( ! $this->check_attach_mimetype( $type ) ) {
@@ -653,11 +654,7 @@ function check_attach_maxbyte( $content )
 //---------------------------------------------------------
 function check_mail_addr( $addr ) 
 {
-// Function ereg() is deprecated
-	if (preg_match( $this->_PREG_MAIL_FORMAT, $addr )) {
-		return true;
-	}
-	return false;
+	return $this->_mail_class->check_valid_addr( $addr );
 }
 
 //---------------------------------------------------------

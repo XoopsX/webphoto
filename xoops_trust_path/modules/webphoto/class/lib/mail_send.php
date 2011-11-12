@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_send.php,v 1.2 2011/11/12 11:05:02 ohwada Exp $
+// $Id: mail_send.php,v 1.3 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2011-11-11 K.OHWADA
-// get_valid_mail_addr()
+// webphoto_lib_mail
 //---------------------------------------------------------
 
 //=========================================================
@@ -17,6 +17,8 @@
 //=========================================================
 class webphoto_lib_mail_send extends webphoto_lib_error
 {
+	var $_mail_class;
+
 	var $_xoops_sitename;
 	var $_xoops_adminmail;
 	var $_msg_array = array();
@@ -29,6 +31,8 @@ class webphoto_lib_mail_send extends webphoto_lib_error
 function webphoto_lib_mail_send()
 {
 	$this->webphoto_lib_error();
+
+	$this->_mail_class =& webphoto_lib_mail::getInstance();
 
 	$this->_xoops_sitename    = $this->get_xoops_sitename();
 	$this->_xoops_adminmail   = $this->get_xoops_adminmail();
@@ -98,13 +102,7 @@ function send( $param )
 
 function get_valid_mail_addr( $addr ) 
 {
-// same as class/xoopsmailer.php
-	$PATTERN = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+([\.][a-z0-9-]+)+$/i";
-
-	if (preg_match($PATTERN, $addr, $matches) ) {
-		return $matches[0];
-	}
-	return null;
+	return $this->_mail_class->get_valid_addr( $addr );
 }
 
 //---------------------------------------------------------

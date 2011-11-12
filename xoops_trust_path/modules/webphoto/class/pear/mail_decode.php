@@ -1,16 +1,24 @@
 <?php
-// $Id: mail_decode.php,v 1.2 2011/05/10 14:28:34 ohwada Exp $
+// $Id: mail_decode.php,v 1.3 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // mail decode with pear
 // 2011-05-01 K.OHWADA
 //=========================================================
 
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// webphoto_lib_mail
+//---------------------------------------------------------
+
 //=========================================================
 // class pear_mail_decode
 //=========================================================
 class webphoto_pear_mail_decode
 {
+	var $_mail_class;
+
 	var $_CHARSET_LOCAL = 'utf-8';
 
 //---------------------------------------------------------
@@ -18,7 +26,7 @@ class webphoto_pear_mail_decode
 //---------------------------------------------------------
 function webphoto_pear_mail_decode()
 {
-	// dummy
+	$this->_mail_class =& webphoto_lib_mail::getInstance();
 }
 
 function &getInstance()
@@ -142,23 +150,22 @@ function decode_headers( $headers, $charset )
 			 = $this->parse_name_addr( $param['to'] );
 	}
 
+	if ( isset($param['reply_to']) ) {
+		list( $reply_name, $param['reply_to'] )
+			 = $this->parse_name_addr( $param['reply_to'] );
+	}
+
+	if ( isset($param['return_path']) ) {
+		list( $return_name, $param['return_path'] )
+			 = $this->parse_name_addr( $param['return_path'] );
+	}
+
 	return $param;
 }
 
 function parse_name_addr( $str ) 
 {
-	$name = '';
-
-// taro <taro@example.com>
-	$pattern = '/(.*)<(.*)>/i';
-
- 	if ( preg_match( $pattern, $str, $matches ) ) {
-		$name = trim( $matches[1] );
-		$addr = trim( $matches[2] );
-	} else {
-		$addr = trim( $str );
-	}
-	return array( $name, $addr );
+	return $this->_mail_class->parse_name_addr( $str );
 }
 
 function decode_single( $structure, $charset )
@@ -229,13 +236,14 @@ function decode_multipart( $parts )
 		{
 			case "text":
 				$text = $this->decode_part_text( $part );
-
+				if ( is_array($text) ) {
 // assume as the text body in first
-				if ( $first ) {
-					$attaches[] = $text;
-				} else {
-					$body  = $text;
-					$first = true;
+					if ( $first ) {
+						$attaches[] = $text;
+					} else {
+						$body  = $text;
+						$first = true;
+					}
 				}
 				break;
 
@@ -259,6 +267,11 @@ function decode_part_text( $part )
 	$param   = $this->decode_part_common( $part );
 	$body    = $param['body'];
 	$charset = $param['charset'] ;
+
+// for iPhone : no context text/plane
+	if ( ! $this->check_text( $body ) ) {
+		return false;
+	}
 
 	switch ( $param['ctype_secondary'] )
 	{
@@ -316,6 +329,16 @@ function decode_part_common( $part )
 		'body'            => $body,
 	);
 	return $param;
+}
+
+function check_text( $text )
+{
+	$text = str_replace("\n", '', $text );
+	$text = str_replace("\r", '', $text );
+	if ( strlen($text) > 0 ) {
+		return true;
+	}
+	return false;
 }
 
 function convert_encoding_html( $source, $charset )

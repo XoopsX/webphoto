@@ -1,5 +1,5 @@
 <?php
-// $Id: mail_register.php,v 1.4 2011/05/15 22:25:53 ohwada Exp $
+// $Id: mail_register.php,v 1.5 2011/11/12 17:17:47 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// class/lib/mail.php
 // 2011-05-16 K.OHWADA
 // class/edit/mail_check.php
 // 2010-04-28 K.OHWADA
@@ -26,6 +28,7 @@ webphoto_include_once( 'class/xoops/user.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/element.php' );
 webphoto_include_once( 'class/lib/form.php' );
+webphoto_include_once( 'class/lib/mail.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
 webphoto_include_once( 'class/handler/user_handler.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
@@ -33,7 +36,6 @@ webphoto_include_once( 'class/edit/item_create.php' );
 webphoto_include_once( 'class/edit/base.php' );
 webphoto_include_once( 'class/edit/form.php' );
 webphoto_include_once( 'class/edit/icon_build.php' );
-webphoto_include_once( 'class/edit/mail_check.php' );
 webphoto_include_once( 'class/edit/mail_register_form.php' );
 webphoto_include_once( 'class/main/mail_register.php' );
 
