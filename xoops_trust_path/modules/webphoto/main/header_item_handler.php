@@ -1,10 +1,16 @@
 <?php
-// $Id: header_item_handler.php,v 1.1 2009/11/29 07:37:03 ohwada Exp $
+// $Id: header_item_handler.php,v 1.2 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-11-11 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// class/inc/config.php
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -30,6 +36,8 @@ webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/handler.php' );
 webphoto_include_once( 'class/lib/tree_handler.php' );
 webphoto_include_once( 'class/inc/ini.php' );
+webphoto_include_once( 'class/inc/xoops_config.php' );
+webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 

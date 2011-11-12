@@ -1,5 +1,5 @@
 <?php
-// $Id: config.php,v 1.4 2008/12/20 06:11:27 ohwada Exp $
+// $Id: config.php,v 1.5 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// webphoto_inc_xoops_config()
 // 2008-12-12 K.OHWADA
 // getInstance() -> getSingleton()
 // 2008-11-29 K.OHWADA
@@ -84,15 +86,13 @@ function _add_slash_to_head( $str )
 //---------------------------------------------------------
 function _get_xoops_config( $dirname )
 {
-	$module_handler =& xoops_gethandler('module');
-	$module = $module_handler->getByDirname( $dirname );
-	if ( !is_object($module) ) {
-		return false;
+	if( defined("WEBPHOTO_COMMOND_MODE") && ( WEBPHOTO_COMMOND_MODE == 1 )) {
+		$config =& webphoto_bin_config::getInstance();
+	} else {
+		$config =& webphoto_inc_xoops_config::getInstance();
 	}
-	$mid = $module->getVar( 'mid' );
 
-	$config_handler =& xoops_gethandler('config');
-	$this->_cached_config = $config_handler->getConfigsByCat( 0, $mid );
+	$this->_cached_config = $config->get_config_by_dirname( $dirname );
 }
 
 // --- class end ---

@@ -1,11 +1,29 @@
-$Id: readme_jp.txt,v 1.65 2011/11/04 15:14:57 ohwada Exp $
+$Id: readme_jp.txt,v 1.66 2011/11/12 11:05:02 ohwada Exp $
+
+=================================================
+Version: 2.51
+Date:   2011-11-11
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. MySQL 5.5 対応
+(1) TYPE=MyISAM -> ENGINE=MyISAM
+
+2. バグ対策
+(1) コマンドのテスト実行にて Fatal error
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1205&forum=13
+
+(2) visit にて Fatal error
+
 
 =================================================
 Version: 2.50
 Date:   2011-11-03
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

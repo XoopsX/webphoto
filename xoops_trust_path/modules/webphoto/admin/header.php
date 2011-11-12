@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.11 2010/09/19 06:43:11 ohwada Exp $
+// $Id: header.php,v 1.12 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWAD
+// class/inc/xoops_config.php
 // 2010-09-17 K.OHWADA
 // class/lib/readfile.php
 // 2010-03-31 K.OHWADA
@@ -42,17 +44,22 @@ include_once XOOPS_ROOT_PATH."/class/xoopsformloader.php";
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'include/constants.php' );
+
 webphoto_include_once( 'class/xoops/base.php' );
+
 webphoto_include_once( 'class/inc/ini.php' );
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/base_ini.php' );
+webphoto_include_once( 'class/inc/xoops_config.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/admin_menu.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
+
 webphoto_include_once( 'class/d3/language.php' );
 webphoto_include_once( 'class/d3/preload.php' );
+
 webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/msg.php' );
@@ -68,11 +75,13 @@ webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/readfile.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
+
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );
 webphoto_include_once( 'class/handler/mime_handler.php' );
+
 webphoto_include_once( 'class/webphoto/config.php' );
 webphoto_include_once( 'class/webphoto/permission.php' );
 webphoto_include_once( 'class/webphoto/uri.php' );
@@ -82,6 +91,7 @@ webphoto_include_once( 'class/webphoto/base_ini.php' );
 webphoto_include_once( 'class/webphoto/base_this.php' );
 webphoto_include_once( 'class/webphoto/mime.php' );
 webphoto_include_once( 'class/webphoto/embed.php' );
+
 webphoto_include_once( 'class/edit/icon_build.php' );
 webphoto_include_once( 'class/edit/base.php' );
 webphoto_include_once( 'class/edit/item_create.php' );

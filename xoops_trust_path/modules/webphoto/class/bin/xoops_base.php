@@ -1,6 +1,5 @@
 <?php
-// $Id: xoops_base.php,v 1.2 2009/05/16 00:18:50 ohwada Exp $
-
+// $Id: xoops_base.php,v 1.3 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// _include_setting_php()
 // 2009-05-15 K.OHWADA
 // _include_once_file() -> _include_global_php()
 //---------------------------------------------------------
@@ -58,16 +59,19 @@ function _init()
 	$this->_LANGUAGE     = $this->get_config_by_name( 'language' );
 
 	$this->_include_global_php();
+	$this->_include_setting_php();
 }
 
 function _include_global_php()
 {
 	$file = 'global.php';
 
-	$file_sys_lang  = $this->_build_lang_file( $file, $this->_LANGUAGE );
-	$file_sys_eng   = $this->_build_lang_file( $file, 'english' );
-	$file_mod_lang  = $this->_build_lang_file( $file, $this->_LANGUAGE, 'legacy' );
-	$file_mod_eng   = $this->_build_lang_file( $file, 'english',        'legacy' );
+	$file_sys_lang  = $this->_build_system_lang_file( $file, $this->_LANGUAGE );
+	$file_sys_eng   = $this->_build_system_lang_file( $file, 'english' );
+
+// for XCL 2.1
+	$file_leg_lang  = $this->_build_legacy_lang_file( $file, $this->_LANGUAGE );
+	$file_leg_eng   = $this->_build_legacy_lang_file( $file, 'english' );
 
 	if ( file_exists( $file_sys_lang ) ) {
 		include_once $file_sys_lang;
@@ -75,21 +79,44 @@ function _include_global_php()
 	} elseif ( file_exists( $file_sys_eng ) ) {
 		include_once $file_sys_eng;
 
-	} elseif ( file_exists( $file_mod_lang ) ) {
-		include_once $file_mod_lang;
+	} elseif ( file_exists( $file_leg_lang ) ) {
+		include_once $file_leg_lang;
 
-	} elseif ( file_exists( $file_mod_eng ) ) {
-		include_once $file_mod_eng;
+	} elseif ( file_exists( $file_leg_eng ) ) {
+		include_once $file_leg_eng;
 	}
 }
 
-function _build_lang_file( $file, $lang, $module=null )
+function _include_setting_php()
 {
-	if ( $module ) {
-		$str  = XOOPS_ROOT_PATH .'/modules/'. $module .'/language/'. $lang .'/'. $file;
-	} else {
-		$str  = XOOPS_ROOT_PATH .'/language/'. $lang .'/'. $file;
+// for XCL 2.2
+	$file = 'setting.php';
+
+	$file_leg_lang  = $this->_build_legacy_lang_file( $file, $this->_LANGUAGE );
+	$file_leg_eng   = $this->_build_legacy_lang_file( $file, 'english' );
+
+	if ( file_exists( $file_leg_lang ) ) {
+		include_once $file_leg_lang;
+
+	} elseif ( file_exists( $file_leg_eng ) ) {
+		include_once $file_leg_eng;
 	}
+}
+
+function _build_system_lang_file( $file, $lang )
+{
+	$str  = XOOPS_ROOT_PATH .'/language/'. $lang .'/'. $file;
+	return $str;
+}
+
+function _build_legacy_lang_file( $file, $lang )
+{
+	return $this->_build_mod_lang_file( $file, $lang, 'legacy' );
+}
+
+function _build_mod_lang_file( $file, $lang, $module )
+{
+	$str  = XOOPS_ROOT_PATH .'/modules/'. $module .'/language/'. $lang .'/'. $file;
 	return $str;
 }
 

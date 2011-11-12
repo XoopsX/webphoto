@@ -1,10 +1,16 @@
 <?php
-// $Id: mail_send.php,v 1.1 2009/12/16 13:36:20 ohwada Exp $
+// $Id: mail_send.php,v 1.2 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// get_valid_mail_addr()
+//---------------------------------------------------------
 
 //=========================================================
 // class webphoto_lib_mail_send
@@ -88,6 +94,17 @@ function send( $param )
 
 	$this->set_msg( $mailer->getSuccess( false ) );
 	return true;
+}
+
+function get_valid_mail_addr( $addr ) 
+{
+// same as class/xoopsmailer.php
+	$PATTERN = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+([\.][a-z0-9-]+)+$/i";
+
+	if (preg_match($PATTERN, $addr, $matches) ) {
+		return $matches[0];
+	}
+	return null;
 }
 
 //---------------------------------------------------------

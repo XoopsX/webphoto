@@ -1,5 +1,5 @@
 <?php
-// $Id: rss.php,v 1.10 2010/11/04 02:24:16 ohwada Exp $
+// $Id: rss.php,v 1.11 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -12,6 +12,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// remove class/inc/config.php
 // 2010-11-03 K.OHWADA
 // class/webphoto/main.php
 // 2010-01-10 K.OHWADA
@@ -49,7 +51,6 @@ webphoto_include_once( 'class/xoops/base.php' );
 
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/base_ini.php' );
-webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 webphoto_include_once( 'class/inc/catlist.php' );

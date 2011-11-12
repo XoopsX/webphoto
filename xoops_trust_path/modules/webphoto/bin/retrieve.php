@@ -1,5 +1,5 @@
 <?php
-// $Id: retrieve.php,v 1.15 2011/05/10 23:08:41 ohwada Exp $
+// $Id: retrieve.php,v 1.16 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// class/bin/config.php
 // 2011-05-01 K.OHWADA
 // main/include_submit.php
 // 2010-04-22 K.OHWADA
@@ -42,8 +44,14 @@ if( !defined("WEBPHOTO_ROOT_PATH") ) {
 	  define("WEBPHOTO_ROOT_PATH", XOOPS_ROOT_PATH.'/modules/'.WEBPHOTO_DIRNAME );
 }
 
+if( !defined("WEBPHOTO_COMMOND_MODE") ) {
+	  define("WEBPHOTO_COMMOND_MODE", 1 );
+}
+
 include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
+
+webphoto_include_once( 'preload/debug.php' );
 
 webphoto_include_once( 'class/lib/error.php' );
 webphoto_include_once( 'class/lib/handler.php' );
@@ -53,6 +61,7 @@ webphoto_include_once( 'class/bin/xoops_mysql_database.php' );
 webphoto_include_once( 'class/bin/xoops_base.php' );
 webphoto_include_once( 'class/bin/permission.php' );
 webphoto_include_once( 'class/bin/base.php' );
+webphoto_include_once( 'class/bin/config.php' );
 
 webphoto_include_once( 'main/include_submit.php' );
 webphoto_include_once( 'main/include_mail.php' );

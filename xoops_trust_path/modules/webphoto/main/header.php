@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.19 2010/11/04 02:24:16 ohwada Exp $
+// $Id: header.php,v 1.20 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWAD
+// class/inc/xoops_config.php
 // 2010-01-10 K.OHWADA
 // class/webphoto/factory.php
 // 2009-11-11 K.OHWADA
@@ -62,6 +64,7 @@ webphoto_include_once( 'class/xoops/groupperm.php' );
 
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/base_ini.php' );
+webphoto_include_once( 'class/inc/xoops_config.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/group_permission.php' );
 webphoto_include_once( 'class/inc/xoops_header.php' );

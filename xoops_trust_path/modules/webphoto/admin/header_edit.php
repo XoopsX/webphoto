@@ -1,5 +1,5 @@
 <?php
-// $Id: header_edit.php,v 1.16 2011/05/10 23:08:41 ohwada Exp $
+// $Id: header_edit.php,v 1.17 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWAD
+// remove class/inc/config.php
 // 2011-05-01 K.OHWADA
 // main/include_submit.php
 // 2010-10-01 K.OHWADA
@@ -58,7 +60,6 @@ webphoto_include_once( 'class/xoops/user.php' );
 
 webphoto_include_once( 'class/inc/handler.php' );
 webphoto_include_once( 'class/inc/base_ini.php' );
-webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/catlist.php' );
 webphoto_include_once( 'class/inc/tagcloud.php' );
 webphoto_include_once( 'class/inc/timeline.php' );

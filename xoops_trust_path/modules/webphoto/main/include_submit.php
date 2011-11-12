@@ -1,10 +1,16 @@
 <?php
-// $Id: include_submit.php,v 1.2 2011/05/10 23:08:41 ohwada Exp $
+// $Id: include_submit.php,v 1.3 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2011-05-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWAD
+// class/inc/xoops_config.php
+//---------------------------------------------------------
 
 //---------------------------------------------------------
 // caller main/header_submit.php admin/header_edit.php bin/retrieve.php
@@ -22,6 +28,8 @@ include_once XOOPS_ROOT_PATH.'/class/snoopy.php';
 //---------------------------------------------------------
 webphoto_include_once( 'include/constants.php' );
 
+webphoto_include_once( 'class/inc/xoops_config.php' );
+webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/inc/uri.php' );
 
 webphoto_include_once( 'class/d3/language.php' );

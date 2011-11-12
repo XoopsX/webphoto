@@ -1,5 +1,5 @@
 <?php
-// $Id: whatsnew.plugin.php,v 1.7 2011/06/05 07:23:40 ohwada Exp $
+// $Id: whatsnew.plugin.php,v 1.8 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// remove class/inc/config.php
 // 2011-06-04 K.OHWADA
 // class/inc/uri.php
 // 2009-11-11 K.OHWADA
@@ -29,7 +31,6 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
 include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 
-webphoto_include_once( 'class/inc/config.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/public.php' ,      $MY_DIRNAME );
 webphoto_include_once( 'class/inc/auto_publish.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/uri.php' ,         $MY_DIRNAME );

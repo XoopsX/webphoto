@@ -1,5 +1,5 @@
 <?php
-// $Id: i.php,v 1.5 2009/09/19 20:40:44 ohwada Exp $
+// $Id: i.php,v 1.6 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// remove class/lib/mail_pop.php
 // 2009-09-20 K.OHWADA
 // staticmap.php
 // 2008-12-29 K.OHWADA
@@ -39,8 +41,6 @@ include_once WEBPHOTO_TRUST_PATH.'/class/d3/optional.php';
 include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'main/header.php' );
-webphoto_include_once( 'class/lib/mail_pop.php' );
-webphoto_include_once( 'class/lib/mail_parse.php' );
 webphoto_include_once( 'class/lib/user_agent.php' );
 webphoto_include_once( 'class/lib/staticmap.php' );
 webphoto_include_once( 'class/webphoto/item_public.php' );

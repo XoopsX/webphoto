@@ -1,12 +1,15 @@
-# $Id: mysql.sql,v 1.25 2011/05/15 22:22:06 ohwada Exp $
+# $Id: mysql.sql,v 1.26 2011/11/12 11:05:02 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
 
+) TYPE=MyISAM;
+
 # =========================================================
 # change log
+# TYPE=MyISAM -> ENGINE=MyISAM
 # 2011-05-16 K.OHWADA
 # SQL syntax error
 # 2011-05-01 K.OHWADA
@@ -188,7 +191,7 @@ CREATE TABLE item (
   KEY (item_equipment(40)),
   KEY (item_search(40)),
   KEY (item_gmap_latitude, item_gmap_longitude, item_gmap_zoom)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `file`
@@ -214,7 +217,7 @@ CREATE TABLE file (
   KEY (file_time_update),
   KEY (file_item_id),
   KEY (file_kind)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `photo`
@@ -296,7 +299,7 @@ CREATE TABLE photo (
   KEY (photo_equipment(40)),
   KEY (photo_search(40)),
   KEY (photo_gmap_latitude, photo_gmap_longitude, photo_gmap_zoom)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `cat`
@@ -347,7 +350,7 @@ CREATE TABLE cat (
   KEY (cat_item_type),
   KEY (cat_title(40)),
   KEY (cat_gmap_latitude, cat_gmap_longitude, cat_gmap_zoom)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `vote`
@@ -365,7 +368,7 @@ CREATE TABLE vote (
   KEY (vote_photo_id),
   KEY (vote_uid),
   KEY (vote_hostname)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `gicon`
@@ -391,7 +394,7 @@ CREATE TABLE gicon (
   gicon_info_x   INT(4) NOT NULL DEFAULT '0',
   gicon_info_y   INT(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (gicon_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `mime`
@@ -411,7 +414,7 @@ CREATE TABLE mime (
   mime_option VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY mime_id (mime_id),
   KEY (mime_ext)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `tag`
@@ -424,7 +427,7 @@ CREATE TABLE tag (
  tag_name VARCHAR(255) NOT NULL DEFAULT '',
  PRIMARY KEY (tag_id),
  KEY (tag_name(40))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `p2t`
@@ -441,7 +444,7 @@ CREATE TABLE p2t (
  KEY (p2t_photo_id),
  KEY (p2t_tag_id),
  KEY (p2t_uid)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `syno`
@@ -455,7 +458,7 @@ CREATE TABLE syno (
  syno_key   VARCHAR(255) NOT NULL DEFAULT '',
  syno_value VARCHAR(255) NOT NULL DEFAULT '',
  PRIMARY KEY (syno_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `user`
@@ -477,7 +480,7 @@ CREATE TABLE user (
  KEY (user_uid),
  KEY (user_cat_id),
  KEY (user_email(40))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `maillog`
@@ -498,7 +501,7 @@ CREATE TABLE maillog (
  PRIMARY KEY (maillog_id),
  KEY (maillog_status),
  KEY (maillog_from(40))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 ## Table structure for table `player`
@@ -520,7 +523,7 @@ CREATE TABLE player (
   player_lightcolor  VARCHAR(7) NOT NULL DEFAULT '',
   PRIMARY KEY  (player_id),
   KEY (player_title(24))
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 ## Table structure for table `flashvar`
@@ -608,7 +611,7 @@ CREATE TABLE flashvar (
   flashvar_logo_position   VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY  (flashvar_id),
   KEY (flashvar_item_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # gicon table

@@ -1,10 +1,16 @@
 <?php
-// $Id: invite.php,v 1.1 2009/12/16 13:45:22 ohwada Exp $
+// $Id: invite.php,v 1.2 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-12-06 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// get_valid_mail_addr()
+//---------------------------------------------------------
 
 if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,7 +20,6 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_invite extends webphoto_base_this
 {
 	var $_mail_template_class;
-	var $_mail_parse_class;
 	var $_mail_send_class;
 	var $_msg_class;
 
@@ -38,7 +43,6 @@ function webphoto_admin_invite( $dirname , $trust_dirname )
 	$this->_mail_template_class 
 		=& webphoto_d3_mail_template::getInstance( $dirname , $trust_dirname );
 
-	$this->_mail_parse_class =& webphoto_lib_mail_parse::getInstance();
 	$this->_mail_send_class  =& webphoto_lib_mail_send::getInstance();
 	$this->_msg_class        =& webphoto_lib_msg::getInstance();
 
@@ -117,7 +121,7 @@ function _invite()
 
 function _invite_exec()
 {
-	$email = $this->_mail_parse_class->parse_mail_addr( $this->_post_email );
+	$email = $this->_mail_send_class->get_valid_mail_addr( $this->_post_email );
 	if ( empty($email) ) {
 		$this->set_error( $this->get_constant('ERR_MAIL_ILLEGAL') ) ;
 		return -1 ;

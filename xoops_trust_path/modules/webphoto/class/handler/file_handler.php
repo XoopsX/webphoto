@@ -1,5 +1,5 @@
 <?php
-// $Id: file_handler.php,v 1.10 2011/05/10 02:56:39 ohwada Exp $
+// $Id: file_handler.php,v 1.11 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// change build_show_file_image()
 // 2011-05-01 K.OHWADA
 // get_download_image_aux()
 // 2010-11-11 K.OHWADA
@@ -278,13 +280,12 @@ function build_show_file_image( $file_row, $flag_exists=false )
 		$file_url = $file_row['file_url'] ;
 		$width    = $file_row['file_width'] ;
 		$height   = $file_row['file_height'] ;
-		$full_url = $file_row['full_url'] ;
-		$exists   = $file_row['full_path_exists'] ;
+
+		$full_url  = $this->build_full_url_by_row(  $file_row );
+		$full_path = $this->build_full_path_by_row( $file_row );
+		$exists    = $this->exists_file( $full_path );
 
 		if ( $flag_exists && $exists && $full_url) {
-			$url = $full_url ;
-
-		} elseif ( $full_url ) {
 			$url = $full_url ;
 
 		} elseif ( $file_url ) {

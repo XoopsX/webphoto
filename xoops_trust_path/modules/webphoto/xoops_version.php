@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.7 2010/04/27 06:52:02 ohwada Exp $
+// $Id: xoops_version.php,v 1.8 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// class/inc/xoops_config.php
 // 2010-04-27 K.OHWADA
 // class/inc/catlist.php
 // 2009-11-11 K.OHWADA
@@ -46,6 +48,7 @@ webphoto_include_once( 'class/lib/multibyte.php',        $MY_DIRNAME );
 webphoto_include_once( 'class/inc/ini.php',              $MY_DIRNAME );
 webphoto_include_once( 'class/inc/handler.php',          $MY_DIRNAME );
 webphoto_include_once( 'class/inc/base_ini.php',         $MY_DIRNAME );
+webphoto_include_once( 'class/inc/xoops_config.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/config.php',           $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group_permission.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/workdir.php',          $MY_DIRNAME );

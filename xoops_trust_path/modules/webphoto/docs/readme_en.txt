@@ -1,11 +1,29 @@
-$Id: readme_en.txt,v 1.63 2011/11/04 15:14:57 ohwada Exp $
+$Id: readme_en.txt,v 1.64 2011/11/12 11:05:02 ohwada Exp $
+
+=================================================
+Version: 2.51
+Date:   2011-11-11
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. Migrating to MySQL 5.5
+(1) TYPE=MyISAM -> ENGINE=MyISAM
+
+2. bug fix
+(1) Fatal error in Command Management
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1205&forum=13
+
+(2) Fatal error in visit
+
 
 =================================================
 Version: 2.50
 Date:   2011-11-03
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 This is the album module which manages photos and videos.

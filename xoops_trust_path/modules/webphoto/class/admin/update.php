@@ -1,5 +1,5 @@
 <?php
-// $Id: update.php,v 1.11 2010/01/26 08:25:45 ohwada Exp $
+// $Id: update.php,v 1.12 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// Older than v2.00
 // 2010-01-10 K.OHWADA
 // get_url('210')
 // 2009-04-19 K.OHWADA
@@ -57,9 +59,6 @@ function main()
 
 	$op = $this->_post_class->get_post_text('op');
 
-	$url_040  = $this->_update_check_class->get_url('040');
-	$url_050  = $this->_update_check_class->get_url('050');
-	$url_130  = $this->_update_check_class->get_url('130');
 	$url_210  = $this->_update_check_class->get_url('210');
 	$url_file = $this->_MODULE_URL .'/admin/index.php?fct=create_file_list' ;
 
@@ -72,21 +71,14 @@ function main()
 	echo "Update v2.00 to v2.10";
 	echo "</a><br /><br />\n";
 
-	echo ' - <a href="'. $url_130 .'">';
-	echo "Update v1.20 to v1.30";
-	echo "</a><br /><br />\n";
-
-	echo ' - <a href="'. $url_050 .'">';
-	echo "Update v0.40 to v0.50";
-	echo "</a><br /><br />\n";
-
-	echo ' - <a href="'. $url_040 .'">';
-	echo "Update v0.30 to v0.40";
-	echo "</a><br /><br />\n";
-
 	echo ' - <a href="'. $url_file .'">';
 	echo "Create file check list";
 	echo "</a><br /><br />\n";
+
+	echo '- Older than v2.00 <br />';
+	echo '  Please download packages from <a href="http://sourceforge.jp/projects/xoops4u/releases/?package_id=7795" target="_blank"><span style="font-size: 120%; font-weight: bold;">sourceforge.jp</span></a> <br />';
+	echo '  and version up step by step, <br />';
+	echo '  if you use the version older than v2.00. <br />';
 
 	xoops_cp_footer();
 	exit();

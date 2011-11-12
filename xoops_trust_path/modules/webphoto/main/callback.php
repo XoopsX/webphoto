@@ -1,5 +1,5 @@
 <?php
-// $Id: callback.php,v 1.2 2008/11/11 06:53:16 ohwada Exp $
+// $Id: callback.php,v 1.3 2011/11/12 11:05:02 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWAD
+// class/inc/xoops_config.php
 // 2008-11-08 K.OHWADA
 // flash_log.php
 //---------------------------------------------------------
@@ -29,6 +31,7 @@ include_once WEBPHOTO_TRUST_PATH.'/include/optional.php';
 
 webphoto_include_once( 'include/constants.php' );
 webphoto_include_once( 'class/inc/handler.php' );
+webphoto_include_once( 'class/inc/xoops_config.php' );
 webphoto_include_once( 'class/inc/config.php' );
 webphoto_include_once( 'class/lib/utility.php' );
 webphoto_include_once( 'class/lib/post.php' );
