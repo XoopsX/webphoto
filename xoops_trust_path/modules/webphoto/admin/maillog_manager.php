@@ -1,5 +1,5 @@
 <?php
-// $Id: maillog_manager.php,v 1.5 2011/05/10 02:56:39 ohwada Exp $
+// $Id: maillog_manager.php,v 1.6 2011/11/13 05:24:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// main/include_mail_recv.php
 // 2011-05-01 K.OHWADA
 // main/include_mail.php
 // 2010-09-17 K.OHWADA
@@ -24,7 +26,7 @@ if( ! defined( 'WEBPHOTO_TRUST_PATH' ) ) die( 'not permit' ) ;
 // webphoto files
 //---------------------------------------------------------
 webphoto_include_once( 'admin/header_edit.php' );
-webphoto_include_once( 'main/include_mail.php' );
+webphoto_include_once( 'main/include_mail_recv.php' );
 webphoto_include_once( 'class/lib/pagenavi.php' );
 webphoto_include_once( 'class/lib/manage.php' );
 webphoto_include_once( 'class/webphoto/cat_selbox.php' );

@@ -1,5 +1,5 @@
 <?php
-// $Id: test.php,v 1.1 2011/11/12 11:07:08 ohwada Exp $
+// $Id: test.php,v 1.2 2011/11/13 05:24:37 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -15,8 +15,11 @@ class webphoto_admin_test extends webphoto_base_this
 {
 	var $_class_dir;
 
-	var $_IGNORES_MAIN = array('header','header_file','header_inc_handler','header_item_handler','header_submit','include_mail','include_submit');
-	var $_IGNORES_ADMIN = array('header','header_edit','header_rss','index','test');
+	var $_IGNORES_MAIN = array('header','header_file','header_inc_handler',
+		'header_item_handler','header_submit','header_submit_imagemanager',
+		'include_mail_recv','include_submit','include_submit_base');
+	var $_IGNORES_ADMIN = array('header','header_edit','header_rss',
+		'index','test');
 	var $_IGNORES_INCLUDE = array('mytrustdirname','weblinks.inc','webphoto');
 
 //---------------------------------------------------------
@@ -112,6 +115,24 @@ function exec_main()
 function exec_list()
 {
 	echo '<h4>module</h4>'."\n";
+	$this->print_module();
+
+	echo '<h4>main</h4>'."\n";
+	$this->print_list_main();
+
+	echo '<h4>admin</h4>'."\n";
+	$this->print_list_admin();
+
+	echo '<h4>include</h4>'."\n";
+	$this->print_list_include();
+
+	echo '<h4>bin</h4>'."\n";
+	$this->print_bin();
+}
+
+function print_module()
+{
+	echo '<ul>'."\n";
 
 	$href = $this->_MODULE_URL .'/module_icon.php';
 	echo '<li><a href="'.$href.'">module_icon</a></li>'."\n";
@@ -122,14 +143,18 @@ function exec_list()
 	$href = $this->build_href_include( 'blocks.php' );
 	echo '<li><a href="'.$href.'">blocks</a></li>'."\n";
 
-	echo '<h4>main</h4>'."\n";
-	$this->print_list_main();
+	echo '</ul>'."\n";
+}
 
-	echo '<h4>admin</h4>'."\n";
-	$this->print_list_admin();
+function print_bin()
+{
+	echo '<ul>'."\n";
 
-	echo '<h4>include</h4>'."\n";
-	$this->print_list_include();
+	$pass = $this->get_config_by_name('bin_pass');
+	$href = $this->_MODULE_URL .'/bin/retrieve.php?pass='.$pass;
+	echo '<li><a href="'.$href.'">retrieve</a></li>'."\n";
+
+	echo '</ul>'."\n";
 }
 
 function print_list_main()
