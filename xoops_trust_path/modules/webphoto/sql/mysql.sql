@@ -1,14 +1,13 @@
-# $Id: mysql.sql,v 1.26 2011/11/12 11:05:02 ohwada Exp $
+# $Id: mysql.sql,v 1.27 2011/11/13 11:19:03 ohwada Exp $
 
 # =========================================================
 # webphoto module
 # 2008-04-02 K.OHWADA
 # =========================================================
 
-) TYPE=MyISAM;
-
 # =========================================================
 # change log
+# 2011-11-11 K.OHWADA
 # TYPE=MyISAM -> ENGINE=MyISAM
 # 2011-05-16 K.OHWADA
 # SQL syntax error
