@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.inc.php,v 1.6 2011/05/10 02:56:39 ohwada Exp $
+// $Id: oninstall.inc.php,v 1.7 2011/11/13 11:11:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// class/lib/file_log.php
 // 2011-05-01 K.OHWADA
 // class/inc/oninstall_flashvar.php
 // 2010-09-20 K.OHWADA
@@ -38,6 +40,7 @@ include_once XOOPS_ROOT_PATH.'/class/template.php' ;
 //---------------------------------------------------------
 include_once WEBPHOTO_TRUST_PATH.'/include/header.php';
 
+webphoto_include_once( 'class/lib/file_log.php',  $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gperm_def.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_item.php', $MY_DIRNAME );

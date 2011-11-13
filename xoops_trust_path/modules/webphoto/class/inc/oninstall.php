@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.27 2011/11/04 15:08:24 ohwada Exp $
+// $Id: oninstall.php,v 1.28 2011/11/13 11:11:18 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// webphoto_lib_file_log
 // 2011-11-03 K.OHWADA
 // Assigning the return value of new by reference is deprecated
 // _groupperm_webphoto_users()
@@ -62,6 +64,7 @@ class webphoto_inc_oninstall extends webphoto_inc_base_ini
 	var $_oninstall_item_class;
 	var $_oninstall_mime_class;
 	var $_oninstall_flashvar_class;
+	var $_log_class;
 
 	var $_table_item ;
 	var $_table_mime ;
@@ -82,6 +85,8 @@ class webphoto_inc_oninstall extends webphoto_inc_base_ini
 //	var $_TRUST_DIR;
 	var $_MODULE_ID = 0;
 
+	var $_flag_debug = false;
+
 //---------------------------------------------------------
 // constructor
 //---------------------------------------------------------
@@ -93,6 +98,7 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 
 	$this->_group_class     =& webphoto_inc_group::getSingleton( $dirname );
 	$this->_gperm_def_class =& webphoto_inc_gperm_def::getInstance();
+	$this->_log_class       =& webphoto_lib_file_log::getInstance();
 
 	$this->_oninstall_item_class 
 		=& webphoto_inc_oninstall_item::getSingleton( $dirname , $trust_dirname );
@@ -152,6 +158,7 @@ function install( &$module )
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
 			$ret[] = $msg."<br />\n";
+			$this->_write_log( $msg );
 		}
 	}
 
@@ -173,6 +180,7 @@ function update( &$module )
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
 			$msgs[] = $msg;
+			$this->_write_log( $msg );
 		}
 	}
 
@@ -194,6 +202,7 @@ function uninstall( &$module )
 	if ( is_array($msg_arr) && count($msg_arr) ) {
 		foreach ( $msg_arr as $msg ) {
 			$ret[] = $msg."<br />";
+			$this->_write_log( $msg );
 		}
 	}
 
@@ -309,6 +318,9 @@ function _table_install()
 		$prefixed_query = $sqlutil->prefixQuery( $piece , $prefix_mod ) ;
 		if( ! $prefixed_query ) {
 			$this->set_msg( "Invalid SQL <b>". $this->sanitize($piece) ."</b>" );
+
+			$this->_log_class->write( $piece );
+
 			return false ;
 		}
 
@@ -752,6 +764,16 @@ function _flashvar_update()
 	$arr = $this->_oninstall_flashvar_class->get_msg_array();
 	if ( is_array($arr) && count($arr) ) {
 		$this->set_msg( $arr );
+	}
+}
+
+//---------------------------------------------------------
+// debug
+//---------------------------------------------------------
+function _write_log( $data )
+{
+	if ( $this->_flag_debug ) {
+		$this->_log_class->write( $data );
 	}
 }
 
