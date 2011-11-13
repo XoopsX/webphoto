@@ -1,10 +1,16 @@
 <?php
-// $Id: file_action.php,v 1.1 2010/10/06 02:23:55 ohwada Exp $
+// $Id: file_action.php,v 1.2 2011/11/13 07:20:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2010-10-01 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-11-11 K.OHWADA
+// set_flag_force_db()
+//---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -17,6 +23,8 @@ class webphoto_edit_file_action extends webphoto_edit_base_create
 	var $_middle_thumb_create_class;
 
 	var $_FILE_LIST;
+
+	var $_flag_force_db = false ;
 
 //---------------------------------------------------------
 // constructor
@@ -41,6 +49,14 @@ function &getInstance( $dirname , $trust_dirname )
 		$instance = new webphoto_edit_file_action( $dirname , $trust_dirname );
 	}
 	return $instance;
+}
+
+//---------------------------------------------------------
+// set & get param
+//---------------------------------------------------------
+function set_flag_force_db( $val )
+{
+	$this->_flag_force_db = (bool)$val;
 }
 
 //---------------------------------------------------------

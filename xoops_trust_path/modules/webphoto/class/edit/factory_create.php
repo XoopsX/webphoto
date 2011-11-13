@@ -1,5 +1,5 @@
 <?php
-// $Id: factory_create.php,v 1.21 2011/06/05 07:23:40 ohwada Exp $
+// $Id: factory_create.php,v 1.22 2011/11/13 07:20:20 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-11 K.OHWADA
+// $this->_file_action_class->set_flag_force_db()
 // 2011-06-04 K.OHWADA
 // build_uri_photo_id_title()
 // 2010-11-11 K.OHWADA
@@ -1084,6 +1086,7 @@ function get_msg_sub_str()
 function set_flag_force_db( $val )
 {
 	$this->_flag_force_db = (bool)$val;
+	$this->_file_action_class->set_flag_force_db( $val );
 }
 
 function set_flag_print_first_msg( $val )
