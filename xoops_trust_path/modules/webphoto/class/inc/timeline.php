@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.6 2011/12/26 06:51:31 ohwada Exp $
+// $Id: timeline.php,v 1.7 2011/12/26 23:52:23 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -113,6 +113,9 @@ function fetch_timeline( $mode, $unit, $date, $photos )
 
 	foreach ( $photos as $photo ) {
 		$event = $this->build_event( $photo );
+
+print_r($event);
+
 		if ( is_array($event) ) {
 			$events[] = $event ;
 		}
@@ -155,8 +158,6 @@ function build_event( $photo )
 	$param['icon']        = $this->build_icon(  $photo ) ;
 	$param['description'] = $this->build_description( $photo ) ;
 
-print_r($param);
-
 	return $param;
 }
 
@@ -171,7 +172,7 @@ function build_start( $photo )
 
 	if ( $photo['time_create'] > 0 ) {
 		$param = array(
-			'start_unixt' => $photo['time_create']
+			'start' => $this->unixtime_to_datetime( $photo['time_create'] )
 		);
 		return $param;
 	}
@@ -195,10 +196,6 @@ function build_start_param( $datetime )
 		'start_second' => $p['second'],
 	);
 
-	$time = $this->_mysql_utility_class->date_param_to_unixtime( $p );
-	if ( $time > 0 ) {
-		$param['start_unixt'] = $time;
-	}
 	return $param;
 }
 
