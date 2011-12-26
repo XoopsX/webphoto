@@ -1,5 +1,5 @@
 <?php
-// $Id: exif.php,v 1.5 2010/10/06 02:22:46 ohwada Exp $
+// $Id: exif.php,v 1.6 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
 // 2010-10-01 K.OHWADA
 // build_row_exif() -> get_exif()
 // 2010-03-18 K.OHWADA
@@ -24,6 +26,7 @@ class webphoto_exif
 {
 	var $_exif_class;
 	var $_utility_class;
+	var $_mysql_utility_class ;
 
 //---------------------------------------------------------
 // constructor
@@ -32,6 +35,8 @@ function webphoto_exif()
 {
 	$this->_exif_class    =& webphoto_lib_exif::getInstance();
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
+
 }
 
 function &getInstance()
@@ -82,7 +87,7 @@ function str_to_time( $str )
 
 function time_to_mysql_datetime( $time )
 {
-	return $this->_utility_class->time_to_mysql_datetime( $time ) ;
+	return $this->_mysql_utility_class->time_to_mysql_datetime( $time ) ;
 }
 
 // --- class end ---

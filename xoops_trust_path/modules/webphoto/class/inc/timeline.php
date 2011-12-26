@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.5 2011/06/05 07:23:40 ohwada Exp $
+// $Id: timeline.php,v 1.6 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
 // 2011-06-04 K.OHWADA
 // remove build_uri()
 // 2009-04-10 K.OHWADA
@@ -24,6 +26,7 @@ if( !class_exists('webphoto_inc_timeline') )
 class webphoto_inc_timeline
 {
 	var $_timeline_class ;
+	var $_mysql_utility_class ;
 
 	var $_cfg_timeline_scale;
 
@@ -54,6 +57,8 @@ function webphoto_inc_timeline( $dirname )
 	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
 
 	$this->_cfg_timeline_scale = $config_handler->get_by_name( 'timeline_scale' );
+
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 
 	$this->_UNIT_DEFAULT = $this->_cfg_timeline_scale ;
 }
@@ -139,32 +144,62 @@ function fetch_timeline( $mode, $unit, $date, $photos )
 //---------------------------------------------------------
 function build_event( $photo )
 {
-	$start = $this->build_start( $photo );
-	if ( empty($start) ) {
+	$param = $this->build_start( $photo );
+	if ( !is_array($param) ) {
 		return false;
 	}
 
-	$arr = array(
-		'start'       => $start ,
-		'title'       => $this->build_title( $photo ) ,
-		'link'        => $this->build_link(  $photo ) ,
-		'image'       => $this->build_image( $photo ) ,
-		'icon'        => $this->build_icon(  $photo ) ,
-		'description' => $this->build_description( $photo ) ,
-	);
-	return $arr;
+	$param['title']       = $this->build_title( $photo ) ;
+	$param['link']        = $this->build_link(  $photo ) ;
+	$param['image']       = $this->build_image( $photo ) ;
+	$param['icon']        = $this->build_icon(  $photo ) ;
+	$param['description'] = $this->build_description( $photo ) ;
+
+print_r($param);
+
+	return $param;
 }
 
 function build_start( $photo )
 {
-	$time = 0 ;
-	if ( $photo['datetime_unix'] > 0 ) {
-		$time = $photo['datetime_unix'] ;
-	} elseif ( $photo['time_create'] > 0 ) {
-		$time = $photo['time_create'] ;
+	if ( $photo['datetime'] ) {
+		$param = $this->build_start_param( $photo['datetime'] );
+		if ( is_array($param) ) {
+			return $param;
+		}
 	}
 
-	return $this->unixtime_to_datetime( $time );
+	if ( $photo['time_create'] > 0 ) {
+		$param = array(
+			'start_unixt' => $photo['time_create']
+		);
+		return $param;
+	}
+
+	return false;
+}
+
+function build_start_param( $datetime )
+{
+	$p = $this->_mysql_utility_class->mysql_datetime_to_date_param( $datetime );
+	if ( !is_array($p) ) {
+		return false ;
+	}
+
+	$param = array(
+		'start_year'   => $p['year'],
+		'start_month'  => $p['month'],
+		'start_day'    => $p['day'],
+		'start_hour'   => $p['hour'],
+		'start_minute' => $p['minute'],
+		'start_second' => $p['second'],
+	);
+
+	$time = $this->_mysql_utility_class->date_param_to_unixtime( $p );
+	if ( $time > 0 ) {
+		$param['start_unixt'] = $time;
+	}
+	return $param;
 }
 
 function build_title( $photo )

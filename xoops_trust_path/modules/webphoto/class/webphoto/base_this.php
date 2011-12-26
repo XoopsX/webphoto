@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.30 2011/06/05 07:23:40 ohwada Exp $
+// $Id: base_this.php,v 1.31 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
 // 2011-06-04 K.OHWADA
 // build_uri_photo_id_title()
 // 2010-11-11 K.OHWADA
@@ -84,6 +86,7 @@ class webphoto_base_this extends webphoto_base_ini
 	var $_preload_class;
 	var $_kind_class;
 	var $_multibyte_class;
+	var $_mysql_utility_class ;
 
 	var $_cfg_uploads_path ;
 	var $_cfg_nameoruname;
@@ -181,6 +184,7 @@ function webphoto_base_this( $dirname, $trust_dirname )
 		=& webphoto_permission::getInstance( $dirname, $trust_dirname  );
 
 	$this->_multibyte_class =& webphoto_multibyte::getInstance();
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 
 	$this->_config_class =& webphoto_config::getInstance( $dirname );
 	$this->_post_class   =& webphoto_lib_post::getInstance();
@@ -759,6 +763,34 @@ function unlink_path( $path )
 function check_file( $file )
 {
 	return $this->_utility_class->check_file( $file );
+}
+
+//---------------------------------------------------------
+// mysql
+//---------------------------------------------------------
+function mysql_datetime_to_str( $date )
+{
+	return $this->_mysql_utility_class->mysql_datetime_to_str( $date );
+}
+
+function str_to_mysql_date( $str )
+{
+	return $this->_utility_class->str_to_mysql_date( $str );
+}
+
+function get_mysql_date_today()
+{
+	return $this->_mysql_utility_class->get_mysql_date_today();
+}
+
+function mysql_datetime_to_day_or_month_or_year( $datetime )
+{
+	return $this->_mysql_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
+}
+
+function mysql_datetime_to_year( $datetime )
+{
+	return $this->_mysql_utility_class->mysql_datetime_to_year( $datetime );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.18 2010/11/16 23:43:38 ohwada Exp $
+// $Id: form.php,v 1.19 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
 // 2010-11-11 K.OHWADA
 // get_cached_file_extend_row_by_kind()
 // 2010-09-17 K.OHWADA
@@ -78,6 +80,7 @@ class webphoto_edit_form extends webphoto_lib_form
 	var $_perm_class;
 	var $_embed_class ;
 	var $_ini_class;
+	var $_mysql_utility_class ;
 
 	var $_cfg_gmap_apikey ;
 	var $_cfg_width ;
@@ -168,6 +171,7 @@ function webphoto_edit_form( $dirname , $trust_dirname )
 		=& webphoto_permission::getInstance( $dirname , $trust_dirname );
 	$this->_embed_class  
 		=& webphoto_embed::getInstance( $dirname, $trust_dirname );
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 	$this->_ini_class 
 		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
 
@@ -947,6 +951,19 @@ function get_ini( $name )
 function explode_ini( $name )
 {
 	return $this->_ini_class->explode_ini( $name );
+}
+
+//---------------------------------------------------------
+// mysql
+//---------------------------------------------------------
+function get_mysql_date_today()
+{
+	return $this->_mysql_utility_class->get_mysql_date_today();
+}
+
+function mysql_datetime_to_str( $date )
+{
+	return $this->_mysql_utility_class->mysql_datetime_to_str( $date );
 }
 
 // --- class end ---

@@ -1,5 +1,5 @@
 <?php
-// $Id: form.php,v 1.7 2009/12/16 13:32:34 ohwada Exp $
+// $Id: form.php,v 1.8 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// remove get_mysql_date_today()
 // 2009-12-06 K.OHWADA
 // get_system_groups()
 // 2009-05-05 K.OHWADA
@@ -207,16 +209,6 @@ function format_filesize( $size )
 function parse_ext( $file )
 {
 	return $this->_utility_class->parse_ext( $file );
-}
-
-function mysql_datetime_to_str( $datetime )
-{
-	return $this->_utility_class->mysql_datetime_to_str( $datetime );
-}
-
-function get_mysql_date_today()
-{
-	return $this->_utility_class->get_mysql_date_today();
 }
 
 function build_error_msg( $msg, $title='', $flag_sanitize=true )

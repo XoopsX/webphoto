@@ -1,11 +1,31 @@
-$Id: readme_jp.txt,v 1.66 2011/11/12 11:05:02 ohwada Exp $
+$Id: readme_jp.txt,v 1.67 2011/12/26 06:51:31 ohwada Exp $
+
+=================================================
+Version: 2.60
+Date:   2011-12-25
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. タイムラインを 1970年 (unixtime) 以前に対応した
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1186&forum=13
+
+● アップデート
+(1) 解凍すると、html と xoops_trust_path の２つディレクトリがあります。
+  それぞれ、XOOPS の該当するディレクトリに上書きしてください。
+(2) 管理者画面にてモジュール・アップデートを実行する
+(3) Webphoto の管理者画面にて、
+  「アップデート」の「ファイルの妥当性の検査」を実行し、
+  必要なファイルが設置されているかを確認する
+
 
 =================================================
 Version: 2.51
 Date:   2011-11-11
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。

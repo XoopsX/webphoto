@@ -1,5 +1,5 @@
 <?php
-// $Id: item_handler.php,v 1.24 2010/11/16 23:43:38 ohwada Exp $
+// $Id: item_handler.php,v 1.25 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// str_to_mysql_datetime()
 // 2010-11-11 K.OHWADA
 // file_id_to_item_name()
 // 2010-10-01 K.OHWADA
@@ -768,7 +770,7 @@ function build_datetime_by_post( $key, $default=null )
 
 function build_datetime( $str )
 {
-	return $this->_utility_class->str_to_mysql_datetime( $str );
+	return $this->str_to_mysql_datetime( $str );
 }
 
 function build_info( $arr )

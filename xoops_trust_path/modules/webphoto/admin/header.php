@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.12 2011/11/12 11:05:02 ohwada Exp $
+// $Id: header.php,v 1.13 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// class/lib/mysql_utility.php
 // 2011-11-11 K.OHWAD
 // class/inc/xoops_config.php
 // 2010-09-17 K.OHWADA
@@ -75,6 +77,7 @@ webphoto_include_once( 'class/lib/multibyte.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/readfile.php' );
 webphoto_include_once( 'class/lib/admin_menu.php' );
+webphoto_include_once( 'class/lib/mysql_utility.php' );
 
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );

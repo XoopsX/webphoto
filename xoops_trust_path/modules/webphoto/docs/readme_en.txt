@@ -1,11 +1,30 @@
-$Id: readme_en.txt,v 1.64 2011/11/12 11:05:02 ohwada Exp $
+$Id: readme_en.txt,v 1.65 2011/12/26 06:51:31 ohwada Exp $
+
+=================================================
+Version: 2.60
+Date:   2011-12-25
+Author: Kenichi OHWADA
+URL:    http://linux.ohwada.jp/
+Email:  webmaster@ohwada.jp
+=================================================
+
+This is the album module which manages photos and videos.
+
+* Changes *
+1. supoort before 1970 (unixtime) in timeline
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1186&forum=13
+
+* Update *
+(1) When you unzip the zip file, there are two directories html and xoops_trust_path.
+Please copy and overwrite in the directory which XOOPS correspond
+(2) Execute the module update in the admin cp
+(3) Execute "File Valid Check" of "Update" in webphoto's admin control, 
+  and cofirm whether or not necessary files are set.
+
 
 =================================================
 Version: 2.51
 Date:   2011-11-11
-Author: Kenichi OHWADA
-URL:    http://linux.ohwada.jp/
-Email:  webmaster@ohwada.jp
 =================================================
 
 This is the album module which manages photos and videos.

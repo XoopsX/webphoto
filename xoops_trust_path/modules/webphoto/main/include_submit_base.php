@@ -1,5 +1,5 @@
 <?php
-// $Id: include_submit_base.php,v 1.1 2011/11/13 05:25:32 ohwada Exp $
+// $Id: include_submit_base.php,v 1.2 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,9 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// class/lib/mysql_utility.php
+// 2011-11-11 K.OHWADA
 // change file name
 // include_submit.php -> include_submit_base.php
 //---------------------------------------------------------
@@ -64,6 +67,7 @@ webphoto_include_once( 'class/lib/xpdf.php' );
 webphoto_include_once( 'class/lib/jodconverter.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/utility.php' );
+webphoto_include_once( 'class/lib/mysql_utility.php' );
 
 webphoto_include_once( 'class/handler/base_ini.php' );
 webphoto_include_once( 'class/handler/item_handler.php' );

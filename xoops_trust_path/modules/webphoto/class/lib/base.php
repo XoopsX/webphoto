@@ -1,5 +1,5 @@
 <?php
-// $Id: base.php,v 1.19 2010/10/06 02:22:46 ohwada Exp $
+// $Id: base.php,v 1.20 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// remove get_mysql_date_today()
 // 2010-10-01 K.OHWADA
 // is_image_cmyk()
 // 2010-01-10 K.OHWADA
@@ -250,21 +252,6 @@ function parse_ext( $file )
 function strip_ext( $file )
 {
 	return $this->_utility_class->strip_ext( $file );
-}
-
-function mysql_datetime_to_str( $date )
-{
-	return $this->_utility_class->mysql_datetime_to_str( $date );
-}
-
-function str_to_mysql_date( $str )
-{
-	return $this->_utility_class->str_to_mysql_date( $str );
-}
-
-function get_mysql_date_today()
-{
-	return $this->_utility_class->get_mysql_date_today();
 }
 
 function rename_file( $old, $new )

@@ -1,10 +1,16 @@
 <?php
-// $Id: base_ini.php,v 1.1 2009/11/29 07:37:03 ohwada Exp $
+// $Id: base_ini.php,v 1.2 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2009-11-11 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
+//---------------------------------------------------------
 
 if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 
@@ -14,6 +20,7 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_handler_base_ini extends webphoto_lib_tree_handler
 {
 	var $_utility_class;
+	var $_mysql_utility_class ;
 	var $_ini_class;
 
 	var $_MODULE_DIR;
@@ -32,6 +39,7 @@ function webphoto_handler_base_ini( $dirname, $trust_dirname )
 	$this->_TRUST_DIR     = XOOPS_TRUST_PATH .'/modules/'. $trust_dirname;
 
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 
 	$this->_ini_class 
 		=& webphoto_inc_ini::getSingleton( $dirname, $trust_dirname );
@@ -89,6 +97,14 @@ function perm_str_with_like_separetor( $str )
 // %&123&%
 	$like  = '%'. $this->perm_str_with_separetor( $str ). '%' ;
 	return $like;
+}
+
+//---------------------------------------------------------
+// mysql
+//---------------------------------------------------------
+function str_to_mysql_datetime( $str )
+{
+	return $this->_mysql_utility_class->str_to_mysql_datetime( $str );
 }
 
 //---------------------------------------------------------

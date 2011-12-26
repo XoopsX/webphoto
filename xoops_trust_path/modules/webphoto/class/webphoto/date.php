@@ -1,5 +1,5 @@
 <?php
-// $Id: date.php,v 1.4 2010/11/04 02:23:19 ohwada Exp $
+// $Id: date.php,v 1.5 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// mysql_datetime_to_year()
 // 2010-11-03 K.OHWADA
 // build_rows_for_rss()
 // 2010-05-10 K.OHWADA
@@ -65,8 +67,8 @@ function build_rows_for_list()
 // year month list
 	foreach ( $list_rows as $row )
 	{
-		$year_month = $this->_utility_class->mysql_datetime_to_year_month( $row['item_datetime'] );
-		$year       = $this->_utility_class->mysql_datetime_to_year( $year_month );
+		$year_month = $this->mysql_datetime_to_year_month( $row['item_datetime'] );
+		$year       = $this->mysql_datetime_to_year( $year_month );
 
 // set year
 		if ( !isset( $year_month_arr_1[ $year ] ) ) {
@@ -194,7 +196,7 @@ function build_total_for_detail( $datetime_in )
 function build_datetime_for_detail( $datetime_in )
 {
 	$datetime = $this->decode_uri_str( $datetime_in );
-	$datetime = $this->_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
+	$datetime = $this->mysql_datetime_to_day_or_month_or_year( $datetime );
 	return $datetime;
 }
 

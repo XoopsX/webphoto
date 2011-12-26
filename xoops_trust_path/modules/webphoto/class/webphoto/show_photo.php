@@ -1,5 +1,5 @@
 <?php
-// $Id: show_photo.php,v 1.31 2011/06/05 07:23:40 ohwada Exp $
+// $Id: show_photo.php,v 1.32 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// $show_arr['datetime'] 
 // 2011-06-04 K.OHWADA
 // remove cfg_use_pathinfo
 // 2010-11-11 K.OHWADA
@@ -211,7 +213,7 @@ function build_photo_show_basic( $row, $tag_name_array=null )
 	$show_arr['photo_id']            = $item_id ;
 	$show_arr['uname_s']             = $this->build_show_uname( $item_uid ) ;
 	$show_arr['time_update_m']       = $this->format_timestamp( $item_time_update , 'm' ) ;
-	$show_arr['datetime_unix']       = $this->_utility_class->mysql_datetime_to_unixtime( $item_datetime );
+	$show_arr['datetime']            = $item_datetime;
 	$show_arr['datetime_disp']       = $datetime_disp ;
 	$show_arr['datetime_urlencode']  = $this->rawurlencode_uri_encode_str( $datetime_disp ) ;
 	$show_arr['place_urlencode']     = $this->rawurlencode_uri_encode_str( $item_place ) ;

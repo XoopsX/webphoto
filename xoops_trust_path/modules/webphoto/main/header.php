@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.21 2011/11/13 05:24:37 ohwada Exp $
+// $Id: header.php,v 1.22 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// class/lib/mysql_utility.php
 // 2011-11-11 K.OHWAD
 // remove class/inc/config.php
 // 2010-01-10 K.OHWADA
@@ -91,6 +93,7 @@ webphoto_include_once( 'class/lib/xml.php' );
 webphoto_include_once( 'class/lib/plugin.php' );
 webphoto_include_once( 'class/lib/gtickets.php' );
 webphoto_include_once( 'class/lib/search.php' );
+webphoto_include_once( 'class/lib/mysql_utility.php' );
 
 webphoto_include_once( 'class/handler/file_handler.php' );
 webphoto_include_once( 'class/handler/cat_handler.php' );

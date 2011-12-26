@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.22 2011/06/05 07:23:40 ohwada Exp $
+// $Id: blocks.php,v 1.23 2011/12/26 06:51:31 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// $arr['datetime']
 // 2011-06-04 K.OHWADA
 // webphoto_inc_uri
 // 2010-10-01 K.OHWADA
@@ -545,7 +547,7 @@ function _build_photos( $options, $item_rows, $flag_amp_sanitize=true )
 		$arr['hits_suffix']   = $this->_build_hits_suffix( $row['item_hits'] ) ;
 
 		$arr['time_create']   = $row['item_time_create'];
-		$arr['datetime_unix'] = $this->_utility_class->mysql_datetime_to_unixtime( $row['item_datetime'] );
+		$arr['datetime']      = $row['item_datetime'];
 		$arr['photo_uri']     = $this->_uri_class->build_photo( $item_id, $flag_amp_sanitize ) ;
 		$arr['description_disp'] = $this->build_item_description( $row );
 
