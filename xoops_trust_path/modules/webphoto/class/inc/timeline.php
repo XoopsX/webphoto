@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.7 2011/12/26 23:52:23 ohwada Exp $
+// $Id: timeline.php,v 1.8 2011/12/26 23:59:13 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -113,9 +113,6 @@ function fetch_timeline( $mode, $unit, $date, $photos )
 
 	foreach ( $photos as $photo ) {
 		$event = $this->build_event( $photo );
-
-print_r($event);
-
 		if ( is_array($event) ) {
 			$events[] = $event ;
 		}
