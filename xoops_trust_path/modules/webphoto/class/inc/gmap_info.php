@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_info.php,v 1.6 2011/06/05 07:23:40 ohwada Exp $
+// $Id: gmap_info.php,v 1.7 2011/12/27 00:27:22 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_lib_mysql_utility
 // 2011-06-04 K.OHWADA
 // webphoto_inc_uri
 // 2010-06-06 K.OHWADA
@@ -23,8 +25,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_gmap_info
 {
-	var $_utility_class ;
 	var $_uri_class;
+	var $_mysql_utility_class ;
 
 	var $_has_editable     = false ;
 
@@ -58,7 +60,7 @@ function webphoto_inc_gmap_info( $dirname , $trust_dirname )
 
 	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 
-	$this->_utility_class =& webphoto_lib_utility::getInstance();
+	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 }
 
 function &getSingleton( $dirname , $trust_dirname )
@@ -288,7 +290,7 @@ function is_ext_in_array( $ext, $arr )
 //---------------------------------------------------------
 function mysql_datetime_to_str( $date )
 {
-	return $this->_utility_class->mysql_datetime_to_str( $date ) ;
+	return $this->_mysql_utility_class->mysql_datetime_to_str( $date ) ;
 }
 
 //---------------------------------------------------------
