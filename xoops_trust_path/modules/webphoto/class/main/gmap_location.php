@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap_location.php,v 1.9 2009/11/29 07:34:21 ohwada Exp $
+// $Id: gmap_location.php,v 1.10 2011/12/28 18:02:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// change _get_center()
 // 2009-11-11 K.OHWADA
 // $trust_dirname in webphoto_photo_public
 // 2009-09-06 K.OHWADA
@@ -90,17 +92,18 @@ function main()
 
 function _assign_template( $cfg_gmap_apikey )
 {
-
 	$flag_location = false;
 	$show_gmap = false;
 	$gmap_list = null;
 
-	list( $code, $latitude, $longitude, $zoom ) = $this->_get_center() ;
+	$center = $this->_get_center() ;
+	$code   = $center['code'];
+
 	if ( $code > 0 ) {
 		$flag_location  = true;
-		$gmap_latitude  = $latitude;
-		$gmap_longitude = $longitude;
-		$gmap_zoom      = $zoom;
+		$gmap_latitude  = $center['latitude'];
+		$gmap_longitude = $center['longitude'];
+		$gmap_zoom      = $center['zoom'];
 	}
 
 // when item
@@ -161,8 +164,13 @@ function _get_center()
 			$longitude = floatval($options[ $get_option_num + 1 ]) ;
 			$zoom      = intval(  $options[ $get_option_num + 2 ]) ;
 			if ( $this->_gmap_class->exist_gmap( $latitude, $longitude, $zoom ) ) {
-				$code = 4 ;	// block
-				return array( $code, $latitude, $longitude, $zoom ) ;
+				$param = array(
+					'code'      => 4, 	// block
+					'latitude'  => $latitude, 
+					'longitude' => $longitude, 
+					'zoom'      => $zoom
+				);
+				return $param;
 			}
 		}
 	}

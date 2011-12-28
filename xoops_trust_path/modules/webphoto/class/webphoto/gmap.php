@@ -1,5 +1,5 @@
 <?php
-// $Id: gmap.php,v 1.16 2011/12/28 16:16:15 ohwada Exp $
+// $Id: gmap.php,v 1.17 2011/12/28 18:02:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -220,7 +220,7 @@ function build_show( $item_row )
 	if ( empty( $this->_cfg_gmap_apikey ) ) { return null; }
 	if ( ! $this->exist_gmap_item( $item_row ) ) { return null; } 
 
-	return $this->_build_show_from_single_row( $item_row );
+	return $this->build_photo_single( $item_row );
 }
 
 //---------------------------------------------------------

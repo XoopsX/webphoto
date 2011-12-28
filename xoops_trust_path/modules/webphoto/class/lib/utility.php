@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.19 2011/12/26 06:51:31 ohwada Exp $
+// $Id: utility.php,v 1.20 2011/12/28 18:02:27 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// BUG : logic was reverse
 // 2011-05-01 K.OHWADA
 // substitute_filename_to_underbar()
 // 2010-11-11 K.OHWADA
@@ -231,6 +233,7 @@ function array_merge_unique_1( $arr1, $arr2, $key_name )
 				$key_val = $a[ $key_name ] ;
 				if ( ! isset( $arr_ret[ $key_val ] ) ) {
 					$arr_ret[ $key_val ] = $a ;
+echo " $key_val ";
 				}
 			}
 		}
@@ -245,7 +248,9 @@ function array_merge_unique_1( $arr1, $arr2, $key_name )
 function array_to_key_value( $arr, $key_name )
 {
 	$arr_ret = null;
-	if ( is_array($arr) && count($arr)  ) {
+
+// BUG : logic was reverse
+	if ( !is_array($arr) || !count($arr) ) {
 		return $arr_ret;
 	}
 
