@@ -1,4 +1,4 @@
-<{* $Id: webphoto_form_admin_cat.html,v 1.3 2010/02/25 08:42:26 ohwada Exp $ *}>
+<{* $Id: webphoto_form_admin_cat.html,v 1.4 2011/12/28 16:32:37 ohwada Exp $ *}>
 
 <script type="text/javascript" src="<{$xoops_url}>/modules/<{$xoops_dirname}>/libs/edit.js"></script>
 
@@ -150,6 +150,15 @@
   <td class="odd">
   <select id="cat_gicon_id" name="cat_gicon_id" size="1">
   <{$cat_gicon_id_options}>
+  </select>
+  </td></tr>
+<{/if}>
+
+<{if $show_timeline}>
+  <tr><td class="head"><{$lang_cat_timeline_scale}></td>
+  <td class="odd">
+  <select name="cat_timeline_scale" >
+  <{$cat_timeline_scale_options}>
   </select>
   </td></tr>
 <{/if}>

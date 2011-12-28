@@ -1,4 +1,4 @@
-<{* $Id: webphoto_page_detail.html,v 1.5 2010/11/04 02:35:57 ohwada Exp $ *}>
+<{* $Id: webphoto_page_detail.html,v 1.6 2011/12/28 16:32:37 ohwada Exp $ *}>
 <!--- page detail --->
 
 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
@@ -118,25 +118,25 @@
 
   <{if $show_timeline_large }>
     <div class="webphoto_timeline_navi">
-    <{if $cfg_use_pathinfo }>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">
-    <{/if}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline&amp;sm=<{$sub_mode}>&amp;sp=<{$sub_param}>">
     <{$lang_timeline_large}></a> 
     </div>
   <{/if}>
 
   <{if $show_timeline_unit }>
     <div class="webphoto_timeline_navi">
-    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','decade')">
-    <{$lang_timeline_scale_decade}></a> |
-    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','year')">
-    <{$lang_timeline_scale_year}></a> |
-    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','month')">
-    <{$lang_timeline_scale_month}></a> |
-    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','week')">
-    <{$lang_timeline_scale_week}></a> 
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','century')">
+    <{$lang_timeline_unit_century}></a> |
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','decade')">
+    <{$lang_timeline_unit_decade}></a> |
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','year')">
+    <{$lang_timeline_unit_year}></a> |
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','month')">
+    <{$lang_timeline_unit_month}></a> |
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','week')">
+    <{$lang_timeline_unit_week}></a> |
+    <a href="#" onClick="return webphoto_timeline_zoom( this,'<{$mode}>','<{$sub_mode}>','<{$sub_param}>','day')">
+    <{$lang_timeline_unit_day}></a> 
     </div>
   <{/if}>
 
@@ -167,11 +167,7 @@
 
   <{if $show_map_large }>
     <div class="webphoto_gmap_navi">
-    <{if $cfg_use_pathinfo }>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/map/">
-    <{else}>
-      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map">
-    <{/if}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map&amp;sm=<{$sub_mode}>&amp;sp=<{$sub_param}>">
     <{$lang_map_large}></a> 
     </div>
   <{/if}>
