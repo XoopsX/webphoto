@@ -1,5 +1,5 @@
 <?php
-// $Id: factory.php,v 1.9 2010/11/05 17:00:04 ohwada Exp $
+// $Id: factory.php,v 1.10 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// show_check_timeline()
 // 2010-11-03 K.OHWADA
 // input_to_param()
 // 2010-05-10 K.OHWADA
@@ -25,7 +27,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_factory extends webphoto_base_this
 {
 	var $_photo_class;
-	var $_catrgory_class;
+	var $_category_class;
 	var $_header_class;
 	var $_page_class;
 	var $_gmap_class;
@@ -55,6 +57,8 @@ class webphoto_factory extends webphoto_base_this
 	var $_page      = null;	// adjusted
 	var $_mode      = null;
 	var $_mode_orig = null;
+	var $_sub_mode  = null;
+	var $_sub_param = null;
 
 	var $_cat_id = 0;
 
@@ -129,6 +133,7 @@ function init_factory()
 
 	$this->get_page_mode();
 	$this->get_pathinfo_param( $this->_mode_orig );
+	$this->get_get_param();
 	$this->set_cat_id( $this->_mode, $this->_param );
 
 	$this->init_preload();
@@ -171,6 +176,13 @@ function get_pathinfo_param( $mode_orig )
 	$this->set_param_out( $this->_param );
 }
 
+function get_get_param()
+{
+	$sm = $this->_post_class->get_get_text('sm');
+	$sp = $this->_post_class->get_get_text('sp');
+	$this->set_sub_mode_param( $sm, $sp );
+}
+
 function set_param_out( $val )
 {
 	$this->_param_out = $val;
@@ -197,6 +209,12 @@ function set_cat_id( $mode, $param )
 		default:
 			break;
 	}
+}
+
+function set_sub_mode_param( $mode, $param )
+{
+	$this->_sub_mode  = $mode;
+	$this->_sub_param = $param;
 }
 
 //---------------------------------------------------------
@@ -402,6 +420,7 @@ function show_check( $key )
 	return false;
 }
 
+
 function show_param()
 {
 	$this->show_param_common();
@@ -532,6 +551,9 @@ function set_tpl_mode( $mode )
 	$this->tpl_set( 'param_sort' , 
 		$this->_uri_class->build_param_sort( $mode, $this->_param_out, $this->_get_kind ) );
 
+	$this->tpl_set( 'sub_mode',  $this->_sub_mode );
+	$this->tpl_set( 'sub_param', $this->_sub_param );
+
 	if ( $mode == 'random' ) {
 		$this->tpl_set( 'show_random_more', true );
 	}
@@ -559,14 +581,14 @@ function set_tpl_photo_list( $val )
 	$this->tpl_set( 'photo_list', $val );
 }
 
-function set_tpl_photo_total_sum( $val )
+function set_tpl_cat_param( $param )
 {
-	$this->tpl_set( 'photo_total_sum', $val );
-}
-
-function set_tpl_photo_small_sum( $val )
-{
-	$this->tpl_set( 'photo_small_sum', $val );
+	if ( isset( $param['photo_total_sum'] ) ) {
+		$this->tpl_set( 'photo_total_sum', $param['photo_total_sum'] );
+	}
+	if ( isset( $param['photo_small_sum'] ) ) {
+		$this->tpl_set( 'photo_small_sum', $param['photo_small_sum'] );
+	}
 }
 
 function set_tpl_category_photo_list( $val )
@@ -635,53 +657,6 @@ function set_tpl_tagcloud_with_check( $limit )
 			$this->tpl_set( 'show_tagcloud', true );
 			$this->tpl_set( 'tagcloud', $tagcloud );
 		}
-	}
-}
-
-function set_tpl_gmap_for_list_with_check( $rows )
-{
-	$gmap_large = $this->show_check('gmap_large');
-	if ( $this->show_check('gmap') || $gmap_large ) {
-		$param = $this->_gmap_class->build_for_main( $rows, $gmap_large );
-		$this->tpl_merge( $param );
-		return $param['show_gmap'];
-	}
-	return false;
-}
-
-function set_tpl_gmap_for_detail_with_check( $mode, $rows, $cat_id )
-{
-	$gmap_large = $this->show_check('gmap_large');
-	if ( $this->show_check('gmap') || $gmap_large ) {
-		if ( $mode == 'category' ) {
-			$param = $this->_gmap_class->build_for_category( $rows, $cat_id, $gmap_large );
-		} else {
-			$param = $this->_gmap_class->build_for_main( $rows, $gmap_large );
-		}
-		$this->tpl_merge( $param );
-		return $param['show_gmap'];
-	}
-	return false;
-}
-
-function set_tpl_gmap_for_photo_with_check( $row )
-{
-	if ( $this->show_check('gmap') ) {
-		$param = $this->_gmap_class->build_for_photo( $row );
-		$this->tpl_merge( $param );
-		return $param['show_gmap'];
-	}
-	return false;
-}
-
-function set_tpl_timeline_with_check( $rows )
-{
-	if ( $this->show_check('timeline') || $this->show_check('timeline_large') ) {
-		$unit  = $this->_post_class->get_get_text('unit');
-		$date  = $this->_post_class->get_get_text('date');
-		$param = $this->_timeline_class->build_timeline_by_rows(
-			$unit, $date, $rows , $this->show_check('timeline_large') );
-		$this->tpl_merge( $param );
 	}
 }
 
@@ -762,10 +737,89 @@ function tpl_get()
 }
 
 //---------------------------------------------------------
+// map timeline
+//---------------------------------------------------------
+function set_tpl_gmap_for_list_with_check( $rows )
+{
+	$gmap_large = $this->show_check('gmap_large');
+	if ( $this->show_check('gmap') || $gmap_large ) {
+		$param = $this->_gmap_class->build_for_list( $rows, $gmap_large );
+		$this->tpl_merge( $param );
+		return $param['show_gmap'];
+	}
+	return false;
+}
+
+function set_tpl_gmap_for_detail_with_check( $param )
+{
+	$gmap_large = $this->show_check('gmap_large');
+	if ( $this->show_check('gmap') || $gmap_large ) {
+		$param_tpl = $this->_gmap_class->build_for_detail( $param, $gmap_large );
+		$this->tpl_merge( $param_tpl );
+		return $param_tpl['show_gmap'];
+	}
+	return false;
+}
+
+function set_tpl_gmap_for_photo_with_check( $row )
+{
+	if ( $this->show_check('gmap') ) {
+		$param = $this->_gmap_class->build_for_photo( $row );
+		$this->tpl_merge( $param );
+		return $param['show_gmap'];
+	}
+	return false;
+}
+
+function show_check_timeline( $mode, $cat_id )
+{
+	switch ( $mode )
+	{
+		case 'category':
+			$ret = $this->show_check_timeline_category( $cat_id );
+			if ( !$ret ) {
+				return false;
+			}
+			break;
+	}
+
+	if ( $this->show_check('timeline') ) {
+		return true;
+	}
+	if ( $this->show_check('timeline_large') ) {
+		return true;
+	}
+	return false;
+}
+
+function show_check_timeline_category( $cat_id )
+{
+	$scale = $this->_cat_handler->get_cached_timeline_scale_by_id( $cat_id );
+	if ( $scale == _C_WEBPHOTO_TIMELINE_SCALE_NONE ) {
+		return false;
+	}
+	return true;
+}
+
+function set_tpl_timeline_with_check( $param )
+{
+	if ( ! $this->show_check_timeline( $param['mode'], $param['cat_id'] ) ) {
+		return;
+	}
+
+	$param_tpl = $this->_timeline_class->build_for_detail(
+		$param, $this->show_check('timeline_large') );
+
+	$this->tpl_merge( $param_tpl );
+}
+
+//---------------------------------------------------------
 // build component
 //---------------------------------------------------------
 function category_build_rows_for_detail( $cat_id )
 {
+	$this->set_sub_mode_param( 'category', $cat_id );
+
 	$cat_param = $this->_category_class->build_total_for_detail( $cat_id ) ;
 
 	$title     = $this->sanitize( $cat_param['cat_title'] );
@@ -780,11 +834,11 @@ function category_build_rows_for_detail( $cat_id )
 	$start = $this->calc_navi_start( $total );
 
 	if ( $total > 0 ) {
-		$rows  = $this->_category_class->build_rows_for_detail( 
+		$rows = $this->_category_class->build_rows_for_detail( 
 			$sum_mode, $cat_id, $this->_orderby, $this->_PHOTO_LIMIT, $start ) ;
 	}
 
-	return array( $title, $total, $rows, $total_sum, $small_sum );
+	return array( $title, $total, $rows, $cat_param );
 }
 
 function calc_navi_start( $total )

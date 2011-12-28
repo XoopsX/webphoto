@@ -1,5 +1,5 @@
 <?php
-// $Id: catmanager.php,v 1.17 2010/11/16 23:43:38 ohwada Exp $
+// $Id: catmanager.php,v 1.18 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_timeline_init
 // 2010-11-11 K.OHWADA
 // build_file_full_path()
 // 2010-10-20 K.OHWADA
@@ -51,6 +53,7 @@ class webphoto_admin_catmanager extends webphoto_edit_base
 	var $_group_class;
 	var $_gperm_def_class;
 	var $_groupperm_class;
+	var $_timeline_init_class;
 
 	var $_cfg_cat_width  ;
 	var $_cfg_csub_width ;
@@ -90,6 +93,7 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 	$this->_group_class     =& webphoto_inc_group::getSingleton( $dirname );
 	$this->_gperm_def_class =& webphoto_inc_gperm_def::getInstance();
 	$this->_groupperm_class =& webphoto_lib_groupperm::getInstance();
+	$this->_timeline_init_class =& webphoto_timeline_init::getInstance( $dirname );
 
 	$this->_cfg_cat_width      = $this->_config_class->get_by_name( 'cat_width' );
 	$this->_cfg_csub_width     = $this->_config_class->get_by_name( 'csub_width' );
@@ -327,6 +331,10 @@ function _build_row_by_post( $row )
 	$row['cat_gmap_latitude']  = $this->get_post_float( 'cat_gmap_latitude' );
 	$row['cat_gmap_longitude'] = $this->get_post_float( 'cat_gmap_longitude' );
 	$row['cat_gmap_zoom']      = $this->get_post_int(   'cat_gmap_zoom' );
+	$row['cat_timeline_mode']  = $this->get_post_int(   'cat_timeline_mode' );
+
+	$cat_timeline_scale        = $this->get_post_text(   'cat_timeline_scale' );
+	$row['cat_timeline_scale'] = $this->_timeline_init_class->unit_to_scale( $cat_timeline_scale ) ;
 
 	if ( $this->_cfg_perm_cat_read > 0 ) {
 		$row['cat_perm_read'] = $this->get_group_perms_str_by_post('cat_perm_read_ids');

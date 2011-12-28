@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.22 2011/12/26 06:51:31 ohwada Exp $
+// $Id: header.php,v 1.23 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -130,6 +130,7 @@ webphoto_include_once( 'class/webphoto/item_public.php' );
 webphoto_include_once( 'class/webphoto/photo_navi.php' );
 webphoto_include_once( 'class/webphoto/show_image.php' );
 webphoto_include_once( 'class/webphoto/show_photo.php' );
+webphoto_include_once( 'class/webphoto/timeline_init.php' );
 webphoto_include_once( 'class/webphoto/timeline.php' );
 webphoto_include_once( 'class/webphoto/qr.php' );
 webphoto_include_once( 'class/webphoto/pagenavi.php' );

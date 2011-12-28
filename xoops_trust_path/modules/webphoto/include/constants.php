@@ -1,5 +1,5 @@
 <?php
-// $Id: constants.php,v 1.33 2011/05/11 23:35:21 ohwada Exp $
+// $Id: constants.php,v 1.34 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -502,6 +502,9 @@ define("_C_WEBPHOTO_FLASHVAR_LOGO_POSITION_DEFAULT", "bottom-left");
 define("_C_WEBPHOTO_FLASHVAR_LOGO_LINKTARGET_DEFAULT", "_blank");
 define("_C_WEBPHOTO_FLASHVAR_PLAYER_REPEAT_DEFAULT", "none");
 define("_C_WEBPHOTO_FLASHVAR_PLAYER_REPEAT_ALWAYS",  "always");
+
+// v2.60
+define("_C_WEBPHOTO_TIMELINE_SCALE_NONE",   99 ) ;
 
 // v1.80
 //define("_C_WEBPHOTO_COMMUNITY_USE" ,    0 ) ;

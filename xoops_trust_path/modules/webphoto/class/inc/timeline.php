@@ -1,5 +1,5 @@
 <?php
-// $Id: timeline.php,v 1.8 2011/12/26 23:59:13 ohwada Exp $
+// $Id: timeline.php,v 1.9 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -28,7 +28,7 @@ class webphoto_inc_timeline
 	var $_timeline_class ;
 	var $_mysql_utility_class ;
 
-	var $_cfg_timeline_scale;
+	var $_init_timeline = false;
 
 	var $_show_onload   = false;
 	var $_show_onresize = false;
@@ -40,8 +40,10 @@ class webphoto_inc_timeline
 	var $_MODULE_DIR ;
 	var $_IMAGE_EXTS ;
 
-	var $_UNIT_DEFAULT = '';
+	var $_UNIT_DEFAULT = 'month';
 	var $_DATE_DEFAULT = '';
+
+	var $_UNIT_ARRAY = array('day','week','month','year','decade','century');
 
 //---------------------------------------------------------
 // constructor
@@ -54,13 +56,7 @@ function webphoto_inc_timeline( $dirname )
 
 	$this->_IMAGE_EXTS = explode( '|', _C_WEBPHOTO_IMAGE_EXTS );
 
-	$config_handler =& webphoto_inc_config::getSingleton( $dirname );
-
-	$this->_cfg_timeline_scale = $config_handler->get_by_name( 'timeline_scale' );
-
 	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
-
-	$this->_UNIT_DEFAULT = $this->_cfg_timeline_scale ;
 }
 
 function &getSingleton( $dirname )
@@ -83,6 +79,8 @@ function init( $timeline_dirname )
 	}
 
 	$this->_timeline_class =& timeline_compo_timeline::getSingleton( $timeline_dirname );
+	$this->_init_timeline = true;
+
 	return true;
 }
 
@@ -100,6 +98,10 @@ function check_exist( $timeline_dirname )
 
 function fetch_timeline( $mode, $unit, $date, $photos )
 {
+	if ( ! $this->_init_timeline ) {
+		return false;
+	}
+
 	$ID     = 0;
 	$events = array();
 
@@ -160,16 +162,16 @@ function build_event( $photo )
 
 function build_start( $photo )
 {
-	if ( $photo['datetime'] ) {
-		$param = $this->build_start_param( $photo['datetime'] );
+	if ( $photo['item_datetime'] ) {
+		$param = $this->build_start_param( $photo['item_datetime'] );
 		if ( is_array($param) ) {
 			return $param;
 		}
 	}
 
-	if ( $photo['time_create'] > 0 ) {
+	if ( $photo['item_time_create'] > 0 ) {
 		$param = array(
-			'start' => $this->unixtime_to_datetime( $photo['time_create'] )
+			'start' => $this->unixtime_to_datetime( $photo['item_time_create'] )
 		);
 		return $param;
 	}
@@ -198,7 +200,7 @@ function build_start_param( $datetime )
 
 function build_title( $photo )
 {
-	return $this->sanitize( $photo['title'] ) ;
+	return $this->sanitize( $photo['item_title'] ) ;
 }
 
 function build_description( $photo )
@@ -271,6 +273,36 @@ function unixtime_to_datetime( $time )
 function escape_quotation( $str )
 {
 	return $this->_timeline_class->escape_quotation( $str );
+}
+
+//---------------------------------------------------------
+// options
+//---------------------------------------------------------
+function get_scale_options()
+{
+	if ( ! $this->_init_timeline ) {
+		return false;
+	}
+
+	$lang = $this->_timeline_class->get_unit_lang_array();
+
+	$arr = array();
+	foreach ( $lang as $k => $v )
+	{
+		if( in_array( $k, $this->_UNIT_ARRAY ) ) {
+			$arr[ $k ] = $v;
+		}
+	}
+	return $arr;
+}
+
+function get_int_unit_array()
+{
+	if ( ! $this->_init_timeline ) {
+		return array();
+	}
+
+	return $this->_timeline_class->get_int_unit_array();
 }
 
 //---------------------------------------------------------

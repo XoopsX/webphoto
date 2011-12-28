@@ -1,5 +1,5 @@
 <?php
-// $Id: blocks.php,v 1.23 2011/12/26 06:51:31 ohwada Exp $
+// $Id: blocks.php,v 1.24 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -9,7 +9,7 @@
 //---------------------------------------------------------
 // change log
 // 2011-12-25 K.OHWADA
-// $arr['datetime']
+// webphoto_inc_timeline
 // 2011-06-04 K.OHWADA
 // webphoto_inc_uri
 // 2010-10-01 K.OHWADA
@@ -116,14 +116,12 @@ function webphoto_inc_blocks( $dirname , $trust_dirname )
 
 	$this->_header_class     =& webphoto_inc_xoops_header::getSingleton( $dirname );
 	$this->_gmap_block_class =& webphoto_inc_gmap_block::getSingleton( $dirname );
-
-	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
+	$this->_uri_class        =& webphoto_inc_uri::getSingleton( $dirname );
+	$this->_utility_class    =& webphoto_lib_utility::getInstance();
+	$this->_multibyte_class  =& webphoto_lib_multibyte::getInstance();
 
 	$this->_timeline_class   =& webphoto_inc_timeline::getSingleton( $dirname );
-	$this->_init_timeline    = $this->_timeline_class->init( $this->_cfg_timeline_dirname );
-
-	$this->_utility_class   =& webphoto_lib_utility::getInstance();
-	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
+	$this->_init_timeline    =  $this->_timeline_class->init( $this->_cfg_timeline_dirname );
 
 	$this->_block_id = isset($_GET['bid']) ? intval($_GET['bid']) : 0 ;
 
@@ -381,11 +379,9 @@ function timeline_show( $options )
 		$item_rows = $this->_get_item_rows_timeline( $latest, $random );
 		list( $photos, $photo_num ) = 
 			$this->_build_photos( $options, $item_rows, false );
+
 		if ( $photo_num > 0 ) {
-
-//			$this->_timeline_class->set_show_timeout( true );
 			$this->_timeline_class->set_show_onload(  true );
-
 			$tl_param = $this->_timeline_class->fetch_timeline( 
 				'painter', $scale, $this->_TIMELINE_DATE, $photos );
 			$js      = $tl_param['timeline_js'] ;
@@ -409,12 +405,10 @@ function timeline_edit( $options )
 	$height = $this->_get_option_int( $options, 3 ) ;
 	$scale  = $this->_get_option(     $options, 4 ) ;
 
-	$SCALE_OPTIONS = array(
-		'week'   => $this->_constant( 'TIMELINE_SCALE_WEEK'   ) ,
-		'month'  => $this->_constant( 'TIMELINE_SCALE_MONTH'  ) ,
-		'year'   => $this->_constant( 'TIMELINE_SCALE_YEAR'   ) ,
-		'decade' => $this->_constant( 'TIMELINE_SCALE_DECADE' ) ,
-	);
+	$scale_options = array();
+	if ( $this->_init_timeline ) {
+		$scale_options = $this->_timeline_class->get_scale_options();
+	}
 
 	$ret  = '<table border="0"><tr><td>'."\n";
 	$ret .= 'dirname';
@@ -437,7 +431,7 @@ function timeline_edit( $options )
 	$ret .= '</td></tr><tr><td>'."\n";
 	$ret .= $this->_constant( 'TIMELINE_SCALE' );
 	$ret .= '</td><td>'."\n";
-	$ret .= $this->build_form_select( 'options[4]', $scale, $SCALE_OPTIONS );
+	$ret .= $this->build_form_select( 'options[4]', $scale, $scale_options );
 	$ret .= "</td></tr>\n";
 	$ret .= '</table>'."\n";
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_version.php,v 1.40 2011/05/10 02:56:39 ohwada Exp $
+// $Id: xoops_version.php,v 1.41 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-11-25 K.OHWADA
+// OPT_TIMELINE_SCALE_CENTURY
 // 2011-05-01 K.OHWADA
 // pear_path
 // 2010-06-06 K.OHWADA
@@ -1340,10 +1342,12 @@ function _build_config()
 		'valuetype'		=> 'text' ,
 		'default'		=> 'month' ,
 		'options'		=> array(
-			$this->_constant( 'OPT_TIMELINE_SCALE_WEEK'   ) => 'week',
-			$this->_constant( 'OPT_TIMELINE_SCALE_MONTH'  ) => 'month',
-			$this->_constant( 'OPT_TIMELINE_SCALE_YEAR'   ) => 'year',
-			$this->_constant( 'OPT_TIMELINE_SCALE_DECADE' ) => 'decade',
+			$this->_constant( 'OPT_TIMELINE_SCALE_DAY'   )   => 'day',
+			$this->_constant( 'OPT_TIMELINE_SCALE_WEEK'   )  => 'week',
+			$this->_constant( 'OPT_TIMELINE_SCALE_MONTH'  )  => 'month',
+			$this->_constant( 'OPT_TIMELINE_SCALE_YEAR'   )  => 'year',
+			$this->_constant( 'OPT_TIMELINE_SCALE_DECADE' )  => 'decade',
+			$this->_constant( 'OPT_TIMELINE_SCALE_CENTURY' ) => 'century',
 		)
 	) ;
 

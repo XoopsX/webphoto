@@ -1,4 +1,4 @@
-$Id: readme_en.txt,v 1.65 2011/12/26 06:51:31 ohwada Exp $
+$Id: readme_en.txt,v 1.66 2011/12/28 16:16:15 ohwada Exp $
 
 =================================================
 Version: 2.60
@@ -11,8 +11,17 @@ Email:  webmaster@ohwada.jp
 This is the album module which manages photos and videos.
 
 * Changes *
-1. supoort before 1970 (unixtime) in timeline
+1. timeline
+(1) supoort before 1970 (unixtime) 
 http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1186&forum=13
+
+(2) add century and day to unit
+(3) show timeline in category
+(4) When move to a large time from a category, the information on a category is succeeded. 
+
+2. map
+(1) When move to a large map from a category, the information on a category is succeeded. 
+
 
 * Update *
 (1) When you unzip the zip file, there are two directories html and xoops_trust_path.

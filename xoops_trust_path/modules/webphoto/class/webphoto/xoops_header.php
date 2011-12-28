@@ -1,5 +1,5 @@
 <?php
-// $Id: xoops_header.php,v 1.4 2010/11/05 17:00:04 ohwada Exp $
+// $Id: xoops_header.php,v 1.5 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// change _build_timeline_extend_js()
 // 2010-11-03 K.OHWADA
 // change _build_header_rss()
 // 2010-01-10 K.OHWADA
@@ -237,10 +239,10 @@ function _build_timeline()
 function _build_timeline_extend_js()
 {
 	$str = <<< EOF
-function webphoto_timeline_zoom( link, op, unit )
+function webphoto_timeline_zoom( link, op, sm, sp, unit )
 {
 	var date  = timeline_get_center_date();
-	link.href = '{$this->_MODULE_URL}/index.php?op=' + op + '&unit=' + unit + '&date=' + encodeURIComponent(date) ;
+	link.href = '{$this->_MODULE_URL}/index.php?op=' + op + '&sm=' + sm + '&sp=' + sp + '&unit=' + unit + '&date=' + encodeURIComponent(date) ;
 	return true;
 }
 EOF;

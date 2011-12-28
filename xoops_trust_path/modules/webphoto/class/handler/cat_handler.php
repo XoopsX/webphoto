@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_handler.php,v 1.14 2010/02/17 04:34:47 ohwada Exp $
+// $Id: cat_handler.php,v 1.15 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// cat_timeline_mode
 // 2010-02-15 K.OHWADA
 // add $flag_admin in check_perm_by_row_name_groups()
 // 2009-12-06 K.OHWADA
@@ -106,6 +108,8 @@ function create( $flag_new=false )
 		'cat_perm_post'      => $this->get_ini('cat_perm_post_default') ,
 		'cat_description'    => '',
 		'cat_group_id'       => '0',
+		'cat_timeline_mode'  => 0,
+		'cat_timeline_scale' => $this->get_ini('cat_timeline_scale_default') ,
 	);
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
@@ -155,6 +159,8 @@ function insert( $row )
 	$sql .= 'cat_perm_read, ';
 	$sql .= 'cat_perm_post, ';
 	$sql .= 'cat_group_id, ';
+	$sql .= 'cat_timeline_mode, ';
+	$sql .= 'cat_timeline_scale, ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$sql .= 'cat_text'.$i.', ';
@@ -195,6 +201,8 @@ function insert( $row )
 	$sql .= $this->quote($cat_perm_read).', ';
 	$sql .= $this->quote($cat_perm_post).', ';
 	$sql .= intval($cat_group_id).', ';
+	$sql .= intval($cat_timeline_mode).', ';
+	$sql .= intval($cat_timeline_scale).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$sql .= $this->quote( $row[ 'cat_text'.$i ] ).', ';
@@ -245,6 +253,8 @@ function update( $row )
 	$sql .= 'cat_perm_read='.$this->quote($cat_perm_read).', ';
 	$sql .= 'cat_perm_post='.$this->quote($cat_perm_post).', ';
 	$sql .= 'cat_group_id='.intval($cat_group_id).', ';
+	$sql .= 'cat_timeline_mode='.intval($cat_timeline_mode).', ';
+	$sql .= 'cat_timeline_scale='.intval($cat_timeline_scale).', ';
 
 	for ( $i=1; $i <= _C_WEBPHOTO_MAX_CAT_TEXT; $i++ ) {
 		$name = 'cat_text'.$i;
@@ -289,7 +299,14 @@ function clear_gicon_id( $gicon_id )
 //---------------------------------------------------------
 function get_cached_title_by_id( $cat_id, $flag_sanitize=false )
 {
-	return $this->get_cached_value_by_id_name( $cat_id, 'cat_title', $flag_sanitize );
+	return $this->get_cached_value_by_id_name( 
+		$cat_id, 'cat_title', $flag_sanitize );
+}
+
+function get_cached_timeline_scale_by_id( $cat_id, $flag_sanitize=false )
+{
+	return $this->get_cached_value_by_id_name( 
+		$cat_id, 'cat_timeline_scale', $flag_sanitize );
 }
 
 //---------------------------------------------------------

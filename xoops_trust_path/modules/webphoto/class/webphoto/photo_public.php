@@ -1,5 +1,5 @@
 <?php
-// $Id: photo_public.php,v 1.13 2011/06/05 07:23:40 ohwada Exp $
+// $Id: photo_public.php,v 1.14 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// change get_rows_by_gmap_catid_array()
 // 2011-06-04 K.OHWADA
 // remove cfg_use_pathinfo
 // 2010-03-14 K.OHWADA
@@ -190,10 +192,10 @@ function get_rows_by_search_orderby( $param, $orderby, $limit=0, $offset=0 )
 		'search', $param, $orderby, $limit, $offset ) ;
 }
 
-function get_rows_by_gmap_catid_array( $catid_array, $limit=0, $offset=0 )
+function get_rows_by_gmap_catid_array( $catid_array, $orderby, $limit=0, $offset=0 )
 {
 	return $this->get_rows_by_name_param_orderby( 
-		'gmap_catid_array', $catid_array, $this->_ORDERBY_LATEST, $limit, $offset ) ;
+		'gmap_catid_array', $catid_array, $orderby, $limit, $offset ) ;
 }
 
 function get_rows_by_gmap_latest( $limit=0, $offset=0, $key=false )

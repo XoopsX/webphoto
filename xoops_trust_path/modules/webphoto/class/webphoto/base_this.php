@@ -1,5 +1,5 @@
 <?php
-// $Id: base_this.php,v 1.31 2011/12/26 06:51:31 ohwada Exp $
+// $Id: base_this.php,v 1.32 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -766,6 +766,15 @@ function check_file( $file )
 }
 
 //---------------------------------------------------------
+// title
+//---------------------------------------------------------
+function build_title_by_mode( $mode )
+{
+	$str = $this->sanitize( $this->get_constant( 'title_'. $mode ) );
+	return $str;
+}
+
+//---------------------------------------------------------
 // mysql
 //---------------------------------------------------------
 function mysql_datetime_to_str( $date )
@@ -786,6 +795,11 @@ function get_mysql_date_today()
 function mysql_datetime_to_day_or_month_or_year( $datetime )
 {
 	return $this->_mysql_utility_class->mysql_datetime_to_day_or_month_or_year( $datetime );
+}
+
+function mysql_datetime_to_year_month( $datetime )
+{
+	return $this->_mysql_utility_class->mysql_datetime_to_year_month( $datetime );
 }
 
 function mysql_datetime_to_year( $datetime )

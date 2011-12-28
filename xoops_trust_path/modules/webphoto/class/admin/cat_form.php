@@ -1,5 +1,5 @@
 <?php
-// $Id: cat_form.php,v 1.14 2010/03/14 14:30:45 ohwada Exp $
+// $Id: cat_form.php,v 1.15 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_timeline_init
 // 2010-03-14 K.OHWADA
 // BUG: typo prem -> perm
 // 2010-02-15 K.OHWADA
@@ -43,6 +45,7 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 class webphoto_admin_cat_form extends webphoto_edit_form
 {
 	var $_gicon_handler;
+	var $_timeline_init_class;
 
 	var $_ini_use_cat_group_id;
 
@@ -70,6 +73,8 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 
 	$this->_gicon_handler  
 		=& webphoto_gicon_handler::getInstance( $dirname, $trust_dirname );
+
+	$this->_timeline_init_class =& webphoto_timeline_init::getInstance( $dirname );
 
 	$this->_THIS_URL      = $this->_MODULE_URL .'/admin/index.php?fct=catmanager';
 	$this->_THIS_URL_EDIT = $this->_THIS_URL .'&amp;disp=edit&amp;cat_id=';
@@ -177,6 +182,10 @@ function build_cat_form_by_row( $row, $param )
 		'img_src_s'   => $this->build_img_src() ,
 		'js_img_path' => $this->build_js_img_path() ,
 
+// timeline
+		'show_timeline'              => $this->show_timeline() ,
+		'cat_timeline_scale_options' => $this->cat_timeline_scale_options() ,
+
 		'lang_title'  => $title ,
 		'lang_button' => $button ,
 		'lang_delete' => _DELETE ,
@@ -225,6 +234,8 @@ function show_gmap()
 	}
 	return false;
 }
+
+
 
 function build_parent()
 {
@@ -410,6 +421,22 @@ function build_admin_language()
 function _build_prefix( $row )
 {
 	return str_replace( '.' , ' --' , substr( $row['prefix'] , 1 ) ).' ' ;
+}
+
+//---------------------------------------------------------
+// timeline
+//---------------------------------------------------------
+function show_timeline()
+{
+	return $this->_timeline_init_class->get_init();
+}
+
+function cat_timeline_scale_options()
+{
+	$scale   = $this->get_row_by_key( 'cat_timeline_scale' ) ;
+	$value   = $this->_timeline_init_class->scale_to_unit( $scale ) ;
+	$options = $this->_timeline_init_class->get_scale_options( true ) ;
+	return $this->build_form_options( $value, $options );
 }
 
 //---------------------------------------------------------

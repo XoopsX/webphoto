@@ -1,5 +1,5 @@
 <?php
-// $Id: header.php,v 1.13 2011/12/26 06:51:31 ohwada Exp $
+// $Id: header.php,v 1.14 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module

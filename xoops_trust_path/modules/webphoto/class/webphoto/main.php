@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.3 2010/11/04 02:23:19 ohwada Exp $
+// $Id: main.php,v 1.4 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// remove build_title()
 // 2010-11-03 K.OHWADA
 // build_rows_for_rss()
 // 2010-05-10 K.OHWADA
@@ -51,7 +53,7 @@ function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 function build_total_for_detail( $mode )
 {
-	$title = $this->build_title( $mode );
+	$title = $this->build_title_by_mode( $mode );
 	$name  = $this->_sort_class->mode_to_name( $mode );
 	$total = $this->_public_class->get_count_by_name_param( $name, null );
 
@@ -65,12 +67,6 @@ function build_rows_for_detail( $mode, $sort, $limit=0, $start=0 )
 
 	return $this->_public_class->get_rows_by_name_param_orderby( 
 		$name, null, $orderby, $limit, $start );
-}
-
-function build_title( $mode )
-{
-	$str = $this->sanitize( $this->get_constant( 'title_'. $mode ) );
-	return $str;
 }
 
 //---------------------------------------------------------

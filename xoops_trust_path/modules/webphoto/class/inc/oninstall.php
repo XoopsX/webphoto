@@ -1,5 +1,5 @@
 <?php
-// $Id: oninstall.php,v 1.28 2011/11/13 11:11:18 ohwada Exp $
+// $Id: oninstall.php,v 1.29 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-25 K.OHWADA
+// webphoto_inc_oninstall_cat
 // 2011-11-11 K.OHWADA
 // webphoto_lib_file_log
 // 2011-11-03 K.OHWADA
@@ -62,6 +64,7 @@ class webphoto_inc_oninstall extends webphoto_inc_base_ini
 	var $_group_class;
 	var $_gperm_def_class;
 	var $_oninstall_item_class;
+	var $_oninstall_cat_class;
 	var $_oninstall_mime_class;
 	var $_oninstall_flashvar_class;
 	var $_log_class;
@@ -102,6 +105,8 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 
 	$this->_oninstall_item_class 
 		=& webphoto_inc_oninstall_item::getSingleton( $dirname , $trust_dirname );
+	$this->_oninstall_cat_class 
+		=& webphoto_inc_oninstall_cat::getSingleton( $dirname , $trust_dirname );
 	$this->_oninstall_mime_class 
 		=& webphoto_inc_oninstall_mime::getSingleton( $dirname , $trust_dirname );
 	$this->_oninstall_flashvar_class 
@@ -693,54 +698,11 @@ function _item_update()
 //---------------------------------------------------------
 function _cat_update()
 {
-	$this->_cat_add_column_060();
-	$this->_cat_add_column_200();
-}
-
-function _cat_add_column_060()
-{
-
-// return if already exists
-	if ( $this->exists_column( $this->_table_cat, 'cat_img_name' ) ) {
-		return true;
+	$this->_oninstall_cat_class->update();
+	$arr = $this->_oninstall_cat_class->get_msg_array();
+	if ( is_array($arr) && count($arr) ) {
+		$this->set_msg( $arr );
 	}
-
-	$sql  = "ALTER TABLE ". $this->_table_cat ." ADD ( " ;
-	$sql  .= "cat_img_name VARCHAR(255) NOT NULL DEFAULT '' " ;
-	$sql .= " )";
-
-	$ret = $this->query( $sql );
-	if ( $ret ) {
-		$this->set_msg( 'Add cat_img_name in <b>'. $this->_table_cat .'</b>' );
-		return true;
-	} else {
-		$this->set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_cat .'</b>.' ) );
-		return false;
-	}
-
-}
-
-function _cat_add_column_200()
-{
-
-// return if already exists
-	if ( $this->exists_column( $this->_table_cat, 'cat_group_id' ) ) {
-		return true;
-	}
-
-	$sql  = "ALTER TABLE ". $this->_table_cat ." ADD ( " ;
-	$sql  .= "cat_group_id INT(5) UNSIGNED NOT NULL DEFAULT '0' " ;
-	$sql .= " )";
-
-	$ret = $this->query( $sql );
-	if ( $ret ) {
-		$this->set_msg( 'Add cat_img_name in <b>'. $this->_table_cat .'</b>' );
-		return true;
-	} else {
-		$this->set_msg( $this->highlight( 'ERROR: Could not update <b>'. $this->_table_cat .'</b>.' ) );
-		return false;
-	}
-
 }
 
 //---------------------------------------------------------

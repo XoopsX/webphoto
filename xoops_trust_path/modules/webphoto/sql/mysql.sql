@@ -1,4 +1,4 @@
-# $Id: mysql.sql,v 1.27 2011/11/13 11:19:03 ohwada Exp $
+# $Id: mysql.sql,v 1.28 2011/12/28 16:16:15 ohwada Exp $
 
 # =========================================================
 # webphoto module
@@ -7,6 +7,8 @@
 
 # =========================================================
 # change log
+# 2011-12-25 K.OHWADA
+# cat_timeline_mode
 # 2011-11-11 K.OHWADA
 # TYPE=MyISAM -> ENGINE=MyISAM
 # 2011-05-16 K.OHWADA
@@ -339,6 +341,8 @@ CREATE TABLE cat (
   cat_description TEXT,
   cat_img_name VARCHAR(255) NOT NULL DEFAULT '',
   cat_group_id INT(5) UNSIGNED NOT NULL DEFAULT '0',
+  cat_timeline_mode  TINYINT(2) NOT NULL DEFAULT '0',
+  cat_timeline_scale INT(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (cat_id),
   KEY (cat_pid),
   KEY (cat_gicon_id),

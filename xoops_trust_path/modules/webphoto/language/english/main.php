@@ -1,5 +1,5 @@
 <?php
-// $Id: main.php,v 1.47 2011/05/10 02:56:39 ohwada Exp $
+// $Id: main.php,v 1.48 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -1467,6 +1467,13 @@ define("_WEBPHOTO_FLASHVAR_LOGO_POSITION_BOTTOM_LEFT",  "bottom-left");
 define("_WEBPHOTO_FLASHVAR_LOGO_POSITION_BOTTOM_RIGHT", "bottom-right");
 define("_WEBPHOTO_FLASHVAR_LOGO_POSITION_TOP_LEFT",     "top-left");
 define("_WEBPHOTO_FLASHVAR_LOGO_POSITION_TOP_RIGHT",    "top-right");
+
+//---------------------------------------------------------
+// v2.60
+//---------------------------------------------------------
+// cat handler
+define("_WEBPHOTO_CAT_TIMELINE_MODE" ,   "Timeline mode" ) ;
+define("_WEBPHOTO_CAT_TIMELINE_SCALE" ,  "Timeline scale" ) ;
 
 // === define end ===
 }

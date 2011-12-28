@@ -1,5 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.14 2011/05/10 02:56:39 ohwada Exp $
+// $Id: modinfo.php,v 1.15 2011/12/28 16:16:15 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -31,6 +31,17 @@ if ( !isset( $MY_DIRNAME ) ) {
 }
 
 $constpref = strtoupper( '_MI_' . $MY_DIRNAME. '_' ) ;
+
+//---------------------------------------------------------
+// v2.60
+//---------------------------------------------------------
+if( !defined($constpref."OPT_TIMELINE_SCALE_HOUR") ) 
+{
+define($constpref."OPT_TIMELINE_SCALE_HOUR",       "Hour") ;
+define($constpref."OPT_TIMELINE_SCALE_DAY",        "Day") ;
+define($constpref."OPT_TIMELINE_SCALE_CENTURY",    "Century") ;
+define($constpref."OPT_TIMELINE_SCALE_MILLENNIUM", "Millennium") ;
+}
 
 //---------------------------------------------------------
 // v2.40
