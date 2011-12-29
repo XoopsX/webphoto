@@ -1,5 +1,5 @@
 <?php
-// $Id: utility.php,v 1.20 2011/12/28 18:02:27 ohwada Exp $
+// $Id: utility.php,v 1.21 2011/12/29 03:39:29 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -233,7 +233,6 @@ function array_merge_unique_1( $arr1, $arr2, $key_name )
 				$key_val = $a[ $key_name ] ;
 				if ( ! isset( $arr_ret[ $key_val ] ) ) {
 					$arr_ret[ $key_val ] = $a ;
-echo " $key_val ";
 				}
 			}
 		}
