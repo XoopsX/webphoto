@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.6 2011/06/05 07:23:40 ohwada Exp $
+// $Id: weblinks.php,v 1.7 2011/12/29 23:54:26 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -8,6 +8,8 @@
 
 //---------------------------------------------------------
 // change log
+// 2011-12-29 K.OHWADA
+// change photos()
 // 2011-06-04 K.OHWADA
 // webphoto_inc_uri
 // 2010-01-10 K.OHWADA
@@ -25,8 +27,6 @@ if ( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 //=========================================================
 class webphoto_inc_weblinks extends webphoto_inc_public
 {
-	var $_catlist_class;
-	var $_uri_class;
 
 //---------------------------------------------------------
 // constructor
@@ -34,8 +34,6 @@ class webphoto_inc_weblinks extends webphoto_inc_public
 function webphoto_inc_weblinks()
 {
 	$this->webphoto_inc_public();
-
-	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 }
 
 function &getInstance()
@@ -91,6 +89,8 @@ function photos( $opts )
 		'disable_renderer' => $disable_renderer , 
 	);
 
+	$uri_class =& webphoto_inc_uri::getSingleton( $dirname );
+
 // BUG: Fatal error: Call to undefined function: getinstance()
 	$inc_class =& webphoto_inc_blocks::getSingleton( $dirname, WEBPHOTO_TRUST_DIRNAME );
 
@@ -104,48 +104,34 @@ function photos( $opts )
 		return null;
 	}
 
-	$href_base       = XOOPS_URL .'/modules/'. $dirname .'/';
+	$href_base = XOOPS_URL .'/modules/'. $dirname .'/';
 
-	$attribs_default = 'width="'. $block['cfg_thumb_width'] .'"';
+	$href  = $href_base ;
+	$href .= $uri_class->build_relatevie_uri_mode_param( 'photo', $photo['item_id'] );
+
+	$cat_href  = $href_base ;
+	$cat_href .= $uri_class->build_relatevie_uri_mode_param( 'category', $photo['item_cat_id'] );
+
+	if ( $photo['img_thumb_width'] && $photo['img_thumb_height'] ) {
+		$img_attribs = 'width="'. $photo['img_thumb_width'] .'" height="'. $photo['img_thumb_height'] .'"';
+	} else {
+		$img_attribs = 'width="'. $block['cfg_thumb_width'] .'"'; ;
+	}
 
 	$ret = array();
 	foreach ( $block['photo'] as $photo )
 	{
 		$ret[] = array(
-			'href'        => $this->build_href_photo( $photo, $href_base ) ,
-			'cat_href'    => $this->build_href_cat(   $photo, $href_base ) ,
+			'href'        => $href ,
+			'cat_href'    => $cat_href ,
+			'img_attribs' => $img_attribs ,
 			'title'       => $photo['title_s'] ,
 			'cat_title'   => $photo['cat_title_s'] ,
 			'img_src'     => $photo['img_thumb_src_s'] ,
-			'img_attribs' => $this->build_attribs( $photo, $attribs_default ) ,
 		);
 	}
 
 	return $ret ;
-}
-
-function build_href_photo( $photo, $href_base )
-{
-	$str  = $href_base ;
-	$str .= $this->_uri_class->build_relatevie_uri_mode_param( 'photo', $photo['item_id'] );
-	return $str;
-}
-
-function build_href_cat( $photo, $href_base )
-{
-	$str  = $href_base ;
-	$str .= $this->_uri_class->build_relatevie_uri_mode_param( 'category', $photo['item_cat_id'] );
-	return $str;
-}
-
-function build_attribs( $photo, $attribs_default )
-{
-	if ( $photo['img_thumb_width'] && $photo['img_thumb_height'] ) {
-		$attribs = 'width="'. $photo['img_thumb_width'] .'" height="'. $photo['img_thumb_height'] .'"';
-	} else {
-		$attribs = $attribs_default ;
-	}
-	return $attribs;
 }
 
 // --- class end ---
