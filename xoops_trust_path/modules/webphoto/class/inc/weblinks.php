@@ -1,5 +1,5 @@
 <?php
-// $Id: weblinks.php,v 1.7 2011/12/29 23:54:26 ohwada Exp $
+// $Id: weblinks.php,v 1.8 2011/12/30 00:07:33 ohwada Exp $
 
 //=========================================================
 // webphoto module
@@ -106,21 +106,21 @@ function photos( $opts )
 
 	$href_base = XOOPS_URL .'/modules/'. $dirname .'/';
 
-	$href  = $href_base ;
-	$href .= $uri_class->build_relatevie_uri_mode_param( 'photo', $photo['item_id'] );
-
-	$cat_href  = $href_base ;
-	$cat_href .= $uri_class->build_relatevie_uri_mode_param( 'category', $photo['item_cat_id'] );
-
-	if ( $photo['img_thumb_width'] && $photo['img_thumb_height'] ) {
-		$img_attribs = 'width="'. $photo['img_thumb_width'] .'" height="'. $photo['img_thumb_height'] .'"';
-	} else {
-		$img_attribs = 'width="'. $block['cfg_thumb_width'] .'"'; ;
-	}
-
 	$ret = array();
 	foreach ( $block['photo'] as $photo )
 	{
+		$href  = $href_base ;
+		$href .= $uri_class->build_relatevie_uri_mode_param( 'photo', $photo['item_id'] );
+
+		$cat_href  = $href_base ;
+		$cat_href .= $uri_class->build_relatevie_uri_mode_param( 'category', $photo['item_cat_id'] );
+
+		if ( $photo['img_thumb_width'] && $photo['img_thumb_height'] ) {
+			$img_attribs = 'width="'. $photo['img_thumb_width'] .'" height="'. $photo['img_thumb_height'] .'"';
+		} else {
+			$img_attribs = 'width="'. $block['cfg_thumb_width'] .'"'; ;
+		}
+
 		$ret[] = array(
 			'href'        => $href ,
 			'cat_href'    => $cat_href ,
