@@ -1,10 +1,16 @@
 <?php
-// $Id: timeline_init.php,v 1.1 2011/12/28 18:03:28 ohwada Exp $
+// $Id: timeline_init.php,v 1.2 2012/04/09 12:46:19 ohwada Exp $
 
 //=========================================================
 // webphoto module
 // 2011-12-25 K.OHWADA
 //=========================================================
+
+//---------------------------------------------------------
+// change log
+// 2012-04-09 K.OHWADA
+// Fatal error: Unsupported operand types
+//---------------------------------------------------------
 
 // === class begin ===
 if( !class_exists('webphoto_timeline_init') ) 
@@ -74,6 +80,11 @@ function get_scale_options( $flag_none=false )
 
 	$arr2 = $this->_timeline_class->get_scale_options();
 
+// Fatal error: Unsupported operand types
+	if ( !is_array($arr2) ) {
+		return false;
+	}
+	
 	if ( $flag_none ) {
 		$arr = $arr1 + $arr2 ;
 	} else {
