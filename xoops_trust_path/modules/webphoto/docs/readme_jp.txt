@@ -1,11 +1,24 @@
-$Id: readme_jp.txt,v 1.68 2011/12/28 16:16:15 ohwada Exp $
+$Id: readme_jp.txt,v 1.69 2012/10/05 12:56:30 ohwada Exp $
 
 =================================================
-Version: 2.60
+Version: 2.61
 Date:   2011-12-25
 Author: Kenichi OHWADA
 URL:    http://linux.ohwada.jp/
 Email:  webmaster@ohwada.jp
+=================================================
+
+写真や動画を管理するアルバム・モジュールです。
+
+● 主な変更
+1. バグ対策
+(1) 新規カテゴリー登録できない
+http://linux.ohwada.jp/modules/newbb/viewtopic.php?topic_id=1280&forum=13
+
+
+=================================================
+Version: 2.60
+Date:   2011-12-25
 =================================================
 
 写真や動画を管理するアルバム・モジュールです。
