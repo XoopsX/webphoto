@@ -1,0 +1,35 @@
+<{* $Id: form_video_thumb.html,v 1.2 2009/05/17 08:59:00 ohwada Exp $ *}>
+
+<{* === form === *}>
+<form name="webphoto_video_thumb" action="<{$action}>" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="fct" name="fct" value="<{$fct}>" />
+<input type="hidden" id="op" name="op" value="video" />
+<input type="hidden" id="mode" name="mode" value="<{$mode}>" />
+<input type="hidden" id="item_id" name="item_id" value="<{$item_id}>" />
+<input type="hidden" id="photo_id" name="photo_id" value="<{$item_id}>" />
+
+<{* === table === *}>
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center"><th colspan="<{$colspan_video_submit}>">
+<{$lang_title_video_thumb_sel}></th></tr>
+
+<tr>
+
+<{* video_thumb_array *}>
+<{foreach item=thumb from=$video_thumb_array}>
+  <td class="odd" align="center">
+  <img src="<{$thumb.src_s}>" width="<{$thumb.width}>" />
+  <br />
+  <input type="radio" name="num" value="<{$thumb.num}>" />
+  </td>
+<{/foreach}>
+
+</tr>
+
+<tr><td class="head" colspan="<{$colspan_video_submit}>" align="center">
+<input type="submit" id="webphoto_video_thumb_submit" name="submit" value="<{$lang_button_select}>" />
+</td></tr>
+</table>
+
+</form>

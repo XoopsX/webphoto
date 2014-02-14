@@ -1,0 +1,49 @@
+<{* $Id: inc_sort.html,v 1.2 2010/02/07 12:20:02 ohwada Exp $ *}>
+
+<div align="center">
+<{$lang_sort_sortby}> &nbsp; 
+
+<{$lang_sort_title}> (
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=titlea">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" /></a>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=titled">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
+</a> ) &nbsp; 
+
+<{$lang_sort_date}> (
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=datea">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
+</a>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=dated">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
+</a> ) &nbsp; 
+
+<{$lang_sort_hits}> (
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=hitsa">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
+</a>
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=hitsd">
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
+</a> ) &nbsp; 
+
+<{if $show_rateview }>
+  <{$lang_sort_rating}> (
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=ratinga">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
+  </a>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=ratingd">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
+  </a> ) 
+<{/if}>
+
+<{if $show_sort_random }>
+  <{$lang_sort_random}> (
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$param_sort}>sort=random">
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/up.png" border="0" align="middle" alt="up" />
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/down.png" border="0" align="middle" alt="down" />
+  </a> ) 
+<{/if}>
+
+<br />
+<b><{$lang_cursortedby}></b>
+</div>

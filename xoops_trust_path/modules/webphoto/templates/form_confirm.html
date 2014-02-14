@@ -1,0 +1,32 @@
+<{* $Id: form_confirm.html,v 1.3 2010/03/04 02:17:26 ohwada Exp $ *}>
+
+<h4><{$lang_title_photodel}></h4>
+<b><{$item_title_s}><b/><br />
+
+<{if ($thumb_src_s != '') && $thumb_width && $thumb_height }>
+  <img src="<{$thumb_src_s}>" alt="<{$item_title_s}>" border="0" width="<{$thumb_width}>" height="<{$thumb_height}>" />
+  <br />
+<{elseif ($thumb_src_s != '') }>
+  <img src="<{$thumb_src_s}>" alt="<{$item_title_s}>" border="0" width="<{$cfg_thumb_width}>" />
+  <br />
+<{/if}>
+
+<br />
+
+<{* === div === *}>
+<div style="background-color: #DDFFDF; color: #136C99; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px; ">
+<h4><{$lang_confirm_photodel}></h4>
+<{$lang_confirm_photodel_dsc}><br /><br />
+
+<{* === form === *}>
+<form name="webphoto_confirm" action="<{$action}>" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="fct" name="fct" value="<{$fct}>" />
+<input type="hidden" id="op" name="op" value="delete" />
+<input type="hidden" id="item_id" name="item_id" value="<{$item_id}>" />
+<input type="hidden" id="photo_id" name="photo_id" value="<{$item_id}>" />
+<input type="submit" id="webphoto_confirm_submit" name="confirm_submit" value="<{$lang_yes}>" />
+ &nbsp; 
+<input type="button" id="webphoto_confirm_cancel" name="confirm_cancel" value="<{$lang_no}>" onclick="javascript:history.go(-1);" />
+</form>
+</div>

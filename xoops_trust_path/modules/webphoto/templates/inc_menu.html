@@ -1,0 +1,210 @@
+<{* $Id: inc_menu.html,v 1.10 2010/02/07 12:20:02 ohwada Exp $ *}>
+
+<div class="webphoto_page_menu">
+
+<{* --- 1st line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/latest/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=latest">
+<{/if}>
+
+<{$lang_title_latest}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/popular/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=popular">
+<{/if}>
+
+<{$lang_title_popular}></a> | 
+
+<{if $show_rateview }>
+  <{if $cfg_use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/highrate/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=highrate">
+  <{/if}>
+
+  <{$lang_title_highrate}></a> | 
+<{/if}>
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/random/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=random">
+<{/if}>
+
+<{$lang_title_random}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/help/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=help">
+<{/if}>
+
+<{$lang_title_help}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/rss/" target="_blank">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=rss" target="_blank">
+<{/if}>
+
+<img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/rss.png" border="0" alt="<{$lang_title_rss}>" title="<{$lang_title_rss}>" />
+</a> | 
+
+<{if $has_insertable }>
+  <{if $cat_id > 0 }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit&amp;cat_id=<{$cat_id}>">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=submit">
+  <{/if}>
+
+  <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/images/icons/pictadd.png" border="0" alt="<{$lang_title_addphoto}>" title="<{$lang_title_addphoto}>" />
+  <{$lang_title_addphoto}>
+  </a> |
+<{/if}>
+
+</div>
+
+<{* --- 2nd line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/picture/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=picture">
+<{/if}>
+
+<{$lang_title_picture}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/video/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=video">
+<{/if}>
+
+<{$lang_title_video}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/audio/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=audio">
+<{/if}>
+
+<{$lang_title_audio}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/office/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=office">
+<{/if}>
+
+<{$lang_title_office}></a> | 
+
+<{if $xoops_isuser }>
+  <{if $cfg_use_pathinfo }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/myphoto/">
+  <{else}>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=myphoto">
+  <{/if}>
+
+  <{$lang_title_myphoto}></a> | 
+<{/if}>
+
+</div>
+
+<{* --- 3rd line --- *}>
+<{if $show_menu_map | $show_menu_timeline | $show_menu_mail || $show_menu_file }>
+  <div class="webphoto_page_menu_line">
+   | 
+
+  <{if $show_menu_map }>
+    <{if $cfg_use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/map/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=map">
+    <{/if}>
+    <{$lang_title_map}>
+    </a> |
+  <{/if}>
+
+  <{if $show_menu_timeline }>
+    <{if $cfg_use_pathinfo }>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/timeline/">
+    <{else}>
+      <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?op=timeline">
+    <{/if}>
+    <{$lang_title_timeline}>
+    </a> |
+  <{/if}>
+
+  <{if $show_menu_mail }>
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=mail_register">
+    <{$lang_title_mail_register}>
+    </a> |
+
+    <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=mail_retrieve">
+    <{$lang_title_mail_retrieve}>
+    </a> |
+  <{/if}>
+
+  </div>
+<{/if}>
+
+<{* --- 4th line --- *}>
+<div class="webphoto_page_menu_line">
+ | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/category/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=category">
+<{/if}>
+
+<{$lang_title_category_list}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/tag/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=tag">
+<{/if}>
+
+<{$lang_title_tag_list}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/user/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=user">
+<{/if}>
+
+<{$lang_title_user_list}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/date/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=date">
+<{/if}>
+
+<{$lang_title_date_list}></a> | 
+
+<{if $cfg_use_pathinfo }>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php/place/">
+<{else}>
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php?fct=place">
+<{/if}>
+
+<{$lang_title_place_list}></a> | 
+</div>
+
+<{* --- 5th line --- *}>
+<div class="webphoto_page_menu_line">
+<{$lang_thereare}> 
+</div>
+
+</div>

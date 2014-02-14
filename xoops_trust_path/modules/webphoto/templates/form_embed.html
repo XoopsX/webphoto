@@ -1,0 +1,30 @@
+<{* $Id: form_embed.html,v 1.2 2009/05/17 08:59:00 ohwada Exp $ *}>
+
+<{* === form === *}>
+<form name="webphoto_embed" action="<{$action}>" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="fct" name="fct" value="<{$fct}>" />
+<input type="hidden" id="op" name="op" value="submit_form" />
+<input type="hidden" id="type" name="type" value="embed" />
+<input type="hidden" id="form_embed" name="form_embed" value="1" />
+<input type="hidden" id="form_playlist" name="form_playlist" value="<{$form_playlist}>" />
+<input type="hidden" id="form_editor" name="form_editor" value="<{$form_editor}>" />
+<input type="hidden" id="item_editor" name="item_editor" value="<{$item_editor_s}>" />
+
+<{* === table === *}>
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center"><th colspan="2"><{$lang_embed_add}></th></tr>
+
+<{* item_embed_type *}>
+<tr><td class="head"><{$lang_item_embed_type}></td><td class="odd">
+<select id="item_embed_type" name="item_embed_type" size="1">
+<{$item_embed_type_select_options}>
+</select>
+</td></tr>
+
+<tr><td class="head"></td><td class="head">
+<input type="submit" id="webphoto_embed_submit" name="submit" value="<{$lang_button_select}>" />
+</td></tr>
+</table>
+
+</form>

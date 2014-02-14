@@ -1,0 +1,117 @@
+<{* $Id: form_admin_groupperm.html,v 1.3 2010/01/26 08:36:07 ohwada Exp $ *}>
+
+<form name="groupperm_form" id="groupperm_form" action="<{$action}>" method="post">
+<input type="hidden" name="modid" id="modid" value="<{$modid}>" />
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$g_ticket}>" />
+
+<{foreach item=h from=$hidden_list}>
+  <input type="hidden" name="<{$h.name}>" value="<{$h.value}>" />
+<{/foreach}>
+
+<{* --- outer table --- *}>
+<table class="outer" width="100%" cellspacing="1">
+<tr align="center"><th colspan="2"><{$lang_title_groupperm}></th></tr>
+
+<{* === group list === *}>
+<{foreach item=g from=$group_list}>
+<tr valign="top" align="left">
+<td class="head">
+
+<{* link to group manager *}>
+<{if $xoops_cube_legacy }>
+  <a href="<{$xoops_url}>/modules/user/admin/index.php?action=GroupProperty&groupid=<{$g.group_id}>">
+<{else}>
+  <a href="<{$xoops_url}>/modules/system/admin.php?fct=groups&op=modify&g_id=<{$g.group_id}>">
+<{/if}>
+
+<{$g.group_name}>
+</a><br /><br />
+
+<{if $g.mod_right_name != "" }>
+   ( <{$g.mod_right_name}> ) <br />
+<{/if}>
+
+<{if $g.cat_id > 0}>
+  <{$lang_group_mod_category}> <br />
+  (
+  <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/admin/index.php?fct=catmanager&disp=edit&cat_id=<{$g.cat_id}>">
+  <{$g.cat_title}>
+  </a> ) <br />
+<{/if}>
+
+</td>
+<td class="even">
+
+<{* --- module table --- *}>
+<table class="outer">
+
+<td class="odd">
+<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_read][<{$modid}>]" value="1" <{$g.module_read_checked}>" ><{$lang_gperm_module_read}> 
+<input type="hidden" name="perms[parents][module_read][<{$modid}>]" value="" />
+<input type="hidden" name="perms[itemname][module_read][<{$modid}>]" value="<{$lang_gperm_module_read}>" /><br />
+</td>
+
+<td class="odd">
+<input type="checkbox" name="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" id="perms[groups][<{$g.group_id}>][module_admin][<{$modid}>]" value="1" <{$g.module_admin_checked}>" ><{$lang_gperm_module_admin}> 
+<input type="hidden" name="perms[parents][module_admin][<{$modid}>]" value="" />
+<input type="hidden" name="perms[itemname][module_admin][<{$modid}>]" value="<{$lang_gperm_module_admin}>" /><br />
+</td>
+
+</table>
+<{* --- module table end --- *}>
+
+<{* --- item table --- *}>
+<table class="outer">
+
+<{* --- item list --- *}>
+<{foreach item=i from=$g.item_list name=item_list key=count }>
+
+<{* -- table line start -- *}>
+  <{if $smarty.foreach.item_list.iteration mod $cols == 1}>
+    <tr>
+  <{/if}>
+
+  <td class="odd">
+  <input type="checkbox" name="perms[groups][<{$g.group_id}>][<{$g.perm_name}>][<{$i.item_id}>]" id="perms[groups][<{$g.group_id}>][<{$g.perm_name}>][<{$i.item_id}>]" value="1" <{$i.checked}>" ><{$i.item_name}> 
+  <input type="hidden" name="perms[parents][<{$g.perm_name}>][<{$i.item_id}>]" value="" />
+  <input type="hidden" name="perms[itemname][<{$g.perm_name}>][<{$i.item_id}>]" value="<{$i.item_name}>" /><br />
+  </td>
+
+<{* -- table line end -- *}>
+  <{if ($smarty.foreach.item_list.iteration is div by $cols) || $smarty.foreach.item_list.last}>
+    </tr>
+  <{/if}>
+
+<{/foreach}>
+<{* --- item list end --- *}>
+
+</table>
+<{* --- item table end --- *}>
+
+</td></tr>
+<{/foreach}>
+<{* --- group list end --- *}>
+
+<{* === onclick === *}>
+<tr valign="top" align="left"><td class="head">&nbsp;</td>
+<td class="even">
+ &nbsp; 
+<input type="button" class="formButton" name="none" id="none" value="<{$lang_none}>" onclick="with(document.groupperm_form){for(i=0;i<length;i++){if(elements[i].type=='checkbox'){elements[i].checked=false;}}}" />
+ &nbsp; 
+<input type="button" class="formButton" name="all" id="all" value="<{$lang_all}>" onclick="with(document.groupperm_form){for(i=0;i<length;i++){if(elements[i].type=='checkbox' &amp;&amp; (elements[i].name.indexOf(module_admin)<0 || elements[i].name.indexOf('[groups][1]')>=0)){elements[i].checked=true;}}}" />
+</td></tr>
+
+<{* === submit === *}>
+<tr valign="top" align="left"><td class="head">&nbsp;</td>
+<td class="even"> 
+ &nbsp; 
+<input type="reset" class="formButton" name="reset" id="reset" value="<{$lang_cancel}>" />
+ &nbsp; 
+<input type="submit" class="formButton" name="submit" id="submit" value="<{$lang_submit}>" />
+</td></tr>
+
+</table>
+<{* --- outer table end --- *}>
+
+</form>
+<{* --- form end --- *}>

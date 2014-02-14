@@ -1,0 +1,32 @@
+<{* $Id: form_editor.html,v 1.2 2009/05/17 08:59:00 ohwada Exp $ *}>
+
+<{* === form === *}>
+<form name="webphoto_editor" action="<{$action}>" method="post">
+<input type="hidden" name="XOOPS_G_TICKET" value="<{$xoops_g_ticket}>" />
+<input type="hidden" id="fct" name="fct" value="<{$fct}>" />
+<input type="hidden" id="op" name="op" value="<{$op_editor}>" />
+<input type="hidden" id="form_editor" name="form_editor" value="1" />
+<input type="hidden" id="form_embed" name="form_embed" value="<{$form_embed}>" />
+<input type="hidden" id="form_playlist" name="form_playlist" value="<{$form_playlist}>" />
+<input type="hidden" id="item_id" name="item_id" value="<{$item_id}>" />
+<input type="hidden" id="item_kind" name="item_kind" value="<{$item_kind}>" />
+<input type="hidden" id="item_embed_type" name="item_embed_type" value="<{$item_embed_type_s}>" />
+<input type="hidden" id="item_playlist_type" name="item_playlist_type" value="<{$item_playlist_type}>" /> 
+
+<{* === table === *}>
+<table class="outer" cellpadding="4" cellspacing="1" width="100%">
+<tr align="center"><th colspan="2"><{$lang_title_editor_select}></th></tr>
+
+<{* item_editor *}>
+<tr><td class="head"><{$lang_item_editor}></td><td class="odd">
+<select id="item_editor" name="item_editor" size="1">
+<{$item_editor_select_options}>
+</select>
+</td></tr>
+
+<tr><td class="head"></td><td class="head">
+<input type="submit" id="webphoto_editor_submit" name="submit" value="<{$lang_button_select}>" />
+</td></tr>
+</table>
+
+</form>

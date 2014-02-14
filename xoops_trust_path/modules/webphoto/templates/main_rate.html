@@ -1,0 +1,53 @@
+<{* $Id: main_rate.html,v 1.2 2008/12/10 19:08:57 ohwada Exp $ *}>
+
+<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
+<{$xoops_modulename}></a>
+ &gt;&gt; 
+<{$lang_votethis}>
+<br /><br />
+
+<div align="center">
+  <{if $photo.img_thumb_width && $photo.img_thumb_height }>
+    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" border="0" width="<{$photo.img_thumb_width}>" height="<{$photo.img_thumb_height}>" />
+  <{else}>
+    <img src="<{$photo.img_thumb_src_s}>" alt="<{$photo.title_s}>" border="0" width="<{$cfg_thumb_width}>" />
+  <{/if}>
+  <br />
+  <h4><{$photo.title_s}></h4>
+</div>
+
+<div align="left">
+  <ul>
+  <li><{$lang_rate_donotvote}></li>
+  <li><{$lang_rate_voteonce}></li>
+  <li><{$lang_rate_ratingscale}></li>
+  <li><{$lang_rate_beobjective}></li>
+  </ul>
+</div><br />
+
+<div align="center">
+<table border="0"><tr><td align="left">
+  <form method="post" action="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php">
+  <input type="hidden" name="<{$token_name}>" value="<{$token_value}>" />
+  <input type="hidden" name="fct" value="rate" />
+  <input type="hidden" name="photo_id" value="<{$photo.photo_id}>" />
+  <{if $select_type == 'radio' }>
+    <{foreach from=$rating_options item=option }>
+      <input type="radio" name="rating" value="<{$option.value}>" />
+        <{$option.name}> <{$radio_delmita}>
+    <{/foreach}>
+  <{else}>
+    <select name="rating">
+    <option>--</option>
+    <{foreach from=$rating_options item=option }>
+      <option value="<{$option.value}>"><{$option.name}></option>
+    <{/foreach}>
+    </select>
+  <{/if}>
+  <{$select_delmita}>
+  <input type="submit" name="submit" value="<{$lang_rate_it}>" />
+  <input type=button value="<{$lang_cancel}>" onclick="history.back();" />
+  </form>
+  </td></tr></table>
+</div>
+<br />
