@@ -41,9 +41,11 @@ function &getInstance()
 //---------------------------------------------------------
 function build_server()
 {
+	$db = XoopsDatabaseFactory::getDatabaseConnection();
+	$get_server_info = (is_object($db->conn) && get_class($db->conn) === 'mysqli')? 'mysqli_get_server_info' : 'mysql_get_server_info';
 	$str  = "OS: ". php_uname() ."<br />\n"; 
 	$str .= "PHP: ". PHP_VERSION ."<br />\n"; 
-	$str .= "MySQL: ". mysql_get_server_info() ."<br />\n"; 
+	$str .= "MySQL: ". $get_server_info($db->conn) ."<br />\n"; 
 	$str .= "XOOPS: ". XOOPS_VERSION ."<br />\n"; 
 	return $str;
 }
