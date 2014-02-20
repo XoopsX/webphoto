@@ -151,6 +151,8 @@ function webphoto_edit_submit( $dirname , $trust_dirname )
 	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 
 	$this->_FILE_KIND_NAME_LIST = explode( '|', _C_WEBPHOTO_FILE_KIND_NAME_LIST );
+	
+	$this->_photo_form_class->set_has_html($this->_has_html);
 }
 
 // for admin_photo_manage admin_catmanager

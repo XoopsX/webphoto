@@ -91,6 +91,7 @@ class webphoto_edit_photo_form extends webphoto_edit_form
 	var $_has_image_resize;
 	var $_has_image_rotate;
 	var $_allowed_exts;
+	var $_has_html;
 
 	var $_ini_file_list = null;
 
@@ -178,6 +179,11 @@ function set_flag_admin( $val )
 {
 	$this->_flag_admin = (bool)$val;
 	$this->_use_item_class->set_flag_admin( $val );
+}
+
+function set_has_html( $val )
+{
+	$this->_has_html = (bool)$val ;
 }
 
 //---------------------------------------------------------
@@ -502,6 +508,8 @@ function build_form_common( $is_edit )
 		'item_description_image_checked'  => $this->build_row_checked( 'item_description_image' ),
 		'item_description_br_checked'     => $this->build_row_checked( 'item_description_br' ),
 		'item_datetime_checkbox_checked'  => $this->build_checkbox_checked( 'item_datetime_checkbox' ) ,
+
+		'has_html' => $this->_has_html,
 
 		'photo_url_s'   => $this->sanitize( $photo_url ), 
 		'jpeg_url_s'    => $this->sanitize( $jpeg_url ), 

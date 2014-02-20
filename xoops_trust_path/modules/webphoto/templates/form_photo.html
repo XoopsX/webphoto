@@ -180,8 +180,8 @@ function webphoto_gmap_disp_on()
 <{* item description options *}>
 <{if $show_desc_options }>
   <tr><td class="head" width="20%"><{$lang_cap_description_option}></td><td class="odd">
-  <input type="checkbox" id="item_description_html" name="item_description_html" value="1" <{$item_description_html_checked}> />
-  <{$lang_cap_html}><br />
+  <{if $has_html}><input type="checkbox" id="item_description_html" name="item_description_html" value="1" <{$item_description_html_checked}> />
+  <{$lang_cap_html}><br /><{else}><input type="hidden" id="item_description_html" name="item_description_html" value="<{if $item_description_html_checked}>1<{else}>0<{/if}>" /><{/if}>
   <input type="checkbox" id="item_description_smiley" name="item_description_smiley" value="1" <{$item_description_smiley_checked}> />
   <{$lang_cap_smiley}><br />
   <input type="checkbox" id="item_description_xcode" name="item_description_xcode" value="1" <{$item_description_xcode_checked}> />
