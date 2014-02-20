@@ -63,7 +63,7 @@ define("_B_WEBPHOTO_GPERM_MAIL",            4096 ) ;
 define("_B_WEBPHOTO_GPERM_FILE",            8192 ) ;
 
 // v1.00
-define("_B_WEBPHOTO_GPERM_HTML",           16368 ) ;
+define("_B_WEBPHOTO_GPERM_HTML",           16384 ) ;
 
 define("_C_WEBPHOTO_GPERM_NAME", "webphoto" ) ;
 
