@@ -29,7 +29,7 @@ function exists()
 	return true ;
 }
 
-function build_textarea( $id, $name, $value, $rows, $cols )
+function build_textarea( $id, $name, $value, $rows, $cols, $item_row )
 {
 	$str  = '<textarea id="'.$id.'" name="'.$name.'" rows="'.$rows.'" cols="'.$cols.'" >';
 	$str .= $this->sanitize($value);

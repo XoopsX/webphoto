@@ -292,7 +292,7 @@ function build_form_photo( $item_row )
 
 	$item_row = $this->set_default_item_row( $item_row );
 	$this->set_row( $item_row );
-	$this->init_editor();
+	$this->init_editor( $item_row );
 
 	switch ($mode)
 	{
@@ -1096,7 +1096,7 @@ function show_gmap()
 //---------------------------------------------------------
 // editor
 //---------------------------------------------------------
-function init_editor()
+function init_editor($item_row)
 {
 	$name1  = 'item_description';
 	$name2  = 'item_editor';
@@ -1105,7 +1105,8 @@ function init_editor()
 	$arr    = $this->_editor_class->init_form( 
 		$editor, $name1, $name1, $value1, 
 		$this->get_ini('submit_item_description_rows'), 
-		$this->get_ini('submit_item_description_cols') );
+		$this->get_ini('submit_item_description_cols'),
+		$item_row );
 
 	if ( is_array($arr) ) {
 		$this->_editor_show = $arr['show'];

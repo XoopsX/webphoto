@@ -204,7 +204,7 @@ function build_form_admin_by_files( $mode, $files )
 
 	$this->set_flag_admin( true );
 	$this->set_row( $item_row );
-	$this->init_editor();
+	$this->init_editor( $item_row );
 
 	$show_valid = $this->show_valid();
 	if ( $show_valid ) {

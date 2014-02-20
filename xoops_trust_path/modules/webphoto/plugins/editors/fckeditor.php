@@ -60,7 +60,7 @@ function fckeditor_exec( instanceName ) {
 	return $str;
 }
 
-function build_textarea( $id, $name, $value, $rows, $cols )
+function build_textarea( $id, $name, $value, $rows, $cols, $item_row )
 {
 	$str  = '<textarea id="'. $id .'" name="'. $name .'">'. $value .'</textarea>';
 	$str .= '<script>fckeditor_exec("'. $id .'");</script>' ;

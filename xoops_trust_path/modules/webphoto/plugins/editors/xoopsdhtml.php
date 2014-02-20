@@ -21,6 +21,7 @@ class webphoto_editor_xoopsdhtml extends webphoto_editor_base
 {
 	var $_caption    = '';
 	var $_hiddentext = 'xoopsHiddenText' ;
+	private $isXCL22;
 
 function webphoto_editor_xoopsdhtml()
 {
@@ -33,6 +34,24 @@ function webphoto_editor_xoopsdhtml()
 	$this->set_display_xcode(  1 ) ;
 	$this->set_display_image(  1 ) ;
 	$this->set_display_br(     1 ) ;
+	
+	$this->isXCL22 = (defined('LEGACY_BASE_VERSION') && version_compare(LEGACY_BASE_VERSION, '2.2.0.0', '>='));
+}
+
+function display_options($has_html)
+{
+	if ($this->isXCL22) {
+		$arr = array(
+			'html'   => $has_html? 1 : 0,
+			'smiley' => $has_html? 0 : 1,
+			'xcode'  => $has_html? 0 : 1,
+			'image'  => $has_html? 0 : 1,
+			'br'     => $has_html? 0 : 1
+		);
+		return $arr;
+	} else {
+		return parent::display_options($has_html);
+	}
 }
 
 function exists()
@@ -40,11 +59,33 @@ function exists()
 	return true ;
 }
 
-function build_textarea( $id, $name, $value, $rows, $cols )
+function build_textarea( $id, $name, $value, $rows, $cols, $item_row )
 {
-	$ele  = new XoopsFormDhtmlTextArea( 
-		$this->_caption, $name, $value, $rows, $cols, $this->_hiddentext );
-	return $ele->render();
+	if ($this->isXCL22) {
+		$params = array();
+		$params['class'] = $params['editor'] =  $item_row['item_description_html']? 'html' : 'bbcode';
+		$params['name'] = trim($name);
+		$params['cols'] = $cols ? intval($cols) : 50;
+		$params['rows'] = $rows ? intval($rows) : 5;
+		$params['value'] = $value ? $value : null;
+		$params['id'] = $id ? trim($id) : 'legacy_xoopsform_' . $params['name'];
+		
+		$html = "";
+		switch($params['editor']){
+			case 'html':
+				XCube_DelegateUtils::call("Site.TextareaEditor.HTML.Show", new XCube_Ref($html), $params);
+				break;
+			default:
+				XCube_DelegateUtils::call("Site.TextareaEditor.BBCode.Show", new XCube_Ref($html), $params);
+				break;
+		}
+		return $html;
+		
+	} else {
+		$ele  = new XoopsFormDhtmlTextArea( 
+			$this->_caption, $name, $value, $rows, $cols, $this->_hiddentext );
+		return $ele->render();
+	}
 }
 
 // --- class end ---

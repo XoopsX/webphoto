@@ -202,7 +202,7 @@ function create_item_row_default()
 	$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_NO );
 
 // description option
-	$options = $this->_editor_class->display_options( $row['item_editor'] );
+	$options = $this->_editor_class->display_options( $row['item_editor'], $this->_has_html );
 
 	if ( is_array($options) ) {
 		$row['item_description_smiley'] = $options['smiley']  ;

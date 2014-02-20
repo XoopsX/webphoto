@@ -48,7 +48,7 @@ function &getInstance( $dirname, $trust_dirname )
 //---------------------------------------------------------
 // editor
 //---------------------------------------------------------
-function display_options( $type )
+function display_options( $type, $has_html )
 {
 	if ( empty($type ) ) {
 		$type = $this->get_ini('item_editor_default') ;
@@ -58,10 +58,10 @@ function display_options( $type )
 	if ( ! is_object($class) ) {
 		return false;
 	}
-	return $class->display_options();
+	return $class->display_options($has_html);
 }
 
-function init_form( $type, $id, $name, $value, $rows, $cols )
+function init_form( $type, $id, $name, $value, $rows, $cols, $item_row  )
 {
 	$class =& $this->get_class_object( $type );
 	if ( ! is_object($class) ) {
@@ -71,7 +71,7 @@ function init_form( $type, $id, $name, $value, $rows, $cols )
 	$arr = array(
 		'js'   => $class->build_js() ,
 		'show' => $class->show_display_options() ,
-		'desc' => $class->build_textarea( $id, $name, $value, $rows, $cols ) ,
+		'desc' => $class->build_textarea( $id, $name, $value, $rows, $cols, $item_row ) ,
 	);
 	return $arr;
 }

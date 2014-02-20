@@ -395,7 +395,7 @@ function build_submit_default_row()
 // set checked
 	$this->set_checkbox_by_name( 'item_datetime_checkbox', _C_WEBPHOTO_NO );
 
-	$options = $this->_editor_class->display_options( $this->_item_editor );
+	$options = $this->_editor_class->display_options( $this->_item_editor, $this->_has_html );
 
 	$row['item_embed_type']     = $this->_item_embed_type;
 	$row['item_playlist_type']  = $this->_item_playlist_type;

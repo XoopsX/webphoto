@@ -74,10 +74,10 @@ function show_display_options()
 	return $this->_show_display_options; 
 }
 
-function display_options()
+function display_options($has_html)
 {
 	$arr = array( 
-		'html'   => $this->_display_html, 
+		'html'   => $has_html? $this->_display_html : 0, 
 		'smiley' => $this->_display_smiley, 
 		'xcode'  => $this->_display_xcode, 
 		'image'  => $this->_display_image, 
@@ -96,7 +96,7 @@ function build_js()
 	return null;
 }
 
-function build_textarea( $id, $name, $value, $rows, $cols )
+function build_textarea( $id, $name, $value, $rows, $cols, $has_html, $item_row )
 {
 	return null;
 }
