@@ -135,20 +135,23 @@ function get_my_item_kind_group_array( $limit=0, $offset=0 )
 	$ext_array = $this->get_my_item_kind_group_array_groupby_item_kind( $limit, $offset );
 
 	$arr = array();
-	foreach ( $ext_array as $k => $v )
-	{
-		if ( !is_array($v) || !count($v) ) {
-			continue;
+	
+	if ($ext_array) {
+		foreach ( $ext_array as $k => $v )
+		{
+			if ( !is_array($v) || !count($v) ) {
+				continue;
+			}
+	
+			$kind = $this->build_item_kind_group( $k );
+			if ( isset( $arr[ $kind ] ) ) {
+				$arr[ $kind ] = array_merge( $arr[ $kind ] , $v );
+			} else {
+				$arr[ $kind ] = $v;
+			}
 		}
-
-		$kind = $this->build_item_kind_group( $k );
-		if ( isset( $arr[ $kind ] ) ) {
-			$arr[ $kind ] = array_merge( $arr[ $kind ] , $v );
-		} else {
-			$arr[ $kind ] = $v;
-		}
+		ksort( $arr, SORT_NUMERIC );
 	}
-	ksort( $arr, SORT_NUMERIC );
 	return $arr;
 }
 
