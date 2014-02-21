@@ -44,6 +44,7 @@ webphoto_include_once( 'class/lib/file_log.php',  $MY_DIRNAME );
 webphoto_include_once( 'class/inc/gperm_def.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/group.php',     $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_item.php', $MY_DIRNAME );
+webphoto_include_once( 'class/inc/oninstall_cat.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_mime.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall_flashvar.php', $MY_DIRNAME );
 webphoto_include_once( 'class/inc/oninstall.php', $MY_DIRNAME );
