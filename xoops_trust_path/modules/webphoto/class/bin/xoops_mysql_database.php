@@ -77,7 +77,7 @@ function fetchArray($result)
 
 function fetchBoth($result)
 {
-	return @mysqli_fetch_array( $result, MYSQL_BOTH );
+	return @mysqli_fetch_array( $result, MYSQLI_BOTH );
 }
 
 function getInsertId()
