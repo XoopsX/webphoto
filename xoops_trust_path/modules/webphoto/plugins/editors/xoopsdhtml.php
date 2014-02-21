@@ -61,31 +61,12 @@ function exists()
 
 function build_textarea( $id, $name, $value, $rows, $cols, $item_row )
 {
+	$ele  = new XoopsFormDhtmlTextArea( 
+		$this->_caption, $name, $value, $rows, $cols, $this->_hiddentext );
 	if ($this->isXCL22) {
-		$params = array();
-		$params['class'] = $params['editor'] =  $item_row['item_description_html']? 'html' : 'bbcode';
-		$params['name'] = trim($name);
-		$params['cols'] = $cols ? intval($cols) : 50;
-		$params['rows'] = $rows ? intval($rows) : 5;
-		$params['value'] = $value ? $value : null;
-		$params['id'] = $id ? trim($id) : 'legacy_xoopsform_' . $params['name'];
-		
-		$html = "";
-		switch($params['editor']){
-			case 'html':
-				XCube_DelegateUtils::call("Site.TextareaEditor.HTML.Show", new XCube_Ref($html), $params);
-				break;
-			default:
-				XCube_DelegateUtils::call("Site.TextareaEditor.BBCode.Show", new XCube_Ref($html), $params);
-				break;
-		}
-		return $html;
-		
-	} else {
-		$ele  = new XoopsFormDhtmlTextArea( 
-			$this->_caption, $name, $value, $rows, $cols, $this->_hiddentext );
-		return $ele->render();
+		$ele->setEditor($item_row['item_description_html']? 'HTML' : 'BBCode');
 	}
+	return $ele->render();
 }
 
 // --- class end ---
