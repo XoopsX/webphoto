@@ -194,7 +194,7 @@ function build_page_list( $mode )
 	$this->set_tpl_photo_list( $photo_list );
 	$this->set_tpl_error( $error );
 	$this->set_tpl_category_photo_list( $category_photo_list );
-	$this->set_tpl_timeline_with_check( $mode, $this->_cat_id, $photo_rows );
+	$this->set_tpl_timeline_with_check( array('mode' => $mode, 'cat_id' => $this->_cat_id, 'rows' => $photo_rows) );
 	$this->set_tpl_tagcloud_with_check( $this->_ini_tagcloud_list_limit );
 
 	$this->set_tpl_show_js_windows();
