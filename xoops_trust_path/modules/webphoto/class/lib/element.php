@@ -264,6 +264,9 @@ function substitute_empty( $str, $substitute='---' )
 function build_form_dhtml( $name, $value, $rows=5, $cols=50, $hiddentext='xoopsHiddenText' )
 {
 	$ele  = new XoopsFormDhtmlTextArea( '', $name, $value, $rows, $cols, $hiddentext );
+	if ( defined('LEGACY_BASE_VERSION') && version_compare(LEGACY_BASE_VERSION, '2.2.2.1', '>=') ) {
+		$ele->setEditor('bbcode');
+	}
 	$text = $ele->render();
 	return $text;
 }
