@@ -76,7 +76,7 @@ function main()
 	echo "</a><br /><br />\n";
 
 	echo '- Older than v2.00 <br />';
-	echo '  Please download packages from <a href="http://sourceforge.jp/projects/xoops4u/releases/?package_id=7795" target="_blank"><span style="font-size: 120%; font-weight: bold;">sourceforge.jp</span></a> <br />';
+	echo '  Please download packages from <a href="https://github.com/XoopsX/webphoto" target="_blank"><span style="font-size: 120%; font-weight: bold;">GitHub</span></a> <br />';
 	echo '  and version up step by step, <br />';
 	echo '  if you use the version older than v2.00. <br />';
 
