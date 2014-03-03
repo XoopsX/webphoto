@@ -35,7 +35,7 @@ function webphoto_editor_xoopsdhtml()
 	$this->set_display_image(  1 ) ;
 	$this->set_display_br(     1 ) ;
 	
-	$this->isXCL22 = (defined('LEGACY_BASE_VERSION') && version_compare(LEGACY_BASE_VERSION, '2.2.0.0', '>='));
+	$this->isXCL22 = (defined('LEGACY_BASE_VERSION') && version_compare(LEGACY_BASE_VERSION, '2.2.2.1', '>='));
 }
 
 function display_options($has_html)
