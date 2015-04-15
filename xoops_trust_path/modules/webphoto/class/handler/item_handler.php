@@ -818,13 +818,13 @@ function build_show_description_disp( $row )
 		$br     = 1 ;
 	}
 
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $text, $html, $smiley, $xcode, $image, $br );
 }
 
 function build_show_exif_disp( $row )
 {
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['item_exif'] , 0 , 0 , 0 , 0 , 1 );
 }
 

@@ -397,7 +397,7 @@ function build_item_description( $row )
 		$br     = 1 ;
 	}
 
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $text, $html, $smiley, $xcode, $image, $br );
 }
 

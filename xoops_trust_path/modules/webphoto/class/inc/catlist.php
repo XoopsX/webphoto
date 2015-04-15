@@ -65,7 +65,7 @@ function webphoto_inc_catlist( $dirname , $trust_dirname )
 	$this->_xoops_tree_handler = new XoopsTree( 
 		$this->_table_cat, $this->_CAT_ID_NAME, 'cat_pid' ) ;
 
-	$this->_myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $this->_myts =& MyTextSanitizer::sGetInstance()) || $this->_myts =& MyTextSanitizer::getInstance();
 
 	$this->_multibyte_class =& webphoto_lib_multibyte::getInstance();
 

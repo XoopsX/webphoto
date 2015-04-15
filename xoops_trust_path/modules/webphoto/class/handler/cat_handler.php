@@ -384,7 +384,7 @@ function is_cached_public_read_in_all_parents_by_id( $id )
 //---------------------------------------------------------
 function build_show_desc_disp( $row )
 {
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['cat_description'] , 0 , 1 , 1 , 1 , 1 , 1 );
 }
 

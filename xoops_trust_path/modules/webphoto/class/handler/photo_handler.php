@@ -882,13 +882,13 @@ function build_datetime( $str )
 //---------------------------------------------------------
 function build_show_description_disp( $row )
 {
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['photo_description'] , 0 , 1 , 1 , 1 , 1  );
 }
 
 function build_show_cont_exif_disp( $row )
 {
-	$myts =& MyTextSanitizer::getInstance();
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextSanitizer::getInstance();
 	return $myts->displayTarea( $row['photo_cont_exif'] , 0 , 0 , 0 , 0 , 1 );
 }
 

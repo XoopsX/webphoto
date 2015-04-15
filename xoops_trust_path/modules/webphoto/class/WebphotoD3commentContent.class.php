@@ -21,7 +21,7 @@ function fetchSummary( $link_id )
 	if ( preg_match( '/[^0-9a-zA-Z_-]/' , $mydirname ) ) die( 'Invalid mydirname' ) ;
 
 	$db =& Database::getInstance() ;
-	$myts =& MyTextsanitizer::getInstance() ;
+	(method_exists('MyTextSanitizer', 'sGetInstance') and $myts =& MyTextSanitizer::sGetInstance()) || $myts =& MyTextsanitizer::getInstance() ;
 
 	$module_handler =& xoops_gethandler( 'module' ) ;
 	$module =& $module_handler->getByDirname( $mydirname ) ;
