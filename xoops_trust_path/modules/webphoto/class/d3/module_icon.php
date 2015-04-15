@@ -28,7 +28,7 @@ function webphoto_d3_module_icon()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

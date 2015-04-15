@@ -96,7 +96,7 @@ function webphoto_playlist( $dirname , $trust_dirname )
 	$this->_SWFOBJECT_EXTS = explode( '|', _C_WEBPHOTO_SWFOBJECT_EXTS ) ;
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

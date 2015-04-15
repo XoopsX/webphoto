@@ -39,7 +39,7 @@ function webphoto_date( $dirname , $trust_dirname )
 		=& webphoto_photo_public::getInstance( $dirname, $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -34,7 +34,7 @@ function webphoto_cat_selbox()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

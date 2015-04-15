@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------
 // http://code.google.com/intl/en/apis/maps/documentation/staticmaps/
-// N903i 240Å~270
+// N903i 240ÔøΩ~270
 //---------------------------------------------------------
 
 if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
@@ -33,7 +33,7 @@ function webphoto_lib_staticmap()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

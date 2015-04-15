@@ -35,7 +35,7 @@ function webphoto_edit_icon_build( $dirname )
 	$this->_ROOT_EXTS_DIR = $this->_MODULE_DIR .'/images/exts';
 }
 
-function &getInstance( $dirname )
+public static function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

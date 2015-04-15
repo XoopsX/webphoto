@@ -98,7 +98,7 @@ function webphoto_lib_element()
 	$this->_THIS_URL = xoops_getenv('PHP_SELF');
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

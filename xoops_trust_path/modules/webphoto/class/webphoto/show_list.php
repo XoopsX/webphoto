@@ -48,7 +48,7 @@ function webphoto_show_list( $dirname , $trust_dirname )
 	$this->webphoto_show_main_photo( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

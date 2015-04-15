@@ -40,7 +40,7 @@ function webphoto_photo_handler( $dirname )
 
 }
 
-function &getInstance( $dirname )
+public static function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

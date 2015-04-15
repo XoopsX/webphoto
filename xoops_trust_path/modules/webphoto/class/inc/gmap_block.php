@@ -31,7 +31,7 @@ function webphoto_inc_gmap_block( $dirname )
 	$this->_header_class =& webphoto_inc_xoops_header::getSingleton( $dirname );
 }
 
-function &getSingleton( $dirname )
+public static function &getSingleton( $dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

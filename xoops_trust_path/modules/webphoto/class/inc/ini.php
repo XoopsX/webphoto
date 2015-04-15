@@ -42,7 +42,7 @@ function webphoto_inc_ini( $dirname , $trust_dirname )
 	$this->set_debug_read_by_const_name( $constpref.'DEBUG_READ' );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

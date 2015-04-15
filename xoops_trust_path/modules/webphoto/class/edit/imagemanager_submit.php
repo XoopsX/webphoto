@@ -114,7 +114,7 @@ function webphoto_edit_imagemanager_submit( $dirname , $trust_dirname )
 }
 
 // for admin_photo_manage admin_catmanager
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

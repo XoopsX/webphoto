@@ -56,7 +56,7 @@ function webphoto_admin_update_130( $dirname , $trust_dirname )
 	$this->preload_constant();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -70,7 +70,7 @@ function webphoto_admin_photo_form( $dirname , $trust_dirname )
 	$this->preload_init();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

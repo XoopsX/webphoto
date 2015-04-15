@@ -72,7 +72,7 @@ function webphoto_admin_checktables( $dirname, $trust_dirname )
 	$this->_xoops_comments_handler =& webphoto_xoops_comments_handler::getInstance();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

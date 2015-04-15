@@ -46,7 +46,7 @@ function webphoto_admin_batch( $dirname , $trust_dirname )
 	$this->_factory_create_class->set_flag_print_first_msg( true );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -34,7 +34,7 @@ function webphoto_lib_mail_pop()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -26,7 +26,7 @@ function webphoto_lib_mysql_utility()
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

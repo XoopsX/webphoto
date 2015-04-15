@@ -28,7 +28,7 @@ function webphoto_edit_docomo_create( $dirname , $trust_dirname )
 	$this->webphoto_edit_base_create( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

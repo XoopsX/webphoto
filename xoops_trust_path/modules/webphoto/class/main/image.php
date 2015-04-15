@@ -35,7 +35,7 @@ function webphoto_main_image( $dirname, $trust_dirname )
 	$this->_kind_class =& webphoto_kind::getInstance();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

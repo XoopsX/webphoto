@@ -44,7 +44,7 @@ function webphoto_lib_imagemagick()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

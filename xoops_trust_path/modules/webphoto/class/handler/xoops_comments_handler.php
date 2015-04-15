@@ -28,7 +28,7 @@ function webphoto_xoops_comments_handler()
 
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

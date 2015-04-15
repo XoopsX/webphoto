@@ -72,7 +72,7 @@ function webphoto_inc_catlist( $dirname , $trust_dirname )
 	$this->_CATS_URL = XOOPS_URL . $this->_cfg_uploadspath .'/categories' ;
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

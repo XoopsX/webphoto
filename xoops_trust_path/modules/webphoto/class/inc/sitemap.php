@@ -39,7 +39,7 @@ function webphoto_inc_sitemap( $dirname , $trust_dirname )
 	$this->_uri_class =& webphoto_inc_uri::getSingleton( $dirname );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

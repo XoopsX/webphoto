@@ -32,7 +32,7 @@ function webphoto_multibyte()
 	$this->set_ja_comma(   _WEBPHOTO_JA_COMMA );
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

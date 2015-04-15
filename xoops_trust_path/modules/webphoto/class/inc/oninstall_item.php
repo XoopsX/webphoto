@@ -27,7 +27,7 @@ function webphoto_inc_oninstall_item( $dirname , $trust_dirname )
 	$this->_table_item   = $this->prefix_dirname( 'item' );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

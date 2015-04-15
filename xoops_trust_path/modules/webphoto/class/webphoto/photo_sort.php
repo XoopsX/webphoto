@@ -80,7 +80,7 @@ function webphoto_photo_sort( $dirname, $trust_dirname )
 	$this->_PHOTO_KIND_ARRAY   = array_keys( $this->_KIND_TO_NAME_ARRAY );
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

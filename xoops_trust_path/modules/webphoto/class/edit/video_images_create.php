@@ -26,7 +26,7 @@ function webphoto_edit_video_images_create( $dirname , $trust_dirname )
 		=& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

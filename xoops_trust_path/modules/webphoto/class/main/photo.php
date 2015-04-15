@@ -63,7 +63,7 @@ function webphoto_main_photo( $dirname , $trust_dirname )
 	$this->webphoto_factory( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

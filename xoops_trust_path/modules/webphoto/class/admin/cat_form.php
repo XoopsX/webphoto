@@ -82,7 +82,7 @@ function webphoto_admin_cat_form( $dirname , $trust_dirname )
 	$this->_ini_use_cat_group_id = $this->get_ini('use_cat_group_id');
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

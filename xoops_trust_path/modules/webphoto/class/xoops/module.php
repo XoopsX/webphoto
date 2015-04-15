@@ -21,7 +21,7 @@ function webphoto_xoops_module()
 	$this->_module_handler =& xoops_gethandler('module');
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

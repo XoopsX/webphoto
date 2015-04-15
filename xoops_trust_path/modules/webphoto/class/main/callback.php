@@ -32,7 +32,7 @@ function webphoto_main_callback( $dirname , $trust_dirname )
 	$this->webphoto_flash_log( $dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

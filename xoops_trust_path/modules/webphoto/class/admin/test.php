@@ -32,7 +32,7 @@ function webphoto_admin_test( $dirname, $trust_dirname )
 	$this->_class_dir =& webphoto_lib_dir::getInstance();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

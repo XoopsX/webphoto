@@ -24,7 +24,7 @@ function webphoto_bin_config()
 	$this->webphoto_lib_handler();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

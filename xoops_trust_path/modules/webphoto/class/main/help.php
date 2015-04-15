@@ -45,7 +45,7 @@ function webphoto_main_help( $dirname , $trust_dirname )
 	$this->_page_class->init_preload();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -49,7 +49,7 @@ function webphoto_search( $dirname , $trust_dirname )
 	$this->_search_class->set_is_japanese( $this->_is_japanese );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

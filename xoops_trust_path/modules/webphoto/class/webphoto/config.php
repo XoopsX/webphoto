@@ -40,7 +40,7 @@ function webphoto_config( $dirname )
 	$this->_utility_class =& webphoto_lib_utility::getInstance();
 }
 
-function &getInstance( $dirname )
+public static function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

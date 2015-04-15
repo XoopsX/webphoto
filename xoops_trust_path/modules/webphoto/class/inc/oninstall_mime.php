@@ -27,7 +27,7 @@ function webphoto_inc_oninstall_mime( $dirname , $trust_dirname )
 	$this->_table_mime   = $this->prefix_dirname( 'mime' );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

@@ -136,7 +136,7 @@ function webphoto_inc_oninstall( $dirname , $trust_dirname )
 	}
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

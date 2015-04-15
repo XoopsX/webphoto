@@ -48,7 +48,7 @@ function webphoto_lib_admin_menu( $dirname , $trust_dirname )
 	$this->_init_xoops_param();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

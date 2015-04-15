@@ -66,7 +66,7 @@ function webphoto_edit_video_middle_thumb_create( $dirname , $trust_dirname )
 	$this->_cfg_use_ffmpeg = $this->get_config_by_name( 'use_ffmpeg' );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

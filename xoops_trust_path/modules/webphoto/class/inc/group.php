@@ -35,7 +35,7 @@ function webphoto_inc_group( $dirname )
 	$this->_init_xoops_module( $dirname );
 }
 
-function &getSingleton( $dirname )
+public static function &getSingleton( $dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

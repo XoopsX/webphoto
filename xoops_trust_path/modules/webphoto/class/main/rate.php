@@ -77,7 +77,7 @@ function webphoto_main_rate( $dirname, $trust_dirname )
 	$this->preload_constant();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

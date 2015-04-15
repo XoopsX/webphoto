@@ -158,7 +158,7 @@ function webphoto_edit_factory_create( $dirname , $trust_dirname )
 	$this->_has_image_rotate  = $this->_image_create_class->has_rotate();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

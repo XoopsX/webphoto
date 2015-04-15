@@ -75,7 +75,7 @@ function webphoto_lib_pagenavi()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

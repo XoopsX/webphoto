@@ -34,7 +34,7 @@ function webphoto_xoops_image_handler()
 
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

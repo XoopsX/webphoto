@@ -88,7 +88,7 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 	$this->_FILE_INSTALL = $this->_TRUST_DIR .'/uploads/install.txt' ;
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

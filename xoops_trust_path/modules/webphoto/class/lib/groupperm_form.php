@@ -39,7 +39,7 @@ function webphoto_lib_groupperm_form()
 	$this->_groupperm_handler =& xoops_gethandler('groupperm');
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

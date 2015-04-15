@@ -38,7 +38,7 @@ function webphoto_ext( $dirname, $trust_dirname )
 	$this->set_prefix(  'webphoto_ext_' );
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

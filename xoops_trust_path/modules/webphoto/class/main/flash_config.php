@@ -53,7 +53,7 @@ function webphoto_main_flash_config( $dirname , $trust_dirname )
 
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

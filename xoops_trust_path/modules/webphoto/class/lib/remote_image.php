@@ -30,7 +30,7 @@ function webphoto_lib_remote_image()
 	$this->_dir_work = XOOPS_TRUST_PATH.'/tmp';
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

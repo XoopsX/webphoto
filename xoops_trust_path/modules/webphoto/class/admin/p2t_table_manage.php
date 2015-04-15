@@ -35,7 +35,7 @@ function webphoto_admin_p2t_table_manage( $dirname , $trust_dirname )
 
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

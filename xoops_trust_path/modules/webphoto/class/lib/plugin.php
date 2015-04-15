@@ -46,7 +46,7 @@ function webphoto_lib_plugin( $dirname, $trust_dirname )
 	$this->_utility_class  =& webphoto_lib_utility::getInstance();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

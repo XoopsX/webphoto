@@ -34,7 +34,7 @@ function webphoto_admin_player_table_manage( $dirname , $trust_dirname )
 		array( 'player_title', 'player_width', 'player_height' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

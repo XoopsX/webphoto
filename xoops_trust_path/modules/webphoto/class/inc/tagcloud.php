@@ -58,7 +58,7 @@ function webphoto_inc_tagcloud( $dirname , $trust_dirname )
 	$this->_p2t_table  = $this->prefix_dirname( 'p2t' );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

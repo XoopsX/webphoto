@@ -37,7 +37,7 @@ function webphoto_admin_photo_table_manage( $dirname , $trust_dirname )
 		array( 'photo_title', 'photo_uid' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

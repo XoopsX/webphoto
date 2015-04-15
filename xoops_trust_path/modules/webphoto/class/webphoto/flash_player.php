@@ -119,7 +119,7 @@ function webphoto_flash_player( $dirname , $trust_dirname )
 	$this->_CALLBACK_URL = $this->_MODULE_URL.'/callback.php';
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

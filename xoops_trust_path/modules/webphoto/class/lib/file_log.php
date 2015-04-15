@@ -24,7 +24,7 @@ function webphoto_lib_file_log()
 	$this->set_file( $file );
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -52,7 +52,7 @@ function webphoto_kind()
 	$this->_VIDEO_DOCOMO_EXTS      = explode( '|', _C_WEBPHOTO_VIDEO_DOCOMO_EXTS ) ;
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

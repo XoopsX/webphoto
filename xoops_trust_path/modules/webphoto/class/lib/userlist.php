@@ -29,7 +29,7 @@ function webphoto_lib_userlist()
 	$this->_member_handler =& xoops_gethandler('member');
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

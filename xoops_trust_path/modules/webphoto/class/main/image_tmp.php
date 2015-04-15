@@ -42,7 +42,7 @@ function webphoto_main_image_tmp( $dirname, $trust_dirname )
 	$this->_TMP_DIR  = $work_dir.'/tmp' ;
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -52,7 +52,7 @@ function webphoto_xoops_base()
 	$this->_init();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

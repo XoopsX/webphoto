@@ -35,7 +35,7 @@ function webphoto_admin_gicon_table_manage( $dirname , $trust_dirname )
 		array( 'gicon_title', 'gicon_image_path' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

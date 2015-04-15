@@ -83,7 +83,7 @@ function webphoto_edit_item_build( $dirname , $trust_dirname )
 	$this->_FILE_LIST = explode( '|', _C_WEBPHOTO_FILE_LIST );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

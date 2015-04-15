@@ -46,7 +46,7 @@ function webphoto_d3_optional()
 	// dummy;
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

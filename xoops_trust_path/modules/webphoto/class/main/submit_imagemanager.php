@@ -53,7 +53,7 @@ function webphoto_main_submit_imagemanager( $dirname , $trust_dirname )
 	$this->_THIS_CLOSE_URL = $this->_MODULE_URL .'/index.php?fct='. $this->_THIS_CLOSE_FCT ;
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance))  {

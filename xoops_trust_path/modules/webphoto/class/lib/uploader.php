@@ -130,7 +130,7 @@ class webphoto_lib_uploader
 	}
 
 // added for webphoto
-	function &getInstance()
+	public static function &getInstance()
 	{
 		static $instance;
 		if (!isset($instance)) {

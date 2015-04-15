@@ -37,7 +37,7 @@ function webphoto_admin_player_form( $dirname , $trust_dirname )
 		$dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

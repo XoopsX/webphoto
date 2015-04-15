@@ -76,7 +76,7 @@ function webphoto_main_imagemanager( $dirname , $trust_dirname )
 		=& webphoto_inc_catlist::getSingleton( $dirname , $trust_dirname );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

@@ -37,7 +37,7 @@ function webphoto_d3_notification_event()
 	$this->_init_xoops_param();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -28,7 +28,7 @@ function webphoto_admin_rss_form( $dirname, $trust_dirname )
 	$this->_URL_ADMIN_INDEX = $this->_MODULE_URL .'/admin/index.php';
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -103,7 +103,7 @@ function webphoto_admin_item_form( $dirname, $trust_dirname )
 	$this->init_preload();
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

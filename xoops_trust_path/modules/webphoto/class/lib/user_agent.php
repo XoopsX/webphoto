@@ -37,7 +37,7 @@ function webphoto_lib_user_agent()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

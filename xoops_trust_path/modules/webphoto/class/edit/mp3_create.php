@@ -41,7 +41,7 @@ function webphoto_edit_mp3_create( $dirname , $trust_dirname )
 	$this->_lame_class   =& webphoto_lame::getInstance(   $dirname, $trust_dirname  );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

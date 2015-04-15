@@ -50,7 +50,7 @@ function webphoto_lib_multibyte()
 	$this->set_func_sel_by_const();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

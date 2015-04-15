@@ -61,7 +61,7 @@ function webphoto_pdf( $dirname, $trust_dirname )
 	$this->set_debug_by_ini_name( $this->_xpdf_class );
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

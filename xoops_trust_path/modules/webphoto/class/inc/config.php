@@ -41,7 +41,7 @@ function webphoto_inc_config( $dirname )
 	$this->_get_xoops_config( $dirname );
 }
 
-function &getSingleton( $dirname )
+public static function &getSingleton( $dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

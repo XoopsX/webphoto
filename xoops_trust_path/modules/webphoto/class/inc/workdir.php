@@ -48,7 +48,7 @@ function webphoto_inc_workdir( $dirname, $trust_dirname )
 	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
-function &getSingleton( $dirname, $trust_dirname )
+public static function &getSingleton( $dirname, $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

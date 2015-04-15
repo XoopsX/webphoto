@@ -38,7 +38,7 @@ function webphoto_lib_mail_send()
 	$this->_xoops_adminmail   = $this->get_xoops_adminmail();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

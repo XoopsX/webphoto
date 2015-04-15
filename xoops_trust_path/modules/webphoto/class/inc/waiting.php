@@ -34,7 +34,7 @@ function webphoto_inc_waiting( $dirname , $trust_dirname )
 	$this->init_handler( $dirname );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

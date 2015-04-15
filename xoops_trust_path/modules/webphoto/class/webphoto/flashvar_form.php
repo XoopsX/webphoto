@@ -61,7 +61,7 @@ function webphoto_flashvar_form( $dirname , $trust_dirname )
 	$this->_CAPTCHA_API_FILE   = XOOPS_ROOT_PATH.'/modules/captcha/include/api.php';
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

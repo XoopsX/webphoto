@@ -39,7 +39,7 @@ function webphoto_lib_error()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

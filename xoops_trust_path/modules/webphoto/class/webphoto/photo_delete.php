@@ -48,7 +48,7 @@ function webphoto_photo_delete( $dirname )
 	$this->_init_xoops_param();
 }
 
-function &getInstance( $dirname )
+public static function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

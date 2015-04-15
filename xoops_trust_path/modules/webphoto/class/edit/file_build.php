@@ -29,7 +29,7 @@ function webphoto_edit_file_build( $dirname , $trust_dirname )
 	$this->_mime_class =& webphoto_mime::getInstance( $dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

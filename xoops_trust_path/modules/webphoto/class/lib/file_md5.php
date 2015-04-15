@@ -33,7 +33,7 @@ function webphoto_lib_file_md5( $dirname , $trust_dirname )
 	$this->_dir_class =& webphoto_lib_dir::getInstance();
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

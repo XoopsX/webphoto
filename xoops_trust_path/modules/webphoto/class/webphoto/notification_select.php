@@ -30,7 +30,7 @@ function webphoto_notification_select( $dirname )
 	$this->_cfg_use_pathinfo = $this->_config_class->get_by_name('use_pathinfo');
 }
 
-function &getInstance( $dirname )
+public static function &getInstance( $dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

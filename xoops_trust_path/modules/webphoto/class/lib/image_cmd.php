@@ -75,7 +75,7 @@ function webphoto_lib_image_cmd()
 	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

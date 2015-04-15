@@ -46,7 +46,7 @@ function webphoto_inc_group_permission( $dirname , $trust_dirname )
 	$this->_init_permission( $dirname );
 }
 
-function &getSingleton( $dirname , $trust_dirname )
+public static function &getSingleton( $dirname , $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

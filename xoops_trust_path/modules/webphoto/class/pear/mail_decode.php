@@ -29,7 +29,7 @@ function webphoto_pear_mail_decode()
 	$this->_mail_class =& webphoto_lib_mail::getInstance();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

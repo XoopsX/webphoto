@@ -43,7 +43,7 @@ function webphoto_edit_pdf_create( $dirname , $trust_dirname )
 	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

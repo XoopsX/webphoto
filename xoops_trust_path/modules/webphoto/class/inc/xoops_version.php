@@ -130,7 +130,7 @@ function webphoto_inc_xoops_version( $dirname, $trust_dirname )
 		= XOOPS_TRUST_PATH .'/modules/'. $trust_dirname .'/uploads/'. $dirname;
 }
 
-function &getSingleton( $dirname, $trust_dirname )
+public static function &getSingleton( $dirname, $trust_dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

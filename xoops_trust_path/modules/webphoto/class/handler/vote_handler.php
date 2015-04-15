@@ -38,7 +38,7 @@ function webphoto_vote_handler( $dirname, $trust_dirname )
 
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

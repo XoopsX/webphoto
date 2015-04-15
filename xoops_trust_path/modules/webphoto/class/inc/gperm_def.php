@@ -22,7 +22,7 @@ function webphoto_inc_gperm_def()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

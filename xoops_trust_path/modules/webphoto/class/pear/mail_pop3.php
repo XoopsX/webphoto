@@ -36,7 +36,7 @@ function webphoto_pear_mail_pop3()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

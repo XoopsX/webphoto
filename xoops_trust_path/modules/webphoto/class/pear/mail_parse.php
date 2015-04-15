@@ -23,7 +23,7 @@ function webphoto_pear_mail_parse()
 	$this->webphoto_pear_mail_decode();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

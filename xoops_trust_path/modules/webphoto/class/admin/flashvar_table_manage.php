@@ -36,7 +36,7 @@ function webphoto_admin_flashvar_table_manage( $dirname , $trust_dirname )
 		array( 'flashvar_item_id' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

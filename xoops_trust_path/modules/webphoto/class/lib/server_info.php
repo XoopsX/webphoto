@@ -27,7 +27,7 @@ function webphoto_lib_server_info()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

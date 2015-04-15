@@ -59,7 +59,7 @@ function webphoto_inc_timeline( $dirname )
 	$this->_mysql_utility_class =& webphoto_lib_mysql_utility::getInstance();
 }
 
-function &getSingleton( $dirname )
+public static function &getSingleton( $dirname )
 {
 	static $singletons;
 	if ( !isset( $singletons[ $dirname ] ) ) {

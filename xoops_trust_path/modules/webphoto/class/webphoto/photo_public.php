@@ -65,7 +65,7 @@ function webphoto_photo_public( $dirname, $trust_dirname )
 	$this->_item_cat_handler->set_perm_cat_read(  $this->_cfg_perm_cat_read );
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

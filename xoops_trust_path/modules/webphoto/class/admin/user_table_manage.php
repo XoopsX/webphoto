@@ -34,7 +34,7 @@ function webphoto_admin_user_table_manage( $dirname , $trust_dirname )
 		array( 'user_uid', 'user_email' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

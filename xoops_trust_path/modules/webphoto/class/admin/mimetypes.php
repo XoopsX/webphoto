@@ -63,7 +63,7 @@ function webphoto_admin_mimetypes( $dirname , $trust_dirname )
 	$this->_ADMIN_MIME_PHP = $this->_MODULE_URL .'/admin/index.php?fct=mimetypes';
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

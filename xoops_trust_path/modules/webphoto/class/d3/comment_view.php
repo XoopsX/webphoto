@@ -69,7 +69,7 @@ function webphoto_d3_comment_view()
 	$this->_init_xoops_param();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

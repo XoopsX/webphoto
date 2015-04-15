@@ -39,7 +39,7 @@ function webphoto_admin_maillog_table_manage( $dirname , $trust_dirname )
 	$this->_unlink_class =& webphoto_edit_mail_unlink::getInstance( $dirname );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

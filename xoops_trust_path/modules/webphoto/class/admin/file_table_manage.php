@@ -35,7 +35,7 @@ function webphoto_admin_file_table_manage( $dirname , $trust_dirname )
 		array( 'file_name', 'file_mime' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

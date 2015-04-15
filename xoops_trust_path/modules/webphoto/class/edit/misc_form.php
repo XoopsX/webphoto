@@ -61,7 +61,7 @@ function webphoto_edit_misc_form( $dirname, $trust_dirname )
 	$this->_ini_kind_list_video = $this->explode_ini('item_kind_list_video');
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

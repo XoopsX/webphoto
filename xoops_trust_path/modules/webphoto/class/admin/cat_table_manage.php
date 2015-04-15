@@ -36,7 +36,7 @@ function webphoto_admin_cat_table_manage( $dirname , $trust_dirname )
 		array( 'cat_title', 'cat_pid' ) );
 }
 
-function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname , $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

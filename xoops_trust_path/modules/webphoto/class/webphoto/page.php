@@ -54,7 +54,7 @@ function webphoto_page( $dirname, $trust_dirname )
 	$this->_has_file        = $this->_perm_class->has_file() ;
 }
 
-function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname, $trust_dirname )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -36,7 +36,7 @@ function webphoto_inc_weblinks()
 	$this->webphoto_inc_public();
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {

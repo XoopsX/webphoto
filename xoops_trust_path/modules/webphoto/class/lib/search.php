@@ -97,7 +97,7 @@ function webphoto_lib_search()
 	// dummy
 }
 
-function &getInstance()
+public static function &getInstance()
 {
 	static $instance;
 	if (!isset($instance)) {
