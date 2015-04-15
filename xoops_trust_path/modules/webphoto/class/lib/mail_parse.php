@@ -504,9 +504,9 @@ function set_internal_encoding()
 	     function_exists('iconv_set_encoding') ) {
 
 		$current = iconv_get_encoding( 'internal_encoding' );
-		$ret = iconv_set_encoding( 'internal_encoding', $this->_CHARSET_LOCAL );
+		$ret = @iconv_set_encoding( 'internal_encoding', $this->_CHARSET_LOCAL );
 		if ( $ret === false ) {
-			iconv_set_encoding( 'internal_encoding', $current );
+			@iconv_set_encoding( 'internal_encoding', $current );
 		}
 	}
 

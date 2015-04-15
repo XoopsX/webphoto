@@ -170,9 +170,9 @@ function i_set_encoding( $type, $charset )
 		if ( strtolower($current) == strtolower($charset) ) {
 			return true;
 		}
-		$ret = iconv_set_encoding( $type, $charset );
+		$ret = @iconv_set_encoding( $type, $charset );
 		if ( $ret === false ) {
-			iconv_set_encoding( $type, $current );
+			@iconv_set_encoding( $type, $current );
 		}
 		return $ret;
 	}
@@ -206,7 +206,7 @@ function i_iconv_get_encoding( $type )
 function i_iconv_set_encoding( $type, $charset )
 {
 	if ( function_exists('iconv_set_encoding') ) {
-		return iconv_set_encoding( $type, $charset );
+		return @iconv_set_encoding( $type, $charset );
 	}
 	return true;	// dummy
 }
