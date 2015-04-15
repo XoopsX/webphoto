@@ -11,8 +11,8 @@ if( ! defined( 'XOOPS_TRUST_PATH' ) ) die( 'not permit' ) ;
 // --- define version begin ---
 if( !defined("_C_WEBPHOTO_VERSION") ) 
 {
-	define("_C_WEBPHOTO_VERSION", "2.63" ) ;
-	define("_C_WEBPHOTO_TIMELINE_VERSION", "0.20" ) ;
+	define("_C_WEBPHOTO_VERSION", "2.64" ) ;
+	define("_C_WEBPHOTO_TIMELINE_VERSION", "0.22" ) ;
 }
 // --- define version end ---
 
