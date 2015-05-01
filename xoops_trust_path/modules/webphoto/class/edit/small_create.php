@@ -37,7 +37,7 @@ function webphoto_edit_small_create( $dirname , $trust_dirname  )
 	$this->_remote_class =& webphoto_lib_remote_file::getInstance();
 }
 
-public static function &getInstance( $dirname , $trust_dirname  )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

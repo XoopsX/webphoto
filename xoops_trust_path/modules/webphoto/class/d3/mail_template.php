@@ -57,7 +57,7 @@ function webphoto_d3_mail_template( $dirname, $trust_dirname )
 	$this->_xoops_module_name = $this->get_xoops_module_name();
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

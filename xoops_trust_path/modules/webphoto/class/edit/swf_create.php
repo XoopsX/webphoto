@@ -41,7 +41,7 @@ function webphoto_edit_swf_create( $dirname , $trust_dirname )
 	$this->_ext_class =& webphoto_ext::getInstance( $dirname , $trust_dirname );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

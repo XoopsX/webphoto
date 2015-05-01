@@ -72,7 +72,7 @@ function webphoto_upload( $dirname , $trust_dirname )
 	$this->_init_errors();
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

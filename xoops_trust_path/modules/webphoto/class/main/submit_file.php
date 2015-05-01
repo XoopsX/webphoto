@@ -73,7 +73,7 @@ function webphoto_main_submit_file( $dirname , $trust_dirname )
 	$this->_THIS_URL  = $this->_MODULE_URL .'/index.php?fct='.$this->_THIS_FCT;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

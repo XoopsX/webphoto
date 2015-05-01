@@ -43,7 +43,7 @@ function webphoto_photo_build( $dirname )
 	$this->_syno_handler  =& webphoto_syno_handler::getInstance(  $dirname );
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

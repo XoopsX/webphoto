@@ -181,7 +181,7 @@ function set_debug_error( $val )
 //---------------------------------------------------------
 // insert
 //---------------------------------------------------------
-function insert( &$row )
+function insert( $row, $force=false )
 {
 	// dummy
 }
@@ -189,7 +189,7 @@ function insert( &$row )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
-function update( &$row )
+function update( $row, $force=false )
 {
 	// dummy
 }

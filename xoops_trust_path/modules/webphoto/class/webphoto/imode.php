@@ -73,7 +73,7 @@ function webphoto_imode( $dirname , $trust_dirname )
 	$this->_TITLE_S = $this->sanitize( $this->_MODULE_NAME .' - '. $this->_xoops_sitename ) ;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -38,7 +38,7 @@ function webphoto_admin_update( $dirname , $trust_dirname )
 
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -62,7 +62,7 @@ function main()
 	$url_210  = $this->_update_check_class->get_url('210');
 	$url_file = $this->_MODULE_URL .'/admin/index.php?fct=create_file_list' ;
 
-	echo $this->_update_check_class->build_msg();
+	echo $this->_update_check_class->build_msg('');
 	echo "<br />\n";
 
 	$this->_print_file_check();

@@ -35,7 +35,7 @@ function webphoto_edit_gicon_create( $dirname, $trust_dirname )
 	$this->_cfg_gicon_height = $this->get_config_by_name( 'gicon_height' ) ;
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

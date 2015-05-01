@@ -66,7 +66,7 @@ function webphoto_main_mail_register( $dirname , $trust_dirname )
 	$this->_has_mail    = $this->_perm_class->has_mail();
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance))  {

@@ -88,7 +88,7 @@ function webphoto_admin_index( $dirname , $trust_dirname )
 	$this->_FILE_INSTALL = $this->_TRUST_DIR .'/uploads/install.txt' ;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -167,7 +167,7 @@ function _print_check()
 		echo $this->build_error_msg( $msg, '', false );
 	}
 
-	echo $this->_update_check_class->build_msg();
+	echo $this->_update_check_class->build_msg('');
 
 	if ( $this->_cat_handler->get_count_all() == 0 ) {
 		$msg  = '<a href="'. $this->_MODULE_URL.'/admin/index.php?fct=catmanager">';

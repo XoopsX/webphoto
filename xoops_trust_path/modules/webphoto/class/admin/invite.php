@@ -50,7 +50,7 @@ function webphoto_admin_invite( $dirname , $trust_dirname )
 	$this->_xoops_user_name  = $this->_xoops_class->get_user_uname_from_id( $this->_xoops_uid, 1 );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

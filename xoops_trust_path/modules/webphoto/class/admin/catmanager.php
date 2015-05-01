@@ -105,7 +105,7 @@ function webphoto_admin_catmanager( $dirname , $trust_dirname )
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -320,7 +320,7 @@ function _build_row( $row )
 	return $row ;
 }
 
-function _build_row_by_post( $row )
+function _build_row_by_post( $row=array() )
 {
 	$row['cat_pid']            = $this->get_post_int('cat_pid');
 	$row['cat_gicon_id']       = $this->get_post_int('cat_gicon_id');

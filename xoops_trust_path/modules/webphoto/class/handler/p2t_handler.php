@@ -29,7 +29,7 @@ function webphoto_p2t_handler( $dirname, $trust_dirname )
 
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -67,7 +67,7 @@ function create( $flag_new= false )
 //---------------------------------------------------------
 // insert
 //---------------------------------------------------------
-function insert( $row )
+function insert( $row, $force=false )
 {
 	extract( $row ) ;
 
@@ -98,7 +98,7 @@ function insert( $row )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
-function update( $row )
+function update( $row, $force=false )
 {
 	extract( $row ) ;
 

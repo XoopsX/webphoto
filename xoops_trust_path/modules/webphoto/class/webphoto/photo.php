@@ -114,7 +114,7 @@ function webphoto_photo( $dirname , $trust_dirname )
 	$this->_CODEINFO_LIST = $this->explode_ini('view_codeinfo_list');
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

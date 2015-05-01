@@ -61,7 +61,7 @@ function webphoto_xoops_header( $dirname, $trust_dirname )
 	$this->_LIGHTBOX_URL = $this->_MODULE_URL .'/images/lightbox';
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -64,7 +64,7 @@ function webphoto_admin_player_manager( $dirname , $trust_dirname )
 	$this->_THIS_URL = $this->_MODULE_URL .'/admin/index.php?fct='.$this->_THIS_FCT;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -391,7 +391,7 @@ function _submit()
 	redirect_header( $url, $this->_TIME_SUCCESS, _AM_WEBPHOTO_PLAYER_ADDED );
 }
 
-function _build_row_by_post( $row )
+function _build_row_by_post( $row=array() )
 {
 	$row['player_title']         = $this->_player_title ;
 	$row['player_screencolor']   = $this->_post_class->get_post_text( 'player_screencolor' );

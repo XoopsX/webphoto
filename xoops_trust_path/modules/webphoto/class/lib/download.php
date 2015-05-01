@@ -48,7 +48,7 @@ function webphoto_main_download( $dirname , $trust_dirname )
 	$this->_filename_class->set_is_japanese( $is_japanese );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

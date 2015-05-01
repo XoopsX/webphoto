@@ -218,7 +218,7 @@ function get_config_character()
 //---------------------------------------------------------
 // insert
 //---------------------------------------------------------
-function insert( &$row )
+function insert( $row, $force=false )
 {
 	// dummy
 }
@@ -226,7 +226,7 @@ function insert( &$row )
 //---------------------------------------------------------
 // update
 //---------------------------------------------------------
-function update( &$row )
+function update( $row, $force=false )
 {
 	// dummy
 }

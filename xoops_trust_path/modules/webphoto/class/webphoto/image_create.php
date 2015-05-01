@@ -55,7 +55,7 @@ function webphoto_image_create( $dirname )
 	$this->_init_image_cmd();
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

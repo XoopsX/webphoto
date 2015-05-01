@@ -38,7 +38,7 @@ function webphoto_admin_groupperm_form( $dirname , $trust_dirname )
 	$this->_TEMPLATE = 'db:'. $dirname .'_form_admin_groupperm.html';
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

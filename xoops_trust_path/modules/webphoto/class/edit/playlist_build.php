@@ -45,7 +45,7 @@ function webphoto_edit_playlist_build( $dirname , $trust_dirname )
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

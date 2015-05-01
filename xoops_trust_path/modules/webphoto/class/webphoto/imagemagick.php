@@ -47,7 +47,7 @@ function webphoto_imagemagick( $dirname, $trust_dirname )
 	$this->set_debug_by_ini_name( $this->_imagemagick_class );
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

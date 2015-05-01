@@ -36,7 +36,7 @@ function webphoto_admin_cat_table_manage( $dirname , $trust_dirname )
 		array( 'cat_title', 'cat_pid' ) );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -56,7 +56,7 @@ function main()
 //=========================================================
 // override for caller
 //=========================================================
-function _build_row_by_post()
+function _build_row_by_post( $row=array() )
 {
 	$row = array(
 		'cat_id'             => $this->_post_class->get_post_get_int( 'cat_id' ),

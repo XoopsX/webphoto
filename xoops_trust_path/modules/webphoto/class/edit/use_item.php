@@ -43,7 +43,7 @@ function webphoto_edit_use_item( $dirname, $trust_dirname )
 	$this->_edit_array = $this->explode_ini('edit_list');
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

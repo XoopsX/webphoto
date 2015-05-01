@@ -50,7 +50,7 @@ function webphoto_admin_update_check ( $dirname , $trust_dirname )
 
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -62,7 +62,7 @@ public static function &getInstance( $dirname , $trust_dirname )
 //---------------------------------------------------------
 // check
 //---------------------------------------------------------
-function build_msg()
+function build_msg($msg, $flag_highlight = false, $flag_br = false)
 {
 	$str = null ;
 

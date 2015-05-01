@@ -44,7 +44,7 @@ function webphoto_admin_admission( $dirname , $trust_dirname )
 	$this->_ADIMISSION_PHP = $this->_MODULE_URL .'/admin/index.php?fct=admission';
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

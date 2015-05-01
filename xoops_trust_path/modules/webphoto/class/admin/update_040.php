@@ -76,7 +76,7 @@ function webphoto_admin_update_040( $dirname , $trust_dirname )
 	echo "flag: ".$this->_FLAG_FDIVING ;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

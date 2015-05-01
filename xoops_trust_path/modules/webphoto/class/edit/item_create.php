@@ -40,7 +40,7 @@ function webphoto_edit_item_create( $dirname , $trust_dirname )
 	$this->_ini_item_search_length  = $this->get_ini('item_search_length') ;
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

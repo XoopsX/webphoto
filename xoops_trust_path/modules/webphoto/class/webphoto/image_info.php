@@ -45,7 +45,7 @@ function webphoto_image_info( $dirname , $trust_dirname )
 		= $this->_config_class->get_thumb_wh();
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

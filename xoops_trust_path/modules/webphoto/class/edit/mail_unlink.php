@@ -43,7 +43,7 @@ function webphoto_edit_mail_unlink( $dirname )
 
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

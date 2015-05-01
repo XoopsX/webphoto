@@ -33,7 +33,7 @@ function webphoto_edit_external_build( $dirname )
 	$this->_icon_build_class =& webphoto_edit_icon_build::getInstance( $dirname );
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

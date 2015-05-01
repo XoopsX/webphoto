@@ -84,7 +84,7 @@ function webphoto_mail_check( $dirname )
 
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

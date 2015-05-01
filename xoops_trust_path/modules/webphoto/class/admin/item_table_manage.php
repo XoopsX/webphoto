@@ -65,7 +65,7 @@ function webphoto_admin_item_table_manage( $dirname , $trust_dirname )
 
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -85,12 +85,12 @@ function main()
 //=========================================================
 // override for caller
 //=========================================================
-function _build_row_add()
+function _build_row_add( $row=array() )
 {
 	return $this->_build_row_common();
 }
 
-function _build_row_edit()
+function _build_row_edit( $row=array() )
 {
 	return $this->_build_row_common();
 }
@@ -102,7 +102,7 @@ function _build_row_common()
 	return $row;
 }
 
-function _build_row_by_post()
+function _build_row_by_post( $row=array() )
 {
 	$row = array(
 		'item_datetime' => $this->_manage_handler->build_datetime_by_post( 'item_datetime' ) ,

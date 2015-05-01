@@ -187,7 +187,7 @@ function webphoto_show_main( $dirname, $trust_dirname )
 	$this->auto_publish();
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

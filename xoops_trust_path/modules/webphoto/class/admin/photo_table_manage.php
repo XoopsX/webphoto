@@ -37,7 +37,7 @@ function webphoto_admin_photo_table_manage( $dirname , $trust_dirname )
 		array( 'photo_title', 'photo_uid' ) );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {
@@ -57,7 +57,7 @@ function main()
 //=========================================================
 // override for caller
 //=========================================================
-function _build_row_by_post()
+function _build_row_by_post( $row=array() )
 {
 	$row = array(
 		'photo_datetime'       => $this->_manage_handler->build_datetime_by_post( 'photo_datetime' ) ,

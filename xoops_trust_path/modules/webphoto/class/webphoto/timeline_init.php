@@ -41,7 +41,7 @@ function webphoto_timeline_init( $dirname )
 		$this->_timeline_class->init( $this->_cfg_timeline_dirname );
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

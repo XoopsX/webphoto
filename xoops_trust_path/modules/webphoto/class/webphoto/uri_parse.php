@@ -29,7 +29,7 @@ function webphoto_uri_parse( $dirname, $trust_dirname )
 	$this->_pathinfo_class =& webphoto_lib_pathinfo::getInstance();
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

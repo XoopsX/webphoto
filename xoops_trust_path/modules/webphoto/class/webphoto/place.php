@@ -42,7 +42,7 @@ function webphoto_place( $dirname , $trust_dirname )
 	$this->_search_class->set_flag_candidate( false );
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

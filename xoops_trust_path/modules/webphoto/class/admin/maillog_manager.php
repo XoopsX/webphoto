@@ -81,7 +81,7 @@ function webphoto_admin_maillog_manager( $dirname , $trust_dirname )
 
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

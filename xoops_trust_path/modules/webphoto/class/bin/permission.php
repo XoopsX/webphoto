@@ -44,7 +44,7 @@ function webphoto_permission( $dirname )
 	// dummy
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

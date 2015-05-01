@@ -55,7 +55,7 @@ function webphoto_main_i( $dirname , $trust_dirname )
 	$this->_encode_type_array = $this->get_encode_type_array();
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -24,7 +24,7 @@ function webphoto_admin_check_qr( $dirname, $trust_dirname )
 	$this->webphoto_base_this( $dirname, $trust_dirname );
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

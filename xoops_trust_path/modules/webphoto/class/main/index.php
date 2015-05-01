@@ -90,7 +90,7 @@ function webphoto_main_index( $dirname , $trust_dirname )
 	$this->_ini_view_mode_default = $this->get_ini('view_mode_default');
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

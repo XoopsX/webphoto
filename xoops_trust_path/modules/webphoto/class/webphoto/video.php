@@ -91,7 +91,7 @@ function webphoto_video( $dirname )
 	$this->set_debug_by_const_name(   $constpref.'DEBUG_VIDEO' );
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

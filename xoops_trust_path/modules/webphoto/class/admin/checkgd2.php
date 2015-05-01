@@ -22,7 +22,7 @@ function webphoto_admin_checkgd2( $dirname, $trust_dirname )
 	// dummy
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

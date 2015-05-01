@@ -947,22 +947,22 @@ function _get_list_rows( $limit, $start )
 	return $rows;
 }
 
-function _build_row_add()
+function _build_row_add( $row=array() )
 {
 	return $this->_build_row_by_post();
 }
 
-function _build_row_edit()
+function _build_row_edit( $row=array() )
 {
 	return $this->_build_row_by_post();
 }
 
-function _build_row_form()
+function _build_row_form( $row=array() )
 {
 	return $this->_build_row_by_post();
 }
 
-function _build_row_by_post()
+function _build_row_by_post( $row=array() )
 {
 	// dummy
 }
@@ -972,7 +972,7 @@ function _print_list( $total, $rows )
 	// dummy
 }
 
-function _print_form()
+function _print_form( $row )
 {
 	// dummy;
 }

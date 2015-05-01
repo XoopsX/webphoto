@@ -54,7 +54,7 @@ function webphoto_flash_log( $dirname )
 	$this->_LOG_FILE = $this->_WORK_DIR .'/log/flash.txt' ;
 }
 
-public static function &getInstance( $dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

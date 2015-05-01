@@ -45,7 +45,7 @@ function webphoto_lib_file_check( $dirname , $trust_dirname )
 	$this->_ini_safe_mode = ini_get('safe_mode');
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

@@ -53,7 +53,7 @@ function webphoto_item_cat_handler( $dirname, $trust_dirname )
 	$this->_p2t_table  = $this->prefix_dirname( 'p2t' );
 }
 
-public static function &getInstance( $dirname, $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

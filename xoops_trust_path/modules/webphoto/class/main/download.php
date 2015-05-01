@@ -40,7 +40,7 @@ function webphoto_main_download( $dirname , $trust_dirname )
 	$this->_browser_class  =& webphoto_lib_browser::getInstance();
 }
 
-public static function &getInstance( $dirname , $trust_dirname )
+public static function &getInstance( $dirname = null, $trust_dirname = null )
 {
 	static $instance;
 	if (!isset($instance)) {

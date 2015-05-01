@@ -40,7 +40,7 @@ public static function &getInstance()
 //---------------------------------------------------------
 // insert
 //---------------------------------------------------------
-function insert( $row )
+function insert( $row, $force=false )
 {
 	extract( $row ) ;
 
