@@ -85,6 +85,8 @@ function check_list( $name )
 	$msg  = '';
 	$dir  = $this->build_dir( $name );
 	$data = $this->read_file( $name );
+	$resFile  = XOOPS_TRUST_PATH . '/cache/webphoto_check_'.$name.'.txt';
+	$res = '';
 
 	$lines = $this->str_to_array( $data, "\n" );
 	foreach ( $lines as $line )
@@ -98,6 +100,7 @@ function check_list( $name )
 //		$md5  = md5_file( $file_full ) ;
 		$size = filesize( $file_full ) ;
 		$line = count ( file( $file_full ) );
+		$res .= $file . ' : ' . $size . ' : ' . $line . "\n";
 //		if ( $md5 != trim($md5) ) ) {
 //			$msg .= 'unmatch md5 : '.$file_full."<br />\n";
 //		}
@@ -109,6 +112,7 @@ function check_list( $name )
 		}
 		$msg .= 'unmatch : '.$file_full."<br />\n";
 	}
+	file_put_contents($resFile, $res);
 	return $msg;
 }
 
