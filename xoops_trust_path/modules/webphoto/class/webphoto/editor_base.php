@@ -96,7 +96,7 @@ function build_js()
 	return null;
 }
 
-function build_textarea( $id, $name, $value, $rows, $cols, $has_html, $item_row )
+function build_textarea( $id, $name, $value, $rows, $cols, $item_row )
 {
 	return null;
 }
